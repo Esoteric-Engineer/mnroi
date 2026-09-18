@@ -68,6 +68,8 @@ Compiler/linker behavior and techniques learned while matching functions in this
 
   If a C file references a symbol dtk labels `.sdata2` (for example `__GXData` at `0x80670788`), `mwld` routes it through `r2`. Because this game's `.sdata2` symbols are often outside `r2`'s ~32 KB window, the link fails with `Range Error for small data relocation`. This currently blocks `GXSetTexRegionCallback` / `GXSetTlutRegionCallback` (`0x8018E7E4`, `0x8018E7F8`) until the fork patches this relocation class post-link, or the data range is reclassified as `.sdata`.
 
+  Not every reference to `__GXData` hits this: `GXLoadTexObjPreLoaded` (`0x8018E3A0`) reads/writes through it (`gx->tlutRegionCallback(...)`, `gx->tImage0[id]`, etc.) and links fine via `r13`, matching the original's own `-11608(r13)` access. The `r2` routing only seems to bite the two `Set*Callback` setters above.
+
 ---
 
 ## General tactics
@@ -90,3 +92,4 @@ Don't re-guess these.
   - the buffered-stdio cluster (`fn_80177CF8`/`D24`/`E04`/`E24`/`ungetc`)
   - the ioctl-wrapper family (`fn_80178D48` and siblings)
   - the small `Dolphin/os` one-offs `fn_8017A620`, `fn_8017A70C`, `fn_8017A6CC`, `fn_8017B444`, `fn_8017FB84`, `fn_8017FD64`, `fn_8017FD74`
+- `GXLoadTexObjPreLoaded` (`0x8018E3A0`, `Dolphin/gx/GXLoadTexObjPreLoaded.c`): body matches byte-for-byte (98.25% fuzzy → the only real diffs are cosmetic symbol-name text on `@sda21` relocations), but the prologue/epilogue frame size is stuck at `-0x28(r1)` vs the original's `-0x40(r1)` (24 bytes short). Tried: reordering/aliasing locals (`t`/`r`/`gx` pointer copies — no effect, fully optimized away), removing/adding `SET_REG_FIELD`/`GX_WRITE_RAS_REG` calls (no effect), pre-computing the `GXTex*Ids[id]` table reads into named locals (changes instruction order, makes it worse), splitting into its own translation unit (no effect), `#pragma scheduling on` (no effect). Only forcing extra *unused* `volatile u32` locals reproduced the missing 24 bytes exactly, which confirms the original reserves stack for something we're not modeling, not a scheduling artifact — but that's not an honest reconstruction, so left `NonMatching`.
