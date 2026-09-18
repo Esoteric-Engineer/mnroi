@@ -1,0 +1,41 @@
+MEMORY
+{
+    text : origin = $ORIGIN
+}
+
+SECTIONS
+{
+    GROUP:
+    {
+        $SECTIONS
+        .stack ALIGN(0x100):{}
+    } > text
+
+    _stack_end = $LAST_SECTION_SYMBOL + SIZEOF($LAST_SECTION_NAME);
+    _stack_addr = (_stack_end + $STACKSIZE + 0x7) & ~0x7;
+    _db_stack_addr = (_stack_addr + 0x2000);
+    _db_stack_end = _stack_addr;
+    __ArenaLo = (_db_stack_addr + 0x1f) & ~0x1f;
+    __ArenaHi = $ARENAHI;
+
+    /* crt0 (__start) hardcodes the .sbss clear-end as the absolute address
+       0x8066FB50, which falls in the padding gap between .sbss and .sdata2 and
+       so maps to no section (the deeper root of the issue-1 crash). dtk emits
+       it as an undefined absolute reference; define it here so the linker can
+       resolve the __start relocations. */
+    lbl_8066FB50 = 0x8066FB50;
+
+    /* This game addresses all small data via r13 (_SDA_BASE_); the read-only
+       .sdata2 segment (0x8066FB60) is reached via r13 too, so its real _SDA2_BASE_
+       (0x806834E0 = _SDA_BASE_ + 0x10000) is vestigial - it addresses no data. The
+       dev dtk fork bakes the r13 accesses to .sdata2 (mwld can only route .sdata2
+       via r2), so no .sdata2 access is left for mwld to range-check. We just pin
+       _SDA2_BASE_ so crt0's own r2 setup matches the original. See GettingStarted.md
+       §8f and dtk-issues/findings-2b-sda2-and-issue1-residue.md §3. */
+    _SDA2_BASE_ = 0x806834E0;
+}
+
+FORCEACTIVE
+{
+    $FORCEACTIVE
+}

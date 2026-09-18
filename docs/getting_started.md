@@ -12,7 +12,7 @@ See [Dependencies](dependencies.md) first.
 
    - **Extracted files:** In Dolphin, use "Extract Entire Disc" for GameCube games, or use "Data Partition" -> "Extract Entire Partition" for Wii games.
 
-4. Rename `config/GAMEID` to the game's ID and modify `config/[GAMEID]/config.yml` appropriately, using [`config.example.yml`](/config/GAMEID/config.example.yml) as a reference. If the game doesn't use RELs, the `modules` list in `config.yml` can be removed.
+4. Rename `config/GAMEID` to the game's ID and modify `config/[GAMEID]/config.yml` appropriately, using [`config.example.yml`](/config/GVLE69/config.example.yml) as a reference. If the game doesn't use RELs, the `modules` list in `config.yml` can be removed.
 
 5. Generate a `config/[GAMEID]/build.sha1` file for verification. This file is a list of SHA-1 hashes for each build artifact. One possible way:
 
@@ -36,7 +36,7 @@ If the game has `.map` files matching the DOL (and RELs, if applicable), they ca
 
 Add the `map` key to `config.yml`, pointing to the `.map` file from the game disc. (For example, `orig/[GAMEID]/files/main.map`.) For RELs, add a `map` key to each module in `config.yml`.
 
-If the game uses [common BSS](common_bss.md), be sure to set `common_start` as well. (See [`config.example.yml`](/config/GAMEID/config.example.yml).) Otherwise, the final link order may fail to be determined.
+If the game uses [common BSS](common_bss.md), be sure to set `common_start` as well. (See [`config.example.yml`](/config/GVLE69/config.example.yml).) Otherwise, the final link order may fail to be determined.
 
 Once the initial analysis is completed, `symbols.txt` and `splits.txt` will be generated from the map information. **Remove** the `map` fields from `config.yml` to avoid conflicts.
 

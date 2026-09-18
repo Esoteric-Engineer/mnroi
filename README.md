@@ -1,66 +1,133 @@
-decomp-toolkit Project Template
-===============================
+Marvel Nemesis: Rise of the Imperfects
+[![Build Status]][actions]
+=============
 
-If starting a new GameCube / Wii decompilation project, this repository can be used as a scaffold.
+<!--  [![Code Progress]][progress] [![Data Progress]][progress] [![Discord Badge]][discord] -->
 
-See [decomp-toolkit](https://github.com/encounter/decomp-toolkit) for background on the concept and more information on the tooling used.
+[Build Status]: https://github.com/Esoteric-Engineer/mnroi/actions/workflows/build.yml/badge.svg
+[actions]: https://github.com/Esoteric-Engineer/mnroi/actions/workflows/build.yml
+<!--
+decomp.dev progress badges
+See https://decomp.dev/api for an API overview.
+-->
+<!-- [Code Progress]: https://decomp.dev/Esoteric-Engineer/mnroi.svg?mode=shield&measure=code&label=Code
+[Data Progress]: https://decomp.dev/Esoteric-Engineer/mnroi.svg?mode=shield&measure=data&label=Data
+[progress]: https://decomp.dev/Esoteric-Engineer/mnroi -->
+
+<!-- [Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
+[discord]: https://discord.gg/ -->
+
+A work-in-progress decompilation of Marvel Nemesis: Rise of the Imperfects for GameCube.
+
+This repository does **not** contain any game assets or assembly whatsoever. An existing copy of the game is required.
+
+Known supported versions:
+
+- `GVLE69`: Rev 0 (USA)
 
 Documentation
--------------
+=============
 
-- [Dependencies](docs/dependencies.md)
-- [Getting Started](docs/getting_started.md)
-- [`symbols.txt`](docs/symbols.md)
-- [`splits.txt`](docs/splits.md)
-- [GitHub Actions](docs/github_actions.md)
+- [`docs/workflow.md`](docs/workflow.md): the day-to-day decomp reference.
+- [`docs/matching_notes.md`](docs/matching_notes.md): compiler/linker gotchas, matching techniques, and known non-matches.
+- [`docs/baseline.md`](docs/baseline.md): why the build is configured the way it is.
 
-General:
+> **Note:** this project requires a local build of the decomp-toolkit fork, [`Esoteric-Engineer/mnroi-decomp-toolkit`](https://github.com/Esoteric-Engineer/mnroi-decomp-toolkit), not the released dtk. See [Building](#building).
 
-- [Common BSS](docs/common_bss.md)
-- [`.comment` section](docs/comment_section.md)
+Dependencies
+============
 
-References
+Windows
 --------
 
-- [Discord: GC/Wii Decompilation](https://discord.gg/hKx3FJJgrV) (Come to `#dtk` for help!)
-- [objdiff](https://github.com/encounter/objdiff) (Local diffing tool)
-- [decomp.me](https://decomp.me) (Collaborate on matches)
-- [decomp.dev](https://decomp.dev) (Decompilation progress hub and API)
-- [wibo](https://github.com/decompals/wibo) (Minimal Win32 wrapper for Linux)
-- [sjiswrap](https://github.com/encounter/sjiswrap) (UTF-8 to Shift JIS wrapper)
+On Windows, it's **highly recommended** to use native tooling. WSL or msys2 are **not** required.  
+When running under WSL, [objdiff](#diffing) is unable to get filesystem notifications for automatic rebuilds.
 
-Nearly all active GC/Wii decompilation projects use this structure, and will be useful
-for reference. A list of active GC/Wii projects can be found on [decomp.dev](https://decomp.dev).
+- Install [Python](https://www.python.org/downloads/) and add it to `%PATH%`.
+  - Also available from the [Windows Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K).
+- Download [ninja](https://github.com/ninja-build/ninja/releases) and add it to `%PATH%`.
+  - Quick install via pip: `pip install ninja`
 
-Features
---------
+macOS
+------
 
-- Few external dependencies: Just `python` for the generator and `ninja` for the build system. See [Dependencies](docs/dependencies.md).
-- Simple configuration: Everything lives in `config.yml`, `symbols.txt`, and `splits.txt`.
-- Multi-version support: Separate configurations for each game version, and a `configure.py --version` flag to switch between them.
-- Feature-rich analyzer: Many time-consuming tasks are automated, allowing you to focus on the decompilation itself. See [Analyzer features](https://github.com/encounter/decomp-toolkit#analyzer-features).
-- REL support: RELs each have their own `symbols.txt` and `splits.txt`, and will automatically be built and linked against the main binary.
-- No manual assembly: decomp-toolkit handles splitting the DOL into relocatable objects based on the configuration. No game assets are committed to the repository.
-- Progress calculation and integration with [decomp.dev](https://decomp.dev).
-- Integration with [objdiff](https://github.com/encounter/objdiff) for a diffing workflow.
-- CI workflow template for GitHub Actions.
+- Install [ninja](https://formulae.brew.sh/formula/ninja):
 
-Project structure
------------------
+  ```sh
+  brew install ninja
+  ```
 
-- `configure.py` - Project configuration and generator script.
-- `config/[GAMEID]` - Configuration files for each game version.
-- `config/[GAMEID]/build.sha1` - SHA-1 hashes for each built artifact, for final verification.
-- `build/` - Build artifacts generated by the the build process. Ignored by `.gitignore`.
-- `orig/[GAMEID]` - Original game files, extracted from the disc. Ignored by `.gitignore`.
-- `orig/[GAMEID]/.gitkeep` - Empty checked-in file to ensure the directory is created on clone.
-- `src/` - C/C++ source files.
-- `include/` - C/C++ header files.
-- `tools/` - Scripts shared between projects.
+[wibo](https://github.com/decompals/wibo), a minimal 32-bit Windows binary wrapper, will be automatically downloaded and used.
 
-Temporary, delete when done:
+Linux
+------
 
-- `config/GAMEID/config.example.yml` - Example configuration file and documentation.
-- `docs/` - Documentation for decomp-toolkit configuration.
-- `README.md` - This file, replace with your own. For a template, see [`README.example.md`](README.example.md).
-- `LICENSE` - This repository is licensed under the CC0 license. Replace with your own if desired.
+- Install [ninja](https://ninja-build.org/) from your distribution's package manager:
+
+  ```sh
+  sudo apt install ninja-build   # Debian/Ubuntu
+  sudo dnf install ninja-build   # Fedora
+  sudo pacman -S ninja           # Arch
+  ```
+
+  Alternatively, download a binary from the [ninja releases](https://github.com/ninja-build/ninja/releases) and put it on your `PATH`.
+
+[wibo](https://github.com/decompals/wibo), a minimal 32-bit Windows binary wrapper, will be automatically downloaded and used.
+
+Building
+========
+
+- Clone the repository:
+
+  ```sh
+  git clone https://github.com/Esoteric-Engineer/mnroi.git
+  ```
+
+- Clone and build the decomp-toolkit fork as a sibling of this repo (requires
+  [Rust](https://rustup.rs/)). The stock released dtk will **not** produce a matching build
+  (see [`docs/baseline.md`](docs/baseline.md)):
+
+  ```sh
+  git clone https://github.com/Esoteric-Engineer/mnroi-decomp-toolkit.git
+  cd mnroi-decomp-toolkit
+  cargo build --release
+  cd ../mnroi
+  mkdir -p build/tools
+  cp ../mnroi-decomp-toolkit/target/release/dtk build/tools/dtk-dev
+  ```
+
+  Repeat the build and copy after pulling fork changes.
+
+- Copy your game's disc image to `orig/GVLE69`.
+  - Supported formats: ISO (GCM), RVZ, WIA, WBFS, CISO, NFS, GCZ, TGC
+  - After the initial build, the disc image can be deleted to save space.
+
+- Configure:
+
+  ```sh
+  python3 configure.py --dtk build/tools/dtk-dev
+  ```
+
+  To use a version other than `GVLE69` (USA), specify it with `--version`.
+
+  The `--dtk` argument is remembered by `build.ninja`, so later `ninja` runs reuse it.<br />
+  If you ever run a bare `python3 configure.py`, it falls back to stock dtk and the build stops matching.
+
+- Build:
+
+  ```sh
+  ninja
+  ```
+
+  A successful build ends with `build/GVLE69/main.dol: OK`. A `WARN Unknown section .rodata.1` during the split step is expected.
+
+Diffing
+=======
+
+Once the initial build succeeds, an `objdiff.json` should exist in the project root.
+
+Download the latest release from [encounter/objdiff](https://github.com/encounter/objdiff). Under project settings, set `Project directory`. The configuration should be loaded automatically.
+
+Select an object from the left sidebar to begin diffing. Changes to the project will rebuild automatically: changes to source files, headers, `configure.py`, `splits.txt` or `symbols.txt`.
+
+![](assets/objdiff.png)

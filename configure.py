@@ -29,7 +29,7 @@ from tools.project import (
 # Game versions
 DEFAULT_VERSION = 0
 VERSIONS = [
-    "GAMEID",  # 0
+    "GVLE69",  # 0
 ]
 
 parser = argparse.ArgumentParser()
@@ -293,8 +293,89 @@ config.libs = [
         "objects": [
             Object(NonMatching, "Runtime.PPCEABI.H/global_destructor_chain.c"),
             Object(NonMatching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
+            Object(Matching, "Runtime.PPCEABI.H/fabsf.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fabs.c"),
+            Object(Matching, "Runtime.PPCEABI.H/copysignf.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_801700B8.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80171F8C.c"),
+            Object(Matching, "Runtime.PPCEABI.H/runtime.c"),
+            Object(Matching, "Runtime.PPCEABI.H/lshrdi3.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80177CF8.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80177D24.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80177E04.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80177E24.c"),
+            Object(Matching, "Runtime.PPCEABI.H/ungetc.c"),
+            Object(Matching, "Runtime.PPCEABI.H/div.c"),
+            Object(Matching, "Runtime.PPCEABI.H/memchr.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178224.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178318.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178D20.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178D48.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178D98.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178DF0.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178E48.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178EA4.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178EFC.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178F54.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80178FF0.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80179080.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_80179138.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_801796FC.c"),
         ],
     },
+    DolphinLib(
+        "ai",
+        [
+            Object(Matching, "Dolphin/ai/AIStartDMA.c"),
+            Object(Matching, "Dolphin/ai/AIStopDMA.c"),
+            Object(Matching, "Dolphin/ai/AIGetStreamPlayState.c"),
+        ],
+    ),
+    DolphinLib(
+        "gx",
+        [
+            Object(Matching, "Dolphin/gx/GXInit.c"),
+        ],
+    ),
+    DolphinLib(
+        "si",
+        [
+            Object(Matching, "Dolphin/si/SIBios.c"),
+        ],
+    ),
+    DolphinLib(
+        "db",
+        [
+            Object(Matching, "Dolphin/db/db.c"),
+        ],
+    ),
+    DolphinLib(
+        "dvd",
+        [
+            Object(Matching, "Dolphin/dvd/dvdfs.c"),
+        ],
+    ),
+    DolphinLib(
+        "os",
+        [
+            Object(Matching, "Dolphin/os/fn_8017A620.c"),
+            Object(Matching, "Dolphin/os/fn_8017A70C.c"),
+            Object(Matching, "Dolphin/os/fn_8017A6CC.c"),
+            Object(Matching, "Dolphin/os/PPCArch.c"),
+            Object(Matching, "Dolphin/os/fn_80169134.c"),
+            Object(Matching, "Dolphin/os/fn_80169150.c"),
+            Object(Matching, "Dolphin/os/fn_8017B444.c"),
+            Object(Matching, "Dolphin/os/OSCache.c"),
+            Object(Matching, "Dolphin/os/fn_8017FB84.c"),
+            Object(Matching, "Dolphin/os/OSInterrupt.c"),
+            Object(Matching, "Dolphin/os/fn_8017FD64.c"),
+            Object(Matching, "Dolphin/os/fn_8017FD74.c"),
+            Object(Matching, "Dolphin/os/fn_8017FD80.c"),
+            Object(Matching, "Dolphin/os/OSThread.c"),
+            Object(Matching, "Dolphin/os/OSYieldThread.c"),
+            Object(Matching, "Dolphin/os/OSTime.c"),
+        ],
+    ),
 ]
 
 

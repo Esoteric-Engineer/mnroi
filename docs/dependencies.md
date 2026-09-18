@@ -15,7 +15,7 @@ When running under WSL, [objdiff](https://github.com/encounter/objdiff) is unabl
 macOS
 ------
 
-- Install [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages):
+- Install [ninja](https://formulae.brew.sh/formula/ninja):
 
   ```sh
   brew install ninja
@@ -26,6 +26,6 @@ macOS
 Linux
 ------
 
-- Install [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages).
+- Install [ninja](https://ninja-build.org/) from your distribution's package manager (e.g. `sudo apt install ninja-build`), or download a binary from the [ninja releases](https://github.com/ninja-build/ninja/releases).
 
 [wibo](https://github.com/decompals/wibo), a minimal 32-bit Windows binary wrapper, will be automatically downloaded and used.

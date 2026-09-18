@@ -1,0 +1,70 @@
+# See config.example.yml for documentation.
+object_base: orig/GVLE69
+object: sys/main.dol
+hash: 8e3cc563c300b7730802f69ade112bba1f4c6be5
+symbols: config/GVLE69/symbols.txt
+splits: config/GVLE69/splits.txt
+# Custom template that also defines the absolute crt0 symbol lbl_8066FB50
+# (see the block_relocations/add_relocations note below).
+# PPCMthid0 is otherwise identical-code-folded away by mwld's -code_merging
+# (its two-instruction body has no other caller in the currently linked code,
+# so the linker treats it as a foldable duplicate and drops it, shifting
+# everything after it in the object). force_active keeps its address fixed.
+force_active:
+- PPCMthid0
+- __ashldi3
+- __ashrdi3
+- __lshrdi3
+- fn_801796FC
+ldscript_template: config/GVLE69/ldscript.lcf
+# Change this to match the linker version. See config.example.yml for a list.
+# NOTE: 11 is a guess (CW 2.7+). Revisit once the real compiler version is known.
+mw_comment_version: 11
+
+# Marvel Nemesis is a single-DOL game (no .rel modules), so no `modules:` block.
+
+# fill_gaps left at its default (true): required so un-analyzed gap bytes are
+# emitted, otherwise the output DOL is incomplete and cannot hash-match. The
+# earlier crash that forced `fill_gaps: false` was the add_direct OOM, now fixed
+# in the dev dtk build.
+
+# Skip control-flow analysis over the hand-written Nintendo SDK supervisor-mode
+# assembly (exception handlers, OS/interrupt init, MMU/cache setup). These were
+# located by scanning .text for rfi/sc/mfmsr/mtmsr/tlbie/mtsr/mfsr. dtk cannot
+# trace these (`bl .+4`, `rfi`, tail `b`), so we skip CFA and will name the
+# functions in symbols.txt instead. Bounds are approximate; refine as needed.
+skip_cfa_ranges:
+- start: .text:0x80169000   # OS/exception kernel (largest block; incl. data-in-text)
+  end: .text:0x8016D000
+- start: .text:0x8017A7E0
+  end: .text:0x8017A960
+- start: .text:0x8017B200
+  end: .text:0x8017B320
+- start: .text:0x8017BEE0
+  end: .text:0x8017BF60
+- start: .text:0x8017C540
+  end: .text:0x8017CB60
+- start: .text:0x8017DB60
+  end: .text:0x8017DBE0
+- start: .text:0x8017E500
+  end: .text:0x8017E5E0
+- start: .text:0x801830C0
+  end: .text:0x80183100
+- start: .text:0x80401540   # MMU/cache/TLB (mtsr/tlbie)
+  end: .text:0x80401E00
+- start: .text:0x800350F4   # real fn; inline FP epilogue mis-detected as _restfpr_14 @ 0x80036CD0
+  end: .text:0x80036D20
+
+# Fix a mis-paired HI16/LO16 relocation in crt0 (__start). dtk bound the LO16 at
+# .init:0x80003160 to `_stack_end`, but the original bytes (lis r5,0x8066 /
+# ori r5,r5,0xFB50) show both halves load the single absolute address
+# 0x8066FB50 (the .sbss clear-end). That address lands in the padding gap
+# between .sbss and .sdata2, so dtk left it sectionless (the deeper root of the
+# add_direct/issue-1 crash). We retarget the LO16 to the absolute symbol
+# lbl_8066FB50 (defined in symbols.txt); the HI16 already targets it.
+block_relocations:
+- source: .init:0x80003160
+add_relocations:
+- source: .init:0x80003160
+  type: PpcAddr16Lo
+  target: lbl_8066FB50
