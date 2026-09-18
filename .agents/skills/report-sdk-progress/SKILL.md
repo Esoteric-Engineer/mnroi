@@ -15,7 +15,7 @@ description: Report how close the SDK decomp is to done, and whether the project
    Note the `All` line (matched functions / total) and the SDK/Game categories.
 2. **Registered vs. unmatched.** In `configure.py`, list `config.libs` entries and any
    `NonMatching` objects. Those are registered SDK units that don't match yet.
-3. **Unsplit SDK functions.** Run `python .claude/skills/report-sdk-progress/sdk_remaining.py`.
+3. **Unsplit SDK functions.** Run `python .agents/skills/report-sdk-progress/sdk_remaining.py`.
    It compares `config/<version>/symbols.txt` against the `.text` ranges in `splits.txt` and
    reports functions in the SDK address range that no split covers:
    - *named* unsplit functions (e.g. `OSReport`, `GXInit`) are known SDK code still to be split;
