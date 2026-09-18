@@ -344,6 +344,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXGetTlutObjAll.c"),
             Object(Matching, "Dolphin/gx/GXGetTlutObjData.c"),
             Object(NonMatching, "Dolphin/gx/GXLoadTlut.c"),
+            Object(Matching, "Dolphin/gx/GXInitTexCacheRegion.c"),
         ],
     ),
     DolphinLib(

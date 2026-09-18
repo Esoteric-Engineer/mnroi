@@ -195,5 +195,8 @@ Dolphin/gx/GXGetTlutObjData.c:
 Dolphin/gx/GXLoadTlut.c:
 	.text       start:0x8018E5D8 end:0x8018E670
 
+Dolphin/gx/GXInitTexCacheRegion.c:
+	.text       start:0x8018E670 end:0x8018E764
+
 Dolphin/gx/GXInit.c:
 	.text       start:0x8018E764 end:0x8018E7E4
