@@ -20,6 +20,8 @@ Compiler/linker behavior and techniques learned while matching functions in this
 
   The fix is adding `#pragma peephole on` immediately after the asm function closes. `#pragma scheduling on` is not needed. This matters in any unit that mixes an early asm function with later plain C, since address order often forces the asm function to appear first.
 
+- **CodeWarrior treats an undeclared data symbol in `asm` as a local label:** declaring the existing external object before the asm function is required for `@ha`/`@l` relocations to compile.
+
 - **Hardware-register arrays must use CodeWarrior's declare-at-address form, not a pointer-cast macro:**
 
   ```c

@@ -298,6 +298,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/copysignf.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_801700B8.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80171F8C.c"),
+            Object(Matching, "Runtime.PPCEABI.H/isdigit.c"),
             Object(Matching, "Runtime.PPCEABI.H/runtime.c"),
             Object(Matching, "Runtime.PPCEABI.H/lshrdi3.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80177CF8.c"),
