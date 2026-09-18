@@ -1,6 +1,13 @@
+typedef unsigned long u32;
+typedef struct OSContext OSContext;
+
 extern void* __DBInterface; // ac-decomp's Dolphin/db/db.c struct DBInterface* pointer; dtk auto-detected this .sbss slot's size (4) but not its scope
 extern unsigned int DBVerbose; // same file, the adjacent .sbss BOOL right after __DBInterface
 extern void __DBExceptionDestination(void); // same file, right after DBInit
+extern char lbl_804D1D28[0x18];
+extern void OSReport(const char* msg, ...);
+extern void lbl_8017C808(OSContext* context);
+extern void PPCHalt(void);
 
 // void DBInit(void) -- see ac-decomp's Dolphin/db/db.c:
 //   __DBInterface = OSPhysicalToCached(0x40);
@@ -20,5 +27,41 @@ asm void DBInit(void)
     li      r0, 1
     stw     r0, DBVerbose
     blr
+    // clang-format on
+}
+
+asm void __DBExceptionDestinationAux(void)
+{
+    // clang-format off
+    nofralloc
+    mflr    r0
+    lis     r3, lbl_804D1D28@ha
+    stw     r0, 4(r1)
+    addi    r3, r3, lbl_804D1D28@l
+    crclr   4*cr1+eq
+    stwu    r1, -0x18(r1)
+    stw     r31, 0x14(r1)
+    lwz     r4, 0xC0(r0)
+    addis   r31, r4, 0x8000
+    bl      OSReport
+    mr      r3, r31
+    bl      lbl_8017C808
+    bl      PPCHalt
+    lwz     r0, 0x1C(r1)
+    lwz     r31, 0x14(r1)
+    addi    r1, r1, 0x18
+    mtlr    r0
+    blr
+    // clang-format on
+}
+
+asm void __DBExceptionDestination(void)
+{
+    // clang-format off
+    nofralloc
+    mfmsr   r3
+    ori     r3, r3, 0x30
+    mtmsr   r3
+    b       __DBExceptionDestinationAux
     // clang-format on
 }
