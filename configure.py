@@ -336,6 +336,7 @@ config.libs = [
         "gx",
         [
             Object(Matching, "Dolphin/gx/GXInit.c"),
+            Object(Matching, "Dolphin/gx/GXAttr.c"),
         ],
     ),
     DolphinLib(
