@@ -121,6 +121,9 @@ Dolphin/os/fn_8017B444.c:
 Dolphin/os/OSCache.c:
 	.text       start:0x8017BEA4 end:0x8017C088
 
+Dolphin/os/OSAlarm.c:
+	.text       start:0x8017D3D8 end:0x8017D3EC
+
 Dolphin/os/OSInterrupt.c:
 	.text       start:0x8017DB88 end:0x8017DBD4
 
