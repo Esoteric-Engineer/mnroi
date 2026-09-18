@@ -25,13 +25,8 @@ SECTIONS
        resolve the __start relocations. */
     lbl_8066FB50 = 0x8066FB50;
 
-    /* This game addresses all small data via r13 (_SDA_BASE_); the read-only
-       .sdata2 segment (0x8066FB60) is reached via r13 too, so its real _SDA2_BASE_
-       (0x806834E0 = _SDA_BASE_ + 0x10000) is vestigial - it addresses no data. The
-       dev dtk fork bakes the r13 accesses to .sdata2 (mwld can only route .sdata2
-       via r2), so no .sdata2 access is left for mwld to range-check. We just pin
-       _SDA2_BASE_ so crt0's own r2 setup matches the original. See GettingStarted.md
-       §8f and dtk-issues/findings-2b-sda2-and-issue1-residue.md §3. */
+    /* Pin the vestigial _SDA2_BASE_ so crt0's r2 setup matches the original.
+       See docs/baseline.md (Small-data). */
     _SDA2_BASE_ = 0x806834E0;
 }
 

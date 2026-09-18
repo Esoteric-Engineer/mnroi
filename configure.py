@@ -343,8 +343,10 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXInitTlutObj.c"),
             Object(Matching, "Dolphin/gx/GXGetTlutObjAll.c"),
             Object(Matching, "Dolphin/gx/GXGetTlutObjData.c"),
-            Object(NonMatching, "Dolphin/gx/GXLoadTlut.c"),
+            Object(Matching, "Dolphin/gx/GXLoadTlut.c"),
             Object(Matching, "Dolphin/gx/GXInitTexCacheRegion.c"),
+            Object(Matching, "Dolphin/gx/GXSetTexRegionCallback.c"),
+            Object(Matching, "Dolphin/gx/GXSetTlutRegionCallback.c"),
         ],
     ),
     DolphinLib(

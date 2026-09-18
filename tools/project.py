@@ -719,6 +719,22 @@ def generate_build_ninja(
         mwcc_extab_implicit.append(transform_dep)
         mwcc_sjis_extab_implicit.append(transform_dep)
 
+    # Bake r13-relative .sdata2/.sbss2 accesses (dtk `sda2_via_r13`)
+    sda_bake_path = build_path / "sda_bake.json"
+    if sda_bake_path.is_file():
+        sda_bake_cmd = f' && {dtk} elf bake-sda {sda_bake_path} "$unit" $out $out'
+        mwcc_cmd = f"{CHAIN}{mwcc_cmd}{sda_bake_cmd}"
+        mwcc_sjis_cmd = f"{CHAIN}{mwcc_sjis_cmd}{sda_bake_cmd}"
+        mwcc_extab_cmd += sda_bake_cmd
+        mwcc_sjis_extab_cmd += sda_bake_cmd
+        for implicit in (
+            mwcc_implicit,
+            mwcc_sjis_implicit,
+            mwcc_extab_implicit,
+            mwcc_sjis_extab_implicit,
+        ):
+            implicit.extend([dtk, sda_bake_path])
+
     n.comment("Link ELF file")
     n.rule(
         name="link",
@@ -1033,6 +1049,7 @@ def generate_build_ninja(
                 "cflags": cflags_str,
                 "basedir": os.path.dirname(obj.src_obj_path),
                 "basefile": obj.src_obj_path.with_suffix(""),
+                "unit": obj.name,
             }
 
             if obj.options["shift_jis"] and obj.options["extab_padding"] is not None:

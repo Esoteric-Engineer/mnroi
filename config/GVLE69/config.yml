@@ -24,6 +24,9 @@ mw_comment_version: 11
 
 # Marvel Nemesis is a single-DOL game (no .rel modules), so no `modules:` block.
 
+# Bake .sdata2/.sbss2 accesses as r13 offsets. See docs/baseline.md (Small-data).
+sda2_via_r13: true
+
 # fill_gaps left at its default (true): required so un-analyzed gap bytes are
 # emitted, otherwise the output DOL is incomplete and cannot hash-match. The
 # earlier crash that forced `fill_gaps: false` was the add_direct OOM, now fixed

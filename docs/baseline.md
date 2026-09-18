@@ -29,12 +29,12 @@ dtk names the read-only small-data segment `.sdata2`, so mwld emits it as `r2`-r
 
 The usual linker fixes don't work: mwld emits only one `r13` small-data pair, and merging the segments changes the DOL layout.
 
-The fork's `bake_conflicting_sda_relocations` pass drops `EMB_SDA21` relocations when mwld's section-derived base register differs from the original one, preserving dtk's instruction bytes.<br />
-`_SDA2_BASE_` is pinned in [`../config/GVLE69/ldscript.lcf`](../config/GVLE69/ldscript.lcf) so crt0 matches.
+The fork's `sda2_via_r13` option (enabled in `config.yml`) bakes those accesses as fixed `r13` offsets, so `mwld` never range-checks them:
 
-Because this is fixed in the tool rather than the finished DOL, the *objects* stay correct and `objdiff` remains trustworthy.
+- **Split objects:** `bake_conflicting_sda_relocations` drops `EMB_SDA21` relocations whose `mwld`-derived register differs from the original one, preserving dtk's instruction bytes. It also writes `build/GVLE69/sda_bake.json`.
+- **Compiled objects:** `tools/project.py` runs `dtk elf bake-sda` on each one before linking, using that file. Without it, C referencing a `.sdata2` symbol (e.g. `__GXData`) fails with `Range Error for small data relocation`.
 
-> **Note:** This only covers code dtk extracts. Fresh code flipped to `Matching` can still hit `Range Error for small data relocation`. See [`matching_notes.md`](matching_notes.md#data-symbols-and-relocations).
+`_SDA2_BASE_` is pinned in [`../config/GVLE69/ldscript.lcf`](../config/GVLE69/ldscript.lcf) so crt0 matches. Because the fix is in the tool rather than the finished DOL, the *objects* stay correct and `objdiff` remains trustworthy.
 
 ## `config.yml` Reference
 

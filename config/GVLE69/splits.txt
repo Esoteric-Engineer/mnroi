@@ -200,3 +200,9 @@ Dolphin/gx/GXInitTexCacheRegion.c:
 
 Dolphin/gx/GXInit.c:
 	.text       start:0x8018E764 end:0x8018E7E4
+
+Dolphin/gx/GXSetTexRegionCallback.c:
+	.text       start:0x8018E7E4 end:0x8018E7F8
+
+Dolphin/gx/GXSetTlutRegionCallback.c:
+	.text       start:0x8018E7F8 end:0x8018E80C
