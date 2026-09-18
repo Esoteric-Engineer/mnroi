@@ -68,7 +68,7 @@ Compiler/linker behavior and techniques learned while matching functions in this
 
   If a C file references a symbol dtk labels `.sdata2` (for example `__GXData` at `0x80670788`), `mwld` routes it through `r2`. Because this game's `.sdata2` symbols are often outside `r2`'s ~32 KB window, the link fails with `Range Error for small data relocation`. This currently blocks `GXSetTexRegionCallback` / `GXSetTlutRegionCallback` (`0x8018E7E4`, `0x8018E7F8`) until the fork patches this relocation class post-link, or the data range is reclassified as `.sdata`.
 
-  Not every reference to `__GXData` hits this: `GXLoadTexObjPreLoaded` (`0x8018E3A0`) reads/writes through it (`gx->tlutRegionCallback(...)`, `gx->tImage0[id]`, etc.) and links fine via `r13`, matching the original's own `-11608(r13)` access. The `r2` routing only seems to bite the two `Set*Callback` setters above.
+  Not every reference to `__GXData` hits this: `GXLoadTexObjPreLoaded` (`0x8018E3A0`) reads/writes through it (`gx->tlutRegionCallback(...)`, `gx->tImage0[id]`, etc.) and links fine via `r13`, matching the original's own `-11608(r13)` access. The `r2` routing only seems to bite the two `Set*Callback` setters above, and `GXLoadTlut` (`0x8018E5D8`, `Dolphin/gx/GXLoadTlut.c`): the body is byte-identical (98.42% fuzzy, only the `@sda21` symbol name differs), but flipping it to `Matching` fails with the same `Range Error for small data relocation`. Left `NonMatching` until the fork fixes this.
 
 ---
 

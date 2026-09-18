@@ -192,5 +192,8 @@ Dolphin/gx/GXGetTlutObjAll.c:
 Dolphin/gx/GXGetTlutObjData.c:
 	.text       start:0x8018E5CC end:0x8018E5D8
 
+Dolphin/gx/GXLoadTlut.c:
+	.text       start:0x8018E5D8 end:0x8018E670
+
 Dolphin/gx/GXInit.c:
 	.text       start:0x8018E764 end:0x8018E7E4
