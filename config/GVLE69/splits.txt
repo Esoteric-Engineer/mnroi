@@ -278,3 +278,6 @@ Dolphin/gx/GXSetNumTevStages.c:
 
 Dolphin/gx/GXSetColorUpdate.c:
 	.text       start:0x8018FCE4 end:0x8018FD10
+
+Dolphin/gx/GXSetAlphaUpdate.c:
+	.text       start:0x8018FD10 end:0x8018FD3C
