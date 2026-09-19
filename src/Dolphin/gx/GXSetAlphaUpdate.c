@@ -24,7 +24,7 @@ typedef union {
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
                           (32 - (shift) - (size)), (31 - (shift)))
 
-void GXSetAlphaUpdate(u32 update_enable)
+void GXSetAlphaUpdate(u8 update_enable)
 {
     __GXDataStruct* gx = __GXData;
     u32 reg = gx->cmode0;

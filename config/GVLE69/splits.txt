@@ -290,3 +290,6 @@ Dolphin/gx/GXSetZCompLoc.c:
 
 Dolphin/gx/GXSetPixelFmt.c:
 	.text       start:0x8018FDA4 end:0x8018FE78
+
+Dolphin/gx/GXSetDither.c:
+	.text       start:0x8018FE78 end:0x8018FEA4
