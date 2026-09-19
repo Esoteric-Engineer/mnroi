@@ -239,6 +239,9 @@ Dolphin/gx/GXClearVtxDesc.c:
 Dolphin/gx/GXInvalidateVtxCache.c:
 	.text       start:0x8018D0F4 end:0x8018D104
 
+Dolphin/gx/GXSetNumTexGens.c:
+	.text       start:0x8018D384 end:0x8018D3C0
+
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
 	.text       start:0x8018E29C end:0x8018E2B8

@@ -350,6 +350,7 @@ config.libs = [
             Object(Matching, "Dolphin/ai/__AI_SRC_INIT.c"),
             Object(NonMatching, "Dolphin/gx/GXClearVtxDesc.c"),
             Object(Matching, "Dolphin/gx/GXInvalidateVtxCache.c"),
+            Object(Matching, "Dolphin/gx/GXSetNumTexGens.c"),
         ],
     ),
     DolphinLib(
