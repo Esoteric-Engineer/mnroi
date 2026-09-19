@@ -408,6 +408,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetScissor.c"),
             Object(NonMatching, "Dolphin/gx/GXSetScissorBoxOffset.c"),
             Object(Matching, "Dolphin/gx/__GXFifoInit.c"),
+            Object(Matching, "Dolphin/gx/__GXFifoReadEnable.c"),
         ],
     ),
     DolphinLib(

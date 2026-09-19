@@ -401,3 +401,6 @@ Dolphin/gx/GXSetScissorBoxOffset.c:
 
 Dolphin/gx/__GXFifoInit.c:
 	.text       start:0x80191E34 end:0x80191E80
+
+Dolphin/gx/__GXFifoReadEnable.c:
+	.text       start:0x80191E80 end:0x80191EA4
