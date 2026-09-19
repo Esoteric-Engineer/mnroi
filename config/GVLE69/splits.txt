@@ -434,3 +434,6 @@ Dolphin/gx/GXResetWriteGatherPipe.c:
 
 Dolphin/gx/GXPokeAlphaMode.c:
 	.text       start:0x80192568 end:0x8019257C
+
+Dolphin/gx/GXPokeAlphaRead.c:
+	.text       start:0x8019257C end:0x8019259C

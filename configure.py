@@ -419,6 +419,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXFlush.c"),
             Object(Matching, "Dolphin/gx/GXResetWriteGatherPipe.c"),
             Object(Matching, "Dolphin/gx/GXPokeAlphaMode.c"),
+            Object(Matching, "Dolphin/gx/GXPokeAlphaRead.c"),
         ],
     ),
     DolphinLib(
