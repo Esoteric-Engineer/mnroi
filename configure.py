@@ -382,6 +382,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXLoadPosMtxImm.c"),
             Object(Matching, "Dolphin/gx/GXLoadNrmMtxImm.c"),
             Object(Matching, "Dolphin/gx/GXSetCurrentMtx.c"),
+            Object(Matching, "Dolphin/gx/GXLoadTexMtxImm.c"),
         ],
     ),
     DolphinLib(
