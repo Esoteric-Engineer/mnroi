@@ -410,10 +410,12 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXSetViewport.c"),
             Object(Matching, "Dolphin/gx/GXSetScissor.c"),
             Object(NonMatching, "Dolphin/gx/GXSetScissorBoxOffset.c"),
+            Object(NonMatching, "Dolphin/gx/__GXSetMatrixIndex.c"),
             Object(Matching, "Dolphin/gx/GXInitFifoBase.c"),
             Object(Matching, "Dolphin/gx/__GXFifoInit.c"),
             Object(Matching, "Dolphin/gx/__GXFifoReadEnable.c"),
             Object(Matching, "Dolphin/gx/__GXFifoReadDisable.c"),
+            Object(Matching, "Dolphin/gx/GXSetMisc.c"),
         ],
     ),
     DolphinLib(
