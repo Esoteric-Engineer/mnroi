@@ -215,3 +215,6 @@ Dolphin/gx/GXSetTlutRegionCallback.c:
 
 Dolphin/gx/GXSetSUTexRegs.c:
 	.text       start:0x8018E80C end:0x8018EA28
+
+Dolphin/gx/GXSetNumIndStages.c:
+	.text       start:0x8018F190 end:0x8018F1B4
