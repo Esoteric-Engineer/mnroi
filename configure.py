@@ -351,6 +351,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXClearVtxDesc.c"),
             Object(Matching, "Dolphin/gx/GXInvalidateVtxCache.c"),
             Object(Matching, "Dolphin/gx/GXSetNumTexGens.c"),
+            Object(NonMatching, "Dolphin/gx/GXSetCullMode.c"),
         ],
     ),
     DolphinLib(
