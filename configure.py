@@ -335,6 +335,7 @@ config.libs = [
             Object(Matching, "Dolphin/ai/AIGetDSPSampleRate.c"),
             Object(Matching, "Dolphin/ai/AIGetStreamSampleRate.c"),
             Object(Matching, "Dolphin/ai/AISetStreamVolLeft.c"),
+            Object(Matching, "Dolphin/ai/AIGetStreamVolLeft.c"),
         ],
     ),
     DolphinLib(
