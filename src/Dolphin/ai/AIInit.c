@@ -21,7 +21,7 @@ extern void lbl_8017DBD4(u32 interrupt, void* handler);
 extern void fn_8017DFD8(u32 mask);
 extern void __AI_set_stream_sample_rate(u32 rate);
 extern void AISetDSPSampleRate(u32 rate);
-extern void fn_8018BBA4(void);
+extern void __AISHandler(void);
 extern void fn_8018BC20(void);
 
 #define OS_TIMER_CLOCK (__OSBusClock / 4)
@@ -61,7 +61,7 @@ void AIInit(u8* stack)
         lbl_8066F410 = stack;
         lbl_8017DBD4(5, fn_8018BC20);
         fn_8017DFD8(0x04000000);
-        lbl_8017DBD4(8, fn_8018BBA4);
+        lbl_8017DBD4(8, __AISHandler);
         fn_8017DFD8(0x800000);
         lbl_8066F418 = 1;
     }

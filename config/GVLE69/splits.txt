@@ -218,6 +218,9 @@ Dolphin/ai/AIGetStreamVolRight.c:
 Dolphin/ai/AIInit.c:
 	.text       start:0x8018BA38 end:0x8018BBA4
 
+Dolphin/ai/__AISHandler.c:
+	.text       start:0x8018BBA4 end:0x8018BC20
+
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
 	.text       start:0x8018E29C end:0x8018E2B8
