@@ -379,6 +379,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXSetFieldMask.c"),
             Object(Matching, "Dolphin/gx/GXSetFieldMode.c"),
             Object(NonMatching, "Dolphin/gx/GXTransform.c"),
+            Object(Matching, "Dolphin/gx/GXLoadPosMtxImm.c"),
         ],
     ),
     DolphinLib(

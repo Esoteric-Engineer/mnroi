@@ -305,3 +305,6 @@ Dolphin/gx/GXSetFieldMode.c:
 
 Dolphin/gx/GXTransform.c:
 	.text       start:0x8018FF90 end:0x801900C0
+
+Dolphin/gx/GXLoadPosMtxImm.c:
+	.text       start:0x801900C0 end:0x80190110
