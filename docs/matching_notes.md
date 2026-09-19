@@ -33,6 +33,8 @@ Compiler/linker behavior and techniques learned while matching functions in this
 
 - **Operand order matters on carry ops:** `ticks + *timeAdjustAddr` compiled to `addc r30,r30,r4` and matched; `*timeAdjustAddr + ticks` produced `addc r30,r4,r30` and also matched. When a function is one instruction off, try reversing the expression first.
 
+- **A `static` helper called from two sites gets inlined unless told otherwise:** if the original keeps the `bl` (function 0% match, prologue lacks `mflr`), wrap the helper in `#pragma dont_inline on` / `#pragma dont_inline reset`. This took `__GXSetSUTexRegs` from 0% to 100%.
+
 - **Inlining:** A function may contain the inlined body of a method from a not-yet-reconstructed header. A `static` helper with a single caller can be inlined with no separate `bl`, which is why an original may have no call where a reference decomp appears to have one.
 
 - **Redundant `b <next instruction>` no-op branches appear at loop/branch join points, sometimes doubled:** Translate literally rather than collapsing them.
@@ -90,3 +92,9 @@ Don't re-guess these.
   - the ioctl-wrapper family (`fn_80178D48` and siblings)
   - the small `Dolphin/os` one-offs `fn_8017A620`, `fn_8017A70C`, `fn_8017A6CC`, `fn_8017B444`, `fn_8017FB84`, `fn_8017FD64`, `fn_8017FD74`
 - `GXLoadTexObjPreLoaded` (`0x8018E3A0`): body matches (98.25%, only `@sda21` symbol-name diffs), but the stack frame is `-0x28` vs `-0x40`. No effect: aliasing locals, adding/removing register writes, own TU, `#pragma scheduling on`. Hoisting the `GXTex*Ids[id]` reads makes it worse. Unused `volatile u32` locals close the 24-byte gap exactly, but that's padding, not a reconstruction, so it stays `NonMatching`.
+- `__SetSURegs` (`0x8018E80C`, `Dolphin/gx/GXSetSUTexRegs.c`): `NonMatching`. Best clean-ish C is 38/40 instructions identical:
+  - The single shared `gx + tcoord*4` `add` needs a second alias of the local `g = __GXData` pointer, with the two 16-bit `__rlwimi` inserts *reading* through the alias and writing through `g`.
+  - It also needs the artificial `suTs1[w = tcoord]` in the last FIFO write; without it, codegen falls back to 48 diff lines.
+  - Remaining: the original allocates the `s_bias` temp to r10 (ours r12) and schedules `li r5,0x61` before the first `clrlwi`. Ours leaves r10/r11 unused, so the `w = tcoord` hack is standing in for some real extra value.
+  - No effect: local order, `u8`/`u32`/`int` bias, int casts, which pointer the bias/`tMode0`/`tImage0` reads use, `extern ... * const __GXData`, declare-at-address `GXWGFifo`. Plain-C `SET_REG_FIELD` is much worse.
+  - decomp-permuter plateaued at score 35 after ~300k iterations.
