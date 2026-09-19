@@ -281,3 +281,6 @@ Dolphin/gx/GXSetColorUpdate.c:
 
 Dolphin/gx/GXSetAlphaUpdate.c:
 	.text       start:0x8018FD10 end:0x8018FD3C
+
+Dolphin/gx/GXSetZMode.c:
+	.text       start:0x8018FD3C end:0x8018FD70
