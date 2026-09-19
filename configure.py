@@ -429,6 +429,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetDrawSyncCallback.c"),
             Object(Matching, "Dolphin/gx/GXTokenInterruptHandler.c"),
             Object(Matching, "Dolphin/gx/GXSetDrawDoneCallback.c"),
+            Object(Matching, "Dolphin/gx/GXFinishInterruptHandler.c"),
         ],
     ),
     DolphinLib(
