@@ -102,3 +102,5 @@ Don't re-guess these.
   - `op` must be `int` (`cmpwi`). The original reloads `__GXData` once before the FIFO writes and uses it for both the `tevc[stage]` store and `bpSentNot`.
   - Remaining: the original defers the clamp/out_reg `rlwimi`s until after the `stb`; ours hoists one above it. No effect: moving the `u8` write, a `z = 0` local. A long-lived `gx` local gives 90% but shifts registers.
 - `GXSetTevAlphaOp` (`0x8018F418`, `Dolphin/gx/GXSetTevAlphaOp.c`): `NonMatching`, 80.38%. Identical shape and identical tail-scheduling diff to `GXSetTevColorOp` (uses `teva`); solving one should solve both.
+- `GXSetTevColor` (`0x8018F480`, `Dolphin/gx/GXSetTevColor.c`): `NonMatching`, about 44%. The color is one `lwz` word with 8-bit `rlwimi` fields (`c >> 24`, `c`, `c >> 8`, `c >> 16`), and the `224/225 + id*2` field is a plain `<< 24` init.
+  - Remaining: the original schedules `slwi id*2` before the color `lwz` and has no `addi rX,rY,0` accumulator copies. No effect: local order, `id2` temp, operand order, `u32*` param.

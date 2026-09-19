@@ -245,3 +245,6 @@ Dolphin/gx/GXSetTevColorOp.c:
 
 Dolphin/gx/GXSetTevAlphaOp.c:
 	.text       start:0x8018F418 end:0x8018F480
+
+Dolphin/gx/GXSetTevColor.c:
+	.text       start:0x8018F480 end:0x8018F4E0

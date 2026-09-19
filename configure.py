@@ -359,6 +359,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetTevAlphaIn.c"),
             Object(NonMatching, "Dolphin/gx/GXSetTevColorOp.c"),
             Object(NonMatching, "Dolphin/gx/GXSetTevAlphaOp.c"),
+            Object(NonMatching, "Dolphin/gx/GXSetTevColor.c"),
         ],
     ),
     DolphinLib(
