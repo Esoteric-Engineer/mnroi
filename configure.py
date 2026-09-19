@@ -329,6 +329,7 @@ config.libs = [
     DolphinLib(
         "ai",
         [
+            Object(Matching, "Dolphin/ai/AIRegisterDMACallback.c"),
             Object(Matching, "Dolphin/ai/AIStartDMA.c"),
             Object(Matching, "Dolphin/ai/AIStopDMA.c"),
             Object(Matching, "Dolphin/ai/AISetStreamPlayState.c"),

@@ -173,6 +173,9 @@ Dolphin/db/db.c:
 Dolphin/dvd/dvdfs.c:
 	.text       start:0x8018315C end:0x801835C4
 
+Dolphin/ai/AIRegisterDMACallback.c:
+	.text       start:0x8018B624 end:0x8018B668
+
 Dolphin/ai/AIStartDMA.c:
 	.text       start:0x8018B6F0 end:0x8018B708
 
