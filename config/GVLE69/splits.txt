@@ -304,4 +304,4 @@ Dolphin/gx/GXSetFieldMode.c:
 	.text       start:0x8018FF18 end:0x8018FF90
 
 Dolphin/gx/GXTransform.c:
-	.text       start:0x8018FF90 end:0x80190034
+	.text       start:0x8018FF90 end:0x801900C0

@@ -63,3 +63,36 @@ void GXSetProjection(f32 mtx[4][4], int type)
     GXWGFifo.u32 = gx2->projType;
     gx2->bpSentNot = 1;
 }
+
+static inline void CopyProjPS(const register f32 src[6], register f32 dst[6])
+{
+    register f32 f1, f2, f3;
+    asm {
+        psq_l f1, 0(src), 0, 0
+        psq_l f2, 8(src), 0, 0
+        psq_l f3, 16(src), 0, 0
+        psq_st f1, 0(dst), 0, 0
+        psq_st f2, 8(dst), 0, 0
+        psq_st f3, 16(dst), 0, 0
+    }
+}
+
+extern const f32 lbl_80670770;
+
+void GXSetProjectionv(f32* ptr)
+{
+    __GXDataStruct* gx;
+    u32 type = (ptr[0] == lbl_80670770) ? 0 : 1;
+    u32 reg;
+
+    gx = __GXData;
+    gx->projType = type;
+    CopyProjPS(ptr + 1, gx->projMtx);
+
+    reg = 0x00061020;
+    GXWGFifo.u8 = 0x10;
+    GXWGFifo.u32 = reg;
+    WriteProjPS(gx->projMtx, &GXWGFifo);
+    GXWGFifo.u32 = gx->projType;
+    gx->bpSentNot = 1;
+}
