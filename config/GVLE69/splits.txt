@@ -440,3 +440,6 @@ Dolphin/gx/GXPokeAlphaRead.c:
 
 Dolphin/gx/GXPokeAlphaUpdate.c:
 	.text       start:0x8019259C end:0x801925B4
+
+Dolphin/gx/GXPokeBlendMode.c:
+	.text       start:0x801925B4 end:0x80192618
