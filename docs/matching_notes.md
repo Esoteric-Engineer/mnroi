@@ -98,3 +98,6 @@ Don't re-guess these.
   - Remaining: the original allocates the `s_bias` temp to r10 (ours r12) and schedules `li r5,0x61` before the first `clrlwi`. Ours leaves r10/r11 unused, so the `w = tcoord` hack is standing in for some real extra value.
   - No effect: local order, `u8`/`u32`/`int` bias, int casts, which pointer the bias/`tMode0`/`tImage0` reads use, `extern ... * const __GXData`, declare-at-address `GXWGFifo`. Plain-C `SET_REG_FIELD` is much worse.
   - decomp-permuter plateaued at score 35 after ~300k iterations.
+- `GXSetTevColorOp` (`0x8018F3B0`, `Dolphin/gx/GXSetTevColorOp.c`): `NonMatching`, about 80%. Only tail scheduling differs.
+  - `op` must be `int` (`cmpwi`). The original reloads `__GXData` once before the FIFO writes and uses it for both the `tevc[stage]` store and `bpSentNot`.
+  - Remaining: the original defers the clamp/out_reg `rlwimi`s until after the `stb`; ours hoists one above it. No effect: moving the `u8` write, a `z = 0` local. A long-lived `gx` local gives 90% but shifts registers.
