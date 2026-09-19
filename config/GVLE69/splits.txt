@@ -36,6 +36,9 @@ Runtime.PPCEABI.H/tolower.c:
 Runtime.PPCEABI.H/isdigit.c:
 	.text       start:0x80177384 end:0x80177398
 
+Runtime.PPCEABI.H/isspace.c:
+	.text       start:0x80177398 end:0x801773AC
+
 Runtime.PPCEABI.H/fn_80177CF8.c:
 	.text       start:0x80177CF8 end:0x80177D24
 
