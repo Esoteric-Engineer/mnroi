@@ -230,6 +230,9 @@ Dolphin/ai/__AICallbackStackSwitch.c:
 Dolphin/ai/__AI_SRC_INIT.c:
 	.text       start:0x8018BD24 end:0x8018BF08
 
+Dolphin/gx/GXClearVtxDesc.c:
+	.text       start:0x8018C820 end:0x8018C858
+
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
 	.text       start:0x8018E29C end:0x8018E2B8

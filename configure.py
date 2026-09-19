@@ -348,6 +348,7 @@ config.libs = [
             Object(Matching, "Dolphin/ai/__AIDHandler.c"),
             Object(Matching, "Dolphin/ai/__AICallbackStackSwitch.c"),
             Object(Matching, "Dolphin/ai/__AI_SRC_INIT.c"),
+            Object(NonMatching, "Dolphin/gx/GXClearVtxDesc.c"),
         ],
     ),
     DolphinLib(
