@@ -376,6 +376,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXSetPixelFmt.c"),
             Object(Matching, "Dolphin/gx/GXSetDither.c"),
             Object(Matching, "Dolphin/gx/GXSetDstAlpha.c"),
+            Object(NonMatching, "Dolphin/gx/GXSetFieldMask.c"),
         ],
     ),
     DolphinLib(

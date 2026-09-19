@@ -296,3 +296,6 @@ Dolphin/gx/GXSetDither.c:
 
 Dolphin/gx/GXSetDstAlpha.c:
 	.text       start:0x8018FEA4 end:0x8018FEE0
+
+Dolphin/gx/GXSetFieldMask.c:
+	.text       start:0x8018FEE0 end:0x8018FF18
