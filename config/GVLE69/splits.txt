@@ -287,3 +287,6 @@ Dolphin/gx/GXSetZMode.c:
 
 Dolphin/gx/GXSetZCompLoc.c:
 	.text       start:0x8018FD70 end:0x8018FDA4
+
+Dolphin/gx/GXSetPixelFmt.c:
+	.text       start:0x8018FDA4 end:0x8018FE78
