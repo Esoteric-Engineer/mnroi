@@ -308,3 +308,6 @@ Dolphin/gx/GXTransform.c:
 
 Dolphin/gx/GXLoadPosMtxImm.c:
 	.text       start:0x801900C0 end:0x80190110
+
+Dolphin/gx/GXLoadNrmMtxImm.c:
+	.text       start:0x80190110 end:0x80190160
