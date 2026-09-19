@@ -275,3 +275,6 @@ Dolphin/gx/GXSetTevOrder.c:
 
 Dolphin/gx/GXSetNumTevStages.c:
 	.text       start:0x8018F930 end:0x8018F958
+
+Dolphin/gx/GXSetColorUpdate.c:
+	.text       start:0x8018FCE4 end:0x8018FD10
