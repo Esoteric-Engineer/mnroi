@@ -461,3 +461,6 @@ Dolphin/gx/GXSetDrawSyncCallback.c:
 
 Dolphin/gx/GXTokenInterruptHandler.c:
 	.text       start:0x801926D0 end:0x80192758
+
+Dolphin/gx/GXSetDrawDoneCallback.c:
+	.text       start:0x80192758 end:0x8019279C
