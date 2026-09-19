@@ -449,3 +449,6 @@ Dolphin/gx/GXPokeColorUpdate.c:
 
 Dolphin/gx/GXPokeDstAlpha.c:
 	.text       start:0x80192630 end:0x80192654
+
+Dolphin/gx/GXPokeDither.c:
+	.text       start:0x80192654 end:0x8019266C
