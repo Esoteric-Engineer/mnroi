@@ -356,6 +356,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetIndirectMask.c"),
             Object(NonMatching, "Dolphin/gx/GXFlushTextureState.c"),
             Object(Matching, "Dolphin/gx/GXSetTevColorIn.c"),
+            Object(Matching, "Dolphin/gx/GXSetTevAlphaIn.c"),
         ],
     ),
     DolphinLib(
