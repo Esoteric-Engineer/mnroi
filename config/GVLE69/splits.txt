@@ -311,3 +311,6 @@ Dolphin/gx/GXLoadPosMtxImm.c:
 
 Dolphin/gx/GXLoadNrmMtxImm.c:
 	.text       start:0x80190110 end:0x80190160
+
+Dolphin/gx/GXSetCurrentMtx.c:
+	.text       start:0x80190160 end:0x80190194
