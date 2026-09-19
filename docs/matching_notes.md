@@ -68,6 +68,8 @@ Compiler/linker behavior and techniques learned while matching functions in this
 - **The auto-namer may only tag part of a merged data blob:**
   For example, it may name the first 0x30 bytes of a 0x98-byte blob and leave the rest as a separate `lbl_`. Auto-names also often come back as `scope:local`, and they may need a manual override to `scope:global` before your object can reference them.
 
+- **A switch statement's compiler-generated jump table is a lone anonymous `.data` object, and MWCC always declares that section with 8-byte alignment, even though the table entries only need 4:** if the function is isolated into its own translation unit, claiming the original `.data` range in `splits.txt` still lands it 4 bytes late whenever the original address is only 4-mod-8 (true when the table wasn't the first `.data` item in the real, larger source file). `main.dol` breaks with thousands of tiny scattered diffs (everything after shifts) even though the function's own fuzzy match reports 100%. No fix found short of reconstructing the original file's other `.data` members first; treat as a blocker and pick a different target instead (confirmed on `VIGetTvFormat`, `0x8018992C`).
+
 - **`.sdata2` symbols in compiled C are fine:** the `sda2_via_r13` option bakes those accesses as `r13` offsets (see [`baseline.md`](baseline.md#small-data-r13-problem)), so write them as ordinary C.<br />
   If `Range Error for small data relocation` appears, check that `build.ninja` was generated with the fork's `dtk-dev` and that `build/GVLE69/sda_bake.json` exists.
 
