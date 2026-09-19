@@ -65,3 +65,14 @@ asm void __DBExceptionDestination(void)
     b       __DBExceptionDestinationAux
     // clang-format on
 }
+
+#pragma peephole on
+
+// ac-decomp's __DBInterface is a struct DBInterface*; exceptionMask is at +4
+u32 __DBIsExceptionMarked(unsigned char exception)
+{
+    u32 mask = 1 << exception;
+    return ((u32*)__DBInterface)[1] & mask;
+}
+
+void DBPrintf(char* str, ...) { }
