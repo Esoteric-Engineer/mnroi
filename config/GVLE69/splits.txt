@@ -191,6 +191,9 @@ Dolphin/ai/AISetStreamPlayState.c:
 Dolphin/ai/AIGetStreamPlayState.c:
 	.text       start:0x8018B7F8 end:0x8018B808
 
+Dolphin/ai/AISetDSPSampleRate.c:
+	.text       start:0x8018B808 end:0x8018B8E8
+
 Dolphin/ai/AIGetDSPSampleRate.c:
 	.text       start:0x8018B8E8 end:0x8018B8FC
 
