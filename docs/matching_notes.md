@@ -106,3 +106,4 @@ Don't re-guess these.
   - Remaining: the original schedules `slwi id*2` before the color `lwz` and has no `addi rX,rY,0` accumulator copies. No effect: local order, `id2` temp, operand order, `u32*` param.
 - `GXSetTevKColor` (`0x8018F4E0`): `NonMatching`, 85.8%. Same scheduling stall as `GXSetTevColor`. Worse: ac-decomp's `reg = 0` + last `<< 24` insert (42%), an `id2` temp (68%).
 - `GXSetTevKColorSel` / `GXSetTevKAlphaSel` (`0x8018F544` / `0x8018F5A0`): `NonMatching`, 92.6% each. Only register allocation differs (original: `Kreg` in r7, `__GXData` reloaded into r3 before the FIFO writes). Reading `__GXData->` directly is worse (88%).
+- `GXSetZTexture` (`0x8018F708`, `Dolphin/gx/GXSetZTexture.c`): `NonMatching`, about 31%. Shape is right (read `__GXData` directly after the switch, no local). Remaining: the `addi rX,rY,0` accumulator copy (as in `GXSetTevColor`) and an early `li r0,0xf4`. No effect: `zenv1 = 0` placement, open-coded `__rlwimi`, `zenv0 += 0`.

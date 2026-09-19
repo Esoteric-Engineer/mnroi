@@ -266,3 +266,6 @@ Dolphin/gx/GXSetTevSwapModeTable.c:
 
 Dolphin/gx/GXSetAlphaCompare.c:
 	.text       start:0x8018F6C4 end:0x8018F708
+
+Dolphin/gx/GXSetZTexture.c:
+	.text       start:0x8018F708 end:0x8018F794
