@@ -426,6 +426,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXPokeBlendMode.c"),
             Object(Matching, "Dolphin/gx/GXPokeDither.c"),
             Object(Matching, "Dolphin/gx/GXPokeZMode.c"),
+            Object(Matching, "Dolphin/gx/GXSetDrawSyncCallback.c"),
         ],
     ),
     DolphinLib(
