@@ -365,6 +365,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXSetTevKAlphaSel.c"),
             Object(Matching, "Dolphin/gx/GXSetTevSwapMode.c"),
             Object(Matching, "Dolphin/gx/GXSetTevSwapModeTable.c"),
+            Object(NonMatching, "Dolphin/gx/GXSetAlphaCompare.c"),
         ],
     ),
     DolphinLib(
