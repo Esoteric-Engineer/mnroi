@@ -115,6 +115,9 @@ Dolphin/os/PPCArch.c:
 	.text       start:0x8017A800 end:0x8017AAAC
 	.sbss       start:0x8066F1D0 end:0x8066F1F0
 
+Dolphin/os/__OSGetDIConfig.c:
+	.text       start:0x8017B3AC end:0x8017B3C0
+
 Dolphin/os/fn_8017B444.c:
 	.text       start:0x8017B444 end:0x8017B454
 
