@@ -416,6 +416,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/__GXFifoReadEnable.c"),
             Object(Matching, "Dolphin/gx/__GXFifoReadDisable.c"),
             Object(Matching, "Dolphin/gx/GXSetMisc.c"),
+            Object(Matching, "Dolphin/gx/GXFlush.c"),
         ],
     ),
     DolphinLib(
