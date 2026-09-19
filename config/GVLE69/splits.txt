@@ -317,3 +317,6 @@ Dolphin/gx/GXSetCurrentMtx.c:
 
 Dolphin/gx/GXLoadTexMtxImm.c:
 	.text       start:0x80190194 end:0x80190248
+
+Dolphin/gx/GXSetViewport.c:
+	.text       start:0x80190248 end:0x80190320
