@@ -179,6 +179,9 @@ Dolphin/ai/AIStartDMA.c:
 Dolphin/ai/AIStopDMA.c:
 	.text       start:0x8018B708 end:0x8018B720
 
+Dolphin/ai/AISetStreamPlayState.c:
+	.text       start:0x8018B720 end:0x8018B7F8
+
 Dolphin/ai/AIGetStreamPlayState.c:
 	.text       start:0x8018B7F8 end:0x8018B808
 
