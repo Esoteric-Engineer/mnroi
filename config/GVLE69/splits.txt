@@ -222,6 +222,12 @@ Dolphin/gx/GXSetSUTexRegs.c:
 Dolphin/gx/GXSetNumIndStages.c:
 	.text       start:0x8018F190 end:0x8018F1B4
 
+Dolphin/gx/GXSetTevDirect.c:
+	.text       start:0x8018F1B4 end:0x8018F1FC
+
+Dolphin/gx/GXSetTevIndRepeat.c:
+	.text       start:0x8018F1FC end:0x8018F244
+
 Dolphin/gx/GXSetIndirectMask.c:
 	.text       start:0x8018F248 end:0x8018F278
 
