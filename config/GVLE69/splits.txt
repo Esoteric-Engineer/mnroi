@@ -323,3 +323,6 @@ Dolphin/gx/GXSetViewport.c:
 
 Dolphin/gx/GXSetScissor.c:
 	.text       start:0x80190320 end:0x80190398
+
+Dolphin/gx/GXSetScissorBoxOffset.c:
+	.text       start:0x80190398 end:0x801903D8
