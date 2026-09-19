@@ -124,6 +124,9 @@ Dolphin/os/PPCArch.c:
 Dolphin/os/__OSGetDIConfig.c:
 	.text       start:0x8017B3AC end:0x8017B3C0
 
+Dolphin/os/OSRegisterVersion.c:
+	.text       start:0x8017B3C0 end:0x8017B3EC
+
 Dolphin/os/fn_8017B444.c:
 	.text       start:0x8017B444 end:0x8017B454
 

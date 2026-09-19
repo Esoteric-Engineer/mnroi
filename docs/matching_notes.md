@@ -41,6 +41,8 @@ Compiler/linker behavior and techniques learned while matching functions in this
 
 - **A `clrlwi rX,r3,24` right after a `bl` that the original lacks means the callee's return type is too narrow:** declare the extern as returning `u32` (locals too), even if the real function returns `u8`. Matched `AISetStreamPlayState` (92% -> 100%, alongside `(reg & ~1) | state` and `(reg & ~0x20) | 0x20` in plain C where the original has `clrrwi`/`rlwinm` + `ori` instead of `rlwimi`).
 
+- **Original has `stwu` before `mr r4,r3` (arg copy after frame setup) in a tiny wrapper: add `#pragma peephole off`** before the function. Default codegen emits the copy first (63%); `#pragma scheduling off` alone gets 76-82% and misorders `li`/`crclr`. Peephole off alone is 100% (`OSRegisterVersion`, `0x8017B3C0`).
+
 - **Inlining:** A function may contain the inlined body of a method from a not-yet-reconstructed header. A `static` helper with a single caller can be inlined with no separate `bl`, which is why an original may have no call where a reference decomp appears to have one.
 
 - **Redundant `b <next instruction>` no-op branches appear at loop/branch join points, sometimes doubled:** Translate literally rather than collapsing them.
