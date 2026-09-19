@@ -404,3 +404,6 @@ Dolphin/gx/__GXFifoInit.c:
 
 Dolphin/gx/__GXFifoReadEnable.c:
 	.text       start:0x80191E80 end:0x80191EA4
+
+Dolphin/gx/__GXFifoReadDisable.c:
+	.text       start:0x80191EA4 end:0x80191EC8
