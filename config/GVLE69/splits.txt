@@ -221,6 +221,12 @@ Dolphin/ai/AIInit.c:
 Dolphin/ai/__AISHandler.c:
 	.text       start:0x8018BBA4 end:0x8018BC20
 
+Dolphin/ai/__AIDHandler.c:
+	.text       start:0x8018BC20 end:0x8018BCCC
+
+Dolphin/ai/__AICallbackStackSwitch.c:
+	.text       start:0x8018BCCC end:0x8018BD24
+
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
 	.text       start:0x8018E29C end:0x8018E2B8
