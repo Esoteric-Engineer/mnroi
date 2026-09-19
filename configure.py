@@ -422,6 +422,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXPokeAlphaRead.c"),
             Object(Matching, "Dolphin/gx/GXPokeAlphaUpdate.c"),
             Object(Matching, "Dolphin/gx/GXPokeColorUpdate.c"),
+            Object(Matching, "Dolphin/gx/GXPokeDstAlpha.c"),
             Object(Matching, "Dolphin/gx/GXPokeBlendMode.c"),
         ],
     ),

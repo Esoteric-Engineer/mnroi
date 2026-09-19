@@ -446,3 +446,6 @@ Dolphin/gx/GXPokeBlendMode.c:
 
 Dolphin/gx/GXPokeColorUpdate.c:
 	.text       start:0x80192618 end:0x80192630
+
+Dolphin/gx/GXPokeDstAlpha.c:
+	.text       start:0x80192630 end:0x80192654
