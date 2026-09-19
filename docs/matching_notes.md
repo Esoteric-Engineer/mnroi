@@ -104,3 +104,5 @@ Don't re-guess these.
 - `GXSetTevAlphaOp` (`0x8018F418`, `Dolphin/gx/GXSetTevAlphaOp.c`): `NonMatching`, 80.38%. Identical shape and identical tail-scheduling diff to `GXSetTevColorOp` (uses `teva`); solving one should solve both.
 - `GXSetTevColor` (`0x8018F480`, `Dolphin/gx/GXSetTevColor.c`): `NonMatching`, about 44%. The color is one `lwz` word with 8-bit `rlwimi` fields (`c >> 24`, `c`, `c >> 8`, `c >> 16`), and the `224/225 + id*2` field is a plain `<< 24` init.
   - Remaining: the original schedules `slwi id*2` before the color `lwz` and has no `addi rX,rY,0` accumulator copies. No effect: local order, `id2` temp, operand order, `u32*` param.
+- `GXSetTevKColor` (`0x8018F4E0`): `NonMatching`, 85.8%. Same scheduling stall as `GXSetTevColor`. Worse: ac-decomp's `reg = 0` + last `<< 24` insert (42%), an `id2` temp (68%).
+- `GXSetTevKColorSel` / `GXSetTevKAlphaSel` (`0x8018F544` / `0x8018F5A0`): `NonMatching`, 92.6% each. Only register allocation differs (original: `Kreg` in r7, `__GXData` reloaded into r3 before the FIFO writes). Reading `__GXData->` directly is worse (88%).
