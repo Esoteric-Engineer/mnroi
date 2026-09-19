@@ -473,3 +473,6 @@ Dolphin/gx/GXPEInit.c:
 
 Dolphin/gx/GXSetDispCopySrc.c:
 	.text       start:0x80192890 end:0x8019290C
+
+Dolphin/gx/GXSetDispCopyDst.c:
+	.text       start:0x80192988 end:0x801929BC
