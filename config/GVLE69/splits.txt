@@ -272,3 +272,6 @@ Dolphin/gx/GXSetZTexture.c:
 
 Dolphin/gx/GXSetTevOrder.c:
 	.text       start:0x8018F794 end:0x8018F930
+
+Dolphin/gx/GXSetNumTevStages.c:
+	.text       start:0x8018F930 end:0x8018F958
