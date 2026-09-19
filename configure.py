@@ -354,6 +354,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXSetCullMode.c"),
             Object(Matching, "Dolphin/gx/GXInitLightAttn.c"),
             Object(Matching, "Dolphin/gx/GXInitLightPos.c"),
+            Object(Matching, "Dolphin/gx/GXInitLightDir.c"),
         ],
     ),
     DolphinLib(
