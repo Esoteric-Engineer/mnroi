@@ -139,6 +139,9 @@ Dolphin/os/__OSSetAlarmState.c:
 Dolphin/os/OSInterrupt.c:
 	.text       start:0x8017DB88 end:0x8017DBD4
 
+Dolphin/os/OSGetSaveRegion.c:
+	.text       start:0x8017E754 end:0x8017E768
+
 Dolphin/os/OSRegisterResetFunction.c:
 	.text       start:0x8017E768 end:0x8017E7EC
 
