@@ -197,6 +197,9 @@ Dolphin/ai/AISetDSPSampleRate.c:
 Dolphin/ai/AIGetDSPSampleRate.c:
 	.text       start:0x8018B8E8 end:0x8018B8FC
 
+Dolphin/ai/__AI_set_stream_sample_rate.c:
+	.text       start:0x8018B8FC end:0x8018B9D0
+
 Dolphin/ai/AIGetStreamSampleRate.c:
 	.text       start:0x8018B9D0 end:0x8018B9E0
 

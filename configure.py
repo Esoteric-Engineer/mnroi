@@ -337,6 +337,7 @@ config.libs = [
             Object(Matching, "Dolphin/ai/AIGetStreamPlayState.c"),
             Object(Matching, "Dolphin/ai/AISetDSPSampleRate.c"),
             Object(Matching, "Dolphin/ai/AIGetDSPSampleRate.c"),
+            Object(Matching, "Dolphin/ai/__AI_set_stream_sample_rate.c"),
             Object(Matching, "Dolphin/ai/AIGetStreamSampleRate.c"),
             Object(Matching, "Dolphin/ai/AISetStreamVolLeft.c"),
             Object(Matching, "Dolphin/ai/AIGetStreamVolLeft.c"),
