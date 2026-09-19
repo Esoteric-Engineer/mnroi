@@ -11,7 +11,7 @@ extern void AISetStreamVolLeft(u32 vol);
 extern void AISetStreamVolRight(u32 vol);
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int level);
-extern void fn_8018BD24(void);
+extern void __AI_SRC_INIT(void);
 
 void AISetStreamPlayState(u32 state)
 {
@@ -26,7 +26,7 @@ void AISetStreamPlayState(u32 state)
             AISetStreamVolRight(0);
             AISetStreamVolLeft(0);
             old = OSDisableInterrupts();
-            fn_8018BD24();
+            __AI_SRC_INIT();
             __AIRegs[0] = (__AIRegs[0] & 0xFFFFFFDF) | 0x20;
             __AIRegs[0] = (__AIRegs[0] & 0xFFFFFFFE) | 1;
             OSRestoreInterrupts(old);
