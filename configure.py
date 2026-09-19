@@ -372,6 +372,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXSetColorUpdate.c"),
             Object(NonMatching, "Dolphin/gx/GXSetAlphaUpdate.c"),
             Object(Matching, "Dolphin/gx/GXSetZMode.c"),
+            Object(Matching, "Dolphin/gx/GXSetZCompLoc.c"),
         ],
     ),
     DolphinLib(
