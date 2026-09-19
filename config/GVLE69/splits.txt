@@ -299,3 +299,6 @@ Dolphin/gx/GXSetDstAlpha.c:
 
 Dolphin/gx/GXSetFieldMask.c:
 	.text       start:0x8018FEE0 end:0x8018FF18
+
+Dolphin/gx/GXSetFieldMode.c:
+	.text       start:0x8018FF18 end:0x8018FF90
