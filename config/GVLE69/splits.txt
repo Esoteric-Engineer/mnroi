@@ -224,3 +224,6 @@ Dolphin/gx/GXSetNumIndStages.c:
 
 Dolphin/gx/GXSetIndirectMask.c:
 	.text       start:0x8018F248 end:0x8018F278
+
+Dolphin/gx/GXFlushTextureState.c:
+	.text       start:0x8018F278 end:0x8018F29C
