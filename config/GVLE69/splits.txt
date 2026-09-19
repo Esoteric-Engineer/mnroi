@@ -260,3 +260,6 @@ Dolphin/gx/GXSetTevKAlphaSel.c:
 
 Dolphin/gx/GXSetTevSwapMode.c:
 	.text       start:0x8018F5FC end:0x8018F644
+
+Dolphin/gx/GXSetTevSwapModeTable.c:
+	.text       start:0x8018F644 end:0x8018F6C4
