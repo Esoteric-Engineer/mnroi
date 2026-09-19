@@ -320,3 +320,6 @@ Dolphin/gx/GXLoadTexMtxImm.c:
 
 Dolphin/gx/GXSetViewport.c:
 	.text       start:0x80190248 end:0x80190320
+
+Dolphin/gx/GXSetScissor.c:
+	.text       start:0x80190320 end:0x80190398

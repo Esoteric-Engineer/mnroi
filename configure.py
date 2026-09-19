@@ -384,6 +384,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetCurrentMtx.c"),
             Object(Matching, "Dolphin/gx/GXLoadTexMtxImm.c"),
             Object(NonMatching, "Dolphin/gx/GXSetViewport.c"),
+            Object(Matching, "Dolphin/gx/GXSetScissor.c"),
         ],
     ),
     DolphinLib(
