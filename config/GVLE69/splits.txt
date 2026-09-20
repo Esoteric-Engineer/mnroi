@@ -398,6 +398,10 @@ Dolphin/gx/GXSetNumChans.c:
 Dolphin/gx/GXSetChanCtrl.c:
 	.text       start:0x8018DB5C end:0x8018DC0C
 
+Dolphin/gx/GXInitTexObj.c:
+	.text       start:0x8018DE94 end:0x8018E0E0
+	.sdata2     start:0x806706C0 end:0x806706D0
+
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
 	.text       start:0x8018E29C end:0x8018E2B8
