@@ -501,6 +501,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/os/OSCreateThread.c"),
             Object(Matching, "Dolphin/os/OSExitThread.c"),
             Object(Matching, "Dolphin/os/OSCancelThread.c"),
+            Object(Matching, "Dolphin/os/OSResumeThread.c"),
             Object(Matching, "Dolphin/os/OSTime.c"),
         ],
     ),
