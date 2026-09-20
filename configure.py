@@ -475,6 +475,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetCopyClamp.c"),
             Object(Matching, "Dolphin/gx/GXSetDispCopyYScale.c"),
             Object(Matching, "Dolphin/gx/GXSetCopyClear.c"),
+            Object(Matching, "Dolphin/gx/GXSetCopyFilter.c"),
             Object(Matching, "Dolphin/gx/GXSetDispCopyGamma.c"),
             Object(Matching, "Dolphin/gx/GXCopyDisp.c"),
             Object(Matching, "Dolphin/gx/GXCopyTex.c"),

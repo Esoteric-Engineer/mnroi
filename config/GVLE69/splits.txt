@@ -701,6 +701,9 @@ Dolphin/gx/GXSetDispCopyYScale.c:
 Dolphin/gx/GXSetCopyClear.c:
 	.text       start:0x80192E6C end:0x80192EE4
 
+Dolphin/gx/GXSetCopyFilter.c:
+	.text       start:0x80192EE4 end:0x801930EC
+
 Dolphin/gx/GXSetDispCopyGamma.c:
 	.text       start:0x801930EC end:0x80193100
 
