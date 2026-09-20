@@ -441,6 +441,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXCopyDisp.c"),
             Object(NonMatching, "Dolphin/gx/GXCopyTex.c"),
             Object(NonMatching, "Dolphin/gx/GXClearBoundingBox.c"),
+            Object(Matching, "Dolphin/gx/GXClearGPMetric.c"),
         ],
     ),
     DolphinLib(

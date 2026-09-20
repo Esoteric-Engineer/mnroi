@@ -500,3 +500,6 @@ Dolphin/gx/GXCopyTex.c:
 
 Dolphin/gx/GXClearBoundingBox.c:
 	.text       start:0x801933F4 end:0x8019342C
+
+Dolphin/gx/GXClearGPMetric.c:
+	.text       start:0x80193E1C end:0x80193E2C
