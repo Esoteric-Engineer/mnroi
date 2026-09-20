@@ -142,6 +142,9 @@ Dolphin/os/fn_8017B444.c:
 Dolphin/os/OSSetAlarm.c:
 	.text       start:0x8017B6A4 end:0x8017B70C
 
+Dolphin/os/OSSetPeriodicAlarm.c:
+	.text       start:0x8017B70C end:0x8017B788
+
 Dolphin/os/OSArena.c:
 	.text       start:0x8017BBC4 end:0x8017BC10
 
