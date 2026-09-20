@@ -484,6 +484,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSArena.c"),
             Object(Matching, "Dolphin/os/OSCache.c"),
             Object(Matching, "Dolphin/os/OSSetCurrentContext.c"),
+            Object(Matching, "Dolphin/os/OSLoadContext.c"),
             Object(Matching, "Dolphin/os/OSClearContext.c"),
             Object(Matching, "Dolphin/os/fn_8017FB84.c"),
             Object(Matching, "Dolphin/os/OSInterrupt.c"),

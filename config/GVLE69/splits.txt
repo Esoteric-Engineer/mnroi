@@ -160,6 +160,9 @@ Dolphin/os/OSCache.c:
 Dolphin/os/OSSetCurrentContext.c:
 	.text       start:0x8017C530 end:0x8017C58C
 
+Dolphin/os/OSLoadContext.c:
+	.text       start:0x8017C618 end:0x8017C6F0
+
 Dolphin/os/OSClearContext.c:
 	.text       start:0x8017C728 end:0x8017C74C
 
