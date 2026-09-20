@@ -196,6 +196,9 @@ Dolphin/os/__OSGetInterruptHandler.c:
 Dolphin/os/OSInterruptMask.c:
 	.text       start:0x8017DF50 end:0x8017E060
 
+Dolphin/os/__OSModuleInit.c:
+	.text       start:0x8017E3F4 end:0x8017E40C
+
 Dolphin/os/OSGetSaveRegion.c:
 	.text       start:0x8017E754 end:0x8017E768
 
