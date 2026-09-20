@@ -389,6 +389,9 @@ Dolphin/gx/GXSetChanMatColor.c:
 Dolphin/gx/GXSetNumChans.c:
 	.text       start:0x8018DB20 end:0x8018DB5C
 
+Dolphin/gx/GXSetChanCtrl.c:
+	.text       start:0x8018DB5C end:0x8018DC0C
+
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
 	.text       start:0x8018E29C end:0x8018E2B8
