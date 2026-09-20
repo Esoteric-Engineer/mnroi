@@ -344,6 +344,9 @@ Dolphin/gx/GXInvalidateVtxCache.c:
 Dolphin/gx/GXSetNumTexGens.c:
 	.text       start:0x8018D384 end:0x8018D3C0
 
+Dolphin/gx/GXEnableTexOffsets.c:
+	.text       start:0x8018D618 end:0x8018D660
+
 Dolphin/gx/GXSetCullMode.c:
 	.text       start:0x8018D660 end:0x8018D688
 
