@@ -344,6 +344,12 @@ Dolphin/gx/GXInvalidateVtxCache.c:
 Dolphin/gx/GXSetNumTexGens.c:
 	.text       start:0x8018D384 end:0x8018D3C0
 
+Dolphin/gx/GXSetLineWidth.c:
+	.text       start:0x8018D598 end:0x8018D5D8
+
+Dolphin/gx/GXSetPointSize.c:
+	.text       start:0x8018D5D8 end:0x8018D618
+
 Dolphin/gx/GXEnableTexOffsets.c:
 	.text       start:0x8018D618 end:0x8018D660
 
