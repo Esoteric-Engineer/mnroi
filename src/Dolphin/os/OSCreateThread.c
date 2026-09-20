@@ -62,7 +62,7 @@ extern u32 lbl_8066C3D0;
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern void lbl_8017C74C(OSContext* context, u32 pc, u32 sp);
-extern void fn_80180564(void* val);
+extern void OSExitThread(void* val);
 
 OSThreadQueue __OSActiveThreadQueue : 0x800000DC;
 
@@ -97,7 +97,7 @@ int fn_8018037C(OSThread* thread, void* (*func)(void*), void* param, void* stack
     ((u32*)sp)[0] = 0;
     ((u32*)sp)[1] = 0;
     lbl_8017C74C(&thread->context, (u32)func, sp);
-    thread->context.lr = (u32)fn_80180564;
+    thread->context.lr = (u32)OSExitThread;
     thread->context.gpr[3] = (u32)param;
     thread->stackBase = stack;
     thread->stackEnd = (u32*)((u32)stack - stackSize);

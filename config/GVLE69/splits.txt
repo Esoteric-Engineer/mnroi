@@ -206,6 +206,9 @@ Dolphin/os/OSYieldThread.c:
 Dolphin/os/OSCreateThread.c:
 	.text       start:0x8018037C end:0x80180564
 
+Dolphin/os/OSExitThread.c:
+	.text       start:0x80180564 end:0x80180648
+
 Dolphin/os/OSTime.c:
 	.text       start:0x80180F58 end:0x801813D4
 
