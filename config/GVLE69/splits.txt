@@ -365,6 +365,9 @@ Dolphin/gx/GXInitLightDir.c:
 Dolphin/gx/GXInitLightColor.c:
 	.text       start:0x8018D8C8 end:0x8018D8D4
 
+Dolphin/gx/GXLoadLightObjImm.c:
+	.text       start:0x8018D8D4 end:0x8018D950
+
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
 	.text       start:0x8018E29C end:0x8018E2B8
