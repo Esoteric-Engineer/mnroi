@@ -531,6 +531,9 @@ Dolphin/gx/GXSetScissorBoxOffset.c:
 Dolphin/gx/__GXSetMatrixIndex.c:
 	.text       start:0x80190400 end:0x80190484
 
+Dolphin/gx/__GXInitRevisionBits.c:
+	.text       start:0x80190734 end:0x801908D8
+
 Dolphin/gx/GXInitFifoBase.c:
 	.text       start:0x80191944 end:0x801919B0
 
