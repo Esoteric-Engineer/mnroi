@@ -450,6 +450,9 @@ Dolphin/gx/GXSetIndirectMask.c:
 Dolphin/gx/GXFlushTextureState.c:
 	.text       start:0x8018F278 end:0x8018F29C
 
+Dolphin/gx/GXSetTevOp.c:
+	.text       start:0x8018F29C end:0x8018F328
+
 Dolphin/gx/GXSetTevColorIn.c:
 	.text       start:0x8018F328 end:0x8018F36C
 
