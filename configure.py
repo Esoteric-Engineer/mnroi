@@ -478,6 +478,8 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXCopyDisp.c"),
             Object(Matching, "Dolphin/gx/GXCopyTex.c"),
             Object(Matching, "Dolphin/gx/GXClearBoundingBox.c"),
+            Object(Matching, "Dolphin/gx/GXSetGPMetric.c"),
+            Object(NonMatching, "Dolphin/gx/GXReadGPMetric.c"),
             Object(Matching, "Dolphin/gx/GXClearGPMetric.c"),
         ],
     ),
