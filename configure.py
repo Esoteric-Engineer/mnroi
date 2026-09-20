@@ -493,6 +493,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSLoadContext.c"),
             Object(Matching, "Dolphin/os/OSClearContext.c"),
             Object(Matching, "Dolphin/os/OSReport.c"),
+            Object(Matching, "Dolphin/os/__OSSyncSram.c"),
             Object(Matching, "Dolphin/os/fn_8017FB84.c"),
             Object(Matching, "Dolphin/os/OSInterrupt.c"),
             Object(Matching, "Dolphin/os/__OSSetInterruptHandler.c"),

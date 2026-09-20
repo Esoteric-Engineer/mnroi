@@ -17,7 +17,7 @@ struct OSResetFunctionQueue {
 };
 
 extern struct OSResetFunctionQueue ResetFunctionQueue;
-extern BOOL fn_8017F668(void);
+extern BOOL __OSSyncSram(void);
 
 BOOL CallResetFunctions(BOOL final)
 {
@@ -32,7 +32,7 @@ BOOL CallResetFunctions(BOOL final)
         err |= !info->func(final);
         last = info->priority;
     }
-    err |= !fn_8017F668();
+    err |= !__OSSyncSram();
     if (err) {
         return 0;
     }
