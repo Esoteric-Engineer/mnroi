@@ -347,6 +347,12 @@ Dolphin/gx/GXSetNumTexGens.c:
 Dolphin/gx/GXSetCullMode.c:
 	.text       start:0x8018D660 end:0x8018D688
 
+Dolphin/gx/GXSetCoPlanar.c:
+	.text       start:0x8018D688 end:0x8018D6BC
+
+Dolphin/gx/__GXSetGenMode.c:
+	.text       start:0x8018D6BC end:0x8018D6E0
+
 Dolphin/gx/GXInitLightAttn.c:
 	.text       start:0x8018D6E0 end:0x8018D6FC
 

@@ -353,6 +353,8 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXInvalidateVtxCache.c"),
             Object(Matching, "Dolphin/gx/GXSetNumTexGens.c"),
             Object(NonMatching, "Dolphin/gx/GXSetCullMode.c"),
+            Object(NonMatching, "Dolphin/gx/GXSetCoPlanar.c"),
+            Object(NonMatching, "Dolphin/gx/__GXSetGenMode.c"),
             Object(Matching, "Dolphin/gx/GXInitLightAttn.c"),
             Object(Matching, "Dolphin/gx/GXInitLightPos.c"),
             Object(Matching, "Dolphin/gx/GXInitLightDir.c"),
