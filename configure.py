@@ -448,6 +448,7 @@ config.libs = [
     DolphinLib(
         "si",
         [
+            Object(Matching, "Dolphin/si/SIBusy.c"),
             Object(Matching, "Dolphin/si/SIBios.c"),
         ],
     ),
