@@ -561,6 +561,15 @@ Dolphin/gx/__GXWriteFifoIntEnable.c:
 Dolphin/gx/__GXWriteFifoIntReset.c:
 	.text       start:0x80191F2C end:0x80191F5C
 
+Dolphin/gx/__GXCleanGPFifo.c:
+	.text       start:0x80191F5C end:0x8019205C
+
+Dolphin/gx/GXGetCPUFifo.c:
+	.text       start:0x8019205C end:0x80192064
+
+Dolphin/gx/GXGetGPFifo.c:
+	.text       start:0x80192064 end:0x8019206C
+
 Dolphin/gx/GXSetMisc.c:
 	.text       start:0x8019206C end:0x80192100
 
