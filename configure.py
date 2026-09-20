@@ -407,6 +407,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetZTexture.c"),
             Object(Matching, "Dolphin/gx/GXSetTevOrder.c"),
             Object(Matching, "Dolphin/gx/GXSetNumTevStages.c"),
+            Object(NonMatching, "Dolphin/gx/GXSetBlendMode.c"),
             Object(Matching, "Dolphin/gx/GXSetColorUpdate.c"),
             Object(Matching, "Dolphin/gx/GXSetAlphaUpdate.c"),
             Object(Matching, "Dolphin/gx/GXSetZMode.c"),
