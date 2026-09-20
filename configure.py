@@ -469,6 +469,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/fn_8017A70C.c"),
             Object(Matching, "Dolphin/os/fn_8017A6CC.c"),
             Object(Matching, "Dolphin/os/PPCArch.c"),
+            Object(Matching, "Dolphin/os/OSExceptionHandler.c"),
             Object(Matching, "Dolphin/os/fn_80169134.c"),
             Object(Matching, "Dolphin/os/fn_80169150.c"),
             Object(Matching, "Dolphin/os/__OSGetDIConfig.c"),
