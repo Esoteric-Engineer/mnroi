@@ -582,7 +582,8 @@ Dolphin/gx/__GXInitRevisionBits.c:
 	.text       start:0x80190734 end:0x801908D8
 
 Dolphin/gx/GXInit.c:
-	.text       start:0x801908D8 end:0x80190ED8
+	.text       start:0x801908D8 end:0x80191810
+	.sdata2     start:0x80670788 end:0x806707B0
 
 Dolphin/gx/GXInitFifoBase.c:
 	.text       start:0x80191944 end:0x801919B0

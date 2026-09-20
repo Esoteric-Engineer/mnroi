@@ -34,6 +34,114 @@ volatile GXWGFifoObj GXWGFifo : 0xCC008000;
 
 u32 __OSBusClock : 0x800000F8;
 
+typedef struct {
+    u8 r, g, b, a;
+} GXColor;
+
+// Only the fields __GXInitGX reads are named.
+typedef struct {
+    u32 viTVmode;
+    u16 fbWidth;
+    u16 efbHeight;
+    u16 xfbHeight;
+    u16 viXOrigin;
+    u16 viYOrigin;
+    u16 viWidth;
+    u16 viHeight;
+    u32 xFBmode;
+    u8 field_rendering;
+    u8 aa;
+    u8 sample_pattern[12][2];
+    u8 vfilter[7];
+} GXRenderModeObj;
+
+typedef struct {
+    u8 dummy[0x20];
+} GXTexObj;
+
+// Raw .data blocks in this translation unit's area, not yet given real names.
+extern u8 lbl_804D3340[];
+extern u8 lbl_804D35E8[];
+extern u8 lbl_804D3648[];
+extern u8 lbl_804D369C[];
+extern u8 lbl_804D36F0[];
+
+extern int VIGetTvFormat(void);
+extern void GXSetCopyClear(GXColor clear_clr, u32 clear_z);
+extern void GXSetTexCoordGen2(int dst, int func, int src, int mtx, int normalize, int postmtx);
+extern void GXSetNumTexGens(u8 nTexGens);
+extern void GXClearVtxDesc(void);
+extern void GXInvalidateVtxCache(void);
+extern void GXSetArray(int attr, void* base, u8 stride);
+extern void GXSetVtxAttrFmtv(int fmt, void* vat);
+extern void GXSetLineWidth(u8 width, int offsets);
+extern void GXSetPointSize(u8 size, int offsets);
+extern void GXEnableTexOffsets(int coord, u8 line, u8 point);
+extern void GXLoadPosMtxImm(f32 mtx[3][4], u32 id);
+extern void GXLoadNrmMtxImm(f32 mtx[3][4], u32 id);
+extern void GXSetCurrentMtx(u32 id);
+extern void GXLoadTexMtxImm(f32 mtx[3][4], u32 id, int type);
+extern void GXSetViewport(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz);
+extern void GXSetProjectionv(f32* ptr);
+extern void GXSetCoPlanar(u8 enable);
+extern void GXSetCullMode(int mode);
+extern void GXSetClipMode(int mode);
+extern void GXSetScissor(u32 left, u32 top, u32 wd, u32 ht);
+extern void GXSetScissorBoxOffset(int x, int y);
+extern void GXSetNumChans(u8 nChans);
+extern void GXSetChanCtrl(int chan, u8 enable, int amb_src, int mat_src, u32 light_mask, int diff_fn, int attn_fn);
+extern void GXSetChanAmbColor(int chan, GXColor amb_color);
+extern void GXSetChanMatColor(int chan, GXColor mat_color);
+extern void GXInvalidateTexAll(void);
+extern void GXSetTexRegionCallback(void* cb);
+extern void GXSetTlutRegionCallback(void* cb);
+extern void GXInitTexObj(GXTexObj* obj, void* image, u16 width, u16 height, int format, int wrap_s, int wrap_t, u8 mipmap);
+extern void GXLoadTexObj(GXTexObj* obj, int map);
+extern void GXSetTevOrder(int stage, int coord, int map, int color);
+extern void GXSetNumTevStages(u8 nStages);
+extern void GXSetTevOp(int stage, int mode);
+extern void GXSetAlphaCompare(int comp0, u8 ref0, int op, int comp1, u8 ref1);
+extern void GXSetZTexture(int op, int fmt, u32 bias);
+extern void GXSetTevKColorSel(int stage, int sel);
+extern void GXSetTevKAlphaSel(int stage, int sel);
+extern void GXSetTevSwapMode(int stage, int ras_sel, int tex_sel);
+extern void GXSetTevSwapModeTable(int table, int red, int green, int blue, int alpha);
+extern void GXSetTevDirect(int stage);
+extern void GXSetNumIndStages(u8 nIndStages);
+extern void GXSetIndTexCoordScale(int stage, int scale_s, int scale_t);
+extern void GXSetFog(int type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color);
+extern void GXSetFogRangeAdj(u8 enable, u16 center, void* table);
+extern void GXSetBlendMode(int type, int src_factor, int dst_factor, int op);
+extern void GXSetColorUpdate(u8 update_enable);
+extern void GXSetAlphaUpdate(u8 update_enable);
+extern void GXSetZMode(u8 compare_enable, int func, u8 update_enable);
+extern void GXSetZCompLoc(u8 before_tex);
+extern void GXSetDither(u8 dither);
+extern void GXSetDstAlpha(u8 enable, u8 alpha);
+extern void GXSetPixelFmt(int pix_fmt, int z_fmt);
+extern void GXSetFieldMask(u8 odd_mask, u8 even_mask);
+extern void GXSetFieldMode(u8 field_mode, u32 half_aspect_ratio);
+extern void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht);
+extern void GXSetDispCopyDst(u16 wd, u16 ht);
+extern void GXSetDispCopyYScale(f32 vscale);
+extern void GXSetCopyClamp(int clamp);
+extern void GXSetCopyFilter(u8 aa, u8 sample_pattern[12][2], u8 vf, u8 vfilter[7]);
+extern void GXSetDispCopyGamma(int gamma);
+extern void GXSetDispCopyFrame2Field(int mode);
+extern void GXClearBoundingBox(void);
+extern void GXPokeColorUpdate(u8 update_enable);
+extern void GXPokeAlphaUpdate(u8 update_enable);
+extern void GXPokeDither(u8 dither);
+extern void GXPokeBlendMode(int type, int src_factor, int dst_factor, int op);
+extern void GXPokeAlphaMode(int func, u8 threshold);
+extern void GXPokeAlphaRead(int mode);
+extern void GXPokeDstAlpha(u8 enable, u8 alpha);
+extern void GXPokeZMode(u8 compare_enable, int func, u8 update_enable);
+extern void GXSetGPMetric(int perf0, int perf1);
+extern void GXClearGPMetric(void);
+extern void __GXDefaultTexRegionCallback(void);
+extern void __GXDefaultTlutRegionCallback(void);
+
 // Real Dolphin SDK global GX state (gx). Only the fields this function touches are declared. The rest is padding to keep their offsets correct.
 typedef struct {
     u8 pad0[0x7C];
@@ -78,7 +186,8 @@ typedef struct {
     u32 dirtyState;
 } __GXDataStruct;
 
-extern __GXDataStruct* const __GXData;
+extern u8 lbl_8057D630[];
+__GXDataStruct* const __GXData = (__GXDataStruct*)lbl_8057D630;
 #define gx __GXData
 
 extern char* __GXVersion;
@@ -89,9 +198,6 @@ extern u32 resetFuncRegistered;
 // OSResetFunctionInfo; only its address is taken here.
 extern u8 GXResetFuncInfo[0x10];
 
-// 16777216.0f and 0.0f, shared with the rest of the SDK's .sdata2 literal pool.
-extern const f32 GXInitZScaleConst;
-extern const f32 GXInitZOffsetConst;
 
 extern u16* __cpReg;
 extern u16* __peReg;
@@ -212,8 +318,8 @@ GXFifoObj* GXInit(void* base, u32 size)
     SET_REG_FIELD(gx->zmode, 8, 24, 0x40);
     SET_REG_FIELD(gx->peCtrl, 8, 24, 0x43);
     SET_REG_FIELD(gx->cpTex, 2, 7, 0);
-    gx->zScale = GXInitZScaleConst;
-    gx->zOffset = GXInitZOffsetConst;
+    gx->zScale = 16777216.0f;
+    gx->zOffset = 0.0f;
     gx->dirtyState = 0;
     gx->dirtyVAT = 0;
 
@@ -264,4 +370,172 @@ GXFifoObj* GXInit(void* base, u32 size)
     __GXSetTmemConfig(2);
     __GXInitGX();
     return fifoObj;
+}
+
+void __GXInitGX(void)
+{
+    GXRenderModeObj* rmode;
+    GXTexObj texObj;
+    f32 identity_mtx[3][4];
+    u8* tbl = lbl_804D3340;
+    GXColor clear = {64, 64, 64, 255};
+    GXColor black = {0, 0, 0, 0};
+    GXColor white = {255, 255, 255, 255};
+    u32 i;
+
+    switch (VIGetTvFormat()) {
+    case 0:
+        rmode = (GXRenderModeObj*)lbl_804D35E8;
+        break;
+    case 1:
+        rmode = (GXRenderModeObj*)lbl_804D369C;
+        break;
+    case 5:
+        rmode = (GXRenderModeObj*)lbl_804D36F0;
+        break;
+    case 2:
+        rmode = (GXRenderModeObj*)lbl_804D3648;
+        break;
+    default:
+        rmode = (GXRenderModeObj*)lbl_804D35E8;
+        break;
+    }
+    GXSetCopyClear(clear, 0xFFFFFF);
+    GXSetTexCoordGen2(0, 1, 4, 60, 0, 125);
+    GXSetTexCoordGen2(1, 1, 5, 60, 0, 125);
+    GXSetTexCoordGen2(2, 1, 6, 60, 0, 125);
+    GXSetTexCoordGen2(3, 1, 7, 60, 0, 125);
+    GXSetTexCoordGen2(4, 1, 8, 60, 0, 125);
+    GXSetTexCoordGen2(5, 1, 9, 60, 0, 125);
+    GXSetTexCoordGen2(6, 1, 10, 60, 0, 125);
+    GXSetTexCoordGen2(7, 1, 11, 60, 0, 125);
+    GXSetNumTexGens(1);
+    GXClearVtxDesc();
+    GXInvalidateVtxCache();
+    for (i = 9; i <= 24; i++) {
+        GXSetArray(i, gx, 0);
+    }
+    for (i = 0; i < 8; i++) {
+        GXSetVtxAttrFmtv(i, tbl + 0x80);
+    }
+    GXSetLineWidth(6, 0);
+    GXSetPointSize(6, 0);
+    GXEnableTexOffsets(0, 0, 0);
+    GXEnableTexOffsets(1, 0, 0);
+    GXEnableTexOffsets(2, 0, 0);
+    GXEnableTexOffsets(3, 0, 0);
+    GXEnableTexOffsets(4, 0, 0);
+    GXEnableTexOffsets(5, 0, 0);
+    GXEnableTexOffsets(6, 0, 0);
+    GXEnableTexOffsets(7, 0, 0);
+    identity_mtx[0][0] = 1.0f;
+    identity_mtx[0][1] = 0.0f;
+    identity_mtx[0][2] = 0.0f;
+    identity_mtx[0][3] = 0.0f;
+    identity_mtx[1][0] = 0.0f;
+    identity_mtx[1][1] = 1.0f;
+    identity_mtx[1][2] = 0.0f;
+    identity_mtx[1][3] = 0.0f;
+    identity_mtx[2][0] = 0.0f;
+    identity_mtx[2][1] = 0.0f;
+    identity_mtx[2][2] = 1.0f;
+    identity_mtx[2][3] = 0.0f;
+    GXLoadPosMtxImm(identity_mtx, 0);
+    GXLoadNrmMtxImm(identity_mtx, 0);
+    GXSetCurrentMtx(0);
+    GXLoadTexMtxImm(identity_mtx, 60, 0);
+    GXLoadTexMtxImm(identity_mtx, 125, 0);
+    GXSetViewport(0.0f, 0.0f, rmode->fbWidth, rmode->xfbHeight, 0.0f, 1.0f);
+    GXSetProjectionv((f32*)(tbl + 0x150));
+    GXSetCoPlanar(0);
+    GXSetCullMode(2);
+    GXSetClipMode(0);
+    GXSetScissor(0, 0, rmode->fbWidth, rmode->efbHeight);
+    GXSetScissorBoxOffset(0, 0);
+    GXSetNumChans(0);
+    GXSetChanCtrl(4, 0, 0, 1, 0, 0, 2);
+    GXSetChanAmbColor(4, black);
+    GXSetChanMatColor(4, white);
+    GXSetChanCtrl(5, 0, 0, 1, 0, 0, 2);
+    GXSetChanAmbColor(5, black);
+    GXSetChanMatColor(5, white);
+    GXInvalidateTexAll();
+    GXSetTexRegionCallback(__GXDefaultTexRegionCallback);
+    GXSetTlutRegionCallback(__GXDefaultTlutRegionCallback);
+    GXInitTexObj(&texObj, tbl + 0x60, 4, 4, 3, 0, 0, 0);
+    GXLoadTexObj(&texObj, 0);
+    GXLoadTexObj(&texObj, 1);
+    GXLoadTexObj(&texObj, 2);
+    GXLoadTexObj(&texObj, 3);
+    GXLoadTexObj(&texObj, 4);
+    GXLoadTexObj(&texObj, 5);
+    GXLoadTexObj(&texObj, 6);
+    GXLoadTexObj(&texObj, 7);
+    GXSetTevOrder(0, 0, 0, 4);
+    GXSetTevOrder(1, 1, 1, 4);
+    GXSetTevOrder(2, 2, 2, 4);
+    GXSetTevOrder(3, 3, 3, 4);
+    GXSetTevOrder(4, 4, 4, 4);
+    GXSetTevOrder(5, 5, 5, 4);
+    GXSetTevOrder(6, 6, 6, 4);
+    GXSetTevOrder(7, 7, 7, 4);
+    GXSetTevOrder(8, 255, 255, 255);
+    GXSetTevOrder(9, 255, 255, 255);
+    GXSetTevOrder(10, 255, 255, 255);
+    GXSetTevOrder(11, 255, 255, 255);
+    GXSetTevOrder(12, 255, 255, 255);
+    GXSetTevOrder(13, 255, 255, 255);
+    GXSetTevOrder(14, 255, 255, 255);
+    GXSetTevOrder(15, 255, 255, 255);
+    GXSetNumTevStages(1);
+    GXSetTevOp(0, 3);
+    GXSetAlphaCompare(7, 0, 0, 7, 0);
+    GXSetZTexture(0, 17, 0);
+    for (i = 0; i < 16; i++) {
+        GXSetTevKColorSel(i, 6);
+        GXSetTevKAlphaSel(i, 0);
+        GXSetTevSwapMode(i, 0, 0);
+    }
+    GXSetTevSwapModeTable(0, 0, 1, 2, 3);
+    GXSetTevSwapModeTable(1, 0, 0, 0, 3);
+    GXSetTevSwapModeTable(2, 1, 1, 1, 3);
+    GXSetTevSwapModeTable(3, 2, 2, 2, 3);
+    for (i = 0; i < 16; i++) {
+        GXSetTevDirect(i);
+    }
+    GXSetNumIndStages(0);
+    GXSetIndTexCoordScale(0, 0, 0);
+    GXSetIndTexCoordScale(1, 0, 0);
+    GXSetIndTexCoordScale(2, 0, 0);
+    GXSetIndTexCoordScale(3, 0, 0);
+    GXSetFog(0, 0.0f, 1.0f, 0.1f, 1.0f, black);
+    GXSetFogRangeAdj(0, 0, 0);
+    GXSetBlendMode(0, 4, 5, 0);
+    GXSetColorUpdate(1);
+    GXSetAlphaUpdate(1);
+    GXSetZMode(1, 3, 1);
+    GXSetZCompLoc(1);
+    GXSetDither(1);
+    GXSetDstAlpha(0, 0);
+    GXSetPixelFmt(0, 0);
+    GXSetFieldMask(1, 1);
+    GXSetFieldMode(rmode->field_rendering, (rmode->viHeight == 2 * rmode->xfbHeight) ? 1 : 0);
+    GXSetDispCopySrc(0, 0, rmode->fbWidth, rmode->efbHeight);
+    GXSetDispCopyDst(rmode->fbWidth, rmode->efbHeight);
+    GXSetDispCopyYScale((f32)rmode->xfbHeight / (f32)rmode->efbHeight);
+    GXSetCopyClamp(3);
+    GXSetCopyFilter(rmode->aa, rmode->sample_pattern, 1, rmode->vfilter);
+    GXSetDispCopyGamma(0);
+    GXSetDispCopyFrame2Field(0);
+    GXClearBoundingBox();
+    GXPokeColorUpdate(1);
+    GXPokeAlphaUpdate(1);
+    GXPokeDither(0);
+    GXPokeBlendMode(0, 0, 1, 15);
+    GXPokeAlphaMode(7, 0);
+    GXPokeAlphaRead(1);
+    GXPokeDstAlpha(0, 0);
+    GXPokeZMode(1, 7, 1);
+    GXSetGPMetric(35, 22);
+    GXClearGPMetric();
 }
