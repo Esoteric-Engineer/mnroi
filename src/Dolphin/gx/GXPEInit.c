@@ -10,7 +10,7 @@ extern volatile u16* __peReg;
 extern char lbl_8066F49C[8];
 
 extern void lbl_8017DBD4(int interrupt, void* handler);
-extern void fn_8017DFD8(u32 mask);
+extern void __OSUnmaskInterrupts(u32 mask);
 extern void fn_8017FD64(void* queue);
 extern void GXTokenInterruptHandler(int interrupt, void* context);
 extern void GXFinishInterruptHandler(int interrupt, void* context);
@@ -22,8 +22,8 @@ void __GXPEInit(void)
     lbl_8017DBD4(0x12, GXTokenInterruptHandler);
     lbl_8017DBD4(0x13, GXFinishInterruptHandler);
     fn_8017FD64(lbl_8066F49C);
-    fn_8017DFD8(0x2000);
-    fn_8017DFD8(0x1000);
+    __OSUnmaskInterrupts(0x2000);
+    __OSUnmaskInterrupts(0x1000);
     reg = __peReg[5];
     SET_REG_FIELD(reg, 1, 2, 1);
     SET_REG_FIELD(reg, 1, 3, 1);
