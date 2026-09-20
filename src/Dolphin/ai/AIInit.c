@@ -17,7 +17,7 @@ extern u64 lbl_8066F438;
 extern u64 lbl_8066F440;
 
 extern void OSRegisterVersion(const char* version);
-extern void lbl_8017DBD4(u32 interrupt, void* handler);
+extern void __OSSetInterruptHandler(u32 interrupt, void* handler);
 extern void __OSUnmaskInterrupts(u32 mask);
 extern void __AI_set_stream_sample_rate(u32 rate);
 extern void AISetDSPSampleRate(u32 rate);
@@ -59,9 +59,9 @@ void AIInit(u8* stack)
         lbl_8066F408 = 0;
         lbl_8066F40C = 0;
         lbl_8066F410 = stack;
-        lbl_8017DBD4(5, fn_8018BC20);
+        __OSSetInterruptHandler(5, fn_8018BC20);
         __OSUnmaskInterrupts(0x04000000);
-        lbl_8017DBD4(8, __AISHandler);
+        __OSSetInterruptHandler(8, __AISHandler);
         __OSUnmaskInterrupts(0x800000);
         lbl_8066F418 = 1;
     }

@@ -484,6 +484,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSClearContext.c"),
             Object(Matching, "Dolphin/os/fn_8017FB84.c"),
             Object(Matching, "Dolphin/os/OSInterrupt.c"),
+            Object(Matching, "Dolphin/os/__OSSetInterruptHandler.c"),
             Object(Matching, "Dolphin/os/__OSGetInterruptHandler.c"),
             Object(Matching, "Dolphin/os/OSInterruptMask.c"),
             Object(Matching, "Dolphin/os/OSGetSaveRegion.c"),

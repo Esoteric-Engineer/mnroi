@@ -1,6 +1,6 @@
 typedef unsigned long u32;
 
-extern void lbl_8017DBD4(int interrupt, void (*handler)(void));
+extern void __OSSetInterruptHandler(int interrupt, void (*handler)(void));
 extern u32 __OSUnmaskInterrupts(u32 mask);
 extern u32 fn_8017FD74(void);
 extern void fn_80191810(void);
@@ -12,7 +12,7 @@ extern u32 lbl_8066F480; // GXOverflowSuspendInProgress
 
 void __GXFifoInit(void)
 {
-    lbl_8017DBD4(0x11, fn_80191810);
+    __OSSetInterruptHandler(0x11, fn_80191810);
     __OSUnmaskInterrupts(0x4000);
     lbl_8066F478 = fn_8017FD74();
     lbl_8066F480 = 0;
