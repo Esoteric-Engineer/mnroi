@@ -486,6 +486,9 @@ Dolphin/gx/__GXSetMatrixIndex.c:
 Dolphin/gx/GXInitFifoBase.c:
 	.text       start:0x80191944 end:0x801919B0
 
+Dolphin/gx/GXInitFifoLimits.c:
+	.text       start:0x80191A20 end:0x80191A2C
+
 Dolphin/gx/__GXFifoInit.c:
 	.text       start:0x80191E34 end:0x80191E80
 
