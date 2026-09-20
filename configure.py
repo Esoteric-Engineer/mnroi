@@ -498,6 +498,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/fn_8017FD80.c"),
             Object(Matching, "Dolphin/os/OSThread.c"),
             Object(Matching, "Dolphin/os/OSYieldThread.c"),
+            Object(NonMatching, "Dolphin/os/OSCreateThread.c"),
             Object(Matching, "Dolphin/os/OSTime.c"),
         ],
     ),
