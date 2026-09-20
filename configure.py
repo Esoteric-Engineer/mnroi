@@ -473,6 +473,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/fn_80169134.c"),
             Object(Matching, "Dolphin/os/fn_80169150.c"),
             Object(Matching, "Dolphin/os/__div2i.c"),
+            Object(Matching, "Dolphin/os/__mod2i.c"),
             Object(Matching, "Dolphin/os/__OSPSInit.c"),
             Object(Matching, "Dolphin/os/__OSGetDIConfig.c"),
             Object(Matching, "Dolphin/os/OSRegisterVersion.c"),

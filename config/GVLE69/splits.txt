@@ -18,6 +18,9 @@ Dolphin/os/fn_80169150.c:
 Dolphin/os/__div2i.c:
 	.text       start:0x8016B5A0 end:0x8016B5A4
 
+Dolphin/os/__mod2i.c:
+	.text       start:0x8016B5A8 end:0x8016B5AC
+
 Runtime.PPCEABI.H/fabsf.c:
 	.text       start:0x8016DD5C end:0x8016DD80
 
