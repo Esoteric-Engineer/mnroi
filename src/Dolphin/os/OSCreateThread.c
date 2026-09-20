@@ -73,6 +73,7 @@ int fn_8018037C(OSThread* thread, void* (*func)(void*), void* param, void* stack
     int enabled;
     u32 sp;
     int i;
+    u64 fill = (u64)-1;
 
     if (priority < 0 || priority > 31) {
         return 0;
