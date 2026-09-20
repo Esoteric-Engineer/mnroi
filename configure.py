@@ -465,6 +465,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXSetTexCopyDst.c"),
             Object(Matching, "Dolphin/gx/GXSetDispCopyFrame2Field.c"),
             Object(Matching, "Dolphin/gx/GXSetCopyClamp.c"),
+            Object(Matching, "Dolphin/gx/GXSetCopyClear.c"),
             Object(Matching, "Dolphin/gx/GXSetDispCopyGamma.c"),
             Object(Matching, "Dolphin/gx/GXCopyDisp.c"),
             Object(Matching, "Dolphin/gx/GXCopyTex.c"),
