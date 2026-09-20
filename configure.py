@@ -479,6 +479,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/fn_8017B444.c"),
             Object(Matching, "Dolphin/os/OSSetAlarm.c"),
             Object(Matching, "Dolphin/os/OSSetPeriodicAlarm.c"),
+            Object(Matching, "Dolphin/os/OSCancelAlarm.c"),
             Object(Matching, "Dolphin/os/OSArena.c"),
             Object(Matching, "Dolphin/os/OSCache.c"),
             Object(Matching, "Dolphin/os/OSClearContext.c"),

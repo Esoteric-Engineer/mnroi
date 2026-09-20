@@ -145,6 +145,9 @@ Dolphin/os/OSSetAlarm.c:
 Dolphin/os/OSSetPeriodicAlarm.c:
 	.text       start:0x8017B70C end:0x8017B788
 
+Dolphin/os/OSCancelAlarm.c:
+	.text       start:0x8017B788 end:0x8017B8A4
+
 Dolphin/os/OSArena.c:
 	.text       start:0x8017BBC4 end:0x8017BC10
 
