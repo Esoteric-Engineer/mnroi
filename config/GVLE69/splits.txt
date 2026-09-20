@@ -368,6 +368,12 @@ Dolphin/gx/GXInitLightColor.c:
 Dolphin/gx/GXLoadLightObjImm.c:
 	.text       start:0x8018D8D4 end:0x8018D950
 
+Dolphin/gx/GXSetChanAmbColor.c:
+	.text       start:0x8018D950 end:0x8018DA38
+
+Dolphin/gx/GXSetChanMatColor.c:
+	.text       start:0x8018DA38 end:0x8018DB20
+
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
 	.text       start:0x8018E29C end:0x8018E2B8
