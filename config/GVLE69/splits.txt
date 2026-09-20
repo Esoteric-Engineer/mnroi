@@ -494,3 +494,6 @@ Dolphin/gx/GXSetDispCopyGamma.c:
 
 Dolphin/gx/GXCopyDisp.c:
 	.text       start:0x80193100 end:0x80193268
+
+Dolphin/gx/GXCopyTex.c:
+	.text       start:0x80193268 end:0x801933F4
