@@ -29,6 +29,16 @@ Smaller findings:
 
 - **Float constants in an FP-heavy function must be real literals, not `extern const f32`:** an extern loads into a scratch and copies out twice (`lfs f0`; `fmr f3,f0`; `fmr f31,f0`); a literal loads straight into the first destination (`lfs f3`; `fmr f31,f3`). So claim the unit's `.sdata2` literal range in `splits.txt`, plus `#pragma force_active on` (below). MWCC orders the pool by pre-scheduling code order, in which a loop body precedes its condition. `GXSetFog` 89.4% -> 97.4%.
 
+- **Two functions sharing one `.sdata2` pool are one translation unit:** if a split-off function fails to bake with `Symbol '@NN' is in .sdata2, but unit ... has no .sdata2 split`, its literals (float constants, the int-to-float magic double, const-initialised `GXColor` locals) are pooled with a neighbour's. Merge the two into one unit and claim the whole pool. `__GXInitGX` had to join `GXInit`, and even the `__GXData` pointer lives in that pool (defined as a `const` pointer to its `.bss` object).
+
+- **Hoist a shared table base by declaring its pointer local first:** `u8* tbl = lbl_XXXX;` as the *first* local put the `lis`/`addi` in r31 before the first call, and reused it for several `tbl + off` arguments (`__GXInitGX` 99.95% -> 100%). Declaring it in any later slot gave a different register assignment.
+
+- **Stack slot order follows declaration order in reverse for aggregates:** the earlier-declared local got the higher offset. In `__GXInitGX`, declaring `texObj` before `identity_mtx` put the matrix at the lower slot, as the original has it.
+
+- **A `u8` parameter on the callee adds a `clrlwi` after a ternary argument:** if the original passes the `li 1`/`li 0` result straight through, prototype the parameter as `u32` (`GXSetFieldMode`'s second argument).
+
+- **Decode a jump table rather than trusting a reference decomp's case list:** this game's `__GXGetTexTileShift` uses `0x2B`/`0x2C` where ac-decomp has `0x24`/`0x25`.
+
 - **A `switch` whose arms each assign to `*ptr` and `return` gets the store and `blr` tail-duplicated into every arm:** assign a local in the arms and store once after the switch, and the shared `b tail` comes back. `GXGetVtxAttrFmt` 97.9% -> 100%.
 
 - **Dolphin SDK register writes use the CodeWarrior `__rlwimi` intrinsic, not plain C:**
