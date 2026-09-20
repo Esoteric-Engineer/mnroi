@@ -13,8 +13,8 @@ extern volatile u16* __peReg;
                           (32 - (shift) - (size)), (31 - (shift)))
 extern GXDrawSyncCallback lbl_8066F490;
 
-extern void lbl_8017C728(OSContext* ctx);
-extern void fn_8017C530(OSContext* ctx);
+extern void OSClearContext(OSContext* ctx);
+extern void OSSetCurrentContext(OSContext* ctx);
 
 void GXTokenInterruptHandler(int interrupt, OSContext* context)
 {
@@ -24,11 +24,11 @@ void GXTokenInterruptHandler(int interrupt, OSContext* context)
 
     token = __peReg[7];
     if (lbl_8066F490 != 0) {
-        lbl_8017C728(&exceptionContext);
-        fn_8017C530(&exceptionContext);
+        OSClearContext(&exceptionContext);
+        OSSetCurrentContext(&exceptionContext);
         lbl_8066F490(token);
-        lbl_8017C728(&exceptionContext);
-        fn_8017C530(context);
+        OSClearContext(&exceptionContext);
+        OSSetCurrentContext(context);
     }
     reg = __peReg[5];
     SET_REG_FIELD(reg, 1, 2, 1);

@@ -17,8 +17,8 @@ extern GXDrawDoneCallback lbl_8066F494;
 extern u8 lbl_8066F498;
 extern char lbl_8066F49C[8];
 
-extern void lbl_8017C728(OSContext* ctx);
-extern void fn_8017C530(OSContext* ctx);
+extern void OSClearContext(OSContext* ctx);
+extern void OSSetCurrentContext(OSContext* ctx);
 extern void fn_80180CE8(void* queue);
 
 void GXFinishInterruptHandler(int interrupt, OSContext* context)
@@ -31,11 +31,11 @@ void GXFinishInterruptHandler(int interrupt, OSContext* context)
     __peReg[5] = reg;
     lbl_8066F498 = 1;
     if (lbl_8066F494 != 0) {
-        lbl_8017C728(&exceptionContext);
-        fn_8017C530(&exceptionContext);
+        OSClearContext(&exceptionContext);
+        OSSetCurrentContext(&exceptionContext);
         lbl_8066F494();
-        lbl_8017C728(&exceptionContext);
-        fn_8017C530(context);
+        OSClearContext(&exceptionContext);
+        OSSetCurrentContext(context);
     }
     fn_80180CE8(lbl_8066F49C);
 }

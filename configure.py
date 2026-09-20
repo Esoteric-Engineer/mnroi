@@ -475,6 +475,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/__OSPSInit.c"),
             Object(Matching, "Dolphin/os/__OSGetDIConfig.c"),
             Object(Matching, "Dolphin/os/OSRegisterVersion.c"),
+            Object(Matching, "Dolphin/os/OSInitAlarm.c"),
             Object(Matching, "Dolphin/os/fn_8017B444.c"),
             Object(Matching, "Dolphin/os/OSCache.c"),
             Object(Matching, "Dolphin/os/fn_8017FB84.c"),

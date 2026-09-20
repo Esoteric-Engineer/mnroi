@@ -133,6 +133,9 @@ Dolphin/os/__OSGetDIConfig.c:
 Dolphin/os/OSRegisterVersion.c:
 	.text       start:0x8017B3C0 end:0x8017B3EC
 
+Dolphin/os/OSInitAlarm.c:
+	.text       start:0x8017B3EC end:0x8017B444
+
 Dolphin/os/fn_8017B444.c:
 	.text       start:0x8017B444 end:0x8017B454
 

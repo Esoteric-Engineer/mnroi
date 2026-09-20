@@ -8,8 +8,8 @@ extern void (*lbl_8066F40C)(void);
 extern void* lbl_8066F410;
 extern int lbl_8066F41C;
 
-extern void lbl_8017C728(void* context);
-extern void fn_8017C530(void* context);
+extern void OSClearContext(void* context);
+extern void OSSetCurrentContext(void* context);
 extern void __AICallbackStackSwitch(void (*cb)(void));
 
 void __AIDHandler(u32 interrupt, void* context)
@@ -20,8 +20,8 @@ void __AIDHandler(u32 interrupt, void* context)
     tmp = __DSPRegs[5];
     tmp = (tmp & ~0xA0) | 8;
     __DSPRegs[5] = tmp;
-    lbl_8017C728(exceptionContext);
-    fn_8017C530(exceptionContext);
+    OSClearContext(exceptionContext);
+    OSSetCurrentContext(exceptionContext);
     if (lbl_8066F40C) {
         if (lbl_8066F41C == 0) {
             lbl_8066F41C = 1;
@@ -33,6 +33,6 @@ void __AIDHandler(u32 interrupt, void* context)
             lbl_8066F41C = 0;
         }
     }
-    lbl_8017C728(exceptionContext);
-    fn_8017C530(context);
+    OSClearContext(exceptionContext);
+    OSSetCurrentContext(context);
 }
