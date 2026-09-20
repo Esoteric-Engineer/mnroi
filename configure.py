@@ -477,6 +477,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSRegisterVersion.c"),
             Object(Matching, "Dolphin/os/OSInitAlarm.c"),
             Object(Matching, "Dolphin/os/fn_8017B444.c"),
+            Object(Matching, "Dolphin/os/InsertAlarm.c"),
             Object(Matching, "Dolphin/os/OSSetAlarm.c"),
             Object(Matching, "Dolphin/os/OSSetPeriodicAlarm.c"),
             Object(Matching, "Dolphin/os/OSCancelAlarm.c"),
