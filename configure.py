@@ -358,6 +358,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXInitLightAttn.c"),
             Object(Matching, "Dolphin/gx/GXInitLightPos.c"),
             Object(Matching, "Dolphin/gx/GXInitLightDir.c"),
+            Object(Matching, "Dolphin/gx/GXInitLightColor.c"),
         ],
     ),
     DolphinLib(
