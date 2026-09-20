@@ -461,6 +461,7 @@ config.libs = [
         "dvd",
         [
             Object(Matching, "Dolphin/dvd/dvdfs.c"),
+            Object(Matching, "Dolphin/dvd/DVDSetAutoInvalidation.c"),
         ],
     ),
     DolphinLib(
