@@ -10,7 +10,7 @@ extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern unsigned int Type[4];
 extern long long __OSGetSystemTime(void);
-extern void fn_8017B6A4(void); // likely OSSetAlarm; unconfirmed, not yet decompiled
+extern void OSSetAlarm(void);
 extern unsigned int VIGetTvFormat(void); // dtk auto-detected identity for fn_8018992C
 extern void OSReport(const char* msg, ...); // dtk auto-detected identity for fn_8017CB7C
 extern unsigned int SamplingRate; // unclaimed .sbss object, dtk auto-detected the real name
@@ -457,7 +457,7 @@ L801826E0:
 }
 
 // Public entry point: rejects if a transfer is already pending for this channel or Si is mid-transfer.
-// If `delay` puts the fire time in the future, schedules an OSAlarm (via the still-undecompiled fn_8017B6A4, presumed OSSetAlarm) instead of transferring immediately; either way records the request in Packet[chan] for AlarmHandler to pick up later.
+// If `delay` puts the fire time in the future, schedules an OSAlarm (via OSSetAlarm) instead of transferring immediately; either way records the request in Packet[chan] for AlarmHandler to pick up later.
 asm int SITransfer(long chan, void* output, unsigned int outputBytes, void* input,
                     unsigned int inputBytes, void* callback, long long delay)
 {
@@ -527,7 +527,7 @@ L801827A4:
     addi    r6, r30, 0
     addi    r5, r31, 0
     addi    r3, r3, 128
-    bl      fn_8017B6A4
+    bl      OSSetAlarm
     b       L80182820
 L801827EC:
     addi    r3, r24, 0

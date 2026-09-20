@@ -139,6 +139,9 @@ Dolphin/os/OSInitAlarm.c:
 Dolphin/os/fn_8017B444.c:
 	.text       start:0x8017B444 end:0x8017B454
 
+Dolphin/os/OSSetAlarm.c:
+	.text       start:0x8017B6A4 end:0x8017B70C
+
 Dolphin/os/OSArena.c:
 	.text       start:0x8017BBC4 end:0x8017BC10
 
