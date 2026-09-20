@@ -675,6 +675,9 @@ Dolphin/gx/GXSetDispCopyFrame2Field.c:
 Dolphin/gx/GXSetCopyClamp.c:
 	.text       start:0x80192B10 end:0x80192B68
 
+Dolphin/gx/GXSetDispCopyYScale.c:
+	.text       start:0x80192DA0 end:0x80192E6C
+
 Dolphin/gx/GXSetCopyClear.c:
 	.text       start:0x80192E6C end:0x80192EE4
 
