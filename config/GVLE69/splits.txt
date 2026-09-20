@@ -511,6 +511,10 @@ Dolphin/gx/GXSetTevOrder.c:
 Dolphin/gx/GXSetNumTevStages.c:
 	.text       start:0x8018F930 end:0x8018F958
 
+Dolphin/gx/GXSetFog.c:
+	.text       start:0x8018F958 end:0x8018FB6C
+	.sdata2     start:0x80670740 end:0x80670748
+
 Dolphin/gx/GXSetFogRangeAdj.c:
 	.text       start:0x8018FB6C end:0x8018FC90
 
