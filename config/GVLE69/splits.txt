@@ -417,6 +417,9 @@ Dolphin/gx/GXSetTlutRegionCallback.c:
 Dolphin/gx/GXSetSUTexRegs.c:
 	.text       start:0x8018E80C end:0x8018EA28
 
+Dolphin/gx/__GXSetTmemConfig.c:
+	.text       start:0x8018EA28 end:0x8018ED7C
+
 Dolphin/gx/GXSetTevIndirect.c:
 	.text       start:0x8018ED7C end:0x8018EDE8
 
