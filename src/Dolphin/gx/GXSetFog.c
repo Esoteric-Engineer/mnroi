@@ -1,3 +1,7 @@
+// The unit owns its .sdata2 literal pool (see splits.txt).
+// dtk's bake-sda rewrites every .sdata2 access into a fixed r13 offset and drops the relocation, which leaves the pool unreferenced and lets mwld dead-strip it. force_active keeps it linked.
+#pragma force_active on
+
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
@@ -22,14 +26,6 @@ typedef struct {
 
 extern __GXDataStruct* const __GXData;
 
-extern const f32 lbl_80670710; // 0.0f
-extern const f32 lbl_80670714; // 1.0f
-extern const f32 lbl_80670718; // 0.5f
-extern const double lbl_80670720; // 1.0
-extern const f32 lbl_80670728; // 2.0f
-extern const double lbl_80670730; // 0.5
-extern const f32 lbl_80670738; // 8.388638e6f
-
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
                           (32 - (shift) - (size)), (31 - (shift)))
@@ -43,8 +39,8 @@ void GXSetFog(u32 type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color
     u32 fog3 = 0;
     f32 A;
     f32 B;
-    f32 C;
     f32 B_mant;
+    f32 C;
     f32 a;
     f32 c;
     u32 B_expn;
@@ -52,22 +48,24 @@ void GXSetFog(u32 type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color
     u32 b_s;
     u32 a_hex;
     u32 c_hex;
+    u32 color_hex;
     u32 ortho = (type >> 3) & 1;
     u32 fmt = type & 7;
 
     if (ortho) {
         if (farz == nearz || endz == startz) {
-            a = lbl_80670710;
-            c = lbl_80670710;
+            a = 0.0f;
+            c = 0.0f;
         } else {
-            f32 tmp = lbl_80670714 / (endz - startz);
+            f32 tmp = 1.0f / (endz - startz);
             a = tmp * (farz - nearz);
             c = tmp * (startz - nearz);
         }
     } else {
         if (farz == nearz || endz == startz) {
-            A = C = lbl_80670710;
-            B = lbl_80670718;
+            A = 0.0f;
+            B = 0.5f;
+            C = 0.0f;
         } else {
             A = (farz * nearz) / ((farz - nearz) * (endz - startz));
             B = farz / (farz - nearz);
@@ -76,17 +74,17 @@ void GXSetFog(u32 type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color
 
         B_mant = B;
         B_expn = 0;
-        while (B_mant > lbl_80670720) {
-            B_mant *= lbl_80670718;
+        while (B_mant > 1.0) {
+            B_mant *= 0.5f;
             B_expn++;
         }
-        while (B_mant > lbl_80670710 && B_mant < lbl_80670730) {
-            B_mant *= lbl_80670728;
+        while (B_mant > 0.0f && B_mant < 0.5) {
+            B_mant *= 2.0f;
             B_expn--;
         }
 
         a = A / (f32)(1 << (B_expn + 1));
-        b_m = lbl_80670738 * B_mant;
+        b_m = 8.388638e6f * B_mant;
         b_s = B_expn + 1;
         c = C;
 
@@ -111,7 +109,8 @@ void GXSetFog(u32 type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color
     SET_REG_FIELD(fog3, 3, 21, fmt);
     SET_REG_FIELD(fog3, 8, 24, 0xF1);
 
-    SET_REG_FIELD(fogclr, 24, 0, *(u32*)&color >> 8);
+    color_hex = *(u32*)&color;
+    SET_REG_FIELD(fogclr, 24, 0, color_hex >> 8);
     SET_REG_FIELD(fogclr, 8, 24, 0xF2);
 
     GXWGFifo.u8 = 0x61;

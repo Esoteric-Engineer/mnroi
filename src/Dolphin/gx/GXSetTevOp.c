@@ -11,10 +11,14 @@ typedef struct {
     u32 teva[16];
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
-// Combined color (10 words) and alpha (10 words) TEV environment tables.
-// The first 5 entries of each are for stage 0, the last 5 for later stages.
+// Four 5-word TEV environment tables laid out back to back, indexed by GXTevMode:
+// - color/stage0 at +0
+// - color/other stages at +20
+// - alpha/stage0 at +40
+// - alpha/other at +60
+// The byte offsets are what the original applies to the base pointer; a 2D array or a struct of arrays makes MWCC share `base + mode * 4` between the two pointers instead.
 extern u32 lbl_804D32A0[];
 
 typedef union {
@@ -27,31 +31,29 @@ typedef union {
 
 void GXSetTevOp(int id, int mode)
 {
-    __GXDataStruct* gx;
-    u32* base = lbl_804D32A0;
     u32* color;
     u32* alpha;
     u32 reg;
+    u8* base = (u8*)lbl_804D32A0;
 
     if (id == 0) {
-        color = &base[mode];
-        alpha = &base[mode + 10];
+        color = (u32*)base + mode;
+        alpha = (u32*)(base + 40) + mode;
     } else {
-        color = &base[mode + 5];
-        alpha = &base[mode + 15];
+        color = (u32*)(base + 20) + mode;
+        alpha = (u32*)(base + 60) + mode;
     }
 
-    gx = __GXData;
-    reg = gx->tevc[id];
+    reg = __GXData->tevc[id];
     reg = (reg & 0xFF000000) | (*color & 0x00FFFFFF);
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
-    gx->tevc[id] = reg;
+    __GXData->tevc[id] = reg;
 
-    reg = gx->teva[id];
+    reg = __GXData->teva[id];
     reg = (reg & 0xFF00000F) | (*alpha & 0x00FFFFF0);
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
-    gx->teva[id] = reg;
-    gx->bpSentNot = 0;
+    __GXData->teva[id] = reg;
+    __GXData->bpSentNot = 0;
 }

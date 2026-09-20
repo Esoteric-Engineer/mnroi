@@ -27,13 +27,11 @@ typedef union {
 void GXSetBlendMode(u32 type, u32 src_factor, u32 dst_factor, u32 op)
 {
     __GXDataStruct* gx = __GXData;
-    u32 a = __cntlzw(3 - type);
-    u32 b = __cntlzw(2 - type);
     u32 reg = gx->cmode0;
 
-    reg = (u32)__rlwimi((int)reg, (int)a, 6, 20, 20);
+    SET_REG_FIELD(reg, 1, 11, type == 3);
     SET_REG_FIELD(reg, 1, 0, type);
-    reg = (u32)__rlwimi((int)reg, (int)b, 28, 30, 30);
+    SET_REG_FIELD(reg, 1, 1, type == 2);
     SET_REG_FIELD(reg, 4, 12, op);
     SET_REG_FIELD(reg, 3, 8, src_factor);
     SET_REG_FIELD(reg, 3, 5, dst_factor);

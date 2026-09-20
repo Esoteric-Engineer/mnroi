@@ -1,3 +1,6 @@
+// GXSetVtxAttrFmt and GXSetVtxAttrFmtv share a translation unit.
+// Their two switch jump tables are adjacent in .data (0x804D2E28 and 0x804D2E6C) with no alignment padding between them, and MWCC always gives .data 8-byte alignment.
+// Splitting them into separate units would land the second table 4 bytes late. See docs/matching_notes.md.
 typedef unsigned char u8;
 typedef unsigned long u32;
 
@@ -96,6 +99,17 @@ static inline void SETVAT(u32* va, u32* vb, u32* vc, GXAttr attr, GXCompCnt cnt,
         SET_REG_FIELD(*vc, 5, 27, shft);
         break;
     }
+}
+
+void GXSetVtxAttrFmt(int vtxfmt, GXAttr attr, GXCompCnt cnt, GXCompType type, u8 frac)
+{
+    u32* va = &__GXData->vatA[vtxfmt];
+    u32* vb = &__GXData->vatB[vtxfmt];
+    u32* vc = &__GXData->vatC[vtxfmt];
+
+    SETVAT(va, vb, vc, attr, cnt, type, frac);
+    __GXData->dirtyState |= 0x10;
+    __GXData->dirtyVAT |= (u8)(1 << (u8)vtxfmt);
 }
 
 void GXSetVtxAttrFmtv(int vtxfmt, const GXVtxAttrFmtList* list)
