@@ -341,6 +341,9 @@ Dolphin/gx/GXSetArray.c:
 Dolphin/gx/GXInvalidateVtxCache.c:
 	.text       start:0x8018D0F4 end:0x8018D104
 
+Dolphin/gx/GXSetTexCoordGen2.c:
+	.text       start:0x8018D104 end:0x8018D384
+
 Dolphin/gx/GXSetNumTexGens.c:
 	.text       start:0x8018D384 end:0x8018D3C0
 
