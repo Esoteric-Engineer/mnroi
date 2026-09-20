@@ -432,6 +432,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXFinishInterruptHandler.c"),
             Object(Matching, "Dolphin/gx/GXPEInit.c"),
             Object(NonMatching, "Dolphin/gx/GXSetDispCopySrc.c"),
+            Object(NonMatching, "Dolphin/gx/GXSetTexCopySrc.c"),
             Object(Matching, "Dolphin/gx/GXSetDispCopyDst.c"),
             Object(NonMatching, "Dolphin/gx/GXSetTexCopyDst.c"),
             Object(Matching, "Dolphin/gx/GXSetDispCopyFrame2Field.c"),
