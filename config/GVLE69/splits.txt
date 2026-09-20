@@ -356,8 +356,11 @@ Dolphin/gx/__GXSetGenMode.c:
 Dolphin/gx/GXInitLightAttn.c:
 	.text       start:0x8018D6E0 end:0x8018D6FC
 
-Dolphin/gx/GXInitLightPos.c:
+Dolphin/gx/GXInitLightAttnK.c:
 	.text       start:0x8018D6FC end:0x8018D70C
+
+Dolphin/gx/GXInitLightPos.c:
+	.text       start:0x8018D89C end:0x8018D8AC
 
 Dolphin/gx/GXInitLightDir.c:
 	.text       start:0x8018D8AC end:0x8018D8C8

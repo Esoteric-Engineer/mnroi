@@ -356,6 +356,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetCoPlanar.c"),
             Object(Matching, "Dolphin/gx/__GXSetGenMode.c"),
             Object(Matching, "Dolphin/gx/GXInitLightAttn.c"),
+            Object(Matching, "Dolphin/gx/GXInitLightAttnK.c"),
             Object(Matching, "Dolphin/gx/GXInitLightPos.c"),
             Object(Matching, "Dolphin/gx/GXInitLightDir.c"),
             Object(Matching, "Dolphin/gx/GXInitLightColor.c"),

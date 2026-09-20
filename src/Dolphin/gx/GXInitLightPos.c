@@ -1,7 +1,7 @@
 typedef float f32;
 
 typedef struct {
-    char pad[0x1C];
+    char pad[0x28];
     f32 lpos[3];
 } GXLightObjInt;
 
