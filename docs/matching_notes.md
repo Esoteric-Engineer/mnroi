@@ -61,6 +61,8 @@ Smaller findings:
 
 - **Original has `clrlwi` separate from a following `slwi` (indexing a table by a `u8` param), where ours emits a merged `clrlslwi`: add `#pragma peephole off`** at the top of the unit. Took `__OSSetExceptionHandler`/`__OSGetExceptionHandler` (`0x8017B234`/`0x8017B250`) from 66-75% to 100%.
 
+- **Redundant `b <next instruction>` branches at every loop head (often two or three in a row), plus a separate `cmplwi`/`blt` where ours folds the compare: `#pragma peephole off`.** In a loop-heavy function this is worth far more than the symptom suggests. It took `GXInit` from 84.7% to 99.2% in one change, restoring ~18 instructions across six loops. The original's peephole-off state comes from an `asm` function earlier in the real translation unit; a `static asm` stub at the top of the file produces byte-identical output to the pragma, so prefer the pragma, which emits no extra function.
+
 - **Align-up arithmetic gets reassociated (`add size, a` first) when written with plain `unsigned long` temps:** use the SDK's shape instead: a `ROUNDUP(x, a)` macro `(((unsigned long)(x) + (a)-1) & ~((a)-1))`, with `unsigned char*` locals for the pointer add (`(u8*)ptr + size`). Took `OSAllocFromArenaLo` (`0x8017BBE4`) from 98% to 100%.
 
 - **Loop tail emits `bne top; b exit` where ours emits `beq exit; b top`:** write the back-edge as `if (x != 0) { continue; } break;` instead of `if (x == 0) { break; }`. Took `OSCancelThread`'s inlined `UpdatePriority` loop from 99.86% to 100%.
@@ -84,6 +86,12 @@ Smaller findings:
   A plain-C `static` local or a fresh string literal can report 100% fuzzy, but the linker places it wherever, so the address computation bakes in the wrong small-data offset and `main.dol` breaks by a byte or two.
 
   The fix is to reference dtk's auto-detected symbol instead. dtk sometimes names these with a compiler-internal disambiguator such as `cmdTypeAndStatus$371`. `$` is not valid in this compiler, so rename it to a plain identifier in `symbols.txt` with `scope:global`, leave the range unclaimed in `splits.txt`, and use a plain `extern`.
+
+- **dtk only preserves a hand-set symbol name if it doesn't look auto-generated:**
+
+  Renaming a compiler literal (`@267 = .sdata2:0x8067078C`) to `lbl_8067078C` is silently reverted on the next build, because `lbl_*`/`fn_*` are dtk's own naming patterns and get regenerated. The rename also never reaches `build/GVLE69/sda_bake.json`, so your `extern` keeps an unbaked `R_PPC_EMB_SDA21` relocation where the original object has a plain `r13` offset. This is visible in `tools/objdiff_mismatches.py` as a `DIFF_REPLACE` on the `lfs`/`lwz`, not as a byte diff.
+
+  Give it a real name instead (`GXInitZScaleConst`). That survives regeneration, lands in the bake list, and the relocation resolves. Same rule as the `cmdTypeAndStatus$371` case above.
 
 - **Prefer referencing an unclaimed symbol over claiming its range:**
 
@@ -149,3 +157,6 @@ Don't re-guess these.
 - `GXLoadLightObjImm` (`0x8018D8D4`, `Dolphin/gx/GXLoadLightObjImm.c`): `NonMatching`, 92.42%. This game's version takes `light` as a bitmask (`cntlzw`, `31 - n`, `& 7`, `<< 4`, `+ 0x600`), not ac-decomp's `GXLightID` switch. The zero/color/`psq_l`/`stw`/`psq_st` run only inlines via a `static inline` helper with an `asm {}` block (a `static asm` function stays a `bl`).
   - Remaining: the original keeps the `cntlzw` chain in r0, the fifo pointer in r4, and the first `stw` of the address is `stwu` (which also sets the pointer). Ours puts the chain in r4/r5 and emits a plain `stw` plus an `addi r5,r7,-0x8000`. Writing `*fifo = ...` through a `volatile u32*` local produces the `stwu` but shifts registers (92.4% either way). No effect: `idx` temp vs inline expression, `fifo` local ordering, `* const __GXData`, declare-at-address `GXWGFifo`.
 - `__GXCleanGPFifo` (`0x80191F5C`, `Dolphin/gx/__GXCleanGPFifo.c`): `NonMatching`, 99.72%. Shape: `gpFifo = GXGetGPFifo(); if (!gpFifo) return;` (the null check comes *before* `GXGetCPUFifo()`, else 91%), `GXInitFifoPtrs` inlined twice (as `static inline` or hand-expanded, same result), 0x80-byte `GXFifoObj` struct copy. Remaining: the original frame is `-0xa8` with the dummy at `0x14(r1)`; ours is `-0x98` with it at `0x8(r1)`. Unused locals are dropped and don't help.
+- `GXInit` (`0x801908D8`, `Dolphin/gx/GXInit.c`): `NonMatching`, 99.47%. Needs `#pragma peephole off`, `extern __GXDataStruct* const __GXData;` (without `const` the pointer is reloaded between every store in a straight-line block, 61%), `EnableWriteGatherPipe` as `static inline`, and a `GXFifoObj* fifoObj = &FifoObj;` local -- without the local the address is re-materialized at all four uses and the frame loses a saved register (96.4%).
+  - Remaining: exactly one instruction. The original materializes the address straight into its saved register (`addi r31,r4,FifoObj@l`); ours routes it through r0 and adds `mr r30,r0`. That swaps r30/r31 for the rest of the function, which accounts for every other diff line.
+  - No effect: initializer vs separate assignment statement, declaration order among the locals, `const`/`register`/`void*`/redundant cast on the local, `FifoObj` declared as `GXFifoObj[1]`/`u8[0x80]`/a file-local `static` definition, assigning the local at four different points in the body, mixing `&FifoObj` and the local across the call sites, and a real `static asm` function in place of the pragma. `#pragma scheduling off` is far worse (57%).

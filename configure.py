@@ -368,7 +368,8 @@ config.libs = [
     DolphinLib(
         "gx",
         [
-            Object(Matching, "Dolphin/gx/GXInit.c"),
+            Object(Matching, "Dolphin/gx/GXInitTlutRegion.c"),
+            Object(NonMatching, "Dolphin/gx/GXInit.c"),
             Object(Matching, "Dolphin/gx/GXAttr.c"),
             Object(Matching, "Dolphin/gx/GXTexture.c"),
             Object(NonMatching, "Dolphin/gx/GXLoadTexObjPreLoaded.c"),

@@ -405,7 +405,7 @@ Dolphin/gx/GXLoadTlut.c:
 Dolphin/gx/GXInitTexCacheRegion.c:
 	.text       start:0x8018E670 end:0x8018E764
 
-Dolphin/gx/GXInit.c:
+Dolphin/gx/GXInitTlutRegion.c:
 	.text       start:0x8018E764 end:0x8018E7E4
 
 Dolphin/gx/GXSetTexRegionCallback.c:
@@ -536,6 +536,9 @@ Dolphin/gx/__GXSetMatrixIndex.c:
 
 Dolphin/gx/__GXInitRevisionBits.c:
 	.text       start:0x80190734 end:0x801908D8
+
+Dolphin/gx/GXInit.c:
+	.text       start:0x801908D8 end:0x80190ED8
 
 Dolphin/gx/GXInitFifoBase.c:
 	.text       start:0x80191944 end:0x801919B0
