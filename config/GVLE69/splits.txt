@@ -142,6 +142,9 @@ Dolphin/os/fn_8017B444.c:
 Dolphin/os/OSCache.c:
 	.text       start:0x8017BEA4 end:0x8017C088
 
+Dolphin/os/OSClearContext.c:
+	.text       start:0x8017C728 end:0x8017C74C
+
 Dolphin/os/OSAlarm.c:
 	.text       start:0x8017D3D8 end:0x8017D3EC
 
