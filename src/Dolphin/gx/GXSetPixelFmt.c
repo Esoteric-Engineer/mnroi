@@ -16,7 +16,7 @@ typedef struct {
     u32 dirtyState;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 extern u32 lbl_804D3318[8];
 
 typedef union {
@@ -36,12 +36,11 @@ void GXSetPixelFmt(int pix_fmt, u32 z_fmt)
     u32 newPeCtrl;
     u32 oldPeCtrl;
     u8 aa;
-    __GXDataStruct* gx = __GXData;
 
     oldPeCtrl = __GXData->peCtrl;
-    SET_REG_FIELD(gx->peCtrl, 3, 0, lbl_804D3318[pix_fmt]);
-    SET_REG_FIELD(gx->peCtrl, 3, 3, z_fmt);
-    newPeCtrl = gx->peCtrl;
+    SET_REG_FIELD(__GXData->peCtrl, 3, 0, lbl_804D3318[pix_fmt]);
+    SET_REG_FIELD(__GXData->peCtrl, 3, 3, z_fmt);
+    newPeCtrl = __GXData->peCtrl;
     if (oldPeCtrl != newPeCtrl) {
         GXWGFifo.u8 = 0x61;
         GXWGFifo.u32 = newPeCtrl;
@@ -49,16 +48,14 @@ void GXSetPixelFmt(int pix_fmt, u32 z_fmt)
             aa = 1;
         else
             aa = 0;
-        gx = __GXData;
-        SET_REG_FIELD(gx->genMode, 1, 9, aa);
-        gx->dirtyState |= 4;
+        SET_REG_FIELD(__GXData->genMode, 1, 9, aa);
+        __GXData->dirtyState |= 4;
     }
     if (lbl_804D3318[pix_fmt] == 4) {
-        gx = __GXData;
-        SET_REG_FIELD(gx->cmode1, 2, 9, (pix_fmt - 4) & 0x3);
-        SET_REG_FIELD(gx->cmode1, 8, 24, 0x42);
+        SET_REG_FIELD(__GXData->cmode1, 2, 9, (pix_fmt - 4) & 0x3);
+        SET_REG_FIELD(__GXData->cmode1, 8, 24, 0x42);
         GXWGFifo.u8 = 0x61;
-        GXWGFifo.u32 = gx->cmode1;
+        GXWGFifo.u32 = __GXData->cmode1;
     }
     __GXData->bpSentNot = 0;
 }

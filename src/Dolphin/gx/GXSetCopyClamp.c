@@ -10,7 +10,7 @@ typedef struct {
     u32 cpTex;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -20,15 +20,13 @@ void GXSetCopyClamp(u32 clamp)
 {
     u8 clmpT;
     u8 clmpB;
-    __GXDataStruct* gx;
 
     clmpT = (clamp & 1) == 1;
     clmpB = (clamp & 2) == 2;
 
-    gx = __GXData;
-    SET_REG_FIELD(gx->cpDisp, 1, 0, clmpT);
-    SET_REG_FIELD(gx->cpDisp, 1, 1, clmpB);
+    SET_REG_FIELD(__GXData->cpDisp, 1, 0, clmpT);
+    SET_REG_FIELD(__GXData->cpDisp, 1, 1, clmpB);
 
-    SET_REG_FIELD(gx->cpTex, 1, 0, clmpT);
-    SET_REG_FIELD(gx->cpTex, 1, 1, clmpB);
+    SET_REG_FIELD(__GXData->cpTex, 1, 0, clmpT);
+    SET_REG_FIELD(__GXData->cpTex, 1, 1, clmpB);
 }

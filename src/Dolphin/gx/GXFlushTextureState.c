@@ -18,13 +18,13 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 void __GXFlushTextureState(void)
 {
-    __GXDataStruct* gx = __GXData;
+    
 
     GXWGFifo.u8 = 0x61;
-    GXWGFifo.u32 = gx->bpMask;
-    gx->bpSentNot = 0;
+    GXWGFifo.u32 = __GXData->bpMask;
+    __GXData->bpSentNot = 0;
 }

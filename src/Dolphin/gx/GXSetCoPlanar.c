@@ -20,7 +20,7 @@ extern __GXDataStruct* __GXData;
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
                           (32 - (shift) - (size)), (31 - (shift)))
 
-void GXSetCoPlanar(u32 enable)
+void GXSetCoPlanar(u8 enable)
 {
     __GXDataStruct* gx = __GXData;
     u32 reg;

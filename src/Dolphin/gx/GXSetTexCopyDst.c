@@ -10,7 +10,7 @@ typedef struct {
     u8 cpTexZ;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 extern void fn_8018DDCC(int fmt, u16 wd, u16 ht, u32* rowTiles, u32* colTiles, u32* cmpTiles);
 
 #define SET_REG_FIELD(reg, size, shift, val)               \

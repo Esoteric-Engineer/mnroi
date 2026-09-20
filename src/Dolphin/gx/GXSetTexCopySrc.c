@@ -9,7 +9,7 @@ typedef struct {
     u32 cpTexSize;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -17,16 +17,13 @@ extern __GXDataStruct* __GXData;
 
 void GXSetTexCopySrc(u16 left, u16 top, u16 wd, u16 ht)
 {
-    u32 h = ht;
-    __GXDataStruct* gx = __GXData;
+    __GXData->cpTexSrc = 0;
+    SET_REG_FIELD(__GXData->cpTexSrc, 10, 0, left);
+    SET_REG_FIELD(__GXData->cpTexSrc, 10, 10, top);
+    SET_REG_FIELD(__GXData->cpTexSrc, 8, 24, 0x49);
 
-    gx->cpTexSrc = 0;
-    SET_REG_FIELD(gx->cpTexSrc, 10, 0, left);
-    SET_REG_FIELD(gx->cpTexSrc, 10, 10, top);
-    SET_REG_FIELD(gx->cpTexSrc, 8, 24, 0x49);
-
-    gx->cpTexSize = 0;
-    SET_REG_FIELD(gx->cpTexSize, 10, 0, wd - 1);
-    SET_REG_FIELD(gx->cpTexSize, 10, 10, h - 1);
-    SET_REG_FIELD(gx->cpTexSize, 8, 24, 0x4A);
+    __GXData->cpTexSize = 0;
+    SET_REG_FIELD(__GXData->cpTexSize, 10, 0, wd - 1);
+    SET_REG_FIELD(__GXData->cpTexSize, 10, 10, ht - 1);
+    SET_REG_FIELD(__GXData->cpTexSize, 8, 24, 0x4A);
 }

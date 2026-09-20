@@ -20,7 +20,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -28,7 +28,6 @@ typedef union {
 
 void GXSetTevColor(u32 id, GXColor color)
 {
-    __GXDataStruct* gx = __GXData;
     u32 regRA;
     u32 regBG;
 
@@ -48,5 +47,5 @@ void GXSetTevColor(u32 id, GXColor color)
     GXWGFifo.u32 = regBG;
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = regBG;
-    gx->bpSentNot = 0;
+    __GXData->bpSentNot = 0;
 }

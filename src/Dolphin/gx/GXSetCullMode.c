@@ -9,7 +9,7 @@ typedef struct {
     u32 dirtyState;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -17,8 +17,9 @@ extern __GXDataStruct* __GXData;
 
 void GXSetCullMode(u32 mode)
 {
-    __GXDataStruct* gx = __GXData;
+    u32 hwMode;
 
-    SET_REG_FIELD(gx->genMode, 2, 14, __rlwimi((mode >> 1) & 1, mode, 1, 30, 30));
-    gx->dirtyState |= 4;
+    hwMode = (u32)__rlwimi((int)((mode >> 1) & 1), (int)mode, 1, 30, 30);
+    SET_REG_FIELD(__GXData->genMode, 2, 14, hwMode);
+    __GXData->dirtyState |= 4;
 }

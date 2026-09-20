@@ -7,7 +7,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 // Real Dolphin SDK global GX state (gx). Only the fields this function touches are declared. The rest is padding to keep their offsets correct.
 typedef struct {
@@ -24,7 +24,6 @@ extern __GXDataStruct* __GXData;
 void GXSetTevIndirect(u32 tev_stage, u32 ind_stage, u32 format, u32 bias_sel, u32 matrix_sel, u32 wrap_s, u32 wrap_t, u8 add_prev, u8 utc_lod, u32 alpha_sel)
 {
     u32 reg;
-    __GXDataStruct* gx = __GXData;
 
     reg = 0;
     SET_REG_FIELD(reg, 2, 0, ind_stage);
@@ -39,5 +38,5 @@ void GXSetTevIndirect(u32 tev_stage, u32 ind_stage, u32 format, u32 bias_sel, u3
     SET_REG_FIELD(reg, 8, 24, tev_stage + 16);
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
-    gx->bpSentNot = 0;
+    __GXData->bpSentNot = 0;
 }

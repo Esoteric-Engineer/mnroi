@@ -7,7 +7,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 // Real Dolphin SDK global GX state (gx). Only the fields this function touches are declared. The rest is padding to keep their offsets correct.
 typedef struct {

@@ -20,7 +20,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -29,7 +29,6 @@ typedef union {
 void GXSetAlphaCompare(u32 comp0, u8 ref0, u32 op, u32 comp1, u8 ref1)
 {
     u32 reg = 0xF3000000;
-    __GXDataStruct* gx = __GXData;
 
     SET_REG_FIELD(reg, 8, 0, ref0);
     SET_REG_FIELD(reg, 8, 8, ref1);
@@ -38,5 +37,5 @@ void GXSetAlphaCompare(u32 comp0, u8 ref0, u32 op, u32 comp1, u8 ref1)
     SET_REG_FIELD(reg, 2, 22, op);
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
-    gx->bpSentNot = 0;
+    __GXData->bpSentNot = 0;
 }

@@ -15,7 +15,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -23,15 +23,13 @@ typedef union {
 
 void GXSetScissorBoxOffset(s32 x_off, s32 y_off)
 {
-    __GXDataStruct* gx = __GXData;
     u32 reg = 0;
-    u32 hx = x_off + 342;
-    u32 hy = (u32)(y_off + 342) >> 1;
 
-    SET_REG_FIELD(reg, 10, 0, hx >> 1);
-    SET_REG_FIELD(reg, 10, 10, hy);
+    SET_REG_FIELD(reg, 10, 0, (u32)(x_off + 342) >> 1);
+    SET_REG_FIELD(reg, 10, 10, (u32)(y_off + 342) >> 1);
     SET_REG_FIELD(reg, 8, 24, 0x59);
+
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
-    gx->bpSentNot = 0;
+    __GXData->bpSentNot = 0;
 }

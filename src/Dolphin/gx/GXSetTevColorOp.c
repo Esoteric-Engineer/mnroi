@@ -11,7 +11,7 @@ typedef struct {
     u32 teva[16];
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
 typedef union {
     volatile u8 u8;
@@ -19,7 +19,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -27,7 +27,6 @@ typedef union {
 
 void GXSetTevColorOp(u32 stage, int op, u32 bias, u32 scale, u32 clamp, u32 out_reg)
 {
-    __GXDataStruct* gx;
     u32 tevc = __GXData->tevc[stage];
 
     SET_REG_FIELD(tevc, 1, 18, op & 1);
@@ -40,9 +39,8 @@ void GXSetTevColorOp(u32 stage, int op, u32 bias, u32 scale, u32 clamp, u32 out_
     }
     SET_REG_FIELD(tevc, 1, 19, clamp & 0xFF);
     SET_REG_FIELD(tevc, 2, 22, out_reg);
-    gx = __GXData;
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = tevc;
-    gx->tevc[stage] = tevc;
-    gx->bpSentNot = 0;
+    __GXData->tevc[stage] = tevc;
+    __GXData->bpSentNot = 0;
 }

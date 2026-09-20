@@ -16,7 +16,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -24,12 +24,11 @@ typedef union {
 
 void GXSetFieldMask(u8 odd_mask, u8 even_mask)
 {
-    __GXDataStruct* gx = __GXData;
     u32 reg = 0;
     SET_REG_FIELD(reg, 1, 0, even_mask);
     SET_REG_FIELD(reg, 1, 1, odd_mask);
     SET_REG_FIELD(reg, 8, 24, 0x44);
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
-    gx->bpSentNot = 0;
+    __GXData->bpSentNot = 0;
 }

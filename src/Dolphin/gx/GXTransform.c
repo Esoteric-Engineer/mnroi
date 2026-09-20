@@ -12,7 +12,7 @@ typedef struct {
     f32 projMtx[6];
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
 typedef union {
     volatile u8 u8;
@@ -38,30 +38,27 @@ static inline void WriteProjPS(const register f32 src[6], register volatile void
 
 void GXSetProjection(f32 mtx[4][4], int type)
 {
-    __GXDataStruct* gx = __GXData;
-    __GXDataStruct* gx2;
     u32 reg;
 
-    gx->projType = type;
-    gx->projMtx[0] = mtx[0][0];
-    gx->projMtx[2] = mtx[1][1];
-    gx->projMtx[4] = mtx[2][2];
-    gx->projMtx[5] = mtx[2][3];
+    __GXData->projType = type;
+    __GXData->projMtx[0] = mtx[0][0];
+    __GXData->projMtx[2] = mtx[1][1];
+    __GXData->projMtx[4] = mtx[2][2];
+    __GXData->projMtx[5] = mtx[2][3];
     if (type == 1) {
-        gx->projMtx[1] = mtx[0][3];
-        gx->projMtx[3] = mtx[1][3];
+        __GXData->projMtx[1] = mtx[0][3];
+        __GXData->projMtx[3] = mtx[1][3];
     } else {
-        gx->projMtx[1] = mtx[0][2];
-        gx->projMtx[3] = mtx[1][2];
+        __GXData->projMtx[1] = mtx[0][2];
+        __GXData->projMtx[3] = mtx[1][2];
     }
 
-    gx2 = __GXData;
     reg = 0x00061020;
     GXWGFifo.u8 = 0x10;
     GXWGFifo.u32 = reg;
-    WriteProjPS(gx2->projMtx, &GXWGFifo);
-    GXWGFifo.u32 = gx2->projType;
-    gx2->bpSentNot = 1;
+    WriteProjPS(__GXData->projMtx, &GXWGFifo);
+    GXWGFifo.u32 = __GXData->projType;
+    __GXData->bpSentNot = 1;
 }
 
 static inline void CopyProjPS(const register f32 src[6], register f32 dst[6])
@@ -81,18 +78,16 @@ extern const f32 lbl_80670770;
 
 void GXSetProjectionv(f32* ptr)
 {
-    __GXDataStruct* gx;
-    u32 type = (ptr[0] == lbl_80670770) ? 0 : 1;
+    u32 type = (lbl_80670770 == ptr[0]) ? 0 : 1;
     u32 reg;
 
-    gx = __GXData;
-    gx->projType = type;
-    CopyProjPS(ptr + 1, gx->projMtx);
+    __GXData->projType = type;
+    CopyProjPS(ptr + 1, __GXData->projMtx);
 
     reg = 0x00061020;
     GXWGFifo.u8 = 0x10;
     GXWGFifo.u32 = reg;
-    WriteProjPS(gx->projMtx, &GXWGFifo);
-    GXWGFifo.u32 = gx->projType;
-    gx->bpSentNot = 1;
+    WriteProjPS(__GXData->projMtx, &GXWGFifo);
+    GXWGFifo.u32 = __GXData->projType;
+    __GXData->bpSentNot = 1;
 }

@@ -9,7 +9,7 @@ typedef struct {
     u32 cpDispSize;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -17,16 +17,13 @@ extern __GXDataStruct* __GXData;
 
 void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht)
 {
-    u32 h = ht;
-    __GXDataStruct* gx = __GXData;
+    __GXData->cpDispSrc = 0;
+    SET_REG_FIELD(__GXData->cpDispSrc, 10, 0, left);
+    SET_REG_FIELD(__GXData->cpDispSrc, 10, 10, top);
+    SET_REG_FIELD(__GXData->cpDispSrc, 8, 24, 0x49);
 
-    gx->cpDispSrc = 0;
-    SET_REG_FIELD(gx->cpDispSrc, 10, 0, left);
-    SET_REG_FIELD(gx->cpDispSrc, 10, 10, top);
-    SET_REG_FIELD(gx->cpDispSrc, 8, 24, 0x49);
-
-    gx->cpDispSize = 0;
-    SET_REG_FIELD(gx->cpDispSize, 10, 0, wd - 1);
-    SET_REG_FIELD(gx->cpDispSize, 10, 10, h - 1);
-    SET_REG_FIELD(gx->cpDispSize, 8, 24, 0x4A);
+    __GXData->cpDispSize = 0;
+    SET_REG_FIELD(__GXData->cpDispSize, 10, 0, wd - 1);
+    SET_REG_FIELD(__GXData->cpDispSize, 10, 10, ht - 1);
+    SET_REG_FIELD(__GXData->cpDispSize, 8, 24, 0x4A);
 }

@@ -13,7 +13,7 @@ typedef struct {
     u32 dirtyState;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -21,15 +21,10 @@ extern __GXDataStruct* __GXData;
 
 void GXClearVtxDesc(void)
 {
-    __GXDataStruct* gx = __GXData;
-    u32 vcdLo;
-
-    gx->vcdLo = 0;
-    vcdLo = gx->vcdLo;
-    SET_REG_FIELD(vcdLo, 2, 9, 1);
-    gx->vcdLo = vcdLo;
-    gx->vcdHi = 0;
-    gx->hasNrms = 0;
-    gx->hasBiNrms = 0;
-    gx->dirtyState |= 8;
+    __GXData->vcdLo = 0;
+    SET_REG_FIELD(__GXData->vcdLo, 2, 9, 1);
+    __GXData->vcdHi = 0;
+    __GXData->hasNrms = 0;
+    __GXData->hasBiNrms = 0;
+    __GXData->dirtyState |= 8;
 }

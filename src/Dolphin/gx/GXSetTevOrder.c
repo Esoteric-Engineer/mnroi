@@ -16,7 +16,7 @@ typedef struct {
     u32 dirtyState;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 extern int c2r[9];
 
 typedef union {
@@ -25,7 +25,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -36,7 +36,6 @@ void GXSetTevOrder(int stage, int coord, int map, int color)
     u32* ptref;
     u32 tmap;
     u32 tcoord;
-    __GXDataStruct* gx;
     ptref = &__GXData->tref[stage / 2];
     __GXData->texmapId[stage] = map;
 
@@ -65,7 +64,6 @@ void GXSetTevOrder(int stage, int coord, int map, int color)
 
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = *ptref;
-    gx = __GXData;
-    gx->bpSentNot = 0;
-    gx->dirtyState |= 1;
+    __GXData->bpSentNot = 0;
+    __GXData->dirtyState |= 1;
 }

@@ -7,18 +7,16 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
-// Real Dolphin SDK global GX state (gx). Only the fields this function touches are declared. The rest is padding to keep their offsets correct.
 typedef struct {
     u8 pad0[0x2];
     u16 bpSentNot;
 } __GXDataStruct;
 
 extern __GXDataStruct* __GXData;
+#define gx __GXData
 
-#pragma peephole off
-#pragma scheduling off
 void GXClearBoundingBox(void)
 {
     u32 reg;
@@ -29,5 +27,5 @@ void GXClearBoundingBox(void)
     reg = 0x560003FF;
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
-    __GXData->bpSentNot = 0;
+    gx->bpSentNot = 0;
 }

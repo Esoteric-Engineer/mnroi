@@ -7,7 +7,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 // Real Dolphin SDK global GX state (gx). Only the fields this function touches are declared. The rest is padding to keep their offsets correct.
 typedef struct {
@@ -17,13 +17,12 @@ typedef struct {
     u32 color[2];
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
 void GXSetChanAmbColor(int chan, u32* color)
 {
-    __GXDataStruct* gx;
-    u32 idx;
     u32 reg;
+    u32 idx;
 
     switch (chan) {
     case 0:
@@ -58,10 +57,9 @@ void GXSetChanAmbColor(int chan, u32* color)
         return;
     }
 
-    gx = __GXData;
     GXWGFifo.u8 = 0x10;
     GXWGFifo.u32 = idx + 0x100A;
     GXWGFifo.u32 = reg;
-    gx->bpSentNot = 1;
-    gx->color[idx] = reg;
+    __GXData->bpSentNot = 1;
+    __GXData->color[idx] = reg;
 }

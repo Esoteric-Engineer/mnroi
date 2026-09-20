@@ -20,7 +20,7 @@ typedef union {
     volatile u32 u32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -28,8 +28,7 @@ typedef union {
 
 void GXSetTevKAlphaSel(int stage, u32 sel)
 {
-    __GXDataStruct* gx = __GXData;
-    u32* Kreg = &gx->tevKsel[stage >> 1];
+    u32* Kreg = &__GXData->tevKsel[stage >> 1];
 
     if (stage & 1) {
         SET_REG_FIELD(*Kreg, 5, 19, sel);
@@ -39,5 +38,5 @@ void GXSetTevKAlphaSel(int stage, u32 sel)
 
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = *Kreg;
-    gx->bpSentNot = 0;
+    __GXData->bpSentNot = 0;
 }
