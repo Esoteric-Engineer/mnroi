@@ -335,6 +335,9 @@ Dolphin/ai/__AI_SRC_INIT.c:
 Dolphin/gx/GXClearVtxDesc.c:
 	.text       start:0x8018C820 end:0x8018C858
 
+Dolphin/gx/GXSetVtxAttrFmtv.c:
+	.text       start:0x8018CAB4 end:0x8018CD34
+
 Dolphin/gx/GXSetArray.c:
 	.text       start:0x8018D0B0 end:0x8018D0F4
 

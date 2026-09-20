@@ -75,6 +75,8 @@ Smaller findings:
 
 - **Early `return 0;` compiles to a bare `blr` where the original branches to the shared exit (`b .L_end`) in a tiny pointer-returning function: `#pragma peephole off`.** Restructuring into a single `r` result variable has no effect. Matched `__GXDefaultTlutRegionCallback` (`0x80190580`).
 
+- **A loop that re-reads a struct field the loop condition already loaded (original has `lwz` in the cond and again in the body) needs enum-typed fields, not `int`:** `int` lets MWCC reuse the cond load (97.5%); `enum` fields on the list struct and inline helper params matched the codegen (`GXSetVtxAttrFmtv`, 99.9%).
+
 - **Redundant `b <next instruction>` no-op branches appear at loop/branch join points, sometimes doubled:** Translate literally rather than collapsing them.
 
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.

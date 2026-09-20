@@ -349,6 +349,7 @@ config.libs = [
             Object(Matching, "Dolphin/ai/__AICallbackStackSwitch.c"),
             Object(Matching, "Dolphin/ai/__AI_SRC_INIT.c"),
             Object(Matching, "Dolphin/gx/GXClearVtxDesc.c"),
+            Object(NonMatching, "Dolphin/gx/GXSetVtxAttrFmtv.c"),
             Object(Matching, "Dolphin/gx/GXSetArray.c"),
             Object(Matching, "Dolphin/gx/GXInvalidateVtxCache.c"),
             Object(NonMatching, "Dolphin/gx/GXSetTexCoordGen2.c"),
