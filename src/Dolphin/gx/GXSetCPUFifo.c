@@ -17,9 +17,9 @@ typedef struct {
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
 extern void fn_8017A838(void);       // __sync
-extern void fn_80191EC8(u8 link);    // __GXFifoLink
-extern void fn_80191EFC(u8 a, u8 b); // __GXWriteFifoIntEnable
-extern void fn_80191F2C(u8 a, u8 b); // __GXWriteFifoIntReset
+extern void __GXFifoLink(u8 link);    // __GXFifoLink
+extern void __GXWriteFifoIntEnable(u8 a, u8 b); // __GXWriteFifoIntEnable
+extern void __GXWriteFifoIntReset(u8 a, u8 b); // __GXWriteFifoIntReset
 
 extern volatile u32* __piReg;
 extern GXFifoObj* lbl_8066F470; // CPUFifo
@@ -44,17 +44,17 @@ void GXSetCPUFifo(GXFifoObj* fifo)
         SET_REG_FIELD(reg, 1, 26, 0);
         __piReg[5] = reg;
         lbl_8066F47C = 1;
-        fn_80191F2C(1, 1);
-        fn_80191EFC(1, 0);
-        fn_80191EC8(1);
+        __GXWriteFifoIntReset(1, 1);
+        __GXWriteFifoIntEnable(1, 0);
+        __GXFifoLink(1);
     } else {
         u32 reg;
 
         if (lbl_8066F47C) {
-            fn_80191EC8(0);
+            __GXFifoLink(0);
             lbl_8066F47C = 0;
         }
-        fn_80191EFC(0, 0);
+        __GXWriteFifoIntEnable(0, 0);
         reg = 0;
         __piReg[3] = (u32)fifo->base & 0x3FFFFFFF;
         __piReg[4] = (u32)fifo->top & 0x3FFFFFFF;

@@ -552,6 +552,15 @@ Dolphin/gx/__GXFifoReadEnable.c:
 Dolphin/gx/__GXFifoReadDisable.c:
 	.text       start:0x80191EA4 end:0x80191EC8
 
+Dolphin/gx/__GXFifoLink.c:
+	.text       start:0x80191EC8 end:0x80191EFC
+
+Dolphin/gx/__GXWriteFifoIntEnable.c:
+	.text       start:0x80191EFC end:0x80191F2C
+
+Dolphin/gx/__GXWriteFifoIntReset.c:
+	.text       start:0x80191F2C end:0x80191F5C
+
 Dolphin/gx/GXSetMisc.c:
 	.text       start:0x8019206C end:0x80192100
 
