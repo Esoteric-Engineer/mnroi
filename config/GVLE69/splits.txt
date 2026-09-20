@@ -497,3 +497,6 @@ Dolphin/gx/GXCopyDisp.c:
 
 Dolphin/gx/GXCopyTex.c:
 	.text       start:0x80193268 end:0x801933F4
+
+Dolphin/gx/GXClearBoundingBox.c:
+	.text       start:0x801933F4 end:0x8019342C
