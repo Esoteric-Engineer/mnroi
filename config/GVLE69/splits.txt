@@ -202,6 +202,9 @@ Dolphin/os/__OSModuleInit.c:
 Dolphin/os/OSMemory.c:
 	.text       start:0x8017E40C end:0x8017E448
 
+Dolphin/os/fn_8017E6E4.c:
+	.text       start:0x8017E6E4 end:0x8017E754
+
 Dolphin/os/OSGetSaveRegion.c:
 	.text       start:0x8017E754 end:0x8017E768
 
