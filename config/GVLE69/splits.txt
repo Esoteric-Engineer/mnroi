@@ -482,3 +482,6 @@ Dolphin/gx/GXSetTexCopyDst.c:
 
 Dolphin/gx/GXSetDispCopyFrame2Field.c:
 	.text       start:0x80192AEC end:0x80192B10
+
+Dolphin/gx/GXSetCopyClamp.c:
+	.text       start:0x80192B10 end:0x80192B68
