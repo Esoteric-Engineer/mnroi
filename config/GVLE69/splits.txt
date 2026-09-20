@@ -157,6 +157,9 @@ Dolphin/os/OSArena.c:
 Dolphin/os/OSCache.c:
 	.text       start:0x8017BEA4 end:0x8017C088
 
+Dolphin/os/OSSetCurrentContext.c:
+	.text       start:0x8017C530 end:0x8017C58C
+
 Dolphin/os/OSClearContext.c:
 	.text       start:0x8017C728 end:0x8017C74C
 
