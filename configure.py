@@ -366,6 +366,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXLoadLightObjImm.c"),
             Object(Matching, "Dolphin/gx/GXSetChanAmbColor.c"),
             Object(Matching, "Dolphin/gx/GXSetChanMatColor.c"),
+            Object(Matching, "Dolphin/gx/GXSetNumChans.c"),
         ],
     ),
     DolphinLib(
