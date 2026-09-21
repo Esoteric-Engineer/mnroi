@@ -980,3 +980,17 @@ int DVDSeekAbsAsyncPrio(DVDCommandBlock* block, u32 offset, void* callback, s32 
     idle = issueCommand(prio, block);
     return idle;
 }
+
+int DVDReadAbsAsyncForBS(DVDCommandBlock* block, void* addr, s32 length, s32 offset, void* callback)
+{
+    int idle;
+
+    block->command = 4;
+    block->addr = addr;
+    block->length = length;
+    block->offset = offset;
+    block->transferredSize = 0;
+    block->callback = callback;
+    idle = issueCommand(2, block);
+    return idle;
+}
