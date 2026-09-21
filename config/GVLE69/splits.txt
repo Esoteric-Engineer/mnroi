@@ -996,3 +996,6 @@ Dolphin/OdemuExi2/DBGHandler.c:
 
 Dolphin/OdemuExi2/DBGReadStatus.c:
 	.text       start:0x801962DC end:0x80196388
+
+Dolphin/OdemuExi2/DBGWrite.c:
+	.text       start:0x80196388 end:0x80196464
