@@ -599,3 +599,10 @@ void stateMotorStopped(void)
     DVDLowWaitCoverClose(cbForStateMotorStopped);
 }
 #pragma dont_inline reset
+
+void cbForStateMotorStopped(u32 intType)
+{
+    __DIRegs[1] = 0;
+    executing->state = 3;
+    stateCoverClosed();
+}
