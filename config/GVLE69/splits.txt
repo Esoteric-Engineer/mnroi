@@ -171,6 +171,12 @@ Dolphin/os/fn_8017A6EC.c:
 Dolphin/os/fn_8017A70C.c:
 	.text       start:0x8017A70C end:0x8017A71C
 
+Dolphin/os/fn_8017A71C.c:
+	.text       start:0x8017A71C end:0x8017A73C
+
+Dolphin/os/fn_8017A73C.c:
+	.text       start:0x8017A73C end:0x8017A75C
+
 Dolphin/os/PPCArch.c:
 	.text       start:0x8017A800 end:0x8017AAAC
 	.sbss       start:0x8066F1D0 end:0x8066F1F0
