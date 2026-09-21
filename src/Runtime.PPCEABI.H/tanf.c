@@ -1,0 +1,45 @@
+extern float lbl_8066C17C;
+extern float fn_8016E6D0(float x, float y, int iy);
+extern int fn_8016E8E4(float x, float* y);
+
+asm float tanf(float x)
+{
+    // clang-format off
+    nofralloc
+    stwu    r1, -0x18(r1)
+    mflr    r0
+    stw     r0, 0x1c(r1)
+    lfs     f2, lbl_8066C17C
+    fmr     f0, f1
+    stfs    f0, 0x10(r1)
+    lwz     r9, 0x10(r1)
+    clrlwi  r9, r9, 1
+    lis     r0, 0x3f49
+    ori     r0, r0, 0xfda
+    cmpw    r9, r0
+    bgt     L_gt
+    li      r3, 1
+    bl      fn_8016E6D0
+    b       L_end
+L_gt:
+    lis     r0, 0x7f7f
+    ori     r0, r0, 0xffff
+    cmpw    r9, r0
+    bgt     L_nan
+    addi    r3, r1, 8
+    bl      fn_8016E8E4
+    clrlslwi r3, r3, 31, 1
+    lfs     f1, 8(r1)
+    lfs     f2, 0xc(r1)
+    subfic  r3, r3, 1
+    bl      fn_8016E6D0
+    b       L_end
+L_nan:
+    fsubs   f1, f1, f1
+L_end:
+    lwz     r0, 0x1c(r1)
+    mtlr    r0
+    addi    r1, r1, 0x18
+    blr
+    // clang-format on
+}
