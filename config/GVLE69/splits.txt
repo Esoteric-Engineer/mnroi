@@ -214,6 +214,9 @@ Dolphin/os/OSCancelAlarm.c:
 Dolphin/os/OSDecrementer.c:
 	.text       start:0x8017B8A4 end:0x8017BB24
 
+Dolphin/os/fn_8017BB24.c:
+	.text       start:0x8017BB24 end:0x8017BBC4
+
 Dolphin/os/OSArena.c:
 	.text       start:0x8017BBC4 end:0x8017BC10
 

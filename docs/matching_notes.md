@@ -115,6 +115,8 @@ Smaller findings:
 
 - **Claiming a jump table forces you to claim the strings before it (`.data` must be contiguous), and a named global array is emitted before string literals:** `char lbl_804D2184[] = "..."` put the string ahead of `"load fst\n"` and shifted `.data` (60 bytes differ, function still 100%). Write the string inline at each use so first-use order applies. `stateBusy` (`0x8018505C`); note the original has a `length == 0` early finish that ac-decomp lacks.
 
+- **Alarm-queue walk with `next` cached (`alarm ? alarm->next : 0` before and at the end of each iteration) plus stray `b <next>` branches:** write `next = alarm ? alarm->next : 0;` ahead of a `while (alarm)` loop and again at the loop tail, with `#pragma peephole off`. A `for` loop with the null check at the head is 58%. Matched `fn_8017BB24` (`0x8017BB24`).
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---
