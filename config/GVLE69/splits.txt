@@ -93,6 +93,9 @@ Runtime.PPCEABI.H/fn_80172CC4.c:
 Runtime.PPCEABI.H/fn_80172D78.c:
 	.text       start:0x80172D78 end:0x80172DA0
 
+Runtime.PPCEABI.H/strtol.c:
+	.text       start:0x80177004 end:0x8017703C
+
 Runtime.PPCEABI.H/tolower.c:
 	.text       start:0x80177368 end:0x80177384
 

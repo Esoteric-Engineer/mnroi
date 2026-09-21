@@ -1,4 +1,4 @@
-extern long fn_80177004(const char* str, char** end, int base);
+extern long strtol(const char* str, char** end, int base);
 
 asm int atoi(const char* str)
 {
@@ -9,7 +9,7 @@ asm int atoi(const char* str)
     stw     r0, 12(r1)
     li      r4, 0
     li      r5, 10
-    bl      fn_80177004
+    bl      strtol
     lwz     r0, 12(r1)
     mtlr    r0
     addi    r1, r1, 8
