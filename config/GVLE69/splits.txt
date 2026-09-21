@@ -69,6 +69,9 @@ Runtime.PPCEABI.H/memset.c:
 Runtime.PPCEABI.H/stricmp.c:
 	.text       start:0x801724AC end:0x80172528
 
+Runtime.PPCEABI.H/strcat.c:
+	.text       start:0x80172528 end:0x801725B8
+
 Runtime.PPCEABI.H/strrchr.c:
 	.text       start:0x80172AB0 end:0x80172AFC
 
