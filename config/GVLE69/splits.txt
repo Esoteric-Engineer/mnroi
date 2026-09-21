@@ -300,7 +300,7 @@ Dolphin/db/db.c:
 	.text       start:0x80183070 end:0x8018315C
 
 Dolphin/dvd/dvdfs.c:
-	.text       start:0x8018315C end:0x80183748
+	.text       start:0x8018315C end:0x8018389C
 
 Dolphin/dvd/DVDSetAutoInvalidation.c:
 	.text       start:0x80185FC8 end:0x80185FD8

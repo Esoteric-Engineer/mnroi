@@ -377,3 +377,27 @@ u32 entryToPath(u32 entry, char* path, u32 maxlen)
 
     return loc;
 }
+
+s32 DVDConvertEntrynumToPath(s32 entrynum, char* path, u32 maxlen)
+{
+    u32 loc;
+
+    loc = entryToPath((u32)entrynum, path, maxlen);
+
+    if (loc == maxlen) {
+        path[maxlen - 1] = '\0';
+        return 0;
+    }
+
+    if (entryIsDir(entrynum)) {
+        if (loc == maxlen - 1) {
+            path[loc] = '\0';
+            return 0;
+        }
+
+        path[loc++] = '/';
+    }
+
+    path[loc] = '\0';
+    return 1;
+}
