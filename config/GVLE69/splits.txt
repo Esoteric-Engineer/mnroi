@@ -303,7 +303,7 @@ Dolphin/dvd/dvdfs.c:
 	.text       start:0x8018315C end:0x80183DC8
 
 Dolphin/dvd/dvd.c:
-	.text       start:0x80183DC8 end:0x80184408
+	.text       start:0x80183DC8 end:0x80184470
 	.data       start:0x804D2178 end:0x804D2184
 
 Dolphin/dvd/DVDSetAutoInvalidation.c:
