@@ -220,6 +220,9 @@ Dolphin/os/CallResetFunctions.c:
 Dolphin/os/OSGetResetCode.c:
 	.text       start:0x8017EBB4 end:0x8017EBEC
 
+Dolphin/os/OSUnlockSram.c:
+	.text       start:0x8017F620 end:0x8017F668
+
 Dolphin/os/__OSSyncSram.c:
 	.text       start:0x8017F668 end:0x8017F678
 
