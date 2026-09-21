@@ -491,6 +491,9 @@ Dolphin/dvd/dvdqueue.c:
 Dolphin/dvd/__DVDPrintFatalMessage.c:
 	.text       start:0x80186A50 end:0x80186A80
 
+Dolphin/dvd/__DVDInitWA.c:
+	.text       start:0x80186CC0 end:0x80186D00
+
 Dolphin/dvd/DVDLowSeek.c:
 	.text       start:0x801874FC end:0x80187590
 
