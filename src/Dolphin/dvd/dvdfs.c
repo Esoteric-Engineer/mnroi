@@ -341,3 +341,39 @@ s32 DVDClose(DVDFileInfo* fileInfo)
     fn_801862A4(&fileInfo->cb);
     return 1;
 }
+
+static u32 myStrncpy(char* dest, char* src, u32 maxlen)
+{
+    u32 i = maxlen;
+
+    while ((i > 0) && (*src != 0)) {
+        *dest++ = *src++;
+        i--;
+    }
+
+    return (maxlen - i);
+}
+
+u32 entryToPath(u32 entry, char* path, u32 maxlen)
+{
+    char* name;
+    u32 loc;
+
+    if (entry == 0) {
+        return 0;
+    }
+
+    name = FstStringStart + (FstStart[entry].isDirAndStringOff & 0xFFFFFF);
+
+    loc = entryToPath(FstStart[entry].parentOrPosition, path, maxlen);
+
+    if (loc == maxlen) {
+        return loc;
+    }
+
+    *(path + loc++) = '/';
+
+    loc += myStrncpy(path + loc, name, maxlen - loc);
+
+    return loc;
+}
