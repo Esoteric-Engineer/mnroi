@@ -71,7 +71,7 @@ extern void DVDLowAudioBufferConfig(u32 enable, u32 size, void* callback);
 extern void fn_80184A74(u32 intType);
 void cbForStateCheckID2a(u32 intType);
 void stateCheckID2a(DVDCommandBlock* block);
-extern void fn_80184990(u32 intType);
+void cbForStateCheckID2(u32 intType);
 void stateCheckID2(DVDCommandBlock* block);
 void stateCheckID3(DVDCommandBlock* block);
 void cbForStateCheckID1(u32 intType);
@@ -453,7 +453,7 @@ void cbForStateCheckID2a(u32 intType)
 
 void stateCheckID2a(DVDCommandBlock* block)
 {
-    DVDLowRead(tmpBuffer, 0x20, 0x420, fn_80184990);
+    DVDLowRead(tmpBuffer, 0x20, 0x420, cbForStateCheckID2);
 }
 
 void cbForStateCheckID1(u32 intType)
@@ -478,5 +478,27 @@ void cbForStateCheckID1(u32 intType)
     if (!CheckCancel(1)) {
         executing->state = 6;
         fn_80184D20();
+    }
+}
+
+void cbForStateCheckID2(u32 intType)
+{
+    if (intType == 16) {
+        executing->state = -1;
+        __DVDStoreErrorCode(0x01234568);
+        DVDReset();
+        cbForStateError(0);
+        return;
+    }
+
+    if (intType & 1) {
+        NumInternalRetry = 0;
+        LastState = stateReadingFST;
+        if (bootInfo->fstLength < tmpBuffer[2]) {
+            fn_8017CBFC(lbl_8066C41C, 0x28A, lbl_804D2184);
+        }
+        DVDLowRead((void*)bootInfo->fstLocation, (tmpBuffer[2] + 0x1F) & ~0x1F, tmpBuffer[1], cbForStateReadingFST);
+    } else {
+        DVDLowRequestError(cbForStateGettingError);
     }
 }
