@@ -130,6 +130,8 @@ Smaller findings:
 
 - **A `static` helper inlined into its caller (`PopWaitingQueuePrio` in `__DVDPopWaitingQueue`, `0x80186668`) gives a frame 8 bytes too big (`-0x18` vs `-0x10`):** its local (`tmp`) stays live across the `OSRestoreInterrupts` call. Delete the helper and write its body inline in the caller's loop (re-calling `OSDisableInterrupts` there, as the original does). 99.875% -> 100%.
 
+- **Inlined `ReadDiscBlocking`-style helper (`u8 block[0x30]`, `DVDReadAbsAsyncPrio` + status loop) with the frame 8 bytes short (`-0x40` vs `-0x48`):** write it as a `static inline` taking `void* addr`, with an extra `void* p = addr;` local and a trailing `(void)p;` (no other locals). Plain body-inline or a `DVDCommandBlock* b` local don't help (99.9% / 87%). Also use `s32` for the sbss cache and `0x800030F4` test (`cmpwi`, not `cmplwi`). Matched `fn_8017D4A4` (`0x8017D4A4`).
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---
