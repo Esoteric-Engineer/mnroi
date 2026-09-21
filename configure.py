@@ -489,6 +489,7 @@ config.libs = [
         "si",
         [
             Object(Matching, "Dolphin/si/SIBusy.c"),
+            Object(Matching, "Dolphin/si/SIIsChanBusy.c"),
             Object(Matching, "Dolphin/si/SIBios.c"),
         ],
     ),

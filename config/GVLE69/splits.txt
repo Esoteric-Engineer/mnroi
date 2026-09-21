@@ -266,6 +266,9 @@ Dolphin/os/OSTime.c:
 Dolphin/si/SIBusy.c:
 	.text       start:0x80181708 end:0x80181728
 
+Dolphin/si/SIIsChanBusy.c:
+	.text       start:0x80181728 end:0x80181764
+
 Dolphin/si/SIBios.c:
 	.text       start:0x801820B0 end:0x80183070
 
