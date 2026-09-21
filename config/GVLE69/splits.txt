@@ -21,6 +21,9 @@ Dolphin/os/__shr2u.c:
 Dolphin/os/__div2i.c:
 	.text       start:0x8016B5A0 end:0x8016B5A4
 
+Dolphin/os/__shl2i.c:
+	.text       start:0x8016B5A4 end:0x8016B5A8
+
 Dolphin/os/__mod2i.c:
 	.text       start:0x8016B5A8 end:0x8016B5AC
 
