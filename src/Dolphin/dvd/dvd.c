@@ -4,7 +4,8 @@ typedef int s32;
 typedef struct DVDCommandBlock DVDCommandBlock;
 struct DVDCommandBlock
 {
-    unsigned char pad[0xC];
+    unsigned char pad[0x8];
+    u32 command;
     s32 state;
     unsigned char pad2[0x18];
     void (*callback)(s32 result, DVDCommandBlock* block);
@@ -30,6 +31,7 @@ extern void* LastState;
 extern char lbl_8066C41C[6];
 extern char lbl_804D2184[];
 extern u32 NumInternalRetry;
+extern u32 lbl_8066F2F0;
 extern DVDCommandBlock* executing;
 extern DVDCommandBlock DummyCommandBlock;
 void stateTimeout(void);
@@ -161,4 +163,34 @@ void stateTimeout(void)
 void stateGettingError(void)
 {
     DVDLowRequestError(cbForStateGettingError);
+}
+
+u32 CategorizeError(u32 error)
+{
+    if (error == 0x20400) {
+        lbl_8066F2F0 = error;
+        return 1;
+    }
+
+    error &= 0x00FFFFFF;
+    if (error == 0x62800 || error == 0x23A00 || error == 0xB5A01) {
+        return 0;
+    }
+    NumInternalRetry += 1;
+    if ((s32)NumInternalRetry == 2) {
+        if (error == lbl_8066F2F0) {
+            lbl_8066F2F0 = error;
+            return 1;
+        }
+        lbl_8066F2F0 = error;
+        return 2;
+    }
+
+    lbl_8066F2F0 = error;
+
+    if (error == 0x31100 || executing->command == 5) {
+        return 2;
+    }
+
+    return 3;
 }
