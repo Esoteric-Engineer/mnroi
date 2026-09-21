@@ -232,6 +232,12 @@ Dolphin/os/OSGetCurrentContext.c:
 Dolphin/os/OSLoadContext.c:
 	.text       start:0x8017C618 end:0x8017C6F0
 
+Dolphin/os/OSGetStackPointer.c:
+	.text       start:0x8017C6F0 end:0x8017C6F8
+
+Dolphin/os/OSSwitchStack.c:
+	.text       start:0x8017C6F8 end:0x8017C728
+
 Dolphin/os/OSClearContext.c:
 	.text       start:0x8017C728 end:0x8017C74C
 

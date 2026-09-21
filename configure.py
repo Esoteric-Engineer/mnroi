@@ -574,6 +574,8 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSSetCurrentContext.c"),
             Object(Matching, "Dolphin/os/OSGetCurrentContext.c"),
             Object(Matching, "Dolphin/os/OSLoadContext.c"),
+            Object(Matching, "Dolphin/os/OSGetStackPointer.c"),
+            Object(Matching, "Dolphin/os/OSSwitchStack.c"),
             Object(Matching, "Dolphin/os/OSClearContext.c"),
             Object(Matching, "Dolphin/os/OSReport.c"),
             Object(Matching, "Dolphin/os/OSLockSram.c"),
