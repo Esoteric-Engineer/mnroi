@@ -135,6 +135,9 @@ Runtime.PPCEABI.H/fn_80178224.c:
 Runtime.PPCEABI.H/fn_80178318.c:
 	.text       start:0x80178318 end:0x80178374
 
+Runtime.PPCEABI.H/fopen.c:
+	.text       start:0x80178654 end:0x80178684
+
 Runtime.PPCEABI.H/fn_80178D20.c:
 	.text       start:0x80178D20 end:0x80178D48
 

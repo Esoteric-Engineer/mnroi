@@ -331,6 +331,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/memchr.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178224.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178318.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fopen.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178D20.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178D48.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178D98.c"),
