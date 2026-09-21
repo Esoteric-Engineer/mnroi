@@ -235,6 +235,10 @@ Dolphin/os/OSAudioSystem.c:
 Dolphin/os/OSCache.c:
 	.text       start:0x8017BEA4 end:0x8017C088
 
+Dolphin/os/__OSCacheInit.c:
+	.text       start:0x8017C088 end:0x8017C2DC
+	.data       start:0x804D0AF0 end:0x804D0D1C
+
 Dolphin/os/__OSLoadFPUContext.c:
 	.text       start:0x8017C2DC end:0x8017C400
 

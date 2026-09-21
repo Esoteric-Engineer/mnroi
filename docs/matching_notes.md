@@ -124,6 +124,8 @@ Smaller findings:
 
 - **A u64 field split as `u32 pad; u32 lo;` in a struct can change register allocation vs. `*((u32*)&u64f + 1)` casts:** `OSSetErrorHandler` (`0x8017CD28`) sat at 99.1% with only the thread-walk pointer in r7 instead of r6 until `fpscr` was declared as `u32 fpscr_pad; u32 fpscr;` and accessed by name. This game's version also toggles the FPE enable bits (MSR FE0/FE1, FPSCR) across `__OSActiveThreadQueue` (head at `0x800000DC`), unlike ac-decomp's plain table swap.
 
+- **A string blob shared by several units: claim from the first string (8-aligned), define that first string as a global `char X[]`, and use plain literals for the rest.** `__OSCacheInit`/`DMAErrorHandler` (`0x8017C1E8`/`0x8017C088`) share `.data 0x804D0AF0` with the already-matched asm `L2GlobalInvalidate`, whose `>>> L2 INVALIDATE` string sits first. Starting the claim at the 4-mod-8 `0x804D0B1C` shifted `main.dol` by +32 (per-function fuzzy was still ~99%). Starting at `0x804D0AF0` and defining `char L2InvalidateStr[] = "..."` (renamed from `@69`, `scope:global`, `OSCache.c` `extern` updated) matched. Also: inlined `L2Disable`/`L2Init` `sync`s are `asm { sync }` blocks, and `#pragma peephole off` is needed for the non-record `rlwinm`/`cmplwi` pairs.
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---
