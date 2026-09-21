@@ -511,6 +511,7 @@ config.libs = [
             Object(Matching, "Dolphin/exi/UnlockedHandler.c"),
             Object(Matching, "Dolphin/exi/InitializeUART.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBInitInterrupts.c"),
+            Object(Matching, "Dolphin/OdemuExi2/DBInitComm.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBGHandler.c"),
         ],
     ),

@@ -874,5 +874,8 @@ Dolphin/exi/InitializeUART.c:
 Dolphin/OdemuExi2/DBInitInterrupts.c:
 	.text       start:0x80196194 end:0x801961E8
 
+Dolphin/OdemuExi2/DBInitComm.c:
+	.text       start:0x801961E8 end:0x80196260
+
 Dolphin/OdemuExi2/DBGHandler.c:
 	.text       start:0x80196260 end:0x801962DC
