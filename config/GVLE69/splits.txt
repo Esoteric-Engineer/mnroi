@@ -198,6 +198,9 @@ Runtime.PPCEABI.H/lshrdi3.c:
 Runtime.PPCEABI.H/fn_801796FC.c:
 	.text       start:0x801796FC end:0x80179C30
 
+Runtime.PPCEABI.H/__pure_virtual.c:
+	.text       start:0x80179C30 end:0x80179C50
+
 Dolphin/os/fn_8017A5CC.c:
 	.text       start:0x8017A5CC end:0x8017A620
 

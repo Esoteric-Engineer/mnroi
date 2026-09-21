@@ -1,3 +1,4 @@
+extern void terminate(void);
 extern void fn_8017A608(void);
 extern void lbl_801796B4(int);
 extern void* lbl_804D0670;
@@ -10,7 +11,7 @@ asm void fn_8017A5CC(void)
     mflr    r0
     stw     r0, 12(r1)
     bl      fn_8017A608
-L_A5DC:
+    entry terminate
     stwu    r1, -8(r1)
     mflr    r0
     stw     r0, 12(r1)

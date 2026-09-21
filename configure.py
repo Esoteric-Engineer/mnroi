@@ -350,6 +350,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/fn_80179080.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80179138.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_801796FC.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__pure_virtual.c"),
         ],
     },
     DolphinLib(
