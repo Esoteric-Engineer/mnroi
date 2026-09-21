@@ -735,3 +735,6 @@ Dolphin/gx/GXClearGPMetric.c:
 
 Dolphin/exi/EXIGetState.c:
 	.text       start:0x80195440 end:0x80195458
+
+Dolphin/exi/UnlockedHandler.c:
+	.text       start:0x80195458 end:0x80195480

@@ -96,6 +96,8 @@ Smaller findings:
 
 - **A hardware-register read where the original keeps `lis`/`addi 0x3000`/`lwz 0x24(r3)` (base add not folded into the displacement), plus `cmpwi` and a `b` to a shared `blr`: `#pragma peephole off`, and use a signed `int` for the flag.** The declare-at-address `__PIRegs` form is still right; peephole off only stops the displacement folding (`lwz 0x3024`). Matched `OSGetResetCode` (`0x8017EBB4`). This game's version differs from ac-decomp's: it reads a `.bss` reset-info struct (`lbl_8057C550[0]`/`[1] | 0x80000000`) rather than `OS_REBOOT_BOOL`.
 
+- **Tiny wrapper where the original emits `stwu` before `li r4,0`/`addi r5,r1,N` (arg setup after frame setup), and ours hoists `li`/`addi` above `stwu` (74%): `#pragma scheduling off`.** `peephole off` alone only swaps the two arg setups (88%); scheduling off alone is 100%. Matched `UnlockedHandler` (`0x80195458`, `EXIGetID(chan, 0, &id)` wrapper).
+
 - **Early `return 0;` compiles to a bare `blr` where the original branches to the shared exit (`b .L_end`) in a tiny pointer-returning function: `#pragma peephole off`.** Restructuring into a single `r` result variable has no effect. Matched `__GXDefaultTlutRegionCallback` (`0x80190580`).
 
 - **A loop that re-reads a struct field the loop condition already loaded (original has `lwz` in the cond and again in the body) needs enum-typed fields, not `int`:** `int` lets MWCC reuse the cond load (97.5%); `enum` fields on the list struct and inline helper params matched the codegen (`GXSetVtxAttrFmtv`, 99.9%).

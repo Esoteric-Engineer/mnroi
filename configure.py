@@ -496,6 +496,7 @@ config.libs = [
         "exi",
         [
             Object(NonMatching, "Dolphin/exi/EXIGetState.c"),
+            Object(Matching, "Dolphin/exi/UnlockedHandler.c"),
         ],
     ),
     DolphinLib(
