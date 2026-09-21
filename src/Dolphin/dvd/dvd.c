@@ -64,7 +64,6 @@ extern int DVDLowWaitCoverClose(void* callback);
 void stateMotorStopped(void);
 void stateCoverClosed(void);
 extern void cbForUnrecoveredError(u32 intType);
-void cbForStateError(u32 intType);
 extern int FatalErrorFlag;
 extern volatile u32 lbl_8066F2E0;
 extern void (*lbl_8066F2E4)(s32 result, DVDCommandBlock* block);
@@ -80,7 +79,9 @@ extern void DCInvalidateRange(void* addr, u32 nBytes);
 extern void DVDLowAudioBufferConfig(u32 enable, u32 size, void* callback);
 void cbForStateCheckID3(u32 intType);
 extern void stateBusy(DVDCommandBlock* block);
-extern void fn_8018537C(u32 intType);
+void cbForStateBusy(u32 intType);
+extern u32 lbl_804D21F8[3];
+extern u32 lbl_8066C424[1];
 extern void fn_801875BC(void* buf, void* callback);
 extern void fn_801878AC(u32 cmd, void* callback);
 extern void fn_80187814(u32 cmd, u32 length, u32 offset, void* callback);
@@ -683,7 +684,7 @@ void stateBusy(DVDCommandBlock* block)
     case 5:
         __DIRegs[1] = __DIRegs[1];
         block->currTransferSize = 0x20;
-        fn_801875BC(block->addr, fn_8018537C);
+        fn_801875BC(block->addr, cbForStateBusy);
         return;
     case 1:
     case 4:
@@ -699,64 +700,233 @@ void stateBusy(DVDCommandBlock* block)
         }
         __DIRegs[1] = __DIRegs[1];
         block->currTransferSize = (block->length - block->transferredSize > 0x80000) ? 0x80000 : (block->length - block->transferredSize);
-        DVDLowRead((char*)block->addr + block->transferredSize, block->currTransferSize, block->offset + block->transferredSize, fn_8018537C);
+        DVDLowRead((char*)block->addr + block->transferredSize, block->currTransferSize, block->offset + block->transferredSize, cbForStateBusy);
         return;
     case 2:
         __DIRegs[1] = __DIRegs[1];
-        DVDLowSeek(block->offset, fn_8018537C);
+        DVDLowSeek(block->offset, cbForStateBusy);
         return;
     case 3:
-        DVDLowStopMotor(fn_8018537C);
+        DVDLowStopMotor(cbForStateBusy);
         return;
     case 15:
-        DVDLowStopMotor(fn_8018537C);
+        DVDLowStopMotor(cbForStateBusy);
         return;
     case 6:
         __DIRegs[1] = __DIRegs[1];
         if (lbl_8066F2D4 != 0) {
             executing->currTransferSize = 0;
-            fn_801878AC(0, fn_8018537C);
+            fn_801878AC(0, cbForStateBusy);
             return;
         }
         executing->currTransferSize = 1;
-        fn_80187814(0, block->length, block->offset, fn_8018537C);
+        fn_80187814(0, block->length, block->offset, cbForStateBusy);
         return;
     case 7:
         __DIRegs[1] = __DIRegs[1];
-        fn_80187814(0x10000, 0, 0, fn_8018537C);
+        fn_80187814(0x10000, 0, 0, cbForStateBusy);
         return;
     case 8:
         __DIRegs[1] = __DIRegs[1];
         lbl_8066F2D4 = 1;
-        fn_80187814(0, 0, 0, fn_8018537C);
+        fn_80187814(0, 0, 0, cbForStateBusy);
         return;
     case 9:
         __DIRegs[1] = __DIRegs[1];
-        fn_801878AC(0, fn_8018537C);
+        fn_801878AC(0, cbForStateBusy);
         return;
     case 10:
         __DIRegs[1] = __DIRegs[1];
-        fn_801878AC(0x10000, fn_8018537C);
+        fn_801878AC(0x10000, cbForStateBusy);
         return;
     case 11:
         __DIRegs[1] = __DIRegs[1];
-        fn_801878AC(0x20000, fn_8018537C);
+        fn_801878AC(0x20000, cbForStateBusy);
         return;
     case 12:
         __DIRegs[1] = __DIRegs[1];
-        fn_801878AC(0x30000, fn_8018537C);
+        fn_801878AC(0x30000, cbForStateBusy);
         return;
     case 13:
         __DIRegs[1] = __DIRegs[1];
-        DVDLowAudioBufferConfig(block->offset, block->length, fn_8018537C);
+        DVDLowAudioBufferConfig(block->offset, block->length, cbForStateBusy);
         return;
     case 14:
         __DIRegs[1] = __DIRegs[1];
         block->currTransferSize = 0x20;
-        fn_80187778(block->addr, fn_8018537C);
+        fn_80187778(block->addr, cbForStateBusy);
         return;
     default:
-        lbl_8066C418(block, fn_8018537C);
+        lbl_8066C418(block, cbForStateBusy);
         return;
     }
+}
+
+static inline int IsDmaCommand(u32 command)
+{
+    int i;
+    if (command == 1 || command == 4 || command == 5 || command == 14) {
+        return 1;
+    }
+    for (i = 0; i < 1; i++) {
+        if (command == lbl_8066C424[i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static inline int IsImmCommandWithResult(u32 command)
+{
+    int i;
+    if (command - 9 <= 3) {
+        return 1;
+    }
+    for (i = 0; i < 3; i++) {
+        if (command == lbl_804D21F8[i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void cbForStateBusy(u32 intType)
+{
+    DVDCommandBlock* finished;
+
+    if (intType == 16) {
+        executing->state = -1;
+        __DVDStoreErrorCode(0x1234568);
+        DVDReset();
+        cbForStateError(0);
+        return;
+    }
+
+    if (CurrCommand == 3 || CurrCommand == 15) {
+        if (intType & 2) {
+            executing->state = -1;
+            stateError(0x1234567);
+            return;
+        }
+        NumInternalRetry = 0;
+        if (CurrCommand == 15) {
+            ResetRequired = 1;
+        }
+        if (!CheckCancel(7)) {
+            executing->state = 7;
+            DVDLowWaitCoverClose(cbForStateMotorStopped);
+        }
+        return;
+    }
+
+    if (IsDmaCommand(CurrCommand)) {
+        executing->transferredSize += executing->currTransferSize - __DIRegs[6];
+    }
+
+    if (intType & 8) {
+        lbl_8066F2E0 = 0;
+        finished = executing;
+        executing = &DummyCommandBlock;
+        finished->state = 10;
+        if (finished->callback) {
+            finished->callback(-3, finished);
+        }
+        if (lbl_8066F2E4) {
+            lbl_8066F2E4(0, finished);
+        }
+        stateReady();
+        return;
+    }
+
+    if (intType & 1) {
+        NumInternalRetry = 0;
+        if (CheckCancel(0)) {
+            return;
+        }
+        if (IsDmaCommand(CurrCommand)) {
+            if (executing->transferredSize != executing->length) {
+                stateBusy(executing);
+                return;
+            }
+            finished = executing;
+            executing = &DummyCommandBlock;
+            finished->state = 0;
+            if (finished->callback) {
+                finished->callback(finished->transferredSize, finished);
+            }
+            stateReady();
+            return;
+        }
+        if (IsImmCommandWithResult(CurrCommand)) {
+            s32 result;
+            if (CurrCommand == 11 || CurrCommand == 10) {
+                result = __DIRegs[8] * 4;
+            } else {
+                result = __DIRegs[8];
+            }
+            finished = executing;
+            executing = &DummyCommandBlock;
+            finished->state = 0;
+            if (finished->callback) {
+                finished->callback(result, finished);
+            }
+            stateReady();
+            return;
+        }
+        if (CurrCommand == 6) {
+            if (executing->currTransferSize == 0) {
+                if (__DIRegs[8] & 1) {
+                    finished = executing;
+                    executing = &DummyCommandBlock;
+                    finished->state = 9;
+                    if (finished->callback) {
+                        finished->callback(-2, finished);
+                    }
+                    stateReady();
+                    return;
+                }
+                lbl_8066F2D4 = 0;
+                executing->currTransferSize = 1;
+                fn_80187814(0, executing->length, executing->offset, cbForStateBusy);
+                return;
+            }
+            finished = executing;
+            executing = &DummyCommandBlock;
+            finished->state = 0;
+            if (finished->callback) {
+                finished->callback(0, finished);
+            }
+            stateReady();
+            return;
+        }
+        finished = executing;
+        executing = &DummyCommandBlock;
+        finished->state = 0;
+        if (finished->callback) {
+            finished->callback(0, finished);
+        }
+        stateReady();
+        return;
+    }
+
+    if (CurrCommand == 14) {
+        executing->state = -1;
+        stateError(0x1234567);
+        return;
+    }
+    if ((CurrCommand == 1 || CurrCommand == 4 || CurrCommand == 5 || CurrCommand == 14)
+        && executing->transferredSize == executing->length) {
+        if (CheckCancel(0)) {
+            return;
+        }
+        finished = executing;
+        executing = &DummyCommandBlock;
+        finished->state = 0;
+        if (finished->callback) {
+            finished->callback(finished->transferredSize, finished);
+        }
+        stateReady();
+        return;
+    }
+    DVDLowRequestError(cbForStateGettingError);
 }
