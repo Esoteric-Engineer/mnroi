@@ -556,6 +556,7 @@ config.libs = [
         [
             Object(Matching, "Dolphin/os/fn_8017A5CC.c"),
             Object(Matching, "Dolphin/os/fn_8017A620.c"),
+            Object(Matching, "Dolphin/os/fn_8017A67C.c"),
             Object(Matching, "Dolphin/os/OSDefaultExceptionHandler.c"),
             Object(Matching, "Dolphin/os/fn_8017A70C.c"),
             Object(Matching, "Dolphin/os/fn_8017A6CC.c"),
