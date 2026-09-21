@@ -289,6 +289,9 @@ Dolphin/os/fn_8017D3B0.c:
 Dolphin/os/OSAlarm.c:
 	.text       start:0x8017D3D8 end:0x8017D3EC
 
+Dolphin/os/ReadDiscBlocking.c:
+	.text       start:0x8017D3EC end:0x8017D458
+
 Dolphin/os/__OSSetAlarmState.c:
 	.text       start:0x8017D458 end:0x8017D464
 
