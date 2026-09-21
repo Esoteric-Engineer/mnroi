@@ -39,6 +39,9 @@ Runtime.PPCEABI.H/copysignf.c:
 Runtime.PPCEABI.H/fn_801700B8.c:
 	.text       start:0x801700B8 end:0x801700C0
 
+Runtime.PPCEABI.H/vsprintf.c:
+	.text       start:0x80171088 end:0x80171158
+
 Runtime.PPCEABI.H/atof.c:
 	.text       start:0x801711F0 end:0x80171214
 

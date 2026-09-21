@@ -297,6 +297,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/fabs.c"),
             Object(Matching, "Runtime.PPCEABI.H/copysignf.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_801700B8.c"),
+            Object(Matching, "Runtime.PPCEABI.H/vsprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/atof.c"),
             Object(Matching, "Runtime.PPCEABI.H/atoi.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80171F8C.c"),
