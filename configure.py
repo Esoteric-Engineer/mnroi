@@ -571,6 +571,7 @@ config.libs = [
             Object(Matching, "Dolphin/vi/VIWaitForRetrace.c"),
             Object(Matching, "Dolphin/vi/VIGetRetraceCount.c"),
             Object(Matching, "Dolphin/vi/getCurrentFieldEvenOdd.c"),
+            Object(NonMatching, "Dolphin/vi/VIGetTvFormat.c"),
         ],
     ),
     DolphinLib(

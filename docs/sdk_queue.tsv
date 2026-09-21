@@ -145,7 +145,7 @@ addr	size	name	library	confidence	notes	status
 0x8018973C	0x6C	VISetNextFrameBuffer	vi	exact	ac-decomp size 0x6c	open
 0x801897A8	0x7C	VISetBlack	vi	exact	ac-decomp size 0x7c	open
 0x80189894	0x98	VIGetCurrentLine	vi	exact	ac-decomp size 0x98	open
-0x8018992C	0x68	VIGetTvFormat	vi	known	symbol already named; just needs split + match	open
+0x8018992C	0x68	VIGetTvFormat	vi	known	code 99.4% (only jump-table symbol name differs); blocked: table @724 at 0x804D2C34 is 4-mod-8 and the unclaimed strings before it (0x804D2AE0, VIConfigure text) must be claimed first; retry after VIConfigure	stalled
 0x80189994	0x21C		vi	unidentified		open
 0x80189BB0	0x60	VIGetDTVStatus	vi	guess	ac-decomp size 0x3c	open
 0x80189C10	0x1A4	UpdateOrigin	pad	exact	ac-decomp size 0x1a4	open
