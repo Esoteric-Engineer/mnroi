@@ -126,6 +126,8 @@ Smaller findings:
 
 - **A string blob shared by several units: claim from the first string (8-aligned), define that first string as a global `char X[]`, and use plain literals for the rest.** `__OSCacheInit`/`DMAErrorHandler` (`0x8017C1E8`/`0x8017C088`) share `.data 0x804D0AF0` with the already-matched asm `L2GlobalInvalidate`, whose `>>> L2 INVALIDATE` string sits first. Starting the claim at the 4-mod-8 `0x804D0B1C` shifted `main.dol` by +32 (per-function fuzzy was still ~99%). Starting at `0x804D0AF0` and defining `char L2InvalidateStr[] = "..."` (renamed from `@69`, `scope:global`, `OSCache.c` `extern` updated) matched. Also: inlined `L2Disable`/`L2Init` `sync`s are `asm { sync }` blocks, and `#pragma peephole off` is needed for the non-record `rlwinm`/`cmplwi` pairs.
 
+- **A string-only `.data` claim starting 4-mod-8 also shifts `main.dol` (+32 here), not just jump tables:** `__OSContextInit`'s `"FPU-unavailable handler installed\n"` (`0x804D0ED4`) failed as its own unit at 100% per-function. Merge it into the neighbouring unit whose `.data` ends there (`OSDumpContext.c`, one original `OSContext.c`). The asm `OSSwitchFPUContext` before it means `#pragma peephole on` must *not* be added: keep peephole off, or `lis` hoists above the prologue.
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---
