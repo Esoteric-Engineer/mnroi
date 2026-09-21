@@ -192,6 +192,10 @@ Smaller findings:
 
 dtk renames the referenced `lbl_XXXXXXXX` bss symbol to `<Name>` (`scope:local`) once the function is split, and the build then fails to link if an unclaimed neighbor also references it. Also add a `.bss start:.. end:..` line to the unit's split, set the symbol to `scope:global` in `symbols.txt`, and define it non-`static` in the source (`__DVDClearWaitingQueue` / `WaitingQueue`).
 
+### `__OSInitAudioSystem` (`Dolphin/os/OSAudioSystem.c`)
+
+ac-decomp's version is marked nonmatching but gets 100% here as-is, including the `u8 errFlag = 0;` local and the dead `if (... + 0x7FAC0000U != 0x4348) {}` / `reg16 != 42069;` statements. Those dead statements keep `reg16` live (`clrlwi r5`) and add the 8 bytes of frame; without them it stalls at ~92-96%. `__DSPRegs` is `volatile u16 __DSPRegs[0x20] : 0xCC005000;`. The `DSPInitCode` data symbol needed `scope:global` in `symbols.txt` to be referenced by its real name.
+
 ## Confirmed non-matches
 
 Don't re-guess these.

@@ -220,6 +220,9 @@ Dolphin/os/fn_8017BB24.c:
 Dolphin/os/OSArena.c:
 	.text       start:0x8017BBC4 end:0x8017BC10
 
+Dolphin/os/OSAudioSystem.c:
+	.text       start:0x8017BC10 end:0x8017BEA4
+
 Dolphin/os/OSCache.c:
 	.text       start:0x8017BEA4 end:0x8017C088
 
