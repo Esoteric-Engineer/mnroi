@@ -67,8 +67,11 @@ extern int fn_80186958(void* id1, void* id2);
 extern void* memcpy(void* dst, const void* src, u32 n);
 extern int fn_801721F8(const void* a, const void* b, u32 n);
 extern void DCInvalidateRange(void* addr, u32 nBytes);
-extern void fn_80184768(DVDCommandBlock* block);
-extern void fn_8018479C(DVDCommandBlock* block);
+extern void DVDLowAudioBufferConfig(u32 enable, u32 size, void* callback);
+extern void fn_80184A74(u32 intType);
+extern void fn_801847D0(u32 intType);
+void stateCheckID2(DVDCommandBlock* block);
+void stateCheckID3(DVDCommandBlock* block);
 extern void fn_8018487C(u32 intType);
 
 extern void OSRegisterVersion(const char* version);
@@ -401,8 +404,8 @@ void stateCheckID(void)
             memcpy(IDShouldBe, lbl_8057D240, 0x20);
             executing->state = 1;
             DCInvalidateRange(tmpBuffer, 0x20);
-            LastState = fn_8018479C;
-            fn_8018479C(executing);
+            LastState = stateCheckID2;
+            stateCheckID2(executing);
         } else {
             DVDLowStopMotor(fn_8018487C);
         }
@@ -411,9 +414,19 @@ void stateCheckID(void)
         if (fn_801721F8(lbl_8057D240, IDShouldBe, 0x20)) {
             DVDLowStopMotor(fn_8018487C);
         } else {
-            LastState = fn_80184768;
-            fn_80184768(executing);
+            LastState = stateCheckID3;
+            stateCheckID3(executing);
         }
         break;
     }
+}
+
+void stateCheckID3(DVDCommandBlock* block)
+{
+    DVDLowAudioBufferConfig(((unsigned char*)IDShouldBe)[8], 10, fn_80184A74);
+}
+
+void stateCheckID2(DVDCommandBlock* block)
+{
+    DVDLowAudioBufferConfig(((unsigned char*)IDShouldBe)[8], 10, fn_801847D0);
 }
