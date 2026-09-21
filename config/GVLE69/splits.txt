@@ -159,6 +159,9 @@ Runtime.PPCEABI.H/lshrdi3.c:
 Runtime.PPCEABI.H/fn_801796FC.c:
 	.text       start:0x801796FC end:0x80179C30
 
+Dolphin/os/fn_8017A5CC.c:
+	.text       start:0x8017A5CC end:0x8017A620
+
 Dolphin/os/fn_8017A620.c:
 	.text       start:0x8017A620 end:0x8017A67C
 
