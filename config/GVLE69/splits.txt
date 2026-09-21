@@ -322,6 +322,9 @@ Dolphin/os/__OSInterruptInit.c:
 Dolphin/os/OSInterruptMask.c:
 	.text       start:0x8017DF50 end:0x8017E060
 
+Dolphin/os/ExternalInterruptHandler.c:
+	.text       start:0x8017E3A4 end:0x8017E3F4
+
 Dolphin/os/__OSModuleInit.c:
 	.text       start:0x8017E3F4 end:0x8017E40C
 
