@@ -9,7 +9,10 @@ struct DVDCommandBlock
     u32 command;
     s32 state;
     u32 offset;
-    unsigned char pad2[0x10];
+    u32 length;
+    void* addr;
+    u32 currTransferSize;
+    u32 transferredSize;
     void* id;
     void (*callback)(s32 result, DVDCommandBlock* block);
     void* userData;
@@ -32,7 +35,6 @@ extern u32 __DVDThreadQueue[2];
 extern char* __DVDVersion;
 extern void* LastState;
 extern char lbl_8066C41C[6];
-extern char lbl_804D2184[];
 extern volatile u32 NumInternalRetry;
 extern u32 lbl_8066F2F0;
 extern DVDCommandBlock* executing;
@@ -78,6 +80,13 @@ extern void DCInvalidateRange(void* addr, u32 nBytes);
 extern void DVDLowAudioBufferConfig(u32 enable, u32 size, void* callback);
 void cbForStateCheckID3(u32 intType);
 extern void stateBusy(DVDCommandBlock* block);
+extern void fn_8018537C(u32 intType);
+extern void fn_801875BC(void* buf, void* callback);
+extern void fn_801878AC(u32 cmd, void* callback);
+extern void fn_80187814(u32 cmd, u32 length, u32 offset, void* callback);
+extern void fn_80187778(void* buf, void* callback);
+extern void (*lbl_8066C418)(DVDCommandBlock* block, void* callback);
+extern int lbl_8066F2D4;
 void cbForStateCheckID2a(u32 intType);
 void stateCheckID2a(DVDCommandBlock* block);
 void cbForStateCheckID2(u32 intType);
@@ -142,7 +151,7 @@ void stateReadingFST(void)
 {
     LastState = stateReadingFST;
     if (bootInfo->fstLength < tmpBuffer[2]) {
-        fn_8017CBFC(lbl_8066C41C, 0x28A, lbl_804D2184);
+        fn_8017CBFC(lbl_8066C41C, 0x28A, "DVDChangeDisk(): FST in the new disc is too big.   ");
     }
     DVDLowRead((void*)bootInfo->fstLocation, (tmpBuffer[2] + 0x1F) & ~0x1F, tmpBuffer[1], cbForStateReadingFST);
 }
@@ -506,7 +515,7 @@ void cbForStateCheckID2(u32 intType)
         NumInternalRetry = 0;
         LastState = stateReadingFST;
         if (bootInfo->fstLength < tmpBuffer[2]) {
-            fn_8017CBFC(lbl_8066C41C, 0x28A, lbl_804D2184);
+            fn_8017CBFC(lbl_8066C41C, 0x28A, "DVDChangeDisk(): FST in the new disc is too big.   ");
         }
         DVDLowRead((void*)bootInfo->fstLocation, (tmpBuffer[2] + 0x1F) & ~0x1F, tmpBuffer[1], cbForStateReadingFST);
     } else {
@@ -571,8 +580,6 @@ void stateCoverClosed(void)
 }
 
 extern void cbForStateReadingID(u32 intType);
-extern void fn_801875BC(void* buf, void* callback);
-
 #pragma dont_inline on
 void stateReadingID(DVDCommandBlock* block)
 {
@@ -667,4 +674,89 @@ void stateReady(void)
     }
     executing->state = 1;
     stateBusy(executing);
+}
+
+void stateBusy(DVDCommandBlock* block)
+{
+    LastState = stateBusy;
+    switch (block->command) {
+    case 5:
+        __DIRegs[1] = __DIRegs[1];
+        block->currTransferSize = 0x20;
+        fn_801875BC(block->addr, fn_8018537C);
+        return;
+    case 1:
+    case 4:
+        if (block->length == 0) {
+            DVDCommandBlock* finished = executing;
+            executing = &DummyCommandBlock;
+            finished->state = 0;
+            if (finished->callback) {
+                finished->callback(0, finished);
+            }
+            stateReady();
+            return;
+        }
+        __DIRegs[1] = __DIRegs[1];
+        block->currTransferSize = (block->length - block->transferredSize > 0x80000) ? 0x80000 : (block->length - block->transferredSize);
+        DVDLowRead((char*)block->addr + block->transferredSize, block->currTransferSize, block->offset + block->transferredSize, fn_8018537C);
+        return;
+    case 2:
+        __DIRegs[1] = __DIRegs[1];
+        DVDLowSeek(block->offset, fn_8018537C);
+        return;
+    case 3:
+        DVDLowStopMotor(fn_8018537C);
+        return;
+    case 15:
+        DVDLowStopMotor(fn_8018537C);
+        return;
+    case 6:
+        __DIRegs[1] = __DIRegs[1];
+        if (lbl_8066F2D4 != 0) {
+            executing->currTransferSize = 0;
+            fn_801878AC(0, fn_8018537C);
+            return;
+        }
+        executing->currTransferSize = 1;
+        fn_80187814(0, block->length, block->offset, fn_8018537C);
+        return;
+    case 7:
+        __DIRegs[1] = __DIRegs[1];
+        fn_80187814(0x10000, 0, 0, fn_8018537C);
+        return;
+    case 8:
+        __DIRegs[1] = __DIRegs[1];
+        lbl_8066F2D4 = 1;
+        fn_80187814(0, 0, 0, fn_8018537C);
+        return;
+    case 9:
+        __DIRegs[1] = __DIRegs[1];
+        fn_801878AC(0, fn_8018537C);
+        return;
+    case 10:
+        __DIRegs[1] = __DIRegs[1];
+        fn_801878AC(0x10000, fn_8018537C);
+        return;
+    case 11:
+        __DIRegs[1] = __DIRegs[1];
+        fn_801878AC(0x20000, fn_8018537C);
+        return;
+    case 12:
+        __DIRegs[1] = __DIRegs[1];
+        fn_801878AC(0x30000, fn_8018537C);
+        return;
+    case 13:
+        __DIRegs[1] = __DIRegs[1];
+        DVDLowAudioBufferConfig(block->offset, block->length, fn_8018537C);
+        return;
+    case 14:
+        __DIRegs[1] = __DIRegs[1];
+        block->currTransferSize = 0x20;
+        fn_80187778(block->addr, fn_8018537C);
+        return;
+    default:
+        lbl_8066C418(block, fn_8018537C);
+        return;
+    }
 }

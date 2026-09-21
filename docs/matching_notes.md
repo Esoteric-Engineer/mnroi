@@ -109,6 +109,8 @@ Smaller findings:
 
 - **A `dont_inline` helper kept for its own address can't be called from a later function that inlined it in the original:** `stateReady` (`0x80184E2C`) shows `lis`/`addi cbForStateMotorStopped` + `bl DVDLowWaitCoverClose` inline (and `executing` in r4), where calling `stateMotorStopped()` gives `bl stateMotorStopped` (95%). Write the helper's body out at the call site. `stateCoverClosed` (not `dont_inline`) does inline into it.
 
+- **Claiming a jump table forces you to claim the strings before it (`.data` must be contiguous), and a named global array is emitted before string literals:** `char lbl_804D2184[] = "..."` put the string ahead of `"load fst\n"` and shifted `.data` (60 bytes differ, function still 100%). Write the string inline at each use so first-use order applies. `stateBusy` (`0x8018505C`); note the original has a `length == 0` early finish that ac-decomp lacks.
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---
