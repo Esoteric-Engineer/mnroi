@@ -994,3 +994,17 @@ int DVDReadAbsAsyncForBS(DVDCommandBlock* block, void* addr, s32 length, s32 off
     idle = issueCommand(2, block);
     return idle;
 }
+
+int DVDReadDiskID(DVDCommandBlock* block, void* diskID, void* callback)
+{
+    int idle;
+
+    block->command = 5;
+    block->addr = diskID;
+    block->length = 0x20;
+    block->offset = 0;
+    block->transferredSize = 0;
+    block->callback = callback;
+    idle = issueCommand(2, block);
+    return idle;
+}
