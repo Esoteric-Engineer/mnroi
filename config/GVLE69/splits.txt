@@ -217,6 +217,9 @@ Dolphin/os/OSRegisterResetFunction.c:
 Dolphin/os/CallResetFunctions.c:
 	.text       start:0x8017E7EC end:0x8017E894
 
+Dolphin/os/OSGetResetCode.c:
+	.text       start:0x8017EBB4 end:0x8017EBEC
+
 Dolphin/os/__OSSyncSram.c:
 	.text       start:0x8017F668 end:0x8017F678
 
