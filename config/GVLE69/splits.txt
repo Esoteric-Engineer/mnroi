@@ -45,6 +45,9 @@ Runtime.PPCEABI.H/isdigit.c:
 Runtime.PPCEABI.H/isspace.c:
 	.text       start:0x80177398 end:0x801773AC
 
+Runtime.PPCEABI.H/fn_801773B4.c:
+	.text       start:0x801773B4 end:0x801773C0
+
 Runtime.PPCEABI.H/fn_80177CF8.c:
 	.text       start:0x80177CF8 end:0x80177D24
 
