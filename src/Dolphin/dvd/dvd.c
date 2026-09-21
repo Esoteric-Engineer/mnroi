@@ -1041,3 +1041,18 @@ void DVDReset(void)
     ResetRequired = 0;
     ResumeFromHere = 0;
 }
+
+s32 DVDGetCommandBlockStatus(const DVDCommandBlock* block)
+{
+    int level;
+    s32 result;
+
+    level = OSDisableInterrupts();
+    if (block->state == 3) {
+        result = 1;
+    } else {
+        result = block->state;
+    }
+    OSRestoreInterrupts(level);
+    return result;
+}
