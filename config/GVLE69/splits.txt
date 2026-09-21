@@ -123,6 +123,9 @@ Dolphin/os/fn_8017A620.c:
 Dolphin/os/fn_8017A6CC.c:
 	.text       start:0x8017A6CC end:0x8017A6EC
 
+Dolphin/os/fn_8017A6EC.c:
+	.text       start:0x8017A6EC end:0x8017A70C
+
 Dolphin/os/fn_8017A70C.c:
 	.text       start:0x8017A70C end:0x8017A71C
 

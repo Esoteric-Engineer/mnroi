@@ -77,6 +77,7 @@ Smaller findings:
 - **A `clrlwi rX,r3,24` right after a `bl` that the original lacks means the callee's return type is too narrow:** declare the extern as returning `u32` (locals too), even if the real function returns `u8`. Matched `AISetStreamPlayState` (92% -> 100%, alongside `(reg & ~1) | state` and `(reg & ~0x20) | 0x20` in plain C where the original has `clrrwi`/`rlwinm` + `ori` instead of `rlwimi`).
 
 - **Original has `stwu` before `mr r4,r3` (arg copy after frame setup) in a tiny wrapper: add `#pragma peephole off`** before the function. Default codegen emits the copy first (63%); `#pragma scheduling off` alone gets 76-82% and misorders `li`/`crclr`. Peephole off alone is 100% (`OSRegisterVersion`, `0x8017B3C0`).
+- **Bare wrapper where the original is `stwu r1,-8` / `mflr r0` / `stw r0,12(r1)` / `bl X` / ... (LR saved *after* the frame is made): plain C can't do it** -- MWCC emits `mflr`/`stw r0,4(r1)` *before* `stwu` (49.9%), and `peephole off` doesn't change that. Write it as an `nofralloc` `asm` function, like `fn_8017A6CC`/`fn_8017A6EC` (`0x8017A6EC`).
 
 - **Original has `clrlwi` separate from a following `slwi` (indexing a table by a `u8` param), where ours emits a merged `clrlslwi`: add `#pragma peephole off`** at the top of the unit. Took `__OSSetExceptionHandler`/`__OSGetExceptionHandler` (`0x8017B234`/`0x8017B250`) from 66-75% to 100%.
 
