@@ -498,6 +498,7 @@ config.libs = [
         [
             Object(NonMatching, "Dolphin/exi/EXIGetState.c"),
             Object(Matching, "Dolphin/exi/UnlockedHandler.c"),
+            Object(Matching, "Dolphin/exi/InitializeUART.c"),
         ],
     ),
     DolphinLib(

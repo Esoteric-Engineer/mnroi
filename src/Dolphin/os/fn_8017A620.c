@@ -1,5 +1,5 @@
 extern int lbl_804D0678;
-extern void fn_80195B78(int);
+extern void InitializeUART(int);
 extern void fn_80195BE8(void* a, void* b);
 
 asm void* fn_8017A620(register void* a, register void* b)
@@ -19,7 +19,7 @@ asm void* fn_8017A620(register void* a, register void* b)
     li      r0, 0
     li      r3, 0
     stw     r0, lbl_804D0678@l(r9)
-    bl      fn_80195B78
+    bl      InitializeUART
 skip:
     mr      r3, r30
     mr      r4, r31

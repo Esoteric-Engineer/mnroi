@@ -759,3 +759,6 @@ Dolphin/exi/EXIGetState.c:
 
 Dolphin/exi/UnlockedHandler.c:
 	.text       start:0x80195458 end:0x80195480
+
+Dolphin/exi/InitializeUART.c:
+	.text       start:0x80195B78 end:0x80195BE8
