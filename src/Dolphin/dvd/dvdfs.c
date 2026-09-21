@@ -43,7 +43,7 @@ extern char lbl_8066C408[8]; // this TU's __FILE__ string; unnamed, compiler-syn
 extern char lbl_804D1D40[]; // the OSPanic() format string below, same reasoning
 extern void fn_8017CBFC(void); // likely OSPanic, unconfirmed
 extern int fn_80400544(int c); // likely tolower, unconfirmed
-extern s32 fn_8018389C(char* path, u32 maxlen); // likely DVDGetCurrentDir, unconfirmed
+extern s32 DVDGetCurrentDir(char* path, u32 maxlen);
 extern s32 fn_801862A4(DVDCommandBlock* block); // likely DVDCancel, unconfirmed
 extern void OSReport(const char* msg, ...);
 extern char lbl_804D1E08[0x38]; // "Warning: DVDOpen(): file '%s' was not found under %s.\n"
@@ -319,7 +319,7 @@ s32 DVDOpen(char* fileName, DVDFileInfo* fileInfo)
     entry = DVDConvertPathToEntrynum(fileName);
 
     if (entry < 0) {
-        fn_8018389C(currentDir, 128);
+        DVDGetCurrentDir(currentDir, 128);
         OSReport(lbl_804D1E08, fileName, currentDir);
         return 0;
     }
@@ -400,4 +400,9 @@ s32 DVDConvertEntrynumToPath(s32 entrynum, char* path, u32 maxlen)
 
     path[loc] = '\0';
     return 1;
+}
+
+s32 DVDGetCurrentDir(char* path, u32 maxlen)
+{
+    return DVDConvertEntrynumToPath((s32)currentDirectory, path, maxlen);
 }
