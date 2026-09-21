@@ -578,6 +578,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSSaveFPUContext.c"),
             Object(Matching, "Dolphin/os/OSSetCurrentContext.c"),
             Object(Matching, "Dolphin/os/OSGetCurrentContext.c"),
+            Object(Matching, "Dolphin/os/OSSaveContext.c"),
             Object(Matching, "Dolphin/os/OSLoadContext.c"),
             Object(Matching, "Dolphin/os/OSGetStackPointer.c"),
             Object(Matching, "Dolphin/os/OSSwitchStack.c"),
