@@ -52,7 +52,9 @@ void cbForStateGoToRetry(u32 intType);
 extern volatile u32 CurrCommand;
 extern int ResetRequired;
 void cbForUnrecoveredErrorRetry(u32 intType);
-extern void fn_80184D20(void);
+extern void cbForStateMotorStopped(u32 intType);
+extern int DVDLowWaitCoverClose(void* callback);
+void stateMotorStopped(void);
 void stateCoverClosed(void);
 extern void cbForUnrecoveredError(u32 intType);
 void cbForStateError(u32 intType);
@@ -320,13 +322,13 @@ void cbForStateGettingError(u32 intType)
 
     if (status == 0x01000000) {
         executing->state = 5;
-        fn_80184D20();
+        stateMotorStopped();
     } else if (status == 0x02000000) {
         executing->state = 3;
         stateCoverClosed();
     } else if (status == 0x03000000) {
         executing->state = 4;
-        fn_80184D20();
+        stateMotorStopped();
     } else {
         executing->state = -1;
         stateError(0x1234567);
@@ -398,7 +400,7 @@ void cbForStateGoToRetry(u32 intType)
 
     if (!CheckCancel(2)) {
         executing->state = 11;
-        fn_80184D20();
+        stateMotorStopped();
     }
 }
 
@@ -481,7 +483,7 @@ void cbForStateCheckID1(u32 intType)
 
     if (!CheckCancel(1)) {
         executing->state = 6;
-        fn_80184D20();
+        stateMotorStopped();
     }
 }
 
@@ -590,3 +592,10 @@ void cbForStateReadingID(u32 intType)
         DVDLowRequestError(cbForStateGettingError);
     }
 }
+
+#pragma dont_inline on
+void stateMotorStopped(void)
+{
+    DVDLowWaitCoverClose(cbForStateMotorStopped);
+}
+#pragma dont_inline reset
