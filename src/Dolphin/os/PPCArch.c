@@ -225,7 +225,7 @@ asm void PPCSetFpNonIEEEMode(void)
 }
 
 u32* lbl_8066F1D0 = 0;
-u32 lbl_8066F1D4 = 0;
+u32 BI2DebugFlag = 0;
 u32 lbl_8066F1D8 = 0;
 u32 lbl_8066F1DC = 0;
 static double lbl_8066F1E0;
