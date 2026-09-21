@@ -19,6 +19,17 @@ Human-facing references (read the relevant one instead of guessing):
   that flag (see README "Building"). Never "fix" this by editing `config.yml`.
 - Run `ninja` once and confirm it ends with `build/GVLE69/main.dol: OK` **before** changing
   anything. If it doesn't, stop and report; don't start matching against a broken baseline.
+- **`main.dol: OK` is not printed on every run — this is normal, don't investigate it.** The
+  message comes from the `CHECK` step (`dtk shasum -c`, output `build/GVLE69/ok`), which ninja
+  reruns only when `main.dol`, `config/GVLE69/build.sha1` or `dtk-dev` is newer than it. Ninja's
+  default target is `progress`, which never writes a file and so always reruns: on an up-to-date
+  tree `ninja` prints just `[1/1] PROGRESS` plus the progress table and exits 0, with no `OK`
+  line. You will never see ninja's `no work to do`, so its absence means nothing.
+  - **Pass:** exit status 0. Independently, `build/GVLE69/ok` newer than `main.dol` means the
+    last check passed — a failed check never creates or touches that file.
+  - **Fail:** `build/GVLE69/main.dol: FAILED` followed by
+    `WARNING: 1 computed checksum(s) did NOT match`, and exit status 1.
+  - To force the check to run and print, `rm build/GVLE69/ok && ninja`.
 
 ## Loop
 
@@ -40,7 +51,8 @@ Human-facing references (read the relevant one instead of guessing):
    types, which byte diffs don't. Form a hypothesis from `docs/matching_notes.md` instead of
    random reshaping; switch to asm transliteration for control-flow-sensitive functions.
 6. **Verify.** Flip to `Matching`, run `ninja`, and require **both** `main.dol: OK` and 100%
-   linked. If `main.dol` breaks, run `python3 tools/diff_dol.py` to locate the bytes; consider
+   linked. Flipping a unit relinks, so `CHECK` does run here and the `OK` line should appear; if
+   it somehow doesn't, use the Preconditions criteria rather than assuming a break. If `main.dol` breaks, run `python3 tools/diff_dol.py` to locate the bytes; consider
    `force_active` only if the diff shows the function was dropped/shifted.
 
 ## Rules
