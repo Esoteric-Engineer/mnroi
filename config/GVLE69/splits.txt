@@ -256,6 +256,10 @@ Dolphin/os/OSClearContext.c:
 Dolphin/os/OSReport.c:
 	.text       start:0x8017CB7C end:0x8017CBFC
 
+Dolphin/os/OSPanic.c:
+	.text       start:0x8017CBFC end:0x8017CD28
+	.data       start:0x804D0EF8 end:0x804D0F54
+
 Dolphin/os/OSAlarm.c:
 	.text       start:0x8017D3D8 end:0x8017D3EC
 

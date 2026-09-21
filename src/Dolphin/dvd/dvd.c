@@ -69,7 +69,7 @@ extern int FatalErrorFlag;
 extern volatile u32 lbl_8066F2E0;
 extern void (*lbl_8066F2E4)(s32 result, DVDCommandBlock* block);
 
-extern void fn_8017CBFC(const char* file, int line, const char* msg, ...);
+extern void OSPanic(const char* file, int line, const char* msg, ...);
 extern void DVDLowRead(void* addr, u32 length, u32 offset, void* callback);
 void cbForStateReadingFST(u32 intType);
 
@@ -153,7 +153,7 @@ void stateReadingFST(void)
 {
     LastState = stateReadingFST;
     if (bootInfo->fstLength < tmpBuffer[2]) {
-        fn_8017CBFC(lbl_8066C41C, 0x28A, "DVDChangeDisk(): FST in the new disc is too big.   ");
+        OSPanic(lbl_8066C41C, 0x28A, "DVDChangeDisk(): FST in the new disc is too big.   ");
     }
     DVDLowRead((void*)bootInfo->fstLocation, (tmpBuffer[2] + 0x1F) & ~0x1F, tmpBuffer[1], cbForStateReadingFST);
 }
@@ -517,7 +517,7 @@ void cbForStateCheckID2(u32 intType)
         NumInternalRetry = 0;
         LastState = stateReadingFST;
         if (bootInfo->fstLength < tmpBuffer[2]) {
-            fn_8017CBFC(lbl_8066C41C, 0x28A, "DVDChangeDisk(): FST in the new disc is too big.   ");
+            OSPanic(lbl_8066C41C, 0x28A, "DVDChangeDisk(): FST in the new disc is too big.   ");
         }
         DVDLowRead((void*)bootInfo->fstLocation, (tmpBuffer[2] + 0x1F) & ~0x1F, tmpBuffer[1], cbForStateReadingFST);
     } else {

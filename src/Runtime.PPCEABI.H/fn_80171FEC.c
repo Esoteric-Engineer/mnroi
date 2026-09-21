@@ -1,5 +1,5 @@
 extern char lbl_8049C2A4[];
-extern void fn_8017CBFC(void);
+extern void OSPanic(void);
 
 asm void fn_80171FEC(void)
 {
@@ -15,7 +15,7 @@ asm void fn_80171FEC(void)
     li      r3, 0
     li      r4, 0
     crclr   6
-    bl      fn_8017CBFC
+    bl      OSPanic
     lwz     r0, 12(r1)
     mtlr    r0
     addi    r1, r1, 8

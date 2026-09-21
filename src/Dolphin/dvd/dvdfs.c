@@ -50,7 +50,7 @@ extern u32 currentDirectory;
 extern u32 __DVDLongFileNameFlag;
 extern char lbl_8066C408[8]; // this TU's __FILE__ string; unnamed, compiler-synthesized
 extern char lbl_804D1D40[]; // the OSPanic() format string below, same reasoning
-extern void fn_8017CBFC(const char* file, int line, const char* msg, ...); // likely OSPanic, unconfirmed
+extern void OSPanic(const char* file, int line, const char* msg, ...);
 extern int fn_80400544(int c); // likely tolower, unconfirmed
 extern s32 DVDGetCurrentDir(char* path, u32 maxlen);
 extern char lbl_804D1ECC[];
@@ -194,7 +194,7 @@ L801832EC:
     addi    r6, r25, 0
     la      r3, lbl_8066C408
     li      r4, 387
-    bl      fn_8017CBFC
+    bl      OSPanic
     b       L80183334
 L80183310:
     mr      r28, r23
@@ -432,11 +432,11 @@ s32 DVDGetCurrentDir(char* path, u32 maxlen)
 s32 DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, void* callback, s32 prio)
 {
     if (!((0 <= offset) && (offset <= fileInfo->length))) {
-        fn_8017CBFC(lbl_8066C408, 0x2EE, lbl_804D1E40);
+        OSPanic(lbl_8066C408, 0x2EE, lbl_804D1E40);
     }
 
     if (!((0 <= offset + length) && (offset + length < fileInfo->length + 32))) {
-        fn_8017CBFC(lbl_8066C408, 0x2F4, lbl_804D1E40);
+        OSPanic(lbl_8066C408, 0x2F4, lbl_804D1E40);
     }
 
     fileInfo->callback = callback;
@@ -463,11 +463,11 @@ s32 DVDReadPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, s32 p
     s32 retVal;
 
     if (!((0 <= offset) && (offset <= fileInfo->length))) {
-        fn_8017CBFC(lbl_8066C408, 0x334, lbl_804D1E74);
+        OSPanic(lbl_8066C408, 0x334, lbl_804D1E74);
     }
 
     if (!((0 <= offset + length) && (offset + length < fileInfo->length + 32))) {
-        fn_8017CBFC(lbl_8066C408, 0x33A, lbl_804D1E74);
+        OSPanic(lbl_8066C408, 0x33A, lbl_804D1E74);
     }
 
     block = &fileInfo->cb;

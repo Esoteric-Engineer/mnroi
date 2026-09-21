@@ -118,6 +118,8 @@ Smaller findings:
 
 - **Alarm-queue walk with `next` cached (`alarm ? alarm->next : 0` before and at the end of each iteration) plus stray `b <next>` branches:** write `next = alarm ? alarm->next : 0;` ahead of a `while (alarm)` loop and again at the loop tail, with `#pragma peephole off`. A `for` loop with the null check at the head is 58%. Matched `fn_8017BB24` (`0x8017BB24`).
 
+- **A variadic `OSPanic`-style function needs `__builtin_va_info(&args)` (as in `OSReport`) and its string literals claimed as `.data`:** the strings sit in one blob whose symbol dtk sized too big (`@13` 0x16 plus one 0x2C6 `lbl_`), so split the blob in `symbols.txt` at the claimed end (`ends within symbol` error otherwise). A string another unclaimed function still references (`@13_804D0EF8` undefined at link) must be renamed to a real global and *defined* in the source as `char Name[] = "..."` used at its first use; it lands in place. Matched `OSPanic` (`0x8017CBFC`); `fn_8017CD28` (`OSSetErrorHandler` neighbour) and `__OSUnhandledException` share that `.data` blob.
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---
