@@ -44,6 +44,7 @@ extern char lbl_804D1D40[]; // the OSPanic() format string below, same reasoning
 extern void fn_8017CBFC(void); // likely OSPanic, unconfirmed
 extern int fn_80400544(int c); // likely tolower, unconfirmed
 extern s32 fn_8018389C(char* path, u32 maxlen); // likely DVDGetCurrentDir, unconfirmed
+extern s32 fn_801862A4(DVDCommandBlock* block); // likely DVDCancel, unconfirmed
 extern void OSReport(const char* msg, ...);
 extern char lbl_804D1E08[0x38]; // "Warning: DVDOpen(): file '%s' was not found under %s.\n"
 
@@ -332,5 +333,11 @@ s32 DVDOpen(char* fileName, DVDFileInfo* fileInfo)
     fileInfo->callback = 0;
     fileInfo->cb.state = 0;
 
+    return 1;
+}
+
+s32 DVDClose(DVDFileInfo* fileInfo)
+{
+    fn_801862A4(&fileInfo->cb);
     return 1;
 }
