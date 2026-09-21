@@ -343,6 +343,9 @@ Dolphin/os/CallResetFunctions.c:
 Dolphin/os/Reset.c:
 	.text       start:0x8017E894 end:0x8017E904
 
+Dolphin/os/KillThreads.c:
+	.text       start:0x8017E904 end:0x8017E96C
+
 Dolphin/os/__OSDoHotReset.c:
 	.text       start:0x8017E96C end:0x8017E9B4
 
