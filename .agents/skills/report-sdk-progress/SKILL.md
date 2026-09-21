@@ -24,7 +24,7 @@ description: Report how close the SDK decomp is to done, and whether the project
 4. **Work queue.** Summarize `docs/sdk_queue.tsv` by status and by confidence tier (columns
    `confidence`, `status`; e.g. `cut -f4,5,7 docs/sdk_queue.tsv | sort | uniq -c`). Report how many
    rows are `open`/`matched`/`stalled`/`wrong-name`, and how many `open` rows are still
-   `unidentified` (they need scouting) or `libc-*` (no reference source yet). If the queue looks
+   `unidentified` (they need scouting), and how many are `libc` (Newlib, see `docs/sdk_libraries.md`). If the queue looks
    stale (its unsplit count differs a lot from step 3), run `python3 tools/sdk_scout.py queue`
    (it keeps curated rows and statuses) before trusting it.
 5. **Verify the range.** The script's default upper bound (`--hi 0x80197000`) is the end of the
@@ -36,7 +36,8 @@ description: Report how close the SDK decomp is to done, and whether the project
    list), count and list of named unsplit SDK functions, count of anonymous functions in range, the
    queue summary, and a verdict. SDK is done only when **all** of these hold:
    - no named SDK functions are unsplit and no SDK object is `NonMatching`;
-   - the queue has no `open` rows outside libc, and libc is either done or explicitly deferred;
+   - the queue has no `open` rows of tier known/exact/guess (libc included; if you deliberately defer the
+     unidentified libc rows, say so);
    - AR, ARQ, AX, DSP and CARD are located and either registered or deliberately excluded;
    - no unidentified functions remain in the confirmed range;
    - SDK data is complete: the progress report's `SDK Code` **Data** line is 100%, and any SDK data

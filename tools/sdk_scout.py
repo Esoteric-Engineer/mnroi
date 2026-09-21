@@ -30,7 +30,7 @@ LO, HI = 0x80169000, 0x80197000  # confirmed SDK range, see docs/sdk_libraries.m
 # (start, end, our library, ac-decomp libraries it may match, or None to skip matching)
 LIBS = [
     (0x80169000, 0x8016D000, "os", {"os"}),
-    (0x8016D000, 0x8017A5CC, "libc-runtime", None),
+    (0x8016D000, 0x8017A5CC, "libc", None),
     (0x8017A5CC, 0x801814F4, "os", {"os"}),
     (0x801814F4, 0x80181708, "exi", {"exi"}),
     (0x80181708, 0x80183070, "si", {"si"}),
@@ -40,7 +40,7 @@ LIBS = [
     (0x80189C10, 0x8018B624, "pad", {"pad"}),
     (0x8018B624, 0x8018BF08, "ai", {"ai"}),
     (0x8018BF08, 0x80193E54, "gx", {"gx"}),
-    (0x80193E54, 0x80195440, "libc-math", None),
+    (0x80193E54, 0x80195440, "exi", {"exi"}),
     (0x80195440, 0x80195E04, "exi", {"exi"}),
     (0x80195E04, 0x80196194, "odenotstub", {"odenotstub"}),
     (0x80196194, 0x80196884, "odemuexi2", {"OdemuExi2"}),
@@ -255,8 +255,8 @@ def cmd_queue(args):
             else:
                 c[2] = n
         elif c[4] == "unidentified":                  # only re-guess rows nobody curated
-            if lib_of(a).startswith("libc"):
-                c[5] = "C runtime/MSL; ac-decomp uses a different MSL version, needs another reference"
+            if lib_of(a) == "libc":
+                c[5] = "Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib"
             elif a in props:
                 name, kind, asz = props[a]
                 c[2], c[4], c[5] = name, kind, f"ac-decomp size {asz:#x}"

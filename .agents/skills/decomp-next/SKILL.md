@@ -34,24 +34,30 @@ Human-facing references (read the relevant one instead of guessing):
 ## Loop
 
 1. **Choose.** Take the next `open` row in `docs/sdk_queue.tsv`. Prefer, in order: `known`
-   (already named in `symbols.txt`), `exact` (size matches ac-decomp), then `guess`, and within a
-   tier the smallest size. Skip `unidentified` rows (they need scouting, not matching) and `libc-*`
-   rows (no reference source yet) and anything in the
+   (already named in `symbols.txt`), `exact` (size matches the reference), then `guess`, and within a
+   tier the smallest size. Skip `unidentified` rows (they need scouting, not matching) and anything in the
    "Confirmed non-matches" list in `docs/matching_notes.md`. Library ranges are in
    `docs/sdk_libraries.md`. If the user named a specific function or unit instead, work that one.
    `tools/find_candidates.py` (small leaf functions only) is a fallback, not the main chooser.
    `python3 tools/sdk_scout.py info <addr>` shows a function's callees, callers and hardware
    registers, which helps confirm an identity.
-   - **Out of queue:** if no `open` row of tier `known`/`exact`/`guess` is left outside the `libc-*` libraries, stop. Tell the
+   - **Out of queue:** if no `open` row of tier `known`/`exact`/`guess` is left, stop. Tell the
      user the queue is exhausted (counts by status/library, what remains) and that the next step is
-     a planning session (re-scout the range, find AR/ARQ/DSP/CARD, decide on libc and game code).
+     a planning session (re-scout the range, find AR/ARQ/DSP/CARD, decide on game code).
      Don't start game code or invent targets.
-2. **Research first.** For SDK/runtime addresses (`0x80169000`+), search `../ac-decomp`
-   (`src/static/dolphin/`, `include/dolphin/`) by apparent purpose, constants, or struct
-   offsets before writing any code. If the sibling clone is missing, say so rather than
+2. **Research first.** Find the reference by the row's `library`, and read it before writing code:
+   - Dolphin SDK libraries (`os`, `exi`, `si`, `db`, `dvd`, `vi`, `pad`, `ai`, `gx`, `odemuexi2`,
+     `odenotstub`): search `../ac-decomp` (`src/static/dolphin/`, `include/dolphin/`) by apparent
+     purpose, constants, or struct offsets. `../mkdd` (doldecomp/mkdd) is a second source for EXI.
+   - `libc` rows (string, stdio, scanf, math, libgcc division): **Newlib, not MSL**, so ac-decomp
+     and the other MSL decomps do not help. Use upstream Newlib/fdlibm/libgcc source; names come
+     from CFTKK-Decomp (see `docs/sdk_libraries.md`, which also lists the known version drift). This
+     libc lives in the existing `Runtime.PPCEABI.H` library (`cflags_runtime`); name the unit after the
+     function (like `strcat.c`).
+   If the reference clone is missing (`../ac-decomp`; `../newlib-cygwin` for libc, which is not cloned yet), say so rather than
    skipping this step silently.
    **Verify the name.** Queue names for `exact`/`guess` rows come from size and order only. Confirm
-   in ac-decomp that the code shape and callees agree before renaming. If it doesn't, don't force it:
+   in the reference that the code shape and callees agree before renaming. If it doesn't, don't force it:
    set the row's `status` to `wrong-name` and note what it looks like instead.
 3. **Claim.** Compute `end = start + size` from `config/GVLE69/symbols.txt`. In one edit: add
    the range to `splits.txt` (tab-indented), and rename `fn_XXXXXXXX` to the real name in
