@@ -590,6 +590,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSGetStackPointer.c"),
             Object(Matching, "Dolphin/os/OSSwitchStack.c"),
             Object(Matching, "Dolphin/os/OSClearContext.c"),
+            Object(Matching, "Dolphin/os/OSInitContext.c"),
             Object(Matching, "Dolphin/os/OSReport.c"),
             Object(Matching, "Dolphin/os/OSPanic.c"),
             Object(Matching, "Dolphin/os/OSSetErrorHandler.c"),
