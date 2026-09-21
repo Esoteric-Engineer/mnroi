@@ -27,6 +27,10 @@ extern void OSReport(const char* msg, ...);
 
 volatile u32 __DIRegs[0x20] : 0xCC006000;
 
+void fn_80183DC8(void)
+{
+}
+
 void DVDInit(void)
 {
     u32* magic;
