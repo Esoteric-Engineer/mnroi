@@ -322,6 +322,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/isdigit.c"),
             Object(Matching, "Runtime.PPCEABI.H/isspace.c"),
             Object(Matching, "Runtime.PPCEABI.H/runtime.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fn_801796B8.c"),
             Object(Matching, "Runtime.PPCEABI.H/lshrdi3.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_801773AC.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_801773B4.c"),

@@ -15,6 +15,7 @@ force_active:
 - __ashldi3
 - __ashrdi3
 - __lshrdi3
+- fn_801796B8
 - fn_801796FC
 - __OSClearAlarm
 - GXReadGPMetric
