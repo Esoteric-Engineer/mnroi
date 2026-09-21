@@ -729,3 +729,6 @@ Dolphin/gx/GXReadGPMetric.c:
 
 Dolphin/gx/GXClearGPMetric.c:
 	.text       start:0x80193E1C end:0x80193E2C
+
+Dolphin/exi/EXIGetState.c:
+	.text       start:0x80195440 end:0x80195458

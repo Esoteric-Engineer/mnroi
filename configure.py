@@ -493,6 +493,12 @@ config.libs = [
         ],
     ),
     DolphinLib(
+        "exi",
+        [
+            Object(NonMatching, "Dolphin/exi/EXIGetState.c"),
+        ],
+    ),
+    DolphinLib(
         "db",
         [
             Object(Matching, "Dolphin/db/db.c"),
