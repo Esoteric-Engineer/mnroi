@@ -570,6 +570,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSResumeThread.c"),
             Object(Matching, "Dolphin/os/OSSuspendThread.c"),
             Object(Matching, "Dolphin/os/OSTime.c"),
+            Object(Matching, "Dolphin/os/_ExitProcess.c"),
         ],
     ),
 ]
