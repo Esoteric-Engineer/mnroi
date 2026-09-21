@@ -1,5 +1,6 @@
 typedef unsigned int u32;
 typedef int s32;
+typedef long long s64;
 
 typedef struct DVDCommandBlock DVDCommandBlock;
 struct DVDCommandBlock
@@ -52,7 +53,7 @@ extern volatile u32 CurrCommand;
 extern int ResetRequired;
 void cbForUnrecoveredErrorRetry(u32 intType);
 extern void fn_80184D20(void);
-extern void fn_80184BB4(void);
+void stateCoverClosed(void);
 extern void cbForUnrecoveredError(u32 intType);
 void cbForStateError(u32 intType);
 extern int FatalErrorFlag;
@@ -80,6 +81,8 @@ void cbForStateCheckID1(u32 intType);
 extern void OSRegisterVersion(const char* version);
 extern void __DVDFSInit(void);
 extern void __DVDClearWaitingQueue(void);
+extern void OSCreateAlarm(void* alarm);
+extern void OSSetAlarm(void* alarm, s64 tick, void* handler);
 extern void __DVDInitWA(void);
 extern void __DVDInterruptHandler(void);
 extern void OSInitThreadQueue(void* queue);
@@ -320,7 +323,7 @@ void cbForStateGettingError(u32 intType)
         fn_80184D20();
     } else if (status == 0x02000000) {
         executing->state = 3;
-        fn_80184BB4();
+        stateCoverClosed();
     } else if (status == 0x03000000) {
         executing->state = 4;
         fn_80184D20();
@@ -533,4 +536,29 @@ void AlarmHandler_80184B70(void* alarm, void* context)
     DCInvalidateRange(lbl_8057D240, 0x20);
     LastState = fn_80184C80;
     fn_80184C80(executing);
+}
+
+void stateCoverClosed(void)
+{
+    DVDCommandBlock* finished;
+
+    switch ((int)CurrCommand) {
+    case 4:
+    case 5:
+    case 13:
+    case 15:
+        __DVDClearWaitingQueue();
+        finished = executing;
+        executing = &DummyCommandBlock;
+        if (finished->callback) {
+            finished->callback(-4, finished);
+        }
+        stateReady();
+        break;
+    default:
+        DVDReset();
+        OSCreateAlarm(lbl_8057D290);
+        OSSetAlarm(lbl_8057D290, (s64)(((*(u32*)0x800000F8 / 4) / 1000) * 1150), AlarmHandler_80184B70);
+        break;
+    }
 }
