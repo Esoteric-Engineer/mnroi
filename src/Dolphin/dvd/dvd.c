@@ -1018,3 +1018,16 @@ int DVDCancelStreamAsync(DVDCommandBlock* block, void* callback)
     idle = issueCommand(1, block);
     return idle;
 }
+
+int DVDInquiryAsync(DVDCommandBlock* block, void* info, void* callback)
+{
+    int idle;
+
+    block->command = 14;
+    block->addr = info;
+    block->length = 0x20;
+    block->transferredSize = 0;
+    block->callback = callback;
+    idle = issueCommand(2, block);
+    return idle;
+}
