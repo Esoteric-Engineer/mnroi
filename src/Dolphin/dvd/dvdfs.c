@@ -565,3 +565,28 @@ s32 DVDOpenDir(char* dirName, DVDDir* dir)
 
     return 1;
 }
+
+typedef struct DVDDirEntry
+{
+    u32 entryNum;
+    u32 isDir;
+    char* name;
+} DVDDirEntry;
+
+#define stringOff(i) (FstStart[i].isDirAndStringOff & ~0xff000000)
+#define nextDir(i) (FstStart[i].nextEntryOrLength)
+
+s32 DVDReadDir(DVDDir* dir, DVDDirEntry* dirent)
+{
+    u32 loc;
+
+    loc = dir->location;
+    if ((loc <= dir->entryNum) || (dir->next <= loc)) {
+        return 0;
+    }
+    dirent->entryNum = loc;
+    dirent->isDir = entryIsDir(loc);
+    dirent->name = FstStringStart + stringOff(loc);
+    dir->location = entryIsDir(loc) ? nextDir(loc) : loc + 1;
+    return 1;
+}
