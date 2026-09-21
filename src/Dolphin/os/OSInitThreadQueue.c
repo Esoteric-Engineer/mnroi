@@ -1,4 +1,4 @@
-asm void fn_8017FD64(register void* p)
+asm void OSInitThreadQueue(register void* p)
 {
     // clang-format off
     nofralloc

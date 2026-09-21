@@ -513,6 +513,7 @@ config.libs = [
         "dvd",
         [
             Object(Matching, "Dolphin/dvd/dvdfs.c"),
+            Object(Matching, "Dolphin/dvd/dvd.c"),
             Object(Matching, "Dolphin/dvd/DVDSetAutoInvalidation.c"),
             Object(Matching, "Dolphin/dvd/dvdqueue.c"),
             Object(Matching, "Dolphin/dvd/DVDLowWaitCoverClose.c"),
@@ -576,7 +577,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSGetResetCode.c"),
             Object(Matching, "Dolphin/os/OSAlarm.c"),
             Object(Matching, "Dolphin/os/__OSSetAlarmState.c"),
-            Object(Matching, "Dolphin/os/fn_8017FD64.c"),
+            Object(Matching, "Dolphin/os/OSInitThreadQueue.c"),
             Object(Matching, "Dolphin/os/fn_8017FD74.c"),
             Object(Matching, "Dolphin/os/fn_8017FD80.c"),
             Object(Matching, "Dolphin/os/OSThread.c"),

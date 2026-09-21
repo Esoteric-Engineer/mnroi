@@ -1,11 +1,11 @@
 typedef int BOOL;
 
-extern BOOL lbl_8066C414;
+extern BOOL autoInvalidation;
 
 BOOL DVDSetAutoInvalidation(BOOL autoInval) {
     BOOL prev;
 
-    prev = lbl_8066C414;
-    lbl_8066C414 = autoInval;
+    prev = autoInvalidation;
+    autoInvalidation = autoInval;
     return prev;
 }

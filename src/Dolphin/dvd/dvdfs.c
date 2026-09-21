@@ -60,7 +60,7 @@ extern s32 fn_801859B4(DVDCommandBlock* block, void* addr, s32 length, s32 offse
 extern char lbl_804D1E74[0x58]; // "DVDRead(): specified area is out of the file  "
 extern void cbForReadSync(void);
 extern void OSWakeupThread(void* queue);
-extern char lbl_8066F2B8[8]; // likely __DVDThreadQueue, unconfirmed
+extern char __DVDThreadQueue[8];
 extern void fn_80180BFC(void* queue); // likely OSSleepThread, unconfirmed
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
@@ -490,7 +490,7 @@ s32 DVDReadPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, s32 p
             retVal = -3;
             break;
         }
-        fn_80180BFC(lbl_8066F2B8);
+        fn_80180BFC(__DVDThreadQueue);
     }
 
     OSRestoreInterrupts(enabled);
@@ -499,7 +499,7 @@ s32 DVDReadPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, s32 p
 
 void cbForReadSync(void)
 {
-    OSWakeupThread(lbl_8066F2B8);
+    OSWakeupThread(__DVDThreadQueue);
 }
 
 s32 DVDSeekPrio(DVDFileInfo* fileInfo, s32 offset, s32 prio)
@@ -530,7 +530,7 @@ s32 DVDSeekPrio(DVDFileInfo* fileInfo, s32 offset, s32 prio)
             retVal = -3;
             break;
         }
-        fn_80180BFC(lbl_8066F2B8);
+        fn_80180BFC(__DVDThreadQueue);
     }
 
     OSRestoreInterrupts(enabled);
@@ -539,7 +539,7 @@ s32 DVDSeekPrio(DVDFileInfo* fileInfo, s32 offset, s32 prio)
 
 void cbForSeekSync(void)
 {
-    OSWakeupThread(lbl_8066F2B8);
+    OSWakeupThread(__DVDThreadQueue);
 }
 
 s32 DVDOpenDir(char* dirName, DVDDir* dir)
