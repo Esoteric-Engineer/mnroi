@@ -56,6 +56,8 @@ extern char lbl_8066F2B8[8]; // likely __DVDThreadQueue, unconfirmed
 extern void fn_80180BFC(void* queue); // likely OSSleepThread, unconfirmed
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
+extern void fn_80183C38(void); // likely cbForSeekSync, unconfirmed
+extern s32 fn_80185A90(DVDCommandBlock* block, u32 offset, void* callback, s32 prio); // likely DVDSeekAbsAsyncPrio, unconfirmed
 extern s32 fn_801862A4(DVDCommandBlock* block); // likely DVDCancel, unconfirmed
 extern void OSReport(const char* msg, ...);
 extern char lbl_804D1E08[0x38]; // "Warning: DVDOpen(): file '%s' was not found under %s.\n"
@@ -490,4 +492,39 @@ s32 DVDReadPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, s32 p
 void cbForReadSync(void)
 {
     OSWakeupThread(lbl_8066F2B8);
+}
+
+s32 DVDSeekPrio(DVDFileInfo* fileInfo, s32 offset, s32 prio)
+{
+    s32 result;
+    DVDCommandBlock* block;
+    s32 state;
+    int enabled;
+    s32 retVal;
+
+    block = &fileInfo->cb;
+    result = fn_80185A90(block, fileInfo->startAddr + offset, fn_80183C38, prio);
+    if (result == 0) {
+        return -1;
+    }
+
+    enabled = OSDisableInterrupts();
+
+    while (1) {
+        state = ((volatile DVDCommandBlock*)block)->state;
+        if (state == 0) {
+            retVal = 0;
+            break;
+        } else if (state == -1) {
+            retVal = -1;
+            break;
+        } else if (state == 10) {
+            retVal = -3;
+            break;
+        }
+        fn_80180BFC(lbl_8066F2B8);
+    }
+
+    OSRestoreInterrupts(enabled);
+    return retVal;
 }
