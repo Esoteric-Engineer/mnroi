@@ -930,3 +930,42 @@ void cbForStateBusy(u32 intType)
     }
     DVDLowRequestError(cbForStateGettingError);
 }
+
+extern int autoInvalidation;
+extern void DCInvalidateRange(void* addr, u32 nBytes);
+extern int OSDisableInterrupts(void);
+extern void OSRestoreInterrupts(int level);
+extern int __DVDPushWaitingQueue(s32 prio, DVDCommandBlock* block);
+
+static int issueCommand(s32 prio, DVDCommandBlock* block)
+{
+    int level;
+    int result;
+
+    if (autoInvalidation != 0
+        && (block->command == 1 || block->command == 4 || block->command == 5 || block->command == 14)) {
+        DCInvalidateRange(block->addr, block->length);
+    }
+    level = OSDisableInterrupts();
+    block->state = 2;
+    result = __DVDPushWaitingQueue(prio, block);
+    if (executing == 0 && PauseFlag == 0) {
+        stateReady();
+    }
+    OSRestoreInterrupts(level);
+    return result;
+}
+
+int DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, s32 length, s32 offset, void* callback, s32 prio)
+{
+    int idle;
+
+    block->command = 1;
+    block->addr = addr;
+    block->length = length;
+    block->offset = offset;
+    block->transferredSize = 0;
+    block->callback = callback;
+    idle = issueCommand(prio, block);
+    return idle;
+}
