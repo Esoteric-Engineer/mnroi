@@ -75,7 +75,7 @@ void cbForStateReadingFST(u32 intType);
 
 extern int fn_80186958(void* id1, void* id2);
 extern void* memcpy(void* dst, const void* src, u32 n);
-extern int fn_801721F8(const void* a, const void* b, u32 n);
+extern int memcmp(const void* a, const void* b, u32 n);
 extern void DCInvalidateRange(void* addr, u32 nBytes);
 extern void DVDLowAudioBufferConfig(u32 enable, u32 size, void* callback);
 void cbForStateCheckID3(u32 intType);
@@ -435,7 +435,7 @@ void stateCheckID(void)
         }
         break;
     default:
-        if (fn_801721F8(lbl_8057D240, IDShouldBe, 0x20)) {
+        if (memcmp(lbl_8057D240, IDShouldBe, 0x20)) {
             DVDLowStopMotor(cbForStateCheckID1);
         } else {
             LastState = stateCheckID3;

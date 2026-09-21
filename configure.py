@@ -303,6 +303,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/fn_80171FB0.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80171FEC.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_801721C0.c"),
+            Object(Matching, "Runtime.PPCEABI.H/memcmp.c"),
             Object(Matching, "Runtime.PPCEABI.H/memset.c"),
             Object(Matching, "Runtime.PPCEABI.H/strrchr.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80172BD4.c"),
