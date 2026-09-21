@@ -15,6 +15,9 @@ Dolphin/os/fn_80169134.c:
 Dolphin/os/fn_80169150.c:
 	.text       start:0x80169150 end:0x80169164
 
+Dolphin/os/__shr2u.c:
+	.text       start:0x8016B59C end:0x8016B5A0
+
 Dolphin/os/__div2i.c:
 	.text       start:0x8016B5A0 end:0x8016B5A4
 
