@@ -46,7 +46,7 @@ extern int PauseFlag;
 extern int PausingFlag;
 extern DVDCommandBlock* __DVDPopWaitingQueue(void);
 extern int __DVDCheckWaitingQueue(void);
-extern void fn_80186A50(void);
+extern void __DVDPrintFatalMessage(void);
 extern void __DVDStoreErrorCode(u32 error);
 extern void DVDReset(void);
 extern void DVDLowRequestError(void* callback);
@@ -192,7 +192,7 @@ void cbForStateError(u32 intType)
         stateTimeout();
         return;
     }
-    fn_80186A50();
+    __DVDPrintFatalMessage();
     FatalErrorFlag = 1;
     finished = executing;
     executing = &DummyCommandBlock;
