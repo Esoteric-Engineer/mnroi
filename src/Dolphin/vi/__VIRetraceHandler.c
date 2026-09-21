@@ -30,7 +30,7 @@ void OSSetCurrentContext(OSContext* context);
 void OSWakeupThread(void* queue);
 void SIRefreshSamplingRate(void);
 void fn_80189BB0(s16* x, s16* y);
-u32 fn_8018982C(void);
+u32 getCurrentFieldEvenOdd(void);
 
 static inline s32 cntlzd(u64 bit)
 {
@@ -51,7 +51,7 @@ static inline int VISetRegs(u8* tbl)
 {
     s32 regIndex;
 
-    if (lbl_8066F3B0 != 1 || fn_8018982C() != 0) {
+    if (lbl_8066F3B0 != 1 || getCurrentFieldEvenOdd() != 0) {
         while (lbl_8066F3B8 != 0) {
             regIndex = cntlzd(lbl_8066F3B8);
             __VIRegs[regIndex] = ((u16*)(tbl + 0x78))[regIndex];

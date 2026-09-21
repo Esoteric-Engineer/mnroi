@@ -347,6 +347,9 @@ Dolphin/vi/VIWaitForRetrace.c:
 Dolphin/vi/VIGetRetraceCount.c:
 	.text       start:0x80189824 end:0x8018982C
 
+Dolphin/vi/getCurrentFieldEvenOdd.c:
+	.text       start:0x8018982C end:0x80189894
+
 Dolphin/ai/AIRegisterDMACallback.c:
 	.text       start:0x8018B624 end:0x8018B668
 
