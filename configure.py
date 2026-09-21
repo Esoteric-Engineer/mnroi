@@ -517,6 +517,7 @@ config.libs = [
             Object(Matching, "Dolphin/dvd/DVDLowClearCallback.c"),
             Object(NonMatching, "Dolphin/dvd/__DVDLowSetWAType.c"),
             Object(Matching, "Dolphin/dvd/__DVDIsDVDAlarm.c"),
+            Object(Matching, "Dolphin/dvd/DVDLowSetResetCoverCallback.c"),
         ],
     ),
     DolphinLib(
