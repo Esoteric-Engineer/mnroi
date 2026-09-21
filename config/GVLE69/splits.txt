@@ -302,6 +302,9 @@ Dolphin/dvd/DVDLowBreak.c:
 Dolphin/dvd/DVDLowClearCallback.c:
 	.text       start:0x80187AA4 end:0x80187AC0
 
+Dolphin/dvd/__DVDLowSetWAType.c:
+	.text       start:0x80187AC0 end:0x80187B04
+
 Dolphin/ai/AIRegisterDMACallback.c:
 	.text       start:0x8018B624 end:0x8018B668
 
