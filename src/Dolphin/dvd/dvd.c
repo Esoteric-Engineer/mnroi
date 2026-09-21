@@ -1,6 +1,15 @@
 typedef unsigned int u32;
 typedef int s32;
 
+typedef struct DVDCommandBlock DVDCommandBlock;
+struct DVDCommandBlock
+{
+    unsigned char pad[0xC];
+    s32 state;
+    unsigned char pad2[0x18];
+    void (*callback)(s32 result, DVDCommandBlock* block);
+};
+
 typedef struct OSBootInfo
 {
     unsigned char pad[0x20];
@@ -20,10 +29,16 @@ extern u32 tmpBuffer[32];
 extern void* LastState;
 extern char lbl_8066C41C[6];
 extern char lbl_804D2184[];
+extern u32 NumInternalRetry;
+extern DVDCommandBlock* executing;
+extern DVDCommandBlock DummyCommandBlock;
+extern void stateTimeout(void);
+extern void stateGettingError(void);
+extern void stateReady(void);
 
 extern void fn_8017CBFC(const char* file, int line, const char* msg, ...);
 extern void DVDLowRead(void* addr, u32 length, u32 offset, void* callback);
-extern void cbForStateReadingFST(u32 intType);
+void cbForStateReadingFST(u32 intType);
 
 extern void OSRegisterVersion(const char* version);
 extern void __DVDFSInit(void);
@@ -76,4 +91,28 @@ void stateReadingFST(void)
         fn_8017CBFC(lbl_8066C41C, 0x28A, lbl_804D2184);
     }
     DVDLowRead((void*)bootInfo->fstLocation, (tmpBuffer[2] + 0x1F) & ~0x1F, tmpBuffer[1], cbForStateReadingFST);
+}
+
+void cbForStateReadingFST(u32 intType)
+{
+    DVDCommandBlock* finished;
+
+    if (intType == 16) {
+        executing->state = -1;
+        stateTimeout();
+        return;
+    }
+    if (intType & 1) {
+        NumInternalRetry = 0;
+        __DVDFSInit();
+        finished = executing;
+        executing = &DummyCommandBlock;
+        finished->state = 0;
+        if (finished->callback) {
+            finished->callback(0, finished);
+        }
+        stateReady();
+        return;
+    }
+    stateGettingError();
 }
