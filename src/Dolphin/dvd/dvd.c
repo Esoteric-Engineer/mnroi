@@ -1008,3 +1008,13 @@ int DVDReadDiskID(DVDCommandBlock* block, void* diskID, void* callback)
     idle = issueCommand(2, block);
     return idle;
 }
+
+int DVDCancelStreamAsync(DVDCommandBlock* block, void* callback)
+{
+    int idle;
+
+    block->command = 7;
+    block->callback = callback;
+    idle = issueCommand(1, block);
+    return idle;
+}
