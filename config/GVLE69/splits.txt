@@ -317,6 +317,9 @@ Dolphin/dvd/DVDLowSetCoverCallback.c:
 Dolphin/dvd/DVDLowSetResetCoverCallback.c:
 	.text       start:0x80187DF4 end:0x80187E38
 
+Dolphin/vi/VIWaitForRetrace.c:
+	.text       start:0x80188588 end:0x801885DC
+
 Dolphin/ai/AIRegisterDMACallback.c:
 	.text       start:0x8018B624 end:0x8018B668
 

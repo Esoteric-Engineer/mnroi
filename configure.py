@@ -520,6 +520,7 @@ config.libs = [
             Object(Matching, "Dolphin/vi/__VIRetraceHandler.c"),
             Object(Matching, "Dolphin/dvd/DVDLowSetCoverCallback.c"),
             Object(Matching, "Dolphin/dvd/DVDLowSetResetCoverCallback.c"),
+            Object(Matching, "Dolphin/vi/VIWaitForRetrace.c"),
         ],
     ),
     DolphinLib(
