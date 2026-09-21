@@ -8,8 +8,10 @@ struct DVDCommandBlock
     u32 command;
     s32 state;
     u32 offset;
-    unsigned char pad2[0x14];
+    unsigned char pad2[0x10];
+    void* id;
     void (*callback)(s32 result, DVDCommandBlock* block);
+    void* userData;
 };
 
 typedef struct OSBootInfo
@@ -27,14 +29,12 @@ extern OSBootInfo* bootInfo;
 extern void* IDShouldBe;
 extern u32 __DVDThreadQueue[2];
 extern char* __DVDVersion;
-extern u32 tmpBuffer[32];
 extern void* LastState;
 extern char lbl_8066C41C[6];
 extern char lbl_804D2184[];
 extern volatile u32 NumInternalRetry;
 extern u32 lbl_8066F2F0;
 extern DVDCommandBlock* executing;
-extern DVDCommandBlock DummyCommandBlock;
 void stateTimeout(void);
 void stateGettingError(void);
 extern void stateReady(void);
@@ -63,6 +63,14 @@ extern void fn_8017CBFC(const char* file, int line, const char* msg, ...);
 extern void DVDLowRead(void* addr, u32 length, u32 offset, void* callback);
 void cbForStateReadingFST(u32 intType);
 
+extern int fn_80186958(void* id1, void* id2);
+extern void* memcpy(void* dst, const void* src, u32 n);
+extern int fn_801721F8(const void* a, const void* b, u32 n);
+extern void DCInvalidateRange(void* addr, u32 nBytes);
+extern void fn_80184768(DVDCommandBlock* block);
+extern void fn_8018479C(DVDCommandBlock* block);
+extern void fn_8018487C(u32 intType);
+
 extern void OSRegisterVersion(const char* version);
 extern void __DVDFSInit(void);
 extern void __DVDClearWaitingQueue(void);
@@ -75,6 +83,13 @@ extern void __OSUnmaskInterrupts(u32 mask);
 extern void OSReport(const char* msg, ...);
 
 volatile u32 __DIRegs[0x20] : 0xCC006000;
+
+// The SDK has these as statics (BB2, CurrDiskID, DummyCommandBlock, ResetAlarm), which stay global here for the unmatched asm.
+// MWCC lays out referenced globals in first-use order and the rest in reverse declaration order, so cbForStateReadingFST carries a no-code use of lbl_8057D240 to keep it second.
+unsigned char lbl_8057D290[0x28];
+DVDCommandBlock DummyCommandBlock;
+unsigned char lbl_8057D240[0x20] __attribute__((aligned(32)));
+u32 tmpBuffer[8] __attribute__((aligned(32)));
 
 void fn_80183DC8(void)
 {
@@ -119,6 +134,7 @@ void stateReadingFST(void)
 void cbForStateReadingFST(u32 intType)
 {
     DVDCommandBlock* finished;
+    (void)lbl_8057D240;
 
     if (intType == 16) {
         executing->state = -1;
@@ -374,5 +390,30 @@ void cbForStateGoToRetry(u32 intType)
     if (!CheckCancel(2)) {
         executing->state = 11;
         fn_80184D20();
+    }
+}
+
+void stateCheckID(void)
+{
+    switch ((int)CurrCommand) {
+    case 3:
+        if (fn_80186958(lbl_8057D240, executing->id)) {
+            memcpy(IDShouldBe, lbl_8057D240, 0x20);
+            executing->state = 1;
+            DCInvalidateRange(tmpBuffer, 0x20);
+            LastState = fn_8018479C;
+            fn_8018479C(executing);
+        } else {
+            DVDLowStopMotor(fn_8018487C);
+        }
+        break;
+    default:
+        if (fn_801721F8(lbl_8057D240, IDShouldBe, 0x20)) {
+            DVDLowStopMotor(fn_8018487C);
+        } else {
+            LastState = fn_80184768;
+            fn_80184768(executing);
+        }
+        break;
     }
 }
