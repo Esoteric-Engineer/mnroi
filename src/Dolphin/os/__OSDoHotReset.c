@@ -1,6 +1,6 @@
 extern void OSDisableInterrupts(void);
 extern void ICFlashInvalidate(void);
-extern void fn_8017E894(void);
+extern void Reset(void);
 
 asm void __OSDoHotReset(void)
 {
@@ -18,7 +18,7 @@ asm void __OSDoHotReset(void)
     sth     r0, 2(r3)
     bl      ICFlashInvalidate
     slwi    r3, r31, 3
-    bl      fn_8017E894
+    bl      Reset
     lwz     r0, 0x1c(r1)
     lwz     r31, 0x14(r1)
     addi    r1, r1, 0x18
