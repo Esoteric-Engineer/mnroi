@@ -5,6 +5,9 @@ typedef struct OSBootInfo
 {
     unsigned char pad[0x20];
     u32 magic;
+    unsigned char pad2[0x14];
+    u32 fstLocation;
+    u32 fstLength;
 } OSBootInfo;
 
 extern int DVDInitialized;
@@ -13,6 +16,14 @@ extern OSBootInfo* bootInfo;
 extern void* IDShouldBe;
 extern u32 __DVDThreadQueue[2];
 extern char* __DVDVersion;
+extern u32 tmpBuffer[32];
+extern void* LastState;
+extern char lbl_8066C41C[6];
+extern char lbl_804D2184[];
+
+extern void fn_8017CBFC(const char* file, int line, const char* msg, ...);
+extern void DVDLowRead(void* addr, u32 length, u32 offset, void* callback);
+extern void cbForStateReadingFST(u32 intType);
 
 extern void OSRegisterVersion(const char* version);
 extern void __DVDFSInit(void);
@@ -56,4 +67,13 @@ void DVDInit(void)
             FirstTimeInBootrom = 1;
         }
     }
+}
+
+void stateReadingFST(void)
+{
+    LastState = stateReadingFST;
+    if (bootInfo->fstLength < tmpBuffer[2]) {
+        fn_8017CBFC(lbl_8066C41C, 0x28A, lbl_804D2184);
+    }
+    DVDLowRead((void*)bootInfo->fstLocation, (tmpBuffer[2] + 0x1F) & ~0x1F, tmpBuffer[1], cbForStateReadingFST);
 }
