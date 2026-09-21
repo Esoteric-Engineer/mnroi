@@ -100,7 +100,7 @@ addr	size	name	library	confidence	notes	status
 0x8017FC08	0x4		os	unidentified		open
 0x8017FC0C	0x158		os	unidentified		open
 0x80180BFC	0xEC	OSSleepThread	os	exact	ac-decomp size 0xec	open
-0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	open
+0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	matched
 0x80180DEC	0xC0	OSSetThreadPriority	os	exact	ac-decomp size 0xc0	open
 0x80180EAC	0xAC	CheckThreadQueue	os	guess	ac-decomp size 0x9c	open
 0x801814F4	0xDC	EXIDetach	exi	guess	ac-decomp size 0xbc	open
