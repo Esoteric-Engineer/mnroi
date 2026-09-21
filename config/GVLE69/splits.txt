@@ -308,6 +308,9 @@ Dolphin/dvd/__DVDLowSetWAType.c:
 Dolphin/dvd/__DVDIsDVDAlarm.c:
 	.text       start:0x80187B04 end:0x80187B3C
 
+Dolphin/dvd/DVDLowSetCoverCallback.c:
+	.text       start:0x80187DB0 end:0x80187DF4
+
 Dolphin/dvd/DVDLowSetResetCoverCallback.c:
 	.text       start:0x80187DF4 end:0x80187E38
 
