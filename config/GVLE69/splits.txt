@@ -57,6 +57,9 @@ Runtime.PPCEABI.H/fn_80171FEC.c:
 Runtime.PPCEABI.H/memset.c:
 	.text       start:0x80172418 end:0x801724AC
 
+Runtime.PPCEABI.H/strrchr.c:
+	.text       start:0x80172AB0 end:0x80172AFC
+
 Runtime.PPCEABI.H/fn_80172BD4.c:
 	.text       start:0x80172BD4 end:0x80172BFC
 
