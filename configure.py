@@ -606,6 +606,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/__OSDoHotReset.c"),
             Object(Matching, "Dolphin/os/OSGetResetCode.c"),
             Object(Matching, "Dolphin/os/fn_8017D3B0.c"),
+            Object(Matching, "Dolphin/os/fn_8017D464.c"),
             Object(Matching, "Dolphin/os/OSAlarm.c"),
             Object(Matching, "Dolphin/os/__OSSetAlarmState.c"),
             Object(Matching, "Dolphin/os/OSInitThreadQueue.c"),

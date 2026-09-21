@@ -272,6 +272,9 @@ Dolphin/os/OSAlarm.c:
 Dolphin/os/__OSSetAlarmState.c:
 	.text       start:0x8017D458 end:0x8017D464
 
+Dolphin/os/fn_8017D464.c:
+	.text       start:0x8017D464 end:0x8017D4A4
+
 Dolphin/os/OSInterrupt.c:
 	.text       start:0x8017DB88 end:0x8017DBD4
 
