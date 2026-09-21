@@ -156,6 +156,8 @@ Smaller findings:
 
 - **`lis`/`addi r31` to one `.bss` object, then `addi rX,r31,0x20` / `addi rX,r31,0` to reach the object *after* it, means pooled data, not a pointer local:** MWCC addresses objects defined in the same unit off one base (`...bss.0`), and the `+0` form stays an `addi`, never `mr`. No `extern`/local-pointer form reproduces it (`stateCheckID` stalled at 97.7%). Claim the unit's `.bss` range and *define* the objects in the source. Keep them non-`static` so unclaimed asm still links (globals pool too). Layout rules: `static`s follow declaration order; globals go referenced-first in **first-use order**, then unreferenced ones in reverse declaration order. A discarded `(void)obj;` counts as a use and emits nothing, so it can pin the order. Place it where nothing else is live (at the end of `stateReadingFST` it stretched the pool base's lifetime, 73%). `stateCheckID` (`0x80184688`, `dvd.c` `.bss 0x8057D220-0x8057D2B8`) 97.7% -> 100%.
 
+- **Two SDK statics with the same name (`AlarmHandler` in `SIBios.c` and `dvd.c`) collide:** dtk-dev renames the second to `AlarmHandler_<addr>` at link and unclaimed asm callers fail with `undefined: 'AlarmHandler_80184B70'`. Rename it that way in `symbols.txt` (`scope:global`) and define the function non-`static` under that name.
+
 - **`.sdata2` symbols in compiled C are fine:** the `sda2_via_r13` option bakes those accesses as `r13` offsets (see [`baseline.md`](baseline.md#small-data-r13-problem)), so write them as ordinary C.<br />
   If `Range Error for small data relocation` appears, check that `build.ninja` was generated with the fork's `dtk-dev` and that `build/GVLE69/sda_bake.json` exists.
 

@@ -524,3 +524,13 @@ void cbForStateCheckID3(u32 intType)
         DVDLowRequestError(cbForStateGettingError);
     }
 }
+
+extern void fn_80184C80(DVDCommandBlock* block);
+
+void AlarmHandler_80184B70(void* alarm, void* context)
+{
+    DVDReset();
+    DCInvalidateRange(lbl_8057D240, 0x20);
+    LastState = fn_80184C80;
+    fn_80184C80(executing);
+}
