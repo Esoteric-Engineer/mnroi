@@ -422,7 +422,7 @@ Dolphin/dvd/DVDGetCurrentDiskID.c:
 	.text       start:0x80186374 end:0x8018637C
 
 Dolphin/dvd/dvdqueue.c:
-	.text       start:0x801865C8 end:0x80186600
+	.text       start:0x801865C8 end:0x80186760
 	.bss        start:0x8057D2B8 end:0x8057D2D8
 
 Dolphin/dvd/DVDLowSeek.c:

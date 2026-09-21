@@ -128,6 +128,8 @@ Smaller findings:
 
 - **A string-only `.data` claim starting 4-mod-8 also shifts `main.dol` (+32 here), not just jump tables:** `__OSContextInit`'s `"FPU-unavailable handler installed\n"` (`0x804D0ED4`) failed as its own unit at 100% per-function. Merge it into the neighbouring unit whose `.data` ends there (`OSDumpContext.c`, one original `OSContext.c`). The asm `OSSwitchFPUContext` before it means `#pragma peephole on` must *not* be added: keep peephole off, or `lis` hoists above the prologue.
 
+- **A `static` helper inlined into its caller (`PopWaitingQueuePrio` in `__DVDPopWaitingQueue`, `0x80186668`) gives a frame 8 bytes too big (`-0x18` vs `-0x10`):** its local (`tmp`) stays live across the `OSRestoreInterrupts` call. Delete the helper and write its body inline in the caller's loop (re-calling `OSDisableInterrupts` there, as the original does). 99.875% -> 100%.
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---
