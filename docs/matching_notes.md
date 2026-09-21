@@ -120,6 +120,8 @@ Smaller findings:
 
 - **A variadic `OSPanic`-style function needs `__builtin_va_info(&args)` (as in `OSReport`) and its string literals claimed as `.data`:** the strings sit in one blob whose symbol dtk sized too big (`@13` 0x16 plus one 0x2C6 `lbl_`), so split the blob in `symbols.txt` at the claimed end (`ends within symbol` error otherwise). A string another unclaimed function still references (`@13_804D0EF8` undefined at link) must be renamed to a real global and *defined* in the source as `char Name[] = "..."` used at its first use; it lands in place. Matched `OSPanic` (`0x8017CBFC`); `fn_8017CD28` (`OSSetErrorHandler` neighbour) and `__OSUnhandledException` share that `.data` blob.
 
+- **A u64 field split as `u32 pad; u32 lo;` in a struct can change register allocation vs. `*((u32*)&u64f + 1)` casts:** `OSSetErrorHandler` (`0x8017CD28`) sat at 99.1% with only the thread-walk pointer in r7 instead of r6 until `fpscr` was declared as `u32 fpscr_pad; u32 fpscr;` and accessed by name. This game's version also toggles the FPE enable bits (MSR FE0/FE1, FPSCR) across `__OSActiveThreadQueue` (head at `0x800000DC`), unlike ac-decomp's plain table swap.
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---

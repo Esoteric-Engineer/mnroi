@@ -585,6 +585,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSClearContext.c"),
             Object(Matching, "Dolphin/os/OSReport.c"),
             Object(Matching, "Dolphin/os/OSPanic.c"),
+            Object(Matching, "Dolphin/os/OSSetErrorHandler.c"),
             Object(Matching, "Dolphin/os/OSLockSram.c"),
             Object(Matching, "Dolphin/os/OSUnlockSram.c"),
             Object(Matching, "Dolphin/os/__OSSyncSram.c"),
