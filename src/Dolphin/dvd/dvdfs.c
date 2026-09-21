@@ -590,3 +590,8 @@ s32 DVDReadDir(DVDDir* dir, DVDDirEntry* dirent)
     dir->location = entryIsDir(loc) ? nextDir(loc) : loc + 1;
     return 1;
 }
+
+s32 DVDCloseDir(DVDDir* dir)
+{
+    return 1;
+}
