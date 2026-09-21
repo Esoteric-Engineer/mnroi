@@ -293,6 +293,9 @@ Dolphin/dvd/dvdfs.c:
 Dolphin/dvd/DVDSetAutoInvalidation.c:
 	.text       start:0x80185FC8 end:0x80185FD8
 
+Dolphin/dvd/DVDLowWaitCoverClose.c:
+	.text       start:0x80187590 end:0x801875BC
+
 Dolphin/dvd/DVDLowBreak.c:
 	.text       start:0x80187A90 end:0x80187AA4
 

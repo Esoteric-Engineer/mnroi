@@ -123,6 +123,8 @@ Smaller findings:
 
   Give it a real name instead (`GXInitZScaleConst`). That survives regeneration, lands in the bake list, and the relocation resolves. Same rule as the `cmdTypeAndStatus$371` case above.
 
+- **Claiming a known SDK function can make dtk-dev rename the `.sbss` symbols it touches (`lbl_8066F330` -> `StopAtNextInt`, `scope:local`):** the next `ninja` rewrites `symbols.txt` and every other unit's `extern lbl_...` fails to link (`undefined: 'lbl_8066F330'`). Keep the new names, set them `scope:global`, and update the `extern`s in sibling units. Seen with `DVDLowWaitCoverClose` (`Callback`, `StopAtNextInt`, `WaitingCoverClose`).
+
 - **Prefer referencing an unclaimed symbol over claiming its range:**
 
   Claiming even a 4-byte `.sbss` range can repack every other unclaimed symbol in that section.
