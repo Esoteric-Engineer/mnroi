@@ -563,12 +563,30 @@ void stateCoverClosed(void)
     }
 }
 
-extern void fn_80184CB0(u32 intType);
+extern void cbForStateReadingID(u32 intType);
 extern void fn_801875BC(void* buf, void* callback);
 
 #pragma dont_inline on
 void stateReadingID(DVDCommandBlock* block)
 {
-    fn_801875BC(lbl_8057D240, fn_80184CB0);
+    fn_801875BC(lbl_8057D240, cbForStateReadingID);
 }
 #pragma dont_inline reset
+
+void cbForStateReadingID(u32 intType)
+{
+    if (intType == 0x10) {
+        executing->state = -1;
+        __DVDStoreErrorCode(0x01234568);
+        DVDReset();
+        cbForStateError(0);
+        return;
+    }
+
+    if (intType & 1) {
+        NumInternalRetry = 0;
+        stateCheckID();
+    } else {
+        DVDLowRequestError(cbForStateGettingError);
+    }
+}
