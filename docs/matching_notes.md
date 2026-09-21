@@ -107,6 +107,8 @@ Smaller findings:
 
 - **An inlined `SetTimeoutAlarm(OSTime)` (saves r30/r31, alarm base loaded before the tick math) needs a `static` helper taking the `s64` timeout as a parameter,** not the `OSCreateAlarm`/`OSSetAlarm` calls written inline (60.9%). Call it as `SetTimeoutAlarm((s64)((*(u32*)0x800000F8 / 4) * 10))`. Matched `DVDLowStopMotor` (`0x80187660`); the same shape should fit its `DVDLowRequestError`-style siblings. Claiming it made dtk-dev auto-name `OSCreateAlarm`/`AlarmForTimeout`/`AlarmHandlerForTimeout` (set the last two `scope:global`, update other units' `extern`s).
 
+- **A `dont_inline` helper kept for its own address can't be called from a later function that inlined it in the original:** `stateReady` (`0x80184E2C`) shows `lis`/`addi cbForStateMotorStopped` + `bl DVDLowWaitCoverClose` inline (and `executing` in r4), where calling `stateMotorStopped()` gives `bl stateMotorStopped` (95%). Write the helper's body out at the call site. `stateCoverClosed` (not `dont_inline`) does inline into it.
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---

@@ -39,6 +39,11 @@ extern DVDCommandBlock* executing;
 void stateTimeout(void);
 void stateGettingError(void);
 extern void stateReady(void);
+extern u32 CancelLastError;
+extern int PauseFlag;
+extern int PausingFlag;
+extern DVDCommandBlock* __DVDPopWaitingQueue(void);
+extern int __DVDCheckWaitingQueue(void);
 extern void fn_80186A50(void);
 extern void __DVDStoreErrorCode(u32 error);
 extern void DVDReset(void);
@@ -605,4 +610,61 @@ void cbForStateMotorStopped(u32 intType)
     __DIRegs[1] = 0;
     executing->state = 3;
     stateCoverClosed();
+}
+
+void stateReady(void)
+{
+    DVDCommandBlock* finished;
+
+    if (__DVDCheckWaitingQueue() == 0) {
+        executing = 0;
+        return;
+    }
+    if (PauseFlag != 0) {
+        PausingFlag = 1;
+        executing = 0;
+        return;
+    }
+    executing = __DVDPopWaitingQueue();
+    if (FatalErrorFlag) {
+        executing->state = -1;
+        finished = executing;
+        executing = &DummyCommandBlock;
+        if (finished->callback) {
+            finished->callback(-1, finished);
+        }
+        stateReady();
+        return;
+    }
+    CurrCommand = executing->command;
+    if (ResumeFromHere != 0) {
+        switch (ResumeFromHere) {
+        case 2:
+            executing->state = 11;
+            DVDLowWaitCoverClose(cbForStateMotorStopped);
+            break;
+        case 3:
+            executing->state = 4;
+            DVDLowWaitCoverClose(cbForStateMotorStopped);
+            break;
+        case 4:
+            executing->state = 5;
+            DVDLowWaitCoverClose(cbForStateMotorStopped);
+            break;
+        case 1:
+        case 6:
+        case 7:
+            executing->state = 3;
+            stateCoverClosed();
+            break;
+        case 5:
+            executing->state = -1;
+            stateError(CancelLastError);
+            break;
+        }
+        ResumeFromHere = 0;
+        return;
+    }
+    executing->state = 1;
+    stateBusy(executing);
 }
