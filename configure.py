@@ -551,6 +551,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/fn_8017A6EC.c"),
             Object(Matching, "Dolphin/os/PPCArch.c"),
             Object(Matching, "Dolphin/os/OSExceptionHandler.c"),
+            Object(Matching, "Dolphin/os/OSExceptionVector.c"),
             Object(Matching, "Dolphin/os/fn_80169134.c"),
             Object(Matching, "Dolphin/os/fn_80169150.c"),
             Object(Matching, "Dolphin/os/__shr2u.c"),

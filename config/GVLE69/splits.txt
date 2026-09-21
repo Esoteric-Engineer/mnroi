@@ -178,6 +178,9 @@ Dolphin/os/PPCArch.c:
 Dolphin/os/OSExceptionHandler.c:
 	.text       start:0x8017B234 end:0x8017B264
 
+Dolphin/os/OSExceptionVector.c:
+	.text       start:0x8017B264 end:0x8017B300
+
 Dolphin/os/OSDefaultExceptionHandler.c:
 	.text       start:0x8017B300 end:0x8017B358
 
