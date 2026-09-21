@@ -297,6 +297,9 @@ Dolphin/os/__OSSetInterruptHandler.c:
 Dolphin/os/__OSGetInterruptHandler.c:
 	.text       start:0x8017DBF0 end:0x8017DC04
 
+Dolphin/os/__OSInterruptInit.c:
+	.text       start:0x8017DC04 end:0x8017DC78
+
 Dolphin/os/OSInterruptMask.c:
 	.text       start:0x8017DF50 end:0x8017E060
 
