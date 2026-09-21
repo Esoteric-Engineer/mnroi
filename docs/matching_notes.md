@@ -156,6 +156,7 @@ Smaller findings:
 - Comments and whitespace do not affect output, except for `__LINE__`/`__FILE__` and whitespace inside string literals.
 - Register allocation differences usually indicate a different expression shape or variable lifetime. Try reordering locals or introducing/removing a temporary.
 - Instruction scheduling differences often come from the compiler hoisting a constant. Match the source structure rather than the instruction order directly.
+- `__OSDoHotReset` (`0x8017E96C`): the original is `lis`/`addi r3,r3,0x2000` then `sth r0,2(r3)`, i.e. a hardware base register with a separate offset. Every C form of `__VIRegs[1] = 0` (address-declared array, cast local, `register`, `vi + 1`) folds the offset into the store (`sth 0x2002(r3)`) and tops out at 91%. Written as an `asm` function instead (same approach as `fn_8017A6EC`).
 - If you're stuck around 95% on register choice, [decomp-permuter](https://github.com/simonlindholm/decomp-permuter) can brute-force equivalent C forms.
 
 ---

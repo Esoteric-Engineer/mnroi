@@ -220,6 +220,9 @@ Dolphin/os/OSRegisterResetFunction.c:
 Dolphin/os/CallResetFunctions.c:
 	.text       start:0x8017E7EC end:0x8017E894
 
+Dolphin/os/__OSDoHotReset.c:
+	.text       start:0x8017E96C end:0x8017E9B4
+
 Dolphin/os/OSGetResetCode.c:
 	.text       start:0x8017EBB4 end:0x8017EBEC
 
