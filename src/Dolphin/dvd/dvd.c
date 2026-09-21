@@ -46,7 +46,8 @@ void cbForStateGettingError(u32 intType);
 extern volatile u32 ResumeFromHere;
 extern void DVDLowStopMotor(void* callback);
 extern void DVDLowSeek(u32 offset, void* callback);
-extern void fn_80184508(void);
+void stateGoToRetry(void);
+extern void fn_80184530(void);
 void cbForUnrecoveredErrorRetry(u32 intType);
 extern void fn_80184D20(void);
 extern void fn_80184BB4(void);
@@ -278,7 +279,7 @@ void cbForStateGettingError(u32 intType)
 
     if (errorCategory == 2) {
         __DVDStoreErrorCode(error);
-        fn_80184508();
+        stateGoToRetry();
         return;
     }
     if (errorCategory == 3) {
@@ -314,7 +315,7 @@ void cbForUnrecoveredError(u32 intType)
     }
 
     if (intType & 1) {
-        fn_80184508();
+        stateGoToRetry();
         return;
     }
 
@@ -338,4 +339,9 @@ void cbForUnrecoveredErrorRetry(u32 intType)
         __DVDStoreErrorCode(__DIRegs[8]);
         DVDLowStopMotor(cbForStateError);
     }
+}
+
+void stateGoToRetry(void)
+{
+    DVDLowStopMotor(fn_80184530);
 }
