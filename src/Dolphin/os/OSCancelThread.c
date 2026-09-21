@@ -61,7 +61,7 @@ extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern void OSClearContext(OSContext* context);
 extern void fn_80181698(OSThread* thread);
-extern void fn_80180CE8(OSThreadQueue* queue);
+extern void OSWakeupThread(OSThreadQueue* queue);
 extern void UnsetRun(OSThread* thread);
 extern long __OSGetEffectivePriority(OSThread* thread);
 extern OSThread* SetEffectivePriority(OSThread* thread, long priority);
@@ -140,7 +140,7 @@ void OSCancelThread(OSThread* thread)
         thread->state = 8;
     }
     fn_80181698(thread);
-    fn_80180CE8(&thread->queueJoin);
+    OSWakeupThread(&thread->queueJoin);
     if (RunQueueHint != 0) {
         SelectThread(0);
     }

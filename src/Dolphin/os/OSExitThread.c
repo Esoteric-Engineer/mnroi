@@ -56,7 +56,7 @@ extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern void OSClearContext(OSContext* context);
 extern void fn_80181698(OSThread* thread);
-extern void fn_80180CE8(OSThreadQueue* queue);
+extern void OSWakeupThread(OSThreadQueue* queue);
 extern void SelectThread(int yield);
 extern volatile long RunQueueHint;
 
@@ -91,7 +91,7 @@ void OSExitThread(void* val)
         currentThread->val = val;
     }
     fn_80181698(currentThread);
-    fn_80180CE8(&currentThread->queueJoin);
+    OSWakeupThread(&currentThread->queueJoin);
     RunQueueHint = 1;
 
     if (RunQueueHint != 0) {
