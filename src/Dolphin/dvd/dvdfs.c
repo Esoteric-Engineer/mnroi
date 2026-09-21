@@ -23,6 +23,13 @@ typedef struct DVDCommandBlock
     unsigned char pad2[0xC];
 } DVDCommandBlock;
 
+typedef struct DVDDir
+{
+    u32 entryNum;
+    u32 location;
+    u32 next;
+} DVDDir;
+
 typedef struct DVDFileInfo
 {
     DVDCommandBlock cb; // 0x00, size 0x30
@@ -46,6 +53,7 @@ extern char lbl_804D1D40[]; // the OSPanic() format string below, same reasoning
 extern void fn_8017CBFC(const char* file, int line, const char* msg, ...); // likely OSPanic, unconfirmed
 extern int fn_80400544(int c); // likely tolower, unconfirmed
 extern s32 DVDGetCurrentDir(char* path, u32 maxlen);
+extern char lbl_804D1ECC[];
 extern char lbl_804D1E40[0x34]; // "DVDReadAsync(): specified area is out of the file  "
 extern void cbForReadAsync(s32 result, DVDCommandBlock* block);
 extern s32 fn_801859B4(DVDCommandBlock* block, void* addr, s32 length, s32 offset, void* callback, s32 prio); // likely DVDReadAbsAsyncPrio, unconfirmed
@@ -532,4 +540,28 @@ s32 DVDSeekPrio(DVDFileInfo* fileInfo, s32 offset, s32 prio)
 void cbForSeekSync(void)
 {
     OSWakeupThread(lbl_8066F2B8);
+}
+
+s32 DVDOpenDir(char* dirName, DVDDir* dir)
+{
+    s32 entry;
+    char currentDir[128];
+
+    entry = DVDConvertPathToEntrynum(dirName);
+
+    if (entry < 0) {
+        DVDGetCurrentDir(currentDir, 128);
+        OSReport(lbl_804D1ECC, dirName, currentDir);
+        return 0;
+    }
+
+    if (!entryIsDir(entry)) {
+        return 0;
+    }
+
+    dir->entryNum = entry;
+    dir->location = entry + 1;
+    dir->next = fileLength(entry);
+
+    return 1;
 }
