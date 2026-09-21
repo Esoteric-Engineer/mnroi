@@ -56,7 +56,7 @@ extern char lbl_8066F2B8[8]; // likely __DVDThreadQueue, unconfirmed
 extern void fn_80180BFC(void* queue); // likely OSSleepThread, unconfirmed
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
-extern void fn_80183C38(void); // likely cbForSeekSync, unconfirmed
+extern void cbForSeekSync(void);
 extern s32 fn_80185A90(DVDCommandBlock* block, u32 offset, void* callback, s32 prio); // likely DVDSeekAbsAsyncPrio, unconfirmed
 extern s32 fn_801862A4(DVDCommandBlock* block); // likely DVDCancel, unconfirmed
 extern void OSReport(const char* msg, ...);
@@ -503,7 +503,7 @@ s32 DVDSeekPrio(DVDFileInfo* fileInfo, s32 offset, s32 prio)
     s32 retVal;
 
     block = &fileInfo->cb;
-    result = fn_80185A90(block, fileInfo->startAddr + offset, fn_80183C38, prio);
+    result = fn_80185A90(block, fileInfo->startAddr + offset, cbForSeekSync, prio);
     if (result == 0) {
         return -1;
     }
@@ -527,4 +527,9 @@ s32 DVDSeekPrio(DVDFileInfo* fileInfo, s32 offset, s32 prio)
 
     OSRestoreInterrupts(enabled);
     return retVal;
+}
+
+void cbForSeekSync(void)
+{
+    OSWakeupThread(lbl_8066F2B8);
 }
