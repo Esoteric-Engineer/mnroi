@@ -269,6 +269,10 @@ Dolphin/os/OSClearContext.c:
 Dolphin/os/OSInitContext.c:
 	.text       start:0x8017C74C end:0x8017C808
 
+Dolphin/os/OSDumpContext.c:
+	.text       start:0x8017C808 end:0x8017CAB0
+	.data       start:0x804D0D20 end:0x804D0ED4
+
 Dolphin/os/OSReport.c:
 	.text       start:0x8017CB7C end:0x8017CBFC
 
