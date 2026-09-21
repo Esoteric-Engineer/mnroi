@@ -35,6 +35,10 @@ extern DVDCommandBlock DummyCommandBlock;
 extern void stateTimeout(void);
 extern void stateGettingError(void);
 extern void stateReady(void);
+extern void fn_80186A50(void);
+extern int FatalErrorFlag;
+extern u32 lbl_8066F2E0;
+extern void (*lbl_8066F2E4)(s32 result, DVDCommandBlock* block);
 
 extern void fn_8017CBFC(const char* file, int line, const char* msg, ...);
 extern void DVDLowRead(void* addr, u32 length, u32 offset, void* callback);
@@ -115,4 +119,29 @@ void cbForStateReadingFST(u32 intType)
         return;
     }
     stateGettingError();
+}
+
+void cbForStateError(u32 intType)
+{
+    DVDCommandBlock* finished;
+
+    if (intType == 16) {
+        executing->state = -1;
+        stateTimeout();
+        return;
+    }
+    fn_80186A50();
+    FatalErrorFlag = 1;
+    finished = executing;
+    executing = &DummyCommandBlock;
+    if (finished->callback) {
+        finished->callback(-1, finished);
+    }
+    if (lbl_8066F2E0) {
+        lbl_8066F2E0 = 0;
+        if (lbl_8066F2E4) {
+            lbl_8066F2E4(0, finished);
+        }
+    }
+    stateReady();
 }
