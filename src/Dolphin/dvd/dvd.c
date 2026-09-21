@@ -53,6 +53,7 @@ extern void DVDLowRequestError(void* callback);
 void cbForStateGettingError(u32 intType);
 extern volatile u32 ResumeFromHere;
 extern void DVDLowStopMotor(void* callback);
+extern void DVDLowReset(void);
 extern void DVDLowSeek(u32 offset, void* callback);
 void stateGoToRetry(void);
 void cbForStateGoToRetry(u32 intType);
@@ -1030,4 +1031,13 @@ int DVDInquiryAsync(DVDCommandBlock* block, void* info, void* callback)
     block->callback = callback;
     idle = issueCommand(2, block);
     return idle;
+}
+
+void DVDReset(void)
+{
+    DVDLowReset();
+    __DIRegs[0] = 0x2A;
+    __DIRegs[1] = __DIRegs[1];
+    ResetRequired = 0;
+    ResumeFromHere = 0;
 }
