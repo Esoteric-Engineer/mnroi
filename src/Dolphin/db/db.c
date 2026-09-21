@@ -6,7 +6,7 @@ extern unsigned int DBVerbose; // same file, the adjacent .sbss BOOL right after
 extern void __DBExceptionDestination(void); // same file, right after DBInit
 extern char lbl_804D1D28[0x18];
 extern void OSReport(const char* msg, ...);
-extern void lbl_8017C808(OSContext* context);
+extern void OSDumpContext(OSContext* context);
 extern void PPCHalt(void);
 
 // void DBInit(void) -- see ac-decomp's Dolphin/db/db.c:
@@ -45,7 +45,7 @@ asm void __DBExceptionDestinationAux(void)
     addis   r31, r4, 0x8000
     bl      OSReport
     mr      r3, r31
-    bl      lbl_8017C808
+    bl      OSDumpContext
     bl      PPCHalt
     lwz     r0, 0x1C(r1)
     lwz     r31, 0x14(r1)
