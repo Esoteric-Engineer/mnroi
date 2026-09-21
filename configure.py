@@ -533,6 +533,7 @@ config.libs = [
             Object(Matching, "Dolphin/dvd/DVDResume.c"),
             Object(Matching, "Dolphin/dvd/cbForCancelSync.c"),
             Object(Matching, "Dolphin/dvd/DVDGetCurrentDiskID.c"),
+            Object(Matching, "Dolphin/dvd/fn_80186590.c"),
             Object(Matching, "Dolphin/dvd/dvdqueue.c"),
             Object(Matching, "Dolphin/dvd/DVDLowWaitCoverClose.c"),
             Object(Matching, "Dolphin/dvd/DVDLowSeek.c"),
