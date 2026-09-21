@@ -74,7 +74,7 @@ void stateCheckID2a(DVDCommandBlock* block);
 extern void fn_80184990(u32 intType);
 void stateCheckID2(DVDCommandBlock* block);
 void stateCheckID3(DVDCommandBlock* block);
-extern void fn_8018487C(u32 intType);
+void cbForStateCheckID1(u32 intType);
 
 extern void OSRegisterVersion(const char* version);
 extern void __DVDFSInit(void);
@@ -409,12 +409,12 @@ void stateCheckID(void)
             LastState = stateCheckID2;
             stateCheckID2(executing);
         } else {
-            DVDLowStopMotor(fn_8018487C);
+            DVDLowStopMotor(cbForStateCheckID1);
         }
         break;
     default:
         if (fn_801721F8(lbl_8057D240, IDShouldBe, 0x20)) {
-            DVDLowStopMotor(fn_8018487C);
+            DVDLowStopMotor(cbForStateCheckID1);
         } else {
             LastState = stateCheckID3;
             stateCheckID3(executing);
@@ -454,4 +454,29 @@ void cbForStateCheckID2a(u32 intType)
 void stateCheckID2a(DVDCommandBlock* block)
 {
     DVDLowRead(tmpBuffer, 0x20, 0x420, fn_80184990);
+}
+
+void cbForStateCheckID1(u32 intType)
+{
+    if (intType == 16) {
+        executing->state = -1;
+        __DVDStoreErrorCode(0x01234568);
+        DVDReset();
+        cbForStateError(0);
+        return;
+    }
+
+    if (intType & 2) {
+        executing->state = -1;
+        __DVDStoreErrorCode(0x01234567);
+        DVDLowStopMotor(cbForStateError);
+        return;
+    }
+
+    NumInternalRetry = 0;
+
+    if (!CheckCancel(1)) {
+        executing->state = 6;
+        fn_80184D20();
+    }
 }
