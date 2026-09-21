@@ -32,10 +32,15 @@ extern char lbl_804D2184[];
 extern u32 NumInternalRetry;
 extern DVDCommandBlock* executing;
 extern DVDCommandBlock DummyCommandBlock;
-extern void stateTimeout(void);
-extern void stateGettingError(void);
+void stateTimeout(void);
+void stateGettingError(void);
 extern void stateReady(void);
 extern void fn_80186A50(void);
+extern void __DVDStoreErrorCode(u32 error);
+extern void DVDReset(void);
+extern void DVDLowRequestError(void* callback);
+extern void cbForStateGettingError(u32 intType);
+void cbForStateError(u32 intType);
 extern int FatalErrorFlag;
 extern u32 lbl_8066F2E0;
 extern void (*lbl_8066F2E4)(s32 result, DVDCommandBlock* block);
@@ -144,4 +149,16 @@ void cbForStateError(u32 intType)
         }
     }
     stateReady();
+}
+
+void stateTimeout(void)
+{
+    __DVDStoreErrorCode(0x01234568);
+    DVDReset();
+    cbForStateError(0);
+}
+
+void stateGettingError(void)
+{
+    DVDLowRequestError(cbForStateGettingError);
 }
