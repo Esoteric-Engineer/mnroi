@@ -847,5 +847,8 @@ Dolphin/exi/UnlockedHandler.c:
 Dolphin/exi/InitializeUART.c:
 	.text       start:0x80195B78 end:0x80195BE8
 
+Dolphin/OdemuExi2/DBInitInterrupts.c:
+	.text       start:0x80196194 end:0x801961E8
+
 Dolphin/OdemuExi2/DBGHandler.c:
 	.text       start:0x80196260 end:0x801962DC
