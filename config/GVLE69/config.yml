@@ -18,6 +18,7 @@ force_active:
 - fn_801796FC
 - __OSClearAlarm
 - GXReadGPMetric
+- __OSLoadFPUContext
 ldscript_template: config/GVLE69/ldscript.lcf
 # Change this to match the linker version. See config.example.yml for a list.
 # NOTE: 11 is a guess (CW 2.7+). Revisit once the real compiler version is known.

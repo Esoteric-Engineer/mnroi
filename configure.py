@@ -572,6 +572,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSArena.c"),
             Object(Matching, "Dolphin/os/OSAudioSystem.c"),
             Object(Matching, "Dolphin/os/OSCache.c"),
+            Object(Matching, "Dolphin/os/__OSLoadFPUContext.c"),
             Object(Matching, "Dolphin/os/OSSaveFPUContext.c"),
             Object(Matching, "Dolphin/os/OSSetCurrentContext.c"),
             Object(Matching, "Dolphin/os/OSGetCurrentContext.c"),
