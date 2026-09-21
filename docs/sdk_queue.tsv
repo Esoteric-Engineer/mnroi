@@ -1,0 +1,235 @@
+addr	size	name	library	confidence	notes	status
+0x8016D000	0x64		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016D064	0x220		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016D284	0x6F4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016D978	0xF8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016DA70	0x210		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016DC80	0xDC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016DD80	0xDC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016DE5C	0x80		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016DEDC	0x11C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016DFF8	0xF4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016E0EC	0xAC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016E198	0x364		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016E538	0xEC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016E624	0xAC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016E6D0	0x214		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016E8E4	0x350		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016EC68	0x888		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016F4F0	0x884		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016FD74	0xC8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016FE3C	0x154		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016FF90	0x50		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016FFE0	0xD8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801700C0	0xF0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801701B0	0xE04		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80170FB4	0xD4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8017123C	0x98		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801712D4	0x32C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80171600	0x98C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80172028	0x198		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8017232C	0xEC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801725B8	0x9C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80172654	0xA8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801726FC	0x84		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80172780	0x6C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801727EC	0x6C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80172858	0xAC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80172904	0xE0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801729E4	0xCC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80172CEC	0x8C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80172DA0	0x258		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80172FF8	0x354		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8017334C	0x288		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801735D4	0x5C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80173630	0x4C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8017367C	0x7C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801736F8	0x4E8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80173BE0	0xD4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80173CB4	0xD8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80173D8C	0x17F0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8017557C	0x188		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80175704	0xD4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801757D8	0x167C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80176E54	0x1B0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8017703C	0x32C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801773E4	0x174		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80177558	0x35C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801778B4	0x2FC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80177BB0	0x148		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80178374	0xB0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80178424	0x144		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80178568	0xEC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801786AC	0x3E4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80178A90	0x80		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80178B10	0xD8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80178BE8	0x64		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80178C4C	0x70		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80178CBC	0x64		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80179C30	0x20		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80179C50	0x4E4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8017A134	0x498		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8017AAAC	0x4E0		os	unidentified		open
+0x8017AF8C	0x280		os	unidentified		open
+0x8017C400	0x128	__OSSaveFPUContext	os	known	symbol already named; just needs split + match	open
+0x8017CF40	0x2E8	__OSUnhandledException	os	known	symbol already named; just needs split + match	open
+0x8017D228	0x188		os	unidentified		open
+0x8017D568	0x484		os	unidentified		open
+0x8017D9EC	0x19C		os	unidentified		open
+0x8017DC78	0x2D8	SetInterruptMask	os	exact	ac-decomp size 0x2d8	open
+0x8017E060	0x344	__OSDispatchInterrupt	os	exact	ac-decomp size 0x344	open
+0x8017E448	0x6C	MEMIntrruptHandler	os	exact	ac-decomp size 0x6c	open
+0x8017E4B4	0x80	Config24MB	os	exact	ac-decomp size 0x80	open
+0x8017E5E0	0x104	__OSInitMemoryProtection	os	guess	ac-decomp size 0x120	open
+0x8017E9B4	0x200		os	unidentified		open
+0x8017EBEC	0xF4	__OSResetSWInterruptHandler	os	exact	ac-decomp size 0xf4	open
+0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298	open
+0x8017EF78	0x60	WriteSramCallback	os	exact	ac-decomp size 0x60	open
+0x8017EFD8	0x118	WriteSram	os	exact	ac-decomp size 0x118	open
+0x8017F0F0	0x13C	__OSInitSram	os	guess	ac-decomp size 0x134	open
+0x8017F2E4	0x33C	UnlockSram	os	guess	ac-decomp size 0x308	open
+0x8017F678	0x124		os	unidentified		open
+0x8017F79C	0x80	OSGetSoundMode	os	exact	ac-decomp size 0x80	open
+0x8017F81C	0xA4	OSSetSoundMode	os	exact	ac-decomp size 0xa4	open
+0x8017F8C0	0x6C	OSGetProgressiveMode	os	guess	ac-decomp size 0x70	open
+0x8017F92C	0x84	OSSetProgressiveMode	os	guess	ac-decomp size 0xa4	open
+0x8017F9B0	0xAC	__OSSetBootMode	os	guess	ac-decomp size 0xa4	open
+0x8017FA5C	0x70	OSGetWirelessID	os	guess	ac-decomp size 0x84	open
+0x8017FACC	0xB8	OSSetWirelessID	os	guess	ac-decomp size 0xac	open
+0x8017FBA4	0x64	__OSInitSystemCall	os	exact	ac-decomp size 0x64	open
+0x8017FC08	0x4		os	unidentified		open
+0x8017FC0C	0x158		os	unidentified		open
+0x80180BFC	0xEC	OSSleepThread	os	exact	ac-decomp size 0xec	open
+0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	open
+0x80180DEC	0xC0	OSSetThreadPriority	os	exact	ac-decomp size 0xc0	open
+0x80180EAC	0xAC	CheckThreadQueue	os	guess	ac-decomp size 0x9c	open
+0x801814F4	0xDC	EXIUnlock	exi	guess	ac-decomp size 0xdc; order vs EXIIntrruptHandler disagrees with ac-decomp	open
+0x801815D0	0xC8	EXIIntrruptHandler	exi	guess	ac-decomp size 0xc8; order disagrees with ac-decomp	open
+0x80181698	0x70		exi	unidentified	size matches InitializeUART but that already exists at 0x80195B78	open
+0x80181764	0x2FC	CompleteTransfer	si	exact	ac-decomp size 0x2fc	open
+0x80181A60	0x344	SIInterruptHandler	si	exact	ac-decomp size 0x344	open
+0x80181DA4	0x98	SIEnablePollingInterrupt	si	exact	ac-decomp size 0x98	open
+0x80181E3C	0xCC	SIRegisterPollingHandler	si	exact	ac-decomp size 0xcc	open
+0x80181F08	0xF4	SIUnregisterPollingHandler	si	exact	ac-decomp size 0xf4	open
+0x80181FFC	0xB4	SIInit	si	guess	ac-decomp size 0xa4	open
+0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270	open
+0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	open
+0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4	open
+0x80186474	0x11C	__DVDPrepareResetAsync	dvd	exact	ac-decomp size 0x11c	open
+0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	open
+0x801868DC	0x7C	__DVDStoreErrorCode	dvd	known	symbol already named; just needs split + match	open
+0x80186958	0xF8		dvd	unidentified		open
+0x80186A80	0xD8	cb	dvd	known	symbol already named; just needs split + match	open
+0x80186B58	0x168	__fstLoad	dvd	known	symbol already named; just needs split + match	open
+0x80186D00	0x2E0	__DVDInterruptHandler	dvd	known	symbol already named; just needs split + match	open
+0x80186FE0	0x84		dvd	unidentified		open
+0x80187064	0x70	AlarmHandlerForTimeout	dvd	known	symbol already named; just needs split + match	open
+0x801870D4	0x110		dvd	unidentified		open
+0x801871E4	0x80		dvd	unidentified		open
+0x80187264	0x298	DVDLowRead	dvd	known	symbol already named; just needs split + match	open
+0x801875BC	0xA4		dvd	unidentified		open
+0x801876EC	0x8C	DVDLowRequestError	dvd	known	symbol already named; just needs split + match	open
+0x80187778	0x9C		dvd	unidentified		open
+0x80187814	0x98		dvd	unidentified		open
+0x801878AC	0x8C		dvd	unidentified		open
+0x80187938	0x9C	DVDLowAudioBufferConfig	dvd	known	symbol already named; just needs split + match	open
+0x801879D4	0xBC	DVDLowReset	dvd	known	symbol already named; just needs split + match	open
+0x80187E38	0xA0	getTiming	vi	guess	ac-decomp size 0x90	open
+0x80187ED8	0x200	__VIInit	vi	guess	ac-decomp size 0x1f8	open
+0x801880D8	0x4B0	VIInit	vi	guess	ac-decomp size 0x478	open
+0x801885DC	0x2D4	setFbbRegs	vi	exact	ac-decomp size 0x2d4	open
+0x801888B0	0x1A0	setVerticalRegs	vi	exact	ac-decomp size 0x1a0	open
+0x80188A50	0x828	VIConfigure	vi	guess	ac-decomp size 0x79c	open
+0x80189278	0x394	VIConfigurePan	vi	exact	ac-decomp size 0x394	open
+0x8018960C	0x130	VIFlush	vi	guess	ac-decomp size 0x11c	open
+0x8018973C	0x6C	VISetNextFrameBuffer	vi	exact	ac-decomp size 0x6c	open
+0x801897A8	0x7C	VISetBlack	vi	exact	ac-decomp size 0x7c	open
+0x80189894	0x98	VIGetCurrentLine	vi	exact	ac-decomp size 0x98	open
+0x8018992C	0x68	VIGetTvFormat	vi	known	symbol already named; just needs split + match	open
+0x80189994	0x21C		vi	unidentified		open
+0x80189BB0	0x60	VIGetDTVStatus	vi	guess	ac-decomp size 0x3c	open
+0x80189C10	0x1A4	UpdateOrigin	pad	exact	ac-decomp size 0x1a4	open
+0x80189DB4	0xC4	PADOriginCallback	pad	exact	ac-decomp size 0xc4	open
+0x80189E78	0xCC	PADOriginUpdateCallback	pad	guess	ac-decomp size 0xc0	open
+0x80189F44	0xD8	PADProbeCallback	pad	exact	ac-decomp size 0xd8	open
+0x8018A01C	0x32C	PADTypeAndStatusCallback	pad	exact	ac-decomp size 0x32c	open
+0x8018A348	0x140	PADReceiveCheckCallback	pad	guess	ac-decomp size 0x134	open
+0x8018A488	0x110	PADReset	pad	guess	ac-decomp size 0x100	open
+0x8018A598	0x114	PADRecalibrate	pad	guess	ac-decomp size 0x104	open
+0x8018A6AC	0x150		pad	unidentified		open
+0x8018A7FC	0x300		pad	unidentified		open
+0x8018AAFC	0xCC		pad	unidentified		open
+0x8018ABC8	0xB8	PADControlAllMotors	pad	exact	ac-decomp size 0xb8	open
+0x8018AC80	0x60	PADSetSpec	pad	exact	ac-decomp size 0x60	open
+0x8018ACE0	0x174	SPEC0_MakeStatus	pad	exact	ac-decomp size 0x174	open
+0x8018AE54	0x174	SPEC1_MakeStatus	pad	exact	ac-decomp size 0x174	open
+0x8018AFC8	0x470	SPEC2_MakeStatus	pad	guess	ac-decomp size 0x3f8	open
+0x8018B438	0xBC		pad	unidentified		open
+0x8018B4F4	0x60	SamplingHandler	pad	exact	ac-decomp size 0x60	open
+0x8018B554	0x54	PADSetSamplingCallback	pad	exact	ac-decomp size 0x54	open
+0x8018B5A8	0x7C	__PADDisableRecalibration	pad	exact	ac-decomp size 0x7c	open
+0x8018BF08	0x26C		gx	unidentified		open
+0x8018C174	0x288		gx	unidentified		open
+0x8018C3FC	0xBC		gx	unidentified		open
+0x8018C4B8	0x124	__ARQServiceQueueLo	gx	guess	ac-decomp size 0x100	open
+0x8018C5DC	0x1B4		gx	unidentified		open
+0x8018C790	0x90		gx	unidentified		open
+0x8018CD34	0x88	__GXSetVAT	gx	guess	ac-decomp size 0x9c	open
+0x8018D3C0	0x80	GXDrawDone	gx	exact	ac-decomp size 0x80	open
+0x8018D440	0xD0	GXBegin	gx	guess	ac-decomp size 0xf0	open
+0x8018D510	0x88	__GXSendFlushPrim	gx	exact	ac-decomp size 0x88	open
+0x8018D70C	0x190		gx	unidentified		open
+0x8018E0E0	0x48	GXInitTexObjCI	gx	exact	ac-decomp size 0x48	open
+0x8018E128	0x164	GXInitTexObjLOD	gx	guess	ac-decomp size 0x194	open
+0x8018EDE8	0x178	GXSetIndTexMtx	gx	guess	ac-decomp size 0x160	open
+0x8018F0A4	0xEC		gx	unidentified		open
+0x80190484	0xFC	__GXDefaultTexRegionCallback	gx	known	symbol already named; just needs split + match	open
+0x801905A4	0x190		gx	unidentified		open
+0x80191810	0x134		gx	unidentified		open
+0x80191CF4	0x34		gx	unidentified		open
+0x80191D28	0xC8		gx	unidentified		open
+0x80191DF0	0x44		gx	unidentified		open
+0x80192190	0x16C		gx	unidentified		open
+0x801922FC	0x1C8		gx	unidentified		open
+0x801924C4	0x80		gx	unidentified		open
+0x80192B68	0x238		gx	unidentified		open
+0x80193E54	0xF4		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80193F48	0x25C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801941A4	0xA0		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80194244	0xEC		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80194330	0x24C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8019457C	0x48		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801945C4	0x7C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80194640	0x174		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801947B4	0x80		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80194834	0xB4		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801948E8	0x10C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x801949F4	0xBC		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80194AB0	0x12C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80194BDC	0x110		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80194CEC	0xC8		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80194DB4	0x218		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80194FCC	0xD0		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8019509C	0x1D4		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80195270	0xF4		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80195364	0xDC		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80195480	0x3B0	EXIGetID	exi	guess	ac-decomp size 0x37c vs 0x3b0; follows UnlockedHandler like ac-decomp	open
+0x80195830	0x18C		exi	unidentified		open
+0x801959BC	0x1BC		exi	unidentified		open
+0x80195BE8	0x21C		exi	unidentified		open
+0x80195E04	0x4	DBClose	odenotstub	guess	4-byte stub, ac-decomp size 0x4	open
+0x80195E08	0x4	DBOpen	odenotstub	guess	4-byte stub, ac-decomp size 0x4	open
+0x80195E0C	0x260	DBWrite	odenotstub	exact	ac-decomp size 0x260	open
+0x8019606C	0x8C	DBRead	odenotstub	exact	ac-decomp size 0x8c	open
+0x801960F8	0x9C	DBQueryData	odenotstub	exact	ac-decomp size 0x9c	open
+0x80196464	0xDC	DBGRead	odemuexi2	exact	ac-decomp size 0xdc	open
+0x80196540	0xAC	DBGReadMailbox	odemuexi2	exact	ac-decomp size 0xac	open
+0x801965EC	0x298	DBGEXIImm	odemuexi2	exact	ac-decomp size 0x298	open
+0x80196884	0x148		unknown	unidentified		open
+0x801969CC	0x98		unknown	unidentified		open
+0x80196A64	0xCC		unknown	unidentified		open
+0x80196B30	0x60		unknown	unidentified		open
+0x80196B90	0x60		unknown	unidentified		open
+0x80196BF0	0x50		unknown	unidentified		open
+0x80196C40	0xA4		unknown	unidentified		open
+0x80196CE4	0x434		unknown	unidentified		open

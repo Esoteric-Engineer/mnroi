@@ -33,14 +33,24 @@ Human-facing references (read the relevant one instead of guessing):
 
 ## Loop
 
-1. **Choose.** No target is given up front — decide it yourself: `python3 tools/find_candidates.py`,
-   or take the next unclaimed function after a recently matched one in `config/GVLE69/splits.txt`.
-   If the user named a specific function or unit instead, work that one. Skip anything in the
-   "Confirmed non-matches" list in `docs/matching_notes.md`.
+1. **Choose.** Take the next `open` row in `docs/sdk_queue.tsv`. Prefer, in order: `known`
+   (already named in `symbols.txt`), `exact` (size matches ac-decomp), then `guess`, and within a
+   tier the smallest size. Skip `unidentified` rows (they need scouting, not matching) and `libc-*`
+   rows (no reference source yet) and anything in the
+   "Confirmed non-matches" list in `docs/matching_notes.md`. Library ranges are in
+   `docs/sdk_libraries.md`. If the user named a specific function or unit instead, work that one.
+   `tools/find_candidates.py` (small leaf functions only) is a fallback, not the main chooser.
+   - **Out of queue:** if no `open` row of tier `known`/`exact`/`guess` is left outside the `libc-*` libraries, stop. Tell the
+     user the queue is exhausted (counts by status/library, what remains) and that the next step is
+     a planning session (re-scout the range, find AR/ARQ/DSP/CARD, decide on libc and game code).
+     Don't start game code or invent targets.
 2. **Research first.** For SDK/runtime addresses (`0x80169000`+), search `../ac-decomp`
    (`src/static/dolphin/`, `include/dolphin/`) by apparent purpose, constants, or struct
    offsets before writing any code. If the sibling clone is missing, say so rather than
    skipping this step silently.
+   **Verify the name.** Queue names for `exact`/`guess` rows come from size and order only. Confirm
+   in ac-decomp that the code shape and callees agree before renaming. If it doesn't, don't force it:
+   set the row's `status` to `wrong-name` and note what it looks like instead.
 3. **Claim.** Compute `end = start + size` from `config/GVLE69/symbols.txt`. In one edit: add
    the range to `splits.txt` (tab-indented), and rename `fn_XXXXXXXX` to the real name in
    `symbols.txt`.
@@ -64,10 +74,18 @@ Human-facing references (read the relevant one instead of guessing):
 - When you learn a new, reusable gotcha or confirm a non-match, add it to
   `docs/matching_notes.md` (concise, with the symptom and the fix), not to this skill.
 
+## Queue upkeep
+
+Update the row in `docs/sdk_queue.tsv` in the same change: `status` -> `matched` (100% and
+`main.dol: OK`), `stalled` (left `NonMatching`; note the blocker), or `wrong-name`. If matching
+reveals the identity of neighbouring functions (or that a library boundary is off), fix those rows
+and `docs/sdk_libraries.md`.
+
 ## Report
 
 Finish with: functions matched (name + address), the unit's final state (`Matching` /
-`NonMatching` + fuzzy %), whether `main.dol: OK` holds, and any blocker worth recording.
+`NonMatching` + fuzzy %), whether `main.dol: OK` holds, any blocker worth recording, and the queue
+rows you changed.
 
 Suggest a single-line commit message for the user to use (don't commit it yourself), e.g.
 `Match <FunctionName> (<unit path>)`.
