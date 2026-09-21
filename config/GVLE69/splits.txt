@@ -595,6 +595,9 @@ Dolphin/gx/GXSetTevDirect.c:
 Dolphin/gx/GXSetTevIndRepeat.c:
 	.text       start:0x8018F1FC end:0x8018F244
 
+Dolphin/gx/GXUpdateBPMask.c:
+	.text       start:0x8018F244 end:0x8018F248
+
 Dolphin/gx/GXSetIndirectMask.c:
 	.text       start:0x8018F248 end:0x8018F278
 

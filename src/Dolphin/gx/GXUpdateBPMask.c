@@ -1,0 +1,3 @@
+void __GXUpdateBPMask(void)
+{
+}
