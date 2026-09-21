@@ -8,6 +8,7 @@ typedef struct EXIControl {
 
 extern EXIControl lbl_8057DBE0[3];
 
+#pragma scheduling off
 u32 EXIGetState(long chan)
 {
     EXIControl* exi;

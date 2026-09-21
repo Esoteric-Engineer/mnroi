@@ -793,11 +793,8 @@ Dolphin/gx/GXClearBoundingBox.c:
 	.text       start:0x801933F4 end:0x8019342C
 
 Dolphin/gx/GXSetGPMetric.c:
-	.text       start:0x8019342C end:0x80193C74
-	.data       start:0x804D3738 end:0x804D3824
-
-Dolphin/gx/GXReadGPMetric.c:
-	.text       start:0x80193C74 end:0x80193E1C
+	.text       start:0x8019342C end:0x80193E1C
+	.data       start:0x804D3738 end:0x804D3880
 
 Dolphin/gx/GXClearGPMetric.c:
 	.text       start:0x80193E1C end:0x80193E2C

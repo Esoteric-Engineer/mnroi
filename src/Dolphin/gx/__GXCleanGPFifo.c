@@ -22,18 +22,27 @@ extern GXFifoObj* GXGetCPUFifo(void);
 extern void GXSetGPFifo(GXFifoObj* fifo);
 extern void GXSetCPUFifo(GXFifoObj* fifo);
 
-static inline void InitFifoPtrs(GXFifoObj* fifo, void* readPtr, void* writePtr)
+typedef GXFifoObj __GXFifoObj;
+
+inline void GXInitFifoPtrs(GXFifoObj* fifo, void* readPtr, void* writePtr)
 {
+    __GXFifoObj* realFifo = (__GXFifoObj*)fifo;
     int enabled;
 
     enabled = OSDisableInterrupts();
-    fifo->rdPtr = readPtr;
-    fifo->wrPtr = writePtr;
-    fifo->count = (u8*)writePtr - (u8*)readPtr;
-    if (fifo->count < 0) {
-        fifo->count += fifo->size;
+    realFifo->rdPtr = readPtr;
+    realFifo->wrPtr = writePtr;
+    realFifo->count = (u8*)writePtr - (u8*)readPtr;
+    if (realFifo->count < 0) {
+        realFifo->count += realFifo->size;
     }
     OSRestoreInterrupts(enabled);
+}
+
+inline void* GXGetFifoBase(GXFifoObj* fifo)
+{
+    __GXFifoObj* realFifo = (__GXFifoObj*)fifo;
+    return realFifo->base;
 }
 
 void __GXCleanGPFifo(void)
@@ -47,14 +56,14 @@ void __GXCleanGPFifo(void)
         return;
     }
     cpuFifo = GXGetCPUFifo();
-    base = gpFifo->base;
+    base = GXGetFifoBase(gpFifo);
     dummyFifo = *gpFifo;
-    InitFifoPtrs(&dummyFifo, base, base);
+    GXInitFifoPtrs(&dummyFifo, base, base);
     GXSetGPFifo(&dummyFifo);
     if (cpuFifo == gpFifo) {
         GXSetCPUFifo(&dummyFifo);
     }
-    InitFifoPtrs(gpFifo, base, base);
+    GXInitFifoPtrs(gpFifo, base, base);
     GXSetGPFifo(gpFifo);
     if (cpuFifo == gpFifo) {
         GXSetCPUFifo(cpuFifo);

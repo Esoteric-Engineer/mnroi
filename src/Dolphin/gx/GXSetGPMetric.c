@@ -280,3 +280,129 @@ void GXSetGPMetric(GXPerf0 perf0, GXPerf1 perf1)
 
     __GXData->bpSentNot = 0;
 }
+
+#define GX_GET_CP_REG(offset) (*(volatile u16*)((__cpReg) + (offset)))
+
+inline u32 __GXReadCPCounterU32(u32 regAddrL, u32 regAddrH)
+{
+    u32 ctrH0;
+    u32 ctrH1;
+    u32 ctrL;
+
+    ctrH0 = GX_GET_CP_REG(regAddrH);
+    while (1) {
+        ctrH1 = ctrH0;
+        ctrL = GX_GET_CP_REG(regAddrL);
+        ctrH0 = GX_GET_CP_REG(regAddrH);
+
+        if (ctrH0 == ctrH1) {
+            break;
+        }
+    }
+
+    return (ctrH0 << 16) | (ctrL);
+}
+
+#pragma scheduling off
+void GXReadGPMetric(u32* cnt0, u32* cnt1)
+{
+    u32 cpCtr0, cpCtr1, cpCtr2, cpCtr3;
+
+    cpCtr0 = __GXReadCPCounterU32(32, 33);
+    cpCtr1 = __GXReadCPCounterU32(34, 35);
+    cpCtr2 = __GXReadCPCounterU32(36, 37);
+    cpCtr3 = __GXReadCPCounterU32(38, 39);
+
+    switch (__GXData->perf0) {
+    case GX_PERF0_CLIP_RATIO:
+        *cnt0 = cpCtr1 * 0x3E8 / cpCtr0;
+        break;
+    case GX_PERF0_VERTICES:
+    case GX_PERF0_CLIP_VTX:
+    case GX_PERF0_CLIP_CLKS:
+    case GX_PERF0_XF_WAIT_IN:
+    case GX_PERF0_XF_WAIT_OUT:
+    case GX_PERF0_XF_XFRM_CLKS:
+    case GX_PERF0_XF_LIT_CLKS:
+    case GX_PERF0_XF_BOT_CLKS:
+    case GX_PERF0_XF_REGLD_CLKS:
+    case GX_PERF0_XF_REGRD_CLKS:
+    case GX_PERF0_TRIANGLES:
+    case GX_PERF0_TRIANGLES_CULLED:
+    case GX_PERF0_TRIANGLES_PASSED:
+    case GX_PERF0_TRIANGLES_SCISSORED:
+    case GX_PERF0_TRIANGLES_0TEX:
+    case GX_PERF0_TRIANGLES_1TEX:
+    case GX_PERF0_TRIANGLES_2TEX:
+    case GX_PERF0_TRIANGLES_3TEX:
+    case GX_PERF0_TRIANGLES_4TEX:
+    case GX_PERF0_TRIANGLES_5TEX:
+    case GX_PERF0_TRIANGLES_6TEX:
+    case GX_PERF0_TRIANGLES_7TEX:
+    case GX_PERF0_TRIANGLES_8TEX:
+    case GX_PERF0_TRIANGLES_0CLR:
+    case GX_PERF0_TRIANGLES_1CLR:
+    case GX_PERF0_TRIANGLES_2CLR:
+    case GX_PERF0_QUAD_0CVG:
+    case GX_PERF0_QUAD_NON0CVG:
+    case GX_PERF0_QUAD_1CVG:
+    case GX_PERF0_QUAD_2CVG:
+    case GX_PERF0_QUAD_3CVG:
+    case GX_PERF0_QUAD_4CVG:
+    case GX_PERF0_AVG_QUAD_CNT:
+    case GX_PERF0_CLOCKS:
+        *cnt0 = cpCtr0;
+        break;
+    case GX_PERF0_NONE:
+        *cnt0 = 0;
+        break;
+    default:
+        *cnt0 = 0;
+        break;
+    }
+
+    switch (__GXData->perf1) {
+    case GX_PERF1_TEXELS:
+        *cnt1 = cpCtr3 * 4;
+        break;
+    case GX_PERF1_TC_CHECK1_2:
+        *cnt1 = cpCtr2 + (cpCtr3 * 2);
+        break;
+    case GX_PERF1_TC_CHECK3_4:
+        *cnt1 = (cpCtr2 * 3) + (cpCtr3 * 4);
+        break;
+    case GX_PERF1_TC_CHECK5_6:
+        *cnt1 = (cpCtr2 * 5) + (cpCtr3 * 6);
+        break;
+    case GX_PERF1_TC_CHECK7_8:
+        *cnt1 = (cpCtr2 * 7) + (cpCtr3 * 8);
+        break;
+    case GX_PERF1_TX_IDLE:
+    case GX_PERF1_TX_REGS:
+    case GX_PERF1_TX_MEMSTALL:
+    case GX_PERF1_TC_MISS:
+    case GX_PERF1_VC_ELEMQ_FULL:
+    case GX_PERF1_VC_MISSQ_FULL:
+    case GX_PERF1_VC_MEMREQ_FULL:
+    case GX_PERF1_VC_STATUS7:
+    case GX_PERF1_VC_MISSREP_FULL:
+    case GX_PERF1_VC_STREAMBUF_LOW:
+    case GX_PERF1_VC_ALL_STALLS:
+    case GX_PERF1_VERTICES:
+    case GX_PERF1_CLOCKS:
+        *cnt1 = cpCtr3;
+        break;
+    case GX_PERF1_FIFO_REQ:
+    case GX_PERF1_CALL_REQ:
+    case GX_PERF1_VC_MISS_REQ:
+    case GX_PERF1_CP_ALL_REQ:
+        *cnt1 = cpCtr2;
+        break;
+    case GX_PERF1_NONE:
+        *cnt1 = 0;
+        break;
+    default:
+        *cnt1 = 0;
+        break;
+    }
+}

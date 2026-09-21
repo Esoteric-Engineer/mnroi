@@ -24,9 +24,13 @@ volatile GXFifoObj GXWGFifo : 0xCC008000;
 void GXSetScissorBoxOffset(s32 x_off, s32 y_off)
 {
     u32 reg = 0;
+    u32 x;
+    u32 y;
 
-    SET_REG_FIELD(reg, 10, 0, (u32)(x_off + 342) >> 1);
-    SET_REG_FIELD(reg, 10, 10, (u32)(y_off + 342) >> 1);
+    x = (u32)(x_off + 342);
+    y = (u32)(y_off + 342);
+    SET_REG_FIELD(reg, 10, 0, x >> 1);
+    SET_REG_FIELD(reg, 10, 10, y >> 1);
     SET_REG_FIELD(reg, 8, 24, 0x59);
 
     GXWGFifo.u8 = 0x61;
