@@ -132,6 +132,8 @@ Smaller findings:
 
 - **Inlined `ReadDiscBlocking`-style helper (`u8 block[0x30]`, `DVDReadAbsAsyncPrio` + status loop) with the frame 8 bytes short (`-0x40` vs `-0x48`):** write it as a `static inline` taking `void* addr`, with an extra `void* p = addr;` local and a trailing `(void)p;` (no other locals). Plain body-inline or a `DVDCommandBlock* b` local don't help (99.9% / 87%). Also use `s32` for the sbss cache and `0x800030F4` test (`cmpwi`, not `cmplwi`). Matched `fn_8017D4A4` (`0x8017D4A4`).
 
+- **`PauseFlag`/`PausingFlag` (dvd `.sbss`) must be `volatile` too:** without it the `lwz PausingFlag` hoists above the `stw PauseFlag` (87%, plus an `addi`/`mr` r31 swap that follows from it). Same family as the `Canceling`/`ResumeFromHere` note below. Matched `DVDResume` (`0x80185FD8`).
+
 - **C++ class layout must be exact:** One wrong member offset breaks matching in that class, and vtable order must match the original virtual declaration order.
 
 ---

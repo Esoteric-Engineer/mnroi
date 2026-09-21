@@ -424,6 +424,9 @@ Dolphin/dvd/DVDGetDriveStatus.c:
 Dolphin/dvd/DVDSetAutoInvalidation.c:
 	.text       start:0x80185FC8 end:0x80185FD8
 
+Dolphin/dvd/DVDResume.c:
+	.text       start:0x80185FD8 end:0x80186028
+
 Dolphin/dvd/DVDGetCurrentDiskID.c:
 	.text       start:0x80186374 end:0x8018637C
 
