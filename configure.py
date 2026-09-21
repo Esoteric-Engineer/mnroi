@@ -507,6 +507,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXClearBoundingBox.c"),
             Object(Matching, "Dolphin/gx/GXSetGPMetric.c"),
             Object(Matching, "Dolphin/gx/GXClearGPMetric.c"),
+            Object(Matching, "Dolphin/gx/GXPerfStubs.c"),
         ],
     ),
     DolphinLib(
