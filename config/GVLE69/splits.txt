@@ -81,6 +81,9 @@ Runtime.PPCEABI.H/stricmp.c:
 Runtime.PPCEABI.H/strcat.c:
 	.text       start:0x80172528 end:0x801725B8
 
+Runtime.PPCEABI.H/strcpy.c:
+	.text       start:0x801726FC end:0x80172780
+
 Runtime.PPCEABI.H/strlen.c:
 	.text       start:0x80172780 end:0x801727EC
 

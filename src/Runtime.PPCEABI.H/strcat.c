@@ -1,4 +1,4 @@
-extern void fn_801726FC(void);
+extern void strcpy(void);
 
 asm char* strcat(char* dst, const char* src)
 {
@@ -37,7 +37,7 @@ bloop:
     cmpwi   r0, 0
     bne     bloop
 call:
-    bl      fn_801726FC
+    bl      strcpy
     mr      r3, r31
     lwz     r0, 0x14(r1)
     mtlr    r0
