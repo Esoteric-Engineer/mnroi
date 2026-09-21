@@ -18,7 +18,9 @@ typedef struct DVDCommandBlock
 {
     unsigned char pad0[0xC];
     s32 state;
-    unsigned char pad1[0x30 - 0x10];
+    unsigned char pad1[0x10];
+    u32 transferredSize;
+    unsigned char pad2[0xC];
 } DVDCommandBlock;
 
 typedef struct DVDFileInfo
@@ -47,6 +49,12 @@ extern s32 DVDGetCurrentDir(char* path, u32 maxlen);
 extern char lbl_804D1E40[0x34]; // "DVDReadAsync(): specified area is out of the file  "
 extern void cbForReadAsync(s32 result, DVDCommandBlock* block);
 extern s32 fn_801859B4(DVDCommandBlock* block, void* addr, s32 length, s32 offset, void* callback, s32 prio); // likely DVDReadAbsAsyncPrio, unconfirmed
+extern char lbl_804D1E74[0x58]; // "DVDRead(): specified area is out of the file  "
+extern void fn_80183B68(s32 result, DVDCommandBlock* block); // likely cbForReadSync, unconfirmed
+extern char lbl_8066F2B8[8]; // likely __DVDThreadQueue, unconfirmed
+extern void fn_80180BFC(void* queue); // likely OSSleepThread, unconfirmed
+extern int OSDisableInterrupts(void);
+extern int OSRestoreInterrupts(int level);
 extern s32 fn_801862A4(DVDCommandBlock* block); // likely DVDCancel, unconfirmed
 extern void OSReport(const char* msg, ...);
 extern char lbl_804D1E08[0x38]; // "Warning: DVDOpen(): file '%s' was not found under %s.\n"
@@ -433,4 +441,47 @@ void cbForReadAsync(s32 result, DVDCommandBlock* block)
     if (fileInfo->callback) {
         ((void (*)(s32, DVDFileInfo*))fileInfo->callback)(result, fileInfo);
     }
+}
+
+s32 DVDReadPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, s32 prio)
+{
+    s32 result;
+    DVDCommandBlock* block;
+    s32 state;
+    int enabled;
+    s32 retVal;
+
+    if (!((0 <= offset) && (offset <= fileInfo->length))) {
+        fn_8017CBFC(lbl_8066C408, 0x334, lbl_804D1E74);
+    }
+
+    if (!((0 <= offset + length) && (offset + length < fileInfo->length + 32))) {
+        fn_8017CBFC(lbl_8066C408, 0x33A, lbl_804D1E74);
+    }
+
+    block = &fileInfo->cb;
+    result = fn_801859B4(block, addr, length, fileInfo->startAddr + offset, fn_80183B68, prio);
+    if (result == 0) {
+        return -1;
+    }
+
+    enabled = OSDisableInterrupts();
+
+    while (1) {
+        state = ((volatile DVDCommandBlock*)block)->state;
+        if (state == 0) {
+            retVal = (s32)block->transferredSize;
+            break;
+        } else if (state == -1) {
+            retVal = -1;
+            break;
+        } else if (state == 10) {
+            retVal = -3;
+            break;
+        }
+        fn_80180BFC(lbl_8066F2B8);
+    }
+
+    OSRestoreInterrupts(enabled);
+    return retVal;
 }
