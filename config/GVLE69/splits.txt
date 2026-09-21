@@ -81,6 +81,9 @@ Runtime.PPCEABI.H/strstr.c:
 Runtime.PPCEABI.H/fn_80172BD4.c:
 	.text       start:0x80172BD4 end:0x80172BFC
 
+Runtime.PPCEABI.H/strtok_r.c:
+	.text       start:0x80172BFC end:0x80172CC4
+
 Runtime.PPCEABI.H/fn_80172CC4.c:
 	.text       start:0x80172CC4 end:0x80172CEC
 
