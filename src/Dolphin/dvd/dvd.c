@@ -528,14 +528,14 @@ void cbForStateCheckID3(u32 intType)
     }
 }
 
-extern void fn_80184C80(DVDCommandBlock* block);
+extern void stateReadingID(DVDCommandBlock* block);
 
 void AlarmHandler_80184B70(void* alarm, void* context)
 {
     DVDReset();
     DCInvalidateRange(lbl_8057D240, 0x20);
-    LastState = fn_80184C80;
-    fn_80184C80(executing);
+    LastState = stateReadingID;
+    stateReadingID(executing);
 }
 
 void stateCoverClosed(void)
@@ -562,3 +562,13 @@ void stateCoverClosed(void)
         break;
     }
 }
+
+extern void fn_80184CB0(u32 intType);
+extern void fn_801875BC(void* buf, void* callback);
+
+#pragma dont_inline on
+void stateReadingID(DVDCommandBlock* block)
+{
+    fn_801875BC(lbl_8057D240, fn_80184CB0);
+}
+#pragma dont_inline reset
