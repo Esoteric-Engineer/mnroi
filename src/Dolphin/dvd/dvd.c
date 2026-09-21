@@ -70,7 +70,8 @@ extern void DCInvalidateRange(void* addr, u32 nBytes);
 extern void DVDLowAudioBufferConfig(u32 enable, u32 size, void* callback);
 extern void fn_80184A74(u32 intType);
 void cbForStateCheckID2a(u32 intType);
-extern void fn_80184844(DVDCommandBlock* block);
+void stateCheckID2a(DVDCommandBlock* block);
+extern void fn_80184990(u32 intType);
 void stateCheckID2(DVDCommandBlock* block);
 void stateCheckID3(DVDCommandBlock* block);
 extern void fn_8018487C(u32 intType);
@@ -444,8 +445,13 @@ void cbForStateCheckID2a(u32 intType)
 
     if (intType & 1) {
         NumInternalRetry = 0;
-        fn_80184844(executing);
+        stateCheckID2a(executing);
     } else {
         DVDLowRequestError(cbForStateGettingError);
     }
+}
+
+void stateCheckID2a(DVDCommandBlock* block)
+{
+    DVDLowRead(tmpBuffer, 0x20, 0x420, fn_80184990);
 }
