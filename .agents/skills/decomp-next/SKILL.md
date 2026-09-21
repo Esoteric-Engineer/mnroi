@@ -40,6 +40,8 @@ Human-facing references (read the relevant one instead of guessing):
    "Confirmed non-matches" list in `docs/matching_notes.md`. Library ranges are in
    `docs/sdk_libraries.md`. If the user named a specific function or unit instead, work that one.
    `tools/find_candidates.py` (small leaf functions only) is a fallback, not the main chooser.
+   `python3 tools/sdk_scout.py info <addr>` shows a function's callees, callers and hardware
+   registers, which helps confirm an identity.
    - **Out of queue:** if no `open` row of tier `known`/`exact`/`guess` is left outside the `libc-*` libraries, stop. Tell the
      user the queue is exhausted (counts by status/library, what remains) and that the next step is
      a planning session (re-scout the range, find AR/ARQ/DSP/CARD, decide on libc and game code).
@@ -56,6 +58,13 @@ Human-facing references (read the relevant one instead of guessing):
    `symbols.txt`.
 4. **Register** as `Object(NonMatching, "<unit>")` in `configure.py`. The name must equal the
    `splits.txt` unit name exactly.
+   - **New library** (e.g. `pad`, not registered yet): add a `DolphinLib("pad", [Object(...)])`
+     entry to `config.libs`, in link order (address order: `pad` goes after `vi` and before `ai`),
+     with units named `Dolphin/pad/<unit>.c` in both `splits.txt` and `src/`. `DolphinLib` supplies
+     `GC/1.2.5n` and `cflags_base`. The SDK libraries were built at different dates (PAD Aug 2003,
+     DVD Sep 2003, the rest Apr 2003), so if the first function matches poorly in an
+     unexplained, uniform way, suspect the flags or compiler version before the source. Record
+     what you find in `docs/matching_notes.md`.
 5. **Write** `src/<unit>` and run `ninja`. Inspect remaining differences with
    `python3 tools/objdiff_mismatches.py <unit-without-.c> <function>`; it shows relocation
    types, which byte diffs don't. Form a hypothesis from `docs/matching_notes.md` instead of
@@ -79,7 +88,8 @@ Human-facing references (read the relevant one instead of guessing):
 Update the row in `docs/sdk_queue.tsv` in the same change: `status` -> `matched` (100% and
 `main.dol: OK`), `stalled` (left `NonMatching`; note the blocker), or `wrong-name`. If matching
 reveals the identity of neighbouring functions (or that a library boundary is off), fix those rows
-and `docs/sdk_libraries.md`.
+and `docs/sdk_libraries.md`. After a batch of matches, run `python3 tools/sdk_scout.py queue` to
+re-guess the `unidentified` rows with the new anchors; it keeps curated rows and statuses.
 
 ## Report
 

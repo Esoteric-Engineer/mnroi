@@ -1,74 +1,74 @@
 addr	size	name	library	confidence	notes	status
-0x8016D000	0x64		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016D064	0x220		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016D284	0x6F4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016D978	0xF8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016DA70	0x210		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016DC80	0xDC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016DD80	0xDC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016DE5C	0x80		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016DEDC	0x11C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016DFF8	0xF4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016E0EC	0xAC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016E198	0x364		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016E538	0xEC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016E624	0xAC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016E6D0	0x214		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016E8E4	0x350		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016EC68	0x888		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016F4F0	0x884		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016FD74	0xC8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016FE3C	0x154		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016FF90	0x50		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8016FFE0	0xD8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801700C0	0xF0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801701B0	0xE04		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80170FB4	0xD4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8017123C	0x98		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801712D4	0x32C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80171600	0x98C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80172028	0x198		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8017232C	0xEC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801725B8	0x9C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80172654	0xA8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801726FC	0x84		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80172780	0x6C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801727EC	0x6C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80172858	0xAC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80172904	0xE0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801729E4	0xCC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80172CEC	0x8C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80172DA0	0x258		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80172FF8	0x354		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8017334C	0x288		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801735D4	0x5C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80173630	0x4C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8017367C	0x7C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801736F8	0x4E8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80173BE0	0xD4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80173CB4	0xD8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80173D8C	0x17F0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8017557C	0x188		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80175704	0xD4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801757D8	0x167C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80176E54	0x1B0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8017703C	0x32C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801773E4	0x174		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80177558	0x35C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801778B4	0x2FC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80177BB0	0x148		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80178374	0xB0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80178424	0x144		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80178568	0xEC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801786AC	0x3E4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80178A90	0x80		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80178B10	0xD8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80178BE8	0x64		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80178C4C	0x70		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80178CBC	0x64		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80179C30	0x20		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80179C50	0x4E4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8017A134	0x498		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x8016D000	0x64		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016D064	0x220		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016D284	0x6F4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016D978	0xF8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016DA70	0x210		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016DC80	0xDC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016DD80	0xDC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016DE5C	0x80		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016DEDC	0x11C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016DFF8	0xF4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016E0EC	0xAC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016E198	0x364		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016E538	0xEC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016E624	0xAC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016E6D0	0x214		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016E8E4	0x350		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016EC68	0x888		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016F4F0	0x884		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016FD74	0xC8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016FE3C	0x154		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016FF90	0x50		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8016FFE0	0xD8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801700C0	0xF0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801701B0	0xE04		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80170FB4	0xD4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8017123C	0x98		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801712D4	0x32C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80171600	0x98C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80172028	0x198		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8017232C	0xEC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801725B8	0x9C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80172654	0xA8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801726FC	0x84		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80172780	0x6C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801727EC	0x6C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80172858	0xAC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80172904	0xE0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801729E4	0xCC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80172CEC	0x8C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80172DA0	0x258		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80172FF8	0x354		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8017334C	0x288		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801735D4	0x5C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80173630	0x4C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8017367C	0x7C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801736F8	0x4E8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80173BE0	0xD4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80173CB4	0xD8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80173D8C	0x17F0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8017557C	0x188		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80175704	0xD4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801757D8	0x167C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80176E54	0x1B0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8017703C	0x32C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801773E4	0x174		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80177558	0x35C		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801778B4	0x2FC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80177BB0	0x148		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80178374	0xB0		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80178424	0x144		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80178568	0xEC		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801786AC	0x3E4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80178A90	0x80		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80178B10	0xD8		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80178BE8	0x64		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80178C4C	0x70		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80178CBC	0x64		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80179C30	0x20		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80179C50	0x4E4		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8017A134	0x498		libc-runtime	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
 0x8017AAAC	0x4E0		os	unidentified		open
 0x8017AF8C	0x280		os	unidentified		open
 0x8017C400	0x128	__OSSaveFPUContext	os	known	symbol already named; just needs split + match	open
@@ -193,26 +193,26 @@ addr	size	name	library	confidence	notes	status
 0x801922FC	0x1C8		gx	unidentified		open
 0x801924C4	0x80		gx	unidentified		open
 0x80192B68	0x238		gx	unidentified		open
-0x80193E54	0xF4		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80193F48	0x25C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801941A4	0xA0		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80194244	0xEC		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80194330	0x24C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8019457C	0x48		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801945C4	0x7C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80194640	0x174		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801947B4	0x80		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80194834	0xB4		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801948E8	0x10C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x801949F4	0xBC		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80194AB0	0x12C		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80194BDC	0x110		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80194CEC	0xC8		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80194DB4	0x218		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80194FCC	0xD0		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x8019509C	0x1D4		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80195270	0xF4		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
-0x80195364	0xDC		libc-math	unidentified	C runtime/MSL; ac-decomp uses different MSL version, needs another reference	open
+0x80193E54	0xF4		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80193F48	0x25C		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801941A4	0xA0		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80194244	0xEC		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80194330	0x24C		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8019457C	0x48		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801945C4	0x7C		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80194640	0x174		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801947B4	0x80		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80194834	0xB4		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801948E8	0x10C		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x801949F4	0xBC		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80194AB0	0x12C		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80194BDC	0x110		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80194CEC	0xC8		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80194DB4	0x218		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80194FCC	0xD0		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x8019509C	0x1D4		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80195270	0xF4		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
+0x80195364	0xDC		libc-math	unidentified	C runtime/MSL; ac-decomp uses a different MSL version, needs another reference	open
 0x80195480	0x3B0	EXIGetID	exi	guess	ac-decomp size 0x37c vs 0x3b0; follows UnlockedHandler like ac-decomp	open
 0x80195830	0x18C		exi	unidentified		open
 0x801959BC	0x1BC		exi	unidentified		open

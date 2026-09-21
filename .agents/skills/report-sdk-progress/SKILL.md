@@ -25,7 +25,8 @@ description: Report how close the SDK decomp is to done, and whether the project
    `confidence`, `status`; e.g. `cut -f4,5,7 docs/sdk_queue.tsv | sort | uniq -c`). Report how many
    rows are `open`/`matched`/`stalled`/`wrong-name`, and how many `open` rows are still
    `unidentified` (they need scouting) or `libc-*` (no reference source yet). If the queue looks
-   stale (its unsplit count differs a lot from step 3), say so and regenerate it before trusting it.
+   stale (its unsplit count differs a lot from step 3), run `python3 tools/sdk_scout.py queue`
+   (it keeps curated rows and statuses) before trusting it.
 5. **Verify the range.** The script's default upper bound (`--hi 0x80197000`) is the end of the
    confirmed SDK code, not the end of the SDK. `docs/sdk_libraries.md` records the library
    boundaries and what has not been found yet (AR, ARQ, AX, DSP, CARD are expected past it). Use
@@ -37,7 +38,10 @@ description: Report how close the SDK decomp is to done, and whether the project
    - no named SDK functions are unsplit and no SDK object is `NonMatching`;
    - the queue has no `open` rows outside libc, and libc is either done or explicitly deferred;
    - AR, ARQ, AX, DSP and CARD are located and either registered or deliberately excluded;
-   - no unidentified functions remain in the confirmed range.
+   - no unidentified functions remain in the confirmed range;
+   - SDK data is complete: the progress report's `SDK Code` **Data** line is 100%, and any SDK data
+     not yet split is accounted for. Only `.text` is checked by `sdk_remaining.py`, so report the
+     data percentage and unmatched data bytes from step 1 explicitly (currently 80%, 2424 / 3028 bytes).
    Otherwise say what remains.
 
 ## Caveats
