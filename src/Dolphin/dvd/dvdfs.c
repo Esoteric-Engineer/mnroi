@@ -41,9 +41,12 @@ extern u32 currentDirectory;
 extern u32 __DVDLongFileNameFlag;
 extern char lbl_8066C408[8]; // this TU's __FILE__ string; unnamed, compiler-synthesized
 extern char lbl_804D1D40[]; // the OSPanic() format string below, same reasoning
-extern void fn_8017CBFC(void); // likely OSPanic, unconfirmed
+extern void fn_8017CBFC(const char* file, int line, const char* msg, ...); // likely OSPanic, unconfirmed
 extern int fn_80400544(int c); // likely tolower, unconfirmed
 extern s32 DVDGetCurrentDir(char* path, u32 maxlen);
+extern char lbl_804D1E40[0x34]; // "DVDReadAsync(): specified area is out of the file  "
+extern void fn_80183A20(s32 result, DVDCommandBlock* block); // likely cbForReadAsync, unconfirmed
+extern s32 fn_801859B4(DVDCommandBlock* block, void* addr, s32 length, s32 offset, void* callback, s32 prio); // likely DVDReadAbsAsyncPrio, unconfirmed
 extern s32 fn_801862A4(DVDCommandBlock* block); // likely DVDCancel, unconfirmed
 extern void OSReport(const char* msg, ...);
 extern char lbl_804D1E08[0x38]; // "Warning: DVDOpen(): file '%s' was not found under %s.\n"
@@ -405,4 +408,20 @@ s32 DVDConvertEntrynumToPath(s32 entrynum, char* path, u32 maxlen)
 s32 DVDGetCurrentDir(char* path, u32 maxlen)
 {
     return DVDConvertEntrynumToPath((s32)currentDirectory, path, maxlen);
+}
+
+s32 DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, void* callback, s32 prio)
+{
+    if (!((0 <= offset) && (offset <= fileInfo->length))) {
+        fn_8017CBFC(lbl_8066C408, 0x2EE, lbl_804D1E40);
+    }
+
+    if (!((0 <= offset + length) && (offset + length < fileInfo->length + 32))) {
+        fn_8017CBFC(lbl_8066C408, 0x2F4, lbl_804D1E40);
+    }
+
+    fileInfo->callback = callback;
+    fn_801859B4(&fileInfo->cb, addr, length, fileInfo->startAddr + offset, fn_80183A20, prio);
+
+    return 1;
 }
