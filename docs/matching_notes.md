@@ -169,6 +169,10 @@ Smaller findings:
 
 ---
 
+### Claiming a function that uses a `.bss` static
+
+dtk renames the referenced `lbl_XXXXXXXX` bss symbol to `<Name>` (`scope:local`) once the function is split, and the build then fails to link if an unclaimed neighbor also references it. Also add a `.bss start:.. end:..` line to the unit's split, set the symbol to `scope:global` in `symbols.txt`, and define it non-`static` in the source (`__DVDClearWaitingQueue` / `WaitingQueue`).
+
 ## Confirmed non-matches
 
 Don't re-guess these.
