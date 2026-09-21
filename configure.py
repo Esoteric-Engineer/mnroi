@@ -640,6 +640,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSTime.c"),
             Object(NonMatching, "Dolphin/os/fn_801813D4.c"),
             Object(Matching, "Dolphin/os/_ExitProcess.c"),
+            Object(Matching, "Dolphin/os/OSMutex.c"),
         ],
     ),
 ]
