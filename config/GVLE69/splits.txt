@@ -226,6 +226,9 @@ Dolphin/os/OSAudioSystem.c:
 Dolphin/os/OSCache.c:
 	.text       start:0x8017BEA4 end:0x8017C088
 
+Dolphin/os/OSSaveFPUContext.c:
+	.text       start:0x8017C528 end:0x8017C530
+
 Dolphin/os/OSSetCurrentContext.c:
 	.text       start:0x8017C530 end:0x8017C58C
 
