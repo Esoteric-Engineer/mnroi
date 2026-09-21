@@ -85,3 +85,20 @@ int __DVDCheckWaitingQueue(void)
     OSRestoreInterrupts(enabled);
     return 0;
 }
+
+int __DVDDequeueWaitingQueue(DVDQueue* block)
+{
+    int enabled = OSDisableInterrupts();
+    DVDQueue* prev = block->prev;
+    DVDQueue* next = block->next;
+
+    if (prev == 0 || next == 0)
+    {
+        OSRestoreInterrupts(enabled);
+        return 0;
+    }
+    prev->next = next;
+    next->prev = prev;
+    OSRestoreInterrupts(enabled);
+    return 1;
+}
