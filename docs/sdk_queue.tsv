@@ -116,8 +116,8 @@ addr	size	name	library	confidence	notes	status
 0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	open
 0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4	open
 0x80186474	0x11C	__DVDPrepareResetAsync	dvd	exact	ac-decomp size 0x11c	open
-0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	open
-0x801868DC	0x7C	__DVDStoreErrorCode	dvd	known	symbol already named; just needs split + match	open
+0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	matched
+0x801868DC	0x7C	__DVDStoreErrorCode	dvd	known	symbol already named; just needs split + match	matched
 0x80186958	0xF8		dvd	unidentified		open
 0x80186A80	0xD8	cb	dvd	known	symbol already named; just needs split + match	open
 0x80186B58	0x168	__fstLoad	dvd	known	symbol already named; just needs split + match	open

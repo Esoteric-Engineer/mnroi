@@ -556,6 +556,7 @@ config.libs = [
             Object(Matching, "Dolphin/dvd/DVDGetCurrentDiskID.c"),
             Object(Matching, "Dolphin/dvd/fn_80186590.c"),
             Object(Matching, "Dolphin/dvd/dvdqueue.c"),
+            Object(Matching, "Dolphin/dvd/dvderror.c"),
             Object(Matching, "Dolphin/dvd/DVDLowWaitCoverClose.c"),
             Object(Matching, "Dolphin/dvd/__DVDPrintFatalMessage.c"),
             Object(Matching, "Dolphin/dvd/__DVDInitWA.c"),
