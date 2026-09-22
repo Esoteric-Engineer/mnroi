@@ -521,6 +521,9 @@ Dolphin/dvd/__DVDPrintFatalMessage.c:
 Dolphin/dvd/__DVDInitWA.c:
 	.text       start:0x80186CC0 end:0x80186D00
 
+Dolphin/dvd/AlarmHandlerForTimeout.c:
+	.text       start:0x80187064 end:0x801870D4
+
 Dolphin/dvd/DVDLowSeek.c:
 	.text       start:0x801874FC end:0x80187590
 
