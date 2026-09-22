@@ -563,6 +563,7 @@ config.libs = [
             Object(Matching, "Dolphin/dvd/AlarmHandlerForTimeout.c"),
             Object(Matching, "Dolphin/dvd/DVDLowSeek.c"),
             Object(Matching, "Dolphin/dvd/DVDLowStopMotor.c"),
+            Object(Matching, "Dolphin/dvd/DVDLowRequestError.c"),
             Object(Matching, "Dolphin/dvd/DVDLowBreak.c"),
             Object(Matching, "Dolphin/dvd/DVDLowClearCallback.c"),
             Object(Matching, "Dolphin/dvd/__DVDLowSetWAType.c"),

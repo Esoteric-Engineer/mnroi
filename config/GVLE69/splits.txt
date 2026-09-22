@@ -536,6 +536,9 @@ Dolphin/dvd/DVDLowWaitCoverClose.c:
 Dolphin/dvd/DVDLowStopMotor.c:
 	.text       start:0x80187660 end:0x801876EC
 
+Dolphin/dvd/DVDLowRequestError.c:
+	.text       start:0x801876EC end:0x80187778
+
 Dolphin/dvd/DVDLowBreak.c:
 	.text       start:0x80187A90 end:0x80187AA4
 

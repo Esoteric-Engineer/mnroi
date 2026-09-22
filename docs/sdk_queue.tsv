@@ -128,7 +128,7 @@ addr	size	name	library	confidence	notes	status
 0x801871E4	0x80		dvd	unidentified		open
 0x80187264	0x298	DVDLowRead	dvd	known	symbol already named; just needs split + match	open
 0x801875BC	0xA4		dvd	unidentified		open
-0x801876EC	0x8C	DVDLowRequestError	dvd	known	symbol already named; just needs split + match	open
+0x801876EC	0x8C	DVDLowRequestError	dvd	known	symbol already named; just needs split + match	matched
 0x80187778	0x9C		dvd	unidentified		open
 0x80187814	0x98		dvd	unidentified		open
 0x801878AC	0x8C		dvd	unidentified		open
