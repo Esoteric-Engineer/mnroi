@@ -132,7 +132,7 @@ addr	size	name	library	confidence	notes	status
 0x80187778	0x9C		dvd	unidentified		open
 0x80187814	0x98		dvd	unidentified		open
 0x801878AC	0x8C		dvd	unidentified		open
-0x80187938	0x9C	DVDLowAudioBufferConfig	dvd	known	symbol already named; just needs split + match	open
+0x80187938	0x9C	DVDLowAudioBufferConfig	dvd	known	symbol already named; just needs split + match	matched
 0x801879D4	0xBC	DVDLowReset	dvd	known	symbol already named; just needs split + match	open
 0x80187E38	0xA0	getTiming	vi	guess	ac-decomp size 0x90	open
 0x80187ED8	0x200	__VIInit	vi	guess	ac-decomp size 0x1f8	open
