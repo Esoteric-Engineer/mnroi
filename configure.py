@@ -344,6 +344,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/fopen.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178684.c"),
             Object(Matching, "Runtime.PPCEABI.H/__sread.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__sseek.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178D20.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178D48.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178D98.c"),
