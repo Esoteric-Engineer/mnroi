@@ -12,7 +12,7 @@ addr	size	name	library	confidence	notes	status
 0x8016E0EC	0xAC	__kernel_sinf	libc	guess	Not __kernel_sinf: that is 0x8016E624 (confirmed by sinf callers). Identity unknown; re-scout.	wrong-name
 0x8016E198	0x364		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016E538	0xEC	__kernel_cosf	libc	known	Called by cosf/sinf as the 2-arg (x,y) kernel; Newlib kf_cos.c	open
-0x8016E624	0xAC	__kernel_sinf	libc	known	Called by cosf/sinf as the 3-arg (x,y,iy) kernel; Newlib kf_sin.c	open
+0x8016E624	0xAC	__kernel_sinf	libc	known	Called by cosf/sinf as the 3-arg (x,y,iy) kernel; Newlib kf_sin.c	matched
 0x8016E6D0	0x214		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016E8E4	0x350	__ieee754_rem_pio2f	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
 0x8016EC68	0x888		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open

@@ -1,6 +1,6 @@
 extern float lbl_8066C174;
 extern float fn_8016E538(float x, float y);
-extern float fn_8016E624(float x, float y, int iy);
+extern float __kernel_sinf(float x, float y, int iy);
 extern int fn_8016E8E4(float x, float* y);
 
 asm float cosf(float x)
@@ -51,7 +51,7 @@ L_n1:
     lfs     f1, 8(r1)
     li      r3, 1
     lfs     f2, 0xc(r1)
-    bl      fn_8016E624
+    bl      __kernel_sinf
     fneg    f1, f1
     b       L_end
 L_n2:
@@ -64,7 +64,7 @@ L_n3:
     lfs     f1, 8(r1)
     li      r3, 1
     lfs     f2, 0xc(r1)
-    bl      fn_8016E624
+    bl      __kernel_sinf
 L_end:
     lwz     r0, 0x1c(r1)
     mtlr    r0

@@ -42,6 +42,9 @@ Runtime.PPCEABI.H/tanf.c:
 Runtime.PPCEABI.H/fabs.c:
 	.text       start:0x8016E4FC end:0x8016E538
 
+Runtime.PPCEABI.H/__kernel_sinf.c:
+	.text       start:0x8016E624 end:0x8016E6D0
+
 Runtime.PPCEABI.H/copysignf.c:
 	.text       start:0x8016EC34 end:0x8016EC68
 
