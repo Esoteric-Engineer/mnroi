@@ -29,7 +29,7 @@ addr	size	name	library	confidence	notes	status
 0x80171600	0x98C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80172028	0x198	_strtoul_r	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
 0x8017232C	0xEC		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x801725B8	0x9C	strchr	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
+0x801725B8	0x9C	strchr	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80172654	0xA8	strcmp	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
 0x801726FC	0x84	strcpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80172780	0x6C	strlen	libc	exact	Matched as asm (GCC-built Newlib word-at-a-time null detect, same shape as strcat)	matched
