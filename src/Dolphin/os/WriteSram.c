@@ -1,6 +1,6 @@
 typedef int BOOL;
 
-extern BOOL fn_80195270(long chan, unsigned long dev, void* callback);
+extern BOOL EXILock(long chan, unsigned long dev, void* callback);
 extern BOOL EXISelect(long chan, unsigned long dev, unsigned long freq);
 extern void EXIUnlock(long chan);
 extern BOOL fn_80193F48(long chan, void* buf, long len, unsigned long type, void* callback);
@@ -14,7 +14,7 @@ BOOL WriteSram(void* buffer, unsigned long offset, unsigned long size)
     unsigned long cmd;
     BOOL err;
 
-    if (fn_80195270(0, 1, WriteSramCallback) == 0) {
+    if (EXILock(0, 1, WriteSramCallback) == 0) {
         return 0;
     }
 
