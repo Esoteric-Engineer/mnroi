@@ -312,6 +312,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/fn_80171F8C.c"),
             Object(Matching, "Runtime.PPCEABI.H/free.c"),
             Object(Matching, "Runtime.PPCEABI.H/realloc.c"),
+            Object(Matching, "Runtime.PPCEABI.H/_strtoul_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/strtoul.c"),
             Object(Matching, "Runtime.PPCEABI.H/memcmp.c"),
             Object(Matching, "Runtime.PPCEABI.H/memcpy.c"),

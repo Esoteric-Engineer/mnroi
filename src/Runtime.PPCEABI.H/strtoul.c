@@ -1,4 +1,4 @@
-extern void fn_80172028(void);
+extern void _strtoul_r(void);
 extern int lbl_8066C3B0;
 
 asm void strtoul(void)
@@ -14,7 +14,7 @@ asm void strtoul(void)
     lwz     r3, lbl_8066C3B0
     mr      r4, r0
     mr      r5, r9
-    bl      fn_80172028
+    bl      _strtoul_r
     lwz     r0, 12(r1)
     mtlr    r0
     addi    r1, r1, 8

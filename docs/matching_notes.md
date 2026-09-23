@@ -182,6 +182,7 @@ Scope: everything in `Runtime.PPCEABI.H` that comes from Newlib or libgcc (strin
 - `_fwalk` (`0x80178A90`): `addic. r29,r3,0x1d8` null-checks `&ptr->__sglue`. Signature `_fwalk(reent, func)` with `func(fp)`. Callers `__srefill`/`fflush`/`fn_80178684` reference it by name.
 - `__sread` (`0x80178BE8`): arg shuffle `mr r0,r4` / `mr r31,r3` / `mr r6,r5`; passes `fp->_data` and `_file` to `_read_r` (`0x80178EA4`).
 - `__smakebuf` (`0x80178B10`): `_flags & __SNBF` uses `_nbuf` with size 1; otherwise `_fstat_r` (stat buf at `r1+8`, `st_mode` at `r1+0xC`), and `S_IFREG` + `_seek == __sseek` sets `_blksize` = 0x400 and `__SOPT`, else `__SNPT`. It always ends unbuffered (no malloc). Keep the `li r0,0; ori r0,r0,0x8000` pair for the `S_IFREG` compare verbatim.
+- `_strtoul_r` (`0x80172028`; `_strtol_r` `0x80176E54` is its signed twin): old Newlib, `reent` first. `_ctype_ + 1` is `lbl_8049C6A1`; flag bits are `8` space, `4` digit, `3` alpha, `1` upper. Use it for any inlined `isspace`/`isdigit`/`isalpha`.
 - `atof` (`0x801711F0`, `strtod(s, 0)`), `atoi` (`0x80171214`, `strtol(s, 0, 10)`), `fn_8017A6CC`/`fn_8017A6EC`: bare wrappers with argument `li`s between the `stw` and the `bl`.
 - `__pure_virtual` (`0x80179C30`): calls `terminate` (`0x8017A5DC`).
 - `tanf` (`0x8016DE5C`) and the rest of libm.

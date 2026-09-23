@@ -84,6 +84,9 @@ Runtime.PPCEABI.H/free.c:
 Runtime.PPCEABI.H/realloc.c:
 	.text       start:0x80171FEC end:0x80172028
 
+Runtime.PPCEABI.H/_strtoul_r.c:
+	.text       start:0x80172028 end:0x801721C0
+
 Runtime.PPCEABI.H/strtoul.c:
 	.text       start:0x801721C0 end:0x801721F8
 
