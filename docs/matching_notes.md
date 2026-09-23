@@ -113,6 +113,8 @@ Smaller findings:
 
 - **Runtime (`GC/1.3.2`) `vsprintf`/`vsnprintf` (`0x80171088`/`0x801710E4`): plain C stalls at 37%.** The original has an 8-aligned `-0x68` frame (ours rounds to `-0x70`) and uses r9-r11 as temps; both are compiler-version behaviour, not source shape. Written as `nofralloc` asm: 100%.
 
+- **Frame 8 bytes too small when the original inlined `__OSLockSram` (`OSGetSoundMode`, `0x8017F79C`): wrap the shared `LockSram(offset)` inline in a second `static inline OSSram* __OSLockSramI(void)` and call that.** Calling `LockSram(0)` directly is 99.84% (every instruction right, frame `-0x18` vs `-0x20`); the extra inline level supplies the 8-byte slot (same mechanism as the inline-local note above). Siblings `OSSetSoundMode`/`OSGetProgressiveMode`/`OSSetProgressiveMode`/`OSGetWirelessID` should use the same shape (`Scb` at `0x8057C5C0`, `flags` at `OSSram+0x13`, unlock is `fn_8017F2E4(commit, offset)`).
+
 - **Inlining:** A function may contain the inlined body of a method from a not-yet-reconstructed header. A `static` helper with a single caller can be inlined with no separate `bl`, which is why an original may have no call where a reference decomp appears to have one.
 
 - **A hardware-register read where the original keeps `lis`/`addi 0x3000`/`lwz 0x24(r3)` (base add not folded into the displacement), plus `cmpwi` and a `b` to a shared `blr`: `#pragma peephole off`, and use a signed `int` for the flag.** The declare-at-address `__PIRegs` form is still right; peephole off only stops the displacement folding (`lwz 0x3024`). Matched `OSGetResetCode` (`0x8017EBB4`).
