@@ -525,7 +525,10 @@ Dolphin/dvd/__DVDPrintFatalMessage.c:
 	.text       start:0x80186A50 end:0x80186A80
 
 Dolphin/dvd/fstload.c:
-	.text       start:0x80186A80 end:0x80186B58
+	.text       start:0x80186A80 end:0x80186CC0
+	.data       start:0x804D2810 end:0x804D2880
+	.bss        start:0x8057D2D8 end:0x8057D348
+	.sdata      start:0x8066C470 end:0x8066C480
 
 Dolphin/dvd/__DVDInitWA.c:
 	.text       start:0x80186CC0 end:0x80186D00

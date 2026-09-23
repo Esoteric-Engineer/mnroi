@@ -201,6 +201,8 @@ Smaller findings:
 
 - **Claiming a function whose caller is already in the same unit can make MWCC inline it** (`-inline auto`): the caller shrinks (`AlarmHandler_80184B70` 0x44 -> 0x40), every later unit shifts 4 bytes, and `main.dol` breaks with ~48% of bytes differing even though each function reports 100% on its own. Wrap the definition in `#pragma dont_inline on` / `reset`. If the caller loads an argument (`lwz r3,executing`) the original callee takes an unused parameter; keep it in the prototype (`stateReadingID`, `0x80184C80`).
 
+- **String literals for a unit live in three places -- claim them all with the unit or `main.dol` shifts:** `__fstLoad` (`0x80186B58`) has its long `OSReport` strings pooled in `.data` (`0x804D2810-0x804D2880`, 8-aligned, addressed off one `r31` base) but the 1-3 char ones (`"\n"`, `"OFF"`, `"ON"`) in `.sdata` (`0x8066C470-0x8066C480`, `li rX, lit@sda21`). Claim `.data`, `.sdata`, and the `.bss` of its `static` locals in `splits.txt`, and write the literals inline; matched 100% first try. The function-local `static block` (`block$16`) and file-static `bb2Buf` become plain `static` arrays in the unit. The unused `switch` on the drive state in ac-decomp's version compiles to nothing (empty loop `bne`), so omit it.
+
 - **`.sdata2` symbols in compiled C are fine:** the `sda2_via_r13` option bakes those accesses as `r13` offsets (see [`baseline.md`](baseline.md#small-data-r13-problem)), so write them as ordinary C.<br />
   If `Range Error for small data relocation` appears, check that `build.ninja` was generated with the fork's `dtk-dev` and that `build/GVLE69/sda_bake.json` exists.
 
