@@ -152,6 +152,8 @@ Smaller findings:
 
 - **Newlib string functions with the word-at-a-time null test (`andi. r0,rX,3` / `lwz` / `subis -0x101` / `subi -0x101` / `andc` / `and.` with `lis`+`ori 0x8080` emitted twice) are GCC output, not MWCC: write them as `nofralloc` asm.** Plain C (Newlib `DETECT_NULL` with `long`/`unsigned long` constants) gives 27% (`clrlwi.`, a single `lis 0x8081`/`subi` constant, no peeled first word check). Matched `strlen` (`0x80172780`) as asm, like `strcat`/`strrchr`/`strcmp` (`0x80172654`, word loop then `extsb` byte loop). Queue names for this range are by size only: `0x801727EC` (0x6C) is a lowercase-in-place loop calling `tolower`, not `strlen`.
 
+- **Newlib `strncpy` (`0x801729E4`) is the non-size-optimised Newlib body (aligned word loop with `DETECT_NULL`, byte loop, then `count-- > 0` zero-pad) compiled by GCC: `nofralloc` asm, 100% first try.** The tell is the same `lis`/`ori 0x8080` (emitted twice) + `subis`/`subi 0x101` as `strcpy`, plus `cmplwi r5,3`/`ble` for `TOO_SMALL_LITTLE_BLOCK`. It uses only r0/r4/r5/r8-r11 and never saves anything, so the asm has no frame.
+
 - **Newlib libm float functions (`tanf` `0x8016DE5C`) are GCC output too (`GET_FLOAT_WORD` via stack `stfs`/`lwz`, `lis`+`ori`+`cmpw` constants, `clrlslwi`): write as `nofralloc` asm.** In MWCC inline asm reference `.sdata` floats by bare name (`lfs f2, lbl_8066C17C`); `@sda21(r0)` is a syntax error.
 
 ---

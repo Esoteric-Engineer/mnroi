@@ -36,7 +36,7 @@ addr	size	name	library	confidence	notes	status
 0x801727EC	0x6C		libc	unidentified	Queue said strlen: wrong. In-place lowercase loop (ctype table lbl_8049C6A1 + tolower), strlwr-like, returns s	wrong-name
 0x80172858	0xAC	strnicmp	libc	exact	CFTKK named this strncat (size/order only): wrong. Bounded case-insensitive compare (old Newlib strncasecmp, tolower on both). Matched as nofralloc asm; C stalls at 78.5% with a -0x20 frame like stricmp	matched
 0x80172904	0xE0		libc	unidentified	Looks like strncmp (n==0 -> 0, word-compare fast path when both 4-aligned); verify against Newlib strncmp before naming	open
-0x801729E4	0xCC	strncpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
+0x801729E4	0xCC	strncpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	verified against Newlib strncpy (word loop + byte loop + zero-pad); matched as nofralloc asm in Runtime.PPCEABI.H/strncpy.c	matched
 0x80172CEC	0x8C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80172DA0	0x258		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80172FF8	0x354		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
