@@ -15,7 +15,7 @@ Boundaries are approximate to the function; confirm when you claim something nea
 | 0x80183070-0x8018315C | db | |
 | 0x8018315C-0x80187B3C | dvd | includes `DVDLow*` |
 | 0x80187B3C-0x80189C10 | vi | |
-| 0x80189C10-0x8018B624 | pad | **not registered yet**; starts at `UpdateOrigin` |
+| 0x80189C10-0x8018B624 | pad | registered (`Dolphin/pad/`, first unit `PADSetSamplingCallback`); starts at `UpdateOrigin` |
 | 0x8018B624-0x8018BF08 | ai | |
 | 0x8018BF08-0x80193E54 | gx | starts at the GX attribute code, before the first split (0x8018C820) |
 | 0x80193E54-0x80195440 | exi | `SetExiInterruptMask` through `EXIUnlock`; ac-decomp and doldecomp/mkdd have the source. Earlier labelled libc by mistake |

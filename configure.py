@@ -585,6 +585,12 @@ config.libs = [
         ],
     ),
     DolphinLib(
+        "pad",
+        [
+            Object(Matching, "Dolphin/pad/PADSetSamplingCallback.c"),
+        ],
+    ),
+    DolphinLib(
         "os",
         [
             Object(Matching, "Dolphin/os/fn_8017A5CC.c"),

@@ -166,7 +166,7 @@ addr	size	name	library	confidence	notes	status
 0x8018AFC8	0x470	SPEC2_MakeStatus	pad	guess	ac-decomp size 0x3f8	open
 0x8018B438	0xBC		pad	unidentified		open
 0x8018B4F4	0x60	SamplingHandler	pad	exact	ac-decomp size 0x60	open
-0x8018B554	0x54	PADSetSamplingCallback	pad	exact	ac-decomp size 0x54	open
+0x8018B554	0x54	PADSetSamplingCallback	pad	exact	ac-decomp size 0x54	matched
 0x8018B5A8	0x7C	__PADDisableRecalibration	pad	exact	ac-decomp size 0x7c	open
 0x8018BF08	0x26C		gx	unidentified		open
 0x8018C174	0x288		gx	unidentified		open
