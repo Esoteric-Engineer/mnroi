@@ -2,7 +2,7 @@ typedef unsigned long u32;
 
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int level);
-extern u32 fn_8017DC78(u32 mask, u32 current);
+extern u32 SetInterruptMask(u32 mask, u32 current);
 
 #pragma peephole off
 u32 __OSMaskInterrupts(u32 global)
@@ -19,7 +19,7 @@ u32 __OSMaskInterrupts(u32 global)
     global |= prev;
     *(u32*)0x800000C4 = global;
     while (mask) {
-        mask = fn_8017DC78(mask, global | local);
+        mask = SetInterruptMask(mask, global | local);
     }
     OSRestoreInterrupts(enabled);
     return prev;
@@ -39,7 +39,7 @@ u32 __OSUnmaskInterrupts(u32 global)
     global = prev & ~global;
     *(u32*)0x800000C4 = global;
     while (mask) {
-        mask = fn_8017DC78(mask, global | local);
+        mask = SetInterruptMask(mask, global | local);
     }
     OSRestoreInterrupts(enabled);
     return prev;
