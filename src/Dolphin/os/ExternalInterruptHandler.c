@@ -1,6 +1,6 @@
 typedef struct OSContext OSContext;
 
-extern void fn_8017E060(void);
+extern void __OSDispatchInterrupt(void);
 
 asm void ExternalInterruptHandler(register int exception, register OSContext* context)
 {
@@ -25,5 +25,5 @@ asm void ExternalInterruptHandler(register int exception, register OSContext* co
     mfspr   r0, GQR7
     stw     r0, 0x1C0(context)
     stwu    r1, -0x8(r1)
-    b       fn_8017E060
+    b       __OSDispatchInterrupt
 }

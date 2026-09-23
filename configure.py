@@ -726,6 +726,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/__OSInterruptInit.c"),
             Object(Matching, "Dolphin/os/SetInterruptMask.c"),
             Object(Matching, "Dolphin/os/OSInterruptMask.c"),
+            Object(Matching, "Dolphin/os/__OSDispatchInterrupt.c"),
             Object(Matching, "Dolphin/os/ExternalInterruptHandler.c"),
             Object(Matching, "Dolphin/os/__OSModuleInit.c"),
             Object(Matching, "Dolphin/os/OSMemory.c"),
