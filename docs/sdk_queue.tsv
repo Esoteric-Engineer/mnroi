@@ -7,7 +7,7 @@ addr	size	name	library	confidence	notes	status
 0x8016DC80	0xDC	cosf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DD80	0xDC	sinf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DE5C	0x80	tanf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
-0x8016DEDC	0x11C	scalbnf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
+0x8016DEDC	0x11C	scalbnf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DFF8	0xF4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016E0EC	0xAC	__kernel_sinf	libc	guess	Not __kernel_sinf: that is 0x8016E624 (confirmed by sinf callers). Identity unknown; re-scout.	wrong-name
 0x8016E198	0x364		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
