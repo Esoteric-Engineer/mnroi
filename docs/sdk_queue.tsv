@@ -208,7 +208,7 @@ addr	size	name	library	confidence	notes	status
 0x80194AB0	0x12C	EXISelect	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194BDC	0x110	EXIDeselect	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194CEC	0xC8	EXIIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
-0x80194DB4	0x218	TCIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
+0x80194DB4	0x218	TCIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194FCC	0xD0	EXTIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x8019509C	0x1D4	EXIInit	exi	exact	Matched as EXIInit (Dolphin/exi/EXIInit.c): the later SDK form (wait loop on the three CR regs, EXIGetID(0,2,&IDSerialPort1), __OSInIPL ? EXIProbeReset inlined : Barnacle probe, OSRegisterVersion); ac-decomp has the older form	matched
 0x80195270	0xF4	EXILock	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
