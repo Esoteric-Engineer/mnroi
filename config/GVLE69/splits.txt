@@ -1208,6 +1208,9 @@ Dolphin/exi/EXIAttach.c:
 Dolphin/exi/EXIDetach.c:
 	.text       start:0x801949F4 end:0x80194AB0
 
+Dolphin/exi/EXISelect.c:
+	.text       start:0x80194AB0 end:0x80194BDC
+
 Dolphin/exi/EXIDeselect.c:
 	.text       start:0x80194BDC end:0x80194CEC
 
