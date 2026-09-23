@@ -417,6 +417,9 @@ Dolphin/os/__OSDoHotReset.c:
 Dolphin/os/OSGetResetCode.c:
 	.text       start:0x8017EBB4 end:0x8017EBEC
 
+Dolphin/os/WriteSramCallback.c:
+	.text       start:0x8017EF78 end:0x8017EFD8
+
 Dolphin/os/OSLockSram.c:
 	.text       start:0x8017F22C end:0x8017F2E4
 

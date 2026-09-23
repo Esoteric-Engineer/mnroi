@@ -84,7 +84,7 @@ addr	size	name	library	confidence	notes	status
 0x8017E9B4	0x200		os	unidentified		open
 0x8017EBEC	0xF4	__OSResetSWInterruptHandler	os	exact	ac-decomp size 0xf4	open
 0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298	open
-0x8017EF78	0x60	WriteSramCallback	os	exact	ac-decomp size 0x60	open
+0x8017EF78	0x60	WriteSramCallback	os	exact	ac-decomp size 0x60	matched
 0x8017EFD8	0x118	WriteSram	os	exact	ac-decomp size 0x118	open
 0x8017F0F0	0x13C	__OSInitSram	os	guess	ac-decomp size 0x134	open
 0x8017F2E4	0x33C	UnlockSram	os	guess	ac-decomp size 0x308	open
