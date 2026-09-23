@@ -1,4 +1,4 @@
-// These four GXTexture.c functions share a translation unit.
+// These five GXTexture.c functions share a translation unit.
 // Their switch jump tables are packed back to back in .data (0x804D2F88 through 0x804D32A0) with no alignment padding, and MWCC always gives .data 8-byte alignment.
 //
 // The unit owns its .sdata2 literal pool (see splits.txt).
@@ -214,4 +214,12 @@ void GXInitTexObj(GXTexObj* obj, void* image_ptr, u16 width, u16 height, GXTexFm
     colC = (height + (1 << colT) - 1) >> colT;
     t->loadCnt = (rowC * colC) & 0x7FFF;
     t->flags |= 2;
+}
+
+void GXInitTexObjCI(GXTexObj* obj, void* image_ptr, u16 width, u16 height, GXTexFmt format,
+                    GXTexWrapMode wrap_s, GXTexWrapMode wrap_t, u8 mipmap, u32 tlut_name)
+{
+    GXInitTexObj(obj, image_ptr, width, height, format, wrap_s, wrap_t, mipmap);
+    obj->flags &= 0xFFFFFFFD;
+    obj->tlutName = tlut_name;
 }

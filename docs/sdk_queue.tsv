@@ -179,7 +179,7 @@ addr	size	name	library	confidence	notes	status
 0x8018D440	0xD0	GXBegin	gx	guess	ac-decomp size 0xf0	open
 0x8018D510	0x88	__GXSendFlushPrim	gx	exact	ac-decomp size 0x88	open
 0x8018D70C	0x190		gx	unidentified		open
-0x8018E0E0	0x48	GXInitTexObjCI	gx	exact	ac-decomp size 0x48	open
+0x8018E0E0	0x48	GXInitTexObjCI	gx	exact	ac-decomp size 0x48	matched
 0x8018E128	0x164	GXInitTexObjLOD	gx	guess	ac-decomp size 0x194	open
 0x8018EDE8	0x178	GXSetIndTexMtx	gx	guess	ac-decomp size 0x160	open
 0x8018F0A4	0xEC		gx	unidentified		open
