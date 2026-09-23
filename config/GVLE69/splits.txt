@@ -111,6 +111,9 @@ Runtime.PPCEABI.H/fn_80172D78.c:
 Runtime.PPCEABI.H/strround.c:
 	.text       start:0x801735D4 end:0x80173630
 
+Runtime.PPCEABI.H/strrev.c:
+	.text       start:0x80173630 end:0x8017367C
+
 Runtime.PPCEABI.H/strtol.c:
 	.text       start:0x80177004 end:0x8017703C
 
