@@ -179,9 +179,9 @@ Scope: everything in `Runtime.PPCEABI.H` that comes from Newlib or libgcc (strin
 - `sprintf` (`0x8016FFE0`), `sscanf` (`0x801700C0`), `fn_8017A75C` (varargs-looking, never uses the va_list).
 - `__sccl` (`0x80170FB4`, scanf `%[` table builder): C with `optimize_for_size` gets the descending `bdnz` fill loop but none of the allocation above. `register`, `if` vs `switch` and every `opt_*` pragma did nothing.
 - `itoa` (`0x8017367C`): `__utoa` inlined (`divwu`/`mullw`/`subf` digit loop, `lbzx` from the `0123456789abcdefghijklmnopqrstuvwxyz` table at `0x804D02A8`, `-` appended, then `strrev` as a plain `bl`). Digits are emitted least-significant first and the terminator is stored from the (zero) quotient register; the function returns `str` from r3.
-- `_fwalk` (`0x80178A90`): `addic. r29,r3,0x1d8` null-checks `&ptr->__sglue`. Signature `_fwalk(reent, func)` with `func(fp)`. Callers `fn_80177E24`/`fn_80178224`/`fn_80178684` reference it by name.
+- `_fwalk` (`0x80178A90`): `addic. r29,r3,0x1d8` null-checks `&ptr->__sglue`. Signature `_fwalk(reent, func)` with `func(fp)`. Callers `__srefill`/`fflush`/`fn_80178684` reference it by name.
 - `__sread` (`0x80178BE8`): arg shuffle `mr r0,r4` / `mr r31,r3` / `mr r6,r5`; passes `fp->_data` and `_file` to `_read_r` (`0x80178EA4`).
-- `__smakebuf` (`0x80178B10`): `_flags & __SNBF` uses `_nbuf` with size 1; otherwise `fn_80178D98` (`_fstat_r`, stat buf at `r1+8`, `st_mode` at `r1+0xC`), and `S_IFREG` + `_seek == __sseek` sets `_blksize` = 0x400 and `__SOPT`, else `__SNPT`. It always ends unbuffered (no malloc). Keep the `li r0,0; ori r0,r0,0x8000` pair for the `S_IFREG` compare verbatim.
+- `__smakebuf` (`0x80178B10`): `_flags & __SNBF` uses `_nbuf` with size 1; otherwise `_fstat_r` (stat buf at `r1+8`, `st_mode` at `r1+0xC`), and `S_IFREG` + `_seek == __sseek` sets `_blksize` = 0x400 and `__SOPT`, else `__SNPT`. It always ends unbuffered (no malloc). Keep the `li r0,0; ori r0,r0,0x8000` pair for the `S_IFREG` compare verbatim.
 - `atof` (`0x801711F0`, `strtod(s, 0)`), `atoi` (`0x80171214`, `strtol(s, 0, 10)`), `fn_8017A6CC`/`fn_8017A6EC`: bare wrappers with argument `li`s between the `stw` and the `bl`.
 - `__pure_virtual` (`0x80179C30`): calls `terminate` (`0x8017A5DC`).
 - `tanf` (`0x8016DE5C`) and the rest of libm.

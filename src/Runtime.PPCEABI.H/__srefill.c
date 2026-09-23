@@ -4,13 +4,13 @@ typedef struct {
 } FileBuf;
 
 extern void __sinit(void);
-extern void fn_80178224(void);
-extern void fn_80177E04(void);
+extern void fflush(void);
+extern void lflush(void);
 extern void __smakebuf(void);
 extern void _fwalk(void);
 extern unsigned int lbl_8066C3B0;
 
-asm int fn_80177E24(FileBuf* stream)
+asm int __srefill(FileBuf* stream)
 {
     // clang-format off
     nofralloc
@@ -44,7 +44,7 @@ have_56:
     andi.   r0, r9, 8
     beq     flag_common
     mr      r3, r31
-    bl      fn_80178224
+    bl      fflush
     mr.     r3, r3
     bne     ret_neg1
     lhz     r0, 12(r31)
@@ -79,9 +79,9 @@ have_16:
     lhz     r0, 12(r31)
     andi.   r9, r0, 3
     beq     call_ptr
-    lis     r4, fn_80177E04@ha
+    lis     r4, lflush@ha
     lwz     r3, 92(r31)
-    addi    r4, r4, fn_80177E04@l
+    addi    r4, r4, lflush@l
     bl      _fwalk
 call_ptr:
     lwz     r0, 16(r31)

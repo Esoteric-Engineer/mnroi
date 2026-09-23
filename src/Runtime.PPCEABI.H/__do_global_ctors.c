@@ -1,6 +1,6 @@
 extern int lbl_804825A0;
 
-asm void fn_80178FF0(void)
+asm void __do_global_ctors(void)
 {
     // clang-format off
     nofralloc

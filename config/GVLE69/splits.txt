@@ -48,7 +48,7 @@ Runtime.PPCEABI.H/copysignf.c:
 Runtime.PPCEABI.H/sprintf.c:
 	.text       start:0x8016FFE0 end:0x801700B8
 
-Runtime.PPCEABI.H/fn_801700B8.c:
+Runtime.PPCEABI.H/eofread.c:
 	.text       start:0x801700B8 end:0x801700C0
 
 Runtime.PPCEABI.H/__sccl.c:
@@ -69,13 +69,13 @@ Runtime.PPCEABI.H/atoi.c:
 Runtime.PPCEABI.H/fn_80171F8C.c:
 	.text       start:0x80171F8C end:0x80171FB0
 
-Runtime.PPCEABI.H/fn_80171FB0.c:
+Runtime.PPCEABI.H/free.c:
 	.text       start:0x80171FB0 end:0x80171FEC
 
-Runtime.PPCEABI.H/fn_80171FEC.c:
+Runtime.PPCEABI.H/realloc.c:
 	.text       start:0x80171FEC end:0x80172028
 
-Runtime.PPCEABI.H/fn_801721C0.c:
+Runtime.PPCEABI.H/strtoul.c:
 	.text       start:0x801721C0 end:0x801721F8
 
 Runtime.PPCEABI.H/memcmp.c:
@@ -120,7 +120,7 @@ Runtime.PPCEABI.H/strspn.c:
 Runtime.PPCEABI.H/strstr.c:
 	.text       start:0x80172B6C end:0x80172BD4
 
-Runtime.PPCEABI.H/fn_80172BD4.c:
+Runtime.PPCEABI.H/strtok.c:
 	.text       start:0x80172BD4 end:0x80172BFC
 
 Runtime.PPCEABI.H/strtok_r.c:
@@ -153,25 +153,25 @@ Runtime.PPCEABI.H/isdigit.c:
 Runtime.PPCEABI.H/isspace.c:
 	.text       start:0x80177398 end:0x801773AC
 
-Runtime.PPCEABI.H/fn_801773AC.c:
+Runtime.PPCEABI.H/__errno.c:
 	.text       start:0x801773AC end:0x801773B4
 
-Runtime.PPCEABI.H/fn_801773B4.c:
+Runtime.PPCEABI.H/_localeconv_r.c:
 	.text       start:0x801773B4 end:0x801773C0
 
-Runtime.PPCEABI.H/fn_801773C0.c:
+Runtime.PPCEABI.H/localeconv.c:
 	.text       start:0x801773C0 end:0x801773E4
 
-Runtime.PPCEABI.H/fn_80177CF8.c:
+Runtime.PPCEABI.H/memcpyalpha.c:
 	.text       start:0x80177CF8 end:0x80177D24
 
-Runtime.PPCEABI.H/fn_80177D24.c:
+Runtime.PPCEABI.H/fread.c:
 	.text       start:0x80177D24 end:0x80177E04
 
-Runtime.PPCEABI.H/fn_80177E04.c:
+Runtime.PPCEABI.H/lflush.c:
 	.text       start:0x80177E04 end:0x80177E24
 
-Runtime.PPCEABI.H/fn_80177E24.c:
+Runtime.PPCEABI.H/__srefill.c:
 	.text       start:0x80177E24 end:0x80177F98
 
 Runtime.PPCEABI.H/ungetc.c:
@@ -183,10 +183,10 @@ Runtime.PPCEABI.H/div.c:
 Runtime.PPCEABI.H/memchr.c:
 	.text       start:0x80178164 end:0x80178224
 
-Runtime.PPCEABI.H/fn_80178224.c:
+Runtime.PPCEABI.H/fflush.c:
 	.text       start:0x80178224 end:0x80178318
 
-Runtime.PPCEABI.H/fn_80178318.c:
+Runtime.PPCEABI.H/snstd.c:
 	.text       start:0x80178318 end:0x80178374
 
 Runtime.PPCEABI.H/__sinit.c:
@@ -213,34 +213,34 @@ Runtime.PPCEABI.H/__swrite.c:
 Runtime.PPCEABI.H/__sseek.c:
 	.text       start:0x80178CBC end:0x80178D20
 
-Runtime.PPCEABI.H/fn_80178D20.c:
+Runtime.PPCEABI.H/__sclose.c:
 	.text       start:0x80178D20 end:0x80178D48
 
-Runtime.PPCEABI.H/fn_80178D48.c:
+Runtime.PPCEABI.H/_close_r.c:
 	.text       start:0x80178D48 end:0x80178D98
 
-Runtime.PPCEABI.H/fn_80178D98.c:
+Runtime.PPCEABI.H/_fstat_r.c:
 	.text       start:0x80178D98 end:0x80178DF0
 
-Runtime.PPCEABI.H/fn_80178DF0.c:
+Runtime.PPCEABI.H/_lseek_r.c:
 	.text       start:0x80178DF0 end:0x80178E48
 
 Runtime.PPCEABI.H/fn_80178E48.c:
 	.text       start:0x80178E48 end:0x80178EA4
 
-Runtime.PPCEABI.H/fn_80178EA4.c:
+Runtime.PPCEABI.H/_read_r.c:
 	.text       start:0x80178EA4 end:0x80178EFC
 
-Runtime.PPCEABI.H/fn_80178EFC.c:
+Runtime.PPCEABI.H/_write_r.c:
 	.text       start:0x80178EFC end:0x80178F54
 
 Runtime.PPCEABI.H/fn_80178F54.c:
 	.text       start:0x80178F54 end:0x80178FF0
 
-Runtime.PPCEABI.H/fn_80178FF0.c:
+Runtime.PPCEABI.H/__do_global_ctors.c:
 	.text       start:0x80178FF0 end:0x80179080
 
-Runtime.PPCEABI.H/fn_80179080.c:
+Runtime.PPCEABI.H/__main.c:
 	.text       start:0x80179080 end:0x801790B8
 
 Runtime.PPCEABI.H/runtime.c:
@@ -255,7 +255,7 @@ Runtime.PPCEABI.H/fn_801796B8.c:
 Runtime.PPCEABI.H/lshrdi3.c:
 	.text       start:0x801796BC end:0x801796FC
 
-Runtime.PPCEABI.H/fn_801796FC.c:
+Runtime.PPCEABI.H/__moddi3.c:
 	.text       start:0x801796FC end:0x80179C30
 
 Runtime.PPCEABI.H/__pure_virtual.c:

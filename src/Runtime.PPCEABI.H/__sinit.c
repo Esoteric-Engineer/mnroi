@@ -1,6 +1,6 @@
 extern char lbl_8057C124[];
 extern char lbl_8057C4E4[];
-extern void fn_80178318(void);
+extern void snstd(void);
 extern void fn_80178684(void);
 
 // __sinit(reent): stdio init. Sets up stdin/stdout/stderr and the first glue.
@@ -23,17 +23,17 @@ asm void __sinit(void* reent)
     li      r4, 4
     li      r5, 0
     mr      r6, r30
-    bl      fn_80178318
+    bl      snstd
     addi    r3, r30, 0x244
     li      r4, 9
     li      r5, 1
     mr      r6, r30
-    bl      fn_80178318
+    bl      snstd
     addi    r3, r30, 0x2a4
     li      r4, 10
     li      r5, 2
     mr      r6, r30
-    bl      fn_80178318
+    bl      snstd
     lis     r8, lbl_8057C4E4@ha
     li      r10, 3
     addi    r11, r8, lbl_8057C4E4@l

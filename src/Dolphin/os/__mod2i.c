@@ -1,9 +1,9 @@
-extern void fn_801796FC(void);
+extern void __moddi3(void);
 
 asm void __mod2i(void)
 {
     // clang-format off
     nofralloc
-    b       fn_801796FC
+    b       __moddi3
     // clang-format on
 }

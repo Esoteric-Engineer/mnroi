@@ -56,35 +56,11 @@ name and a confidence. See the `decomp-next` skill for how it is used.
 - Ruled out as references: every MSL_C-based project (melee, sms, ttyd, pikmin 1/2, tp, tww, prime,
   mkdd, ...). mkdd is useful only for EXI.
 
-### Already matched under `fn_` names
+### Still under `fn_` names (guesses)
 
-These units are split and matched but still carry `fn_XXXXXXXX` names. The real names are a
-cosmetic rename (symbols, source file, splits, configure) and are not in the queue:
+Matched, but the name is only a guess (equal size and neighbour order, no byte-level confirmation), so they keep their `fn_` names until confirmed:
 
-| Address | Name | Confidence |
+| Address | Guessed name | Confidence |
 |---|---|---|
-| 0x801700B8 | `eofread` | exact |
-| 0x80171FB0 | `free` | exact |
-| 0x80171FEC | `realloc` | exact |
-| 0x801721C0 | `strtoul` | exact |
-| 0x80172BD4 | `strtok` | exact |
-| 0x801773AC | `__errno` | exact |
-| 0x801773B4 | `_localeconv_r` | exact |
-| 0x801773C0 | `localeconv` | exact |
-| 0x80177CF8 | `memcpyalpha` | exact |
-| 0x80177D24 | `fread` | exact |
-| 0x80177E04 | `lflush` | exact |
-| 0x80177E24 | `__srefill` | exact |
-| 0x80178224 | `fflush` | exact |
-| 0x80178318 | `snstd` | exact |
 | 0x80178684 | `_cleanup_r` | guess |
-| 0x80178D20 | `__sclose` | exact |
-| 0x80178D48 | `_close_r` | exact |
-| 0x80178D98 | `_fstat_r` | exact |
-| 0x80178DF0 | `_lseek_r` | exact |
-| 0x80178EA4 | `_read_r` | exact |
-| 0x80178EFC | `_write_r` | exact |
-| 0x80178FF0 | `__do_global_ctors` | exact |
-| 0x80179080 | `__main` | exact |
 | 0x80179138 | `__divdi3` | guess |
-| 0x801796FC | `__moddi3` | exact |

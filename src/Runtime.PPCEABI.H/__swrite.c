@@ -1,5 +1,5 @@
-extern int fn_80178DF0(void* reent, short fd, int offset, int whence);
-extern int fn_80178EFC(void* reent, short fd, const char* buf, int n);
+extern int _lseek_r(void* reent, short fd, int offset, int whence);
+extern int _write_r(void* reent, short fd, const char* buf, int n);
 
 asm int __swrite(void* fp, const char* buf, int n)
 {
@@ -19,7 +19,7 @@ asm int __swrite(void* fp, const char* buf, int n)
     li      r5, 0
     lha     r4, 14(r31)
     li      r6, 2
-    bl      fn_80178DF0
+    bl      _lseek_r
 noappend:
     lhz     r0, 12(r31)
     mr      r5, r30
@@ -28,7 +28,7 @@ noappend:
     rlwinm  r0, r0, 0, 20, 18
     lwz     r3, 92(r31)
     sth     r0, 12(r31)
-    bl      fn_80178EFC
+    bl      _write_r
     lwz     r0, 28(r1)
     mtlr    r0
     lmw     r29, 12(r1)

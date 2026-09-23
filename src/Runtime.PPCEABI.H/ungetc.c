@@ -4,7 +4,7 @@ typedef struct {
 } FileBuf;
 
 extern void __sinit(void);
-extern void fn_80178224(void);
+extern void fflush(void);
 extern void fn_8017A6CC(void);
 extern unsigned int lbl_8066C3B0;
 extern char lbl_8049C8DC[];
@@ -44,7 +44,7 @@ have_56:
     andi.   r11, r9, 8
     beq     flag_common
     mr      r3, r31
-    bl      fn_80178224
+    bl      fflush
     mr.     r3, r3
     bne     ret_neg1
     lhz     r0, 12(r31)

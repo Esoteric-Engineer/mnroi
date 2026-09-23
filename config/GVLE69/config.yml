@@ -16,7 +16,7 @@ force_active:
 - __ashrdi3
 - __lshrdi3
 - fn_801796B8
-- fn_801796FC
+- __moddi3
 - __OSClearAlarm
 - GXReadGPMetric
 - __OSLoadFPUContext

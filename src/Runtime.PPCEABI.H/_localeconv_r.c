@@ -1,5 +1,5 @@
 extern unsigned char lbl_8049C7A4[];
 
-unsigned char* fn_801773B4(void) {
+unsigned char* _localeconv_r(void) {
     return lbl_8049C7A4;
 }

@@ -5,9 +5,9 @@ typedef struct {
     void* f92;
 } FileHandle;
 
-extern int fn_80178D48(void* device, short flag);
+extern int _close_r(void* device, short flag);
 
-asm int fn_80178D20(FileHandle* stream)
+asm int __sclose(FileHandle* stream)
 {
     // clang-format off
     nofralloc
@@ -16,7 +16,7 @@ asm int fn_80178D20(FileHandle* stream)
     stw     r0, 12(r1)
     lha     r4, 14(r3)
     lwz     r3, 92(r3)
-    bl      fn_80178D48
+    bl      _close_r
     lwz     r0, 12(r1)
     mtlr    r0
     addi    r1, r1, 8

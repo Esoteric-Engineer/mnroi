@@ -1,7 +1,7 @@
 extern int lbl_8066FB30;
-extern int fn_8017A6CC(short request, int arg1, int arg2);
+extern int fn_8017A70C(short request, int arg);
 
-asm int fn_80178EFC(void* device, short flag, int arg1, int arg2)
+asm int _fstat_r(void* device, short flag, int arg)
 {
     // clang-format off
     nofralloc
@@ -14,8 +14,8 @@ asm int fn_80178EFC(void* device, short flag, int arg1, int arg2)
     mr      r3, r4
     stw     r0, lbl_8066FB30
     mr      r4, r5
-    mr      r5, r6
-    bl      fn_8017A6CC
+    crclr   4*cr1+eq
+    bl      fn_8017A70C
     cmpwi   r3, -1
     bne     epilogue
     lwz     r0, lbl_8066FB30

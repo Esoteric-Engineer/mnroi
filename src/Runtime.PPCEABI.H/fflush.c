@@ -2,7 +2,7 @@ extern void _fwalk(void);
 extern void __sinit(void);
 extern unsigned int lbl_8066C3B0;
 
-asm int fn_80178224(void* stream)
+asm int fflush(void* stream)
 {
     // clang-format off
     nofralloc
@@ -12,9 +12,9 @@ asm int fn_80178224(void* stream)
     stw     r0, 28(r1)
     mr.     r31, r3
     bne     have_stream
-    lis     r4, fn_80178224@ha
+    lis     r4, fflush@ha
     lwz     r3, lbl_8066C3B0
-    addi    r4, r4, fn_80178224@l
+    addi    r4, r4, fflush@l
     bl      _fwalk
     b       epilogue
 have_stream:

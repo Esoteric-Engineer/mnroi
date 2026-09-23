@@ -1,5 +1,5 @@
 extern int lbl_8066C3B0;
-extern void fn_80171FB0(void);
+extern void free(void);
 
 asm int __register_atexit(void (*func)(void))
 {
@@ -21,7 +21,7 @@ have:
     cmpwi   r0, 0x1f
     ble     store
     li      r3, 0x88
-    bl      fn_80171FB0
+    bl      free
     mr.     r10, r3
     bne     alloced
     li      r3, -1

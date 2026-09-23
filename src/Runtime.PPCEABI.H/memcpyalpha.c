@@ -1,4 +1,4 @@
-asm void fn_80177CF8(unsigned char* dst, unsigned char* src, int n)
+asm void memcpyalpha(unsigned char* dst, unsigned char* src, int n)
 {
     // clang-format off
     nofralloc

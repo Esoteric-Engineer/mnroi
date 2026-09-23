@@ -1,5 +1,5 @@
 extern void _fwalk(void);
-extern void fn_80178224(void);
+extern void fflush(void);
 
 asm void fn_80178684(void)
 {
@@ -8,8 +8,8 @@ asm void fn_80178684(void)
     stwu    r1, -8(r1)
     mflr    r0
     stw     r0, 12(r1)
-    lis     r4, fn_80178224@ha
-    addi    r4, r4, fn_80178224@l
+    lis     r4, fflush@ha
+    addi    r4, r4, fflush@l
     bl      _fwalk
     lwz     r0, 12(r1)
     mtlr    r0

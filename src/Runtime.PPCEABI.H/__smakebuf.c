@@ -1,4 +1,4 @@
-extern int fn_80178D98(void* reent, short fd, void* st);
+extern int _fstat_r(void* reent, short fd, void* st);
 extern int __sseek(void* fp, int offset, int whence);
 
 asm void __smakebuf(void* fp)
@@ -25,7 +25,7 @@ unbuffered:
     blt     nopt
     lwz     r3, 0x5c(r31)
     addi    r5, r1, 8
-    bl      fn_80178D98
+    bl      _fstat_r
     cmpwi   r3, 0
     blt     nopt
     lwz     r9, 0xc(r1)

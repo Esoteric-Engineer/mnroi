@@ -1,16 +1,13 @@
-extern void strtok_r(void);
-extern int lbl_8066C3B0;
+extern void fflush(void);
 
-asm void fn_80172BD4(void)
+asm void lflush(void)
 {
     // clang-format off
     nofralloc
     stwu    r1, -8(r1)
     mflr    r0
     stw     r0, 12(r1)
-    lwz     r5, lbl_8066C3B0
-    addi    r5, r5, 0x5c
-    bl      strtok_r
+    bl      fflush
     lwz     r0, 12(r1)
     mtlr    r0
     addi    r1, r1, 8

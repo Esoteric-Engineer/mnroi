@@ -19,21 +19,21 @@ typedef struct {
 extern void __sread(void);
 extern void __swrite(void);
 extern void __sseek(void);
-extern void fn_80178D20(void);
+extern void __sclose(void);
 
-asm void fn_80178318(FileHandle* stream, short a1, short a2, void* device)
+asm void snstd(FileHandle* stream, short a1, short a2, void* device)
 {
     // clang-format off
     nofralloc
     lis     r9, __sread@ha
     lis     r11, __swrite@ha
     lis     r10, __sseek@ha
-    lis     r8, fn_80178D20@ha
+    lis     r8, __sclose@ha
     li      r0, 0
     addi    r9, r9, __sread@l
     addi    r11, r11, __swrite@l
     addi    r10, r10, __sseek@l
-    addi    r8, r8, fn_80178D20@l
+    addi    r8, r8, __sclose@l
     stw     r6, 92(r3)
     sth     r4, 12(r3)
     sth     r5, 14(r3)

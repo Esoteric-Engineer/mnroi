@@ -1,4 +1,4 @@
-extern int fn_80178DF0(void* reent, short fd, int offset, int whence);
+extern int _lseek_r(void* reent, short fd, int offset, int whence);
 
 asm int __sseek(void* fp, int offset, int whence)
 {
@@ -14,7 +14,7 @@ asm int __sseek(void* fp, int offset, int whence)
     lwz     r3, 92(r31)
     lha     r4, 14(r31)
     mr      r5, r0
-    bl      fn_80178DF0
+    bl      _lseek_r
     cmpwi   r3, -1
     bne     ok
     lhz     r0, 12(r31)

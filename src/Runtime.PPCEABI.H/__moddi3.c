@@ -1,4 +1,4 @@
-asm long long fn_801796FC(long long a, long long b)
+asm long long __moddi3(long long a, long long b)
 {
     // clang-format off
     nofralloc

@@ -1,7 +1,7 @@
 extern int lbl_8057C4F0;
-extern void fn_80178FF0(void);
+extern void __do_global_ctors(void);
 
-asm void fn_80179080(void)
+asm void __main(void)
 {
     // clang-format off
     nofralloc
@@ -14,7 +14,7 @@ asm void fn_80179080(void)
     bne     epilogue
     li      r0, 1
     stw     r0, lbl_8057C4F0@l(r9)
-    bl      fn_80178FF0
+    bl      __do_global_ctors
 epilogue:
     lwz     r0, 12(r1)
     mtlr    r0

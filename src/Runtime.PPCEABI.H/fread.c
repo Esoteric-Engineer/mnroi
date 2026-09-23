@@ -3,10 +3,10 @@ typedef struct {
     int cnt;
 } FileBuf;
 
-extern void fn_80177CF8(unsigned char* dst, unsigned char* src, int n);
-extern int fn_80177E24(FileBuf* stream);
+extern void memcpyalpha(unsigned char* dst, unsigned char* src, int n);
+extern int __srefill(FileBuf* stream);
 
-asm int fn_80177D24(unsigned char* dst, unsigned int size, unsigned int nmemb, FileBuf* stream)
+asm int fread(unsigned char* dst, unsigned int size, unsigned int nmemb, FileBuf* stream)
 {
     // clang-format off
     nofralloc
@@ -42,13 +42,13 @@ loop:
     mr      r3, r29
     mr      r5, r31
     subf    r28, r31, r28
-    bl      fn_80177CF8
+    bl      memcpyalpha
     add     r29, r29, r31
     lwz     r0, 0(r30)
     mr      r3, r30
     add     r0, r0, r31
     stw     r0, 0(r30)
-    bl      fn_80177E24
+    bl      __srefill
     cmpwi   r3, 0
     bne     partial
     lwz     r31, 4(r30)
@@ -58,7 +58,7 @@ final_chunk:
     lwz     r4, 0(r30)
     mr      r3, r29
     mr      r5, r28
-    bl      fn_80177CF8
+    bl      memcpyalpha
     lwz     r9, 4(r30)
     mr      r3, r26
     lwz     r0, 0(r30)
