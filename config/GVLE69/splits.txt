@@ -403,7 +403,7 @@ Dolphin/os/__OSModuleInit.c:
 	.text       start:0x8017E3F4 end:0x8017E40C
 
 Dolphin/os/OSMemory.c:
-	.text       start:0x8017E40C end:0x8017E4B4
+	.text       start:0x8017E40C end:0x8017E534
 
 Dolphin/os/RealMode.c:
 	.text       start:0x8017E5B4 end:0x8017E5CC
