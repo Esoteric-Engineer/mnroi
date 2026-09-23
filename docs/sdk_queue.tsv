@@ -126,14 +126,14 @@ addr	size	name	library	confidence	notes	status
 0x80187064	0x70	AlarmHandlerForTimeout	dvd	known	symbol already named; just needs split + match	matched
 0x801870D4	0x110		dvd	unidentified		open
 0x801871E4	0x80		dvd	unidentified		open
-0x80187264	0x298	DVDLowRead	dvd	known	NonMatching 99.6% (Dolphin/dvd/DVDLowRead.c); see docs/matching_notes.md	stalled
+0x80187264	0x298	DVDLowRead	dvd	known	NonMatching 99.6% (Dolphin/dvd/DVDLowRead.c); see docs/nonmatching.md	stalled
 0x801875BC	0xA4		dvd	unidentified		open
 0x801876EC	0x8C	DVDLowRequestError	dvd	known	symbol already named; just needs split + match	matched
 0x80187778	0x9C		dvd	unidentified		open
 0x80187814	0x98		dvd	unidentified		open
 0x801878AC	0x8C		dvd	unidentified		open
 0x80187938	0x9C	DVDLowAudioBufferConfig	dvd	known	symbol already named; just needs split + match	matched
-0x801879D4	0xBC	DVDLowReset	dvd	known	NonMatching 99.15%, see docs/matching_notes.md (resetStart/ticks register-pair swap)	stalled
+0x801879D4	0xBC	DVDLowReset	dvd	known	NonMatching 99.15%, see docs/nonmatching.md (resetStart/ticks register-pair swap)	stalled
 0x80187E38	0xA0	getTiming	vi	guess	ac-decomp size 0x90	open
 0x80187ED8	0x200	__VIInit	vi	guess	ac-decomp size 0x1f8	open
 0x801880D8	0x4B0	VIInit	vi	guess	ac-decomp size 0x478	open

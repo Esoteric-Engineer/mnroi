@@ -5,6 +5,7 @@ Commands, per-function loop, how to choose what to work on.
 See also:
 - First-time setup: [`README.md`](../README.md#building).
 - Compiler/linker gotchas: [`matching_notes.md`](matching_notes.md).
+- Functions stuck as `NonMatching`: [`nonmatching.md`](nonmatching.md).
 
 `configure.py`'s object list is the source of truth for what is currently matched.
 
@@ -100,7 +101,7 @@ Create the source file at `src/<unit name>` (e.g. `src/Dolphin/gx/GXInit.c`), th
 SDK Code: 65.36% fuzzy, 0.00% matched, 0.00% linked (0 / 1 files)
 ```
 
-Compare the two disassemblies, adjust (see [`matching_notes.md`](matching_notes.md)), and repeat until:
+Compare the two disassemblies, adjust (see [`matching_notes.md`](matching_notes.md), and [`nonmatching.md`](nonmatching.md) if it is a known stall), and repeat until:
 
 ```
 SDK Code: 100.00% fuzzy, 100.00% matched

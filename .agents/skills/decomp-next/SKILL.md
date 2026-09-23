@@ -8,8 +8,10 @@ description: Pick the next best function to decompile in this GameCube decomp (m
 Human-facing references (read the relevant one instead of guessing):
 
 - `docs/workflow.md` — the per-function loop, commands, and how to choose targets.
-- `docs/matching_notes.md` — compiler/linker gotchas and confirmed non-matches. **Read it before
+- `docs/matching_notes.md` — compiler/linker gotchas and matching techniques. **Read it before
   your first iteration on a function**, and again whenever a function stalls short of 100%.
+- `docs/nonmatching.md` — functions stuck as `NonMatching`, with everything already tried. Check it
+  before starting a function, and don't re-guess what it lists.
 - `docs/baseline.md` — why the build is set up the way it is (toolkit fork, r13 small data).
 
 ## Preconditions
@@ -35,9 +37,8 @@ Human-facing references (read the relevant one instead of guessing):
 
 1. **Choose.** Take the next `open` row in `docs/sdk_queue.tsv`. Prefer, in order: `known`
    (already named in `symbols.txt`), `exact` (size matches the reference), then `guess`, and within a
-   tier the smallest size. Skip `unidentified` rows (they need scouting, not matching) and anything in the
-   "Confirmed non-matches" list in `docs/matching_notes.md`. Library ranges are in
-   `docs/sdk_libraries.md`. If the user named a specific function or unit instead, work that one.
+   tier the smallest size. Skip `unidentified` rows (they need scouting, not matching) and anything listed in
+   `docs/nonmatching.md`. Library ranges are in `docs/sdk_libraries.md`. If the user named a specific function or unit instead, work that one.
    `tools/find_candidates.py` (small leaf functions only) is a fallback, not the main chooser.
    `python3 tools/sdk_scout.py info <addr>` shows a function's callees, callers and hardware
    registers, which helps confirm an identity.
@@ -86,8 +87,8 @@ Human-facing references (read the relevant one instead of guessing):
 - Prefer referencing existing (unclaimed) dtk symbols over declaring fresh data or claiming
   data ranges; override `scope:local` → `scope:global` in `symbols.txt` when needed.
 - Don't `git add -f` anything ignored, and don't commit unless asked.
-- When you learn a new, reusable gotcha or confirm a non-match, add it to
-  `docs/matching_notes.md` (concise, with the symptom and the fix), not to this skill.
+- When you learn a new, reusable gotcha, add it to `docs/matching_notes.md` (concise, with the
+  symptom and the fix); when you confirm a non-match, add it to `docs/nonmatching.md`. Not to this skill.
 
 ## Queue upkeep
 

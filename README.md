@@ -29,7 +29,8 @@ Documentation
 =============
 
 - [`docs/workflow.md`](docs/workflow.md): the day-to-day decomp reference.
-- [`docs/matching_notes.md`](docs/matching_notes.md): compiler/linker gotchas, matching techniques, and known non-matches.
+- [`docs/matching_notes.md`](docs/matching_notes.md): compiler/linker gotchas and matching techniques.
+- [`docs/nonmatching.md`](docs/nonmatching.md): functions stuck as `NonMatching`, with what has already been tried.
 - [`docs/baseline.md`](docs/baseline.md): why the build is configured the way it is.
 
 > **Note:** this project requires a local build of the decomp-toolkit fork, [`Esoteric-Engineer/mnroi-decomp-toolkit`](https://github.com/Esoteric-Engineer/mnroi-decomp-toolkit), not the released dtk. See [Building](#building).
