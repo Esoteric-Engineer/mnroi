@@ -302,6 +302,9 @@ Dolphin/os/__OSCacheInit.c:
 Dolphin/os/__OSLoadFPUContext.c:
 	.text       start:0x8017C2DC end:0x8017C400
 
+Dolphin/os/__OSSaveFPUContext.c:
+	.text       start:0x8017C400 end:0x8017C528
+
 Dolphin/os/OSSaveFPUContext.c:
 	.text       start:0x8017C528 end:0x8017C530
 
