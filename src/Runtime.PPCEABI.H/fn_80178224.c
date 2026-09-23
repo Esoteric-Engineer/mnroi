@@ -1,5 +1,5 @@
 extern void _fwalk(void);
-extern void fn_80178374(void);
+extern void __sinit(void);
 extern unsigned int lbl_8066C3B0;
 
 asm int fn_80178224(void* stream)
@@ -29,7 +29,7 @@ have_92:
     cmpwi   r0, 0
     bne     have_56
     crclr   4*cr1+eq
-    bl      fn_80178374
+    bl      __sinit
 have_56:
     lha     r3, 12(r31)
     andi.   r0, r3, 8

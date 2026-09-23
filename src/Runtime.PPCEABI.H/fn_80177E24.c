@@ -3,7 +3,7 @@ typedef struct {
     int cnt;
 } FileBuf;
 
-extern void fn_80178374(void);
+extern void __sinit(void);
 extern void fn_80178224(void);
 extern void fn_80177E04(void);
 extern void fn_80178B10(void);
@@ -30,7 +30,7 @@ have_92:
     cmpwi   r0, 0
     bne     have_56
     crclr   4*cr1+eq
-    bl      fn_80178374
+    bl      __sinit
 have_56:
     li      r0, 0
     lhz     r9, 12(r31)
