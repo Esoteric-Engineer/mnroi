@@ -637,6 +637,7 @@ config.libs = [
     DolphinLib(
         "pad",
         [
+            Object(Matching, "Dolphin/pad/UpdateOrigin.c"),
             Object(NonMatching, "Dolphin/pad/PADOriginCallback.c"),
             Object(NonMatching, "Dolphin/pad/PADProbeCallback.c"),
             Object(Matching, "Dolphin/pad/PADControlMotor.c"),

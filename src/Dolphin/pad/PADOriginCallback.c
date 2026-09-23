@@ -7,7 +7,7 @@ extern void SIEnablePolling(u32 poll);
 extern void SIGetTypeAsync(int chan, void* callback);
 extern void* memset(void* dst, int val, unsigned long n);
 
-extern void fn_80189C10(int chan);
+extern void UpdateOrigin(int chan);
 extern void fn_8018A01C(void);
 
 extern int lbl_8066C49C;
@@ -46,7 +46,7 @@ static inline void DoReset(void)
 void PADOriginCallback(int chan, u32 error, void* context)
 {
     if (!(error & 0xF)) {
-        fn_80189C10(lbl_8066C49C);
+        UpdateOrigin(lbl_8066C49C);
         PADEnable(lbl_8066C49C);
     }
     DoReset();
