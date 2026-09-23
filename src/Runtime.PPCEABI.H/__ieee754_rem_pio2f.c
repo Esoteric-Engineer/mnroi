@@ -12,7 +12,7 @@ extern float lbl_8066C2F8;
 extern const char lbl_8067015C[4];
 extern const char lbl_8066FE44[4];
 extern float fabsf(float x);
-extern int fn_8016F4F0(float* x, float* y, int e0, int nx, int prec, const char* ipio2);
+extern int __kernel_rem_pio2f(float* x, float* y, int e0, int nx, int prec, const char* ipio2);
 
 asm int __ieee754_rem_pio2f(float x, float* y)
 {
@@ -229,7 +229,7 @@ L_call:
     mr      r4, r31
     li      r7, 2
     la      r8, lbl_8066FE44
-    bl      fn_8016F4F0
+    bl      __kernel_rem_pio2f
     mtcrf   128, r30
     bge     L_end
     lfs     f13, 0(r31)
