@@ -483,6 +483,9 @@ Dolphin/os/OSGetResetCode.c:
 Dolphin/os/__OSResetSWInterruptHandler.c:
 	.text       start:0x8017EBEC end:0x8017ECE0
 
+Dolphin/os/OSGetResetButtonState.c:
+	.text       start:0x8017ECE0 end:0x8017EF78
+
 Dolphin/os/WriteSramCallback.c:
 	.text       start:0x8017EF78 end:0x8017EFD8
 

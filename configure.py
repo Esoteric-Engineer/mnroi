@@ -733,6 +733,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/__OSDoHotReset.c"),
             Object(Matching, "Dolphin/os/OSGetResetCode.c"),
             Object(NonMatching, "Dolphin/os/__OSResetSWInterruptHandler.c"),
+            Object(Matching, "Dolphin/os/OSGetResetButtonState.c"),
             Object(Matching, "Dolphin/os/fn_8017D3B0.c"),
             Object(Matching, "Dolphin/os/fn_8017D464.c"),
             Object(Matching, "Dolphin/os/fn_8017D4A4.c"),

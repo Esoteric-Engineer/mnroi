@@ -83,7 +83,7 @@ addr	size	name	library	confidence	notes	status
 0x8017E5E0	0x104	__OSInitMemoryProtection	os	guess	ac-decomp size 0x120	open
 0x8017E9B4	0x200		os	unidentified		open
 0x8017EBEC	0xF4	__OSResetSWInterruptHandler	os	exact	ac-decomp size 0xf4; stalled 86.4%: frame -0x28 vs -0x20 and constant scheduling, see docs/nonmatching.md	stalled
-0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298	open
+0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298; matched (GameChoice mask is 0x1F here, not ac-decomp 0x3F)	matched
 0x8017EF78	0x60	WriteSramCallback	os	exact	ac-decomp size 0x60	matched
 0x8017EFD8	0x118	WriteSram	os	exact	ac-decomp size 0x118	matched
 0x8017F0F0	0x13C	__OSInitSram	os	guess	ac-decomp size 0x134	open
