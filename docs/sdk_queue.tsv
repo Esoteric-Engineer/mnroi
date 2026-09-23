@@ -113,7 +113,7 @@ addr	size	name	library	confidence	notes	status
 0x80181F08	0xF4	SIUnregisterPollingHandler	si	exact	ac-decomp size 0xf4	matched
 0x80181FFC	0xB4	SIInit	si	guess	ac-decomp size 0xa4	open
 0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270	open
-0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	open
+0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	matched
 0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4	open
 0x80186474	0x11C	__DVDPrepareResetAsync	dvd	exact	ac-decomp size 0x11c	open
 0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	matched

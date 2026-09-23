@@ -546,6 +546,9 @@ Dolphin/dvd/DVDSetAutoInvalidation.c:
 Dolphin/dvd/DVDResume.c:
 	.text       start:0x80185FD8 end:0x80186028
 
+Dolphin/dvd/DVDCancel.c:
+	.text       start:0x801862A4 end:0x80186350
+
 Dolphin/dvd/cbForCancelSync.c:
 	.text       start:0x80186350 end:0x80186374
 

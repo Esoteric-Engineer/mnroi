@@ -66,7 +66,7 @@ extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern void cbForSeekSync(void);
 extern s32 DVDSeekAbsAsyncPrio(DVDCommandBlock* block, u32 offset, void* callback, s32 prio);
-extern s32 fn_801862A4(DVDCommandBlock* block); // likely DVDCancel, unconfirmed
+extern s32 DVDCancel(DVDCommandBlock* block);
 extern void OSReport(const char* msg, ...);
 extern char lbl_804D1E08[0x38]; // "Warning: DVDOpen(): file '%s' was not found under %s.\n"
 
@@ -360,7 +360,7 @@ s32 DVDOpen(char* fileName, DVDFileInfo* fileInfo)
 
 s32 DVDClose(DVDFileInfo* fileInfo)
 {
-    fn_801862A4(&fileInfo->cb);
+    DVDCancel(&fileInfo->cb);
     return 1;
 }
 
