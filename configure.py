@@ -525,6 +525,7 @@ config.libs = [
             Object(Matching, "Dolphin/si/SIIsChanBusy.c"),
             Object(Matching, "Dolphin/si/SIEnablePollingInterrupt.c"),
             Object(Matching, "Dolphin/si/SIRegisterPollingHandler.c"),
+            Object(Matching, "Dolphin/si/SIUnregisterPollingHandler.c"),
             Object(Matching, "Dolphin/si/SIBios.c"),
         ],
     ),

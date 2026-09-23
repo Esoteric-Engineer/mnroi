@@ -490,6 +490,9 @@ Dolphin/si/SIEnablePollingInterrupt.c:
 Dolphin/si/SIRegisterPollingHandler.c:
 	.text       start:0x80181E3C end:0x80181F08
 
+Dolphin/si/SIUnregisterPollingHandler.c:
+	.text       start:0x80181F08 end:0x80181FFC
+
 Dolphin/si/SIBios.c:
 	.text       start:0x801820B0 end:0x80183070
 
