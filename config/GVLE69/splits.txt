@@ -729,6 +729,10 @@ Dolphin/pad/PADOriginCallback.c:
 Dolphin/pad/PADProbeCallback.c:
 	.text       start:0x80189F44 end:0x8018A01C
 
+Dolphin/pad/PADTypeAndStatusCallback.c:
+	.text       start:0x8018A01C end:0x8018A348
+	.bss        start:0x8057D560 end:0x8057D5B0
+
 Dolphin/pad/PADControlMotor.c:
 	.text       start:0x8018ABC8 end:0x8018AC80
 

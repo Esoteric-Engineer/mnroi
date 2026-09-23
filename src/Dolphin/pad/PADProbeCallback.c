@@ -7,14 +7,14 @@ extern void SIEnablePolling(u32 poll);
 extern void SIGetTypeAsync(int chan, void* callback);
 extern void* memset(void* dst, int val, unsigned long n);
 
-extern void fn_8018A01C(void);
+extern void PADTypeAndStatusCallback(void);
 
 extern int lbl_8066C49C;
 extern u32 lbl_8066C4A4;
 extern u32 lbl_8066F3DC;
 extern u32 lbl_8066F3E0;
 extern u32 lbl_8066F3E8;
-extern unsigned char lbl_8057D570[];
+extern unsigned char Origin[];
 
 static inline void PADEnable(int chan)
 {
@@ -38,8 +38,8 @@ static inline void DoReset(void)
     if (lbl_8066C49C != 32) {
         chanBit = 0x80000000 >> lbl_8066C49C;
         lbl_8066F3E0 &= ~chanBit;
-        memset(lbl_8057D570 + lbl_8066C49C * 12, 0, 12);
-        SIGetTypeAsync(lbl_8066C49C, fn_8018A01C);
+        memset(Origin + lbl_8066C49C * 12, 0, 12);
+        SIGetTypeAsync(lbl_8066C49C, PADTypeAndStatusCallback);
     }
 }
 

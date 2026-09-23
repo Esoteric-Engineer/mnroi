@@ -19,7 +19,7 @@ extern u32 SIGetType(int chan);
 
 extern u32 lbl_8066C4A0;
 extern u32 lbl_8066C4A4;
-extern PADStatus lbl_8057D570[];
+extern PADStatus Origin[];
 
 void UpdateOrigin(int chan)
 {
@@ -27,7 +27,7 @@ void UpdateOrigin(int chan)
     u32 chanBit;
 
     chanBit = 0x80000000 >> chan;
-    origin = &lbl_8057D570[chan];
+    origin = &Origin[chan];
     switch (lbl_8066C4A4 & 0x700u) {
     case 0x000u:
     case 0x500u:
