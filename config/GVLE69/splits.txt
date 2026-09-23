@@ -511,6 +511,9 @@ Dolphin/os/OSResumeThread.c:
 Dolphin/os/OSSuspendThread.c:
 	.text       start:0x80180A8C end:0x80180BFC
 
+Dolphin/os/OSSleepThread.c:
+	.text       start:0x80180BFC end:0x80180CE8
+
 Dolphin/os/OSWakeupThread.c:
 	.text       start:0x80180CE8 end:0x80180DEC
 
