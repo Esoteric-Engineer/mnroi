@@ -109,7 +109,7 @@ addr	size	name	library	confidence	notes	status
 0x80181764	0x2FC	CompleteTransfer	si	exact	ac-decomp size 0x2fc	open
 0x80181A60	0x344	SIInterruptHandler	si	exact	ac-decomp size 0x344	open
 0x80181DA4	0x98	SIEnablePollingInterrupt	si	exact	ac-decomp size 0x98	open
-0x80181E3C	0xCC	SIRegisterPollingHandler	si	exact	ac-decomp size 0xcc	open
+0x80181E3C	0xCC	SIRegisterPollingHandler	si	exact	ac-decomp size 0xcc	matched
 0x80181F08	0xF4	SIUnregisterPollingHandler	si	exact	ac-decomp size 0xf4	open
 0x80181FFC	0xB4	SIInit	si	guess	ac-decomp size 0xa4	open
 0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270	open
