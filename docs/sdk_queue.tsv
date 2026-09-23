@@ -78,7 +78,7 @@ addr	size	name	library	confidence	notes	status
 0x8017D9EC	0x19C		os	unidentified		open
 0x8017DC78	0x2D8	SetInterruptMask	os	exact	ac-decomp size 0x2d8	open
 0x8017E060	0x344	__OSDispatchInterrupt	os	exact	ac-decomp size 0x344	open
-0x8017E448	0x6C	MEMIntrruptHandler	os	exact	ac-decomp size 0x6c	open
+0x8017E448	0x6C	MEMIntrruptHandler	os	exact	ac-decomp size 0x6c	matched
 0x8017E4B4	0x80	Config24MB	os	exact	ac-decomp size 0x80	open
 0x8017E5E0	0x104	__OSInitMemoryProtection	os	guess	ac-decomp size 0x120	open
 0x8017E9B4	0x200		os	unidentified		open

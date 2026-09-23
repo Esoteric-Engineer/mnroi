@@ -13,3 +13,23 @@ BOOL OnReset(BOOL final)
     }
     return 1;
 }
+
+typedef unsigned short u16;
+typedef void (*OSErrorHandler)(u16 error, void* context, ...);
+
+extern OSErrorHandler __OSErrorTable[17];
+extern void __OSUnhandledException(u16 error, void* context, u32 cause, u32 addr);
+
+void MEMIntrruptHandler(short interrupt, void* ctx)
+{
+    u32 cause = __MEMRegs[0xF];
+    u32 addr = ((__MEMRegs[0x12] & 0x3FF) << 16) | __MEMRegs[0x11];
+    __MEMRegs[0x10] = 0;
+
+    if (__OSErrorTable[15]) {
+        __OSErrorTable[15](15, ctx, cause, addr);
+        return;
+    }
+
+    __OSUnhandledException(15, ctx, cause, addr);
+}
