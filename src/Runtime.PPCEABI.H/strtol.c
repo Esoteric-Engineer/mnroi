@@ -1,4 +1,4 @@
-extern void fn_80176E54(void);
+extern void _strtol_r(void);
 extern int lbl_8066C3B0;
 
 asm long strtol(const char* str, char** end, int base)
@@ -14,7 +14,7 @@ asm long strtol(const char* str, char** end, int base)
     lwz     r3, lbl_8066C3B0
     mr      r4, r0
     mr      r5, r9
-    bl      fn_80176E54
+    bl      _strtol_r
     lwz     r0, 12(r1)
     mtlr    r0
     addi    r1, r1, 8
