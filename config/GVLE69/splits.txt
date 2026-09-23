@@ -505,6 +505,9 @@ Dolphin/os/OSSuspendThread.c:
 Dolphin/os/OSWakeupThread.c:
 	.text       start:0x80180CE8 end:0x80180DEC
 
+Dolphin/os/OSSetThreadPriority.c:
+	.text       start:0x80180DEC end:0x80180EAC
+
 Dolphin/os/OSTime.c:
 	.text       start:0x80180F58 end:0x801813D4
 
