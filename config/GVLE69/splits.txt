@@ -574,6 +574,9 @@ Dolphin/si/SIBusy.c:
 Dolphin/si/SIIsChanBusy.c:
 	.text       start:0x80181728 end:0x80181764
 
+Dolphin/si/CompleteTransfer.c:
+	.text       start:0x80181764 end:0x80181A60
+
 Dolphin/si/SIEnablePollingInterrupt.c:
 	.text       start:0x80181DA4 end:0x80181E3C
 

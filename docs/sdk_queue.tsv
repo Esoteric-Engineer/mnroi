@@ -106,7 +106,7 @@ addr	size	name	library	confidence	notes	status
 0x801814F4	0xDC	EXIDetach	exi	guess	ac-decomp size 0xbc	open
 0x801815D0	0xC8	EXIIntrruptHandler	exi	exact	duplicate guess: the real EXIIntrruptHandler is 0x80194CEC (matched); this address is in the os/si range, re-identify	wrong-name
 0x80181698	0x70		exi	unidentified	size matches InitializeUART but that already exists at 0x80195B78	open
-0x80181764	0x2FC	CompleteTransfer	si	exact	ac-decomp size 0x2fc	open
+0x80181764	0x2FC	CompleteTransfer	si	exact	matched as Dolphin/si/CompleteTransfer.c (SIClearTCInterrupt inlined; Si/Type reached via lbl_804D1B78 pool base)	matched
 0x80181A60	0x344	SIInterruptHandler	si	exact	ac-decomp size 0x344	open
 0x80181DA4	0x98	SIEnablePollingInterrupt	si	exact	ac-decomp size 0x98	matched
 0x80181E3C	0xCC	SIRegisterPollingHandler	si	exact	ac-decomp size 0xcc	matched
