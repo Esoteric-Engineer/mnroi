@@ -524,6 +524,9 @@ Dolphin/dvd/dvderror.c:
 Dolphin/dvd/__DVDPrintFatalMessage.c:
 	.text       start:0x80186A50 end:0x80186A80
 
+Dolphin/dvd/fstload.c:
+	.text       start:0x80186A80 end:0x80186B58
+
 Dolphin/dvd/__DVDInitWA.c:
 	.text       start:0x80186CC0 end:0x80186D00
 

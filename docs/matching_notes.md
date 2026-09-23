@@ -197,6 +197,8 @@ Smaller findings:
 
 - **Two SDK statics with the same name (`AlarmHandler` in `SIBios.c` and `dvd.c`) collide:** dtk-dev renames the second to `AlarmHandler_<addr>` at link and unclaimed asm callers fail with `undefined: 'AlarmHandler_80184B70'`. Rename it that way in `symbols.txt` (`scope:global`) and define the function non-`static` under that name.
 
+- **A `static` SDK function claimed while its caller is still unclaimed (`cb` in `fstload.c`, `0x80186A80`) fails to link with `undefined: 'cb_80186A80'`:** rename it `cb_<addr>` (`scope:global`) in `symbols.txt` and define it non-`static` under that name (self-references in the source use it too). `tools/objdiff_mismatches.py` needs the full unit path (`Dolphin/dvd/fstload`), and the function name as linked (`cb_80186A80`).
+
 - **Claiming a function whose caller is already in the same unit can make MWCC inline it** (`-inline auto`): the caller shrinks (`AlarmHandler_80184B70` 0x44 -> 0x40), every later unit shifts 4 bytes, and `main.dol` breaks with ~48% of bytes differing even though each function reports 100% on its own. Wrap the definition in `#pragma dont_inline on` / `reset`. If the caller loads an argument (`lwz r3,executing`) the original callee takes an unused parameter; keep it in the prototype (`stateReadingID`, `0x80184C80`).
 
 - **`.sdata2` symbols in compiled C are fine:** the `sda2_via_r13` option bakes those accesses as `r13` offsets (see [`baseline.md`](baseline.md#small-data-r13-problem)), so write them as ordinary C.<br />
