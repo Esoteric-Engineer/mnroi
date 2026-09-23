@@ -708,6 +708,12 @@ Dolphin/pad/PADControlMotor.c:
 Dolphin/pad/PADSetSpec.c:
 	.text       start:0x8018AC80 end:0x8018ACE0
 
+Dolphin/pad/SPEC0_MakeStatus.c:
+	.text       start:0x8018ACE0 end:0x8018AE54
+
+Dolphin/pad/SPEC1_MakeStatus.c:
+	.text       start:0x8018AE54 end:0x8018AFC8
+
 Dolphin/pad/SamplingHandler.c:
 	.text       start:0x8018B4F4 end:0x8018B554
 

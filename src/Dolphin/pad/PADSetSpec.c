@@ -4,8 +4,8 @@ extern u32 lbl_8066C4A8;
 extern void* lbl_8066C4AC;
 extern u32 lbl_8066F404;
 
-extern void fn_8018ACE0(void);
-extern void fn_8018AE54(void);
+extern void SPEC0_MakeStatus(void);
+extern void SPEC1_MakeStatus(void);
 extern void fn_8018AFC8(void);
 
 void PADSetSpec(u32 spec)
@@ -13,10 +13,10 @@ void PADSetSpec(u32 spec)
     lbl_8066F404 = 0;
     switch (spec) {
     case 0:
-        lbl_8066C4AC = fn_8018ACE0;
+        lbl_8066C4AC = SPEC0_MakeStatus;
         break;
     case 1:
-        lbl_8066C4AC = fn_8018AE54;
+        lbl_8066C4AC = SPEC1_MakeStatus;
         break;
     case 2:
     case 3:
