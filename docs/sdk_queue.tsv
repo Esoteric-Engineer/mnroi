@@ -151,7 +151,7 @@ addr	size	name	library	confidence	notes	status
 0x80189C10	0x1A4	UpdateOrigin	pad	exact	ac-decomp size 0x1a4	open
 0x80189DB4	0xC4	PADOriginCallback	pad	exact	NonMatching 99.29%: r4/r5 swap in inlined DoReset, see docs/nonmatching.md	stalled
 0x80189E78	0xCC	PADOriginUpdateCallback	pad	guess	ac-decomp size 0xc0	open
-0x80189F44	0xD8	PADProbeCallback	pad	exact	ac-decomp size 0xd8	open
+0x80189F44	0xD8	PADProbeCallback	pad	exact	verified against ac-decomp PADProbeCallback; NonMatching 99.35%, same DoReset r4/r5 swap as PADOriginCallback (see docs/nonmatching.md)	stalled
 0x8018A01C	0x32C	PADTypeAndStatusCallback	pad	exact	ac-decomp size 0x32c	open
 0x8018A348	0x140	PADReceiveCheckCallback	pad	guess	ac-decomp size 0x134	open
 0x8018A488	0x110	PADReset	pad	guess	ac-decomp size 0x100	open
