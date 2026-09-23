@@ -1,7 +1,7 @@
 extern int lbl_8066FB30;
 extern int fn_8017A73C(short request, int arg1, int arg2);
 
-asm int fn_80178EA4(void* device, short flag, int arg1, int arg2)
+asm int _read_r(void* device, short flag, int arg1, int arg2)
 {
     // clang-format off
     nofralloc
