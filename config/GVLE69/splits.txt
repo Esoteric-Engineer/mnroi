@@ -1244,6 +1244,9 @@ Dolphin/exi/EXIIntrruptHandler.c:
 Dolphin/exi/EXTIntrruptHandler.c:
 	.text       start:0x80194FCC end:0x8019509C
 
+Dolphin/exi/EXIInit.c:
+	.text       start:0x8019509C end:0x80195270
+
 Dolphin/exi/EXILock.c:
 	.text       start:0x80195270 end:0x80195364
 

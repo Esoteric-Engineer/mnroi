@@ -20,7 +20,7 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 volatile u32 __EXIRegs[0x40] : 0xCC006800;
 
 extern void OSClearContext(OSContext* context);
@@ -55,7 +55,7 @@ void EXIIntrruptHandler(short interrupt, OSContext* context)
     EXICallback callback;
 
     chan = (interrupt - 9) / 3;
-    exi = &lbl_8057DBE0[chan];
+    exi = &Ecb[chan];
     EXIClearInterruptsI(chan, 1, 0, 0);
     callback = exi->exiCallback;
     if (callback) {

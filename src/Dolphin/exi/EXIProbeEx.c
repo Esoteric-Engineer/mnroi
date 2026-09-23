@@ -19,24 +19,24 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 
 s32 __gUnknown800030C0[2] : 0x800030C0;
 
 extern int __EXIProbe(s32 chan);
-extern s32 fn_80195480(s32 chan, u32 dev, u32* id);
+extern s32 EXIGetID(s32 chan, u32 dev, u32* id);
 
 #pragma scheduling off
 
 static inline int EXIProbe(s32 chan)
 {
-    EXIControl* exi = &lbl_8057DBE0[chan];
+    EXIControl* exi = &Ecb[chan];
     int rc;
     u32 id;
 
     rc = __EXIProbe(chan);
     if (rc && !exi->idTime) {
-        rc = fn_80195480(chan, 0, &id) ? 1 : 0;
+        rc = EXIGetID(chan, 0, &id) ? 1 : 0;
     }
     return rc;
 }

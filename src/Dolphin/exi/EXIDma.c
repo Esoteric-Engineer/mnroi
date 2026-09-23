@@ -19,7 +19,7 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 volatile u32 __EXIRegs[0x40] : 0xCC006800;
 
 extern int OSDisableInterrupts(void);
@@ -34,7 +34,7 @@ int EXIDma(s32 chan, void* buf, s32 len, u32 type, EXICallback callback)
     EXIControl* exi;
     int enabled;
 
-    exi = &lbl_8057DBE0[chan];
+    exi = &Ecb[chan];
     enabled = OSDisableInterrupts();
     if ((exi->state & 3) || !(exi->state & 4)) {
         OSRestoreInterrupts(enabled);

@@ -20,7 +20,7 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 volatile u32 __EXIRegs[0x40] : 0xCC006800;
 s32 __gUnknown800030C0[2] : 0x800030C0;
 u32 __OSBusClock : 0x800000F8;
@@ -59,7 +59,7 @@ int __EXIProbe(s32 chan)
     u32 cpr;
     s32 t;
 
-    exi = &lbl_8057DBE0[chan];
+    exi = &Ecb[chan];
     if (chan == 2) {
         return 1;
     }

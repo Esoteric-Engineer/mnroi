@@ -28,7 +28,7 @@ addr	size	name	library	confidence	notes	status
 0x801712D4	0x32C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80171600	0x98C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80172028	0x198	_strtoul_r	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
-0x8017232C	0xEC		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8017232C	0xEC	memmove	libc	guess	Named memmove by dtk-dev (called from EXIUnlock); verify against Newlib memmove	open
 0x801725B8	0x9C	strchr	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80172654	0xA8	strcmp	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x801726FC	0x84	strcpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
@@ -210,12 +210,12 @@ addr	size	name	library	confidence	notes	status
 0x80194CEC	0xC8	EXIIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194DB4	0x218	TCIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
 0x80194FCC	0xD0	EXTIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
-0x8019509C	0x1D4	EXIInit	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
+0x8019509C	0x1D4	EXIInit	exi	exact	Matched as EXIInit (Dolphin/exi/EXIInit.c): the later SDK form (wait loop on the three CR regs, EXIGetID(0,2,&IDSerialPort1), __OSInIPL ? EXIProbeReset inlined : Barnacle probe, OSRegisterVersion); ac-decomp has the older form	matched
 0x80195270	0xF4	EXILock	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80195364	0xDC	EXIUnlock	exi	exact	matched in Dolphin/exi/EXIUnlock.c (100%, main.dol OK); calls SetExiInterruptMask and fn_8017232C (memmove)	matched
 0x80195480	0x3B0	EXIGetID	exi	guess	ac-decomp size 0x37c vs 0x3b0; follows UnlockedHandler like ac-decomp	open
 0x80195830	0x18C		exi	unidentified		open
-0x801959BC	0x1BC		exi	unidentified		open
+0x801959BC	0x1BC	__OSEnableBarnacle	exi	guess	Named by dtk-dev from EXIInit call shape (EXIGetID id==0x07010000 -> __OSEnableBarnacle(chan, dev)); verify body	open
 0x80195BE8	0x21C		exi	unidentified		open
 0x80195E04	0x4	DBClose	odenotstub	guess	4-byte stub, ac-decomp size 0x4	open
 0x80195E08	0x4	DBOpen	odenotstub	guess	4-byte stub, ac-decomp size 0x4	open

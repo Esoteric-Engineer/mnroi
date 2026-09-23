@@ -19,7 +19,7 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 volatile u32 __EXIRegs[0x40] : 0xCC006800;
 
 extern int OSDisableInterrupts(void);
@@ -35,7 +35,7 @@ int EXISelect(s32 chan, u32 dev, u32 freq)
     u32 cpr;
     int enabled;
 
-    exi = &lbl_8057DBE0[chan];
+    exi = &Ecb[chan];
     enabled = OSDisableInterrupts();
     if ((exi->state & 4)
         || ((chan != 2)

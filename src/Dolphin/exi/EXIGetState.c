@@ -6,13 +6,13 @@ typedef struct EXIControl {
     u32 pad1[12];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 
 #pragma scheduling off
 u32 EXIGetState(long chan)
 {
     EXIControl* exi;
 
-    exi = &lbl_8057DBE0[chan];
+    exi = &Ecb[chan];
     return exi->state;
 }

@@ -19,7 +19,7 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
@@ -33,7 +33,7 @@ int EXILock(s32 chan, u32 dev, EXICallback unlockedCallback)
     int enabled;
     int i;
 
-    exi = &lbl_8057DBE0[chan];
+    exi = &Ecb[chan];
     enabled = OSDisableInterrupts();
     if (exi->state & 0x10) {
         if (unlockedCallback) {

@@ -19,7 +19,7 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 
 extern void* __OSGetInterruptHandler(short interrupt);
 extern u32 __OSMaskInterrupts(u32 mask);
@@ -29,7 +29,7 @@ extern u32 __OSUnmaskInterrupts(u32 mask);
 
 void SetExiInterruptMask(s32 chan, EXIControl* exi)
 {
-    EXIControl* exi2 = &lbl_8057DBE0[2];
+    EXIControl* exi2 = &Ecb[2];
 
     switch (chan) {
     case 0:

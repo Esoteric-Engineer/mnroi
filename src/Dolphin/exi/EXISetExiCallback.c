@@ -19,7 +19,7 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
@@ -33,14 +33,14 @@ EXICallback EXISetExiCallback(s32 chan, EXICallback exiCallback)
     EXICallback prev;
     int enabled;
 
-    exi = &lbl_8057DBE0[chan];
+    exi = &Ecb[chan];
     enabled = OSDisableInterrupts();
     prev = exi->exiCallback;
     exi->exiCallback = exiCallback;
     if (chan != 2) {
         SetExiInterruptMask(chan, exi);
     } else {
-        SetExiInterruptMask(0, &lbl_8057DBE0[0]);
+        SetExiInterruptMask(0, &Ecb[0]);
     }
     OSRestoreInterrupts(enabled);
     return prev;

@@ -19,12 +19,12 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl lbl_8057DBE0[3];
+extern EXIControl Ecb[3];
 
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
 extern void SetExiInterruptMask(s32 chan, EXIControl* exi);
-extern void* fn_8017232C(void* dst, const void* src, u32 n);
+extern void* memmove(void* dst, const void* src, u32 n);
 
 #pragma scheduling off
 
@@ -34,7 +34,7 @@ int EXIUnlock(s32 chan)
     int enabled;
     EXICallback unlockedCallback;
 
-    exi = &lbl_8057DBE0[chan];
+    exi = &Ecb[chan];
     enabled = OSDisableInterrupts();
     if (!(exi->state & 0x10)) {
         OSRestoreInterrupts(enabled);
@@ -45,7 +45,7 @@ int EXIUnlock(s32 chan)
     if (exi->items > 0) {
         unlockedCallback = exi->queue[0].callback;
         if (--exi->items > 0) {
-            fn_8017232C(&exi->queue[0], &exi->queue[1], exi->items * 8);
+            memmove(&exi->queue[0], &exi->queue[1], exi->items * 8);
         }
         unlockedCallback(chan, 0);
     }
