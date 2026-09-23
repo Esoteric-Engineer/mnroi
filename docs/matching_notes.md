@@ -257,6 +257,8 @@ Scope: everything in `Runtime.PPCEABI.H` that comes from Newlib or libgcc (strin
 - **`.sdata2` symbols in compiled C are fine:** the `sda2_via_r13` option bakes those accesses as `r13` offsets (see [`baseline.md`](baseline.md#small-data-r13-problem)), so write them as ordinary C.<br />
   If `Range Error for small data relocation` appears, check that `build.ninja` was generated with the fork's `dtk-dev` and that `build/GVLE69/sda_bake.json` exists.
 
+- **Struct fields of a pooled `.bss` static reached through a pointer/extern lose MWCC's hoisted address temps: `sth rX,0x106(base)` followed by `addi r11,base,0x106` (reused later as `lhz rY,0(r11)`) needs real defined objects.** `VIConfigurePan` (`0x80189278`): `extern` array + `HorVer` cast macro, and one extern struct with a base local passed to the inline helpers, gave 71-85%; claiming the pool and defining `regs`/`shdwRegs`/`HorVer` as globals (pinned with `(void)` uses) gave 94% with all displacements right. Define the *whole* pool including the neighbouring object that precedes the struct, or the base and every offset shift.
+
 ---
 
 ## General tactics

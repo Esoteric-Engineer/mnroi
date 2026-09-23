@@ -723,6 +723,10 @@ Dolphin/vi/setFbbRegs.c:
 Dolphin/vi/setVerticalRegs.c:
 	.text       start:0x801888B0 end:0x80188A50
 
+Dolphin/vi/VIConfigurePan.c:
+	.text       start:0x80189278 end:0x8018960C
+	.bss        start:0x8057D418 end:0x8057D560
+
 Dolphin/vi/VISetNextFrameBuffer.c:
 	.text       start:0x8018973C end:0x801897A8
 
