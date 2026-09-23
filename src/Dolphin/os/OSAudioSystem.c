@@ -62,6 +62,8 @@ void __OSInitAudioSystem(void)
     while (!(reg16 & 0x8000))
         reg16 = __DSPRegs[2];
 
+    /* Dead statements below, kept on purpose: they keep reg16 live (clrlwi r5) and add 8 bytes of frame.
+    Without them this stalls at ~92-96%. */
     if (((u32)((reg16 << 16) | __DSPRegs[3]) + 0x7FAC0000U) != 0x4348) {
     }
 
