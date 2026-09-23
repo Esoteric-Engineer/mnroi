@@ -195,6 +195,9 @@ Runtime.PPCEABI.H/fn_80178684.c:
 Runtime.PPCEABI.H/_fwalk.c:
 	.text       start:0x80178A90 end:0x80178B10
 
+Runtime.PPCEABI.H/__smakebuf.c:
+	.text       start:0x80178B10 end:0x80178BE8
+
 Runtime.PPCEABI.H/__sread.c:
 	.text       start:0x80178BE8 end:0x80178C4C
 

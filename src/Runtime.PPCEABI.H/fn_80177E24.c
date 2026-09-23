@@ -6,7 +6,7 @@ typedef struct {
 extern void __sinit(void);
 extern void fn_80178224(void);
 extern void fn_80177E04(void);
-extern void fn_80178B10(void);
+extern void __smakebuf(void);
 extern void _fwalk(void);
 extern unsigned int lbl_8066C3B0;
 
@@ -74,7 +74,7 @@ after_flag4:
     cmpwi   r0, 0
     bne     have_16
     mr      r3, r31
-    bl      fn_80178B10
+    bl      __smakebuf
 have_16:
     lhz     r0, 12(r31)
     andi.   r9, r0, 3

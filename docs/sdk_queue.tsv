@@ -62,7 +62,7 @@ addr	size	name	library	confidence	notes	status
 0x80178568	0xEC		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x801786AC	0x3E4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80178A90	0x80	_fwalk	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
-0x80178B10	0xD8	__smakebuf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
+0x80178B10	0xD8	__smakebuf	libc	exact	Newlib __smakebuf (old signature, reent via fp->_data); matched as nofralloc asm	matched
 0x80178BE8	0x64	__sread	libc	exact	Verified: old-Newlib __sread(fp,buf,n) -> _read_r(fp->_data,fp->_file,buf,n); GCC output, written as asm	matched
 0x80178C4C	0x70	__swrite	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80178CBC	0x64	__sseek	libc	exact	Matched as nofralloc asm (Newlib old-signature __sseek(fp, off, whence): _lseek_r(fp->_data, fp->_file, ...) = fn_80178DF0, sets/clears __SOFF 0x1000, stores _offset 0x58); Runtime.PPCEABI.H/__sseek.c	matched
