@@ -138,7 +138,7 @@ addr	size	name	library	confidence	notes	status
 0x80187ED8	0x200	__VIInit	vi	guess	ac-decomp size 0x1f8	open
 0x801880D8	0x4B0	VIInit	vi	guess	ac-decomp size 0x478	open
 0x801885DC	0x2D4	setFbbRegs	vi	exact	ac-decomp size 0x2d4	open
-0x801888B0	0x1A0	setVerticalRegs	vi	exact	ac-decomp size 0x1a0	open
+0x801888B0	0x1A0	setVerticalRegs	vi	exact	ac-decomp size 0x1a0	matched
 0x80188A50	0x828	VIConfigure	vi	guess	ac-decomp size 0x79c	open
 0x80189278	0x394	VIConfigurePan	vi	exact	ac-decomp size 0x394	open
 0x8018960C	0x130	VIFlush	vi	guess	ac-decomp size 0x11c	open

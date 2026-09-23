@@ -684,6 +684,9 @@ Dolphin/dvd/DVDLowSetResetCoverCallback.c:
 Dolphin/vi/VIWaitForRetrace.c:
 	.text       start:0x80188588 end:0x801885DC
 
+Dolphin/vi/setVerticalRegs.c:
+	.text       start:0x801888B0 end:0x80188A50
+
 Dolphin/vi/VISetNextFrameBuffer.c:
 	.text       start:0x8018973C end:0x801897A8
 

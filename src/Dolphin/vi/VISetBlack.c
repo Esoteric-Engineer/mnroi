@@ -6,7 +6,7 @@ extern u8 lbl_8057D418[];
 
 int OSDisableInterrupts(void);
 void OSRestoreInterrupts(int level);
-void fn_801888B0(u32 posY, u32 sizeY, u32 equ, u32 acv, u32 prbOdd, u32 prbEven, u32 psbOdd,
+void setVerticalRegs(u32 posY, u32 sizeY, u32 equ, u32 acv, u32 prbOdd, u32 prbEven, u32 psbOdd,
                  u32 psbEven, u32 black);
 
 typedef struct VITiming {
@@ -27,7 +27,7 @@ void VISetBlack(u32 black)
     enabled = OSDisableInterrupts();
     *(u32*)(tbl + 0x130) = black;
     tm = *(VITiming**)(tbl + 0x144);
-    fn_801888B0(*(u16*)(tbl + 0xFA), *(u16*)(tbl + 0xF6), tm->equ, tm->acv, tm->prbOdd, tm->prbEven,
+    setVerticalRegs(*(u16*)(tbl + 0xFA), *(u16*)(tbl + 0xF6), tm->equ, tm->acv, tm->prbOdd, tm->prbEven,
                 tm->psbOdd, tm->psbEven, *(u32*)(tbl + 0x130));
     OSRestoreInterrupts(enabled);
 }

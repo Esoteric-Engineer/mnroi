@@ -625,6 +625,7 @@ config.libs = [
             Object(Matching, "Dolphin/dvd/DVDLowSetCoverCallback.c"),
             Object(Matching, "Dolphin/dvd/DVDLowSetResetCoverCallback.c"),
             Object(Matching, "Dolphin/vi/VIWaitForRetrace.c"),
+            Object(Matching, "Dolphin/vi/setVerticalRegs.c"),
             Object(Matching, "Dolphin/vi/VISetNextFrameBuffer.c"),
             Object(Matching, "Dolphin/vi/VISetBlack.c"),
             Object(Matching, "Dolphin/vi/VIGetRetraceCount.c"),
