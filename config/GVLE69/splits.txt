@@ -1174,3 +1174,6 @@ Dolphin/OdemuExi2/DBGReadStatus.c:
 
 Dolphin/OdemuExi2/DBGWrite.c:
 	.text       start:0x80196388 end:0x80196464
+
+Dolphin/OdemuExi2/DBGReadMailbox.c:
+	.text       start:0x80196540 end:0x801965EC

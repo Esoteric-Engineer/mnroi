@@ -556,6 +556,7 @@ config.libs = [
             Object(Matching, "Dolphin/OdemuExi2/DBGHandler.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBGReadStatus.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBGWrite.c"),
+            Object(Matching, "Dolphin/OdemuExi2/DBGReadMailbox.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBRead.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBQueryData.c"),
         ],

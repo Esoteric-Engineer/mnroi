@@ -5,7 +5,7 @@ typedef int BOOL;
 extern BOOL OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(BOOL enabled);
 extern void DBGReadStatus(u32* status);
-extern void fn_80196540(u32* mail);
+extern void DBGReadMailbox(u32* mail);
 
 extern u32 lbl_8066F4C8;
 extern int lbl_8066F4CC;
@@ -17,7 +17,7 @@ static void CheckMailBox(void)
 
     DBGReadStatus(mail);
     if (mail[0] & 1) {
-        fn_80196540(mail);
+        DBGReadMailbox(mail);
         mail[0] &= ~0xE0000000;
         if ((mail[0] & 0x1F000000) == 0x1F000000) {
             lbl_8066F4C8 = mail[0];
