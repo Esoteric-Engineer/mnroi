@@ -204,7 +204,7 @@ addr	size	name	library	confidence	notes	status
 0x801947B4	0x80	EXIProbe	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194834	0xB4	EXIProbeEx	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x801948E8	0x10C	EXIAttach	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
-0x801949F4	0xBC	EXIDetach	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
+0x801949F4	0xBC	EXIDetach	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194AB0	0x12C	EXISelect	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
 0x80194BDC	0x110	EXIDeselect	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194CEC	0xC8	EXIIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open

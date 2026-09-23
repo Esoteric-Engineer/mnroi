@@ -1151,6 +1151,9 @@ Dolphin/exi/EXIProbeEx.c:
 Dolphin/exi/EXIAttach.c:
 	.text       start:0x801948E8 end:0x801949F4
 
+Dolphin/exi/EXIDetach.c:
+	.text       start:0x801949F4 end:0x80194AB0
+
 Dolphin/exi/EXIDeselect.c:
 	.text       start:0x80194BDC end:0x80194CEC
 
