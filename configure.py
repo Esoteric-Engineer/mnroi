@@ -465,6 +465,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/gx/GXSetScissorBoxOffset.c"),
             Object(Matching, "Dolphin/gx/GXSetClipMode.c"),
             Object(Matching, "Dolphin/gx/__GXSetMatrixIndex.c"),
+            Object(Matching, "Dolphin/gx/__GXDefaultTexRegionCallback.c"),
             Object(Matching, "Dolphin/gx/__GXDefaultTlutRegionCallback.c"),
             Object(Matching, "Dolphin/gx/__GXInitRevisionBits.c"),
             Object(Matching, "Dolphin/gx/GXInitFifoBase.c"),

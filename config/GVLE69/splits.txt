@@ -888,6 +888,9 @@ Dolphin/gx/GXSetClipMode.c:
 Dolphin/gx/__GXSetMatrixIndex.c:
 	.text       start:0x80190400 end:0x80190484
 
+Dolphin/gx/__GXDefaultTexRegionCallback.c:
+	.text       start:0x80190484 end:0x80190580
+
 Dolphin/gx/__GXDefaultTlutRegionCallback.c:
 	.text       start:0x80190580 end:0x801905A4
 
