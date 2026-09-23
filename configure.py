@@ -598,6 +598,7 @@ config.libs = [
             Object(Matching, "Dolphin/vi/VISetBlack.c"),
             Object(Matching, "Dolphin/vi/VIGetRetraceCount.c"),
             Object(Matching, "Dolphin/vi/getCurrentFieldEvenOdd.c"),
+            Object(NonMatching, "Dolphin/vi/VIGetCurrentLine.c"),
             Object(NonMatching, "Dolphin/vi/VIGetTvFormat.c"),
         ],
     ),
