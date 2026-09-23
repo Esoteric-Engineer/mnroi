@@ -28,7 +28,7 @@ addr	size	name	library	confidence	notes	status
 0x801712D4	0x32C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80171600	0x98C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80172028	0x198	_strtoul_r	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
-0x8017232C	0xEC	memmove	libc	guess	Named memmove by dtk-dev (called from EXIUnlock); verify against Newlib memmove	open
+0x8017232C	0xEC	memmove	libc	exact	verified against Newlib memmove (non-size-optimised: byte-only backward copy, memcpy-style forward loops); matched as nofralloc asm in Runtime.PPCEABI.H/memmove.c (100%, main.dol OK)	matched
 0x801725B8	0x9C	strchr	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80172654	0xA8	strcmp	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x801726FC	0x84	strcpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
