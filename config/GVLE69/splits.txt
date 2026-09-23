@@ -609,6 +609,9 @@ Dolphin/vi/getCurrentFieldEvenOdd.c:
 Dolphin/vi/VIGetTvFormat.c:
 	.text       start:0x8018992C end:0x80189994
 
+Dolphin/pad/PADSetSpec.c:
+	.text       start:0x8018AC80 end:0x8018ACE0
+
 Dolphin/pad/SamplingHandler.c:
 	.text       start:0x8018B4F4 end:0x8018B554
 
