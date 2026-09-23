@@ -1145,6 +1145,9 @@ Dolphin/exi/EXISetExiCallback.c:
 Dolphin/exi/EXIProbe.c:
 	.text       start:0x801947B4 end:0x80194834
 
+Dolphin/exi/EXIProbeEx.c:
+	.text       start:0x80194834 end:0x801948E8
+
 Dolphin/exi/EXIAttach.c:
 	.text       start:0x801948E8 end:0x801949F4
 
