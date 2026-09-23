@@ -27,6 +27,9 @@ Dolphin/os/__shl2i.c:
 Dolphin/os/__mod2i.c:
 	.text       start:0x8016B5A8 end:0x8016B5AC
 
+Runtime.PPCEABI.H/cosf.c:
+	.text       start:0x8016DC80 end:0x8016DD5C
+
 Runtime.PPCEABI.H/fabsf.c:
 	.text       start:0x8016DD5C end:0x8016DD80
 
