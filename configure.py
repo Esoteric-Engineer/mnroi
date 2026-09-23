@@ -552,6 +552,7 @@ config.libs = [
     DolphinLib(
         "exi",
         [
+            Object(Matching, "Dolphin/exi/SetExiInterruptMask.c"),
             Object(Matching, "Dolphin/exi/EXIImmEx.c"),
             Object(Matching, "Dolphin/exi/EXIDma.c"),
             Object(Matching, "Dolphin/exi/EXIClearInterrupts.c"),

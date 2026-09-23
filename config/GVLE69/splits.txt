@@ -1181,6 +1181,9 @@ Dolphin/gx/GXClearGPMetric.c:
 Dolphin/gx/GXPerfStubs.c:
 	.text       start:0x80193E2C end:0x80193E54
 
+Dolphin/exi/SetExiInterruptMask.c:
+	.text       start:0x80193E54 end:0x80193F48
+
 Dolphin/exi/EXIImmEx.c:
 	.text       start:0x801941A4 end:0x80194244
 

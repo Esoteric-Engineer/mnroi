@@ -23,7 +23,7 @@ extern EXIControl lbl_8057DBE0[3];
 
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
-extern void fn_80193E54(s32 chan, EXIControl* exi);
+extern void SetExiInterruptMask(s32 chan, EXIControl* exi);
 extern void* fn_8017232C(void* dst, const void* src, u32 n);
 
 #pragma scheduling off
@@ -41,7 +41,7 @@ int EXIUnlock(s32 chan)
         return 0;
     }
     exi->state &= ~0x10;
-    fn_80193E54(chan, exi);
+    SetExiInterruptMask(chan, exi);
     if (exi->items > 0) {
         unlockedCallback = exi->queue[0].callback;
         if (--exi->items > 0) {

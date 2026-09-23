@@ -23,7 +23,7 @@ extern EXIControl lbl_8057DBE0[3];
 
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
-extern void fn_80193E54(s32 chan, EXIControl* exi);
+extern void SetExiInterruptMask(s32 chan, EXIControl* exi);
 
 #pragma scheduling off
 
@@ -38,9 +38,9 @@ EXICallback EXISetExiCallback(s32 chan, EXICallback exiCallback)
     prev = exi->exiCallback;
     exi->exiCallback = exiCallback;
     if (chan != 2) {
-        fn_80193E54(chan, exi);
+        SetExiInterruptMask(chan, exi);
     } else {
-        fn_80193E54(0, &lbl_8057DBE0[0]);
+        SetExiInterruptMask(0, &lbl_8057DBE0[0]);
     }
     OSRestoreInterrupts(enabled);
     return prev;
