@@ -298,6 +298,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/sinf.c"),
             Object(Matching, "Runtime.PPCEABI.H/tanf.c"),
             Object(Matching, "Runtime.PPCEABI.H/fabs.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__kernel_cosf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__kernel_sinf.c"),
             Object(Matching, "Runtime.PPCEABI.H/copysignf.c"),
             Object(Matching, "Runtime.PPCEABI.H/sprintf.c"),

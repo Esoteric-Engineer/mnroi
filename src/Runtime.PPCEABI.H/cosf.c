@@ -1,5 +1,5 @@
 extern float lbl_8066C174;
-extern float fn_8016E538(float x, float y);
+extern float __kernel_cosf(float x, float y);
 extern float __kernel_sinf(float x, float y, int iy);
 extern int fn_8016E8E4(float x, float* y);
 
@@ -19,7 +19,7 @@ asm float cosf(float x)
     ori     r0, r0, 0xfd8
     cmpw    r9, r0
     bgt     L_gt
-    bl      fn_8016E538
+    bl      __kernel_cosf
     b       L_end
 L_gt:
     lis     r0, 0x7f7f
@@ -45,7 +45,7 @@ L_gt1:
 L_n0:
     lfs     f1, 8(r1)
     lfs     f2, 0xc(r1)
-    bl      fn_8016E538
+    bl      __kernel_cosf
     b       L_end
 L_n1:
     lfs     f1, 8(r1)
@@ -57,7 +57,7 @@ L_n1:
 L_n2:
     lfs     f1, 8(r1)
     lfs     f2, 0xc(r1)
-    bl      fn_8016E538
+    bl      __kernel_cosf
     fneg    f1, f1
     b       L_end
 L_n3:
