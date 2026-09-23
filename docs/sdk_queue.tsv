@@ -96,7 +96,7 @@ addr	size	name	library	confidence	notes	status
 0x8017F9B0	0xAC	__OSSetBootMode	os	guess	ac-decomp size 0xa4	open
 0x8017FA5C	0x70	OSGetWirelessID	os	guess	ac-decomp size 0x84	open
 0x8017FACC	0xB8	OSSetWirelessID	os	guess	ac-decomp size 0xac	open
-0x8017FBA4	0x64	__OSInitSystemCall	os	exact	ac-decomp size 0x64	open
+0x8017FBA4	0x64	__OSInitSystemCall	os	exact	ac-decomp size 0x64	matched
 0x8017FC08	0x4		os	unidentified		open
 0x8017FC0C	0x158		os	unidentified		open
 0x80180BFC	0xEC	OSSleepThread	os	exact	ac-decomp size 0xec	open

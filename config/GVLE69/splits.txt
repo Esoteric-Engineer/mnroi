@@ -429,8 +429,8 @@ Dolphin/os/OSUnlockSram.c:
 Dolphin/os/__OSSyncSram.c:
 	.text       start:0x8017F668 end:0x8017F678
 
-Dolphin/os/fn_8017FB84.c:
-	.text       start:0x8017FB84 end:0x8017FBA4
+Dolphin/os/OSSync.c:
+	.text       start:0x8017FB84 end:0x8017FC08
 
 Dolphin/os/OSInitThreadQueue.c:
 	.text       start:0x8017FD64 end:0x8017FD74
