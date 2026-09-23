@@ -484,6 +484,9 @@ Dolphin/si/SIBusy.c:
 Dolphin/si/SIIsChanBusy.c:
 	.text       start:0x80181728 end:0x80181764
 
+Dolphin/si/SIEnablePollingInterrupt.c:
+	.text       start:0x80181DA4 end:0x80181E3C
+
 Dolphin/si/SIRegisterPollingHandler.c:
 	.text       start:0x80181E3C end:0x80181F08
 
