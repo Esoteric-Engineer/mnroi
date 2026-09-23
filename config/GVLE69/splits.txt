@@ -60,6 +60,9 @@ Runtime.PPCEABI.H/sprintf.c:
 Runtime.PPCEABI.H/eofread.c:
 	.text       start:0x801700B8 end:0x801700C0
 
+Runtime.PPCEABI.H/sscanf.c:
+	.text       start:0x801700C0 end:0x801701B0
+
 Runtime.PPCEABI.H/__sccl.c:
 	.text       start:0x80170FB4 end:0x80171088
 

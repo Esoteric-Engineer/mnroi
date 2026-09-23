@@ -21,7 +21,7 @@ addr	size	name	library	confidence	notes	status
 0x8016FE3C	0x154		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016FF90	0x50		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016FFE0	0xD8	sprintf	libc	exact	Newlib sprintf (_svfprintf_r(&f,fmt,ap) with an inline FILE); matched as nofralloc asm in Runtime.PPCEABI.H/sprintf.c	matched
-0x801700C0	0xF0	sscanf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
+0x801700C0	0xF0	sscanf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x801701B0	0xE04	__svfscanf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
 0x80170FB4	0xD4	__sccl	libc	exact	verified against Newlib sccl.c (identical control flow); matched as nofralloc asm in Runtime.PPCEABI.H/__sccl.c	matched
 0x8017123C	0x98		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
