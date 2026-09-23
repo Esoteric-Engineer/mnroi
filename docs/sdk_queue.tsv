@@ -143,7 +143,7 @@ addr	size	name	library	confidence	notes	status
 0x80189278	0x394	VIConfigurePan	vi	exact	ac-decomp size 0x394	open
 0x8018960C	0x130	VIFlush	vi	guess	ac-decomp size 0x11c	open
 0x8018973C	0x6C	VISetNextFrameBuffer	vi	exact	ac-decomp size 0x6c	matched
-0x801897A8	0x7C	VISetBlack	vi	exact	ac-decomp size 0x7c	open
+0x801897A8	0x7C	VISetBlack	vi	exact	ac-decomp size 0x7c	matched
 0x80189894	0x98	VIGetCurrentLine	vi	exact	ac-decomp size 0x98	open
 0x8018992C	0x68	VIGetTvFormat	vi	known	code 99.4% (only jump-table symbol name differs); blocked: table @724 at 0x804D2C34 is 4-mod-8 and the unclaimed strings before it (0x804D2AE0, VIConfigure text) must be claimed first; retry after VIConfigure	stalled
 0x80189994	0x21C		vi	unidentified		open

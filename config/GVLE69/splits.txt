@@ -609,6 +609,9 @@ Dolphin/vi/VIWaitForRetrace.c:
 Dolphin/vi/VISetNextFrameBuffer.c:
 	.text       start:0x8018973C end:0x801897A8
 
+Dolphin/vi/VISetBlack.c:
+	.text       start:0x801897A8 end:0x80189824
+
 Dolphin/vi/VIGetRetraceCount.c:
 	.text       start:0x80189824 end:0x8018982C
 
