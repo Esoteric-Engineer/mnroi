@@ -1094,6 +1094,9 @@ Dolphin/gx/GXPerfStubs.c:
 Dolphin/exi/EXIClearInterrupts.c:
 	.text       start:0x8019457C end:0x801945C4
 
+Dolphin/exi/EXISetExiCallback.c:
+	.text       start:0x801945C4 end:0x80194640
+
 Dolphin/exi/EXIAttach.c:
 	.text       start:0x801948E8 end:0x801949F4
 

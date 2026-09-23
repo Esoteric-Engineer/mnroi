@@ -536,6 +536,7 @@ config.libs = [
         "exi",
         [
             Object(Matching, "Dolphin/exi/EXIClearInterrupts.c"),
+            Object(Matching, "Dolphin/exi/EXISetExiCallback.c"),
             Object(Matching, "Dolphin/exi/EXIAttach.c"),
             Object(Matching, "Dolphin/exi/EXIDeselect.c"),
             Object(Matching, "Dolphin/exi/EXIGetState.c"),
