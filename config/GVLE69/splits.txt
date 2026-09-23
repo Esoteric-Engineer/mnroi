@@ -1166,6 +1166,9 @@ Dolphin/exi/EXIDetach.c:
 Dolphin/exi/EXIDeselect.c:
 	.text       start:0x80194BDC end:0x80194CEC
 
+Dolphin/exi/EXIIntrruptHandler.c:
+	.text       start:0x80194CEC end:0x80194DB4
+
 Dolphin/exi/EXIGetState.c:
 	.text       start:0x80195440 end:0x80195458
 

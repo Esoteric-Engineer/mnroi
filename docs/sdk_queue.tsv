@@ -104,7 +104,7 @@ addr	size	name	library	confidence	notes	status
 0x80180DEC	0xC0	OSSetThreadPriority	os	exact	ac-decomp size 0xc0	matched
 0x80180EAC	0xAC	CheckThreadQueue	os	guess	ac-decomp size 0x9c	open
 0x801814F4	0xDC	EXIDetach	exi	guess	ac-decomp size 0xbc	open
-0x801815D0	0xC8	EXIIntrruptHandler	exi	exact	ac-decomp size 0xc8	open
+0x801815D0	0xC8	EXIIntrruptHandler	exi	exact	duplicate guess: the real EXIIntrruptHandler is 0x80194CEC (matched); this address is in the os/si range, re-identify	wrong-name
 0x80181698	0x70		exi	unidentified	size matches InitializeUART but that already exists at 0x80195B78	open
 0x80181764	0x2FC	CompleteTransfer	si	exact	ac-decomp size 0x2fc	open
 0x80181A60	0x344	SIInterruptHandler	si	exact	ac-decomp size 0x344	open
@@ -207,7 +207,7 @@ addr	size	name	library	confidence	notes	status
 0x801949F4	0xBC	EXIDetach	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194AB0	0x12C	EXISelect	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
 0x80194BDC	0x110	EXIDeselect	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
-0x80194CEC	0xC8	EXIIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
+0x80194CEC	0xC8	EXIIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194DB4	0x218	TCIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
 0x80194FCC	0xD0	EXTIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
 0x8019509C	0x1D4	EXIInit	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
