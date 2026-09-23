@@ -601,6 +601,7 @@ config.libs = [
             Object(Matching, "Dolphin/pad/PADSetSpec.c"),
             Object(Matching, "Dolphin/pad/SamplingHandler.c"),
             Object(Matching, "Dolphin/pad/PADSetSamplingCallback.c"),
+            Object(Matching, "Dolphin/pad/__PADDisableRecalibration.c"),
         ],
     ),
     DolphinLib(

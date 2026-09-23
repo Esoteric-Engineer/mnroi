@@ -633,6 +633,9 @@ Dolphin/pad/SamplingHandler.c:
 Dolphin/pad/PADSetSamplingCallback.c:
 	.text       start:0x8018B554 end:0x8018B5A8
 
+Dolphin/pad/__PADDisableRecalibration.c:
+	.text       start:0x8018B5A8 end:0x8018B624
+
 Dolphin/ai/AIRegisterDMACallback.c:
 	.text       start:0x8018B624 end:0x8018B668
 
