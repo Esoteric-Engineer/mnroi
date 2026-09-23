@@ -1142,6 +1142,9 @@ Dolphin/exi/InitializeUART.c:
 Dolphin/OdemuExi2/DBRead.c:
 	.text       start:0x8019606C end:0x801960F8
 
+Dolphin/OdemuExi2/DBQueryData.c:
+	.text       start:0x801960F8 end:0x80196194
+
 Dolphin/OdemuExi2/DBInitInterrupts.c:
 	.text       start:0x80196194 end:0x801961E8
 

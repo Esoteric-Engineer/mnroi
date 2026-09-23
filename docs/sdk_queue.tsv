@@ -221,7 +221,7 @@ addr	size	name	library	confidence	notes	status
 0x80195E08	0x4	DBOpen	odenotstub	guess	4-byte stub, ac-decomp size 0x4	open
 0x80195E0C	0x260	DBWrite	odenotstub	exact	ac-decomp size 0x260	open
 0x8019606C	0x8C	DBRead	odenotstub	exact	ac-decomp size 0x8c; actually OdemuExi2 DebuggerDriver.c (calls DBGRead fn_80196464), unit Dolphin/OdemuExi2/DBRead.c	matched
-0x801960F8	0x9C	DBQueryData	odenotstub	exact	ac-decomp size 0x9c	open
+0x801960F8	0x9C	DBQueryData	odenotstub	exact	ac-decomp size 0x9c	matched
 0x80196464	0xDC	DBGRead	odemuexi2	exact	ac-decomp size 0xdc	open
 0x80196540	0xAC	DBGReadMailbox	odemuexi2	exact	ac-decomp size 0xac	open
 0x801965EC	0x298	DBGEXIImm	odemuexi2	exact	ac-decomp size 0x298	open

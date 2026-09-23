@@ -554,6 +554,7 @@ config.libs = [
             Object(Matching, "Dolphin/OdemuExi2/DBGReadStatus.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBGWrite.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBRead.c"),
+            Object(Matching, "Dolphin/OdemuExi2/DBQueryData.c"),
         ],
     ),
     DolphinLib(
