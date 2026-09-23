@@ -576,6 +576,9 @@ Dolphin/dvd/cbForCancelSync.c:
 Dolphin/dvd/DVDGetCurrentDiskID.c:
 	.text       start:0x80186374 end:0x8018637C
 
+Dolphin/dvd/__DVDPrepareResetAsync.c:
+	.text       start:0x80186474 end:0x80186590
+
 Dolphin/dvd/fn_80186590.c:
 	.text       start:0x80186590 end:0x801865C8
 
