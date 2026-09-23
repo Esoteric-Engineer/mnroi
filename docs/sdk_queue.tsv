@@ -195,7 +195,7 @@ addr	size	name	library	confidence	notes	status
 0x80192B68	0x238		gx	unidentified		open
 0x80193E54	0xF4	SetExiInterruptMask	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
 0x80193F48	0x25C	EXIImm	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
-0x801941A4	0xA0	EXIImmEx	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
+0x801941A4	0xA0	EXIImmEx	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194244	0xEC	EXIDma	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
 0x80194330	0x24C	EXISync	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
 0x8019457C	0x48	EXIClearInterrupts	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
