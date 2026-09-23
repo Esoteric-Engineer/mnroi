@@ -114,6 +114,9 @@ Runtime.PPCEABI.H/strround.c:
 Runtime.PPCEABI.H/strrev.c:
 	.text       start:0x80173630 end:0x8017367C
 
+Runtime.PPCEABI.H/itoa.c:
+	.text       start:0x8017367C end:0x801736F8
+
 Runtime.PPCEABI.H/strtol.c:
 	.text       start:0x80177004 end:0x8017703C
 

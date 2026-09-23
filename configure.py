@@ -322,6 +322,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/fn_80172D78.c"),
             Object(Matching, "Runtime.PPCEABI.H/strround.c"),
             Object(Matching, "Runtime.PPCEABI.H/strrev.c"),
+            Object(Matching, "Runtime.PPCEABI.H/itoa.c"),
             Object(Matching, "Runtime.PPCEABI.H/strtol.c"),
             Object(Matching, "Runtime.PPCEABI.H/tolower.c"),
             Object(Matching, "Runtime.PPCEABI.H/isdigit.c"),
