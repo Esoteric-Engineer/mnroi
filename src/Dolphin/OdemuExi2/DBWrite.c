@@ -6,7 +6,7 @@ volatile u32 __EXIRegs[0x40] : 0xCC006800;
 
 extern BOOL OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(BOOL enabled);
-extern BOOL fn_801965EC(void* data, int size, u32 write);
+extern BOOL DBGEXIImm(void* data, int size, u32 write);
 extern BOOL DBGWrite(u32 param1, u32* data, int byte_size);
 
 extern u8 lbl_8066C558;
@@ -43,9 +43,9 @@ static inline BOOL DBGReadStatus(void* param_1)
     }
 
     value = 0x40000000;
-    error |= !fn_801965EC((u8*)&value, 2, 1);
+    error |= !DBGEXIImm((u8*)&value, 2, 1);
     error |= !DBGEXISync();
-    error |= !fn_801965EC(param_1, sizeof(param_1), 0);
+    error |= !DBGEXIImm(param_1, sizeof(param_1), 0);
     error |= !DBGEXISync();
     error |= !DBGEXIDeselect();
 
@@ -62,7 +62,7 @@ static inline BOOL DBGWriteMailbox(u32 param_1)
     }
 
     value = (param_1 & 0x1fffffff) | 0xc0000000;
-    error |= !fn_801965EC((u8*)&value, sizeof(value), 1);
+    error |= !DBGEXIImm((u8*)&value, sizeof(value), 1);
     error |= !DBGEXISync();
     error |= !DBGEXIDeselect();
 

@@ -1300,3 +1300,6 @@ Dolphin/OdemuExi2/DBGRead.c:
 
 Dolphin/OdemuExi2/DBGReadMailbox.c:
 	.text       start:0x80196540 end:0x801965EC
+
+Dolphin/OdemuExi2/DBGEXIImm.c:
+	.text       start:0x801965EC end:0x80196884

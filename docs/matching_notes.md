@@ -115,6 +115,8 @@ Smaller findings:
 
 - **Inlined static callee's locals supply the frame and the register order (`EXISync`, `0x80194330`):** writing EXI's `CompleteTransfer` by hand inside `EXISync` gave 98.2% (frame `-0x28` vs `-0x30`, `exi`/`regs` in r29/r31 instead of r31/r29). Moving the body into a `static inline void CompleteTransfer(s32 chan)` with its own locals (`exi`, `buf`, `data`, `i`, `len`) and calling it fixed both, 100% first try.
 
+- **`for (i = 0; i < n; ++i)` compiles to `cmpwi n,0` where the original has `li i,0` / `cmpw i,n`: check the type of `n`.** With `typedef int s32` the compiler folds the first test against the known zero start; with the SDK's `typedef long s32` on the parameter it emits the original's un-folded `cmpw` and matches (96.2% -> 100%). Both unrolled-by-8 loops in `DBGEXIImm` (`0x801965EC`) came out right with no other change.
+
 - **Inlining:** A function may contain the inlined body of a method from a not-yet-reconstructed header. A `static` helper with a single caller can be inlined with no separate `bl`, which is why an original may have no call where a reference decomp appears to have one.
 
 - **A hardware-register read where the original keeps `lis`/`addi 0x3000`/`lwz 0x24(r3)` (base add not folded into the displacement), plus `cmpwi` and a `b` to a shared `blr`: `#pragma peephole off`, and use a signed `int` for the flag.** The declare-at-address `__PIRegs` form is still right; peephole off only stops the displacement folding (`lwz 0x3024`). Matched `OSGetResetCode` (`0x8017EBB4`).

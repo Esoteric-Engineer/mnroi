@@ -224,7 +224,7 @@ addr	size	name	library	confidence	notes	status
 0x801960F8	0x9C	DBQueryData	odenotstub	exact	ac-decomp size 0x9c	matched
 0x80196464	0xDC	DBGRead	odemuexi2	exact	ac-decomp size 0xdc	matched
 0x80196540	0xAC	DBGReadMailbox	odemuexi2	exact	ac-decomp size 0xac	matched
-0x801965EC	0x298	DBGEXIImm	odemuexi2	exact	ac-decomp size 0x298	open
+0x801965EC	0x298	DBGEXIImm	odemuexi2	exact	Matched as Dolphin/OdemuExi2/DBGEXIImm.c (ac-decomp DBGEXIImm, DBGEXISync inlined); needs s32 = long	matched
 0x80196884	0x148		unknown	unidentified		open
 0x801969CC	0x98		unknown	unidentified		open
 0x80196A64	0xCC		unknown	unidentified		open

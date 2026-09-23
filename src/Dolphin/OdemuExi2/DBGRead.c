@@ -4,7 +4,7 @@ typedef int BOOL;
 
 volatile u32 __EXIRegs[0x40] : 0xCC006800;
 
-extern BOOL fn_801965EC(void* data, int size, u32 write);
+extern BOOL DBGEXIImm(void* data, int size, u32 write);
 
 static BOOL DBGEXISelect(u32 v)
 {
@@ -40,11 +40,11 @@ BOOL DBGRead(u32 param1, u32* data, int byte_size)
     }
 
     writeValue = (param1 << 8) & 0x1fffc00 | 0x20000000;
-    error = !fn_801965EC((u8*)&writeValue, sizeof(writeValue), 1);
+    error = !DBGEXIImm((u8*)&writeValue, sizeof(writeValue), 1);
     error |= !DBGEXISync();
 
     while (byte_size != 0) {
-        error |= !fn_801965EC((u8*)&readValue, sizeof(readValue), 0);
+        error |= !DBGEXIImm((u8*)&readValue, sizeof(readValue), 0);
         error |= !DBGEXISync();
 
         *dataPtr++ = readValue;
