@@ -671,6 +671,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSReport.c"),
             Object(Matching, "Dolphin/os/OSPanic.c"),
             Object(Matching, "Dolphin/os/WriteSramCallback.c"),
+            Object(Matching, "Dolphin/os/WriteSram.c"),
             Object(Matching, "Dolphin/os/OSLockSram.c"),
             Object(Matching, "Dolphin/os/OSUnlockSram.c"),
             Object(Matching, "Dolphin/os/__OSSyncSram.c"),
