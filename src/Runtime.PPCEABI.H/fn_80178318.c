@@ -17,7 +17,7 @@ typedef struct {
 } FileHandle;
 
 extern void __sread(void);
-extern void fn_80178C4C(void);
+extern void __swrite(void);
 extern void __sseek(void);
 extern void fn_80178D20(void);
 
@@ -26,12 +26,12 @@ asm void fn_80178318(FileHandle* stream, short a1, short a2, void* device)
     // clang-format off
     nofralloc
     lis     r9, __sread@ha
-    lis     r11, fn_80178C4C@ha
+    lis     r11, __swrite@ha
     lis     r10, __sseek@ha
     lis     r8, fn_80178D20@ha
     li      r0, 0
     addi    r9, r9, __sread@l
-    addi    r11, r11, fn_80178C4C@l
+    addi    r11, r11, __swrite@l
     addi    r10, r10, __sseek@l
     addi    r8, r8, fn_80178D20@l
     stw     r6, 92(r3)

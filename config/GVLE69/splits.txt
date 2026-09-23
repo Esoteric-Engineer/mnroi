@@ -171,6 +171,9 @@ Runtime.PPCEABI.H/fn_80178684.c:
 Runtime.PPCEABI.H/__sread.c:
 	.text       start:0x80178BE8 end:0x80178C4C
 
+Runtime.PPCEABI.H/__swrite.c:
+	.text       start:0x80178C4C end:0x80178CBC
+
 Runtime.PPCEABI.H/__sseek.c:
 	.text       start:0x80178CBC end:0x80178D20
 

@@ -64,7 +64,7 @@ addr	size	name	library	confidence	notes	status
 0x80178A90	0x80	_fwalk	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
 0x80178B10	0xD8	__smakebuf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
 0x80178BE8	0x64	__sread	libc	exact	Verified: old-Newlib __sread(fp,buf,n) -> _read_r(fp->_data,fp->_file,buf,n); GCC output, written as asm	matched
-0x80178C4C	0x70	__swrite	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
+0x80178C4C	0x70	__swrite	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80178CBC	0x64	__sseek	libc	exact	Matched as nofralloc asm (Newlib old-signature __sseek(fp, off, whence): _lseek_r(fp->_data, fp->_file, ...) = fn_80178DF0, sets/clears __SOFF 0x1000, stores _offset 0x58); Runtime.PPCEABI.H/__sseek.c	matched
 0x80179C30	0x20	__pure_virtual	libc	exact	Matched as asm: calls terminate (0x8017A5DC, split out of fn_8017A5CC); -8 frame is not MWCC output	matched
 0x80179C50	0x4E4	__udivdi3	libc	exact	CFTKK-Decomp size/order match (libgcc); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
