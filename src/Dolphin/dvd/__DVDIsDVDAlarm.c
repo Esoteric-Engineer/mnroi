@@ -1,10 +1,10 @@
 extern char lbl_8057D290[];
 extern char AlarmForTimeout[];
-extern char lbl_8057D3D8[];
+extern char AlarmForBreak[];
 
 int __DVDIsDVDAlarm(void* alarm)
 {
-    if (alarm == lbl_8057D3D8) {
+    if (alarm == AlarmForBreak) {
         return 1;
     }
     if (alarm == AlarmForTimeout) {

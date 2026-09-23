@@ -126,7 +126,7 @@ addr	size	name	library	confidence	notes	status
 0x80187064	0x70	AlarmHandlerForTimeout	dvd	known	symbol already named; just needs split + match	matched
 0x801870D4	0x110		dvd	unidentified		open
 0x801871E4	0x80		dvd	unidentified		open
-0x80187264	0x298	DVDLowRead	dvd	known	symbol already named; just needs split + match	open
+0x80187264	0x298	DVDLowRead	dvd	known	NonMatching 99.6% (Dolphin/dvd/DVDLowRead.c); see docs/matching_notes.md	stalled
 0x801875BC	0xA4		dvd	unidentified		open
 0x801876EC	0x8C	DVDLowRequestError	dvd	known	symbol already named; just needs split + match	matched
 0x80187778	0x9C		dvd	unidentified		open
