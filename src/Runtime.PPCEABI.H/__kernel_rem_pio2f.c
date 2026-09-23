@@ -9,7 +9,7 @@ extern float lbl_8066C360;
 extern const char lbl_80670230[4];
 extern const char lbl_8067023C[4];
 extern float scalbnf(float x, int n);
-extern float fn_8016FD74(float x);
+extern float floorf(float x);
 
 asm int __kernel_rem_pio2f(float* x, float* y, int e0, int nx, int prec, const int* ipio2)
 {
@@ -160,7 +160,7 @@ L_8016F6E8:
     lfs     f0, lbl_8066C354
     fmr     f31, f1
     fmuls   f1, f31, f0
-    bl      fn_8016FD74
+    bl      floorf
     lfs     f0, lbl_8066C358
     mr      r9, r11
     lis     r10, 0x4330

@@ -17,7 +17,7 @@ addr	size	name	library	confidence	notes	status
 0x8016E8E4	0x350	__ieee754_rem_pio2f	libc	exact	Verified: callers cosf/sinf/tanf, calls fabsf and 0x8016F4F0 (likely __kernel_rem_pio2f); matched as nofralloc asm in Runtime.PPCEABI.H/__ieee754_rem_pio2f.c	matched
 0x8016EC68	0x888		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016F4F0	0x884		libc	exact	Confirmed __kernel_rem_pio2f (kf_rem_pio2.c: init_jk/PIo2 tables, scalbnf + floorf calls); matched as nofralloc asm in Runtime.PPCEABI.H/__kernel_rem_pio2f.c	matched
-0x8016FD74	0xC8		libc	unidentified	Confirmed floorf by shape (exp<23 path, huge-value 1e30 test, -1.0 result); called by __kernel_rem_pio2f. Unclaimed, name it when matching	open
+0x8016FD74	0xC8	floorf	libc	exact	Confirmed floorf (sf_floor.c); matched as nofralloc asm in Runtime.PPCEABI.H/floorf.c. Also called from game code (0x802A10E8)	matched
 0x8016FE3C	0x154		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016FF90	0x50		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016FFE0	0xD8	sprintf	libc	exact	Newlib sprintf (_svfprintf_r(&f,fmt,ap) with an inline FILE); matched as nofralloc asm in Runtime.PPCEABI.H/sprintf.c	matched
