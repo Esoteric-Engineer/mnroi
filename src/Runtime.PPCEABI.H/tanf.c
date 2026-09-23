@@ -1,6 +1,6 @@
 extern float lbl_8066C17C;
 extern float fn_8016E6D0(float x, float y, int iy);
-extern int fn_8016E8E4(float x, float* y);
+extern int __ieee754_rem_pio2f(float x, float* y);
 
 asm float tanf(float x)
 {
@@ -27,7 +27,7 @@ L_gt:
     cmpw    r9, r0
     bgt     L_nan
     addi    r3, r1, 8
-    bl      fn_8016E8E4
+    bl      __ieee754_rem_pio2f
     clrlslwi r3, r3, 31, 1
     lfs     f1, 8(r1)
     lfs     f2, 0xc(r1)

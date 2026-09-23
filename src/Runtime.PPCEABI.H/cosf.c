@@ -1,7 +1,7 @@
 extern float lbl_8066C174;
 extern float __kernel_cosf(float x, float y);
 extern float __kernel_sinf(float x, float y, int iy);
-extern int fn_8016E8E4(float x, float* y);
+extern int __ieee754_rem_pio2f(float x, float* y);
 
 asm float cosf(float x)
 {
@@ -30,7 +30,7 @@ L_gt:
     b       L_end
 L_fin:
     addi    r3, r1, 8
-    bl      fn_8016E8E4
+    bl      __ieee754_rem_pio2f
     clrlwi  r3, r3, 30
     cmpwi   r3, 1
     beq     L_n1
