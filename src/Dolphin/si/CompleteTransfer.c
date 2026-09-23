@@ -26,7 +26,7 @@ extern u8 lbl_804D1B78[];
 #define SI(b) ((SIControl*)((b) + 0x44))
 #define TYPE(b) ((u32*)((b) + 0x58))
 
-extern s64 lbl_8057D150[4]; // XferTime
+extern s64 XferTime[4];
 extern s64 TypeTime[4];
 
 static inline void SIClearTCInterrupt(void) {
@@ -50,7 +50,7 @@ u32 CompleteTransfer(void) {
     SIClearTCInterrupt();
 
     if (SI(b)->chan != -1) {
-        lbl_8057D150[SI(b)->chan] = __OSGetSystemTime();
+        XferTime[SI(b)->chan] = __OSGetSystemTime();
         input = SI(b)->input;
         rLen = SI(b)->inputBytes / sizeof(u32);
         for (i = 0; i < rLen; i++) {

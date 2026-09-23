@@ -5,7 +5,7 @@ extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern BOOL SIEnablePollingInterrupt(BOOL enable);
 
-extern __OSInterruptHandler lbl_8057D1B0[4]; // RDSTHandler, start of a larger unclaimed .bss object
+extern __OSInterruptHandler RDSTHandler[4];
 
 BOOL SIRegisterPollingHandler(__OSInterruptHandler handler) {
     BOOL enabled;
@@ -13,15 +13,15 @@ BOOL SIRegisterPollingHandler(__OSInterruptHandler handler) {
 
     enabled = OSDisableInterrupts();
     for (i = 0; i < 4; i++) {
-        if (lbl_8057D1B0[i] == handler) {
+        if (RDSTHandler[i] == handler) {
             OSRestoreInterrupts(enabled);
             return 1;
         }
     }
 
     for (i = 0; i < 4; i++) {
-        if (lbl_8057D1B0[i] == 0) {
-            lbl_8057D1B0[i] = handler;
+        if (RDSTHandler[i] == 0) {
+            RDSTHandler[i] = handler;
             SIEnablePollingInterrupt(1);
             OSRestoreInterrupts(enabled);
             return 1;

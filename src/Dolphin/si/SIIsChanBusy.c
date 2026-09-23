@@ -14,8 +14,8 @@ typedef struct SIPacket {
 } SIPacket;
 
 extern SIControl Si;
-extern SIPacket lbl_8057D010[4];
+extern SIPacket Packet[4];
 
 BOOL SIIsChanBusy(long chan) {
-    return lbl_8057D010[chan].chan != -1 || Si.chan == chan;
+    return Packet[chan].chan != -1 || Si.chan == chan;
 }

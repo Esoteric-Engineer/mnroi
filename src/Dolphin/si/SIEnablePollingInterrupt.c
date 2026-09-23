@@ -11,10 +11,10 @@ volatile u32 __SIRegs[0x100] : 0xCC006400;
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 
-extern unsigned char lbl_8057D010[]; // .bss base; InputBufferVcount[4] is at +0x1E0
+extern unsigned char Packet[]; // .bss base; InputBufferVcount[4] is at +0x1E0
 
 BOOL SIEnablePollingInterrupt(BOOL enable) {
-    unsigned char* base = lbl_8057D010;
+    unsigned char* base = Packet;
     BOOL enabled;
     BOOL rc;
     u32 reg;

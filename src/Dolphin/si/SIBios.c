@@ -282,7 +282,7 @@ unsigned int SIDisablePolling(unsigned int poll)
     return poll;
 }
 
-extern unsigned char lbl_8057D010[]; // shared static blob; InputBufferValid/InputBuffer live at offsets +432/+448 within it
+extern unsigned char Packet[]; // shared static blob; InputBufferValid/InputBuffer live at offsets +432/+448 within it
 
 // Inlines SIGetStatus's own body (interrupt guard included).
 // InputBufferValid/InputBuffer areaddressed via one shared base register with large literal displacements.
@@ -292,11 +292,11 @@ asm int SIGetResponseRaw(int chan)
     // clang-format off
     nofralloc
     mflr    r0
-    lis     r4, lbl_8057D010@ha
+    lis     r4, Packet@ha
     stw     r0, 4(r1)
     stwu    r1, -40(r1)
     stw     r31, 36(r1)
-    addi    r31, r4, lbl_8057D010@l
+    addi    r31, r4, Packet@l
     stw     r30, 32(r1)
     addi    r30, r3, 0
     stw     r29, 28(r1)
@@ -356,13 +356,13 @@ asm int SIGetResponse(int chan, void* data)
     // clang-format off
     nofralloc
     mflr    r0
-    lis     r5, lbl_8057D010@ha
+    lis     r5, Packet@ha
     stw     r0, 4(r1)
     stwu    r1, -40(r1)
     stmw    r27, 20(r1)
     addi    r29, r3, 0
     addi    r30, r4, 0
-    addi    r28, r5, lbl_8057D010@l
+    addi    r28, r5, Packet@l
     bl      OSDisableInterrupts
     addi    r31, r3, 0
     addi    r3, r29, 0
@@ -409,7 +409,7 @@ L80182648:
     // clang-format on
 }
 
-extern unsigned char lbl_8057D090[]; // Alarm[4] (OSAlarm, sizeof 0x28), exactly fills this blob
+extern unsigned char Alarm[]; // Alarm[4] (OSAlarm, sizeof 0x28), exactly fills this blob
 
 // chan = alarm - Alarm (pointer difference / sizeof(OSAlarm), via magic-constant division), then dispatches Packet[chan] to __SITransfer if still pending.
 // `context` is unused, matching the original. Same shared-base-register shape as SIGetResponseRaw, transliterated directly.
@@ -418,9 +418,9 @@ asm void AlarmHandler(void* alarm, void* context)
     // clang-format off
     nofralloc
     mflr    r0
-    lis     r4, lbl_8057D090@ha
+    lis     r4, Alarm@ha
     stw     r0, 4(r1)
-    addi    r0, r4, lbl_8057D090@l
+    addi    r0, r4, Alarm@l
     lis     r4, 26214
     subf    r0, r0, r3
     stwu    r1, -32(r1)
@@ -430,9 +430,9 @@ asm void AlarmHandler(void* alarm, void* context)
     srawi   r0, r0, 4
     srwi    r3, r0, 31
     add     r0, r0, r3
-    lis     r3, lbl_8057D010@ha
+    lis     r3, Packet@ha
     slwi    r4, r0, 5
-    addi    r0, r3, lbl_8057D010@l
+    addi    r0, r3, Packet@l
     add     r31, r0, r4
     lwz     r3, 0(r31)
     cmpwi   r3, -1
@@ -468,8 +468,8 @@ asm int SITransfer(long chan, void* output, unsigned int outputBytes, void* inpu
     stwu    r1, -96(r1)
     stmw    r19, 44(r1)
     addi    r24, r3, 0
-    lis     r3, lbl_8057D010@ha
-    addi    r23, r3, lbl_8057D010@l
+    lis     r3, Packet@ha
+    addi    r23, r3, Packet@l
     slwi    r0, r24, 5
     addi    r25, r4, 0
     addi    r26, r5, 0
@@ -583,9 +583,9 @@ asm void GetTypeCallback(int chan, unsigned int error, void* context)
     addi    r0, r3, Type@l
     slwi    r29, r27, 2
     add     r30, r0, r29
-    lis     r3, lbl_8057D010@ha
+    lis     r3, Packet@ha
     addi    r26, r4, 0
-    addi    r31, r3, lbl_8057D010@l
+    addi    r31, r3, Packet@l
     lwz     r0, 0(r30)
     rlwinm  r0, r0, 0, 25, 23
     stw     r0, 0(r30)
@@ -888,7 +888,7 @@ L80182CA8:
     // clang-format on
 }
 
-extern unsigned char lbl_8057D170[]; // TypeCallback[4][4], own dtk-detected .bss symbol
+extern unsigned char TypeCallback[]; // TypeCallback[4][4], own dtk-detected .bss symbol
 
 // Calls SIGetType(chan) first; if the result is still busy (Type[chan] & SI_ERROR_BUSY), registers `callback` in the first free (or matching) slot of TypeCallback[chan][0..3], otherwise invokes `callback(chan, type)` immediately via mtlr/blrl.
 // Written as asm: the 4-iteration registration loop is fully unrolled into four straight-line copies, including one unreachable trailing `b` at L80182DB4 (dead code from the unrolled tail).
@@ -917,9 +917,9 @@ asm unsigned int SIGetTypeAsync(int chan, void* callback)
     addi    r29, r3, 0
     rlwinm. r0, r0, 0, 24, 24
     beq     L80182DB8
-    lis     r3, lbl_8057D170@ha
+    lis     r3, TypeCallback@ha
     slwi    r4, r28, 4
-    addi    r0, r3, lbl_8057D170@l
+    addi    r0, r3, TypeCallback@l
     add     r4, r0, r4
     lwz     r0, 0(r4)
     li      r5, 0
