@@ -1,4 +1,4 @@
-extern unsigned long fn_8017AA48(void);
+extern unsigned long OSGetConsoleType(void);
 
 extern unsigned long lbl_8066F4B0;
 extern unsigned long lbl_8066F4B4;
@@ -11,7 +11,7 @@ int InitializeUART(void)
         return 0;
     }
 
-    if ((fn_8017AA48() & 0x10000000) == 0) {
+    if ((OSGetConsoleType() & 0x10000000) == 0) {
         lbl_8066F4B8 = 0;
         return 2;
     }

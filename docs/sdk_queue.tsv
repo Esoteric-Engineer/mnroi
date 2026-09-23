@@ -194,10 +194,10 @@ addr	size	name	library	confidence	notes	status
 0x801924C4	0x80		gx	unidentified		open
 0x80192B68	0x238		gx	unidentified		open
 0x80193E54	0xF4	SetExiInterruptMask	exi	exact	matched in Dolphin/exi/SetExiInterruptMask.c (100%, main.dol OK); needs #pragma scheduling off; static in the original, global here because EXISetExiCallback/EXIUnlock are separate units	matched
-0x80193F48	0x25C	EXIImm	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
+0x80193F48	0x25C	EXIImm	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x801941A4	0xA0	EXIImmEx	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194244	0xEC	EXIDma	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
-0x80194330	0x24C	EXISync	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
+0x80194330	0x24C	EXISync	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x8019457C	0x48	EXIClearInterrupts	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x801945C4	0x7C	EXISetExiCallback	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80194640	0x174	__EXIProbe	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched

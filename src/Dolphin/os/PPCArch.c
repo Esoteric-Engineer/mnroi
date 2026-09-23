@@ -313,7 +313,7 @@ scalar_init:
     // clang-format on
 }
 
-u32 fn_8017AA48(void)
+u32 OSGetConsoleType(void)
 {
     u32* p = lbl_8066F1D0;
     if (p == 0 || p[11] == 0) {

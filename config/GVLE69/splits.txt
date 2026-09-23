@@ -1205,11 +1205,17 @@ Dolphin/gx/GXPerfStubs.c:
 Dolphin/exi/SetExiInterruptMask.c:
 	.text       start:0x80193E54 end:0x80193F48
 
+Dolphin/exi/EXIImm.c:
+	.text       start:0x80193F48 end:0x801941A4
+
 Dolphin/exi/EXIImmEx.c:
 	.text       start:0x801941A4 end:0x80194244
 
 Dolphin/exi/EXIDma.c:
 	.text       start:0x80194244 end:0x80194330
+
+Dolphin/exi/EXISync.c:
+	.text       start:0x80194330 end:0x8019457C
 
 Dolphin/exi/EXIClearInterrupts.c:
 	.text       start:0x8019457C end:0x801945C4
