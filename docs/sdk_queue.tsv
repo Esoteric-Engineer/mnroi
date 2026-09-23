@@ -72,7 +72,7 @@ addr	size	name	library	confidence	notes	status
 0x8017AAAC	0x4E0		os	unidentified		open
 0x8017AF8C	0x280		os	unidentified		open
 0x8017C400	0x128	__OSSaveFPUContext	os	known	symbol already named; just needs split + match	matched
-0x8017CF40	0x2E8	__OSUnhandledException	os	known	symbol already named; just needs split + match	open
+0x8017CF40	0x2E8	__OSUnhandledException	os	known	symbol already named; just needs split + match	matched
 0x8017D228	0x188		os	unidentified		open
 0x8017D568	0x484		os	unidentified		open
 0x8017D9EC	0x19C		os	unidentified		open

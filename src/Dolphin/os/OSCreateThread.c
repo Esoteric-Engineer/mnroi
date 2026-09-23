@@ -57,7 +57,7 @@ struct OSFpuInfo {
 };
 
 extern struct OSFpuInfo lbl_8057C570;
-extern u32 lbl_8066C3D0;
+extern u32 __OSFpscrEnableBits;
 
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
@@ -111,7 +111,7 @@ int fn_8018037C(OSThread* thread, void* (*func)(void*), void* param, void* stack
     if (lbl_8057C570.enabled != 0) {
         thread->context.srr1 |= 0x900;
         thread->context.state |= 1;
-        thread->context.fpscr = (lbl_8066C3D0 & 0xF8) | 4;
+        thread->context.fpscr = (__OSFpscrEnableBits & 0xF8) | 4;
         for (i = 0; i < 32; i++) {
             thread->context.fpr[i] = (u64)-1;
             thread->context.psf[i] = (u64)-1;

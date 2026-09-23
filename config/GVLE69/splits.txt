@@ -340,11 +340,10 @@ Dolphin/os/OSReport.c:
 	.text       start:0x8017CB7C end:0x8017CBFC
 
 Dolphin/os/OSPanic.c:
-	.text       start:0x8017CBFC end:0x8017CD28
-	.data       start:0x804D0EF8 end:0x804D0F54
-
-Dolphin/os/OSSetErrorHandler.c:
-	.text       start:0x8017CD28 end:0x8017CF40
+	.text       start:0x8017CBFC end:0x8017D228
+	.data       start:0x804D0EF8 end:0x804D1214
+	.bss        start:0x8057C570 end:0x8057C5B4
+	.sdata      start:0x8066C3D0 end:0x8066C3D8
 
 Dolphin/os/fn_8017D3B0.c:
 	.text       start:0x8017D3B0 end:0x8017D3D8
