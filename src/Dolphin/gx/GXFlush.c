@@ -8,7 +8,7 @@ typedef struct {
 
 extern __GXDataStruct* __GXData;
 
-extern void fn_8018D3C0(void);
+extern void __GXSetDirtyState(void);
 extern void fn_8017A838(void);
 
 volatile u32 GXWGFifo : 0xCC008000;
@@ -16,7 +16,7 @@ volatile u32 GXWGFifo : 0xCC008000;
 void GXFlush(void)
 {
     if (__GXData->dirtyState) {
-        fn_8018D3C0();
+        __GXSetDirtyState();
     }
     GXWGFifo = 0;
     GXWGFifo = 0;

@@ -713,6 +713,9 @@ Dolphin/gx/GXGetVtxAttrFmt.c:
 Dolphin/gx/GXSetNumTexGens.c:
 	.text       start:0x8018D384 end:0x8018D3C0
 
+Dolphin/gx/__GXSetDirtyState.c:
+	.text       start:0x8018D3C0 end:0x8018D440
+
 Dolphin/gx/GXSetLineWidth.c:
 	.text       start:0x8018D598 end:0x8018D5D8
 
