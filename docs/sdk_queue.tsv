@@ -90,7 +90,7 @@ addr	size	name	library	confidence	notes	status
 0x8017F2E4	0x33C	UnlockSram	os	guess	ac-decomp size 0x308	open
 0x8017F678	0x124		os	unidentified		open
 0x8017F79C	0x80	OSGetSoundMode	os	exact	ac-decomp size 0x80	matched
-0x8017F81C	0xA4	OSSetSoundMode	os	exact	ac-decomp size 0xa4	open
+0x8017F81C	0xA4	OSSetSoundMode	os	exact	ac-decomp size 0xa4	matched
 0x8017F8C0	0x6C	OSGetProgressiveMode	os	guess	ac-decomp size 0x70	open
 0x8017F92C	0x84	OSSetProgressiveMode	os	guess	ac-decomp size 0xa4	open
 0x8017F9B0	0xAC	__OSSetBootMode	os	guess	ac-decomp size 0xa4	open
