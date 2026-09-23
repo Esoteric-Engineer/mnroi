@@ -212,7 +212,7 @@ addr	size	name	library	confidence	notes	status
 0x80194FCC	0xD0	EXTIntrruptHandler	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x8019509C	0x1D4	EXIInit	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
 0x80195270	0xF4	EXILock	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
-0x80195364	0xDC	EXIUnlock	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	open
+0x80195364	0xDC	EXIUnlock	exi	exact	matched in Dolphin/exi/EXIUnlock.c (100%, main.dol OK); calls fn_80193E54 (SetExiInterruptMask) and fn_8017232C (memmove)	matched
 0x80195480	0x3B0	EXIGetID	exi	guess	ac-decomp size 0x37c vs 0x3b0; follows UnlockedHandler like ac-decomp	open
 0x80195830	0x18C		exi	unidentified		open
 0x801959BC	0x1BC		exi	unidentified		open

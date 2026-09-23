@@ -2,7 +2,7 @@ typedef int BOOL;
 
 extern BOOL fn_80195270(long chan, unsigned long dev, void* callback);
 extern BOOL fn_80194AB0(long chan, unsigned long dev, unsigned long freq);
-extern void fn_80195364(long chan);
+extern void EXIUnlock(long chan);
 extern BOOL fn_80193F48(long chan, void* buf, long len, unsigned long type, void* callback);
 extern BOOL fn_80194330(long chan);
 extern BOOL EXIImmEx(long chan, void* buf, long len, unsigned long type);
@@ -19,7 +19,7 @@ BOOL WriteSram(void* buffer, unsigned long offset, unsigned long size)
     }
 
     if (fn_80194AB0(0, 1, 3) == 0) {
-        fn_80195364(0);
+        EXIUnlock(0);
         return 0;
     }
 
@@ -29,6 +29,6 @@ BOOL WriteSram(void* buffer, unsigned long offset, unsigned long size)
     err |= !fn_80194330(0);
     err |= !EXIImmEx(0, buffer, size, 1);
     err |= !EXIDeselect(0);
-    fn_80195364(0);
+    EXIUnlock(0);
     return !err;
 }
