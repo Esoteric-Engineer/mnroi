@@ -227,6 +227,8 @@ dtk renames the referenced `lbl_XXXXXXXX` bss symbol to `<Name>` (`scope:local`)
 
 ac-decomp's version is marked nonmatching but gets 100% here as-is, including the `u8 errFlag = 0;` local and the dead `if (... + 0x7FAC0000U != 0x4348) {}` / `reg16 != 42069;` statements. Those dead statements keep `reg16` live (`clrlwi r5`) and add the 8 bytes of frame; without them it stalls at ~92-96%. `__DSPRegs` is `volatile u16 __DSPRegs[0x20] : 0xCC005000;`. The `DSPInitCode` data symbol needed `scope:global` in `symbols.txt` to be referenced by its real name.
 
+- **Pooled `.bss` owned by another unit: declare it as one extern struct plus a local base pointer.** `__DVDInterruptHandler` (`Dolphin/dvd/__DVDInterruptHandler.c`) addresses `CommandList`/`AlarmForTimeout`/`Prev`/`Curr` (defined in `DVDLowRead.c`) off one saved register (`lis`+`addi r30`, hoisted to the prologue). Separate externs give a `lis`/`addi` per symbol (84%). Mirroring the layout in a `DVDLowBss` struct, `extern DVDLowBss CommandList;` (the first symbol, so relocs stay `CommandList@ha/@l`), plus `DVDLowBss* bss = &CommandList;` as a local declared last, gets the hoisted base and the extra `stmw r27`. Pass `bss` into the inlined `ProcessNextCommand` too, or it re-materializes the address (96.8% -> 100%). No need to merge the TUs. The `(void)` trick from `DVDLowRead` only fixes pool order for *defined* symbols.
+
 ## Confirmed non-matches
 
 Don't re-guess these.
