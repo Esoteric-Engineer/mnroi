@@ -25,7 +25,7 @@ volatile u32 __EXIRegs[0x40] : 0xCC006800;
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
 extern u32 __OSUnmaskInterrupts(u32 mask);
-extern int fn_80194640(s32 chan);
+extern int __EXIProbe(s32 chan);
 
 #pragma scheduling off
 
@@ -56,7 +56,7 @@ int EXIDeselect(s32 chan)
     }
     OSRestoreInterrupts(enabled);
     if ((chan != 2) && (cpr & 0x80)) {
-        if (fn_80194640(chan) != 0) {
+        if (__EXIProbe(chan) != 0) {
             return 1;
         }
         return 0;

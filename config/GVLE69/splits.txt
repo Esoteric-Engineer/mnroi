@@ -1196,6 +1196,9 @@ Dolphin/exi/EXIClearInterrupts.c:
 Dolphin/exi/EXISetExiCallback.c:
 	.text       start:0x801945C4 end:0x80194640
 
+Dolphin/exi/__EXIProbe.c:
+	.text       start:0x80194640 end:0x801947B4
+
 Dolphin/exi/EXIProbe.c:
 	.text       start:0x801947B4 end:0x80194834
 

@@ -23,7 +23,7 @@ extern EXIControl lbl_8057DBE0[3];
 
 s32 __gUnknown800030C0[2] : 0x800030C0;
 
-extern int fn_80194640(s32 chan);
+extern int __EXIProbe(s32 chan);
 extern s32 fn_80195480(s32 chan, u32 dev, u32* id);
 
 #pragma scheduling off
@@ -34,7 +34,7 @@ static inline int EXIProbe(s32 chan)
     int rc;
     u32 id;
 
-    rc = fn_80194640(chan);
+    rc = __EXIProbe(chan);
     if (rc && !exi->idTime) {
         rc = fn_80195480(chan, 0, &id) ? 1 : 0;
     }

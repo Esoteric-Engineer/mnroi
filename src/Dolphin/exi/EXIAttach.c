@@ -24,7 +24,7 @@ extern EXIControl lbl_8057DBE0[3];
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
 extern u32 __OSUnmaskInterrupts(u32 mask);
-extern int fn_80194640(s32 chan);
+extern int __EXIProbe(s32 chan);
 extern s32 fn_80195480(s32 chan, u32 dev, u32* id);
 extern u32 EXIClearInterrupts(s32 chan, int exi, int tc, int ext);
 
@@ -36,7 +36,7 @@ static inline int EXIProbe(s32 chan)
     int rc;
     u32 id;
 
-    rc = fn_80194640(chan);
+    rc = __EXIProbe(chan);
     if (rc && !exi->idTime) {
         rc = fn_80195480(chan, 0, &id) ? 1 : 0;
     }
@@ -50,7 +50,7 @@ static int __EXIAttach(s32 chan, EXICallback extCallback)
 
     exi = &lbl_8057DBE0[chan];
     enabled = OSDisableInterrupts();
-    if ((exi->state & 8) || !fn_80194640(chan)) {
+    if ((exi->state & 8) || !__EXIProbe(chan)) {
         OSRestoreInterrupts(enabled);
         return 0;
     }
