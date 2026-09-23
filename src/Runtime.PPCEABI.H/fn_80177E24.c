@@ -7,7 +7,7 @@ extern void fn_80178374(void);
 extern void fn_80178224(void);
 extern void fn_80177E04(void);
 extern void fn_80178B10(void);
-extern void fn_80178A90(void);
+extern void _fwalk(void);
 extern unsigned int lbl_8066C3B0;
 
 asm int fn_80177E24(FileBuf* stream)
@@ -82,7 +82,7 @@ have_16:
     lis     r4, fn_80177E04@ha
     lwz     r3, 92(r31)
     addi    r4, r4, fn_80177E04@l
-    bl      fn_80178A90
+    bl      _fwalk
 call_ptr:
     lwz     r0, 16(r31)
     lwz     r11, 32(r31)

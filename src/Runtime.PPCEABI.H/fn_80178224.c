@@ -1,4 +1,4 @@
-extern void fn_80178A90(void);
+extern void _fwalk(void);
 extern void fn_80178374(void);
 extern unsigned int lbl_8066C3B0;
 
@@ -15,7 +15,7 @@ asm int fn_80178224(void* stream)
     lis     r4, fn_80178224@ha
     lwz     r3, lbl_8066C3B0
     addi    r4, r4, fn_80178224@l
-    bl      fn_80178A90
+    bl      _fwalk
     b       epilogue
 have_stream:
     lwz     r0, 92(r31)
