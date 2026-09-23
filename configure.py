@@ -295,6 +295,7 @@ config.libs = [
             Object(NonMatching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
             Object(Matching, "Runtime.PPCEABI.H/cosf.c"),
             Object(Matching, "Runtime.PPCEABI.H/fabsf.c"),
+            Object(Matching, "Runtime.PPCEABI.H/sinf.c"),
             Object(Matching, "Runtime.PPCEABI.H/tanf.c"),
             Object(Matching, "Runtime.PPCEABI.H/fabs.c"),
             Object(Matching, "Runtime.PPCEABI.H/copysignf.c"),
