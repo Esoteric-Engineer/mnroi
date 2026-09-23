@@ -542,6 +542,10 @@ Dolphin/dvd/DVDLowRequestError.c:
 Dolphin/dvd/DVDLowAudioBufferConfig.c:
 	.text       start:0x80187938 end:0x801879D4
 
+Dolphin/dvd/DVDLowReset.c:
+	.text       start:0x801879D4 end:0x80187A90
+	.sbss       start:0x8066F340 end:0x8066F34C
+
 Dolphin/dvd/DVDLowBreak.c:
 	.text       start:0x80187A90 end:0x80187AA4
 
