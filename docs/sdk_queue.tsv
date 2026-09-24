@@ -16,7 +16,7 @@ addr	size	name	library	confidence	notes	status
 0x8016E6D0	0x214		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016E8E4	0x350	__ieee754_rem_pio2f	libc	exact	Verified: callers cosf/sinf/tanf, calls fabsf and 0x8016F4F0 (likely __kernel_rem_pio2f); matched as nofralloc asm in Runtime.PPCEABI.H/__ieee754_rem_pio2f.c	matched
 0x8016EC68	0x888		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x8016F4F0	0x884		libc	exact	Confirmed __kernel_rem_pio2f (kf_rem_pio2.c: init_jk/PIo2 tables, scalbnf + floorf calls); matched as nofralloc asm in Runtime.PPCEABI.H/__kernel_rem_pio2f.c	matched
+0x8016F4F0	0x884	__kernel_rem_pio2f	libc	exact	Confirmed __kernel_rem_pio2f (kf_rem_pio2.c: init_jk/PIo2 tables, scalbnf + floorf calls); matched as nofralloc asm in Runtime.PPCEABI.H/__kernel_rem_pio2f.c	matched
 0x8016FD74	0xC8	floorf	libc	exact	Confirmed floorf (sf_floor.c); matched as nofralloc asm in Runtime.PPCEABI.H/floorf.c. Also called from game code (0x802A10E8)	matched
 0x8016FE3C	0x154		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016FF90	0x50		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
@@ -36,7 +36,7 @@ addr	size	name	library	confidence	notes	status
 0x801727EC	0x6C		libc	unidentified	Queue said strlen: wrong. In-place lowercase loop (ctype table lbl_8049C6A1 + tolower), strlwr-like, returns s	wrong-name
 0x80172858	0xAC	strnicmp	libc	exact	CFTKK named this strncat (size/order only): wrong. Bounded case-insensitive compare (old Newlib strncasecmp, tolower on both). Matched as nofralloc asm; C stalls at 78.5% with a -0x20 frame like stricmp	matched
 0x80172904	0xE0		libc	unidentified	Looks like strncmp (n==0 -> 0, word-compare fast path when both 4-aligned); verify against Newlib strncmp before naming	open
-0x801729E4	0xCC	strncpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	verified against Newlib strncpy (word loop + byte loop + zero-pad); matched as nofralloc asm in Runtime.PPCEABI.H/strncpy.c	matched
+0x801729E4	0xCC	strncpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL; verified against Newlib strncpy (word loop + byte loop + zero-pad); matched as nofralloc asm in Runtime.PPCEABI.H/strncpy.c	matched
 0x80172CEC	0x8C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80172DA0	0x258		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80172FF8	0x354		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open

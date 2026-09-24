@@ -2,7 +2,7 @@
 """Scout the unidentified SDK functions and maintain docs/sdk_queue.tsv.
 
 Usage (from repo root):
-    python3 tools/sdk_scout.py queue            # refresh docs/sdk_queue.tsv (keeps curated rows)
+    python3 tools/sdk_scout.py queue            # refresh docs/sdk_queue.tsv (never overwrites hand-written notes)
     python3 tools/sdk_scout.py align [--all]    # print name proposals from ac-decomp
     python3 tools/sdk_scout.py hw [LO HI]       # which hardware blocks each function touches
     python3 tools/sdk_scout.py info ADDR        # callees, callers, hardware for one function
@@ -230,6 +230,17 @@ def cmd_align(args):
         print(f"{a:08X} -> {name} ({kind}, ac size {sz:#x}) [{lib_of(a)}]")
 
 
+NOTE_NAMED = "symbol already named; just needs split + match"
+NOTE_LIBC = ("Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, "
+             "code from upstream Newlib")
+AUTO_NOTE_RE = re.compile(r"^ac-decomp size 0x[0-9a-f]+$")
+
+
+def curated(note):
+    """True if a person wrote this note, i.e. it is neither empty nor one the queue command generates."""
+    return bool(note) and note not in (NOTE_NAMED, NOTE_LIBC) and not AUTO_NOTE_RE.match(note)
+
+
 def cmd_queue(args):
     ours_spans = load_splits(SPLITS)
     split = lambda a: any(s <= a < e for s, e, _ in ours_spans)
@@ -238,7 +249,10 @@ def cmd_queue(args):
     if os.path.exists(QUEUE):
         for line in open(QUEUE).read().splitlines()[1:]:
             c = line.split("\t")
-            if len(c) >= 7:
+            if len(c) > 7:                            # stray tab inside the notes: fold it back in
+                print(f"warning: {c[0]} has {len(c)} columns; merging the extras into notes", file=sys.stderr)
+                c = c[:5] + ["; ".join(x for x in c[5:-1] if x)] + [c[-1]]
+            if len(c) == 7:
                 old[int(c[0], 16)] = c
     rows = {}
     for a, c in old.items():
@@ -250,13 +264,12 @@ def cmd_queue(args):
         c[1] = f"0x{s:X}"
         c[3] = lib_of(a)
         if not ANON_RE.match(n):                      # already named in symbols.txt
-            if c[6] == "open" and c[4] != "known":
-                c[2], c[4], c[5] = n, "known", "symbol already named; just needs split + match"
-            else:
-                c[2] = n
-        elif c[4] == "unidentified":                  # only re-guess rows nobody curated
+            c[2] = n
+            if c[6] == "open" and c[4] != "known" and not curated(c[5]):
+                c[4], c[5] = "known", NOTE_NAMED
+        elif c[4] == "unidentified" and not curated(c[5]):  # only re-guess rows nobody curated
             if lib_of(a) == "libc":
-                c[5] = "Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib"
+                c[5] = NOTE_LIBC
             elif a in props:
                 name, kind, asz = props[a]
                 c[2], c[4], c[5] = name, kind, f"ac-decomp size {asz:#x}"
