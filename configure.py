@@ -323,6 +323,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/atof.c"),
             Object(Matching, "Runtime.PPCEABI.H/atoi.c"),
             Object(Matching, "Runtime.PPCEABI.H/bsearch.c"),
+            Object(Matching, "Runtime.PPCEABI.H/_mbtowc_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80171F8C.c"),
             Object(Matching, "Runtime.PPCEABI.H/free.c"),
             Object(Matching, "Runtime.PPCEABI.H/realloc.c"),
