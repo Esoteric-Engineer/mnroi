@@ -867,6 +867,12 @@ config.libs = [
         ],
     ),
     DolphinLib(
+        "ar",
+        [
+            Object(Matching, "Dolphin/ar/ARGetBaseAddress.c"),
+        ],
+    ),
+    DolphinLib(
         "arq",
         [
             Object(Matching, "Dolphin/arq/__ARQCallbackHack.c"),
