@@ -87,7 +87,7 @@ addr	size	name	library	confidence	notes	status
 0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298; matched (GameChoice mask is 0x1F here, not ac-decomp 0x3F)	matched
 0x8017EF78	0x60	WriteSramCallback	os	exact	ac-decomp size 0x60	matched
 0x8017EFD8	0x118	WriteSram	os	exact	ac-decomp size 0x118	matched
-0x8017F0F0	0x13C	__OSInitSram	os	known	Named by dtk-dev from OSInit; ac-decomp size 0x134	open
+0x8017F0F0	0x13C	__OSInitSram	os	known	Named by dtk-dev from OSInit; ac-decomp size 0x134; stalled 99.24%: one mr vs addi r3,r30,0, see docs/nonmatching.md	stalled
 0x8017F2E4	0x33C	UnlockSram	os	guess	ac-decomp size 0x308	open
 0x8017F678	0x124		os	unidentified		open
 0x8017F79C	0x80	OSGetSoundMode	os	exact	ac-decomp size 0x80	matched
