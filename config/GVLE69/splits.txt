@@ -291,6 +291,12 @@ Runtime.PPCEABI.H/__moddi3.c:
 Runtime.PPCEABI.H/__pure_virtual.c:
 	.text       start:0x80179C30 end:0x80179C50
 
+Runtime.PPCEABI.H/__udivdi3.c:
+	.text       start:0x80179C50 end:0x8017A134
+
+Runtime.PPCEABI.H/__umoddi3.c:
+	.text       start:0x8017A134 end:0x8017A5CC
+
 Dolphin/os/fn_8017A5CC.c:
 	.text       start:0x8017A5CC end:0x8017A620
 
