@@ -132,6 +132,9 @@ Runtime.PPCEABI.H/bsearch.c:
 Runtime.PPCEABI.H/_mbtowc_r.c:
 	.text       start:0x801712D4 end:0x80171600
 
+Runtime.PPCEABI.H/qsort.c:
+	.text       start:0x80171600 end:0x80171F8C
+
 Runtime.PPCEABI.H/fn_80171F8C.c:
 	.text       start:0x80171F8C end:0x80171FB0
 
