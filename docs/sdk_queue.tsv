@@ -304,7 +304,7 @@ addr	size	name	library	confidence	notes	status
 0x8040852C	0x2C	__AXSPBInit	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSPBInit size 0x2c	open
 0x80408558	0x4	__AXSPBQuit	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSPBQuit size 0x4	matched
 0x8040855C	0x94	__AXDepopVoice	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXDepopVoice size 0x94	open
-0x804085F0	0x8	__AXGetNumVoices	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetNumVoices size 0x8	open
+0x804085F0	0x8	__AXGetNumVoices	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetNumVoices size 0x8	matched
 0x804085F8	0x74C	__AXServiceVPB	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXServiceVPB size 0x74c	open
 0x80408D44	0x278	__AXSyncPBs	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSyncPBs size 0x278	open
 0x80408FBC	0xC	__AXGetPBs	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetPBs size 0xc	open

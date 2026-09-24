@@ -1684,6 +1684,9 @@ Dolphin/ax/__AXClQuit.c:
 Dolphin/ax/__AXSPBQuit.c:
 	.text       start:0x80408558 end:0x8040855C
 
+Dolphin/ax/__AXGetNumVoices.c:
+	.text       start:0x804085F0 end:0x804085F8
+
 Dolphin/ax/__AXVPBQuit.c:
 	.text       start:0x80409208 end:0x8040920C
 
