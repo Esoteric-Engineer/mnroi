@@ -83,7 +83,7 @@ addr	size	name	library	confidence	notes	status
 0x8017E534	0x80	Config48MB	os	known	Named by dtk-dev from OSInit (was lbl_8017E534, the unclaimed gap between Config24MB and RealMode); ac-decomp static asm in OSMemory.c; matched as asm in Dolphin/os/OSMemory.c (same shape as Config24MB, 48MB BAT values)	matched
 0x8017E5CC	0x118	__OSInitMemoryProtection	os	known	Starts at 0x8017E5CC (old fn_8017E5E0 began mid-prologue; skip_cfa end moved); named by dtk-dev from OSInit; ac-decomp size 0x120; matched with padding[0x30] (ac-decomp 0x28), peephole off	matched
 0x8017E9B4	0x200	OSResetSystem	os	exact	CFTKK-Decomp size 0x200. Callees agree: OSDisableScheduler, __OSLockSram/__OSUnlockSram, __OSStopAudioSystem, __PADDisableRecalibration, CallResetFunctions x4, KillThreads, __OSSyncSram, LCDisable, Reset, __OSReboot, 6x memset. Independent proof: renaming it made dtk-dev apply signatures/OSResetSystem.yml, which named __OSReboot (0x8017E6E4), @153 (.data 0x804D12B8) and bootThisDol (.sbss 0x8066F248) by itself	open
-0x8017EBEC	0xF4	__OSResetSWInterruptHandler	os	exact	ac-decomp size 0xf4; stalled 86.4%: frame -0x28 vs -0x20 and constant scheduling, see docs/nonmatching.md	stalled
+0x8017EBEC	0xF4	__OSResetSWInterruptHandler	os	exact	ac-decomp size 0xf4; stalled 86.5%: frame fixed by the (exception, context) params, constant scheduling remains, see docs/nonmatching.md	stalled
 0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298; matched (GameChoice mask is 0x1F here, not ac-decomp 0x3F)	matched
 0x8017EF78	0x60	WriteSramCallback	os	exact	ac-decomp size 0x60	matched
 0x8017EFD8	0x118	WriteSram	os	exact	ac-decomp size 0x118	matched
@@ -113,9 +113,9 @@ addr	size	name	library	confidence	notes	status
 0x80181E3C	0xCC	SIRegisterPollingHandler	si	exact	ac-decomp size 0xcc	matched
 0x80181F08	0xF4	SIUnregisterPollingHandler	si	exact	ac-decomp size 0xf4	matched
 0x80181FFC	0xB4	SIInit	si	known	Named by dtk-dev from OSInit; ac-decomp size 0xa4; matched in Dolphin/si/SIInit.c	matched
-0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270 (+0xC: game sets executing = &DummyCommandBlock in the motor-stopped case); 99.94%, frame -0x20 vs -0x28; see nonmatching.md	stalled
+0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270 (+0xC: game sets executing = &DummyCommandBlock in the motor-stopped case); matched with a state local for the switch (frame -0x28)	matched
 0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	matched
-0x8018637C	0xF8	DVDCheckDisk	dvd	exact	Confirmed: FatalErrorFlag/PausingFlag then executing state switch (jump table 0x804D227C) with DI status bit tests and ResumeFromHere; CFTKK-Decomp size 0xF8 (ac-decomp 0xE4 is the newer variant); blocked: jump table 0x804D227C is 4-mod-8, DVDCancelAsync (0x80186028) now claims .data 0x804D2248-0x804D227C; jump table 0x804D227C still 4-mod-8, needs DVDCheckDisk in the same unit as DVDCancelAsync or after it matches	open
+0x8018637C	0xF8	DVDCheckDisk	dvd	exact	Confirmed: FatalErrorFlag/PausingFlag then executing state switch (jump table 0x804D227C) with DI status bit tests and ResumeFromHere; CFTKK-Decomp size 0xF8 (ac-decomp 0xE4 is the newer variant); blocked: jump table 0x804D227C is 4-mod-8, DVDCancelAsync (0x80186028) now claims .data 0x804D2248-0x804D227C; jump table 0x804D227C still 4-mod-8, DVDCancelAsync is now Matching, so retry	open
 0x80186474	0x11C	__DVDPrepareResetAsync	dvd	exact	ac-decomp size 0x11c	matched
 0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	matched
 0x801868DC	0x7C	__DVDStoreErrorCode	dvd	known	symbol already named; just needs split + match	matched
@@ -145,7 +145,7 @@ addr	size	name	library	confidence	notes	status
 0x8018960C	0x130	VIFlush	vi	guess	ac-decomp size 0x11c	matched
 0x8018973C	0x6C	VISetNextFrameBuffer	vi	exact	ac-decomp size 0x6c	matched
 0x801897A8	0x7C	VISetBlack	vi	exact	ac-decomp size 0x7c	matched
-0x80189894	0x98	VIGetCurrentLine	vi	exact	NonMatching 99.82%: frame -0x10 vs -0x20, see docs/nonmatching.md	stalled
+0x80189894	0x98	VIGetCurrentLine	vi	exact	Matched: getCurrentHalfLine calls the SDK inline GetCurrentDisplayPosition(&hcount, &vcount), which supplies the -0x20 frame	matched
 0x8018992C	0x68	VIGetTvFormat	vi	known	code 99.4% (only jump-table symbol name differs); blocked: table @724 at 0x804D2C34 is 4-mod-8 and the unclaimed strings before it (0x804D2AE0, VIConfigure text) must be claimed first; retry after VIConfigure	stalled
 0x80189994	0x21C	__VIDisplayPositionToXY	vi	exact	CFTKK-Decomp size 0x21C, order: right before __VIGetCurrentPosition. Takes (hcount, vcount, s16* x, s16* y), branches on the HorVer mode and timing fields (equ, prb/psb) storing -1 for out-of-range; pure leaf. An earlier note called it GetCurrentDisplayPosition, but that is CFTKK 0x3C	open
 0x80189BB0	0x60	__VIGetCurrentPosition	vi	known	Was VIGetDTVStatus (size/order only, wrong). Retrace handler calls it with (s16 x, s16 y) before PositionCallback; body is the stable vcount/hcount read then __VIDisplayPositionToXY (0x80189994, 0x21C, unclaimed)	matched

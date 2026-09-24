@@ -20,19 +20,16 @@ void fn_801813F4(void)
     }
 }
 
-static inline void runList(void (**list)(void))
+inline static void __fini_cpp(void)
 {
-    void (**p)(void) = list;
-    while (*p != 0) {
-        (*p)();
-        p++;
+    void (**destructor)(void);
+    for (destructor = lbl_804DCD8C; *destructor; destructor++) {
+        (*destructor)();
     }
 }
 
-void fn_80181448(void)
+void fn_80181448(int status)
 {
-    void (**p)(void) = lbl_804DCD8C;
-    runList(p);
+    __fini_cpp();
     _ExitProcess();
-    (void)p;
 }

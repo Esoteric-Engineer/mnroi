@@ -12,7 +12,7 @@ extern OSTime lbl_8066F268;
 OSTime __OSGetSystemTime(void);
 void __OSMaskInterrupts(u32 mask);
 
-void __OSResetSWInterruptHandler(void)
+void __OSResetSWInterruptHandler(short exception, void* context)
 {
     void (*callback)(void);
     u32 ticks;

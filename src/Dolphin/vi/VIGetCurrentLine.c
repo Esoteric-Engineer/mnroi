@@ -13,7 +13,7 @@ extern VITiming* lbl_8066F3C0;
 extern BOOL OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(BOOL enabled);
 
-inline static u32 getCurrentHalfLine(void)
+inline static void GetCurrentDisplayPosition(u32* hct, u32* vct)
 {
     u32 hcount;
     u32 vcount0;
@@ -25,7 +25,17 @@ inline static u32 getCurrentHalfLine(void)
         hcount = __VIRegs[23] & 0x7FF;
         vcount = __VIRegs[22] & 0x7FF;
     } while (vcount0 != vcount);
-    return ((vcount - 1) * 2) + ((hcount - 1) / lbl_8066F3C0->hlw);
+    *hct = hcount;
+    *vct = vcount;
+}
+
+inline static u32 getCurrentHalfLine(void)
+{
+    u32 hcount;
+    u32 vcount;
+
+    GetCurrentDisplayPosition(&hcount, &vcount);
+    return ((vcount - 1) << 1) + ((hcount - 1) / lbl_8066F3C0->hlw);
 }
 
 u32 VIGetCurrentLine(void)

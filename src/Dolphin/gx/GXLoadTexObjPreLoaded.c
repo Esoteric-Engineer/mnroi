@@ -68,9 +68,18 @@ extern u8 GXTexImage2Ids[8];
 extern u8 GXTexImage3Ids[8];
 extern u8 GXTexTlutIds[8];
 
-void GXLoadTexObjPreLoaded(GXTexObj* t, GXTexRegion* r, GXTexMapID id)
+void GXLoadTexObjPreLoaded(GXTexObj* obj, GXTexRegion* region, GXTexMapID id)
 {
     GXTlutRegionInt* tlr;
+    // Unused in release builds, but MWCC still reserves a stack slot for each.
+    u32 m0;
+    u32 m1;
+    u32 img0;
+    u32 img1;
+    u32 img2;
+    u32 img3;
+    GXTexObj* t = obj;
+    GXTexRegion* r = region;
     __GXDataStruct* gx;
 
     SET_REG_FIELD(t->mode0, 8, 24, GXTexMode0Ids[id]);

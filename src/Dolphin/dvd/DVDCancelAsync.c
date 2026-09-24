@@ -24,10 +24,12 @@ void cbForStateMotorStopped(void);
 int DVDCancelAsync(DVDCommandBlock* block, void (*callback)(long, DVDCommandBlock*)) {
     void* old;
     BOOL enabled;
+    int state;
 
     enabled = OSDisableInterrupts();
 
-    switch (block->state) {
+    state = block->state;
+    switch (state) {
     case -1:
     case 0:
     case 10:
