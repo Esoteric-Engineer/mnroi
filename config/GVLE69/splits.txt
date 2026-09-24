@@ -1651,5 +1651,8 @@ Dolphin/OdemuExi2/DBGEXIImm.c:
 Dolphin/ar/ARGetBaseAddress.c:
 	.text       start:0x80404B00 end:0x80404B08
 
+Dolphin/ar/__ARGetInterruptStatus.c:
+	.text       start:0x80404BA0 end:0x80404BB0
+
 Dolphin/arq/__ARQCallbackHack.c:
 	.text       start:0x804064A4 end:0x804064A8

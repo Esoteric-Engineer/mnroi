@@ -870,6 +870,7 @@ config.libs = [
         "ar",
         [
             Object(Matching, "Dolphin/ar/ARGetBaseAddress.c"),
+            Object(Matching, "Dolphin/ar/__ARGetInterruptStatus.c"),
         ],
     ),
     DolphinLib(
