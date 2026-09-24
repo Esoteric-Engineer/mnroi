@@ -1659,3 +1659,6 @@ Dolphin/arq/__ARQCallbackHack.c:
 
 Dolphin/dsp/DSPCheckMailToDSP.c:
 	.text       start:0x8040962C end:0x8040963C
+
+Dolphin/dsp/DSPCheckMailFromDSP.c:
+	.text       start:0x8040963C end:0x8040964C
