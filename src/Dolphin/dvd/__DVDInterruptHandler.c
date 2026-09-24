@@ -32,7 +32,7 @@ extern volatile BOOL WaitingCoverClose;
 extern volatile BOOL lbl_8066F350;
 extern volatile OSTime LastReadFinished;
 extern volatile BOOL lbl_8066F370;
-extern volatile u32 NextCommandNumber_8066F374;
+extern volatile u32 NextCommandNumber;
 
 // DVDLowRead.c's pooled .bss (0x8057D348), addressed off one base register
 typedef struct {
@@ -59,14 +59,14 @@ extern void DVDLowSeek(u32 offset, DVDLowCallback callback);
 
 static inline BOOL ProcessNextCommand(DVDLowBss* bss)
 {
-    s32 n = NextCommandNumber_8066F374;
+    s32 n = NextCommandNumber;
 
     if (bss->CommandList[n].cmd == 1) {
-        ++NextCommandNumber_8066F374;
+        ++NextCommandNumber;
         Read(bss->CommandList[n].addr, bss->CommandList[n].length, bss->CommandList[n].offset, bss->CommandList[n].callback);
         return 1;
     } else if (bss->CommandList[n].cmd == 2) {
-        ++NextCommandNumber_8066F374;
+        ++NextCommandNumber;
         DVDLowSeek(bss->CommandList[n].offset, bss->CommandList[n].callback);
         return 1;
     }
@@ -150,7 +150,7 @@ void __DVDInterruptHandler(s32 interrupt, void* context)
         }
     } else {
         bss->CommandList[0].cmd = -1;
-        NextCommandNumber_8066F374 = 0;
+        NextCommandNumber = 0;
     }
 
     OSClearContext(exceptionContext);

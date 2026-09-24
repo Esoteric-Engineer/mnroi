@@ -33,7 +33,7 @@ extern DVDLowCallback Callback;
 extern volatile u32 WorkAroundType;
 extern u32 WorkAroundSeekLocation;
 extern volatile OSTime LastReadFinished;
-extern s32 NextCommandNumber_8066F374;
+extern s32 NextCommandNumber;
 
 #define OS_TIMER_CLOCK ((*(u32*)0x800000F8) / 4)
 #define OSMillisecondsToTicks(msec) ((OS_TIMER_CLOCK / 1000) * (msec))
@@ -78,7 +78,7 @@ static inline BOOL HitCache(DVDBuffer* cur, DVDBuffer* prev)
 static inline void DoJustRead(void* addr, u32 length, u32 offset, DVDLowCallback callback)
 {
     CommandList[0].cmd = -1;
-    NextCommandNumber_8066F374 = 0;
+    NextCommandNumber = 0;
     Read(addr, length, offset, callback);
 }
 
@@ -90,7 +90,7 @@ static inline void WaitBeforeRead(void* addr, u32 length, u32 offset, DVDLowCall
     CommandList[0].offset = offset;
     CommandList[0].callback = callback;
     CommandList[1].cmd = -1;
-    NextCommandNumber_8066F374 = 0;
+    NextCommandNumber = 0;
     OSCreateAlarm(AlarmForWA);
     OSSetAlarm(AlarmForWA, timeout, AlarmHandler_80186FE0);
 }
