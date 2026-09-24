@@ -1217,6 +1217,9 @@ Dolphin/gx/GXInit.c:
 	.bss        start:0x8057D5B0 end:0x8057DBE0
 	.sdata2     start:0x80670788 end:0x806707B0
 
+Dolphin/gx/GXCPInterruptHandler.c:
+	.text       start:0x80191810 end:0x80191944
+
 Dolphin/gx/GXInitFifoBase.c:
 	.text       start:0x80191944 end:0x801919B0
 

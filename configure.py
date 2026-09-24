@@ -511,6 +511,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/__GXDefaultTexRegionCallback.c"),
             Object(Matching, "Dolphin/gx/__GXDefaultTlutRegionCallback.c"),
             Object(Matching, "Dolphin/gx/__GXInitRevisionBits.c"),
+            Object(Matching, "Dolphin/gx/GXCPInterruptHandler.c"),
             Object(Matching, "Dolphin/gx/GXInitFifoBase.c"),
             Object(Matching, "Dolphin/gx/GXInitFifoPtrs.c"),
             Object(Matching, "Dolphin/gx/GXInitFifoLimits.c"),
