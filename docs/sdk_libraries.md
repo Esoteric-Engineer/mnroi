@@ -65,14 +65,19 @@ note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFata
   at 0x802420A8, 0x802CBFC4, 0x8042706C, 0x8042DB20, 0x80440490 (GCC frame-pointer game code), the
   inline GX FIFO helpers in game code, and the paired-single block 0x802DF3F0-0x802E013C (no
   reference match; probably engine math). Unresolved: 0x803FF3B0-0x80400544 and texPalette.
-- `sdk_scout.py` (`HI`) and `report-sdk-progress/sdk_remaining.py` (`--hi`) still only cover the first
-  cluster (up to 0x80196884). The second cluster needs a second range, 0x80400544-0x804114EC, not a
-  higher upper bound (see `docs/sdk_scout_findings.md`, "Upper bound").
+- `sdk_scout.py` scans both clusters (`RANGES`: 0x80169000-0x80196884 and 0x80400544-0x804114EC), but
+  only queues the second cluster's AR, ARQ, AX, DSP and CARD functions. The rest of it (libc, VM, OS,
+  MTX, GX display lists, texPalette) is labelled by `lib_of` and has no queue rows yet.
+  `report-sdk-progress/sdk_remaining.py` (`--hi`) still only covers the first cluster; run it a second
+  time with `--lo 0x80400544 --hi 0x804114EC` (see `docs/sdk_scout_findings.md`, "Upper bound").
 
 ## Work queue
 
-`docs/sdk_queue.tsv` lists every unsplit function in the range above with a library, a proposed
-name and a confidence. See the `decomp-next` skill for how it is used.
+`docs/sdk_queue.tsv` lists every unsplit function in the first cluster, plus the AR, ARQ, AX, DSP and CARD
+functions of the second cluster (0x804048CC-0x80411208, 188 rows, all `open`), with a library, a proposed
+name and a confidence. Second-cluster names and evidence come from `docs/sdk_scout_findings.md`; an
+`exact` row there needs an equal-size same-name function in CFTKK or ac-decomp (or, for the `*Init`
+functions, the `__XXVersion` pointer load), otherwise it is `guess`. See the `decomp-next` skill for how it is used.
 
 ## libc reference (research, 2026-09-21)
 

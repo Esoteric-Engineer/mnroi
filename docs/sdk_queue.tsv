@@ -234,3 +234,191 @@ addr	size	name	library	confidence	notes	status
 0x80196BF0	0x50		game	unidentified	Not SDK (game code, GCC-style C++): Sets a global current pointer (lbl_8066C560) and calls fn_80213828 when it changes; returns 1; 10 game callers	not-sdk
 0x80196C40	0xA4		game	unidentified	Not SDK (game code, GCC-style C++): Setter that clamps a float between lbl_8049CB44 and lbl_8049CB48, stores it at +0x2DC and calls the big update fn_80196CE4	not-sdk
 0x80196CE4	0x434		game	unidentified	Not SDK (game code, GCC-style C++): Large update routine of the same class (0x434): memset, many fn_8042DC3C (matrix/vector ops), fn_8042A7D8, fn_80404764, fn_80465540/80465600, fn_801B93D0	not-sdk
+0x804048CC	0x44	ARRegisterDMACallback	ar	exact	CFTKK size run of 5; equal size in CFTKK ARRegisterDMACallback size 0x44 and ac-decomp ARRegisterDMACallback size 0x44	open
+0x80404910	0x3C	ARGetDMAStatus	ar	exact	CFTKK size run of 5; equal size in CFTKK ARGetDMAStatus size 0x3c	open
+0x8040494C	0xF0	ARStartDMA	ar	exact	CFTKK size run of 5; equal size in CFTKK ARStartDMA size 0xf0 and ac-decomp ARStartDMA size 0xf0	open
+0x80404A3C	0xC4	ARInit	ar	exact	__ARVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK size run of 5	open
+0x80404B00	0x8	ARGetBaseAddress	ar	exact	li r3,0x4000; ARGetSize is stripped; equal size in CFTKK ARGetBaseAddress size 0x8 and ac-decomp ARGetBaseAddress size 0x8	open
+0x80404B08	0x78	__ARHandler	ar	exact	CFTKK size run of 10; equal size in CFTKK __ARHandler size 0x78 and ac-decomp __ARHandler size 0x78	open
+0x80404B80	0x20	__ARClearInterrupt	ar	exact	CFTKK size run of 10; equal size in CFTKK __ARClearInterrupt size 0x20	open
+0x80404BA0	0x10	__ARGetInterruptStatus	ar	exact	CFTKK size run of 10; equal size in CFTKK __ARGetInterruptStatus size 0x10	open
+0x80404BB0	0x17F4	__ARChecksize	ar	exact	CFTKK size run of 10; equal size in CFTKK __ARChecksize size 0x17f4	open
+0x804063A4	0x100	__ARQServiceQueueLo	arq	exact	CFTKK size run of 10; equal size in CFTKK __ARQServiceQueueLo size 0x100 and ac-decomp __ARQServiceQueueLo size 0x100	open
+0x804064A4	0x4	__ARQCallbackHack	arq	exact	CFTKK size run of 10; equal size in CFTKK __ARQCallbackHack size 0x4 and ac-decomp __ARQCallbackHack size 0x4	open
+0x804064A8	0xCC	__ARQInterruptServiceRoutine	arq	exact	CFTKK size run of 10; equal size in CFTKK __ARQInterruptServiceRoutine size 0xcc and ac-decomp __ARQInterruptServiceRoutine size 0xcc	open
+0x80406574	0x70	ARQInit	arq	exact	__ARQVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK size run of 10	open
+0x804065E4	0x15C	ARQPostRequest	arq	exact	CFTKK size run of 10; equal size in CFTKK ARQPostRequest size 0x15c and ac-decomp ARQPostRequest size 0x15c	open
+0x80406740	0xE8	ARQRemoveRequest	arq	guess	0xE8; unlinks one request pointer from both ARQ queues	open
+0x80406828	0x24	AXInit	ax	exact	CFTKK 0x24; wrapper before AXInitEx; equal size in CFTKK AXInit size 0x24	open
+0x8040684C	0x4C	AXInitEx	ax	exact	__AXVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK 0x4C; loads __AXVersion and calls OSRegisterVersion	open
+0x80406898	0x34	AXQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK AXQuit size 0x34	open
+0x804068CC	0x18	__AXGetStackHead	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetStackHead size 0x18	open
+0x804068E4	0x74	__AXServiceCallbackStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXServiceCallbackStack size 0x74	open
+0x80406958	0xB4	__AXAllocInit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAllocInit size 0xb4	open
+0x80406A0C	0xB4	__AXAllocQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAllocQuit size 0xb4	open
+0x80406AC0	0x20	__AXPushFreeStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXPushFreeStack size 0x20	open
+0x80406AE0	0x10	__AXPushCallbackStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXPushCallbackStack size 0x10	open
+0x80406AF0	0x1C	__AXPopCallbackStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXPopCallbackStack size 0x1c	open
+0x80406B0C	0x94	__AXRemoveFromStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXRemoveFromStack size 0x94	open
+0x80406BA0	0x80	AXFreeVoice	ax	exact	CFTKK size run of 33; equal size in CFTKK AXFreeVoice size 0x80	open
+0x80406C20	0x174	AXAcquireVoice	ax	exact	CFTKK size run of 33; equal size in CFTKK AXAcquireVoice size 0x174	open
+0x80406D94	0xE4	__AXAuxInit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAuxInit size 0xe4	open
+0x80406E78	0x10	__AXAuxQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAuxQuit size 0x10	open
+0x80406E88	0x34	__AXGetAuxAInput	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAInput size 0x34	open
+0x80406EBC	0x20	__AXGetAuxAInputDpl2	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAInputDpl2 size 0x20	open
+0x80406EDC	0x1C	__AXGetAuxAOutput	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutput size 0x1c	open
+0x80406EF8	0x20	__AXGetAuxAOutputDpl2R	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutputDpl2R size 0x20	open
+0x80406F18	0x20	__AXGetAuxAOutputDpl2Ls	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutputDpl2Ls size 0x20	open
+0x80406F38	0x20	__AXGetAuxAOutputDpl2Rs	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutputDpl2Rs size 0x20	open
+0x80406F58	0x34	__AXGetAuxBInput	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxBInput size 0x34	open
+0x80406F8C	0x1C	__AXGetAuxBOutput	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxBOutput size 0x1c	open
+0x80406FA8	0x1C	__AXGetAuxBForDPL2	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxBForDPL2 size 0x1c	open
+0x80406FC4	0x1C	__AXGetAuxBOutputDPL2	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxBOutputDPL2 size 0x1c	open
+0x80406FE0	0x23C	__AXProcessAux	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXProcessAux size 0x23c	open
+0x8040721C	0xC	AXRegisterAuxACallback	ax	exact	CFTKK size run of 33; equal size in CFTKK AXRegisterAuxACallback size 0xc	open
+0x80407228	0x8	__AXGetCommandListCycles	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetCommandListCycles size 0x8	open
+0x80407230	0x3C	__AXGetCommandListAddress	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetCommandListAddress size 0x3c	open
+0x8040726C	0x6B0	__AXNextFrame	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXNextFrame size 0x6b0	open
+0x8040791C	0x24	__AXClInit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXClInit size 0x24	open
+0x80407940	0x4	__AXClQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXClQuit size 0x4	open
+0x80407944	0x14	AXSetMode	ax	exact	CFTKK size run of 33; equal size in CFTKK AXSetMode size 0x14	open
+0x80407958	0x8	AXGetMode	ax	guess	0x8 getter after AXSetMode	open
+0x80407960	0x1B8	__AXOutNewFrame	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutNewFrame size 0x1b8	open
+0x80407B18	0xBC	__AXOutAiCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutAiCallback size 0xbc	open
+0x80407BD4	0xC	__AXDSPInitCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXDSPInitCallback size 0xc	open
+0x80407BE0	0x58	__AXDSPResumeCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXDSPResumeCallback size 0x58	open
+0x80407C38	0x2C	__AXDSPDoneCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXDSPDoneCallback size 0x2c	open
+0x80407C64	0xCC	__AXOutInitDSP	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutInitDSP size 0xcc	open
+0x80407D30	0x3A0	__AXOutInit	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutInit size 0x3a0	open
+0x804080D0	0x58	__AXOutQuit	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutQuit size 0x58	open
+0x80408128	0xC	__AXGetStudio	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetStudio size 0xc	open
+0x80408134	0x3F8	__AXPrintStudio	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXPrintStudio size 0x3f8	open
+0x8040852C	0x2C	__AXSPBInit	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSPBInit size 0x2c	open
+0x80408558	0x4	__AXSPBQuit	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSPBQuit size 0x4	open
+0x8040855C	0x94	__AXDepopVoice	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXDepopVoice size 0x94	open
+0x804085F0	0x8	__AXGetNumVoices	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetNumVoices size 0x8	open
+0x804085F8	0x74C	__AXServiceVPB	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXServiceVPB size 0x74c	open
+0x80408D44	0x278	__AXSyncPBs	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSyncPBs size 0x278	open
+0x80408FBC	0xC	__AXGetPBs	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetPBs size 0xc	open
+0x80408FC8	0x40	__AXSetPBDefault	ax	guess	CFTKK 0x44	open
+0x80409008	0x200	__AXVPBInit	ax	guess	CFTKK 0x204; called from AXInitEx, DCFlushRange	open
+0x80409208	0x4	__AXVPBQuit	ax	exact	CFTKK size run of 3; equal size in CFTKK __AXVPBQuit size 0x4	open
+0x8040920C	0xC4	AXSetVoiceSrcType	ax	exact	CFTKK size run of 3; equal size in CFTKK AXSetVoiceSrcType size 0xc4	open
+0x804092D0	0x5C	AXSetVoiceState	ax	exact	CFTKK size run of 3; equal size in CFTKK AXSetVoiceState size 0x5c	open
+0x8040932C	0x110	AXSetVoiceAddr	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceAddr size 0x110	open
+0x8040943C	0xA4	AXSetVoiceAdpcm	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceAdpcm size 0xa4	open
+0x804094E0	0x98	AXSetVoiceSrc	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceSrc size 0x98	open
+0x80409578	0x6C	AXSetVoiceAdpcmLoop	ax	exact	CFTKK size run of 3; equal size in CFTKK AXSetVoiceAdpcmLoop size 0x6c	open
+0x804095E4	0x48	__AXGetCurrentProfile	ax	exact	CFTKK 0x48; called by __AXOutNewFrame; equal size in CFTKK __AXGetCurrentProfile size 0x48	open
+0x8040962C	0x10	DSPCheckMailToDSP	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPCheckMailToDSP size 0x10 and ac-decomp DSPCheckMailToDSP size 0x10	open
+0x8040963C	0x10	DSPCheckMailFromDSP	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPCheckMailFromDSP size 0x10 and ac-decomp DSPCheckMailFromDSP size 0x10	open
+0x8040964C	0x18	DSPReadMailFromDSP	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPReadMailFromDSP size 0x18 and ac-decomp DSPReadMailFromDSP size 0x18	open
+0x80409664	0x14	DSPSendMailToDSP	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPSendMailToDSP size 0x14 and ac-decomp DSPSendMailToDSP size 0x14	open
+0x80409678	0xC4	DSPInit	dsp	exact	__DSPVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK size run of 23	open
+0x8040973C	0x8	DSPCheckInit	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPCheckInit size 0x8	open
+0x80409744	0x70	DSPAddTask	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPAddTask size 0x70	open
+0x804097B4	0x40	DSPCancelTask	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPCancelTask size 0x40	open
+0x804097F4	0xC8	DSPAssertTask	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPAssertTask size 0xc8	open
+0x804098BC	0x50	__DSP_debug_printf	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_debug_printf size 0x50	open
+0x8040990C	0x424	__DSPHandler	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSPHandler size 0x424	open
+0x80409D30	0x1A0	__DSP_exec_task	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_exec_task size 0x1a0	open
+0x80409ED0	0x18C	__DSP_boot_task	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_boot_task size 0x18c	open
+0x8040A05C	0xA0	__DSP_insert_task	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_insert_task size 0xa0	open
+0x8040A0FC	0x94	__DSP_remove_task	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_remove_task size 0x94	open
+0x8040A190	0x4	__CARDDefaultApiCallback	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDDefaultApiCallback size 0x4 and ac-decomp __CARDDefaultApiCallback size 0x4	open
+0x8040A194	0x34	__CARDSyncCallback	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDSyncCallback size 0x34 and ac-decomp __CARDSyncCallback size 0x34	open
+0x8040A1C8	0xD8	__CARDExtHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDExtHandler size 0xd8 and ac-decomp __CARDExtHandler size 0xd8	open
+0x8040A2A0	0x118	__CARDExiHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDExiHandler size 0x118 and ac-decomp __CARDExiHandler size 0x118	open
+0x8040A3B8	0xA8	__CARDTxHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDTxHandler size 0xa8 and ac-decomp __CARDTxHandler size 0xa8	open
+0x8040A460	0x84	__CARDUnlockedHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDUnlockedHandler size 0x84 and ac-decomp __CARDUnlockedHandler size 0x84	open
+0x8040A4E4	0xC0	__CARDEnableInterrupt	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDEnableInterrupt size 0xc0 and ac-decomp __CARDEnableInterrupt size 0xc0	open
+0x8040A5A4	0xF0	__CARDReadStatus	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDReadStatus size 0xf0 and ac-decomp __CARDReadStatus size 0xf0	open
+0x8040A694	0xAC	__CARDClearStatus	card	exact	CFTKK size run of 3; equal size in CFTKK __CARDClearStatus size 0xac and ac-decomp __CARDClearStatus size 0xac	open
+0x8040A740	0xA4	TimeoutHandler	card	exact	CFTKK size run of 3; equal size in CFTKK TimeoutHandler size 0xa4 and ac-decomp TimeoutHandler size 0xa4	open
+0x8040A7E4	0x22C	Retry	card	exact	ac 0x22C (CFTKK 0x2A0); equal size in ac-decomp Retry size 0x22c	open
+0x8040AA10	0x110	UnlockedCallback	card	exact	ac-decomp size run of 16; equal size in CFTKK UnlockedCallback size 0x110 and ac-decomp UnlockedCallback size 0x110	open
+0x8040AB20	0x1B4	__CARDStart	card	exact	ac 0x1B4; equal size in ac-decomp __CARDStart size 0x1b4	open
+0x8040ACD4	0x134	__CARDReadSegment	card	exact	ac-decomp size run of 16; equal size in CFTKK __CARDReadSegment size 0x134 and ac-decomp __CARDReadSegment size 0x134	open
+0x8040AE08	0x11C	__CARDWritePage	card	exact	ac 0x11C; equal size in ac-decomp __CARDWritePage size 0x11c	open
+0x8040AF24	0xE0	__CARDEraseSector	card	exact	ac 0xE0; equal size in ac-decomp __CARDEraseSector size 0xe0	open
+0x8040B004	0xAC	CARDInit	card	exact	__CARDVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK size run of 6	open
+0x8040B0B0	0x8	__CARDGetFontEncode	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDGetFontEncode size 0x8	open
+0x8040B0B8	0x38	__CARDSetDiskID	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDSetDiskID size 0x38 and ac-decomp __CARDSetDiskID size 0x38	open
+0x8040B0F0	0xB8	__CARDGetControlBlock	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDGetControlBlock size 0xb8 and ac-decomp __CARDGetControlBlock size 0xb8	open
+0x8040B1A8	0x64	__CARDPutControlBlock	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDPutControlBlock size 0x64 and ac-decomp __CARDPutControlBlock size 0x64	open
+0x8040B20C	0x150	CARDFreeBlocks	card	exact	CFTKK size run of 6; equal size in CFTKK CARDFreeBlocks size 0x150 and ac-decomp CARDFreeBlocks size 0x150	open
+0x8040B35C	0x84	CARDGetSectorSize	card	exact	ac 0x84; equal size in ac-decomp CARDGetSectorSize size 0x84	open
+0x8040B3E0	0x98	__CARDSync	card	exact	ac-decomp size run of 4; equal size in CFTKK __CARDSync size 0x98 and ac-decomp __CARDSync size 0x98	open
+0x8040B478	0x50	OnReset	card	exact	ac-decomp size run of 4; equal size in CFTKK OnReset size 0x50 and ac-decomp OnReset size 0x50	open
+0x8040B4C8	0x8	__CARDGetFatBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDGetFatBlock size 0x8 and ac-decomp __CARDGetFatBlock size 0x8	open
+0x8040B4D0	0xD4	WriteCallback	card	exact	CFTKK size run of 16; equal size in CFTKK WriteCallback size 0xd4 and ac-decomp WriteCallback size 0xd4; static, name repeats across CARD files (file-local name needed when splitting)	open
+0x8040B5A4	0xC8	EraseCallback	card	exact	CFTKK size run of 16; equal size in CFTKK EraseCallback size 0xc8 and ac-decomp EraseCallback size 0xc8; static, name repeats across CARD files (file-local name needed when splitting)	open
+0x8040B66C	0x118	__CARDAllocBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDAllocBlock size 0x118 and ac-decomp __CARDAllocBlock size 0x118	open
+0x8040B784	0x9C	__CARDFreeBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDFreeBlock size 0x9c and ac-decomp __CARDFreeBlock size 0x9c	open
+0x8040B820	0xAC	__CARDUpdateFatBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDUpdateFatBlock size 0xac and ac-decomp __CARDUpdateFatBlock size 0xac	open
+0x8040B8CC	0x8	__CARDGetDirBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDGetDirBlock size 0x8 and ac-decomp __CARDGetDirBlock size 0x8	open
+0x8040B8D4	0xD0	WriteCallback	card	exact	CFTKK size run of 16; equal size in CFTKK WriteCallback size 0xd0 and ac-decomp WriteCallback size 0xd0; static, name repeats across CARD files (file-local name needed when splitting)	open
+0x8040B9A4	0xC8	EraseCallback	card	exact	CFTKK size run of 16; equal size in CFTKK EraseCallback size 0xc8 and ac-decomp EraseCallback size 0xc8; static, name repeats across CARD files (file-local name needed when splitting)	open
+0x8040BA6C	0xC4	__CARDUpdateDir	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDUpdateDir size 0xc4 and ac-decomp __CARDUpdateDir size 0xc4	open
+0x8040BB30	0x1B0	__CARDCheckSum	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDCheckSum size 0x1b0 and ac-decomp __CARDCheckSum size 0x1b0	open
+0x8040BCE0	0x284	VerifyID	card	exact	CFTKK size run of 16; equal size in CFTKK VerifyID size 0x284 and ac-decomp VerifyID size 0x284	open
+0x8040BF64	0x240	VerifyDir	card	exact	CFTKK size run of 16; equal size in CFTKK VerifyDir size 0x240 and ac-decomp VerifyDir size 0x240	open
+0x8040C1A4	0x284	VerifyFAT	card	exact	CFTKK size run of 16; equal size in CFTKK VerifyFAT size 0x284 and ac-decomp VerifyFAT size 0x284	open
+0x8040C428	0x8C	__CARDVerify	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDVerify size 0x8c and ac-decomp __CARDVerify size 0x8c	open
+0x8040C4B4	0x590	CARDCheckExAsync	card	exact	CFTKK size run of 16; equal size in CFTKK CARDCheckExAsync size 0x590 and ac-decomp CARDCheckExAsync size 0x590	open
+0x8040CA44	0x54	CARDCheck	card	exact	ac 0x54; CARDCheckExAsync + __CARDSync; equal size in ac-decomp CARDCheck size 0x54	open
+0x8040CA98	0xCC	IsCard	card	exact	ac-decomp size run of 11; equal size in CFTKK IsCard size 0xcc and ac-decomp IsCard size 0xcc	open
+0x8040CB64	0x17C	CARDProbeEx	card	exact	ac-decomp size run of 11; equal size in CFTKK CARDProbeEx size 0x17c and ac-decomp CARDProbeEx size 0x17c	open
+0x8040CCE0	0x410	DoMount	card	exact	ac 0x410 (CFTKK 0x454); equal size in ac-decomp DoMount size 0x410	open
+0x8040D0F0	0x138	__CARDMountCallback	card	exact	ac-decomp size run of 11; equal size in CFTKK __CARDMountCallback size 0x138 and ac-decomp __CARDMountCallback size 0x138	open
+0x8040D228	0x1A0	CARDMountAsync	card	exact	ac-decomp size run of 11; equal size in CFTKK CARDMountAsync size 0x1a0 and ac-decomp CARDMountAsync size 0x1a0	open
+0x8040D3C8	0x48	CARDMount	card	exact	0x48 sync wrapper of CARDMountAsync; equal size in ac-decomp CARDMount size 0x48	open
+0x8040D410	0x9C	DoUnmount	card	exact	CFTKK size run of 4; equal size in CFTKK DoUnmount size 0x9c and ac-decomp DoUnmount size 0x9c	open
+0x8040D4AC	0xAC	CARDUnmount	card	exact	CFTKK size run of 4; equal size in CFTKK CARDUnmount size 0xac and ac-decomp CARDUnmount size 0xac	open
+0x8040D558	0x144	FormatCallback	card	exact	CFTKK size run of 4; equal size in CFTKK FormatCallback size 0x144 and ac-decomp FormatCallback size 0x144	open
+0x8040D69C	0x658	__CARDFormatRegionAsync	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDFormatRegionAsync size 0x658 and ac-decomp __CARDFormatRegionAsync size 0x658	open
+0x8040DCF4	0x54	CARDFormat	card	exact	ac 0x54; __CARDGetFontEncode + __CARDFormatRegionAsync + __CARDSync; equal size in ac-decomp CARDFormat size 0x54	open
+0x8040DD48	0x68	__CARDCompareFileName	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDCompareFileName size 0x68 and ac-decomp __CARDCompareFileName size 0x68	open
+0x8040DDB0	0x94	__CARDAccess	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDAccess size 0x94	open
+0x8040DE44	0x134	__CARDIsWritable	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDIsWritable size 0x134	open
+0x8040DF78	0xF4	__CARDIsReadable	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDIsReadable size 0xf4	open
+0x8040E06C	0x150	__CARDGetFileNo	card	exact	ac 0x150; called by CARDDeleteAsync; equal size in ac-decomp __CARDGetFileNo size 0x150	open
+0x8040E1BC	0x104	CARDFastOpen	card	guess	ac 0x160; control block + dir block + __CARDIsWritable	open
+0x8040E2C0	0x11C	CARDOpen	card	exact	CFTKK size run of 5; equal size in CFTKK CARDOpen size 0x11c	open
+0x8040E3DC	0x54	CARDClose	card	exact	CFTKK size run of 5; equal size in CFTKK CARDClose size 0x54 and ac-decomp CARDClose size 0x54	open
+0x8040E430	0x8	__CARDIsOpened	card	exact	CFTKK size run of 5; equal size in CFTKK __CARDIsOpened size 0x8 and ac-decomp __CARDIsOpened size 0x8	open
+0x8040E438	0x130	CreateCallbackFat	card	exact	CFTKK size run of 5; equal size in CFTKK CreateCallbackFat size 0x130 and ac-decomp CreateCallbackFat size 0x130	open
+0x8040E568	0x220	CARDCreateAsync	card	exact	CFTKK size run of 5; equal size in CFTKK CARDCreateAsync size 0x220 and ac-decomp CARDCreateAsync size 0x220	open
+0x8040E788	0x48	CARDCreate	card	exact	0x48 sync wrapper of CARDCreateAsync; equal size in ac-decomp CARDCreate size 0x48	open
+0x8040E7D0	0x1B8	__CARDSeek	card	exact	CFTKK size run of 3; equal size in CFTKK __CARDSeek size 0x1b8 and ac-decomp __CARDSeek size 0x1b8	open
+0x8040E988	0x130	ReadCallback	card	exact	CFTKK size run of 3; equal size in CFTKK ReadCallback size 0x130 and ac-decomp ReadCallback size 0x130	open
+0x8040EAB8	0x144	CARDReadAsync	card	exact	CFTKK size run of 3; equal size in CFTKK CARDReadAsync size 0x144	open
+0x8040EBFC	0x48	CARDRead	card	exact	0x48 sync wrapper of CARDReadAsync; equal size in ac-decomp CARDRead size 0x48	open
+0x8040EC44	0x170	WriteCallback	card	exact	CFTKK size run of 3; equal size in CFTKK WriteCallback size 0x170 and ac-decomp WriteCallback size 0x170; static, name repeats across CARD files (file-local name needed when splitting)	open
+0x8040EDB4	0xB0	EraseCallback	card	exact	CFTKK size run of 3; equal size in CFTKK EraseCallback size 0xb0 and ac-decomp EraseCallback size 0xb0; static, name repeats across CARD files (file-local name needed when splitting)	open
+0x8040EE64	0x114	CARDWriteAsync	card	exact	CFTKK size run of 3; equal size in CFTKK CARDWriteAsync size 0x114 and ac-decomp CARDWriteAsync size 0x114	open
+0x8040EF78	0x48	CARDWrite	card	exact	0x48 sync wrapper of CARDWriteAsync; equal size in ac-decomp CARDWrite size 0x48	open
+0x8040EFC0	0xA4	DeleteCallback	card	exact	ac-decomp size run of 6; equal size in CFTKK DeleteCallback size 0xa4 and ac-decomp DeleteCallback size 0xa4	open
+0x8040F064	0x12C	CARDFastDeleteAsync	card	exact	CFTKK 0x12C; wrapped by CARDFastDelete; equal size in CFTKK CARDFastDeleteAsync size 0x12c	open
+0x8040F190	0x48	CARDFastDelete	card	guess	0x48 sync wrapper of CARDFastDeleteAsync; no same-size reference by name, name from callees	open
+0x8040F1D8	0x110	CARDDeleteAsync	card	exact	ac 0x110; equal size in ac-decomp CARDDeleteAsync size 0x110	open
+0x8040F2E8	0x48	CARDDelete	card	exact	0x48 sync wrapper of CARDDeleteAsync; equal size in ac-decomp CARDDelete size 0x48	open
+0x8040F330	0x1F8	UpdateIconOffsets	card	exact	CFTKK size run of 4; equal size in CFTKK UpdateIconOffsets size 0x1f8 and ac-decomp UpdateIconOffsets size 0x1f8	open
+0x8040F528	0x114	CARDGetStatus	card	exact	CFTKK size run of 4; equal size in CFTKK CARDGetStatus size 0x114	open
+0x8040F63C	0x174	CARDSetStatusAsync	card	exact	CFTKK size run of 4; equal size in CFTKK CARDSetStatusAsync size 0x174 and ac-decomp CARDSetStatusAsync size 0x174	open
+0x8040F7B0	0x48	CARDSetStatus	card	exact	CFTKK size run of 4; equal size in CFTKK CARDSetStatus size 0x48 and ac-decomp CARDSetStatus size 0x48	open
+0x8040F7F8	0xC4	CARDGetSerialNo	card	guess	0xC4; control block get/put only (CARDNet.c)	open
+0x8040F8BC	0xE4	CARDSetAttributesAsync	card	guess	0xE4; __CARDGetStatusEx + __CARDSetStatusExAsync	open
+0x8040F9A0	0x48	CARDSetAttributes	card	guess	0x48 sync wrapper of the above	open
+0x8040F9E8	0x16C	bitrev	card	exact	CFTKK size run of 7; equal size in CFTKK bitrev size 0x16c	open
+0x8040FB54	0x144	ReadArrayUnlock	card	exact	CFTKK size run of 7; equal size in CFTKK ReadArrayUnlock size 0x144	open
+0x8040FC98	0xC4	DummyLen	card	exact	CFTKK size run of 7; equal size in CFTKK DummyLen size 0xc4	open
+0x8040FD5C	0xB58	__CARDUnlock	card	exact	CFTKK size run of 7; equal size in CFTKK __CARDUnlock size 0xb58	open
+0x804108B4	0x70	InitCallback	card	exact	CFTKK size run of 7; equal size in CFTKK InitCallback size 0x70	open
+0x80410924	0x324	DoneCallback	card	exact	CFTKK size run of 7; equal size in CFTKK DoneCallback size 0x324	open
+0x80410C48	0xDC	BlockReadCallback	card	exact	ac 0xDC (CARDRdwr.c, linked after CARDUnlock); equal size in CFTKK BlockReadCallback size 0xdc and ac-decomp BlockReadCallback size 0xdc	open
+0x80410D24	0x64	__CARDRead	card	exact	ac 0x64; called by CARDReadAsync/DoMount; equal size in CFTKK __CARDRead size 0x64 and ac-decomp __CARDRead size 0x64	open
+0x80410D88	0xDC	BlockWriteCallback	card	exact	ac 0xDC; equal size in ac-decomp BlockWriteCallback size 0xdc	open
+0x80410E64	0x64	__CARDWrite	card	exact	ac 0x64; equal size in ac-decomp __CARDWrite size 0x64	open
+0x80410EC8	0xA4	__CARDGetStatusEx	card	guess	ac 0xBC; CARDStatEx.c	open
+0x80410F6C	0x29C	__CARDSetStatusExAsync	card	guess	ac 0x254; __CARDIsWritable, memcmp	open

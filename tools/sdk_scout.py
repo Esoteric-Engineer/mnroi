@@ -3,6 +3,7 @@
 
 Usage (from repo root):
     python3 tools/sdk_scout.py queue            # refresh docs/sdk_queue.tsv (never overwrites hand-written notes)
+                                                # covers both SDK clusters, see RANGES below
     python3 tools/sdk_scout.py align [--all]    # print name proposals from ac-decomp
     python3 tools/sdk_scout.py hw [LO HI]       # which hardware blocks each function touches
     python3 tools/sdk_scout.py info ADDR        # callees, callers, hardware for one function
@@ -26,6 +27,10 @@ DOL = "orig/GVLE69/sys/main.dol"
 QUEUE = "docs/sdk_queue.tsv"
 AC_DIR = os.environ.get("AC_DECOMP", "../ac-decomp/config/GAFE01_00")
 LO, HI = 0x80169000, 0x80196884  # confirmed SDK range (first cluster), see docs/sdk_libraries.md
+LO2, HI2 = 0x80400544, 0x804114EC  # second cluster, inside the game's .text (docs/sdk_libraries.md)
+# Ranges the queue scans, with the libraries that get rows (None = all). The second cluster also holds
+# libc, VM, OS, MTX, GX display lists and texPalette; those are labelled by lib_of but not queued yet.
+RANGES = [(LO, HI, None), (LO2, HI2, {"ar", "arq", "ax", "dsp", "card"})]
 
 # (start, end, our library, ac-decomp libraries it may match, or None to skip matching)
 LIBS = [
@@ -44,6 +49,19 @@ LIBS = [
     (0x80195440, 0x80195E04, "exi", {"exi"}),
     (0x80195E04, 0x80196194, "odenotstub", {"odenotstub"}),
     (0x80196194, 0x80196884, "odemuexi2", {"OdemuExi2"}),
+    # second cluster: names come from docs/sdk_scout_findings.md, not from ac-decomp alignment
+    (0x80400544, 0x804009C4, "libc", None),
+    (0x804009C4, 0x80401EB0, "vm", None),
+    (0x80401EB0, 0x80401F48, "runtime", None),
+    (0x80401F48, 0x804044C8, "os", None),
+    (0x804044C8, 0x804048CC, "mtx", None),
+    (0x804048CC, 0x804063A4, "ar", None),
+    (0x804063A4, 0x80406828, "arq", None),
+    (0x80406828, 0x8040962C, "ax", None),
+    (0x8040962C, 0x8040A190, "dsp", None),
+    (0x8040A190, 0x80411208, "card", None),
+    (0x80411208, 0x80411408, "gx", None),
+    (0x80411408, 0x804114EC, "texpalette", None),
 ]
 HW = {0x0: "CP", 0x1000: "PE", 0x2000: "VI", 0x3000: "PI", 0x4000: "MI", 0x5000: "DSP/AR",
       0x6000: "DVD", 0x6400: "SI", 0x6800: "EXI", 0x6C00: "AI", 0x8000: "FIFO"}
@@ -230,6 +248,7 @@ def cmd_align(args):
 
 
 NOTE_NAMED = "symbol already named; just needs split + match"
+NOTE_SECOND = "second SDK cluster, not identified yet (docs/sdk_scout_findings.md)"
 NOTE_LIBC = ("Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, "
              "code from upstream Newlib")
 AUTO_NOTE_RE = re.compile(r"^ac-decomp size 0x[0-9a-f]+$")
@@ -237,7 +256,7 @@ AUTO_NOTE_RE = re.compile(r"^ac-decomp size 0x[0-9a-f]+$")
 
 def curated(note):
     """True if a person wrote this note, i.e. it is neither empty nor one the queue command generates."""
-    return bool(note) and note not in (NOTE_NAMED, NOTE_LIBC) and not AUTO_NOTE_RE.match(note)
+    return bool(note) and note not in (NOTE_NAMED, NOTE_LIBC, NOTE_SECOND) and not AUTO_NOTE_RE.match(note)
 
 
 def cmd_queue(args):
@@ -256,7 +275,9 @@ def cmd_queue(args):
     rows = {}
     for a, c in old.items():
         rows[a] = c
-    for a, n, s in load_funcs(SYMBOLS, LO, HI):
+    funcs = [(a, n, s) for lo, hi, libs in RANGES for a, n, s in load_funcs(SYMBOLS, lo, hi)
+             if libs is None or lib_of(a) in libs]
+    for a, n, s in funcs:
         if n.startswith("lbl_") or (split(a) and a not in rows):
             continue
         c = rows.get(a) or [f"0x{a:08X}", "", "", lib_of(a), "unidentified", "", "open"]
@@ -267,7 +288,9 @@ def cmd_queue(args):
             if c[6] == "open" and c[4] != "known" and not curated(c[5]):
                 c[4], c[5] = "known", NOTE_NAMED
         elif c[4] == "unidentified" and not curated(c[5]):  # only re-guess rows nobody curated
-            if lib_of(a) == "libc":
+            if a >= LO2:
+                c[5] = NOTE_SECOND
+            elif lib_of(a) == "libc":
                 c[5] = NOTE_LIBC
             elif a in props:
                 name, kind, asz = props[a]
