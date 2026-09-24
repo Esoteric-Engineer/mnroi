@@ -1696,6 +1696,9 @@ Dolphin/dsp/DSPCheckMailToDSP.c:
 Dolphin/dsp/DSPCheckMailFromDSP.c:
 	.text       start:0x8040963C end:0x8040964C
 
+Dolphin/dsp/DSPSendMailToDSP.c:
+	.text       start:0x80409664 end:0x80409678
+
 Dolphin/dsp/DSPCheckInit.c:
 	.text       start:0x8040973C end:0x80409744
 
