@@ -42,7 +42,7 @@ description: Report how close the SDK decomp is to done, and whether the project
    - no unidentified functions remain in the confirmed range;
    - SDK data is complete: the progress report's `SDK Code` **Data** line is 100%, and any SDK data
      not yet split is accounted for. Only `.text` is checked by `sdk_remaining.py`, so report the
-     data percentage and unmatched data bytes from step 1 explicitly (currently 80%, 2424 / 3028 bytes).
+     data percentage and unmatched data bytes from step 1 explicitly.
    Otherwise say what remains.
 
 ## Caveats

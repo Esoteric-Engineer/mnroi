@@ -26,8 +26,8 @@ Boundaries are approximate to the function; confirm when you claim something nea
 ## Not found yet
 
 AR, ARQ, AX, DSP and CARD have SDK version strings in `.rodata` (after EXI), so their code is
-probably past 0x80197000. The end of the SDK range is open-ended; the `0x801B0000` upper bound in
-`report-sdk-progress` is a guess.
+probably past 0x80197000. The end of the SDK range is open-ended; the `0x80197000` upper bound in
+`report-sdk-progress` is only the end of the confirmed SDK code, not the end of the SDK.
 
 ## Work queue
 
