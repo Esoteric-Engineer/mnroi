@@ -886,6 +886,7 @@ config.libs = [
         "ax",
         [
             Object(Matching, "Dolphin/ax/__AXPushCallbackStack.c"),
+            Object(Matching, "Dolphin/ax/__AXClQuit.c"),
         ],
     ),
     DolphinLib(
