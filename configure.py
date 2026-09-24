@@ -307,6 +307,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_rem_pio2f.c"),
             Object(Matching, "Runtime.PPCEABI.H/__kernel_rem_pio2f.c"),
             Object(Matching, "Runtime.PPCEABI.H/floorf.c"),
+            Object(Matching, "Runtime.PPCEABI.H/copysign.c"),
             Object(Matching, "Runtime.PPCEABI.H/copysignf.c"),
             Object(Matching, "Runtime.PPCEABI.H/sprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/eofread.c"),

@@ -72,6 +72,9 @@ Runtime.PPCEABI.H/__kernel_rem_pio2f.c:
 Runtime.PPCEABI.H/floorf.c:
 	.text       start:0x8016FD74 end:0x8016FE3C
 
+Runtime.PPCEABI.H/copysign.c:
+	.text       start:0x8016FF90 end:0x8016FFE0
+
 Runtime.PPCEABI.H/sprintf.c:
 	.text       start:0x8016FFE0 end:0x801700B8
 
