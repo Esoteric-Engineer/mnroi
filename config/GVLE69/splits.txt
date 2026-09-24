@@ -1217,6 +1217,9 @@ Dolphin/gx/GXSetCPUFifo.c:
 Dolphin/gx/GXSetGPFifo.c:
 	.text       start:0x80191B54 end:0x80191CF4
 
+Dolphin/gx/GXSaveCPUFifo.c:
+	.text       start:0x80191CF4 end:0x80191D28
+
 Dolphin/gx/__GXFifoInit.c:
 	.text       start:0x80191E34 end:0x80191E80
 
