@@ -165,7 +165,7 @@ addr	size	name	library	confidence	notes	status
 0x8018ACE0	0x174	SPEC0_MakeStatus	pad	exact	ac-decomp size 0x174	matched
 0x8018AE54	0x174	SPEC1_MakeStatus	pad	exact	ac-decomp size 0x174	matched
 0x8018AFC8	0x470	SPEC2_MakeStatus	pad	guess	Confirmed against ac-decomp Pad.c: switch on AnalogMode & 0x700 (cases 0x000/0x500/0x600/0x700, 0x100, 0x200, 0x300, 0x400) unpacking the 8 response bytes, then a Type[] dependent tail; no callees (ac-decomp size 0x3F8, ours 0x470, older/less optimised). Referenced by PADSetSpec.c	open
-0x8018B438	0xBC	OnReset_8018B438	pad	guess	ac-decomp PAD OnReset (0x194): PADSetSamplingCallback(NULL) if set, PADSync inlined (SIBusy + ResettingBits), PADRecalibrate once, static recalibrated flag; ours 0xBC. Suffixed because OS has OnReset. No callers: it is the OSResetFunctionInfo callback. PADSetAnalogMode (ac 0x74) is not in this SDK	open
+0x8018B438	0xBC	OnReset_8018B438	pad	guess	ac-decomp PAD OnReset (0x194): PADSetSamplingCallback(NULL) if set, PADSync inlined (SIBusy + ResettingBits), PADRecalibrate once, static recalibrated flag; ours 0xBC. Suffixed because OS has OnReset. No callers: it is the OSResetFunctionInfo callback. PADSetAnalogMode (ac 0x74) is not in this SDK; matched as plain C: static inline PADSync + static recalibrated flag (lbl_8066F400, extern)	matched
 0x8018B4F4	0x60	SamplingHandler	pad	exact	ac-decomp size 0x60	matched
 0x8018B554	0x54	PADSetSamplingCallback	pad	exact	ac-decomp size 0x54	matched
 0x8018B5A8	0x7C	__PADDisableRecalibration	pad	exact	ac-decomp size 0x7c	matched
