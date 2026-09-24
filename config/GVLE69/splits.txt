@@ -804,6 +804,9 @@ Dolphin/pad/PADReceiveCheckCallback.c:
 Dolphin/pad/PADReset.c:
 	.text       start:0x8018A488 end:0x8018A598
 
+Dolphin/pad/PADRecalibrate.c:
+	.text       start:0x8018A598 end:0x8018A6AC
+
 Dolphin/pad/PADControlAllMotors.c:
 	.text       start:0x8018AAFC end:0x8018ABC8
 

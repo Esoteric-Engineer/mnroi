@@ -674,6 +674,7 @@ config.libs = [
             Object(NonMatching, "Dolphin/pad/PADTypeAndStatusCallback.c"),
             Object(Matching, "Dolphin/pad/PADReceiveCheckCallback.c"),
             Object(NonMatching, "Dolphin/pad/PADReset.c"),
+            Object(NonMatching, "Dolphin/pad/PADRecalibrate.c"),
             Object(Matching, "Dolphin/pad/PADControlAllMotors.c"),
             Object(Matching, "Dolphin/pad/PADControlMotor.c"),
             Object(Matching, "Dolphin/pad/PADSetSpec.c"),

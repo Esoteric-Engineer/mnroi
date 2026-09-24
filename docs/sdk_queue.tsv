@@ -156,7 +156,7 @@ addr	size	name	library	confidence	notes	status
 0x8018A01C	0x32C	PADTypeAndStatusCallback	pad	exact	NonMatching 97.7% (Dolphin/pad/PADTypeAndStatusCallback.c): same DoReset r4/r5 swap as PADOriginCallback in two of its four inlined copies; see docs/nonmatching.md	stalled
 0x8018A348	0x140	PADReceiveCheckCallback	pad	guess	matched; this game inlines PADDisable in the failure arm	matched
 0x8018A488	0x110	PADReset	pad	guess	ac-decomp size 0x100; NonMatching 99.49%, same DoReset r4/r5 swap as PADOriginCallback (see nonmatching.md)	stalled
-0x8018A598	0x114	PADRecalibrate	pad	guess	ac-decomp size 0x104	open
+0x8018A598	0x114	PADRecalibrate	pad	guess	ac-decomp PADRecalibrate (Spec test replaced by !(0x800030E3 & 0x40)); 99.49%, same DoReset r4/r5 swap as PADReset; see nonmatching.md	stalled
 0x8018A6AC	0x150		pad	unidentified		open
 0x8018A7FC	0x300		pad	unidentified		open
 0x8018AAFC	0xCC	PADControlAllMotors	pad	guess	preceding PADControlMotor in ac-decomp order; loop over 4 chans (verify)	matched
