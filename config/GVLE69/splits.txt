@@ -463,6 +463,9 @@ Dolphin/os/OSMemory.c:
 Dolphin/os/RealMode.c:
 	.text       start:0x8017E5B4 end:0x8017E5CC
 
+Dolphin/os/__OSInitMemoryProtection.c:
+	.text       start:0x8017E5CC end:0x8017E6E4
+
 Dolphin/os/fn_8017E6E4.c:
 	.text       start:0x8017E6E4 end:0x8017E754
 

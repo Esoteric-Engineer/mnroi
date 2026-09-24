@@ -81,7 +81,7 @@ addr	size	name	library	confidence	notes	status
 0x8017E448	0x6C	MEMIntrruptHandler	os	exact	ac-decomp size 0x6c	matched
 0x8017E4B4	0x80	Config24MB	os	exact	ac-decomp size 0x80; static asm Config24MB in OSMemory.c (ac-decomp), merged into that unit, global for RealMode ref	matched
 0x8017E534	0x80	Config48MB	os	known	Named by dtk-dev from OSInit (was lbl_8017E534, the unclaimed gap between Config24MB and RealMode); ac-decomp static asm in OSMemory.c; matched as asm in Dolphin/os/OSMemory.c (same shape as Config24MB, 48MB BAT values)	matched
-0x8017E5CC	0x118	__OSInitMemoryProtection	os	known	Starts at 0x8017E5CC (old fn_8017E5E0 began mid-prologue; skip_cfa end moved); named by dtk-dev from OSInit; ac-decomp size 0x120	open
+0x8017E5CC	0x118	__OSInitMemoryProtection	os	known	Starts at 0x8017E5CC (old fn_8017E5E0 began mid-prologue; skip_cfa end moved); named by dtk-dev from OSInit; ac-decomp size 0x120; matched with padding[0x30] (ac-decomp 0x28), peephole off	matched
 0x8017E9B4	0x200		os	unidentified		open
 0x8017EBEC	0xF4	__OSResetSWInterruptHandler	os	exact	ac-decomp size 0xf4; stalled 86.4%: frame -0x28 vs -0x20 and constant scheduling, see docs/nonmatching.md	stalled
 0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298; matched (GameChoice mask is 0x1F here, not ac-decomp 0x3F)	matched
