@@ -119,7 +119,7 @@ addr	size	name	library	confidence	notes	status
 0x80186474	0x11C	__DVDPrepareResetAsync	dvd	exact	ac-decomp size 0x11c	matched
 0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	matched
 0x801868DC	0x7C	__DVDStoreErrorCode	dvd	known	symbol already named; just needs split + match	matched
-0x80186958	0xF8	DVDCompareDiskID	dvd	exact	CFTKK-Decomp size 0xF8. strncmp gameName(4), company(2), then diskNumber (byte 6) and gameVersion (byte 7) with 0xFF wildcards; called from the dvd.c state machine	open
+0x80186958	0xF8	DVDCompareDiskID	dvd	exact	CFTKK-Decomp size 0xF8. strncmp gameName(4), company(2), then diskNumber (byte 6) and gameVersion (byte 7) with 0xFF wildcards; called from the dvd.c state machine; matched: company check is `!c1[0] || !c2[0] || strncmp(..)!=0 -> return 0` (a zero company byte fails, unlike gameName which is skipped), gameName[0] is signed char (extsb.)	matched
 0x80186A80	0xD8	cb_80186A80	dvd	known	symbol already named; just needs split + match; static cb of fstload.c, matched as unit Dolphin/dvd/fstload.c (non-static cb_80186A80); __fstLoad merged into the same unit	matched
 0x80186B58	0x168	__fstLoad	dvd	known	matched in Dolphin/dvd/fstload.c (with cb_80186A80)	matched
 0x80186D00	0x2E0	__DVDInterruptHandler	dvd	known	symbol already named; just needs split + match	matched

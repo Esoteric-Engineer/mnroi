@@ -704,6 +704,9 @@ Dolphin/dvd/dvdqueue.c:
 Dolphin/dvd/dvderror.c:
 	.text       start:0x801867C0 end:0x80186958
 
+Dolphin/dvd/DVDCompareDiskID.c:
+	.text       start:0x80186958 end:0x80186A50
+
 Dolphin/dvd/__DVDPrintFatalMessage.c:
 	.text       start:0x80186A50 end:0x80186A80
 
