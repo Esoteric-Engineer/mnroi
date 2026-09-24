@@ -128,7 +128,7 @@ addr	size	name	library	confidence	notes	status
 0x801870D4	0x110	Read	dvd	exact	CFTKK-Decomp Read size 0x110 (dvdlow.c static): DI regs 0xA8000000 read command, LastReadIssued=__OSGetSystemTime, 20s timeout when length > 0xA00000 else 10s via OSCreateAlarm/OSSetAlarm(AlarmHandlerForTimeout). Name kept generic like the source	open
 0x801871E4	0x80	SeekTwiceBeforeRead	dvd	exact	CFTKK-Decomp size 0x80 (dvdlow.c static): fills CommandList[0]=seek to (offset&~0x7FFF)+WorkAroundSeekLocation, [1]=read, [2]=-1, then DVDLowSeek; own unit SeekTwiceBeforeRead.c; a `DVDCommand* list = CommandList;` local hoists the lis/addi before the branch (100%)	matched
 0x80187264	0x298	DVDLowRead	dvd	known	NonMatching 99.6% (Dolphin/dvd/DVDLowRead.c); see docs/nonmatching.md	stalled
-0x801875BC	0xA4	DVDLowReadDiskID	dvd	exact	CFTKK-Decomp size 0xA4. DI cmd 0xA8000040, length 0x20, 10s timeout alarm	open
+0x801875BC	0xA4	DVDLowReadDiskID	dvd	exact	CFTKK-Decomp size 0xA4. DI cmd 0xA8000040, length 0x20, 10s timeout alarm	matched
 0x801876EC	0x8C	DVDLowRequestError	dvd	known	symbol already named; just needs split + match	matched
 0x80187778	0x9C	DVDLowInquiry	dvd	exact	CFTKK-Decomp size 0x9C. DI cmd 0x12000000, length 0x20; matched with the DVDLowStopMotor SetTimeoutAlarm shape (static helper, s64 timeout), 100% first try	matched
 0x80187814	0x98	DVDLowAudioStream	dvd	exact	CFTKK-Decomp size 0x98. DI cmd 0xE1000000 | mode, length/offset regs	matched

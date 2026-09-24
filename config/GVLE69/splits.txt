@@ -735,6 +735,9 @@ Dolphin/dvd/DVDLowSeek.c:
 Dolphin/dvd/DVDLowWaitCoverClose.c:
 	.text       start:0x80187590 end:0x801875BC
 
+Dolphin/dvd/DVDLowReadDiskID.c:
+	.text       start:0x801875BC end:0x80187660
+
 Dolphin/dvd/DVDLowStopMotor.c:
 	.text       start:0x80187660 end:0x801876EC
 

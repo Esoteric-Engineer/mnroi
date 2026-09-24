@@ -653,6 +653,7 @@ config.libs = [
             Object(Matching, "Dolphin/dvd/SeekTwiceBeforeRead.c"),
             Object(NonMatching, "Dolphin/dvd/DVDLowRead.c"),
             Object(Matching, "Dolphin/dvd/DVDLowSeek.c"),
+            Object(Matching, "Dolphin/dvd/DVDLowReadDiskID.c"),
             Object(Matching, "Dolphin/dvd/DVDLowStopMotor.c"),
             Object(Matching, "Dolphin/dvd/DVDLowRequestError.c"),
             Object(Matching, "Dolphin/dvd/DVDLowInquiry.c"),
