@@ -1675,6 +1675,9 @@ Dolphin/ax/__AXAuxQuit.c:
 Dolphin/ax/__AXClQuit.c:
 	.text       start:0x80407940 end:0x80407944
 
+Dolphin/ax/__AXSPBQuit.c:
+	.text       start:0x80408558 end:0x8040855C
+
 Dolphin/dsp/DSPCheckMailToDSP.c:
 	.text       start:0x8040962C end:0x8040963C
 

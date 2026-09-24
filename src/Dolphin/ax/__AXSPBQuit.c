@@ -1,0 +1,1 @@
+void __AXSPBQuit(void) {}
