@@ -7,7 +7,7 @@ typedef struct DVDCommandBlock DVDCommandBlock;
 extern void* OSAllocFromArenaLo(u32 size, u32 align);
 extern s32 DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, s32 length, s32 offset, void* callback, s32 prio);
 extern s32 DVDGetCommandBlockStatus(DVDCommandBlock* block);
-extern s32 fn_8018637C(void);
+extern s32 DVDCheckDisk(void);
 extern void __OSDoHotReset(s32 resetCode);
 extern s32 lbl_8066F21C;
 
@@ -18,7 +18,7 @@ static inline void ReadDisc(void* addr, s32 length, s32 offset)
 
     DVDReadAbsAsyncPrio((DVDCommandBlock*)block, addr, length, offset, 0, 0);
     while (DVDGetCommandBlockStatus((DVDCommandBlock*)block)) {
-        if (!fn_8018637C()) {
+        if (!DVDCheckDisk()) {
             __OSDoHotReset(0);
         }
     }

@@ -5,6 +5,11 @@ build; most sizes match exactly) and by which hardware registers each function t
 (`0xCC00xxxx`: VI 0x2000, DSP/AR 0x5000, DVD 0x6000, SI 0x6400, EXI 0x6800, AI 0x6C00, FIFO 0x8000).
 Boundaries are approximate to the function; confirm when you claim something near an edge.
 
+The sibling `../CFTKK-Decomp` (`config/GQ4E78/symbols.txt`) names *every* SDK library in this
+build (OS incl. OSExec/OSFont, DVD, VI, AI, AR/ARQ/AX/DSP/CARD, GX incl. getters, EXI), not just libc,
+and its sizes match ours far more often than ac-decomp's (which is a newer SDK and lacks the older
+functions). Align against it first, then read the ac-decomp source for the body.
+
 | Range | Library | Notes |
 |---|---|---|
 | 0x80169134-0x80169164 | os | two tiny functions |
@@ -21,13 +26,30 @@ Boundaries are approximate to the function; confirm when you claim something nea
 | 0x80195440-0x80195E04 | exi | `EXIGetID`, `InitializeUART`, `WriteUARTN` (the exi library is in two clusters) |
 | 0x80195E04-0x80196194 | odenotstub | `DBOpen`/`DBClose`/`DBWrite`/`DBRead`/`DBQueryData` |
 | 0x80196194-0x80196884 | OdemuExi2 | |
-| 0x80196884-? | unknown | not identified |
+| 0x80196884-0x80197000+ | game code | **Not SDK.** The first cluster of SDK code ends at 0x80196884 (end of `DBGEXIImm`). Everything after it is GCC-style C++ (frame pointer `mr r31, r1`, `stmw r30`) calling unnamed functions at 0x8042xxxx/0x8046xxxx and called from game code below 0x80169000: a 0x300-byte camera-like class (ctor `0x80196884`, factory `0x801969CC`, setters, update `0x80196CE4`). The old `0x80197000` upper bound in `sdk_scout.py` / `report-sdk-progress` was arbitrary and is now `0x80196884` |
+
+## Second SDK cluster (found 2026-09-23, not split or named yet)
+
+More SDK code sits far above the first cluster, inside the game's `.text`. It was found by aligning
+function sizes and order against CFTKK-Decomp (`config/GQ4E78/symbols.txt`, same SDK build for these
+libraries): long exact runs, e.g. `0x80404BB0` (0x17F4) = `__ARChecksize`, and a 60-function AX run.
+Not confirmed by callees yet; treat the ranges as approximate.
+
+| Range | Library | First functions |
+|---|---|---|
+| 0x804048CC-0x80404BB0 | ar | `ARRegisterDMACallback` 0x804048CC, `ARGetDMAStatus` 0x80404910, `ARStartDMA` 0x8040494C, `ARInit` 0x80404A3C, `ARGetSize` 0x80404B00, `__ARHandler` 0x80404B08, `__ARClearInterrupt` 0x80404B80, `__ARChecksize` 0x80404BB0 |
+| 0x804063A4-0x80406740 | arq | `__ARQServiceQueueLo` 0x804063A4, `__ARQCallbackHack` 0x804064A4, `__ARQInterruptServiceRoutine` 0x804064A8, `ARQInit` 0x80406574, `ARQPostRequest` 0x804065E4 |
+| 0x80406828-0x8040962C | ax | `AXInit` 0x80406828 ... `__AXGetCurrentProfile` 0x804095E4 |
+| 0x8040962C-0x8040A190 | dsp | `DSPCheckMailToDSP` 0x8040962C ... `__DSP_remove_task` 0x8040A0FC |
+| 0x8040A190-0x80410C48 | card | `__CARDDefaultApiCallback` 0x8040A190 ... `DoneCallback` 0x80410924 |
+
+The 0x8040250C-0x80404074 functions that touch VI/PI/EXI registers are not from this run of matches
+(the sizes do not line up with CFTKK); they are probably game code.
 
 ## Not found yet
 
-AR, ARQ, AX, DSP and CARD have SDK version strings in `.rodata` (after EXI), so their code is
-probably past 0x80197000. The end of the SDK range is open-ended; the `0x80197000` upper bound in
-`report-sdk-progress` is only the end of the confirmed SDK code, not the end of the SDK.
+Nothing further is known about SDK code outside the two clusters above; `.rodata` version strings for
+the libraries linked into the game are the way to check for more.
 
 ## Work queue
 

@@ -73,7 +73,7 @@ extern void OSPanic(const char* file, int line, const char* msg, ...);
 extern void DVDLowRead(void* addr, u32 length, u32 offset, void* callback);
 void cbForStateReadingFST(u32 intType);
 
-extern int fn_80186958(void* id1, void* id2);
+extern int DVDCompareDiskID(void* id1, void* id2);
 extern void* memcpy(void* dst, const void* src, u32 n);
 extern int memcmp(const void* a, const void* b, u32 n);
 extern void DCInvalidateRange(void* addr, u32 nBytes);
@@ -83,10 +83,10 @@ extern void stateBusy(DVDCommandBlock* block);
 void cbForStateBusy(u32 intType);
 extern u32 lbl_804D21F8[3];
 extern u32 lbl_8066C424[1];
-extern void fn_801875BC(void* buf, void* callback);
-extern void fn_801878AC(u32 cmd, void* callback);
-extern void fn_80187814(u32 cmd, u32 length, u32 offset, void* callback);
-extern void fn_80187778(void* buf, void* callback);
+extern void DVDLowReadDiskID(void* buf, void* callback);
+extern void DVDLowRequestAudioStatus(u32 cmd, void* callback);
+extern void DVDLowAudioStream(u32 cmd, u32 length, u32 offset, void* callback);
+extern void DVDLowInquiry(void* buf, void* callback);
 extern void (*lbl_8066C418)(DVDCommandBlock* block, void* callback);
 extern int lbl_8066F2D4;
 void cbForStateCheckID2a(u32 intType);
@@ -424,7 +424,7 @@ void stateCheckID(void)
 {
     switch ((int)CurrCommand) {
     case 3:
-        if (fn_80186958(lbl_8057D240, executing->id)) {
+        if (DVDCompareDiskID(lbl_8057D240, executing->id)) {
             memcpy(IDShouldBe, lbl_8057D240, 0x20);
             executing->state = 1;
             DCInvalidateRange(tmpBuffer, 0x20);
@@ -585,7 +585,7 @@ extern void cbForStateReadingID(u32 intType);
 #pragma dont_inline on
 void stateReadingID(DVDCommandBlock* block)
 {
-    fn_801875BC(lbl_8057D240, cbForStateReadingID);
+    DVDLowReadDiskID(lbl_8057D240, cbForStateReadingID);
 }
 #pragma dont_inline reset
 
@@ -685,7 +685,7 @@ void stateBusy(DVDCommandBlock* block)
     case 5:
         __DIRegs[1] = __DIRegs[1];
         block->currTransferSize = 0x20;
-        fn_801875BC(block->addr, cbForStateBusy);
+        DVDLowReadDiskID(block->addr, cbForStateBusy);
         return;
     case 1:
     case 4:
@@ -717,36 +717,36 @@ void stateBusy(DVDCommandBlock* block)
         __DIRegs[1] = __DIRegs[1];
         if (lbl_8066F2D4 != 0) {
             executing->currTransferSize = 0;
-            fn_801878AC(0, cbForStateBusy);
+            DVDLowRequestAudioStatus(0, cbForStateBusy);
             return;
         }
         executing->currTransferSize = 1;
-        fn_80187814(0, block->length, block->offset, cbForStateBusy);
+        DVDLowAudioStream(0, block->length, block->offset, cbForStateBusy);
         return;
     case 7:
         __DIRegs[1] = __DIRegs[1];
-        fn_80187814(0x10000, 0, 0, cbForStateBusy);
+        DVDLowAudioStream(0x10000, 0, 0, cbForStateBusy);
         return;
     case 8:
         __DIRegs[1] = __DIRegs[1];
         lbl_8066F2D4 = 1;
-        fn_80187814(0, 0, 0, cbForStateBusy);
+        DVDLowAudioStream(0, 0, 0, cbForStateBusy);
         return;
     case 9:
         __DIRegs[1] = __DIRegs[1];
-        fn_801878AC(0, cbForStateBusy);
+        DVDLowRequestAudioStatus(0, cbForStateBusy);
         return;
     case 10:
         __DIRegs[1] = __DIRegs[1];
-        fn_801878AC(0x10000, cbForStateBusy);
+        DVDLowRequestAudioStatus(0x10000, cbForStateBusy);
         return;
     case 11:
         __DIRegs[1] = __DIRegs[1];
-        fn_801878AC(0x20000, cbForStateBusy);
+        DVDLowRequestAudioStatus(0x20000, cbForStateBusy);
         return;
     case 12:
         __DIRegs[1] = __DIRegs[1];
-        fn_801878AC(0x30000, cbForStateBusy);
+        DVDLowRequestAudioStatus(0x30000, cbForStateBusy);
         return;
     case 13:
         __DIRegs[1] = __DIRegs[1];
@@ -755,7 +755,7 @@ void stateBusy(DVDCommandBlock* block)
     case 14:
         __DIRegs[1] = __DIRegs[1];
         block->currTransferSize = 0x20;
-        fn_80187778(block->addr, cbForStateBusy);
+        DVDLowInquiry(block->addr, cbForStateBusy);
         return;
     default:
         lbl_8066C418(block, cbForStateBusy);
@@ -888,7 +888,7 @@ void cbForStateBusy(u32 intType)
                 }
                 lbl_8066F2D4 = 0;
                 executing->currTransferSize = 1;
-                fn_80187814(0, executing->length, executing->offset, cbForStateBusy);
+                DVDLowAudioStream(0, executing->length, executing->offset, cbForStateBusy);
                 return;
             }
             finished = executing;

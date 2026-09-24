@@ -3,7 +3,7 @@ typedef unsigned short u16;
 typedef short s16;
 
 extern volatile u16 __VIRegs[0x100] : 0xCC002000;
-extern void fn_80189994(u32 hcount, u32 vcount, s16* x, s16* y);
+extern void __VIDisplayPositionToXY(u32 hcount, u32 vcount, s16* x, s16* y);
 
 inline static void getCurrentPosition(u32* h, u32* v)
 {
@@ -27,5 +27,5 @@ void __VIGetCurrentPosition(s16* x, s16* y)
     u32 vcount;
 
     getCurrentPosition(&hcount, &vcount);
-    fn_80189994(hcount, vcount, x, y);
+    __VIDisplayPositionToXY(hcount, vcount, x, y);
 }

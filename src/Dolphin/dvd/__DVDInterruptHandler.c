@@ -54,7 +54,7 @@ extern OSTime __OSGetSystemTime(void);
 extern void OSCancelAlarm(void* alarm);
 extern void OSClearContext(void* context);
 extern void OSSetCurrentContext(void* context);
-extern void fn_801870D4(void* addr, u32 length, u32 offset, DVDLowCallback callback);
+extern void Read(void* addr, u32 length, u32 offset, DVDLowCallback callback);
 extern void DVDLowSeek(u32 offset, DVDLowCallback callback);
 
 static inline BOOL ProcessNextCommand(DVDLowBss* bss)
@@ -63,7 +63,7 @@ static inline BOOL ProcessNextCommand(DVDLowBss* bss)
 
     if (bss->CommandList[n].cmd == 1) {
         ++NextCommandNumber_8066F374;
-        fn_801870D4(bss->CommandList[n].addr, bss->CommandList[n].length, bss->CommandList[n].offset, bss->CommandList[n].callback);
+        Read(bss->CommandList[n].addr, bss->CommandList[n].length, bss->CommandList[n].offset, bss->CommandList[n].callback);
         return 1;
     } else if (bss->CommandList[n].cmd == 2) {
         ++NextCommandNumber_8066F374;

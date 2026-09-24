@@ -73,23 +73,23 @@ addr	size	name	library	confidence	notes	status
 0x8017AF8C	0x280	OSExceptionInit	os	known	Shares OS.c .data pool with OSInit, so only matches in the same unit; plain ac-decomp port	matched
 0x8017C400	0x128	__OSSaveFPUContext	os	known	symbol already named; just needs split + match	matched
 0x8017CF40	0x2E8	__OSUnhandledException	os	known	symbol already named; just needs split + match	matched
-0x8017D228	0x188		os	unidentified		open
-0x8017D568	0x484		os	unidentified		open
-0x8017D9EC	0x19C		os	unidentified		open
+0x8017D228	0x188	PackArgs	os	exact	CFTKK-Decomp PackArgs size 0x188 (OSExec.c, not in ac-decomp): memset 0x2000 arena, strlen/strcpy each argv string top-down, then copies the pointer array below it and stores argc; caller __OSBootDolSimple	open
+0x8017D568	0x484	__OSBootDolSimple	os	exact	CFTKK-Decomp size 0x484, order matches (PackArgs, Run, ReadDisc, Callback, __OSGetExecParams, GetApploaderPosition, __OSBootDolSimple, __OSBootDol). Calls DVDInit, DVDSetAutoInvalidation, DVDResume, __DVDPrepareResetAsync, DVDCheckDisk, AISetStreamVol*, DVDCancelStreamAsync, ReadDisc, DVDReadAbsAsyncPrio for DOL sections, memcpy, ICInvalidateRange, Run	open
+0x8017D9EC	0x19C	__OSBootDol	os	exact	CFTKK-Decomp size 0x19C. sprintf + OSGetSaveRegion + OSAllocFromArenaLo, then calls __OSBootDolSimple; caller is the matched __OSReboot (fn_8017E6E4.c)	open
 0x8017DC78	0x2D8	SetInterruptMask	os	exact	Matched (Dolphin/os/SetInterruptMask.c); static in OS interrupt TU, needs peephole off	matched
 0x8017E060	0x344	__OSDispatchInterrupt	os	exact	ac-decomp size 0x344	matched
 0x8017E448	0x6C	MEMIntrruptHandler	os	exact	ac-decomp size 0x6c	matched
 0x8017E4B4	0x80	Config24MB	os	exact	ac-decomp size 0x80; static asm Config24MB in OSMemory.c (ac-decomp), merged into that unit, global for RealMode ref	matched
 0x8017E534	0x80	Config48MB	os	known	Named by dtk-dev from OSInit (was lbl_8017E534, the unclaimed gap between Config24MB and RealMode); ac-decomp static asm in OSMemory.c; matched as asm in Dolphin/os/OSMemory.c (same shape as Config24MB, 48MB BAT values)	matched
 0x8017E5CC	0x118	__OSInitMemoryProtection	os	known	Starts at 0x8017E5CC (old fn_8017E5E0 began mid-prologue; skip_cfa end moved); named by dtk-dev from OSInit; ac-decomp size 0x120; matched with padding[0x30] (ac-decomp 0x28), peephole off	matched
-0x8017E9B4	0x200		os	unidentified		open
+0x8017E9B4	0x200	OSResetSystem	os	exact	CFTKK-Decomp size 0x200. Callees agree: OSDisableScheduler, __OSLockSram/__OSUnlockSram, __OSStopAudioSystem, __PADDisableRecalibration, CallResetFunctions x4, KillThreads, __OSSyncSram, LCDisable, Reset, __OSReboot, 6x memset. Independent proof: renaming it made dtk-dev apply signatures/OSResetSystem.yml, which named __OSReboot (0x8017E6E4), @153 (.data 0x804D12B8) and bootThisDol (.sbss 0x8066F248) by itself	open
 0x8017EBEC	0xF4	__OSResetSWInterruptHandler	os	exact	ac-decomp size 0xf4; stalled 86.4%: frame -0x28 vs -0x20 and constant scheduling, see docs/nonmatching.md	stalled
 0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298; matched (GameChoice mask is 0x1F here, not ac-decomp 0x3F)	matched
 0x8017EF78	0x60	WriteSramCallback	os	exact	ac-decomp size 0x60	matched
 0x8017EFD8	0x118	WriteSram	os	exact	ac-decomp size 0x118	matched
 0x8017F0F0	0x13C	__OSInitSram	os	known	Named by dtk-dev from OSInit; ac-decomp size 0x134; stalled 99.24%: one mr vs addi r3,r30,0, see docs/nonmatching.md	stalled
 0x8017F2E4	0x33C	UnlockSram	os	exact	OSRtc.c UnlockSram (static in the SDK, global here: sibling units call it); ac-decomp body + gbs sanitise (Scb.offset <= 0x14) + WriteSram inlined; 98.07%, two addi/lwz scheduling swaps, see docs/nonmatching.md	stalled
-0x8017F678	0x124		os	unidentified		open
+0x8017F678	0x124	__OSReadROM	os	exact	CFTKK-Decomp size 0x124. EXILock, EXISelect, EXIImm command word then EXIDma read, EXIDeselect, EXIUnlock, DCInvalidateRange on the destination; caller is game code (not in ac-decomp)	open
 0x8017F79C	0x80	OSGetSoundMode	os	exact	ac-decomp size 0x80	matched
 0x8017F81C	0xA4	OSSetSoundMode	os	exact	ac-decomp size 0xa4	matched
 0x8017F8C0	0x6C	OSGetLanguage	os	guess	Matched: LockSram template (OSGetSoundMode) + lbz sram->language	matched
@@ -98,7 +98,7 @@ addr	size	name	library	confidence	notes	status
 0x8017FA5C	0x70	OSGetGbsMode	os	known	Was OSGetWirelessID (size/order only); named by dtk-dev from OSInit; reads SramEx u16 at +0x28 (LockSram(0x14) inline template)	matched
 0x8017FACC	0xB8	OSSetGbsMode	os	known	Was OSSetWirelessID (size/order only); named by dtk-dev from OSInit; matched as asm in Dolphin/os/OSSetGbsMode.c (C stalled at 75.8%, see docs/matching_notes.md)	matched
 0x8017FBA4	0x64	__OSInitSystemCall	os	exact	ac-decomp size 0x64	matched
-0x8017FC08	0x4		os	unidentified		open
+0x8017FC08	0x4	DefaultSwitchThreadCallback	os	exact	CFTKK-Decomp size 0x4 (blr); the initial value of the thread-switch callback slot	open
 0x8017FC0C	0x158	__OSThreadInit	os	known	Named by dtk-dev from OSInit; matched: RunQueue block struct + rq local, own unit (original TU is OSThread.c, split into separate units here)	matched
 0x80180BFC	0xEC	OSSleepThread	os	exact	ac-decomp size 0xec	matched
 0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	matched
@@ -115,40 +115,40 @@ addr	size	name	library	confidence	notes	status
 0x80181FFC	0xB4	SIInit	si	known	Named by dtk-dev from OSInit; ac-decomp size 0xa4; matched in Dolphin/si/SIInit.c	matched
 0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270 (+0xC: game sets executing = &DummyCommandBlock in the motor-stopped case); 99.94%, frame -0x20 vs -0x28; see nonmatching.md	stalled
 0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	matched
-0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4; blocked: jump table 0x804D227C is 4-mod-8, DVDCancelAsync (0x80186028) now claims .data 0x804D2248-0x804D227C; jump table 0x804D227C still 4-mod-8, needs DVDCheckDisk in the same unit as DVDCancelAsync or after it matches	open
+0x8018637C	0xF8	DVDCheckDisk	dvd	exact	Confirmed: FatalErrorFlag/PausingFlag then executing state switch (jump table 0x804D227C) with DI status bit tests and ResumeFromHere; CFTKK-Decomp size 0xF8 (ac-decomp 0xE4 is the newer variant); blocked: jump table 0x804D227C is 4-mod-8, DVDCancelAsync (0x80186028) now claims .data 0x804D2248-0x804D227C; jump table 0x804D227C still 4-mod-8, needs DVDCheckDisk in the same unit as DVDCancelAsync or after it matches	open
 0x80186474	0x11C	__DVDPrepareResetAsync	dvd	exact	ac-decomp size 0x11c	matched
 0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	matched
 0x801868DC	0x7C	__DVDStoreErrorCode	dvd	known	symbol already named; just needs split + match	matched
-0x80186958	0xF8		dvd	unidentified		open
+0x80186958	0xF8	DVDCompareDiskID	dvd	exact	CFTKK-Decomp size 0xF8. strncmp gameName(4), company(2), then diskNumber (byte 6) and gameVersion (byte 7) with 0xFF wildcards; called from the dvd.c state machine	open
 0x80186A80	0xD8	cb_80186A80	dvd	known	symbol already named; just needs split + match; static cb of fstload.c, matched as unit Dolphin/dvd/fstload.c (non-static cb_80186A80); __fstLoad merged into the same unit	matched
 0x80186B58	0x168	__fstLoad	dvd	known	matched in Dolphin/dvd/fstload.c (with cb_80186A80)	matched
 0x80186D00	0x2E0	__DVDInterruptHandler	dvd	known	symbol already named; just needs split + match	matched
-0x80186FE0	0x84		dvd	unidentified		open
+0x80186FE0	0x84	AlarmHandler_80186FE0	dvd	exact	CFTKK-Decomp AlarmHandler size 0x84 (dvdlow.c static; suffixed to stay unique because SI has AlarmHandler): ProcessNextCommand inlined, runs CommandList[NextCommandNumber++] via Read or DVDLowSeek	open
 0x80187064	0x70	AlarmHandlerForTimeout	dvd	known	symbol already named; just needs split + match	matched
-0x801870D4	0x110		dvd	unidentified		open
-0x801871E4	0x80		dvd	unidentified		open
+0x801870D4	0x110	Read	dvd	exact	CFTKK-Decomp Read size 0x110 (dvdlow.c static): DI regs 0xA8000000 read command, LastReadIssued=__OSGetSystemTime, 20s timeout when length > 0xA00000 else 10s via OSCreateAlarm/OSSetAlarm(AlarmHandlerForTimeout). Name kept generic like the source	open
+0x801871E4	0x80	SeekTwiceBeforeRead	dvd	exact	CFTKK-Decomp size 0x80 (dvdlow.c static): fills CommandList[0]=seek to (offset&~0x7FFF)+WorkAroundSeekLocation, [1]=read, [2]=-1, then DVDLowSeek	open
 0x80187264	0x298	DVDLowRead	dvd	known	NonMatching 99.6% (Dolphin/dvd/DVDLowRead.c); see docs/nonmatching.md	stalled
-0x801875BC	0xA4		dvd	unidentified		open
+0x801875BC	0xA4	DVDLowReadDiskID	dvd	exact	CFTKK-Decomp size 0xA4. DI cmd 0xA8000040, length 0x20, 10s timeout alarm	open
 0x801876EC	0x8C	DVDLowRequestError	dvd	known	symbol already named; just needs split + match	matched
-0x80187778	0x9C		dvd	unidentified		open
-0x80187814	0x98		dvd	unidentified		open
-0x801878AC	0x8C		dvd	unidentified		open
+0x80187778	0x9C	DVDLowInquiry	dvd	exact	CFTKK-Decomp size 0x9C. DI cmd 0x12000000, length 0x20	open
+0x80187814	0x98	DVDLowAudioStream	dvd	exact	CFTKK-Decomp size 0x98. DI cmd 0xE1000000 | mode, length/offset regs	open
+0x801878AC	0x8C	DVDLowRequestAudioStatus	dvd	exact	CFTKK-Decomp size 0x8C. DI cmd 0xE2000000 | subcmd	open
 0x80187938	0x9C	DVDLowAudioBufferConfig	dvd	known	symbol already named; just needs split + match	matched
 0x801879D4	0xBC	DVDLowReset	dvd	known	NonMatching 99.15%, see docs/nonmatching.md (resetStart/ticks register-pair swap)	stalled
 0x80187E38	0xA0	getTiming	vi	known	Matched; VI .data pool (version string, timing[10], taps) claimed with it	matched
 0x80187ED8	0x200	__VIInit	vi	guess	Name confirmed (ac-decomp body minus getEncoderType/Philips). Stalled at 99.96%: `a` slot 0x18 vs 0x1c; see nonmatching.md	stalled
-0x801880D8	0x4B0	VIInit	vi	guess	ac-decomp size 0x478	open
+0x801880D8	0x4B0	VIInit	vi	exact	CFTKK-Decomp size 0x4B0 (ac-decomp 0x478). OSRegisterVersion, __VIInit, __OSLockSram/__OSUnlockSram (EuRgb60/progressive flags), getTiming, OSInitThreadQueue, __OSSetInterruptHandler + __OSUnmaskInterrupts. Confirms the proposed name	open
 0x801885DC	0x2D4	setFbbRegs	vi	exact	ac-decomp vi.c setFbbRegs (calcFbbs inlined x2); matched in Dolphin/vi/setFbbRegs.c	matched
 0x801888B0	0x1A0	setVerticalRegs	vi	exact	ac-decomp size 0x1a0	matched
-0x80188A50	0x828	VIConfigure	vi	guess	ac-decomp size 0x79c	open
+0x80188A50	0x828	VIConfigure	vi	guess	Identity confirmed (callees: OSDisableInterrupts, 7x OSReport error strings, OSPanic, getTiming, setFbbRegs, setVerticalRegs, OSRestoreInterrupts; sits right before VIConfigurePan/VIFlush) but size 0x828 vs CFTKK-Decomp 0x808 and ac-decomp 0x79C, so the body differs from both references	open
 0x80189278	0x394	VIConfigurePan	vi	exact	ac-decomp size 0x394; 94.4% NonMatching, see docs/nonmatching.md	stalled
 0x8018960C	0x130	VIFlush	vi	guess	ac-decomp size 0x11c	matched
 0x8018973C	0x6C	VISetNextFrameBuffer	vi	exact	ac-decomp size 0x6c	matched
 0x801897A8	0x7C	VISetBlack	vi	exact	ac-decomp size 0x7c	matched
 0x80189894	0x98	VIGetCurrentLine	vi	exact	NonMatching 99.82%: frame -0x10 vs -0x20, see docs/nonmatching.md	stalled
 0x8018992C	0x68	VIGetTvFormat	vi	known	code 99.4% (only jump-table symbol name differs); blocked: table @724 at 0x804D2C34 is 4-mod-8 and the unclaimed strings before it (0x804D2AE0, VIConfigure text) must be claimed first; retry after VIConfigure	stalled
-0x80189994	0x21C		vi	unidentified		open
-0x80189BB0	0x60	__VIGetCurrentPosition	vi	known	Was VIGetDTVStatus (size/order only, wrong). Retrace handler calls it with (s16 x, s16 y) before PositionCallback; body is the stable vcount/hcount read then fn_80189994 (GetCurrentDisplayPosition, unclaimed, 0x21C)	matched
+0x80189994	0x21C	__VIDisplayPositionToXY	vi	exact	CFTKK-Decomp size 0x21C, order: right before __VIGetCurrentPosition. Takes (hcount, vcount, s16* x, s16* y), branches on the HorVer mode and timing fields (equ, prb/psb) storing -1 for out-of-range; pure leaf. An earlier note called it GetCurrentDisplayPosition, but that is CFTKK 0x3C	open
+0x80189BB0	0x60	__VIGetCurrentPosition	vi	known	Was VIGetDTVStatus (size/order only, wrong). Retrace handler calls it with (s16 x, s16 y) before PositionCallback; body is the stable vcount/hcount read then __VIDisplayPositionToXY (0x80189994, 0x21C, unclaimed)	matched
 0x80189C10	0x1A4	UpdateOrigin	pad	exact	ac-decomp size 0x1a4	matched
 0x80189DB4	0xC4	PADOriginCallback	pad	exact	NonMatching 99.29%: r4/r5 swap in inlined DoReset, see docs/nonmatching.md	stalled
 0x80189E78	0xCC	PADOriginUpdateCallback	pad	guess	ac-decomp size 0xc0; this game has a 5th PADDisable bit var (lbl_8066F3F4) and NO_RESPONSE is & 8	matched
@@ -157,15 +157,15 @@ addr	size	name	library	confidence	notes	status
 0x8018A348	0x140	PADReceiveCheckCallback	pad	guess	matched; this game inlines PADDisable in the failure arm	matched
 0x8018A488	0x110	PADReset	pad	guess	ac-decomp size 0x100; NonMatching 99.49%, same DoReset r4/r5 swap as PADOriginCallback (see nonmatching.md)	stalled
 0x8018A598	0x114	PADRecalibrate	pad	guess	ac-decomp PADRecalibrate (Spec test replaced by !(0x800030E3 & 0x40)); 99.49%, same DoReset r4/r5 swap as PADReset; see nonmatching.md	stalled
-0x8018A6AC	0x150		pad	unidentified		open
-0x8018A7FC	0x300		pad	unidentified		open
+0x8018A6AC	0x150	PADInit	pad	guess	Identity certain: OSRegisterVersion, PADSetSpec, OSGetTime, SIRefreshSamplingRate, OSRegisterResetFunction, PADReset, libgcc helper at 0x8016B5AC; ac-decomp PADInit is 0x210, ours 0x150 (older, fewer inlines)	open
+0x8018A7FC	0x300	PADRead	pad	guess	Identity certain: OSDisableInterrupts, per-channel SIGetStatus/SIGetResponse/SIGetType(Async), memset of PADStatus, PADReset on lost pads, OSSetWirelessID, SITransfer recalibration, MakeStatus fn pointer; ac-decomp PADRead is 0x3AC, ours 0x300	open
 0x8018AAFC	0xCC	PADControlAllMotors	pad	guess	preceding PADControlMotor in ac-decomp order; loop over 4 chans (verify)	matched
 0x8018ABC8	0xB8	PADControlMotor	pad	exact	queue name PADControlAllMotors was wrong (single chan, takes chan+command); has 0x800030E3 bit-5 check	matched
 0x8018AC80	0x60	PADSetSpec	pad	exact	ac-decomp size 0x60	matched
 0x8018ACE0	0x174	SPEC0_MakeStatus	pad	exact	ac-decomp size 0x174	matched
 0x8018AE54	0x174	SPEC1_MakeStatus	pad	exact	ac-decomp size 0x174	matched
-0x8018AFC8	0x470	SPEC2_MakeStatus	pad	guess	ac-decomp size 0x3f8	open
-0x8018B438	0xBC		pad	unidentified		open
+0x8018AFC8	0x470	SPEC2_MakeStatus	pad	guess	Confirmed against ac-decomp Pad.c: switch on AnalogMode & 0x700 (cases 0x000/0x500/0x600/0x700, 0x100, 0x200, 0x300, 0x400) unpacking the 8 response bytes, then a Type[] dependent tail; no callees (ac-decomp size 0x3F8, ours 0x470, older/less optimised). Referenced by PADSetSpec.c	open
+0x8018B438	0xBC	OnReset_8018B438	pad	guess	ac-decomp PAD OnReset (0x194): PADSetSamplingCallback(NULL) if set, PADSync inlined (SIBusy + ResettingBits), PADRecalibrate once, static recalibrated flag; ours 0xBC. Suffixed because OS has OnReset. No callers: it is the OSResetFunctionInfo callback. PADSetAnalogMode (ac 0x74) is not in this SDK	open
 0x8018B4F4	0x60	SamplingHandler	pad	exact	ac-decomp size 0x60	matched
 0x8018B554	0x54	PADSetSamplingCallback	pad	exact	ac-decomp size 0x54	matched
 0x8018B5A8	0x7C	__PADDisableRecalibration	pad	exact	ac-decomp size 0x7c	matched
@@ -173,27 +173,27 @@ addr	size	name	library	confidence	notes	status
 0x8018C174	0x288	GXSetVtxDescv	gx	guess	ac-decomp GXAttr.c; needs static inline SETVCDATTR(GXAttr,GXAttrType) with enum params	matched
 0x8018C3FC	0xBC	__GXSetVCD	gx	guess	Verified: ac-decomp __GXSetVCD with the later-SDK __GXXfVtxSpecs inlined (cntlzw color/tex counts); 99.79% NonMatching, see docs/nonmatching.md	stalled
 0x8018C4B8	0x124	__GXCalculateVLim	gx	exact	Was mislabelled __ARQServiceQueueLo; called from __GXSetDirtyState (dirty & 0x18). Body is ac-decomp GXAttr.c __GXCalculateVLim, 100% first try	matched
-0x8018C5DC	0x1B4		gx	unidentified		open
-0x8018C790	0x90		gx	unidentified		open
+0x8018C5DC	0x1B4	GXGetVtxDesc	gx	exact	CFTKK-Decomp size 0x1B4 (GXAttr.c getter, not in ac-decomp): jump table 0x804D2DC0 over GX_VA_PNMTXIDX..GX_VA_NBT reading gx->vcdLo/vcdHi bitfields; leaf, called by GXGetVtxDescv. Needs the jump table claimed with it	open
+0x8018C790	0x90	GXGetVtxDescv	gx	guess	Standard SDK GXGetVtxDescv: loops attr 0..0x14 calling GXGetVtxDesc(attr,&vcd[i].type), then attr 0x19 (GX_VA_NBT), terminates with GX_VA_NULL (0xFF). Not in CFTKK or ac-decomp, so order-only; shape is unambiguous	open
 0x8018CD34	0x88	__GXSetVAT	gx	guess	ac-decomp size 0x9c	matched
 0x8018D3C0	0x80	__GXSetDirtyState	gx	exact	GXGeometry.c order (ac-decomp); was misnamed GXDrawDone; callees __GXSetVCD/CD34/C4B8 are __GXSetVCD/__GXSetVAT/__GXCalculateVLim	matched
 0x8018D440	0xD0	GXBegin	gx	guess	Matched: ac-decomp GXBegin (non-debug) with __GXSetDirtyState as a static inline; the game code inlines it	matched
 0x8018D510	0x88	__GXSendFlushPrim	gx	exact	ac-decomp size 0x88	matched
-0x8018D70C	0x190		gx	unidentified		open
+0x8018D70C	0x190	GXInitLightSpot	gx	exact	CFTKK-Decomp size 0x190. Only callee is cosf; cutoff/spot-function switch computing the a0..a2 coefficients (not in ac-decomp)	open
 0x8018E0E0	0x48	GXInitTexObjCI	gx	exact	ac-decomp size 0x48	matched
 0x8018E128	0x164	GXInitTexObjLOD	gx	guess	ac-decomp size 0x194; matched in __GXGetTexTileShift.c (this game has no asserts; size 0x164)	matched
 0x8018EDE8	0x178	GXSetIndTexMtx	gx	guess	ac-decomp GXBump.c GXSetIndTexMtx; body verified (3x fmuls 1024.0 / fctiwz, id switch on ITM 1-3/5-7/9-11); 100%, main.dol OK	matched
-0x8018F0A4	0xEC		gx	unidentified		open
+0x8018F0A4	0xEC	GXSetIndTexOrder	gx	guess	Shape identical to ac-decomp GXBump.c GXSetIndTexOrder (0x138): tex_map/tex_coord 0xFF -> 0, switch on ind_stage writing gx->iref (+0x120) 3-bit fields (shifts 0/3/6/9/12/15/18/21), BP reg 0x61, dirtyState |= 3. Size 0xEC here (no asserts, older). Between GXSetIndTexCoordScale and GXSetNumIndStages as in ac-decomp	open
 0x80190484	0xFC	__GXDefaultTexRegionCallback	gx	known	symbol already named; just needs split + match	matched
-0x801905A4	0x190		gx	unidentified		open
-0x80191810	0x134		gx	unidentified		open
-0x80191CF4	0x34		gx	unidentified		open
-0x80191D28	0xC8		gx	unidentified		open
-0x80191DF0	0x44		gx	unidentified		open
-0x80192190	0x16C		gx	unidentified		open
-0x801922FC	0x1C8		gx	unidentified		open
-0x801924C4	0x80		gx	unidentified		open
-0x80192B68	0x238		gx	unidentified		open
+0x801905A4	0x190	__GXShutdown	gx	exact	CFTKK-Decomp size 0x190. OSGetTime PE-idle timeout, GXSetBreakPtCallback/GXSetDrawSyncCallback/GXSetDrawDoneCallback, __GXAbort; an OSResetFunction, no direct callers	open
+0x80191810	0x134	GXCPInterruptHandler	gx	exact	CFTKK-Decomp size 0x134. OSResumeThread/OSSuspendThread with __GXWriteFifoIntEnable/__GXWriteFifoIntReset (FIFO over/underflow), OSClearContext/OSSetCurrentContext; installed by __GXFifoInit via __OSSetInterruptHandler(0x11)	open
+0x80191CF4	0x34	GXSaveCPUFifo	gx	exact	CFTKK-Decomp size 0x34: GXFlush then __GXSaveCPUFifoAux(fifo)	open
+0x80191D28	0xC8	__GXSaveCPUFifoAux	gx	exact	CFTKK-Decomp size 0xC8: under OSDisableInterrupts copies PI FIFO base/end/wrptr and CP read/write pointers into the __GXFifoObj, recomputes rdwtDistance	open
+0x80191DF0	0x44	GXSetBreakPtCallback	gx	exact	CFTKK-Decomp size 0x44: swaps the callback slot (lbl_8066F484) under OSDisableInterrupts and returns the old one. CFTKK has GXGetGPStatus (0x50) before it, absent here (older SDK)	open
+0x80192190	0x16C	__GXAbort	gx	exact	CFTKK-Decomp size 0x16C. GXGetGPFifo, OSGetTime wait loops (6 calls) around CP/PI reset writes; called from __GXShutdown	open
+0x801922FC	0x1C8	GXAbortFrame	gx	guess	Same OSGetTime/GXGetGPFifo abort sequence as __GXAbort (0x16C) followed by __GXCleanGPFifo, __GXInitRevisionBits and __GXSetDirtyState: ac-decomp GXAbortFrame = __GXAbort(); __GXCleanGPFifo(); with __GXAbort inlined (0x16C+0x5C = 0x1C8). Not in CFTKK	open
+0x801924C4	0x80	GXDrawDone	gx	exact	CFTKK-Decomp size 0x80: GXSetDrawDone (flush) and GXWaitDrawDone (OSSleepThread on FinishQueue) both inlined under OSDisableInterrupts. Note 0x80192544 (named __GXFlushTextureStateDup, 0x24) is CFTKK GXPixModeSync; GXSetDrawSync/GXReadDrawSync are not in this range	open
+0x80192B68	0x238	GXGetYScaleFactor	gx	guess	SDK GXFrameBuf.c GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight) returning f32: iterative search for the yScale whose GXGetNumXfbLines equals xfbHeight, with that helper inlined (fdivs, __cvt_fp2unsigned, divwu by 0x100/0x80 tests, clamp 0x400); between GXSetCopyClamp and GXSetDispCopyYScale like ac-decomp. No CFTKK size	open
 0x80193E54	0xF4	SetExiInterruptMask	exi	exact	matched in Dolphin/exi/SetExiInterruptMask.c (100%, main.dol OK); needs #pragma scheduling off; static in the original, global here because EXISetExiCallback/EXIUnlock are separate units	matched
 0x80193F48	0x25C	EXIImm	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x801941A4	0xA0	EXIImmEx	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
@@ -217,7 +217,7 @@ addr	size	name	library	confidence	notes	status
 0x80195480	0x3B0	EXIGetID	exi	guess	Matched as Dolphin/exi/EXIGetID.c (100% first shape after one fix): later SDK form with the IDSerialPort1 shortcut for chan 0/dev 2, __EXIAttach/EXIUnlock/EXIDetach inlined as static inlines, EXILock..EXIDeselect wrapped in OSDisableInterrupts/OSRestoreInterrupts	matched
 0x80195830	0x18C	ProbeBarnacle	exi	guess	Matched as Dolphin/exi/ProbeBarnacle.c (100% first try, ac-decomp EXIUart.c body; no pragmas needed, `sizeof(revision)` is the pointer size = 4); caller __OSEnableBarnacle	matched
 0x801959BC	0x1BC	__OSEnableBarnacle	exi	guess	Matched as Dolphin/exi/__OSEnableBarnacle.c (100% first try, ac-decomp EXIUart.c body; id is s32, binary-search switch, no jump table; Chan/Dev/Enabled/BarnacleEnabled = lbl_8066F4B0..BC); ProbeBarnacle (fn_80195830) stays an extern	matched
-0x80195BE8	0x21C		exi	unidentified		open
+0x80195BE8	0x21C	WriteUARTN	exi	guess	ac-decomp EXIUart.c WriteUARTN (0x200): Enabled==0xA5FF005A test, EXILock, LF->CR rewrite, cmd 0xA0010000 write / 0x20010000 queue-length poll (QueueLength inlined), EXISelect/EXIImm/EXISync/EXIDeselect, EXIUnlock. Ours 0x21C wraps EXILock in OSDisableInterrupts (older). Caller is os fn_8017A620 (the OSReport UART hook)	open
 0x80195E04	0x4	DBOpen	odenotstub	guess	4-byte empty stub; order follows ac-decomp (DBOpen, DBClose), bodies are indistinguishable	matched
 0x80195E08	0x4	DBClose	odenotstub	guess	4-byte empty stub; order follows ac-decomp (DBOpen, DBClose), bodies are indistinguishable	matched
 0x80195E0C	0x260	DBWrite	odenotstub	exact	ac-decomp size 0x260	matched
@@ -226,11 +226,11 @@ addr	size	name	library	confidence	notes	status
 0x80196464	0xDC	DBGRead	odemuexi2	exact	ac-decomp size 0xdc	matched
 0x80196540	0xAC	DBGReadMailbox	odemuexi2	exact	ac-decomp size 0xac	matched
 0x801965EC	0x298	DBGEXIImm	odemuexi2	exact	Matched as Dolphin/OdemuExi2/DBGEXIImm.c (ac-decomp DBGEXIImm, DBGEXISync inlined); needs s32 = long	matched
-0x80196884	0x148		unknown	unidentified		open
-0x801969CC	0x98		unknown	unidentified		open
-0x80196A64	0xCC		unknown	unidentified		open
-0x80196B30	0x60		unknown	unidentified		open
-0x80196B90	0x60		unknown	unidentified		open
-0x80196BF0	0x50		unknown	unidentified		open
-0x80196C40	0xA4		unknown	unidentified		open
-0x80196CE4	0x434		unknown	unidentified		open
+0x80196884	0x148		game	unidentified	Not SDK (game code, GCC-style C++): Camera-like C++ class constructor (GCC style: frame pointer r31=r1, stmw r30): default-constructs six 0x40-byte members at +0/0x40/0x80/0xC0/0x100/0x140 (fn_8042D7B0 x6, likely matrices), then member ctors at +0x1C0/0x1D0/0x180, stores viewport u16s at 0x2B0/0x2B2, then fn_80196C40 and fn_80196CE4. Callers 0x80015358/0x8001A9E0 are game code	not-sdk
+0x801969CC	0x98		game	unidentified	Not SDK (game code, GCC-style C++): operator new(0x300) (fn_801ACED4) + constructor 0x80196884 + null check: factory for the same 0x300-byte class. Callers are game code at 0x80033CEC/0x800B5614	not-sdk
+0x80196A64	0xCC		game	unidentified	Not SDK (game code, GCC-style C++): Setter on the same class: stores a pointer at +0x2F0 and copies a u16 pair (0x58/0x5A from the pointee, else defaults from lbl_8057E430 +0x78/+0x7A) to +0x2B0/+0x2B2, then fn_80465508/fn_80213AC4/fn_80219D54	not-sdk
+0x80196B30	0x60		game	unidentified	Not SDK (game code, GCC-style C++): Destructor-style helper on the same class (null check, fn_80465508, fn_80213828, fn_801ACF9C = operator delete)	not-sdk
+0x80196B90	0x60		game	unidentified	Not SDK (game code, GCC-style C++): Setter storing four u16 args at +0x2B0..0x2B6 (viewport x/y/w/h)	not-sdk
+0x80196BF0	0x50		game	unidentified	Not SDK (game code, GCC-style C++): Sets a global current pointer (lbl_8066C560) and calls fn_80213828 when it changes; returns 1; 10 game callers	not-sdk
+0x80196C40	0xA4		game	unidentified	Not SDK (game code, GCC-style C++): Setter that clamps a float between lbl_8049CB44 and lbl_8049CB48, stores it at +0x2DC and calls the big update fn_80196CE4	not-sdk
+0x80196CE4	0x434		game	unidentified	Not SDK (game code, GCC-style C++): Large update routine of the same class (0x434): memset, many fn_8042DC3C (matrix/vector ops), fn_8042A7D8, fn_80404764, fn_80465540/80465600, fn_801B93D0	not-sdk

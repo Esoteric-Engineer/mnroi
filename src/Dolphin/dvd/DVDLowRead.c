@@ -50,9 +50,9 @@ OSTime __OSGetSystemTime(void);
 void OSCreateAlarm(void* alarm);
 void OSSetAlarm(void* alarm, OSTime tick, void* handler);
 DVDDiskID* DVDGetCurrentDiskID(void);
-void fn_80186FE0(void* alarm, void* context);
-void fn_801870D4(void* addr, u32 length, u32 offset, DVDLowCallback callback);
-void fn_801871E4(void* addr, u32 length, u32 offset, DVDLowCallback callback);
+void AlarmHandler_80186FE0(void* alarm, void* context);
+void Read(void* addr, u32 length, u32 offset, DVDLowCallback callback);
+void SeekTwiceBeforeRead(void* addr, u32 length, u32 offset, DVDLowCallback callback);
 
 static inline BOOL AudioBufferOn(void)
 {
@@ -79,7 +79,7 @@ static inline void DoJustRead(void* addr, u32 length, u32 offset, DVDLowCallback
 {
     CommandList[0].cmd = -1;
     NextCommandNumber_8066F374 = 0;
-    fn_801870D4(addr, length, offset, callback);
+    Read(addr, length, offset, callback);
 }
 
 static inline void WaitBeforeRead(void* addr, u32 length, u32 offset, DVDLowCallback callback, OSTime timeout)
@@ -92,7 +92,7 @@ static inline void WaitBeforeRead(void* addr, u32 length, u32 offset, DVDLowCall
     CommandList[1].cmd = -1;
     NextCommandNumber_8066F374 = 0;
     OSCreateAlarm(AlarmForWA);
-    OSSetAlarm(AlarmForWA, timeout, fn_80186FE0);
+    OSSetAlarm(AlarmForWA, timeout, AlarmHandler_80186FE0);
 }
 
 BOOL DVDLowRead(void* addr, u32 length, u32 offset, DVDLowCallback callback)
@@ -118,7 +118,7 @@ BOOL DVDLowRead(void* addr, u32 length, u32 offset, DVDLowCallback callback)
         DoJustRead(addr, length, offset, callback);
     } else if (WorkAroundType == 1) {
         if (FirstRead) {
-            fn_801871E4(addr, length, offset, callback);
+            SeekTwiceBeforeRead(addr, length, offset, callback);
         } else {
             if (!HitCache(&Curr, &Prev)) {
                 DoJustRead(addr, length, offset, callback);
@@ -135,7 +135,7 @@ BOOL DVDLowRead(void* addr, u32 length, u32 offset, DVDLowCallback callback)
                                        ticks - diff + OSMicrosecondsToTicks(500));
                     }
                 } else {
-                    fn_801871E4(addr, length, offset, callback);
+                    SeekTwiceBeforeRead(addr, length, offset, callback);
                 }
             }
         }

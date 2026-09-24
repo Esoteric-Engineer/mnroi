@@ -25,7 +25,7 @@ SPLITS = "config/GVLE69/splits.txt"
 DOL = "orig/GVLE69/sys/main.dol"
 QUEUE = "docs/sdk_queue.tsv"
 AC_DIR = os.environ.get("AC_DECOMP", "../ac-decomp/config/GAFE01_00")
-LO, HI = 0x80169000, 0x80197000  # confirmed SDK range, see docs/sdk_libraries.md
+LO, HI = 0x80169000, 0x80196884  # confirmed SDK range (first cluster), see docs/sdk_libraries.md
 
 # (start, end, our library, ac-decomp libraries it may match, or None to skip matching)
 LIBS = [
@@ -44,7 +44,6 @@ LIBS = [
     (0x80195440, 0x80195E04, "exi", {"exi"}),
     (0x80195E04, 0x80196194, "odenotstub", {"odenotstub"}),
     (0x80196194, 0x80196884, "odemuexi2", {"OdemuExi2"}),
-    (0x80196884, HI, "unknown", None),
 ]
 HW = {0x0: "CP", 0x1000: "PE", 0x2000: "VI", 0x3000: "PI", 0x4000: "MI", 0x5000: "DSP/AR",
       0x6000: "DVD", 0x6400: "SI", 0x6800: "EXI", 0x6C00: "AI", 0x8000: "FIFO"}

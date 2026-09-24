@@ -8,9 +8,9 @@ extern void OSSetArenaLo(void* addr);
 extern void OSSetArenaHi(void* addr);
 extern void OSClearContext(void* context);
 extern void OSSetCurrentContext(void* context);
-extern void fn_8017D9EC(u32 a, u32 b, u32* c);
+extern void __OSBootDol(u32 a, u32 b, u32* c);
 
-void fn_8017E6E4(u32 a, u32 b)
+void __OSReboot(u32 a, u32 b)
 {
     Context context;
     u32 zero;
@@ -21,5 +21,5 @@ void fn_8017E6E4(u32 a, u32 b)
     OSClearContext(&context);
     OSSetCurrentContext(&context);
     zero = 0;
-    fn_8017D9EC(b, a | 0x80000000, &zero);
+    __OSBootDol(b, a | 0x80000000, &zero);
 }

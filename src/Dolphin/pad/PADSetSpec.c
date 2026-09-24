@@ -6,7 +6,7 @@ extern u32 __PADSpec;
 
 extern void SPEC0_MakeStatus(void);
 extern void SPEC1_MakeStatus(void);
-extern void fn_8018AFC8(void);
+extern void SPEC2_MakeStatus(void);
 
 void PADSetSpec(u32 spec)
 {
@@ -22,7 +22,7 @@ void PADSetSpec(u32 spec)
     case 3:
     case 4:
     case 5:
-        lbl_8066C4AC = fn_8018AFC8;
+        lbl_8066C4AC = SPEC2_MakeStatus;
         break;
     }
     lbl_8066C4A8 = spec;

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Report how much SDK code is still unsplit, by comparing symbols.txt to splits.txt.
 
-Usage: sdk_remaining.py [--version GVLE69] [--lo 0x80169000] [--hi 0x80197000] [--list]
+Usage: sdk_remaining.py [--version GVLE69] [--lo 0x80169000] [--hi 0x80196884] [--list]
 """
 import argparse
 import collections
@@ -11,7 +11,7 @@ from pathlib import Path
 ap = argparse.ArgumentParser()
 ap.add_argument("--version", default="GVLE69")
 ap.add_argument("--lo", type=lambda x: int(x, 0), default=0x80169000)
-ap.add_argument("--hi", type=lambda x: int(x, 0), default=0x80197000)
+ap.add_argument("--hi", type=lambda x: int(x, 0), default=0x80196884)
 ap.add_argument("--list", action="store_true", help="also list unsplit fn_ functions")
 args = ap.parse_args()
 
