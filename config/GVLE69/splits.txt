@@ -243,6 +243,9 @@ Runtime.PPCEABI.H/_localeconv_r.c:
 Runtime.PPCEABI.H/localeconv.c:
 	.text       start:0x801773C0 end:0x801773E4
 
+Runtime.PPCEABI.H/floor.c:
+	.text       start:0x801773E4 end:0x80177558
+
 Runtime.PPCEABI.H/__ieee754_log10.c:
 	.text       start:0x80177BB0 end:0x80177CF8
 
