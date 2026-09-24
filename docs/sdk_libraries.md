@@ -9,8 +9,7 @@ Boundaries are approximate to the function; confirm when you claim something nea
 |---|---|---|
 | 0x80169134-0x80169164 | os | two tiny functions |
 | 0x8016D000-0x8017A5CC | libc: Newlib + fdlibm + libgcc | **Not MSL.** Newlib stdio/string/scanf, fdlibm float math, libgcc 64-bit division. Code source is upstream Newlib/fdlibm/libgcc; names come from CFTKK-Decomp (see below) |
-| 0x8017A5CC-0x801814F4 | os | interrupts, memory protection, reset, SRAM, system call, threads |
-| 0x801814F4-0x80181708 | exi | |
+| 0x8017A5CC-0x80181708 | os | interrupts, memory protection, reset, SRAM, system call, threads, mutexes (`OSLockMutex`..`__OSUnlockAllMutex` at `0x801814F4-0x80181708`; the queue once had these as exi) |
 | 0x80181708-0x80183070 | si | |
 | 0x80183070-0x8018315C | db | |
 | 0x8018315C-0x80187B3C | dvd | includes `DVDLow*` |

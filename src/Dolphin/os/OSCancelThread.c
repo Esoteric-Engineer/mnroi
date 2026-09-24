@@ -60,7 +60,7 @@ typedef struct OSMutex {
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern void OSClearContext(OSContext* context);
-extern void fn_80181698(OSThread* thread);
+extern void __OSUnlockAllMutex(OSThread* thread);
 extern void OSWakeupThread(OSThreadQueue* queue);
 extern void UnsetRun(OSThread* thread);
 extern long __OSGetEffectivePriority(OSThread* thread);
@@ -139,7 +139,7 @@ void OSCancelThread(OSThread* thread)
     } else {
         thread->state = 8;
     }
-    fn_80181698(thread);
+    __OSUnlockAllMutex(thread);
     OSWakeupThread(&thread->queueJoin);
     if (RunQueueHint != 0) {
         SelectThread(0);

@@ -55,7 +55,7 @@ struct OSThread {
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern void OSClearContext(OSContext* context);
-extern void fn_80181698(OSThread* thread);
+extern void __OSUnlockAllMutex(OSThread* thread);
 extern void OSWakeupThread(OSThreadQueue* queue);
 extern void SelectThread(int yield);
 extern volatile long RunQueueHint;
@@ -90,7 +90,7 @@ void OSExitThread(void* val)
         currentThread->state = 8;
         currentThread->val = val;
     }
-    fn_80181698(currentThread);
+    __OSUnlockAllMutex(currentThread);
     OSWakeupThread(&currentThread->queueJoin);
     RunQueueHint = 1;
 

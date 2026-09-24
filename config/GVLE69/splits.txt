@@ -606,7 +606,7 @@ Dolphin/os/_ExitProcess.c:
 	.text       start:0x8018149C end:0x801814BC
 
 Dolphin/os/OSMutex.c:
-	.text       start:0x801814BC end:0x801814F4
+	.text       start:0x801814BC end:0x80181708
 
 Dolphin/si/SIBusy.c:
 	.text       start:0x80181708 end:0x80181728
