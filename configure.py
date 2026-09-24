@@ -308,6 +308,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/sprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/eofread.c"),
             Object(Matching, "Runtime.PPCEABI.H/sscanf.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__svfscanf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__sccl.c"),
             Object(Matching, "Runtime.PPCEABI.H/vsprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__register_atexit.c"),

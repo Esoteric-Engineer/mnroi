@@ -1,7 +1,7 @@
 extern void* lbl_8066C3B0;
 extern void strlen(void);
 extern void eofread(void);
-extern void fn_801701B0(void);
+extern void __svfscanf(void);
 
 asm int sscanf(const char* str, const char* fmt, ...)
 {
@@ -62,7 +62,7 @@ skipfp:
     stw     r11, 0x70(r1)
     stw     r0, 4(r9)
     stw     r10, 8(r9)
-    bl      fn_801701B0
+    bl      __svfscanf
     lwz     r0, 0xfc(r1)
     mtlr    r0
     lmw     r30, 0xf0(r1)
