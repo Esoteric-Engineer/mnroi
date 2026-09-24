@@ -1666,6 +1666,9 @@ Dolphin/ar/__ARGetInterruptStatus.c:
 Dolphin/arq/__ARQCallbackHack.c:
 	.text       start:0x804064A4 end:0x804064A8
 
+Dolphin/ax/__AXGetStackHead.c:
+	.text       start:0x804068CC end:0x804068E4
+
 Dolphin/ax/__AXPushCallbackStack.c:
 	.text       start:0x80406AE0 end:0x80406AF0
 
