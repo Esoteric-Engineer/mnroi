@@ -159,7 +159,7 @@ addr	size	name	library	confidence	notes	status
 0x8018A598	0x114	PADRecalibrate	pad	guess	ac-decomp size 0x104	open
 0x8018A6AC	0x150		pad	unidentified		open
 0x8018A7FC	0x300		pad	unidentified		open
-0x8018AAFC	0xCC	PADControlAllMotors	pad	guess	preceding PADControlMotor in ac-decomp order; loop over 4 chans (verify)	open
+0x8018AAFC	0xCC	PADControlAllMotors	pad	guess	preceding PADControlMotor in ac-decomp order; loop over 4 chans (verify)	matched
 0x8018ABC8	0xB8	PADControlMotor	pad	exact	queue name PADControlAllMotors was wrong (single chan, takes chan+command); has 0x800030E3 bit-5 check	matched
 0x8018AC80	0x60	PADSetSpec	pad	exact	ac-decomp size 0x60	matched
 0x8018ACE0	0x174	SPEC0_MakeStatus	pad	exact	ac-decomp size 0x174	matched

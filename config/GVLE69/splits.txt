@@ -795,6 +795,9 @@ Dolphin/pad/PADTypeAndStatusCallback.c:
 Dolphin/pad/PADReset.c:
 	.text       start:0x8018A488 end:0x8018A598
 
+Dolphin/pad/PADControlAllMotors.c:
+	.text       start:0x8018AAFC end:0x8018ABC8
+
 Dolphin/pad/PADControlMotor.c:
 	.text       start:0x8018ABC8 end:0x8018AC80
 
