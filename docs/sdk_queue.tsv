@@ -142,7 +142,7 @@ addr	size	name	library	confidence	notes	status
 0x801888B0	0x1A0	setVerticalRegs	vi	exact	ac-decomp size 0x1a0	matched
 0x80188A50	0x828	VIConfigure	vi	guess	ac-decomp size 0x79c	open
 0x80189278	0x394	VIConfigurePan	vi	exact	ac-decomp size 0x394; 94.4% NonMatching, see docs/nonmatching.md	stalled
-0x8018960C	0x130	VIFlush	vi	guess	ac-decomp size 0x11c	open
+0x8018960C	0x130	VIFlush	vi	guess	ac-decomp size 0x11c	matched
 0x8018973C	0x6C	VISetNextFrameBuffer	vi	exact	ac-decomp size 0x6c	matched
 0x801897A8	0x7C	VISetBlack	vi	exact	ac-decomp size 0x7c	matched
 0x80189894	0x98	VIGetCurrentLine	vi	exact	NonMatching 99.82%: frame -0x10 vs -0x20, see docs/nonmatching.md	stalled

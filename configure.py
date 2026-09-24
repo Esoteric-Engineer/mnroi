@@ -651,6 +651,7 @@ config.libs = [
             Object(Matching, "Dolphin/vi/setFbbRegs.c"),
             Object(Matching, "Dolphin/vi/setVerticalRegs.c"),
             Object(NonMatching, "Dolphin/vi/VIConfigurePan.c"),
+            Object(Matching, "Dolphin/vi/VIFlush.c"),
             Object(Matching, "Dolphin/vi/VISetNextFrameBuffer.c"),
             Object(Matching, "Dolphin/vi/VISetBlack.c"),
             Object(Matching, "Dolphin/vi/VIGetRetraceCount.c"),
