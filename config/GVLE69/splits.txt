@@ -201,6 +201,9 @@ Runtime.PPCEABI.H/asctime_r.c:
 Runtime.PPCEABI.H/fn_80172D78.c:
 	.text       start:0x80172D78 end:0x80172DA0
 
+Runtime.PPCEABI.H/gmtime_r.c:
+	.text       start:0x80172DA0 end:0x80172FF8
+
 Runtime.PPCEABI.H/strround.c:
 	.text       start:0x801735D4 end:0x80173630
 
