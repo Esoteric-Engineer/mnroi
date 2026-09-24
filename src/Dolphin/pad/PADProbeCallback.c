@@ -9,7 +9,7 @@ extern void* memset(void* dst, int val, unsigned long n);
 
 extern void PADTypeAndStatusCallback(void);
 
-extern int lbl_8066C49C;
+extern long lbl_8066C49C;
 extern u32 lbl_8066C4A4;
 extern u32 lbl_8066F3DC;
 extern u32 lbl_8066F3E0;

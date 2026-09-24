@@ -14,7 +14,7 @@ extern void PADOriginCallback(void);
 extern void PADTypeAndStatusCallback(int chan, u32 type);
 extern void PADProbeCallback(void);
 
-extern int lbl_8066C49C;
+extern long lbl_8066C49C;
 extern u32 lbl_8066C4A4;
 extern u32 lbl_8066C4A8;
 extern u32 lbl_8066F3DC;

@@ -150,13 +150,13 @@ addr	size	name	library	confidence	notes	status
 0x80189994	0x21C	__VIDisplayPositionToXY	vi	exact	CFTKK-Decomp size 0x21C, order: right before __VIGetCurrentPosition. Takes (hcount, vcount, s16* x, s16* y), branches on the HorVer mode and timing fields (equ, prb/psb) storing -1 for out-of-range; pure leaf. An earlier note called it GetCurrentDisplayPosition, but that is CFTKK 0x3C	open
 0x80189BB0	0x60	__VIGetCurrentPosition	vi	known	Was VIGetDTVStatus (size/order only, wrong). Retrace handler calls it with (s16 x, s16 y) before PositionCallback; body is the stable vcount/hcount read then __VIDisplayPositionToXY (0x80189994, 0x21C, unclaimed)	matched
 0x80189C10	0x1A4	UpdateOrigin	pad	exact	ac-decomp size 0x1a4	matched
-0x80189DB4	0xC4	PADOriginCallback	pad	exact	NonMatching 99.29%: r4/r5 swap in inlined DoReset, see docs/nonmatching.md	stalled
+0x80189DB4	0xC4	PADOriginCallback	pad	exact	matched: ResettingChan (lbl_8066C49C) must be extern long (SDK s32), not int	matched
 0x80189E78	0xCC	PADOriginUpdateCallback	pad	guess	ac-decomp size 0xc0; this game has a 5th PADDisable bit var (lbl_8066F3F4) and NO_RESPONSE is & 8	matched
-0x80189F44	0xD8	PADProbeCallback	pad	exact	verified against ac-decomp PADProbeCallback; NonMatching 99.35%, same DoReset r4/r5 swap as PADOriginCallback (see docs/nonmatching.md)	stalled
-0x8018A01C	0x32C	PADTypeAndStatusCallback	pad	exact	NonMatching 97.7% (Dolphin/pad/PADTypeAndStatusCallback.c): same DoReset r4/r5 swap as PADOriginCallback in two of its four inlined copies; see docs/nonmatching.md	stalled
+0x80189F44	0xD8	PADProbeCallback	pad	exact	verified against ac-decomp PADProbeCallback; matched once ResettingChan was typed long	matched
+0x8018A01C	0x32C	PADTypeAndStatusCallback	pad	exact	matched (Dolphin/pad/PADTypeAndStatusCallback.c) once ResettingChan was typed long	matched
 0x8018A348	0x140	PADReceiveCheckCallback	pad	guess	matched; this game inlines PADDisable in the failure arm	matched
-0x8018A488	0x110	PADReset	pad	guess	ac-decomp size 0x100; NonMatching 99.49%, same DoReset r4/r5 swap as PADOriginCallback (see nonmatching.md)	stalled
-0x8018A598	0x114	PADRecalibrate	pad	guess	ac-decomp PADRecalibrate (Spec test replaced by !(0x800030E3 & 0x40)); 99.49%, same DoReset r4/r5 swap as PADReset; see nonmatching.md	stalled
+0x8018A488	0x110	PADReset	pad	guess	ac-decomp size 0x100; matched once ResettingChan was typed long	matched
+0x8018A598	0x114	PADRecalibrate	pad	guess	ac-decomp PADRecalibrate (Spec test replaced by !(0x800030E3 & 0x40)); matched once ResettingChan was typed long	matched
 0x8018A6AC	0x150	PADInit	pad	guess	Identity certain: OSRegisterVersion, PADSetSpec, OSGetTime, SIRefreshSamplingRate, OSRegisterResetFunction, PADReset, libgcc helper at 0x8016B5AC; ac-decomp PADInit is 0x210, ours 0x150 (older, fewer inlines)	open
 0x8018A7FC	0x300	PADRead	pad	guess	Identity certain: OSDisableInterrupts, per-channel SIGetStatus/SIGetResponse/SIGetType(Async), memset of PADStatus, PADReset on lost pads, OSSetWirelessID, SITransfer recalibration, MakeStatus fn pointer; ac-decomp PADRead is 0x3AC, ours 0x300	open
 0x8018AAFC	0xCC	PADControlAllMotors	pad	guess	preceding PADControlMotor in ac-decomp order; loop over 4 chans (verify)	matched

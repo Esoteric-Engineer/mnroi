@@ -12,7 +12,7 @@ extern void PADTypeAndStatusCallback(void);
 
 u8 __gUnknown800030E3 : 0x800030E3;
 
-extern int lbl_8066C49C;
+extern long lbl_8066C49C;
 extern u32 lbl_8066F3DC;
 extern u32 lbl_8066F3E0;
 extern u32 lbl_8066F3E4;
