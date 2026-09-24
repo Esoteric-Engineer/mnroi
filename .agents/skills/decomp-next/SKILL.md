@@ -70,8 +70,8 @@ Human-facing references (read the relevant one instead of guessing):
      with units named `Dolphin/pad/<unit>.c` in both `splits.txt` and `src/`. `DolphinLib` supplies
      `GC/1.2.5n` and `cflags_base`. The SDK libraries were built at different dates (PAD Aug 2003,
      DVD Sep 2003, the rest Apr 2003), so if the first function matches poorly in an
-     unexplained, uniform way, suspect the flags or compiler version before the source. Record
-     what you find in `docs/matching_notes.md`.
+     unexplained, uniform way, suspect the flags or compiler version before the source. If you
+     confirm a flag/version difference, record it per "Recording notes" below.
 5. **Write** `src/<unit>` and run `ninja`. Inspect remaining differences with
    `python3 tools/objdiff_mismatches.py <unit-without-.c> <function>`; it shows relocation
    types, which byte diffs don't. Form a hypothesis from `docs/matching_notes.md` instead of
@@ -87,8 +87,52 @@ Human-facing references (read the relevant one instead of guessing):
 - Prefer referencing existing (unclaimed) dtk symbols over declaring fresh data or claiming
   data ranges; override `scope:local` → `scope:global` in `symbols.txt` when needed.
 - Don't `git add -f` anything ignored, and don't commit unless asked.
-- When you learn a new, reusable gotcha, add it to `docs/matching_notes.md` (concise, with the
-  symptom and the fix); when you confirm a non-match, add it to `docs/nonmatching.md`. Not to this skill.
+- Record what you learn per "Recording notes" below. Notes never go in this skill.
+
+## Recording notes
+
+Two files, two jobs. Decide which one (or neither) before writing anything.
+
+**`docs/matching_notes.md` is a lookup table of reusable rules for a future agent stuck on a
+*different* function.** It is read in full before every function, so every line costs every future
+session. Add an entry only if **all** of these hold:
+
+- **Reusable:** it is a compiler/linker/dtk/objdiff behaviour or source-shape rule likely to apply
+  to other functions, not a fact about this one function. Ask: "would this change what I'd try on
+  some other function?" If not, don't add it.
+- **Actionable:** it states a symptom the reader can recognise in a diff (an instruction pattern,
+  a frame-size gap, a `main.dol` shift, a link error) and the fix to apply.
+- **Verified:** the fix actually reached 100% / `main.dol: OK` (or the claim was measured in a
+  scratch TU). No hypotheses, no "might be".
+
+Write it as one bullet, in this shape: **bold symptom or rule**, then 1-3 sentences: cause, fix,
+and at most one example function (`Name`, address). Add a code block only when the exact source
+form is the whole point. Update the existing entry instead of appending a near-duplicate: `grep` the
+file for the symptom, the pragma, or the function's neighbours first. If a note turns out wrong or
+superseded, fix or delete it.
+
+Do **not** put any of these in `matching_notes.md`:
+
+- What you did or how it went: attempt counts, "tried N variants", percentage progressions
+  ("68% -> 100%"), what broke along the way, "first try", "now matched", session or date narrative.
+- A per-function write-up: what the function does, its full source shape, or every register and
+  offset in it. The source in `src/` and git history are that record. Only the part that
+  generalises belongs, as the example under a rule.
+- Failed approaches. A dead end that is a *common trap* (an agent would naturally try it and lose
+  an hour) may be one short "doesn't help:" clause on the relevant rule. Everything else goes in
+  `nonmatching.md`, and only if the function is still unmatched.
+- Anything for a function that is still `NonMatching`. That is `nonmatching.md`.
+- Queue status, SDK identity or library-boundary findings (`docs/sdk_queue.tsv`,
+  `docs/sdk_libraries.md`), or how the tools/build work (`docs/workflow.md`, `docs/baseline.md`).
+- Praise for a technique, opinions, or reference-decomp trivia that doesn't change what you'd write.
+
+If you are unsure whether something qualifies, leave it out and mention it in your report instead.
+Two lines that a future agent will act on beat ten paragraphs it has to skim.
+
+**`docs/nonmatching.md`** takes the per-function detail: for a unit you leave `NonMatching`, its
+fuzzy %, what is left, and what you tried (so nobody repeats it). Longer entries are fine there. When
+a unit later flips to `Matching`, delete its entry and move only the general lesson, if any, to
+`matching_notes.md` under the rules above.
 
 ## Queue upkeep
 
