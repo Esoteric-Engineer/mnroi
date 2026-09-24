@@ -684,6 +684,7 @@ config.libs = [
             Object(Matching, "Dolphin/vi/getCurrentFieldEvenOdd.c"),
             Object(Matching, "Dolphin/vi/VIGetCurrentLine.c"),
             Object(Matching, "Dolphin/vi/VIGetTvFormat.c"),
+            Object(Matching, "Dolphin/vi/__VIDisplayPositionToXY.c"),
             Object(Matching, "Dolphin/vi/__VIGetCurrentPosition.c"),
         ],
     ),
