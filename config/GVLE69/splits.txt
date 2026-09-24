@@ -261,6 +261,9 @@ Runtime.PPCEABI.H/__sinit.c:
 Runtime.PPCEABI.H/__sfp.c:
 	.text       start:0x80178424 end:0x80178568
 
+Runtime.PPCEABI.H/_fopen_r.c:
+	.text       start:0x80178568 end:0x80178654
+
 Runtime.PPCEABI.H/fopen.c:
 	.text       start:0x80178654 end:0x80178684
 
