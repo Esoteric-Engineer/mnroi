@@ -517,6 +517,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetCPUFifo.c"),
             Object(Matching, "Dolphin/gx/GXSetGPFifo.c"),
             Object(Matching, "Dolphin/gx/GXSaveCPUFifo.c"),
+            Object(Matching, "Dolphin/gx/GXSetBreakPtCallback.c"),
             Object(Matching, "Dolphin/gx/__GXFifoInit.c"),
             Object(Matching, "Dolphin/gx/__GXFifoReadEnable.c"),
             Object(Matching, "Dolphin/gx/__GXFifoReadDisable.c"),

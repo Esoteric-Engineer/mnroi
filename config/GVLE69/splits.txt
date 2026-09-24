@@ -1220,6 +1220,9 @@ Dolphin/gx/GXSetGPFifo.c:
 Dolphin/gx/GXSaveCPUFifo.c:
 	.text       start:0x80191CF4 end:0x80191D28
 
+Dolphin/gx/GXSetBreakPtCallback.c:
+	.text       start:0x80191DF0 end:0x80191E34
+
 Dolphin/gx/__GXFifoInit.c:
 	.text       start:0x80191E34 end:0x80191E80
 
