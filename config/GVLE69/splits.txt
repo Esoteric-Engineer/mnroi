@@ -949,6 +949,10 @@ Dolphin/gx/__GXCalculateVLim.c:
 	.text       start:0x8018C4B8 end:0x8018C5DC
 	.sdata      start:0x8066C4C0 end:0x8066C4CC
 
+Dolphin/gx/GXGetVtxDesc.c:
+	.text       start:0x8018C5DC end:0x8018C790
+	.data       start:0x804D2DC0 end:0x804D2E28
+
 Dolphin/gx/GXClearVtxDesc.c:
 	.text       start:0x8018C820 end:0x8018C858
 
