@@ -879,6 +879,12 @@ config.libs = [
             Object(Matching, "Dolphin/arq/__ARQCallbackHack.c"),
         ],
     ),
+    DolphinLib(
+        "dsp",
+        [
+            Object(Matching, "Dolphin/dsp/DSPCheckMailToDSP.c"),
+        ],
+    ),
 ]
 
 

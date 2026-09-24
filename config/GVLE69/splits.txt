@@ -1656,3 +1656,6 @@ Dolphin/ar/__ARGetInterruptStatus.c:
 
 Dolphin/arq/__ARQCallbackHack.c:
 	.text       start:0x804064A4 end:0x804064A8
+
+Dolphin/dsp/DSPCheckMailToDSP.c:
+	.text       start:0x8040962C end:0x8040963C
