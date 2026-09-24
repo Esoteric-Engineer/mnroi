@@ -967,9 +967,9 @@ Dolphin/gx/GXSetChanCtrl.c:
 	.text       start:0x8018DB5C end:0x8018DC0C
 
 Dolphin/gx/__GXGetTexTileShift.c:
-	.text       start:0x8018DC0C end:0x8018E128
+	.text       start:0x8018DC0C end:0x8018E28C
 	.data       start:0x804D2F88 end:0x804D32A0
-	.sdata2     start:0x806706C0 end:0x806706D0
+	.sdata2     start:0x806706C0 end:0x806706E8
 
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
