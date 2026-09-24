@@ -48,6 +48,9 @@ Runtime.PPCEABI.H/tanf.c:
 Runtime.PPCEABI.H/scalbnf.c:
 	.text       start:0x8016DEDC end:0x8016DFF8
 
+Runtime.PPCEABI.H/__kernel_cos.c:
+	.text       start:0x8016DFF8 end:0x8016E0EC
+
 Runtime.PPCEABI.H/__kernel_sin.c:
 	.text       start:0x8016E0EC end:0x8016E198
 

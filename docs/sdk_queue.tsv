@@ -8,7 +8,7 @@ addr	size	name	library	confidence	notes	status
 0x8016DD80	0xDC	sinf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DE5C	0x80	tanf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DEDC	0x11C	scalbnf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
-0x8016DFF8	0xF4	__kernel_cos	libc	guess	fdlibm k_cos.c (double): 0x3e3fffff / 0x3fd33333 / 0x3fe90000 breakpoints, qx=0.28125. No callers or callees; double sibling of __kernel_cosf. Not in CFTKK	open
+0x8016DFF8	0xF4	__kernel_cos	libc	guess	fdlibm k_cos.c (double): 0x3e3fffff / 0x3fd33333 / 0x3fe90000 breakpoints, qx=0.28125. No callers or callees; double sibling of __kernel_cosf. Not in CFTKK; matched as nofralloc asm, sdata2 double literals 0x8066C190-D0 via bare externs; needs force_active (no callers)	matched
 0x8016E0EC	0xAC	__kernel_sin	libc	exact	Newlib fdlibm k_sin.c (double); matched as nofralloc asm (hi/lo word spill idiom like the float siblings; C alone 42%), .sdata doubles 0x8066C1D8-208 via bare externs; needs force_active (no callers yet)	matched
 0x8016E198	0x364	__ieee754_rem_pio2	libc	guess	fdlibm e_rem_pio2.c (double): 0x3fe921fb / 0x4002d97c / 0x413921fb / 0x7ff00000 breakpoints; calls fabs (0x8016E4FC) and __kernel_rem_pio2 (0x8016EC68). Not in CFTKK	open
 0x8016E538	0xEC	__kernel_cosf	libc	known	Called by cosf/sinf as the 2-arg (x,y) kernel; Newlib kf_cos.c	matched
