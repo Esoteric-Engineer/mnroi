@@ -992,6 +992,11 @@ Dolphin/gx/GXInitLightAttn.c:
 Dolphin/gx/GXInitLightAttnK.c:
 	.text       start:0x8018D6FC end:0x8018D70C
 
+Dolphin/gx/GXInitLightSpot.c:
+	.text       start:0x8018D70C end:0x8018D89C
+	.data       start:0x804D2F68 end:0x804D2F84
+	.sdata2     start:0x80670678 end:0x806706A4
+
 Dolphin/gx/GXInitLightPos.c:
 	.text       start:0x8018D89C end:0x8018D8AC
 
@@ -1279,6 +1284,9 @@ Dolphin/gx/GXFlush.c:
 
 Dolphin/gx/GXResetWriteGatherPipe.c:
 	.text       start:0x8019215C end:0x80192190
+
+Dolphin/gx/__GXAbort.c:
+	.text       start:0x80192190 end:0x801922FC
 
 Dolphin/gx/GXDrawDone.c:
 	.text       start:0x801924C4 end:0x80192544

@@ -179,7 +179,7 @@ addr	size	name	library	confidence	notes	status
 0x8018D3C0	0x80	__GXSetDirtyState	gx	exact	GXGeometry.c order (ac-decomp); was misnamed GXDrawDone; callees __GXSetVCD/CD34/C4B8 are __GXSetVCD/__GXSetVAT/__GXCalculateVLim	matched
 0x8018D440	0xD0	GXBegin	gx	guess	Matched: ac-decomp GXBegin (non-debug) with __GXSetDirtyState as a static inline; the game code inlines it	matched
 0x8018D510	0x88	__GXSendFlushPrim	gx	exact	ac-decomp size 0x88	matched
-0x8018D70C	0x190	GXInitLightSpot	gx	exact	CFTKK-Decomp size 0x190. Only callee is cosf; cutoff/spot-function switch computing the a0..a2 coefficients (not in ac-decomp)	open
+0x8018D70C	0x190	GXInitLightSpot	gx	exact	CFTKK-Decomp size 0x190. Only callee is cosf; cutoff/spot-function switch computing the a0..a2 coefficients (not in ac-decomp); matched with the older reciprocal form (d=1/(..), multiplies) and fp_contract off	matched
 0x8018E0E0	0x48	GXInitTexObjCI	gx	exact	ac-decomp size 0x48	matched
 0x8018E128	0x164	GXInitTexObjLOD	gx	guess	ac-decomp size 0x194; matched in __GXGetTexTileShift.c (this game has no asserts; size 0x164)	matched
 0x8018EDE8	0x178	GXSetIndTexMtx	gx	guess	ac-decomp GXBump.c GXSetIndTexMtx; body verified (3x fmuls 1024.0 / fctiwz, id switch on ITM 1-3/5-7/9-11); 100%, main.dol OK	matched
@@ -190,7 +190,7 @@ addr	size	name	library	confidence	notes	status
 0x80191CF4	0x34	GXSaveCPUFifo	gx	exact	CFTKK-Decomp size 0x34: GXFlush then __GXSaveCPUFifoAux(fifo)	matched
 0x80191D28	0xC8	__GXSaveCPUFifoAux	gx	exact	CFTKK-Decomp size 0xC8: under OSDisableInterrupts copies PI FIFO base/end/wrptr and CP read/write pointers into the __GXFifoObj, recomputes rdwtDistance; stalled at 99.2%, see nonmatching.md	stalled
 0x80191DF0	0x44	GXSetBreakPtCallback	gx	exact	CFTKK-Decomp size 0x44: swaps the callback slot (lbl_8066F484) under OSDisableInterrupts and returns the old one. CFTKK has GXGetGPStatus (0x50) before it, absent here (older SDK)	matched
-0x80192190	0x16C	__GXAbort	gx	exact	CFTKK-Decomp size 0x16C. GXGetGPFifo, OSGetTime wait loops (6 calls) around CP/PI reset writes; called from __GXShutdown	open
+0x80192190	0x16C	__GXAbort	gx	exact	CFTKK-Decomp size 0x16C. GXGetGPFifo, OSGetTime wait loops (6 calls) around CP/PI reset writes; called from __GXShutdown; 98.8%: first half is a GXGetGPFifo-guarded memReg (0x4E/0x50) stability wait, then PI reg 0xCC003018 pulse; loop tail is bne-top in the original (see nonmatching.md). GXAbortFrame (0x801922FC) inlines this whole body then GXGetGPFifo/__GXCleanGPFifo/__GXInitRevisionBits/dirtyState/__GXSetDirtyState/8 FIFO zero writes/fn_8017A838	stalled
 0x801922FC	0x1C8	GXAbortFrame	gx	guess	Same OSGetTime/GXGetGPFifo abort sequence as __GXAbort (0x16C) followed by __GXCleanGPFifo, __GXInitRevisionBits and __GXSetDirtyState: ac-decomp GXAbortFrame = __GXAbort(); __GXCleanGPFifo(); with __GXAbort inlined (0x16C+0x5C = 0x1C8). Not in CFTKK	open
 0x801924C4	0x80	GXDrawDone	gx	exact	CFTKK-Decomp size 0x80: GXSetDrawDone (flush) and GXWaitDrawDone (OSSleepThread on FinishQueue) both inlined under OSDisableInterrupts. Note 0x80192544 (named __GXFlushTextureStateDup, 0x24) is CFTKK GXPixModeSync; GXSetDrawSync/GXReadDrawSync are not in this range	matched
 0x80192B68	0x238	GXGetYScaleFactor	gx	guess	SDK GXFrameBuf.c GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight) returning f32: iterative search for the yScale whose GXGetNumXfbLines equals xfbHeight, with that helper inlined (fdivs, __cvt_fp2unsigned, divwu by 0x100/0x80 tests, clamp 0x400); between GXSetCopyClamp and GXSetDispCopyYScale like ac-decomp. No CFTKK size	open
