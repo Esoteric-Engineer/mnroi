@@ -973,6 +973,9 @@ Dolphin/gx/GXGetVtxDesc.c:
 	.text       start:0x8018C5DC end:0x8018C790
 	.data       start:0x804D2DC0 end:0x804D2E28
 
+Dolphin/gx/GXGetVtxDescv.c:
+	.text       start:0x8018C790 end:0x8018C820
+
 Dolphin/gx/GXClearVtxDesc.c:
 	.text       start:0x8018C820 end:0x8018C858
 
