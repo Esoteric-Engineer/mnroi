@@ -1217,6 +1217,9 @@ Dolphin/gx/__GXDefaultTexRegionCallback.c:
 Dolphin/gx/__GXDefaultTlutRegionCallback.c:
 	.text       start:0x80190580 end:0x801905A4
 
+Dolphin/gx/__GXShutdown.c:
+	.text       start:0x801905A4 end:0x80190734
+
 Dolphin/gx/__GXInitRevisionBits.c:
 	.text       start:0x80190734 end:0x801908D8
 
