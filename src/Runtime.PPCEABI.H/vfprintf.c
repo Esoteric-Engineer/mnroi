@@ -1,5 +1,5 @@
-extern void fn_80173D8C(void);
-extern void fn_801757D8(void);
+extern void _vfprintf_r(void);
+extern void _vfiprintf_r(void);
 
 asm int vfprintf(void* fp, const char* fmt, void* ap)
 {
@@ -52,7 +52,7 @@ above_L:
     blt     next
 isfloat:
     mr      r5, r11
-    bl      fn_80173D8C
+    bl      _vfprintf_r
     b       done
 next:
     lbzu    r0, 1(r9)
@@ -62,7 +62,7 @@ endscan:
     lwz     r3, 0x5c(r4)
     mr      r5, r11
     crclr   6
-    bl      fn_801757D8
+    bl      _vfiprintf_r
 done:
     lwz     r0, 0xc(r1)
     mtlr    r0

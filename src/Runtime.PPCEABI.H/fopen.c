@@ -1,7 +1,7 @@
 typedef struct FILE FILE;
 
 extern FILE* lbl_8066C3B0;
-extern FILE* fn_80178568(FILE* file, const char* name, const char* mode);
+extern FILE* _fopen_r(FILE* file, const char* name, const char* mode);
 
 asm FILE* fopen(const char* name, const char* mode)
 {
@@ -14,7 +14,7 @@ asm FILE* fopen(const char* name, const char* mode)
     mr      r5, r4
     lwz     r3, lbl_8066C3B0
     mr      r4, r0
-    bl      fn_80178568
+    bl      _fopen_r
     lwz     r0, 12(r1)
     mtlr    r0
     addi    r1, r1, 8

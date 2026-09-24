@@ -1,5 +1,5 @@
 extern float lbl_8066C17C;
-extern float fn_8016E6D0(float x, float y, int iy);
+extern float __kernel_tanf(float x, float y, int iy);
 extern int __ieee754_rem_pio2f(float x, float* y);
 
 asm float tanf(float x)
@@ -19,7 +19,7 @@ asm float tanf(float x)
     cmpw    r9, r0
     bgt     L_gt
     li      r3, 1
-    bl      fn_8016E6D0
+    bl      __kernel_tanf
     b       L_end
 L_gt:
     lis     r0, 0x7f7f
@@ -32,7 +32,7 @@ L_gt:
     lfs     f1, 8(r1)
     lfs     f2, 0xc(r1)
     subfic  r3, r3, 1
-    bl      fn_8016E6D0
+    bl      __kernel_tanf
     b       L_end
 L_nan:
     fsubs   f1, f1, f1

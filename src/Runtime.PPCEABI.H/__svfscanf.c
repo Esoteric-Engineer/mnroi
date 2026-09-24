@@ -1,4 +1,4 @@
-extern void fn_801712D4(void);
+extern void _mbtowc_r(void);
 extern void __srefill(void);
 extern void ungetc(void);
 extern void fread(void);
@@ -41,7 +41,7 @@ L_80170200:
     lwz     r6, lbl_8066C3AC
     mr      r4, r14
     lwz     r7, 0x270(r1)
-    bl      fn_801712D4
+    bl      _mbtowc_r
     lhz     r0, 0x268(r1)
     mr      r25, r3
     add     r22, r22, r25

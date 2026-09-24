@@ -1,32 +1,32 @@
 addr	size	name	library	confidence	notes	status
-0x8016D000	0x64		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8016D000	0x64		libc	unidentified	NOT a function: the last 0x64 bytes of the function 0x8016CE18-0x8016D064 (0x24C, asin/acos family: p/q polynomial, calls the sqrt at 0x8016D978, blr with a 0x28 frame) that sits inside the pad_01_8016B5AC_text region. No prologue here. Needs the boundary fixed (split at 0x8016CE18) before naming; the name lives on the 0x8016CE18 function	open
 0x8016D064	0x220	__ieee754_atan2f	libc	exact	Newlib ef_atan2.c body (no errno wrapper); matched as nofralloc asm, sdata literals 0x8066C0A0-CC via bare externs	matched
-0x8016D284	0x6F4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x8016D978	0xF8		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8016D284	0x6F4	__ieee754_powf	libc	guess	Newlib ef_pow.c (checked: 0x4b7fffff/0x3f7ffff7/0x3f800007/0x4d000000 breakpoints, calls sqrt 0x8016D978 for y==0.5, fabsf, scalbnf). CFTKK calls this powf (0x730); ours is 0x3C smaller = no w_powf wrapper (callers are game code), same as __ieee754_atan2f	open
+0x8016D978	0xF8	__ieee754_sqrtf	libc	guess	Newlib ef_sqrt.c: integer bit-by-bit sqrt (x*x+x for inf/nan, (x-x)/(x-x) for neg). CFTKK calls this sqrtf (0x10C); ours is smaller = no w_sqrtf wrapper. Called by the asin/acos tail, powf and game code	open
 0x8016DA70	0x210	atanf	libc	guess	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL; verified vs newlib sf_atan.c (0x507fffff/0x3edfffff breakpoints, atanhi/atanlo/aT); matched as nofralloc asm	matched
 0x8016DC80	0xDC	cosf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DD80	0xDC	sinf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DE5C	0x80	tanf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DEDC	0x11C	scalbnf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
-0x8016DFF8	0xF4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8016DFF8	0xF4	__kernel_cos	libc	guess	fdlibm k_cos.c (double): 0x3e3fffff / 0x3fd33333 / 0x3fe90000 breakpoints, qx=0.28125. No callers or callees; double sibling of __kernel_cosf. Not in CFTKK	open
 0x8016E0EC	0xAC	__kernel_sin	libc	exact	Newlib fdlibm k_sin.c (double); matched as nofralloc asm (hi/lo word spill idiom like the float siblings; C alone 42%), .sdata doubles 0x8066C1D8-208 via bare externs; needs force_active (no callers yet)	matched
-0x8016E198	0x364		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8016E198	0x364	__ieee754_rem_pio2	libc	guess	fdlibm e_rem_pio2.c (double): 0x3fe921fb / 0x4002d97c / 0x413921fb / 0x7ff00000 breakpoints; calls fabs (0x8016E4FC) and __kernel_rem_pio2 (0x8016EC68). Not in CFTKK	open
 0x8016E538	0xEC	__kernel_cosf	libc	known	Called by cosf/sinf as the 2-arg (x,y) kernel; Newlib kf_cos.c	matched
 0x8016E624	0xAC	__kernel_sinf	libc	known	Called by cosf/sinf as the 3-arg (x,y,iy) kernel; Newlib kf_sin.c	matched
-0x8016E6D0	0x214		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8016E6D0	0x214	__kernel_tanf	libc	guess	Newlib kf_tan.c (0x317fffff, 0x3f2ca140 breakpoints, calls fabsf); called by tanf. CFTKK __kernel_tanf is 0x224 (drift 0x10); neighbour order matches exactly (__kernel_sinf, this, __ieee754_rem_pio2f)	open
 0x8016E8E4	0x350	__ieee754_rem_pio2f	libc	exact	Verified: callers cosf/sinf/tanf, calls fabsf and 0x8016F4F0 (likely __kernel_rem_pio2f); matched as nofralloc asm in Runtime.PPCEABI.H/__ieee754_rem_pio2f.c	matched
-0x8016EC68	0x888		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8016EC68	0x888	__kernel_rem_pio2	libc	guess	fdlibm k_rem_pio2.c (double, init_jk/PIo2 tables): calls scalbn (0x8016FE3C) x4 and floor (pad function 0x8016CBDC). Double sibling of the already-named __kernel_rem_pio2f (0x8016F4F0). Not in CFTKK	open
 0x8016F4F0	0x884	__kernel_rem_pio2f	libc	exact	Confirmed __kernel_rem_pio2f (kf_rem_pio2.c: init_jk/PIo2 tables, scalbnf + floorf calls); matched as nofralloc asm in Runtime.PPCEABI.H/__kernel_rem_pio2f.c	matched
 0x8016FD74	0xC8	floorf	libc	exact	Confirmed floorf (sf_floor.c); matched as nofralloc asm in Runtime.PPCEABI.H/floorf.c. Also called from game code (0x802A10E8)	matched
-0x8016FE3C	0x154		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x8016FF90	0x50		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8016FE3C	0x154	scalbn	libc	guess	fdlibm s_scalbn.c (double): 0x43500000-style two54 scaling, 50000 threshold, huge*copysign / tiny*copysign via 0x8016FF90. Not in CFTKK	open
+0x8016FF90	0x50	copysign	libc	guess	fdlibm s_copysign.c (double): (hx&0x7fffffff)|(hy&0x80000000), verbatim. Called only by scalbn. Not in CFTKK	open
 0x8016FFE0	0xD8	sprintf	libc	exact	Newlib sprintf (_svfprintf_r(&f,fmt,ap) with an inline FILE); matched as nofralloc asm in Runtime.PPCEABI.H/sprintf.c	matched
 0x801700C0	0xF0	sscanf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x801701B0	0xE04	__svfscanf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80170FB4	0xD4	__sccl	libc	exact	verified against Newlib sccl.c (identical control flow); matched as nofralloc asm in Runtime.PPCEABI.H/__sccl.c	matched
-0x8017123C	0x98		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x801712D4	0x32C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80171600	0x98C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8017123C	0x98	bsearch	libc	guess	Newlib bsearch.c: binary search, mid=(lo+hi)>>1, calls compar via blrl, returns base+mid*size. Called from game code (next to qsort). Not in CFTKK	open
+0x801712D4	0x32C	_mbtowc_r	libc	guess	Newlib _mbtowc_r (mbtowc_r.c, 1.14-1.16 era): strlen(r->_current_locale)>1 then strcmp against C-SJIS / C-EUCJP / C-JIS (strings at 0x8049C20C..). Called by __svfscanf and both printf bodies. CFTKK _mbtowc_r is 0x31C (drift 0x10); neighbour order differs (CFTKK has exit before it)	open
+0x80171600	0x98C	qsort	libc	guess	Newlib qsort.c (BSD qsort): swaptype from alignment/size, n<7 insertion sort, n>40 median of 9, inlined swaps, recurses on the smaller partition (self-call at 0x80171F60). Called from game code next to bsearch. Not in CFTKK	open
 0x80172028	0x198	_strtoul_r	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8017232C	0xEC	memmove	libc	exact	verified against Newlib memmove (non-size-optimised: byte-only backward copy, memcpy-style forward loops); matched as nofralloc asm in Runtime.PPCEABI.H/memmove.c (100%, main.dol OK)	matched
 0x801725B8	0x9C	strchr	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
@@ -35,32 +35,32 @@ addr	size	name	library	confidence	notes	status
 0x80172780	0x6C	strlen	libc	exact	Matched as asm (GCC-built Newlib word-at-a-time null detect, same shape as strcat)	matched
 0x801727EC	0x6C	strlwr	libc	exact	Newlib strlwr.c; byte-verified, matched as nofralloc asm (see matching_notes.md string routines)	matched
 0x80172858	0xAC	strnicmp	libc	exact	CFTKK named this strncat (size/order only): wrong. Bounded case-insensitive compare (old Newlib strncasecmp, tolower on both). Matched as nofralloc asm; C stalls at 78.5% with a -0x20 frame like stricmp	matched
-0x80172904	0xE0		libc	unidentified	Looks like strncmp (n==0 -> 0, word-compare fast path when both 4-aligned); verify against Newlib strncmp before naming	open
+0x80172904	0xE0	strncmp	libc	guess	Newlib strncmp: n==0 -> 0, word-at-a-time path when both 4-aligned (0x01010101/0x80808080 null detect), byte tail. Checked against string/strncmp.c. Not in CFTKK	open
 0x801729E4	0xCC	strncpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL; verified against Newlib strncpy (word loop + byte loop + zero-pad); matched as nofralloc asm in Runtime.PPCEABI.H/strncpy.c	matched
-0x80172CEC	0x8C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80172DA0	0x258		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80172FF8	0x354		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x8017334C	0x288		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x80172CEC	0x8C	asctime_r	libc	guess	Newlib asctime_r: sprintf(buf,"%.3s %.3s%3d %.2d:%.2d:%.2d %d\n", day_name[wday], mon_name[mon], mday, hour, min, sec, year+1900) with the 3-char name tables at 0x8049C420/0x8049C435. Already-matched wrapper fn_80172CC4 (asctime) calls it with reent+0x60. Not in CFTKK	open
+0x80172DA0	0x258	gmtime_r	libc	guess	gmtime_r(tim_p,res): old tzcode-style day/year loop (86400/3600/60, 1970 base, leap tests, month-length table 0x8049C480), no calls. Already-matched wrapper fn_80172D78 (gmtime) calls it with reent+0x7c. Not the modern civil_from_days algorithm. Not in CFTKK	open
+0x80172FF8	0x354	validate_structure	libc	guess	mktime.c static validate_structure: div(sec,60) div(min,60) div(hour,24) div(mon,12), then mday/leap fixups. Called only by mktime (0x8017334C). Not in CFTKK	open
+0x8017334C	0x288	mktime	libc	guess	Newlib mktime (old, no tz/DST calls): validate_structure, then days from year (70 base, 100/400 leap tests), *86400/3600/60. Called from game code. Not in CFTKK	open
 0x801735D4	0x5C	strround	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL; name kept from CFTKK (not a Newlib symbol); GCC-style asm (mr./subic.), rounds decimal digit string in place	matched
 0x80173630	0x4C	strrev	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8017367C	0x7C	itoa	libc	exact	Matched as nofralloc asm (GCC output): old Newlib itoa with __utoa inlined, calls strrev on the result	matched
-0x801736F8	0x4E8		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80173BE0	0xD4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80173CB4	0xD8	vfprintf	libc	guess	vfprintf(fp,fmt,ap): reent = fp->_data (0x5C), scans fmt for L/E/e-g/G specs and tail-calls fn_80173D8C (float _vfprintf_r?) or fn_801757D8 (integer _vfiprintf_r?). No upstream Newlib counterpart (machine/powerpc/vfprintf.c has no such wrapper), so matched as nofralloc asm in Runtime.PPCEABI.H/vfprintf.c, like sprintf/vsprintf	matched
-0x80173D8C	0x17F0		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x8017557C	0x188		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80175704	0xD4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x801757D8	0x167C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x801736F8	0x4E8	fftoa	libc	guess	CFTKK-local float->ascii (calls strround, itoa, floor 0x801773E4, __ieee754_fmod 0x80177558); called only by _vfprintf_r. Name kept from CFTKK (0x438; ours 0x4E8, so a different revision); shape not checked line by line	open
+0x80173BE0	0xD4	_vfwrite	libc	guess	CFTKK-local _vfwrite: buffered writer (128-byte static buffer at 0x8057C024, flushes via os fn_8017A6CC when full or when n==1 with a flush request); called by _vfprintf_r. CFTKK size 0xD8 (ours 0xD4). Label, not a Newlib symbol	open
+0x80173CB4	0xD8	vfprintf	libc	guess	vfprintf(fp,fmt,ap): reent = fp->_data (0x5C), scans fmt for L/E/e-g/G specs and tail-calls _vfprintf_r (float _vfprintf_r?) or _vfiprintf_r (integer _vfiprintf_r?). No upstream Newlib counterpart (machine/powerpc/vfprintf.c has no such wrapper), so matched as nofralloc asm in Runtime.PPCEABI.H/vfprintf.c, like sprintf/vsprintf	matched
+0x80173D8C	0x17F0	_vfprintf_r	libc	guess	printf body with float support (tail-called by vfprintf 0x80173CB4): localeconv, _mbtowc_r, memchr/strlen, __umoddi3/__udivdi3 (%lld), fftoa, __ieee754_log10 and the comma helper 0x8017557C. CFTKK _vfprintf_r is 0x1440 (ours 0x17F0); order matches (fftoa, _vfwrite, vfprintf, this)	open
+0x8017557C	0x188		libc	unidentified	Not upstream Newlib and not in CFTKK: inserts ',' every 3 digits into a numeric string (scans back to '.' or 'e'/'E', memcpy's the result over the input). Called by both printf bodies (likely the ' grouping flag). Needs an invented label if it is ever matched	open
+0x80175704	0xD4	_vfiwrite	libc	guess	Second copy of the CFTKK-local _vfwrite (same code as 0x80173BE0, own static buffer use), used by _vfiprintf_r. Named _vfiwrite here to keep symbol names unique; CFTKK names both _vfwrite	open
+0x801757D8	0x167C	_vfiprintf_r	libc	guess	printf body without float support (the integer variant vfprintf picks when the format has no float spec): no fftoa/log10 calls, otherwise same callees as _vfprintf_r. CFTKK _vfiprintf_r is 0x12F4 (ours 0x167C); order matches (_vfprintf_r, _vfwrite, this)	open
 0x80176E54	0x1B0	_strtol_r	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
-0x8017703C	0x32C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x801773E4	0x174		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80177558	0x35C		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x801778B4	0x2FC		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80177BB0	0x148		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x8017703C	0x32C	strtod	libc	guess	strtod(str,endptr) (called by atof with endptr=0): isspace skip, sign, digit scan with '.', 9+9 digit chunking, errno on overflow. CFTKK strtod is 0x330 (ours 0x32C); neighbour order differs. Not Newlib's dtoa-based _strtod_r	open
+0x801773E4	0x174	floor	libc	guess	fdlibm s_floor.c (double): 0xbff00000 for negatives, 0x000fffff>>j0 mask. Called by fftoa. CFTKK floor is 0x16C (ours 0x174)	open
+0x80177558	0x35C	__ieee754_fmod	libc	guess	fdlibm e_fmod.c (double): y==0/x non-finite -> (x*y)/(x*y), |x|<|y| returns x, Zero[sx] on equality. Called by fftoa; no w_fmod wrapper. Not in CFTKK	open
+0x801778B4	0x2FC	__ieee754_log	libc	guess	fdlibm e_log.c (double): hx+0x95f64 / 0x3ff00000 reduction, called only by __ieee754_log10. Not in CFTKK	open
+0x80177BB0	0x148	__ieee754_log10	libc	guess	fdlibm e_log10.c (double): k=(hx>>20)-1023, i=(k>>31)&1, y=(double)(k+i), calls __ieee754_log (0x801778B4). Called by _vfprintf_r. Not in CFTKK	open
 0x80178374	0xB0	__sinit	libc	exact	Named __sinit (not CFTKK's _sn_sinit): sets __sdidinit/__cleanup, inits stdin/out/err via std() (0x80178318) and the first glue. nofralloc asm, 100% first try	matched
-0x80178424	0x144		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80178568	0xEC		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x801786AC	0x3E4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
+0x80178424	0x144	__sfp	libc	guess	Newlib findfp.c __sfp(reent): __sinit if not done, walks the glue list for a free FILE (_flags==0), sets _flags=1 and clears the fields (reent at 0x5C). Called by _fopen_r. Not in CFTKK	open
+0x80178568	0xEC	_fopen_r	libc	guess	Newlib fopen.c _fopen_r(reent,file,mode): __sflags (0x80178F54), __sfp, _open_r (0x80178E48, mode 0666), installs __sread/__swrite/__sseek/__sclose, _fseek_r to end for append. Called by fopen (0x80178654). Not in CFTKK	open
+0x801786AC	0x3E4	_fseek_r	libc	guess	Newlib fseek.c _fseek_r(reent,fp,off,whence): __sinit, fflush, __smakebuf, _fstat_r (block-size seek optimisation), __srefill. Called by _fopen_r for append mode. Not in CFTKK	open
 0x80178A90	0x80	_fwalk	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80178B10	0xD8	__smakebuf	libc	exact	Newlib __smakebuf (old signature, reent via fp->_data); matched as nofralloc asm	matched
 0x80178BE8	0x64	__sread	libc	exact	Verified: old-Newlib __sread(fp,buf,n) -> _read_r(fp->_data,fp->_file,buf,n); GCC output, written as asm	matched

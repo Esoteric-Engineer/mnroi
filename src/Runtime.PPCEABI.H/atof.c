@@ -1,4 +1,4 @@
-extern double fn_8017703C(const char* str, char** end);
+extern double strtod(const char* str, char** end);
 
 asm double atof(const char* str)
 {
@@ -8,7 +8,7 @@ asm double atof(const char* str)
     mflr    r0
     stw     r0, 12(r1)
     li      r4, 0
-    bl      fn_8017703C
+    bl      strtod
     lwz     r0, 12(r1)
     mtlr    r0
     addi    r1, r1, 8
