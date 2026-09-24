@@ -135,7 +135,7 @@ addr	size	name	library	confidence	notes	status
 0x801878AC	0x8C		dvd	unidentified		open
 0x80187938	0x9C	DVDLowAudioBufferConfig	dvd	known	symbol already named; just needs split + match	matched
 0x801879D4	0xBC	DVDLowReset	dvd	known	NonMatching 99.15%, see docs/nonmatching.md (resetStart/ticks register-pair swap)	stalled
-0x80187E38	0xA0	getTiming	vi	guess	ac-decomp size 0x90	open
+0x80187E38	0xA0	getTiming	vi	known	Matched; VI .data pool (version string, timing[10], taps) claimed with it	matched
 0x80187ED8	0x200	__VIInit	vi	guess	ac-decomp size 0x1f8	open
 0x801880D8	0x4B0	VIInit	vi	guess	ac-decomp size 0x478	open
 0x801885DC	0x2D4	setFbbRegs	vi	exact	ac-decomp vi.c setFbbRegs (calcFbbs inlined x2); matched in Dolphin/vi/setFbbRegs.c	matched
