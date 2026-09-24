@@ -21,7 +21,6 @@ typedef struct {
 } __GXDataStruct;
 
 extern __GXDataStruct* const __GXData;
-extern const f32 GXDispCopyYScaleConst;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -53,6 +52,41 @@ static u32 __GXGetNumXfbLines(u32 efbHt, u32 iScale)
     return realHt;
 }
 
+// The unit owns its .sdata2 literal pool (see splits.txt); force_active keeps it from being dead-stripped.
+// Kept below the static helper so its out-of-line copy is still dropped.
+#pragma force_active on
+
+f32 GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight)
+{
+    f32 fScale;
+    f32 yScale;
+    u32 iScale;
+    u32 tgtHt;
+    u32 realHt;
+
+    tgtHt = xfbHeight;
+    yScale = (f32)xfbHeight / (f32)efbHeight;
+    iScale = (u32)(256.0f / yScale) & 0x1FF;
+    realHt = __GXGetNumXfbLines(efbHeight, iScale);
+    while (realHt > xfbHeight) {
+        tgtHt--;
+        yScale = (f32)tgtHt / (f32)efbHeight;
+        iScale = (u32)(256.0f / yScale) & 0x1FF;
+        realHt = __GXGetNumXfbLines(efbHeight, iScale);
+    }
+    fScale = yScale;
+
+    while (realHt < xfbHeight) {
+        fScale = yScale;
+        tgtHt++;
+        yScale = (f32)tgtHt / (f32)efbHeight;
+        iScale = (u32)(256.0f / yScale) & 0x1FF;
+        realHt = __GXGetNumXfbLines(efbHeight, iScale);
+    }
+
+    return fScale;
+}
+
 u32 GXSetDispCopyYScale(f32 vscale)
 {
     u8 enable;
@@ -60,7 +94,7 @@ u32 GXSetDispCopyYScale(f32 vscale)
     u32 ht;
     u32 reg;
 
-    iScale = (u32)(GXDispCopyYScaleConst / vscale) & 0x1FF;
+    iScale = (u32)(256.0f / vscale) & 0x1FF;
     enable = (iScale != 256);
 
     reg = 0;
