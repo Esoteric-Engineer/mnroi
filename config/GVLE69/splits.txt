@@ -745,6 +745,9 @@ Dolphin/vi/getTiming.c:
 	.text       start:0x80187E38 end:0x80187ED8
 	.data       start:0x804D2880 end:0x804D2AE0
 
+Dolphin/vi/__VIInit.c:
+	.text       start:0x80187ED8 end:0x801880D8
+
 Dolphin/vi/VIWaitForRetrace.c:
 	.text       start:0x80188588 end:0x801885DC
 
