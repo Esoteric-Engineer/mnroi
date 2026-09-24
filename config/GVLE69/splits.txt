@@ -234,6 +234,9 @@ Runtime.PPCEABI.H/_strtol_r.c:
 Runtime.PPCEABI.H/strtol.c:
 	.text       start:0x80177004 end:0x8017703C
 
+Runtime.PPCEABI.H/strtod.c:
+	.text       start:0x8017703C end:0x80177368
+
 Runtime.PPCEABI.H/tolower.c:
 	.text       start:0x80177368 end:0x80177384
 

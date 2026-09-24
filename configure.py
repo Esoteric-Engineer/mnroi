@@ -361,6 +361,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/_vfiwrite.c"),
             Object(Matching, "Runtime.PPCEABI.H/_strtol_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/strtol.c"),
+            Object(Matching, "Runtime.PPCEABI.H/strtod.c"),
             Object(Matching, "Runtime.PPCEABI.H/tolower.c"),
             Object(Matching, "Runtime.PPCEABI.H/isdigit.c"),
             Object(Matching, "Runtime.PPCEABI.H/isspace.c"),
