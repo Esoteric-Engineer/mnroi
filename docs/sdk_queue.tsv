@@ -46,7 +46,7 @@ addr	size	name	library	confidence	notes	status
 0x8017367C	0x7C	itoa	libc	exact	Matched as nofralloc asm (GCC output): old Newlib itoa with __utoa inlined, calls strrev on the result	matched
 0x801736F8	0x4E8		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80173BE0	0xD4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80173CB4	0xD8	vfprintf	libc	guess	Public vfprintf(fp,fmt,ap): reent = fp->_data, scans fmt for L/E/e-g/G and calls fn_80173D8C (float _vfprintf_r?) or fn_801757D8 (integer _vfiprintf_r?). Not _vfwrite; no upstream counterpart, possibly project-local. Used by sprintf/vsprintf/vsnprintf	open
+0x80173CB4	0xD8	vfprintf	libc	guess	vfprintf(fp,fmt,ap): reent = fp->_data (0x5C), scans fmt for L/E/e-g/G specs and tail-calls fn_80173D8C (float _vfprintf_r?) or fn_801757D8 (integer _vfiprintf_r?). No upstream Newlib counterpart (machine/powerpc/vfprintf.c has no such wrapper), so matched as nofralloc asm in Runtime.PPCEABI.H/vfprintf.c, like sprintf/vsprintf	matched
 0x80173D8C	0x17F0		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8017557C	0x188		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80175704	0xD4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open

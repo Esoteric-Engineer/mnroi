@@ -345,6 +345,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/strround.c"),
             Object(Matching, "Runtime.PPCEABI.H/strrev.c"),
             Object(Matching, "Runtime.PPCEABI.H/itoa.c"),
+            Object(Matching, "Runtime.PPCEABI.H/vfprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/_strtol_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/strtol.c"),
             Object(Matching, "Runtime.PPCEABI.H/tolower.c"),
