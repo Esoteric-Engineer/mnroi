@@ -33,6 +33,9 @@ Dolphin/os/__shr2i.c:
 Runtime.PPCEABI.H/atan2f.c:
 	.text       start:0x8016D064 end:0x8016D284
 
+Runtime.PPCEABI.H/__ieee754_powf.c:
+	.text       start:0x8016D284 end:0x8016D978
+
 Runtime.PPCEABI.H/__ieee754_sqrtf.c:
 	.text       start:0x8016D978 end:0x8016DA70
 
