@@ -879,6 +879,9 @@ Dolphin/ai/__AICallbackStackSwitch.c:
 Dolphin/ai/__AI_SRC_INIT.c:
 	.text       start:0x8018BD24 end:0x8018BF08
 
+Dolphin/gx/__GXSetVCD.c:
+	.text       start:0x8018C3FC end:0x8018C4B8
+
 Dolphin/gx/__GXCalculateVLim.c:
 	.text       start:0x8018C4B8 end:0x8018C5DC
 	.sdata      start:0x8066C4C0 end:0x8066C4CC
