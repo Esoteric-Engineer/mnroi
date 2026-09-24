@@ -564,8 +564,8 @@ L8018284C:
     // clang-format on
 }
 
-extern void fn_8017F9B0(long chan, unsigned int id); // likely OSSetWirelessID, unconfirmed
-extern unsigned int fn_8017F92C(long chan);           // likely OSGetWirelessID, unconfirmed
+extern void OSSetWirelessID(long chan, unsigned int id);
+extern unsigned int OSGetWirelessID(long chan);
 extern unsigned int lbl_8066F288;                     // likely __PADFixBits, file-scope
 
 // `context` is unused, same as AlarmHandler.
@@ -617,7 +617,7 @@ asm void GetTypeCallback(int chan, unsigned int error, void* context)
 L80182900:
     addi    r3, r27, 0
     li      r4, 0
-    bl      fn_8017F9B0
+    bl      OSSetWirelessID
     slwi    r0, r27, 4
     lwz     r30, 0(r30)
     add     r31, r31, r0
@@ -641,7 +641,7 @@ L80182944:
     b       L80182AE4
 L80182958:
     mr      r3, r27
-    bl      fn_8017F92C
+    bl      OSGetWirelessID
     cmpwi   r26, 0
     rlwinm  r26, r3, 8, 8, 23
     beq     L801829BC
@@ -679,7 +679,7 @@ L801829BC:
     oris    r26, r3, 16
     addi    r3, r27, 0
     rlwinm  r4, r26, 24, 16, 31
-    bl      fn_8017F9B0
+    bl      OSSetWirelessID
 L801829F4:
     oris    r0, r26, 19968
     add     r4, r31, r29
@@ -705,7 +705,7 @@ L80182A30:
     oris    r28, r28, 16
     addi    r3, r27, 0
     rlwinm  r4, r28, 24, 16, 31
-    bl      fn_8017F9B0
+    bl      OSSetWirelessID
     oris    r0, r28, 19968
     add     r4, r31, r29
     stwu    r0, 496(r4)
@@ -724,7 +724,7 @@ L80182A30:
 L80182A90:
     addi    r3, r27, 0
     li      r4, 0
-    bl      fn_8017F9B0
+    bl      OSSetWirelessID
 L80182A9C:
     slwi    r0, r27, 4
     lwz     r30, 0(r30)

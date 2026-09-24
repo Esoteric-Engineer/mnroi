@@ -727,6 +727,8 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSGetSoundMode.c"),
             Object(Matching, "Dolphin/os/OSSetSoundMode.c"),
             Object(Matching, "Dolphin/os/OSGetLanguage.c"),
+            Object(Matching, "Dolphin/os/OSGetWirelessID.c"),
+            Object(Matching, "Dolphin/os/OSSetWirelessID.c"),
             Object(Matching, "Dolphin/os/OSGetGbsMode.c"),
             Object(Matching, "Dolphin/os/OSSetGbsMode.c"),
             Object(Matching, "Dolphin/os/OSSync.c"),

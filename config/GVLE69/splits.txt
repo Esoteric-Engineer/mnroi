@@ -532,6 +532,12 @@ Dolphin/os/OSSetSoundMode.c:
 Dolphin/os/OSGetLanguage.c:
 	.text       start:0x8017F8C0 end:0x8017F92C
 
+Dolphin/os/OSGetWirelessID.c:
+	.text       start:0x8017F92C end:0x8017F9B0
+
+Dolphin/os/OSSetWirelessID.c:
+	.text       start:0x8017F9B0 end:0x8017FA5C
+
 Dolphin/os/OSGetGbsMode.c:
 	.text       start:0x8017FA5C end:0x8017FACC
 
