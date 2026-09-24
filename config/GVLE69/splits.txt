@@ -563,6 +563,9 @@ Dolphin/os/OSWakeupThread.c:
 Dolphin/os/OSSetThreadPriority.c:
 	.text       start:0x80180DEC end:0x80180EAC
 
+Dolphin/os/OSClearStack.c:
+	.text       start:0x80180EAC end:0x80180F58
+
 Dolphin/os/OSTime.c:
 	.text       start:0x80180F58 end:0x801813D4
 

@@ -103,7 +103,7 @@ addr	size	name	library	confidence	notes	status
 0x80180BFC	0xEC	OSSleepThread	os	exact	ac-decomp size 0xec	matched
 0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	matched
 0x80180DEC	0xC0	OSSetThreadPriority	os	exact	ac-decomp size 0xc0	matched
-0x80180EAC	0xAC	OSClearStack	os	known	Was CheckThreadQueue (size/order only); named by dtk-dev from OSInit	open
+0x80180EAC	0xAC	OSClearStack	os	known	Was CheckThreadQueue (size/order only); named by dtk-dev from OSInit; matched in Dolphin/os/OSClearStack.c (fill stack below sp with a byte pattern)	matched
 0x801814F4	0xDC	EXIDetach	exi	guess	ac-decomp size 0xbc	open
 0x801815D0	0xC8	EXIIntrruptHandler	exi	exact	duplicate guess: the real EXIIntrruptHandler is 0x80194CEC (matched); this address is in the os/si range, re-identify	wrong-name
 0x80181698	0x70		exi	unidentified	size matches InitializeUART but that already exists at 0x80195B78	open

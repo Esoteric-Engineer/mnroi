@@ -761,6 +761,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSSleepThread.c"),
             Object(Matching, "Dolphin/os/OSWakeupThread.c"),
             Object(Matching, "Dolphin/os/OSSetThreadPriority.c"),
+            Object(Matching, "Dolphin/os/OSClearStack.c"),
             Object(Matching, "Dolphin/os/OSTime.c"),
             Object(NonMatching, "Dolphin/os/fn_801813D4.c"),
             Object(Matching, "Dolphin/os/_ExitProcess.c"),
