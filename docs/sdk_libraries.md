@@ -28,28 +28,46 @@ functions). Align against it first, then read the ac-decomp source for the body.
 | 0x80196194-0x80196884 | OdemuExi2 | |
 | 0x80196884-0x80197000+ | game code | **Not SDK.** The first cluster of SDK code ends at 0x80196884 (end of `DBGEXIImm`). Everything after it is GCC-style C++ (frame pointer `mr r31, r1`, `stmw r30`) calling unnamed functions at 0x8042xxxx/0x8046xxxx and called from game code below 0x80169000: a 0x300-byte camera-like class (ctor `0x80196884`, factory `0x801969CC`, setters, update `0x80196CE4`). The old `0x80197000` upper bound in `sdk_scout.py` / `report-sdk-progress` was arbitrary and is now `0x80196884` |
 
-## Second SDK cluster (found 2026-09-23, not split or named yet)
+## Second SDK cluster (0x80400544-0x804114EC, confirmed 2026-09-23, not split or named yet)
 
-More SDK code sits far above the first cluster, inside the game's `.text`. It was found by aligning
-function sizes and order against CFTKK-Decomp (`config/GQ4E78/symbols.txt`, same SDK build for these
-libraries): long exact runs, e.g. `0x80404BB0` (0x17F4) = `__ARChecksize`, and a 60-function AX run.
-Not confirmed by callees yet; treat the ranges as approximate.
+More SDK code sits far above the first cluster, inside the game's `.text`. Every `*Init` of AR, ARQ,
+AX, DSP and CARD is pinned by its `__XXVersion` load before `OSRegisterVersion`; the rest comes from
+exact size/order runs against CFTKK-Decomp and ac-decomp plus callee checks. Full evidence and a
+262-row name-proposal table: `docs/sdk_scout_findings.md`.
 
-| Range | Library | First functions |
+| Range | Library | Notes |
 |---|---|---|
-| 0x804048CC-0x80404BB0 | ar | `ARRegisterDMACallback` 0x804048CC, `ARGetDMAStatus` 0x80404910, `ARStartDMA` 0x8040494C, `ARInit` 0x80404A3C, `ARGetSize` 0x80404B00, `__ARHandler` 0x80404B08, `__ARClearInterrupt` 0x80404B80, `__ARChecksize` 0x80404BB0 |
-| 0x804063A4-0x80406740 | arq | `__ARQServiceQueueLo` 0x804063A4, `__ARQCallbackHack` 0x804064A4, `__ARQInterruptServiceRoutine` 0x804064A8, `ARQInit` 0x80406574, `ARQPostRequest` 0x804065E4 |
-| 0x80406828-0x8040962C | ax | `AXInit` 0x80406828 ... `__AXGetCurrentProfile` 0x804095E4 |
-| 0x8040962C-0x8040A190 | dsp | `DSPCheckMailToDSP` 0x8040962C ... `__DSP_remove_task` 0x8040A0FC |
-| 0x8040A190-0x80410C48 | card | `__CARDDefaultApiCallback` 0x8040A190 ... `DoneCallback` 0x80410924 |
+| 0x803FF3B0-0x80400544 | unclassified | 9 frame-pointer-less float functions; libm, middleware or game (unconfirmed) |
+| 0x80400544-0x804009C4 | libc (GCC Newlib, 2nd cluster) | `tolower`, `fclose`, `fprintf`, `printf`, `snprintf`, `vprintf`, `strncat`, `__floatdisf`. GCC-compiled, as in CFTKK |
+| 0x804009C4-0x80401EB0 | vm | VM + VMBASE (ARAM virtual memory). `VMInit` 0x804009C4; 0x80401550-0x80401E00 is VMBASE asm still as `lbl_` labels |
+| 0x80401EB0-0x80401F48 | runtime | `__save_gpr` / `__restore_gpr` |
+| 0x80401F48-0x80402130 | os | OSAlloc: `OSAllocFromHeap`, `OSSetCurrentHeap`, `OSInitAlloc`, `OSCreateHeap` |
+| 0x80402130-0x80402DC0 | os | OSFatal: `ScreenReport`, `ConfigureVideo`, `OSFatal` 0x80402608, `Halt` |
+| 0x80402DC0-0x80404148 | os | OSFont: `GetFontCode` .. `OSGetFontWidth` (`OSGetFontEncode` 0x804030A8) |
+| 0x80404148-0x804044C8 | os | OSMessage (3), OSSemaphore (4) |
+| 0x804044C8-0x804048CC | mtx | `PSMTXIdentity` .. `C_MTXOrtho` (8) |
+| 0x804048CC-0x804063A4 | ar | `ARInit` 0x80404A3C (version string); 9 functions |
+| 0x804063A4-0x80406828 | arq | `ARQInit` 0x80406574 (version string); 6 functions incl. `ARQRemoveRequest` |
+| 0x80406828-0x8040962C | ax | `AXInit` 0x80406828, `AXInitEx` 0x8040684C (version string); 61 functions. No AXFX/MIX/AXART |
+| 0x8040962C-0x8040A190 | dsp | `DSPInit` 0x80409678 (version string); 15 functions |
+| 0x8040A190-0x80411208 | card | `CARDInit` 0x8040B004 (version string); 97 functions. CARDRdwr (0x80410C48) and CARDStatEx (0x80410EC8) are linked after CARDUnlock |
+| 0x80411208-0x80411408 | gx | GXDisplayList: `GXBeginDisplayList`, `GXEndDisplayList`, `GXCallDisplayList` |
+| 0x80411408-0x804114EC | texPalette (unconfirmed) | `TEXGet`, `TEXGetGXTexObjFromPalette` by code shape |
 
-The 0x8040250C-0x80404074 functions that touch VI/PI/EXI registers are not from this run of matches
-(the sizes do not line up with CFTKK); they are probably game code.
+Between 0x80196884 and 0x803FF3B0, and from 0x804114EC on, the code is game or middleware. The earlier
+note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFatal/OSFont.
 
 ## Not found yet
 
-Nothing further is known about SDK code outside the two clusters above; `.rodata` version strings for
-the libraries linked into the game are the way to check for more.
+- All 13 `<< Dolphin SDK - ... >>` version strings in `main.dol` (OS, SI, DVD, VI, PAD, AI, GX, EXI,
+  AR, ARQ, AX, DSP, CARD) are now accounted for, so no other *versioned* SDK library is linked.
+- Unversioned SDK pieces could still hide in game `.text`. Checked and ruled out: the chance size runs
+  at 0x802420A8, 0x802CBFC4, 0x8042706C, 0x8042DB20, 0x80440490 (GCC frame-pointer game code), the
+  inline GX FIFO helpers in game code, and the paired-single block 0x802DF3F0-0x802E013C (no
+  reference match; probably engine math). Unresolved: 0x803FF3B0-0x80400544 and texPalette.
+- `sdk_scout.py` (`HI`) and `report-sdk-progress/sdk_remaining.py` (`--hi`) still only cover the first
+  cluster (up to 0x80196884). The second cluster needs a second range, 0x80400544-0x804114EC, not a
+  higher upper bound (see `docs/sdk_scout_findings.md`, "Upper bound").
 
 ## Work queue
 
