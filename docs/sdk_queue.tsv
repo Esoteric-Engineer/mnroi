@@ -9,7 +9,7 @@ addr	size	name	library	confidence	notes	status
 0x8016DE5C	0x80	tanf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DEDC	0x11C	scalbnf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DFF8	0xF4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x8016E0EC	0xAC	__kernel_sinf	libc	guess	Not __kernel_sinf: that is 0x8016E624 (confirmed by sinf callers). Identity unknown; re-scout.	wrong-name
+0x8016E0EC	0xAC	__kernel_sin	libc	guess	Double-precision fdlibm k_sin.c (fabs, ix<0x3e400000 shortcut, S1-S6 polynomial); float kernel is 0x8016E624. Renamed from the wrong __kernel_sinf; not yet byte-verified	open
 0x8016E198	0x364		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016E538	0xEC	__kernel_cosf	libc	known	Called by cosf/sinf as the 2-arg (x,y) kernel; Newlib kf_cos.c	matched
 0x8016E624	0xAC	__kernel_sinf	libc	known	Called by cosf/sinf as the 3-arg (x,y,iy) kernel; Newlib kf_sin.c	matched
@@ -33,7 +33,7 @@ addr	size	name	library	confidence	notes	status
 0x80172654	0xA8	strcmp	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x801726FC	0x84	strcpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80172780	0x6C	strlen	libc	exact	Matched as asm (GCC-built Newlib word-at-a-time null detect, same shape as strcat)	matched
-0x801727EC	0x6C		libc	unidentified	Queue said strlen: wrong. In-place lowercase loop (ctype table lbl_8049C6A1 + tolower), strlwr-like, returns s	wrong-name
+0x801727EC	0x6C	strlwr	libc	guess	In-place lowercase loop returning s (ctype table lbl_8049C6A1 + tolower): Newlib strlwr.c. Queue once said strlen (wrong); not yet byte-verified	open
 0x80172858	0xAC	strnicmp	libc	exact	CFTKK named this strncat (size/order only): wrong. Bounded case-insensitive compare (old Newlib strncasecmp, tolower on both). Matched as nofralloc asm; C stalls at 78.5% with a -0x20 frame like stricmp	matched
 0x80172904	0xE0		libc	unidentified	Looks like strncmp (n==0 -> 0, word-compare fast path when both 4-aligned); verify against Newlib strncmp before naming	open
 0x801729E4	0xCC	strncpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL; verified against Newlib strncpy (word loop + byte loop + zero-pad); matched as nofralloc asm in Runtime.PPCEABI.H/strncpy.c	matched
@@ -46,7 +46,7 @@ addr	size	name	library	confidence	notes	status
 0x8017367C	0x7C	itoa	libc	exact	Matched as nofralloc asm (GCC output): old Newlib itoa with __utoa inlined, calls strrev on the result	matched
 0x801736F8	0x4E8		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80173BE0	0xD4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80173CB4	0xD8	_vfwrite	libc	guess	No upstream Newlib counterpart: scans fmt for L/E/e-g/G and dispatches to fn_80173D8C (float vfprintf) or fn_801757D8 (integer); not _vfwrite. Wrapper is vfprintf(fp,fmt,ap)-shaped (reent = fp->_data)	wrong-name
+0x80173CB4	0xD8	vfprintf	libc	guess	Public vfprintf(fp,fmt,ap): reent = fp->_data, scans fmt for L/E/e-g/G and calls fn_80173D8C (float _vfprintf_r?) or fn_801757D8 (integer _vfiprintf_r?). Not _vfwrite; no upstream counterpart, possibly project-local. Used by sprintf/vsprintf/vsnprintf	open
 0x80173D8C	0x17F0		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8017557C	0x188		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80175704	0xD4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
@@ -104,9 +104,9 @@ addr	size	name	library	confidence	notes	status
 0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	matched
 0x80180DEC	0xC0	OSSetThreadPriority	os	exact	ac-decomp size 0xc0	matched
 0x80180EAC	0xAC	OSClearStack	os	known	Was CheckThreadQueue (size/order only); named by dtk-dev from OSInit; matched in Dolphin/os/OSClearStack.c (fill stack below sp with a byte pattern)	matched
-0x801814F4	0xDC	OSLockMutex	os	exact	Was guessed EXIDetach; callees (OSPromoteThread/OSSleepThread) identify it as ac-decomp OSMutex.c OSLockMutex. Matched 100% in Dolphin/os/OSMutex.c	matched
-0x801815D0	0xC8	OSUnlockMutex	os	exact	Identified as OSUnlockMutex (OSMutex.c); matched 100%	matched
-0x80181698	0x70	__OSUnlockAllMutex	os	exact	Identified as __OSUnlockAllMutex (OSMutex.c; called by OSExitThread/OSCancelThread); matched 100%	matched
+0x801814F4	0xDC	OSLockMutex	exi	exact	Was guessed EXIDetach; callees (OSPromoteThread/OSSleepThread) identify it as ac-decomp OSMutex.c OSLockMutex. Matched 100% in Dolphin/os/OSMutex.c	matched
+0x801815D0	0xC8	OSUnlockMutex	exi	exact	Identified as OSUnlockMutex (OSMutex.c); matched 100%	matched
+0x80181698	0x70	__OSUnlockAllMutex	exi	exact	Identified as __OSUnlockAllMutex (OSMutex.c; called by OSExitThread/OSCancelThread); matched 100%	matched
 0x80181764	0x2FC	CompleteTransfer	si	exact	matched as Dolphin/si/CompleteTransfer.c (SIClearTCInterrupt inlined; Si/Type reached via lbl_804D1B78 pool base)	matched
 0x80181A60	0x344	SIInterruptHandler	si	exact	ac-decomp size 0x344	matched
 0x80181DA4	0x98	SIEnablePollingInterrupt	si	exact	ac-decomp size 0x98	matched

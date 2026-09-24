@@ -1,5 +1,5 @@
 extern void* lbl_8066C3B0;
-extern void fn_80173CB4(void);
+extern void vfprintf(void);
 
 asm int sprintf(char* str, const char* fmt, ...)
 {
@@ -51,7 +51,7 @@ skipfp:
     stw     r31, 0x70(r1)
     stw     r0, 4(r11)
     stw     r10, 8(r11)
-    bl      fn_80173CB4
+    bl      vfprintf
     lwz     r9, 0x80(r1)
     li      r0, 0
     stb     r0, 0(r9)

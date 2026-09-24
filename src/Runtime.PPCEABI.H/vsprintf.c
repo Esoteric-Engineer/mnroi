@@ -1,5 +1,5 @@
 extern void* lbl_8066C3B0;
-extern void fn_80173CB4(void);
+extern void vfprintf(void);
 
 asm int vsprintf(char* s, const char* fmt, void* args)
 {
@@ -20,7 +20,7 @@ asm int vsprintf(char* s, const char* fmt, void* args)
     stw     r11, 0x18(r1)
     stw     r10, 0x64(r1)
     stw     r11, 0x8(r1)
-    bl      fn_80173CB4
+    bl      vfprintf
     lwz     r9, 0x8(r1)
     li      r0, 0
     stb     r0, 0(r9)
@@ -52,7 +52,7 @@ asm int vsnprintf(char* s, unsigned long n, const char* fmt, void* args)
     stw     r11, 0x64(r1)
     stw     r30, 0x10(r1)
     stw     r30, 0x1c(r1)
-    bl      fn_80173CB4
+    bl      vfprintf
     lwz     r9, 0x8(r1)
     li      r0, 0
     cmplw   r3, r30
