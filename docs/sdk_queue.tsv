@@ -96,7 +96,7 @@ addr	size	name	library	confidence	notes	status
 0x8017F92C	0x84	OSGetWirelessID	os	guess	Was OSSetProgressiveMode (size/order only); code returns SramEx u16 at +0x1C + chan*2	open
 0x8017F9B0	0xAC	OSSetWirelessID	os	guess	Was __OSSetBootMode (size/order only); writes SramEx u16 at +0x1C + chan*2, commits only if changed	open
 0x8017FA5C	0x70	OSGetGbsMode	os	known	Was OSGetWirelessID (size/order only); named by dtk-dev from OSInit; reads SramEx u16 at +0x28 (LockSram(0x14) inline template)	matched
-0x8017FACC	0xB8	OSSetGbsMode	os	known	Was OSSetWirelessID (size/order only); named by dtk-dev from OSInit	open
+0x8017FACC	0xB8	OSSetGbsMode	os	known	Was OSSetWirelessID (size/order only); named by dtk-dev from OSInit; matched as asm in Dolphin/os/OSSetGbsMode.c (C stalled at 75.8%, see docs/matching_notes.md)	matched
 0x8017FBA4	0x64	__OSInitSystemCall	os	exact	ac-decomp size 0x64	matched
 0x8017FC08	0x4		os	unidentified		open
 0x8017FC0C	0x158	__OSThreadInit	os	known	Named by dtk-dev from OSInit	open

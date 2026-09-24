@@ -517,6 +517,9 @@ Dolphin/os/OSSetSoundMode.c:
 Dolphin/os/OSGetGbsMode.c:
 	.text       start:0x8017FA5C end:0x8017FACC
 
+Dolphin/os/OSSetGbsMode.c:
+	.text       start:0x8017FACC end:0x8017FB84
+
 Dolphin/os/OSSync.c:
 	.text       start:0x8017FB84 end:0x8017FC08
 
