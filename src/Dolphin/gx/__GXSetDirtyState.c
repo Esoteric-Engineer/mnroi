@@ -14,7 +14,7 @@ extern void __GXUpdateBPMask(void);
 extern void __GXSetGenMode(void);
 extern void fn_8018C3FC(void);
 extern void __GXSetVAT(void);
-extern void fn_8018C4B8(void);
+extern void __GXCalculateVLim(void);
 
 void __GXSetDirtyState(void)
 {
@@ -36,7 +36,7 @@ void __GXSetDirtyState(void)
         __GXSetVAT();
     }
     if (dirty & (0x10 | 8)) {
-        fn_8018C4B8();
+        __GXCalculateVLim();
     }
     __GXData->dirtyState = 0;
 }
