@@ -7,7 +7,7 @@ extern char lbl_8049C644[];
 extern char lbl_8049C64C[];
 extern char lbl_8049C660[];
 extern void _vfiwrite(void);
-extern void fn_8017557C(void);
+extern void __group_digits(void);
 extern void _mbtowc_r(void);
 extern void memchr(void);
 extern void memcpy(void);
@@ -1101,7 +1101,7 @@ L_801765D8:
     mr r4, r26
     addi r3, r1, 0x8
     addi r6, r1, 0x38
-    bl fn_8017557C
+    bl __group_digits
     mr r26, r3
     b L_8017662C
 L_80176600:

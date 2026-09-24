@@ -246,6 +246,9 @@ Runtime.PPCEABI.H/vfprintf.c:
 Runtime.PPCEABI.H/_vfprintf_r.c:
 	.text       start:0x80173D8C end:0x8017557C
 
+Runtime.PPCEABI.H/__group_digits.c:
+	.text       start:0x8017557C end:0x80175704
+
 Runtime.PPCEABI.H/_vfiwrite.c:
 	.text       start:0x80175704 end:0x801757D8
 

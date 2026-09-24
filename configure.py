@@ -365,6 +365,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/_vfwrite.c"),
             Object(Matching, "Runtime.PPCEABI.H/vfprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/_vfprintf_r.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__group_digits.c"),
             Object(Matching, "Runtime.PPCEABI.H/_vfiwrite.c"),
             Object(Matching, "Runtime.PPCEABI.H/_vfiprintf_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/_strtol_r.c"),

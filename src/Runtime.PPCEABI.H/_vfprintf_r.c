@@ -10,7 +10,7 @@ extern char lbl_8049C5BC[];
 extern char lbl_8049C5D0[];
 extern char lbl_8049C5F0[];
 extern char lbl_8049C5F8[];
-extern void fn_8017557C(void);
+extern void __group_digits(void);
 extern void _vfwrite(void);
 extern void _mbtowc_r(void);
 extern void memchr(void);
@@ -1219,7 +1219,7 @@ L_80174CFC:
     addi r3, r1, 0x10
     addi r6, r1, 0x178
 L_80174D18:
-    bl fn_8017557C
+    bl __group_digits
     mr r27, r3
     b L_80174D50
 L_80174D24:

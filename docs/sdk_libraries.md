@@ -141,7 +141,7 @@ functions, the `__XXVersion` pointer load), otherwise it is `guess`. See the `de
   `floor`) and `_vfiprintf_r` 0x801757D8 (integer variant). `_vfwrite` is a CFTKK-local buffered writer, two
   copies (0x80173BE0 and 0x80175704); the second is named `_vfiwrite` here to keep names unique.
   0x8017557C (0x188) is a `,` digit-grouping helper for the `'` printf flag (0x200, hard-coded comma, no
-  locale); it is neither Newlib nor in CFTKK, so it stays `unidentified` (see its queue row for what was checked).
+  locale); it is neither Newlib nor in CFTKK. Split and matched as `__group_digits` (invented name, nofralloc asm) in `Runtime.PPCEABI.H/__group_digits.c`.
 - Boundary fixed: the old `fn_8016D000` (0x64) was the tail of `__ieee754_acosf` 0x8016CE18 (0x24C, Newlib
   ef_acos.c; CFTKK `acosf` 0x250), which dtk had cut at the end of the pad region. It is split out and matched. The rest of
   the unsplit `pad_01_8016B5AC_text` region (0x8016B5AC-0x8016CE18) is still more libm (e.g. the `floor`-like callee at
