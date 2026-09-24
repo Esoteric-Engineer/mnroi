@@ -37,7 +37,7 @@ exact size/order runs against CFTKK-Decomp and ac-decomp plus callee checks. Ful
 
 | Range | Library | Notes |
 |---|---|---|
-| 0x803FF3B0-0x80400544 | unclassified | 9 frame-pointer-less float functions; libm, middleware or game (unconfirmed) |
+| 0x803FF3B0-0x80400544 | libc (Newlib libm, 2nd cluster) | 8 functions (not 9; sizes sum to 0x1194): `__ieee754_asin` 0x803FF3B0, `__ieee754_exp` 0x803FF60C, `__ieee754_fmod` 0x803FF888, `__ieee754_asinf` 0x803FFBE0, `__ieee754_expf` 0x803FFE0C, `__ieee754_fmodf` 0x80400038, `__ieee754_logf` 0x80400200, `ceilf` 0x80400480. Same fdlibm/Newlib code and MWCC code style as the first-cluster libm; they sit directly in front of the second libc cluster. See "Second-cluster libm" below |
 | 0x80400544-0x804009C4 | libc (GCC Newlib, 2nd cluster) | `tolower`, `fclose`, `fprintf`, `printf`, `snprintf`, `vprintf`, `strncat`, `__floatdisf`. GCC-compiled, as in CFTKK |
 | 0x804009C4-0x80401EB0 | vm | VM + VMBASE (ARAM virtual memory). `VMInit` 0x804009C4; 0x80401550-0x80401E00 is VMBASE asm still as `lbl_` labels |
 | 0x80401EB0-0x80401F48 | runtime | `__save_gpr` / `__restore_gpr` |
@@ -53,6 +53,31 @@ exact size/order runs against CFTKK-Decomp and ac-decomp plus callee checks. Ful
 | 0x8040A190-0x80411208 | card | `CARDInit` 0x8040B004 (version string); 97 functions. CARDRdwr (0x80410C48) and CARDStatEx (0x80410EC8) are linked after CARDUnlock |
 | 0x80411208-0x80411408 | gx | GXDisplayList: `GXBeginDisplayList`, `GXEndDisplayList`, `GXCallDisplayList` |
 | 0x80411408-0x804114EC | texPalette (unconfirmed) | `TEXGet`, `TEXGetGXTexObjFromPalette` by code shape |
+
+### Second-cluster libm (0x803FF3B0-0x80400544)
+
+Verdict: **all 8 are Newlib/fdlibm libm, i.e. SDK-side libc, not game code and not middleware.** Evidence:
+
+- Bodies match upstream Newlib `e_asin.c`, `e_exp.c`, `e_fmod.c`, `ef_asin.c`, `ef_exp.c`, `ef_fmod.c`,
+  `ef_log.c`, `sf_ceil.c` (branch thresholds and, for the double ones, the `.sdata2` constants read back and
+  compared: asin pio2/pS/qS tables, exp o_threshold 709.78 / u_threshold -745.13 / invln2 / P1-P5 / twom1000).
+  They are the bare `__ieee754_*` bodies with no `w_*` errno wrapper, exactly like the first-cluster
+  `__ieee754_atan2f`/`__ieee754_powf`/`__ieee754_sqrtf`, and are called straight from game code (one to three callers each).
+- Callees are the first-cluster libm: `fabs` 0x8016E4FC, `fabsf` 0x8016DD5C, `__ieee754_sqrtf` 0x8016D978 and the
+  double sqrt at 0x8016C790 (still a `lbl_`). Nothing in the range calls game code.
+- Sizes agree with CFTKK (same Newlib build): `asinf` 0x22C = ours 0x22C, `__ieee754_logf` 0x280 = ours 0x280.
+  `ceilf` is 0xD8 there vs our 0xC4, the usual version drift.
+- The neighbours are not libm: before 0x803FF3B0 is GCC-style game code (frame pointer r31), after 0x80400544 is the
+  second libc cluster. So the libm pieces were linked in between, apart from the first-cluster libm (0x8016xxxx).
+- `__ieee754_fmod` 0x803FF888 (0x358) is a **second copy** of the first-cluster `__ieee754_fmod` 0x80177558 (0x35C);
+  the copies differ by 4 bytes, so they were not built identically. Keep both.
+- No caller-side or hardware hints of middleware; nothing is game code, so no row is `not-sdk`.
+
+Confidence: `__ieee754_asinf` and `__ieee754_logf` are `exact` (CFTKK size plus code shape). The rest are `guess`
+(code shape and constants match Newlib, no CFTKK counterpart). The queue rows are `open`, library `libc`. Nothing was
+split or renamed. The double sqrt at 0x8016C790 and `__ieee754_asin`'s use of it are worth a look when the first-cluster
+libm region gets split. `sdk_scout.py`'s `LIBS` now labels this range `libc`; `queue` still scans only the AR/ARQ/AX/DSP/CARD part
+of the second cluster (RANGES is unchanged), and the rows here were added by hand and survive a refresh.
 
 Between 0x80196884 and 0x803FF3B0, and from 0x804114EC on, the code is game or middleware. The earlier
 note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFatal/OSFont.

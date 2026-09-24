@@ -50,6 +50,7 @@ LIBS = [
     (0x80195E04, 0x80196194, "odenotstub", {"odenotstub"}),
     (0x80196194, 0x80196884, "odemuexi2", {"OdemuExi2"}),
     # second cluster: names come from docs/sdk_scout_findings.md, not from ac-decomp alignment
+    (0x803FF3B0, 0x80400544, "libc", None),  # Newlib libm pieces (asin/exp/fmod/asinf/expf/fmodf/logf/ceilf)
     (0x80400544, 0x804009C4, "libc", None),
     (0x804009C4, 0x80401EB0, "vm", None),
     (0x80401EB0, 0x80401F48, "runtime", None),
