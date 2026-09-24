@@ -46,7 +46,7 @@ addr	size	name	library	confidence	notes	status
 0x8017367C	0x7C	itoa	libc	exact	Matched as nofralloc asm (GCC output): old Newlib itoa with __utoa inlined, calls strrev on the result	matched
 0x801736F8	0x4E8		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80173BE0	0xD4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x80173CB4	0xD8	_vfwrite	libc	guess	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
+0x80173CB4	0xD8	_vfwrite	libc	guess	No upstream Newlib counterpart: scans fmt for L/E/e-g/G and dispatches to fn_80173D8C (float vfprintf) or fn_801757D8 (integer); not _vfwrite. Wrapper is vfprintf(fp,fmt,ap)-shaped (reent = fp->_data)	wrong-name
 0x80173D8C	0x17F0		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8017557C	0x188		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x80175704	0xD4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
@@ -115,7 +115,7 @@ addr	size	name	library	confidence	notes	status
 0x80181FFC	0xB4	SIInit	si	known	Named by dtk-dev from OSInit; ac-decomp size 0xa4; matched in Dolphin/si/SIInit.c	matched
 0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270	open
 0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	matched
-0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4	open
+0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4; blocked: jump table 0x804D227C is 4-mod-8, needs DVDCancelAsync (fn_80186028) tables/unit merged first	open
 0x80186474	0x11C	__DVDPrepareResetAsync	dvd	exact	ac-decomp size 0x11c	matched
 0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	matched
 0x801868DC	0x7C	__DVDStoreErrorCode	dvd	known	symbol already named; just needs split + match	matched
@@ -154,7 +154,7 @@ addr	size	name	library	confidence	notes	status
 0x80189E78	0xCC	PADOriginUpdateCallback	pad	guess	ac-decomp size 0xc0; this game has a 5th PADDisable bit var (lbl_8066F3F4) and NO_RESPONSE is & 8	matched
 0x80189F44	0xD8	PADProbeCallback	pad	exact	verified against ac-decomp PADProbeCallback; NonMatching 99.35%, same DoReset r4/r5 swap as PADOriginCallback (see docs/nonmatching.md)	stalled
 0x8018A01C	0x32C	PADTypeAndStatusCallback	pad	exact	NonMatching 97.7% (Dolphin/pad/PADTypeAndStatusCallback.c): same DoReset r4/r5 swap as PADOriginCallback in two of its four inlined copies; see docs/nonmatching.md	stalled
-0x8018A348	0x140	PADReceiveCheckCallback	pad	guess	ac-decomp size 0x134	open
+0x8018A348	0x140	PADReceiveCheckCallback	pad	guess	matched; this game inlines PADDisable in the failure arm	matched
 0x8018A488	0x110	PADReset	pad	guess	ac-decomp size 0x100; NonMatching 99.49%, same DoReset r4/r5 swap as PADOriginCallback (see nonmatching.md)	stalled
 0x8018A598	0x114	PADRecalibrate	pad	guess	ac-decomp size 0x104	open
 0x8018A6AC	0x150		pad	unidentified		open
