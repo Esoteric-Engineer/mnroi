@@ -24,7 +24,7 @@ addr	size	name	library	confidence	notes	status
 0x801700C0	0xF0	sscanf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x801701B0	0xE04	__svfscanf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80170FB4	0xD4	__sccl	libc	exact	verified against Newlib sccl.c (identical control flow); matched as nofralloc asm in Runtime.PPCEABI.H/__sccl.c	matched
-0x8017123C	0x98	bsearch	libc	guess	Newlib bsearch.c: binary search, mid=(lo+hi)>>1, calls compar via blrl, returns base+mid*size. Called from game code (next to qsort). Not in CFTKK	open
+0x8017123C	0x98	bsearch	libc	guess	Newlib bsearch.c: binary search, mid=(lo+hi)>>1, calls compar via blrl, returns base+mid*size. Called from game code (next to qsort). Not in CFTKK; matched as nofralloc asm (GCC output: stmw before stw r0)	matched
 0x801712D4	0x32C	_mbtowc_r	libc	guess	Newlib _mbtowc_r (mbtowc_r.c, 1.14-1.16 era): strlen(r->_current_locale)>1 then strcmp against C-SJIS / C-EUCJP / C-JIS (strings at 0x8049C20C..). Called by __svfscanf and both printf bodies. CFTKK _mbtowc_r is 0x31C (drift 0x10); neighbour order differs (CFTKK has exit before it)	open
 0x80171600	0x98C	qsort	libc	guess	Newlib qsort.c (BSD qsort): swaptype from alignment/size, n<7 insertion sort, n>40 median of 9, inlined swaps, recurses on the smaller partition (self-call at 0x80171F60). Called from game code next to bsearch. Not in CFTKK	open
 0x80172028	0x198	_strtoul_r	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched

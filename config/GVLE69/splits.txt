@@ -102,6 +102,9 @@ Runtime.PPCEABI.H/atof.c:
 Runtime.PPCEABI.H/atoi.c:
 	.text       start:0x80171214 end:0x8017123C
 
+Runtime.PPCEABI.H/bsearch.c:
+	.text       start:0x8017123C end:0x801712D4
+
 Runtime.PPCEABI.H/fn_80171F8C.c:
 	.text       start:0x80171F8C end:0x80171FB0
 
