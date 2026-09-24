@@ -18,7 +18,7 @@ addr	size	name	library	confidence	notes	status
 0x8016EC68	0x888	__kernel_rem_pio2	libc	guess	fdlibm k_rem_pio2.c (double, init_jk/PIo2 tables): calls scalbn (0x8016FE3C) x4 and floor (pad function 0x8016CBDC). Double sibling of the already-named __kernel_rem_pio2f (0x8016F4F0). Not in CFTKK	open
 0x8016F4F0	0x884	__kernel_rem_pio2f	libc	exact	Confirmed __kernel_rem_pio2f (kf_rem_pio2.c: init_jk/PIo2 tables, scalbnf + floorf calls); matched as nofralloc asm in Runtime.PPCEABI.H/__kernel_rem_pio2f.c	matched
 0x8016FD74	0xC8	floorf	libc	exact	Confirmed floorf (sf_floor.c); matched as nofralloc asm in Runtime.PPCEABI.H/floorf.c. Also called from game code (0x802A10E8)	matched
-0x8016FE3C	0x154	scalbn	libc	guess	fdlibm s_scalbn.c (double): 0x43500000-style two54 scaling, 50000 threshold, huge*copysign / tiny*copysign via 0x8016FF90. Not in CFTKK	open
+0x8016FE3C	0x154	scalbn	libc	guess	fdlibm s_scalbn.c (double): 0x43500000-style two54 scaling, 50000 threshold, huge*copysign / tiny*copysign via 0x8016FF90. Not in CFTKK; matched as nofralloc asm (sdata doubles 0x8066C370-88 via bare externs), same shape as scalbnf	matched
 0x8016FF90	0x50	copysign	libc	guess	fdlibm s_copysign.c (double): (hx&0x7fffffff)|(hy&0x80000000), verbatim. Called only by scalbn. Not in CFTKK	matched
 0x8016FFE0	0xD8	sprintf	libc	exact	Newlib sprintf (_svfprintf_r(&f,fmt,ap) with an inline FILE); matched as nofralloc asm in Runtime.PPCEABI.H/sprintf.c	matched
 0x801700C0	0xF0	sscanf	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
