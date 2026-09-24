@@ -315,6 +315,9 @@ Runtime.PPCEABI.H/fopen.c:
 Runtime.PPCEABI.H/fn_80178684.c:
 	.text       start:0x80178684 end:0x801786AC
 
+Runtime.PPCEABI.H/_fseek_r.c:
+	.text       start:0x801786AC end:0x80178A90
+
 Runtime.PPCEABI.H/_fwalk.c:
 	.text       start:0x80178A90 end:0x80178B10
 
