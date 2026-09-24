@@ -1669,6 +1669,9 @@ Dolphin/arq/__ARQCallbackHack.c:
 Dolphin/ax/__AXPushCallbackStack.c:
 	.text       start:0x80406AE0 end:0x80406AF0
 
+Dolphin/ax/__AXAuxQuit.c:
+	.text       start:0x80406E78 end:0x80406E88
+
 Dolphin/ax/__AXClQuit.c:
 	.text       start:0x80407940 end:0x80407944
 
