@@ -785,6 +785,9 @@ Dolphin/pad/UpdateOrigin.c:
 Dolphin/pad/PADOriginCallback.c:
 	.text       start:0x80189DB4 end:0x80189E78
 
+Dolphin/pad/PADOriginUpdateCallback.c:
+	.text       start:0x80189E78 end:0x80189F44
+
 Dolphin/pad/PADProbeCallback.c:
 	.text       start:0x80189F44 end:0x8018A01C
 

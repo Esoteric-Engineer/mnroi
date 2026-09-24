@@ -663,6 +663,7 @@ config.libs = [
         [
             Object(Matching, "Dolphin/pad/UpdateOrigin.c"),
             Object(NonMatching, "Dolphin/pad/PADOriginCallback.c"),
+            Object(Matching, "Dolphin/pad/PADOriginUpdateCallback.c"),
             Object(NonMatching, "Dolphin/pad/PADProbeCallback.c"),
             Object(NonMatching, "Dolphin/pad/PADTypeAndStatusCallback.c"),
             Object(NonMatching, "Dolphin/pad/PADReset.c"),
