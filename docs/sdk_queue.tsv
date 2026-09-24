@@ -157,7 +157,7 @@ addr	size	name	library	confidence	notes	status
 0x8018A348	0x140	PADReceiveCheckCallback	pad	guess	matched; this game inlines PADDisable in the failure arm	matched
 0x8018A488	0x110	PADReset	pad	guess	ac-decomp size 0x100; matched once ResettingChan was typed long	matched
 0x8018A598	0x114	PADRecalibrate	pad	guess	ac-decomp PADRecalibrate (Spec test replaced by !(0x800030E3 & 0x40)); matched once ResettingChan was typed long	matched
-0x8018A6AC	0x150	PADInit	pad	guess	Identity certain: OSRegisterVersion, PADSetSpec, OSGetTime, SIRefreshSamplingRate, OSRegisterResetFunction, PADReset, libgcc helper at 0x8016B5AC; ac-decomp PADInit is 0x210, ours 0x150 (older, fewer inlines)	open
+0x8018A6AC	0x150	PADInit	pad	guess	Identity certain: OSRegisterVersion, PADSetSpec, OSGetTime, SIRefreshSamplingRate, OSRegisterResetFunction, PADReset, libgcc helper at 0x8016B5AC; ac-decomp PADInit is 0x210, ours 0x150 (older, fewer inlines); matched as C (unit PADInit.c). Its 64-bit `>> 16/32/48` calls the 4-byte thunk at 0x8016B5AC, named __shr2i (b __ashrdi3) in os/__shr2i.c	matched
 0x8018A7FC	0x300	PADRead	pad	guess	Identity certain: OSDisableInterrupts, per-channel SIGetStatus/SIGetResponse/SIGetType(Async), memset of PADStatus, PADReset on lost pads, OSSetWirelessID, SITransfer recalibration, MakeStatus fn pointer; ac-decomp PADRead is 0x3AC, ours 0x300	open
 0x8018AAFC	0xCC	PADControlAllMotors	pad	guess	preceding PADControlMotor in ac-decomp order; loop over 4 chans (verify)	matched
 0x8018ABC8	0xB8	PADControlMotor	pad	exact	queue name PADControlAllMotors was wrong (single chan, takes chan+command); has 0x800030E3 bit-5 check	matched

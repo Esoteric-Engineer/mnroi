@@ -27,6 +27,9 @@ Dolphin/os/__shl2i.c:
 Dolphin/os/__mod2i.c:
 	.text       start:0x8016B5A8 end:0x8016B5AC
 
+Dolphin/os/__shr2i.c:
+	.text       start:0x8016B5AC end:0x8016B5B0
+
 Runtime.PPCEABI.H/atan2f.c:
 	.text       start:0x8016D064 end:0x8016D284
 
@@ -899,6 +902,9 @@ Dolphin/pad/PADReset.c:
 
 Dolphin/pad/PADRecalibrate.c:
 	.text       start:0x8018A598 end:0x8018A6AC
+
+Dolphin/pad/PADInit.c:
+	.text       start:0x8018A6AC end:0x8018A7FC
 
 Dolphin/pad/PADControlAllMotors.c:
 	.text       start:0x8018AAFC end:0x8018ABC8
