@@ -907,6 +907,7 @@ config.libs = [
         "card",
         [
             Object(Matching, "Dolphin/card/__CARDDefaultApiCallback.c"),
+            Object(Matching, "Dolphin/card/__CARDGetFontEncode.c"),
         ],
     ),
 ]
