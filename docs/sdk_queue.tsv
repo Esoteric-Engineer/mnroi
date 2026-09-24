@@ -33,7 +33,7 @@ addr	size	name	library	confidence	notes	status
 0x80172654	0xA8	strcmp	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x801726FC	0x84	strcpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x80172780	0x6C	strlen	libc	exact	Matched as asm (GCC-built Newlib word-at-a-time null detect, same shape as strcat)	matched
-0x801727EC	0x6C	strlwr	libc	guess	In-place lowercase loop returning s (ctype table lbl_8049C6A1 + tolower): Newlib strlwr.c. Queue once said strlen (wrong); not yet byte-verified	open
+0x801727EC	0x6C	strlwr	libc	exact	Newlib strlwr.c; byte-verified, matched as nofralloc asm (see matching_notes.md string routines)	matched
 0x80172858	0xAC	strnicmp	libc	exact	CFTKK named this strncat (size/order only): wrong. Bounded case-insensitive compare (old Newlib strncasecmp, tolower on both). Matched as nofralloc asm; C stalls at 78.5% with a -0x20 frame like stricmp	matched
 0x80172904	0xE0		libc	unidentified	Looks like strncmp (n==0 -> 0, word-compare fast path when both 4-aligned); verify against Newlib strncmp before naming	open
 0x801729E4	0xCC	strncpy	libc	exact	CFTKK-Decomp size/order match (libc-newlib); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL; verified against Newlib strncpy (word loop + byte loop + zero-pad); matched as nofralloc asm in Runtime.PPCEABI.H/strncpy.c	matched
