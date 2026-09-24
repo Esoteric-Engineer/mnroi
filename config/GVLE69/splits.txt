@@ -1330,6 +1330,12 @@ Dolphin/exi/UnlockedHandler.c:
 Dolphin/exi/InitializeUART.c:
 	.text       start:0x80195B78 end:0x80195BE8
 
+Dolphin/OdemuExi2/DBOpen.c:
+	.text       start:0x80195E04 end:0x80195E08
+
+Dolphin/OdemuExi2/DBClose.c:
+	.text       start:0x80195E08 end:0x80195E0C
+
 Dolphin/OdemuExi2/DBWrite.c:
 	.text       start:0x80195E0C end:0x8019606C
 

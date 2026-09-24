@@ -218,8 +218,8 @@ addr	size	name	library	confidence	notes	status
 0x80195830	0x18C		exi	unidentified		open
 0x801959BC	0x1BC	__OSEnableBarnacle	exi	guess	Named by dtk-dev from EXIInit call shape (EXIGetID id==0x07010000 -> __OSEnableBarnacle(chan, dev)); verify body	open
 0x80195BE8	0x21C		exi	unidentified		open
-0x80195E04	0x4	DBClose	odenotstub	guess	4-byte stub, ac-decomp size 0x4	open
-0x80195E08	0x4	DBOpen	odenotstub	guess	4-byte stub, ac-decomp size 0x4	open
+0x80195E04	0x4	DBOpen	odenotstub	guess	4-byte empty stub; order follows ac-decomp (DBOpen, DBClose), bodies are indistinguishable	matched
+0x80195E08	0x4	DBClose	odenotstub	guess	4-byte empty stub; order follows ac-decomp (DBOpen, DBClose), bodies are indistinguishable	matched
 0x80195E0C	0x260	DBWrite	odenotstub	exact	ac-decomp size 0x260	matched
 0x8019606C	0x8C	DBRead	odenotstub	exact	ac-decomp size 0x8c; actually OdemuExi2 DebuggerDriver.c (calls DBGRead fn_80196464), unit Dolphin/OdemuExi2/DBRead.c	matched
 0x801960F8	0x9C	DBQueryData	odenotstub	exact	ac-decomp size 0x9c	matched
