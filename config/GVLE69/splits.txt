@@ -633,7 +633,7 @@ Dolphin/os/WriteSram.c:
 
 Dolphin/os/__OSInitSram.c:
 	.text       start:0x8017F0F0 end:0x8017F22C
-	.bss        start:0x8057C5C0 end:0x8057C618
+	.bss        start:0x8057C5C0 end:0x8057C614
 
 Dolphin/os/OSLockSram.c:
 	.text       start:0x8017F22C end:0x8017F2E4
@@ -688,7 +688,7 @@ Dolphin/os/fn_8017FD80.c:
 
 Dolphin/os/OSThread.c:
 	.text       start:0x8017FDB4 end:0x801800E8
-	.sbss       start:0x8066F270 end:0x8066F280
+	.sbss       start:0x8066F270 end:0x8066F27C
 
 Dolphin/os/SelectThread.c:
 	.text       start:0x801800E8 end:0x80180310
