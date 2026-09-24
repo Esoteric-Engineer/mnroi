@@ -629,6 +629,7 @@ config.libs = [
             Object(Matching, "Dolphin/exi/ProbeBarnacle.c"),
             Object(Matching, "Dolphin/exi/__OSEnableBarnacle.c"),
             Object(Matching, "Dolphin/exi/InitializeUART.c"),
+            Object(Matching, "Dolphin/exi/WriteUARTN.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBInitInterrupts.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBInitComm.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBGHandler.c"),

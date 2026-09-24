@@ -1548,6 +1548,9 @@ Dolphin/exi/__OSEnableBarnacle.c:
 Dolphin/exi/InitializeUART.c:
 	.text       start:0x80195B78 end:0x80195BE8
 
+Dolphin/exi/WriteUARTN.c:
+	.text       start:0x80195BE8 end:0x80195E04
+
 Dolphin/OdemuExi2/DBOpen.c:
 	.text       start:0x80195E04 end:0x80195E08
 
