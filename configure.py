@@ -682,7 +682,7 @@ config.libs = [
             Object(Matching, "Dolphin/vi/VIGetRetraceCount.c"),
             Object(Matching, "Dolphin/vi/getCurrentFieldEvenOdd.c"),
             Object(Matching, "Dolphin/vi/VIGetCurrentLine.c"),
-            Object(NonMatching, "Dolphin/vi/VIGetTvFormat.c"),
+            Object(Matching, "Dolphin/vi/VIGetTvFormat.c"),
             Object(Matching, "Dolphin/vi/__VIGetCurrentPosition.c"),
         ],
     ),

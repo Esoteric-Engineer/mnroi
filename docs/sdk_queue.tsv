@@ -140,13 +140,13 @@ addr	size	name	library	confidence	notes	status
 0x801880D8	0x4B0	VIInit	vi	exact	CFTKK-Decomp size 0x4B0 (ac-decomp 0x478). OSRegisterVersion, __VIInit, __OSLockSram/__OSUnlockSram (EuRgb60/progressive flags), getTiming, OSInitThreadQueue, __OSSetInterruptHandler + __OSUnmaskInterrupts. Confirms the proposed name	open
 0x801885DC	0x2D4	setFbbRegs	vi	exact	ac-decomp vi.c setFbbRegs (calcFbbs inlined x2); matched in Dolphin/vi/setFbbRegs.c	matched
 0x801888B0	0x1A0	setVerticalRegs	vi	exact	ac-decomp size 0x1a0	matched
-0x80188A50	0x828	VIConfigure	vi	guess	Identity confirmed (callees: OSDisableInterrupts, 7x OSReport error strings, OSPanic, getTiming, setFbbRegs, setVerticalRegs, OSRestoreInterrupts; sits right before VIConfigurePan/VIFlush) but size 0x828 vs CFTKK-Decomp 0x808 and ac-decomp 0x79C, so the body differs from both references	open
+0x80188A50	0x828	VIConfigure	vi	guess	Identity confirmed (callees: OSDisableInterrupts, 7x OSReport error strings, OSPanic, getTiming, setFbbRegs, setVerticalRegs, OSRestoreInterrupts; sits right before VIConfigurePan/VIFlush) but size 0x828 vs CFTKK-Decomp 0x808 and ac-decomp 0x79C, so the body differs from both references; its OSReport strings (0x804D2AE0-0x804D2C34) are currently defined in VIGetTvFormat.c, move them when splitting this	open
 0x80189278	0x394	VIConfigurePan	vi	exact	ac-decomp size 0x394; 94.4% NonMatching, see docs/nonmatching.md	stalled
 0x8018960C	0x130	VIFlush	vi	guess	ac-decomp size 0x11c	matched
 0x8018973C	0x6C	VISetNextFrameBuffer	vi	exact	ac-decomp size 0x6c	matched
 0x801897A8	0x7C	VISetBlack	vi	exact	ac-decomp size 0x7c	matched
 0x80189894	0x98	VIGetCurrentLine	vi	exact	Matched: getCurrentHalfLine calls the SDK inline GetCurrentDisplayPosition(&hcount, &vcount), which supplies the -0x20 frame	matched
-0x8018992C	0x68	VIGetTvFormat	vi	known	code 99.4% (only jump-table symbol name differs); blocked: table @724 at 0x804D2C34 is 4-mod-8 and the unclaimed strings before it (0x804D2AE0, VIConfigure text) must be claimed first; retry after VIConfigure	stalled
+0x8018992C	0x68	VIGetTvFormat	vi	known	code+data 100%; unit claims .data 0x804D2AE0-0x804D2C50 (VIConfigure strings under force_active, then table @724) so its .data starts 8-aligned	matched
 0x80189994	0x21C	__VIDisplayPositionToXY	vi	exact	CFTKK-Decomp size 0x21C, order: right before __VIGetCurrentPosition. Takes (hcount, vcount, s16* x, s16* y), branches on the HorVer mode and timing fields (equ, prb/psb) storing -1 for out-of-range; pure leaf. An earlier note called it GetCurrentDisplayPosition, but that is CFTKK 0x3C	open
 0x80189BB0	0x60	__VIGetCurrentPosition	vi	known	Was VIGetDTVStatus (size/order only, wrong). Retrace handler calls it with (s16 x, s16 y) before PositionCallback; body is the stable vcount/hcount read then __VIDisplayPositionToXY (0x80189994, 0x21C, unclaimed)	matched
 0x80189C10	0x1A4	UpdateOrigin	pad	exact	ac-decomp size 0x1a4	matched
