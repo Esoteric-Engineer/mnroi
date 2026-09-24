@@ -26,7 +26,7 @@ SPLITS = "config/GVLE69/splits.txt"
 DOL = "orig/GVLE69/sys/main.dol"
 QUEUE = "docs/sdk_queue.tsv"
 AC_DIR = os.environ.get("AC_DECOMP", "../ac-decomp/config/GAFE01_00")
-LO, HI = 0x80169000, 0x80196884  # confirmed SDK range (first cluster), see docs/sdk_libraries.md
+LO, HI = 0x80168770, 0x80196884  # first cluster (SN debug stub, then SDK), see docs/sdk_libraries.md
 LO2, HI2 = 0x80400544, 0x804114EC  # second cluster, inside the game's .text (docs/sdk_libraries.md)
 LO3 = 0x803FF3B0  # start of the second libm run in front of the second cluster's libc
 FINDINGS = "docs/sdk_scout_findings.md"
@@ -36,8 +36,9 @@ RANGES = [(LO, HI, None), (LO3, HI2, None)]
 
 # (start, end, our library, ac-decomp libraries it may match, or None to skip matching)
 LIBS = [
-    (0x80169000, 0x8016D000, "os", {"os"}),
-    (0x8016D000, 0x8017A5CC, "libc", None),
+    (0x80168770, 0x8016B554, "sn", None),  # SN Systems ProDG debug stub, not Dolphin SDK
+    (0x8016B554, 0x8016B5B0, "runtime", None),  # __cvt_fp2unsigned, __shr2u .. __shr2i
+    (0x8016B5B0, 0x8017A5CC, "libc", None),  # libm starts at 0x8016B5B0, not 0x8016D000
     (0x8017A5CC, 0x801814F4, "os", {"os"}),
     (0x801814F4, 0x80181708, "exi", {"exi"}),
     (0x80181708, 0x80183070, "si", {"si"}),
@@ -254,6 +255,7 @@ NOTE_NAMED = "symbol already named; just needs split + match"
 NOTE_SECOND = "second SDK cluster, not identified yet (docs/sdk_scout_findings.md)"
 NOTE_LIBC = ("Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, "
              "code from upstream Newlib")
+NOTE_SN = "SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)"
 AUTO_NOTE_RE = re.compile(r"^ac-decomp size 0x[0-9a-f]+$")
 
 
@@ -272,7 +274,7 @@ def findings():
 
 def curated(note):
     """True if a person wrote this note, i.e. it is neither empty nor one the queue command generates."""
-    return bool(note) and note not in (NOTE_NAMED, NOTE_LIBC, NOTE_SECOND) and not AUTO_NOTE_RE.match(note)
+    return bool(note) and note not in (NOTE_NAMED, NOTE_LIBC, NOTE_SECOND, NOTE_SN) and not AUTO_NOTE_RE.match(note)
 
 
 def cmd_queue(args):
@@ -311,6 +313,8 @@ def cmd_queue(args):
                 c[5] = NOTE_SECOND
             elif lib_of(a) == "libc":
                 c[5] = NOTE_LIBC
+            elif lib_of(a) == "sn":
+                c[5] = NOTE_SN
             elif a in props:
                 name, kind, asz = props[a]
                 c[2], c[4], c[5] = name, kind, f"ac-decomp size {asz:#x}"

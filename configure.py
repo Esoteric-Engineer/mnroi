@@ -291,8 +291,6 @@ config.libs = [
         "cflags": cflags_runtime,
         "progress_category": "sdk",  # str | List[str]
         "objects": [
-            Object(NonMatching, "Runtime.PPCEABI.H/global_destructor_chain.c"),
-            Object(NonMatching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_acosf.c"),
             Object(Matching, "Runtime.PPCEABI.H/atan2f.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_powf.c"),
@@ -419,6 +417,17 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/__pure_virtual.c"),
             Object(Matching, "Runtime.PPCEABI.H/__udivdi3.c"),
             Object(Matching, "Runtime.PPCEABI.H/__umoddi3.c"),
+        ],
+    },
+    {
+        # SN Systems ProDG debug stub (0x80168770-0x8016B554), see docs/sdk_libraries.md
+        "lib": "SN",
+        "mw_version": "GC/1.2.5n",
+        "cflags": cflags_base,
+        "progress_category": "sdk",
+        "objects": [
+            Object(Matching, "SN/fn_80169134.c"),
+            Object(Matching, "SN/fn_80169150.c"),
         ],
     },
     DolphinLib(
@@ -763,8 +772,6 @@ config.libs = [
             Object(Matching, "Dolphin/os/fn_8017A75C.c"),
             Object(Matching, "Dolphin/os/PPCArch.c"),
             Object(Matching, "Dolphin/os/OS.c"),
-            Object(Matching, "Dolphin/os/fn_80169134.c"),
-            Object(Matching, "Dolphin/os/fn_80169150.c"),
             Object(Matching, "Dolphin/os/__shr2u.c"),
             Object(Matching, "Dolphin/os/__div2i.c"),
             Object(Matching, "Dolphin/os/__shl2i.c"),

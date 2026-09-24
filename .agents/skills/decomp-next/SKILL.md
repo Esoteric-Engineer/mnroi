@@ -44,7 +44,8 @@ Human-facing references (read the relevant one instead of guessing):
    registers, which helps confirm an identity.
    - **Out of queue:** if no `open` row of tier `known`/`exact`/`guess` is left, stop. Tell the
      user the queue is exhausted (counts by status/library, what remains) and that the next step is
-     a planning session (re-scout the range, find AR/ARQ/DSP/CARD, decide on game code).
+     a planning session (add function boundaries to the label-only regions, scout the `unidentified`
+     rows, locate the second cluster's data, then decide on game code).
      Don't start game code or invent targets.
 2. **Research first.** Find the reference by the row's `library`, and read it before writing code:
    - Dolphin SDK libraries (`os`, `exi`, `si`, `db`, `dvd`, `vi`, `pad`, `ai`, `gx`, `odemuexi2`,
@@ -55,6 +56,13 @@ Human-facing references (read the relevant one instead of guessing):
      from CFTKK-Decomp (see `docs/sdk_libraries.md`, which also lists the known version drift). This
      libc lives in the existing `Runtime.PPCEABI.H` library (`cflags_runtime`); name the unit after the
      function (like `strcat.c`).
+   - `runtime` and `init` rows (`__cvt_fp2unsigned`, `__save_gpr`, `__start` and the other `.init`
+     code): compiler runtime and boot code. Search ac-decomp by name. A row whose symbol is only a
+     label (see its note) needs a `type:function` symbol with a size in `symbols.txt` first.
+   - `sn` rows: SN Systems' ProDG debug stub. It isn't Dolphin SDK, but it is part of the SDK decomp.
+     No public source is known, so work from the disassembly and what `docs/sdk_libraries.md`
+     records. Much of it is hand-written asm (`mtsprg`, `psq_st`, SPR saves); transcribe that as
+     `nofralloc` asm, like the existing `SN/` units.
    If the reference clone is missing (`../ac-decomp`; `../newlib-cygwin` for libc, which is not cloned yet), say so rather than
    skipping this step silently.
    **Verify the name.** Queue names for `exact`/`guess` rows come from size and order only. Confirm
@@ -62,9 +70,16 @@ Human-facing references (read the relevant one instead of guessing):
    set the row's `status` to `wrong-name` and note what it looks like instead.
 3. **Claim.** Compute `end = start + size` from `config/GVLE69/symbols.txt`. In one edit: add
    the range to `splits.txt` (tab-indented), and rename `fn_XXXXXXXX` to the real name in
-   `symbols.txt`.
+   `symbols.txt`. For an `init` row the split line is `.init start:... end:...`, not `.text`.
 4. **Register** as `Object(NonMatching, "<unit>")` in `configure.py`. The name must equal the
-   `splits.txt` unit name exactly.
+   `splits.txt` unit name exactly. Where each library's units go:
+   - `runtime`: the `Runtime.PPCEABI.H` library (`cflags_runtime`), unit `Runtime.PPCEABI.H/<name>.c`.
+   - `init`: the library ac-decomp uses for the same function. `__start`, `__init_registers` and
+     `__init_data` go in `os`; `__init_hardware` and `__flush_cache` also go in `os`
+     (`__ppc_eabi_init` there); `memset`, `__fill_mem` and `memcpy` go in `Runtime.PPCEABI.H`
+     (`__mem.c` there). Identify each `fn_` helper by size and code shape against those first.
+     Keep one unit per function, named after it.
+   - `sn`: the `SN` library entry, unit `SN/<name>.c` (`GC/1.2.5n`, `cflags_base`).
    - **New library** (e.g. `pad`, not registered yet): add a `DolphinLib("pad", [Object(...)])`
      entry to `config.libs`, in link order (address order: `pad` goes after `vi` and before `ai`),
      with units named `Dolphin/pad/<unit>.c` in both `splits.txt` and `src/`. `DolphinLib` supplies

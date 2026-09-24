@@ -158,7 +158,7 @@ When a function references a string or table you intend to reproduce, read the o
 
 ## 4. Choosing what to work on
 
-**Start with SDK code (`0x80169000`+), not game code.** Game code (`0x800034A0`–`0x80169000`) is C++ compiled with `-O4 -inline auto`, which inlined away essentially every small function (see [`baseline.md`](baseline.md)). SDK code is plain C with normal small functions, and its structure is publicly documented across other GameCube decomps.
+**Start with SDK code (`0x80168770`+; the first 0x2DE4 bytes are SN Systems' debug stub, see [`sdk_libraries.md`](sdk_libraries.md)), not game code.** Game code (`0x800034A0`–`0x80168768`) is C++ compiled with `-O4 -inline auto`, which inlined away essentially every small function (see [`baseline.md`](baseline.md)). SDK code is plain C with normal small functions, and its structure is publicly documented across other GameCube decomps.
 
 Most of the 17,161 functions are still `fn_XXXXXXXX`. Naming is a large part of the work ahead.
 

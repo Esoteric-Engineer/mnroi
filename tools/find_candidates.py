@@ -45,7 +45,7 @@ def functions(path):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--start", type=lambda s: int(s, 16), default=0x80169000, help="hex, default SDK start")
+    p.add_argument("--start", type=lambda s: int(s, 16), default=0x80168770, help="hex, default start of library code (SN stub, then SDK)")
     p.add_argument("--end", type=lambda s: int(s, 16), default=0xFFFFFFFF, help="hex, default no limit")
     p.add_argument("--min", type=int, default=3, help="minimum instruction count (default 3)")
     p.add_argument("--max", type=int, default=16, help="maximum instruction count (default 16)")

@@ -12,8 +12,9 @@ functions). Align against it first, then read the ac-decomp source for the body.
 
 | Range | Library | Notes |
 |---|---|---|
-| 0x80169134-0x80169164 | os | two tiny functions |
-| 0x8016D000-0x8017A5CC | libc: Newlib + fdlibm + libgcc | **Not MSL.** The libm part starts before 0x8016D000 (see "Boundary problem" below). Newlib stdio/string/scanf, fdlibm float math, libgcc 64-bit division. Code source is upstream Newlib/fdlibm/libgcc; names come from CFTKK-Decomp (see below) |
+| 0x80168770-0x8016B554 | sn: SN Systems ProDG debug stub | **Not Dolphin SDK and not game code, but part of the SDK decomp** (decided 2026-09-24; `SN` library in `configure.py`, units `SN/<name>.c`). The debug monitor from SN's ProDG toolchain (the same toolchain explains the GCC-style game code and Newlib libc). It provides the MetroTRK hooks the OS calls (`EnableMetroTRKInterrupts` 0x801688E8; `fn_8016894C` is called from `__start` and patches exception vectors); strings `snPause() : Stopped.`, `*** FS CMD READ ERROR ***`, `Comms Error` at 0x804CFD58+. Two function tables: 0x804CFD00 (command dispatch; `fn_80168CC4` is the `blr` stub for unsupported slots) and 0x804CFCC8 (DB comm replacements 0x8016AB30-0x8016B0AC, same slots as the `DBInitComm`..`DBOpen` table next to it). 0x80169164-0x8016B554 has no function symbols yet (only `lbl_`), queued as one label-only row. `fn_80169134` (writes the PI reset register 0xCC003024 and spins) and `fn_80169150` are in the dispatch table; they were first matched as `Dolphin/os/` and now live in `SN/`. Game code ends at 0x80168768 (last GCC frame-pointer function); 0x80168768-0x80168770 is zero padding |
+| 0x8016B554-0x8016B5B0 | runtime | `__cvt_fp2unsigned` 0x8016B554 (0x48, 30 callers, only a label in `symbols.txt`), then the 4-byte `__shr2u`/`__div2i`/`__shl2i`/`__mod2i`/`__shr2i`, registered as `Dolphin/os/` |
+| 0x8016B5B0-0x8017A5CC | libc: Newlib + fdlibm + libgcc | **Not MSL.** The libm part starts at 0x8016B5B0; 0x8016B5B0-0x8016CE18 has no function symbols yet (only `lbl_`) and is queued as one label-only row (see "Boundary fixed" below). Newlib stdio/string/scanf, fdlibm float math, libgcc 64-bit division. Code source is upstream Newlib/fdlibm/libgcc; names come from CFTKK-Decomp (see below) |
 | 0x8017A5CC-0x80181708 | os | interrupts, memory protection, reset, SRAM, system call, threads, mutexes (`OSLockMutex`..`__OSUnlockAllMutex` at `0x801814F4-0x80181708`; the queue once had these as exi) |
 | 0x80181708-0x80183070 | si | |
 | 0x80183070-0x8018315C | db | |
@@ -88,10 +89,19 @@ note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFata
 - Unversioned SDK pieces could still hide in game `.text`. Checked and ruled out: the chance size runs
   at 0x802420A8, 0x802CBFC4, 0x8042706C, 0x8042DB20, 0x80440490 (GCC frame-pointer game code), the
   inline GX FIFO helpers in game code, and the paired-single block 0x802DF3F0-0x802E013C (no
-  reference match; probably engine math). Unresolved: 0x803FF3B0-0x80400544 and texPalette.
-- `sdk_scout.py` (`RANGES`: 0x80169000-0x80196884 and 0x803FF3B0-0x804114EC) and
-  `report-sdk-progress/sdk_remaining.py` both scan the two clusters by default. New second-cluster
+  reference match; probably engine math). Unresolved: texPalette (0x803FF3B0-0x80400544 is libm, see above).
+- `sdk_scout.py` (`RANGES`: 0x80168770-0x80196884 and 0x803FF3B0-0x804114EC) and
+  `report-sdk-progress/sdk_remaining.py` both scan the two clusters by default; `sdk_remaining.py` imports
+  `RANGES` and `LIBS` from `sdk_scout.py`, so change them there. New second-cluster
   queue rows take their name and confidence from the proposal table in `docs/sdk_scout_findings.md`.
+
+## Beyond `.text`
+
+- `.init` (0x80003100-0x800034A0, 928 bytes) is boot/runtime code (`__start` and helpers) with no split.
+- Data: inside the address span that library data splits already cover there are unsplit gaps
+  (2026-09-24: `.data` 7136, `.bss` 2600, `.sbss` 300, `.sdata` 216, `.sdata2` 132 bytes). Being between
+  library units, they are probably library data. The second cluster's data (AX, CARD, VM, OSFont, ...) has not
+  been located at all. `sdk_remaining.py` reports both; its data figure is a floor, not a total.
 
 ## Work queue
 
@@ -101,6 +111,14 @@ texPalette), with a library, a proposed
 name and a confidence. Second-cluster names and evidence come from `docs/sdk_scout_findings.md`; an
 `exact` row there needs an equal-size same-name function in CFTKK or ac-decomp (or, for the `*Init`
 functions, the `__XXVersion` pointer load), otherwise it is `guess`. See the `decomp-next` skill for how it is used.
+
+Hand-added rows that the `queue` command keeps but would not generate:
+
+- Label-only code (no `type:function` symbol, so the scan can't see it): 0x8016900C and 0x80169164 (sn),
+  0x8016B5B0 (libm), 0x80401550 (VMBASE), plus `__cvt_fp2unsigned` 0x8016B554. One row per region, sized to the
+  region; once function symbols are added, the refresh adds per-function rows and the region row can go.
+- `.init` (library `init`): `__start` and six helpers at 0x80003100-0x800034A0. The scan only reads `.text`.
+- `stalled` rows for every registered `NonMatching` function (details in `docs/nonmatching.md`).
 
 ## libc reference (research, 2026-09-21)
 
@@ -142,8 +160,8 @@ functions, the `__XXVersion` pointer load), otherwise it is `guess`. See the `de
   locale); it is neither Newlib nor in CFTKK. Split and matched as `__group_digits` (invented name, nofralloc asm) in `Runtime.PPCEABI.H/__group_digits.c`.
 - Boundary fixed: the old `fn_8016D000` (0x64) was the tail of `__ieee754_acosf` 0x8016CE18 (0x24C, Newlib
   ef_acos.c; CFTKK `acosf` 0x250), which dtk had cut at the end of the pad region. It is split out and matched. The rest of
-  the unsplit `pad_01_8016B5AC_text` region (0x8016B5AC-0x8016CE18) is still more libm (e.g. the `floor`-like callee at
-  0x8016CBDC); the libm start is earlier than 0x8016D000 and that region still needs splitting.
+  the unsplit region 0x8016B5B0-0x8016CE18 (after `__shr2i`) is still more libm (e.g. the `floor`-like callee at
+  0x8016CBDC, the double sqrt at 0x8016C790); it needs function boundaries in `symbols.txt` before it can be split.
 - Ruled out as references: every MSL_C-based project (melee, sms, ttyd, pikmin 1/2, tp, tww, prime,
   mkdd, ...). mkdd is useful only for EXI.
 

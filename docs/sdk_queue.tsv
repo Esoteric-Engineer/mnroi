@@ -1,5 +1,32 @@
 addr	size	name	library	confidence	notes	status
-0x8016CE18	0x24C	__ieee754_acosf	os	exact	Newlib ef_acos.c body (no errno wrapper), matched as nofralloc asm. Identity from code shape against ef_acos.c: |x|==1 -> 0 or pi+2*pi_lo, |x|>1 -> NaN, |x|<0.5 p/q polynomial with pio2_hi-(x-(pio2_lo-x*r)), x<0 branch with sqrt and pi-2*(s+w), x>0 branch with sqrt and 2*(df+w). CFTKK acosf is 0x250 (ours 0x24C, same version drift as atan2f). This was the old row at 0x8016D000 (0x64): that was only the tail of this function, split off wrongly by dtk; boundary fixed. The sqrt callee is __ieee754_sqrtf 0x8016D978. Literals lbl_8066C058-9C via bare externs (symbols split out of the lbl_8066BFA4 blob and the old lbl_8066C078/88/90/9C ranges)	matched
+0x80003100	0x154	__start	init	known	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
+0x80003254	0x6C		init	unidentified	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
+0x800032C0	0x40		init	unidentified	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
+0x80003300	0x28		init	unidentified	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
+0x80003334	0x130		init	unidentified	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
+0x80003464	0x4		init	unidentified	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
+0x80003468	0x24		init	unidentified	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
+0x80168770	0x78		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x801687E8	0x10		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x801687F8	0xF0		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x801688E8	0x64	EnableMetroTRKInterrupts	sn	known	symbol already named; just needs split + match	open
+0x8016894C	0x250		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168B9C	0x14		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168BB0	0xEC		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168C9C	0x28		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168CC4	0x4		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168CC8	0x40		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168D08	0x40		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168D48	0x50		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168D98	0x9C		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168E34	0xF0		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168F24	0x48		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x80168F6C	0xA0		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
+0x8016900C	0x128		sn	unidentified	label-only code (no function symbol in symbols.txt): add function boundaries, then split + match. Entry in the SN dispatch table at 0x804CFD00	open
+0x80169164	0x23F0		sn	unidentified	label-only code (no function symbol in symbols.txt): add function boundaries, then split + match. SN stub body: dispatch-table handlers (0x804CFD00), 8-byte hook thunks 0x8016AAD0-0x8016AB2C called from OS, and the DB comm replacements 0x8016AB30-0x8016B0AC listed in the table at 0x804CFCC8 (same slots as DBInitComm..DBOpen)	open
+0x8016B554	0x48	__cvt_fp2unsigned	runtime	known	named, but only a label in symbols.txt: add a function symbol, then split + match. 30 callers	open
+0x8016B5B0	0x1868		libc	unidentified	label-only code (no function symbol in symbols.txt): add function boundaries, then split + match. First-cluster libm before __ieee754_acosf: double sqrt 0x8016C790, floor-like 0x8016CBDC (see Boundary problem in docs/sdk_libraries.md)	open
+0x8016CE18	0x24C	__ieee754_acosf	libc	exact	Newlib ef_acos.c body (no errno wrapper), matched as nofralloc asm. Identity from code shape against ef_acos.c: |x|==1 -> 0 or pi+2*pi_lo, |x|>1 -> NaN, |x|<0.5 p/q polynomial with pio2_hi-(x-(pio2_lo-x*r)), x<0 branch with sqrt and pi-2*(s+w), x>0 branch with sqrt and 2*(df+w). CFTKK acosf is 0x250 (ours 0x24C, same version drift as atan2f). This was the old row at 0x8016D000 (0x64): that was only the tail of this function, split off wrongly by dtk; boundary fixed. The sqrt callee is __ieee754_sqrtf 0x8016D978. Literals lbl_8066C058-9C via bare externs (symbols split out of the lbl_8066BFA4 blob and the old lbl_8066C078/88/90/9C ranges)	matched
 0x8016D064	0x220	__ieee754_atan2f	libc	exact	Newlib ef_atan2.c body (no errno wrapper); matched as nofralloc asm, sdata literals 0x8066C0A0-CC via bare externs	matched
 0x8016D284	0x6F4	__ieee754_powf	libc	exact	Newlib ef_pow.c (checked: 0x4b7fffff/0x3f7ffff7/0x3f800007/0x4d000000 breakpoints, calls sqrt 0x8016D978 for y==0.5, fabsf, scalbnf). CFTKK calls this powf (0x730); ours is 0x3C smaller = no w_powf wrapper (callers are game code), same as __ieee754_atan2f. Verified vs Newlib ef_pow.c (same breakpoints, sqrt/fabsf/scalbnf calls); matched as nofralloc asm, .sdata literals 0x8066C0D0-158 via bare externs, bp/dp_h/dp_l tables (0x8066FC20/28/30) via la	matched
 0x8016D978	0xF8	__ieee754_sqrtf	libc	guess	Newlib ef_sqrt.c: integer bit-by-bit sqrt (x*x+x for inf/nan, (x-x)/(x-x) for neg). CFTKK calls this sqrtf (0x10C); ours is smaller = no w_sqrtf wrapper. Called by the asin/acos tail, powf and game code; matched as nofralloc asm (the rounding block folds away: no inexact-flag code)	matched
@@ -100,6 +127,7 @@ addr	size	name	library	confidence	notes	status
 0x8017FBA4	0x64	__OSInitSystemCall	os	exact	ac-decomp size 0x64	matched
 0x8017FC08	0x4	DefaultSwitchThreadCallback	os	exact	CFTKK-Decomp size 0x4 (blr); the initial value of the thread-switch callback slot	matched
 0x8017FC0C	0x158	__OSThreadInit	os	known	Named by dtk-dev from OSInit; matched: RunQueue block struct + rq local, own unit (original TU is OSThread.c, split into separate units here)	matched
+0x8018037C	0x1E8	fn_8018037C	os	known	registered NonMatching at 99.51%; blockers in docs/nonmatching.md	stalled
 0x80180BFC	0xEC	OSSleepThread	os	exact	ac-decomp size 0xec	matched
 0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	matched
 0x80180DEC	0xC0	OSSetThreadPriority	os	exact	ac-decomp size 0xc0	matched
@@ -180,10 +208,16 @@ addr	size	name	library	confidence	notes	status
 0x8018D440	0xD0	GXBegin	gx	guess	Matched: ac-decomp GXBegin (non-debug) with __GXSetDirtyState as a static inline; the game code inlines it	matched
 0x8018D510	0x88	__GXSendFlushPrim	gx	exact	ac-decomp size 0x88	matched
 0x8018D70C	0x190	GXInitLightSpot	gx	exact	CFTKK-Decomp size 0x190. Only callee is cosf; cutoff/spot-function switch computing the a0..a2 coefficients (not in ac-decomp); matched with the older reciprocal form (d=1/(..), multiplies) and fp_contract off	matched
+0x8018D8D4	0x7C	GXLoadLightObjImm	gx	known	registered NonMatching at 92.42%; blockers in docs/nonmatching.md	stalled
 0x8018E0E0	0x48	GXInitTexObjCI	gx	exact	ac-decomp size 0x48	matched
 0x8018E128	0x164	GXInitTexObjLOD	gx	guess	ac-decomp size 0x194; matched in __GXGetTexTileShift.c (this game has no asserts; size 0x164)	matched
+0x8018E80C	0xA0	__SetSURegs	gx	known	registered NonMatching at 96.85%; blockers in docs/nonmatching.md	stalled
 0x8018EDE8	0x178	GXSetIndTexMtx	gx	guess	ac-decomp GXBump.c GXSetIndTexMtx; body verified (3x fmuls 1024.0 / fctiwz, id switch on ITM 1-3/5-7/9-11); 100%, main.dol OK	matched
 0x8018F0A4	0xEC	GXSetIndTexOrder	gx	guess	Shape identical to ac-decomp GXBump.c GXSetIndTexOrder (0x138): tex_map/tex_coord 0xFF -> 0, switch on ind_stage writing gx->iref (+0x120) 3-bit fields (shifts 0/3/6/9/12/15/18/21), BP reg 0x61, dirtyState |= 3. Size 0xEC here (no asserts, older). Between GXSetIndTexCoordScale and GXSetNumIndStages as in ac-decomp	matched
+0x8018F480	0x60	GXSetTevColor	gx	known	registered NonMatching at 55.83%; blockers in docs/nonmatching.md	stalled
+0x8018FF90	0xA4	GXSetProjection	gx	known	registered NonMatching at 97.37%; blockers in docs/nonmatching.md	stalled
+0x80190248	0x90	__GXSetViewport	gx	known	registered NonMatching at 88.59%; blockers in docs/nonmatching.md	stalled
+0x80190398	0x40	GXSetScissorBoxOffset	gx	known	registered NonMatching at 92.5%; blockers in docs/nonmatching.md	stalled
 0x80190484	0xFC	__GXDefaultTexRegionCallback	gx	known	symbol already named; just needs split + match	matched
 0x801905A4	0x190	__GXShutdown	gx	exact	CFTKK-Decomp size 0x190. OSGetTime PE-idle timeout, GXSetBreakPtCallback/GXSetDrawSyncCallback/GXSetDrawDoneCallback, __GXAbort; an OSResetFunction, no direct callers	matched
 0x80191810	0x134	GXCPInterruptHandler	gx	exact	CFTKK-Decomp size 0x134. OSResumeThread/OSSuspendThread with __GXWriteFifoIntEnable/__GXWriteFifoIntReset (FIFO over/underflow), OSClearContext/OSSetCurrentContext; installed by __GXFifoInit via __OSSetInterruptHandler(0x11)	matched
@@ -193,6 +227,7 @@ addr	size	name	library	confidence	notes	status
 0x80192190	0x16C	__GXAbort	gx	exact	CFTKK-Decomp size 0x16C. GXGetGPFifo, OSGetTime wait loops (6 calls) around CP/PI reset writes; called from __GXShutdown; 98.8%: first half is a GXGetGPFifo-guarded memReg (0x4E/0x50) stability wait, then PI reg 0xCC003018 pulse; loop tail is bne-top in the original (see nonmatching.md). GXAbortFrame (0x801922FC) inlines this whole body then GXGetGPFifo/__GXCleanGPFifo/__GXInitRevisionBits/dirtyState/__GXSetDirtyState/8 FIFO zero writes/fn_8017A838	stalled
 0x801922FC	0x1C8	GXAbortFrame	gx	guess	Same OSGetTime/GXGetGPFifo abort sequence as __GXAbort (0x16C) followed by __GXCleanGPFifo, __GXInitRevisionBits and __GXSetDirtyState: ac-decomp GXAbortFrame = __GXAbort(); __GXCleanGPFifo(); with __GXAbort inlined (0x16C+0x5C = 0x1C8). Not in CFTKK Matched to 99.08% as __GXAbort inlined + GXFlush inlined; stalls on the same retry-loop tail as __GXAbort (docs/nonmatching.md)	stalled
 0x801924C4	0x80	GXDrawDone	gx	exact	CFTKK-Decomp size 0x80: GXSetDrawDone (flush) and GXWaitDrawDone (OSSleepThread on FinishQueue) both inlined under OSDisableInterrupts. Note 0x80192544 (named __GXFlushTextureStateDup, 0x24) is CFTKK GXPixModeSync; GXSetDrawSync/GXReadDrawSync are not in this range	matched
+0x801929BC	0x130	GXSetTexCopyDst	gx	known	registered NonMatching at 94.41%; blockers in docs/nonmatching.md	stalled
 0x80192B68	0x238	GXGetYScaleFactor	gx	exact	SDK GXFrameBuf.c GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight) returning f32: iterative search for the yScale whose GXGetNumXfbLines equals xfbHeight, with that helper inlined (fdivs, __cvt_fp2unsigned, divwu by 0x100/0x80 tests, clamp 0x400); between GXSetCopyClamp and GXSetDispCopyYScale like ac-decomp. No CFTKK size. Matched 100%; merged into Dolphin/gx/GXSetDispCopyYScale.c (they share the .sdata2 256.0f / int-to-float magic pool 0x806707B0-C0); __GXGetNumXfbLines is a static inlined 3x here	matched
 0x80193E54	0xF4	SetExiInterruptMask	exi	exact	matched in Dolphin/exi/SetExiInterruptMask.c (100%, main.dol OK); needs #pragma scheduling off; static in the original, global here because EXISetExiCallback/EXIUnlock are separate units	matched
 0x80193F48	0x25C	EXIImm	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
@@ -276,6 +311,7 @@ addr	size	name	library	confidence	notes	status
 0x804014B0	0x28	VMBASEIsPageDirty	vm	guess	0x28 getter called by __VMPageReplacementLRU	open
 0x804014D8	0x28	VMBASESetPageLocked	vm	guess	0x28; called by __VMSwapPageIn and LRU	open
 0x80401500	0x50	__VMBASEDSIServiceExceptionPrep	vm	exact	CFTKK size 0x50	open
+0x80401550	0x8B0		vm	unidentified	label-only code (no function symbol in symbols.txt): add function boundaries, then split + match. VMBASE asm	open
 0x80401E00	0x4C	__VMBASEISIServiceExceptionPrep	vm	exact	CFTKK size 0x4C	open
 0x80401E4C	0x64	__VMBASEISIServiceException	vm	guess	CFTKK 0x58 (DSI one is 0x64); OSClearContext/OSSetCurrentContext/OSLoadContext	open
 0x80401EB0	0x4C	__save_gpr	runtime	known	symbol already named; just needs split + match	open
