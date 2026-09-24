@@ -132,7 +132,7 @@ addr	size	name	library	confidence	notes	status
 0x801876EC	0x8C	DVDLowRequestError	dvd	known	symbol already named; just needs split + match	matched
 0x80187778	0x9C	DVDLowInquiry	dvd	exact	CFTKK-Decomp size 0x9C. DI cmd 0x12000000, length 0x20	open
 0x80187814	0x98	DVDLowAudioStream	dvd	exact	CFTKK-Decomp size 0x98. DI cmd 0xE1000000 | mode, length/offset regs	open
-0x801878AC	0x8C	DVDLowRequestAudioStatus	dvd	exact	CFTKK-Decomp size 0x8C. DI cmd 0xE2000000 | subcmd	open
+0x801878AC	0x8C	DVDLowRequestAudioStatus	dvd	exact	CFTKK-Decomp size 0x8C. DI cmd 0xE2000000 | subcmd	matched
 0x80187938	0x9C	DVDLowAudioBufferConfig	dvd	known	symbol already named; just needs split + match	matched
 0x801879D4	0xBC	DVDLowReset	dvd	known	NonMatching 99.15%, see docs/nonmatching.md (resetStart/ticks register-pair swap)	stalled
 0x80187E38	0xA0	getTiming	vi	known	Matched; VI .data pool (version string, timing[10], taps) claimed with it	matched
