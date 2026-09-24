@@ -204,6 +204,9 @@ Runtime.PPCEABI.H/fn_80172D78.c:
 Runtime.PPCEABI.H/gmtime_r.c:
 	.text       start:0x80172DA0 end:0x80172FF8
 
+Runtime.PPCEABI.H/mktime.c:
+	.text       start:0x80172FF8 end:0x801735D4
+
 Runtime.PPCEABI.H/strround.c:
 	.text       start:0x801735D4 end:0x80173630
 
