@@ -293,6 +293,7 @@ config.libs = [
         "objects": [
             Object(NonMatching, "Runtime.PPCEABI.H/global_destructor_chain.c"),
             Object(NonMatching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
+            Object(Matching, "Runtime.PPCEABI.H/atan2f.c"),
             Object(Matching, "Runtime.PPCEABI.H/atanf.c"),
             Object(Matching, "Runtime.PPCEABI.H/cosf.c"),
             Object(Matching, "Runtime.PPCEABI.H/fabsf.c"),

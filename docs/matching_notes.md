@@ -205,6 +205,7 @@ Scope: everything in `Runtime.PPCEABI.H` that comes from Newlib or libgcc (strin
 - `atof` (`0x801711F0`, `strtod(s, 0)`), `atoi` (`0x80171214`, `strtol(s, 0, 10)`), `fn_8017A6CC`/`fn_8017A6EC`: bare wrappers with argument `li`s between the `stw` and the `bl`.
 - `__pure_virtual` (`0x80179C30`): calls `terminate` (`0x8017A5DC`).
 - `tanf` (`0x8016DE5C`) and the rest of libm.
+- `__ieee754_atan2f` (`0x8016D064`): Newlib `ef_atan2.c` (the `atan2f` errno wrapper is absent, callers hit this directly). Transliterated as `nofralloc` asm, 100% first try; the `switch` blocks compile to compare chains with duplicated tail blocks, so copy them literally. Its `.sdata` literals (`0x8066C0A0-CC`) are unclaimed `lbl_` floats referenced by bare name (`lfs f1, lbl_8066C0AC`).
 - `__ieee754_rem_pio2f` (`0x8016E8E4`): straight transliteration of Newlib `ef_rem_pio2.c` output (`stmw` before `stw r0`, `mfcr r30`/`mtcrf 128` around the `while(tx[nx-1]==zero)` loop, `fmadds`/`fmsubs`). Its tables are `.sdata2` objects (`two_over_pi` `0x8066FE44`, `npio2_hw` `0x8067015C`), which the original reaches as `subi rX,r13,N`. Use `la rX, sym` with the extern declared **`extern const char sym[4];`**: with the real size (`[0x84]`) the compiler treats it as far data and emits `li rX,0 [R_PPC_ADDR16]` (99.9%), while a small `const` size gives the sda21 reloc that bakes to the `r13` form (100%). Matched first try otherwise.
 
 ---
