@@ -435,6 +435,9 @@ Dolphin/os/OSPanic.c:
 	.bss        start:0x8057C570 end:0x8057C5B4
 	.sdata      start:0x8066C3D0 end:0x8066C3D8
 
+Dolphin/os/PackArgs.c:
+	.text       start:0x8017D228 end:0x8017D3B0
+
 Dolphin/os/fn_8017D3B0.c:
 	.text       start:0x8017D3B0 end:0x8017D3D8
 
