@@ -69,6 +69,9 @@ Runtime.PPCEABI.H/__kernel_cosf.c:
 Runtime.PPCEABI.H/__kernel_sinf.c:
 	.text       start:0x8016E624 end:0x8016E6D0
 
+Runtime.PPCEABI.H/__kernel_tanf.c:
+	.text       start:0x8016E6D0 end:0x8016E8E4
+
 Runtime.PPCEABI.H/__ieee754_rem_pio2f.c:
 	.text       start:0x8016E8E4 end:0x8016EC34
 
@@ -1363,6 +1366,9 @@ Dolphin/gx/GXResetWriteGatherPipe.c:
 
 Dolphin/gx/__GXAbort.c:
 	.text       start:0x80192190 end:0x801922FC
+
+Dolphin/gx/GXAbortFrame.c:
+	.text       start:0x801922FC end:0x801924C4
 
 Dolphin/gx/GXDrawDone.c:
 	.text       start:0x801924C4 end:0x80192544
