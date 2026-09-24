@@ -115,7 +115,7 @@ addr	size	name	library	confidence	notes	status
 0x80181FFC	0xB4	SIInit	si	known	Named by dtk-dev from OSInit; ac-decomp size 0xa4; matched in Dolphin/si/SIInit.c	matched
 0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270 (+0xC: game sets executing = &DummyCommandBlock in the motor-stopped case); matched with a state local for the switch (frame -0x28)	matched
 0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	matched
-0x8018637C	0xF8	DVDCheckDisk	dvd	exact	Confirmed: FatalErrorFlag/PausingFlag then executing state switch (jump table 0x804D227C) with DI status bit tests and ResumeFromHere; CFTKK-Decomp size 0xF8 (ac-decomp 0xE4 is the newer variant); blocked: jump table 0x804D227C is 4-mod-8, DVDCancelAsync (0x80186028) now claims .data 0x804D2248-0x804D227C; jump table 0x804D227C still 4-mod-8, DVDCancelAsync is now Matching, so retry	open
+0x8018637C	0xF8	DVDCheckDisk	dvd	exact	Matched: merged into DVDCancelAsync.c with DVDCancel/cbForCancelSync/DVDGetCurrentDiskID so the 4-mod-8 jump table 0x804D227C follows DVDCancelAsync's table (.data 0x804D2248-0x804D22B0); ResumeFromHere test in the END/PAUSING arm	matched
 0x80186474	0x11C	__DVDPrepareResetAsync	dvd	exact	ac-decomp size 0x11c	matched
 0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	matched
 0x801868DC	0x7C	__DVDStoreErrorCode	dvd	known	symbol already named; just needs split + match	matched
