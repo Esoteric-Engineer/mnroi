@@ -9,7 +9,7 @@ addr	size	name	library	confidence	notes	status
 0x8016DE5C	0x80	tanf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DEDC	0x11C	scalbnf	libc	exact	CFTKK-Decomp size/order match (libm); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	matched
 0x8016DFF8	0xF4		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
-0x8016E0EC	0xAC	__kernel_sin	libc	guess	Double-precision fdlibm k_sin.c (fabs, ix<0x3e400000 shortcut, S1-S6 polynomial); float kernel is 0x8016E624. Renamed from the wrong __kernel_sinf; not yet byte-verified	open
+0x8016E0EC	0xAC	__kernel_sin	libc	exact	Newlib fdlibm k_sin.c (double); matched as nofralloc asm (hi/lo word spill idiom like the float siblings; C alone 42%), .sdata doubles 0x8066C1D8-208 via bare externs; needs force_active (no callers yet)	matched
 0x8016E198	0x364		libc	unidentified	Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names come from CFTKK-Decomp, code from upstream Newlib	open
 0x8016E538	0xEC	__kernel_cosf	libc	known	Called by cosf/sinf as the 2-arg (x,y) kernel; Newlib kf_cos.c	matched
 0x8016E624	0xAC	__kernel_sinf	libc	known	Called by cosf/sinf as the 3-arg (x,y,iy) kernel; Newlib kf_sin.c	matched
