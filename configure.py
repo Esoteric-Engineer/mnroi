@@ -364,6 +364,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/__errno.c"),
             Object(Matching, "Runtime.PPCEABI.H/_localeconv_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/localeconv.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__ieee754_log10.c"),
             Object(Matching, "Runtime.PPCEABI.H/memcpyalpha.c"),
             Object(Matching, "Runtime.PPCEABI.H/fread.c"),
             Object(Matching, "Runtime.PPCEABI.H/lflush.c"),
