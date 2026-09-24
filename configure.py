@@ -591,6 +591,7 @@ config.libs = [
             Object(Matching, "Dolphin/exi/EXIUnlock.c"),
             Object(Matching, "Dolphin/exi/EXIGetState.c"),
             Object(Matching, "Dolphin/exi/UnlockedHandler.c"),
+            Object(Matching, "Dolphin/exi/EXIGetID.c"),
             Object(Matching, "Dolphin/exi/__OSEnableBarnacle.c"),
             Object(Matching, "Dolphin/exi/InitializeUART.c"),
             Object(Matching, "Dolphin/OdemuExi2/DBInitInterrupts.c"),

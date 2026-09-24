@@ -1368,6 +1368,9 @@ Dolphin/exi/EXIGetState.c:
 Dolphin/exi/UnlockedHandler.c:
 	.text       start:0x80195458 end:0x80195480
 
+Dolphin/exi/EXIGetID.c:
+	.text       start:0x80195480 end:0x80195830
+
 Dolphin/exi/__OSEnableBarnacle.c:
 	.text       start:0x801959BC end:0x80195B78
 
