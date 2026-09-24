@@ -921,6 +921,9 @@ Dolphin/pad/PADRecalibrate.c:
 Dolphin/pad/PADInit.c:
 	.text       start:0x8018A6AC end:0x8018A7FC
 
+Dolphin/pad/PADRead.c:
+	.text       start:0x8018A7FC end:0x8018AAFC
+
 Dolphin/pad/PADControlAllMotors.c:
 	.text       start:0x8018AAFC end:0x8018ABC8
 
