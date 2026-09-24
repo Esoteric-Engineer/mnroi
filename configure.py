@@ -884,6 +884,7 @@ config.libs = [
         [
             Object(Matching, "Dolphin/dsp/DSPCheckMailToDSP.c"),
             Object(Matching, "Dolphin/dsp/DSPCheckMailFromDSP.c"),
+            Object(Matching, "Dolphin/dsp/DSPCheckInit.c"),
         ],
     ),
 ]
