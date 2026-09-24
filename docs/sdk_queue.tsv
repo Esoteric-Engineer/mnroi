@@ -98,7 +98,7 @@ addr	size	name	library	confidence	notes	status
 0x8017FA5C	0x70	OSGetGbsMode	os	known	Was OSGetWirelessID (size/order only); named by dtk-dev from OSInit; reads SramEx u16 at +0x28 (LockSram(0x14) inline template)	matched
 0x8017FACC	0xB8	OSSetGbsMode	os	known	Was OSSetWirelessID (size/order only); named by dtk-dev from OSInit; matched as asm in Dolphin/os/OSSetGbsMode.c (C stalled at 75.8%, see docs/matching_notes.md)	matched
 0x8017FBA4	0x64	__OSInitSystemCall	os	exact	ac-decomp size 0x64	matched
-0x8017FC08	0x4	DefaultSwitchThreadCallback	os	exact	CFTKK-Decomp size 0x4 (blr); the initial value of the thread-switch callback slot	open
+0x8017FC08	0x4	DefaultSwitchThreadCallback	os	exact	CFTKK-Decomp size 0x4 (blr); the initial value of the thread-switch callback slot	matched
 0x8017FC0C	0x158	__OSThreadInit	os	known	Named by dtk-dev from OSInit; matched: RunQueue block struct + rq local, own unit (original TU is OSThread.c, split into separate units here)	matched
 0x80180BFC	0xEC	OSSleepThread	os	exact	ac-decomp size 0xec	matched
 0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	matched
