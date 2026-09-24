@@ -794,6 +794,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/fn_8017D3B0.c"),
             Object(Matching, "Dolphin/os/fn_8017D464.c"),
             Object(Matching, "Dolphin/os/fn_8017D4A4.c"),
+            Object(Matching, "Dolphin/os/__OSBootDol.c"),
             Object(Matching, "Dolphin/os/OSAlarm.c"),
             Object(Matching, "Dolphin/os/ReadDiscBlocking.c"),
             Object(Matching, "Dolphin/os/__OSSetAlarmState.c"),
