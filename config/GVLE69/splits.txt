@@ -1644,3 +1644,6 @@ Dolphin/OdemuExi2/DBGReadMailbox.c:
 
 Dolphin/OdemuExi2/DBGEXIImm.c:
 	.text       start:0x801965EC end:0x80196884
+
+Dolphin/arq/__ARQCallbackHack.c:
+	.text       start:0x804064A4 end:0x804064A8

@@ -865,6 +865,12 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSMutex.c"),
         ],
     ),
+    DolphinLib(
+        "arq",
+        [
+            Object(Matching, "Dolphin/arq/__ARQCallbackHack.c"),
+        ],
+    ),
 ]
 
 
