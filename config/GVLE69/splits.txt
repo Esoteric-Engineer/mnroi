@@ -601,6 +601,9 @@ Dolphin/si/SIRegisterPollingHandler.c:
 Dolphin/si/SIUnregisterPollingHandler.c:
 	.text       start:0x80181F08 end:0x80181FFC
 
+Dolphin/si/SIInit.c:
+	.text       start:0x80181FFC end:0x801820B0
+
 Dolphin/si/SIBios.c:
 	.text       start:0x801820B0 end:0x80183070
 

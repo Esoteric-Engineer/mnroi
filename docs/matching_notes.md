@@ -33,6 +33,8 @@ Smaller findings:
 
 - **Hoist a shared table base by declaring its pointer local first:** `u8* tbl = lbl_XXXX;` as the *first* local put the `lis`/`addi` in r31 before the first call, and reused it for several `tbl + off` arguments (`__GXInitGX` 99.95% -> 100%). Declaring it in any later slot gave a different register assignment.
 
+- **A `.bss` base the original computes *before* a leading call and keeps in a saved register (`lis r4`/`addi r31,Packet@l` ahead of `bl OSRegisterVersion`, `SIInit` `0x80181FFC`): use a `u8*` local cast from a struct-array extern, and write byte-offset stores.** `SIPacket* p = Packet;` with `p[i].chan`, a loop, and a late assignment all leave the `lis`/`addi` after the call in a scratch register (85.6%, size 172 vs 180). `unsigned char* base = (unsigned char*)Packet;` (with `extern SIPacket Packet[4];`) plus `*(s32*)base = *(s32*)(base + 0x20) = *(s32*)(base + 0x40) = *(s32*)(base + 0x60) = -1;` hoists it and matches. Declaring the extern as `unsigned char Packet[]` instead loses the hoist again. The chain evaluates right to left, so write it in ascending order to get the original's `0x60, 0x40, 0x20, 0x0` stores. `__SIVersion` is a `const char*` in `.sdata` (`lwz r3,__SIVersion@sda21`), not an array.
+
 - **Stack slot order follows declaration order in reverse for aggregates:** the earlier-declared local got the higher offset. In `__GXInitGX`, declaring `texObj` before `identity_mtx` put the matrix at the lower slot, as the original has it.
 
 - **A `u8` parameter on the callee adds a `clrlwi` after a ternary argument:** if the original passes the `li 1`/`li 0` result straight through, prototype the parameter as `u32` (`GXSetFieldMode`'s second argument).

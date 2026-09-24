@@ -112,7 +112,7 @@ addr	size	name	library	confidence	notes	status
 0x80181DA4	0x98	SIEnablePollingInterrupt	si	exact	ac-decomp size 0x98	matched
 0x80181E3C	0xCC	SIRegisterPollingHandler	si	exact	ac-decomp size 0xcc	matched
 0x80181F08	0xF4	SIUnregisterPollingHandler	si	exact	ac-decomp size 0xf4	matched
-0x80181FFC	0xB4	SIInit	si	known	Named by dtk-dev from OSInit; ac-decomp size 0xa4	open
+0x80181FFC	0xB4	SIInit	si	known	Named by dtk-dev from OSInit; ac-decomp size 0xa4; matched in Dolphin/si/SIInit.c	matched
 0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270	open
 0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	matched
 0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4	open
