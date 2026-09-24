@@ -741,6 +741,9 @@ Dolphin/dvd/DVDLowStopMotor.c:
 Dolphin/dvd/DVDLowRequestError.c:
 	.text       start:0x801876EC end:0x80187778
 
+Dolphin/dvd/DVDLowInquiry.c:
+	.text       start:0x80187778 end:0x80187814
+
 Dolphin/dvd/DVDLowAudioStream.c:
 	.text       start:0x80187814 end:0x801878AC
 

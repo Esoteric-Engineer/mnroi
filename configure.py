@@ -655,6 +655,7 @@ config.libs = [
             Object(Matching, "Dolphin/dvd/DVDLowSeek.c"),
             Object(Matching, "Dolphin/dvd/DVDLowStopMotor.c"),
             Object(Matching, "Dolphin/dvd/DVDLowRequestError.c"),
+            Object(Matching, "Dolphin/dvd/DVDLowInquiry.c"),
             Object(Matching, "Dolphin/dvd/DVDLowAudioStream.c"),
             Object(Matching, "Dolphin/dvd/DVDLowRequestAudioStatus.c"),
             Object(Matching, "Dolphin/dvd/DVDLowAudioBufferConfig.c"),
