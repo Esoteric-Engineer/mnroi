@@ -175,7 +175,7 @@ addr	size	name	library	confidence	notes	status
 0x8018C4B8	0x124	__ARQServiceQueueLo	gx	guess	ac-decomp size 0x100	open
 0x8018C5DC	0x1B4		gx	unidentified		open
 0x8018C790	0x90		gx	unidentified		open
-0x8018CD34	0x88	__GXSetVAT	gx	guess	ac-decomp size 0x9c	open
+0x8018CD34	0x88	__GXSetVAT	gx	guess	ac-decomp size 0x9c	matched
 0x8018D3C0	0x80	__GXSetDirtyState	gx	exact	GXGeometry.c order (ac-decomp); was misnamed GXDrawDone; callees fn_8018C3FC/CD34/C4B8 are likely __GXSetVCD/__GXSetVAT/__GXCalculateVLim	matched
 0x8018D440	0xD0	GXBegin	gx	guess	ac-decomp size 0xf0	open
 0x8018D510	0x88	__GXSendFlushPrim	gx	exact	ac-decomp size 0x88	matched

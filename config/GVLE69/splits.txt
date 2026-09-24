@@ -873,6 +873,9 @@ Dolphin/gx/GXSetVtxAttrFmt.c:
 	.text       start:0x8018C858 end:0x8018CD34
 	.data       start:0x804D2E28 end:0x804D2EB0
 
+Dolphin/gx/__GXSetVAT.c:
+	.text       start:0x8018CD34 end:0x8018CDBC
+
 Dolphin/gx/GXGetVtxAttrFmt.c:
 	.text       start:0x8018CDBC end:0x8018D384
 	.data       start:0x804D2EB0 end:0x804D2F64

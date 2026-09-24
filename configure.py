@@ -411,6 +411,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXClearVtxDesc.c"),
             Object(Matching, "Dolphin/gx/GXGetVtxAttrFmt.c"),
             Object(Matching, "Dolphin/gx/GXSetVtxAttrFmt.c"),
+            Object(Matching, "Dolphin/gx/__GXSetVAT.c"),
             Object(Matching, "Dolphin/gx/GXSetNumTexGens.c"),
             Object(Matching, "Dolphin/gx/__GXSetDirtyState.c"),
             Object(Matching, "Dolphin/gx/__GXSendFlushPrim.c"),

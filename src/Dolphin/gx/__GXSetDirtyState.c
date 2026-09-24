@@ -13,7 +13,7 @@ extern void __GXSetSUTexRegs(void);
 extern void __GXUpdateBPMask(void);
 extern void __GXSetGenMode(void);
 extern void fn_8018C3FC(void);
-extern void fn_8018CD34(void);
+extern void __GXSetVAT(void);
 extern void fn_8018C4B8(void);
 
 void __GXSetDirtyState(void)
@@ -33,7 +33,7 @@ void __GXSetDirtyState(void)
         fn_8018C3FC();
     }
     if (dirty & 0x10) {
-        fn_8018CD34();
+        __GXSetVAT();
     }
     if (dirty & (0x10 | 8)) {
         fn_8018C4B8();
