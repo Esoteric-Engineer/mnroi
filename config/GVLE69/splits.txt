@@ -1020,6 +1020,9 @@ Dolphin/gx/__GXSetTmemConfig.c:
 Dolphin/gx/GXSetTevIndirect.c:
 	.text       start:0x8018ED7C end:0x8018EDE8
 
+Dolphin/gx/GXSetIndTexMtx.c:
+	.text       start:0x8018EDE8 end:0x8018EF60
+
 Dolphin/gx/GXSetIndTexCoordScale.c:
 	.text       start:0x8018EF60 end:0x8018F0A4
 
