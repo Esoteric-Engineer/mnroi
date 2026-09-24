@@ -12,14 +12,16 @@ extern OSTime lbl_8066F268;
 OSTime __OSGetSystemTime(void);
 void __OSMaskInterrupts(u32 mask);
 
+// Declare-at-address (as in os.h) so MWCC hoists the load out of the wait loop.
+u32 __OSBusClock : 0x800000F8;
+#define OSMicrosecondsToTicks(usec) (((usec) * ((__OSBusClock / 4) / 125000)) / 8)
+
 void __OSResetSWInterruptHandler(short exception, void* context)
 {
     void (*callback)(void);
-    u32 ticks;
 
     lbl_8066F268 = __OSGetSystemTime();
-    ticks = ((*(u32*)0x800000F8) / 4 / 125000 * 100) / 8;
-    while ((__OSGetSystemTime() - lbl_8066F268) < ticks && !(__PIRegs[0] & 0x00010000))
+    while ((__OSGetSystemTime() - lbl_8066F268) < OSMicrosecondsToTicks(100) && !(__PIRegs[0] & 0x00010000))
         ;
     if (!(__PIRegs[0] & 0x00010000)) {
         lbl_8066F258 = lbl_8066F254 = 1;

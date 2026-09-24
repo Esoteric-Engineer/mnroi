@@ -25,7 +25,8 @@ volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 extern int __cntlzw(unsigned int);
 
-#define GET_REG_FIELD(reg, size, shift) (((reg) >> (shift)) & ((1 << (size)) - 1))
+// The SDK macro: the (int) cast is what keeps the vcdHi clrlwi in place.
+#define GET_REG_FIELD(reg, size, shift) ((int)((reg) >> (shift)) & ((1 << (size)) - 1))
 
 static inline void __GXXfVtxSpecs(void)
 {

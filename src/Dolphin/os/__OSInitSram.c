@@ -6,9 +6,11 @@ typedef struct SramControlBlock {
     BOOL enabled;
     BOOL locked;
     BOOL sync;
+    void (*callback)(void);
 } SramControlBlock;
 
-extern SramControlBlock Scb;
+// Defined here, not extern: the pooled .bss address gives the original's `addi r3,r30,0`.
+SramControlBlock Scb __attribute__((aligned(32)));
 
 extern void DCInvalidateRange(void* addr, unsigned long nBytes);
 extern BOOL EXILock(long chan, unsigned long dev, void* callback);

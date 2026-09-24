@@ -5,8 +5,16 @@ typedef s64 OSTime;
 extern volatile u32 __DIRegs[0x20] : 0xCC006000;
 extern volatile u32 __PIRegs[0x20] : 0xCC003000;
 
-static volatile OSTime LastResetEnd;
-static volatile u32 ResetOccurred;
+// Declare-at-address (as in os.h) so MWCC hoists the load out of the wait loop.
+u32 __OSBusClock : 0x800000F8;
+
+#define OS_BUS_CLOCK __OSBusClock
+#define OS_TIMER_CLOCK (OS_BUS_CLOCK / 4)
+#define OSMicrosecondsToTicks(usec) (((usec) * (OS_TIMER_CLOCK / 125000)) / 8)
+
+// Reverse declaration order in .sbss: this order puts LastResetEnd first.
+volatile u32 ResetOccurred;
+volatile OSTime LastResetEnd;
 
 OSTime __OSGetSystemTime(void);
 
@@ -14,15 +22,13 @@ void DVDLowReset(void)
 {
     u32 reg;
     OSTime resetStart;
-    u32 ticks;
 
     __DIRegs[1] = 2;
     reg = __PIRegs[9];
     __PIRegs[9] = (reg & ~4) | 1;
 
     resetStart = __OSGetSystemTime();
-    ticks = ((*(u32*)0x800000F8) / 4 / 125000 * 12) / 8;
-    while ((__OSGetSystemTime() - resetStart) < ticks)
+    while ((__OSGetSystemTime() - resetStart) < OSMicrosecondsToTicks(12))
         ;
 
     __PIRegs[9] = reg | 4 | 1;

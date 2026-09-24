@@ -528,6 +528,7 @@ Dolphin/os/WriteSram.c:
 
 Dolphin/os/__OSInitSram.c:
 	.text       start:0x8017F0F0 end:0x8017F22C
+	.bss        start:0x8057C5C0 end:0x8057C618
 
 Dolphin/os/OSLockSram.c:
 	.text       start:0x8017F22C end:0x8017F2E4
@@ -1224,6 +1225,7 @@ Dolphin/gx/__GXInitRevisionBits.c:
 
 Dolphin/gx/GXInit.c:
 	.text       start:0x801908D8 end:0x80191810
+	.bss        start:0x8057D5B0 end:0x8057DBE0
 	.sdata2     start:0x80670788 end:0x806707B0
 
 Dolphin/gx/GXInitFifoBase.c:

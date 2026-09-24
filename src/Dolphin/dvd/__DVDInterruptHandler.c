@@ -27,7 +27,7 @@ extern volatile BOOL StopAtNextInt;
 extern DVDLowCallback Callback;
 extern DVDLowCallback lbl_8066F33C;
 extern volatile OSTime LastResetEnd;
-extern volatile u32 ResetOccurred_8066F348;
+extern volatile u32 ResetOccurred;
 extern volatile BOOL WaitingCoverClose;
 extern volatile BOOL lbl_8066F350;
 extern volatile OSTime LastReadFinished;
@@ -110,13 +110,13 @@ void __DVDInterruptHandler(s32 interrupt, void* context)
         cause |= 2;
     }
     if (cause) {
-        ResetOccurred_8066F348 = 0;
+        ResetOccurred = 0;
         OSCancelAlarm(bss->AlarmForTimeout);
     }
 
     __DIRegs[0] = intr | mask;
 
-    if (ResetOccurred_8066F348 && (__OSGetSystemTime() - LastResetEnd) < OSMillisecondsToTicks(200)) {
+    if (ResetOccurred && (__OSGetSystemTime() - LastResetEnd) < OSMillisecondsToTicks(200)) {
         reg = __DIRegs[1];
         mask = reg & 2;
         intr = (reg & 4) & (mask << 1);

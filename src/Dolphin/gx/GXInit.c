@@ -1,3 +1,6 @@
+// Keeps the .sdata2 literal pool from being dead-stripped (see GXSetFog.c).
+#pragma force_active on
+
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
@@ -186,12 +189,13 @@ typedef struct {
     u32 dirtyState;
 } __GXDataStruct;
 
-extern u8 lbl_8057D630[];
+// Defined here (non-static, other units use them) so `&FifoObj` is a pooled .bss address.
+GXFifoObj FifoObj;
+u8 lbl_8057D630[0x5B0];
 __GXDataStruct* const __GXData = (__GXDataStruct*)lbl_8057D630;
 #define gx __GXData
 
 extern char* __GXVersion;
-extern GXFifoObj FifoObj;
 extern u32 GXTexRegionAddrTable[6][8];
 extern u32 resetFuncRegistered;
 
@@ -250,12 +254,10 @@ static inline void EnableWriteGatherPipe(void)
 
 GXFifoObj* GXInit(void* base, u32 size)
 {
-    GXFifoObj* fifoObj;
     u32 i;
     u32 reg;
     u32 freqBase;
 
-    fifoObj = &FifoObj;
     OSRegisterVersion(__GXVersion);
 
     gx->inDispList = 0;
@@ -271,9 +273,9 @@ GXFifoObj* GXInit(void* base, u32 size)
     __memReg = (u16*)OSPhysicalToUncached(0x0C004000);
 
     __GXFifoInit();
-    GXInitFifoBase(fifoObj, base, size);
-    GXSetCPUFifo(fifoObj);
-    GXSetGPFifo(fifoObj);
+    GXInitFifoBase(&FifoObj, base, size);
+    GXSetCPUFifo(&FifoObj);
+    GXSetGPFifo(&FifoObj);
 
     if (!resetFuncRegistered) {
         OSRegisterResetFunction(&GXResetFuncInfo);
@@ -369,7 +371,7 @@ GXFifoObj* GXInit(void* base, u32 size)
     __GXSetIndirectMask(0);
     __GXSetTmemConfig(2);
     __GXInitGX();
-    return fifoObj;
+    return &FifoObj;
 }
 
 void __GXInitGX(void)

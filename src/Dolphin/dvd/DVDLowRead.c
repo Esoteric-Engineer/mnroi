@@ -35,7 +35,9 @@ extern u32 WorkAroundSeekLocation;
 extern volatile OSTime LastReadFinished;
 extern s32 NextCommandNumber;
 
-#define OS_TIMER_CLOCK ((*(u32*)0x800000F8) / 4)
+// Declare-at-address (as in os.h), not a pointer cast: changes the tick-math registers.
+u32 __OSBusClock : 0x800000F8;
+#define OS_TIMER_CLOCK (__OSBusClock / 4)
 #define OSMillisecondsToTicks(msec) ((OS_TIMER_CLOCK / 1000) * (msec))
 #define OSMicrosecondsToTicks(usec) (((OS_TIMER_CLOCK / 125000) * (usec)) / 8)
 
@@ -100,7 +102,6 @@ BOOL DVDLowRead(void* addr, u32 length, u32 offset, DVDLowCallback callback)
     u32 blockNumOfPrevEnd;
     u32 blockNumOfCurrStart;
     OSTime diff;
-    u32 ticks;
 
     (void)CommandList;
     (void)AlarmForWA;
@@ -127,12 +128,11 @@ BOOL DVDLowRead(void* addr, u32 length, u32 offset, DVDLowCallback callback)
                 blockNumOfCurrStart = (u32)((Curr.offset >> 15) & 0x1FFFF);
                 if (blockNumOfPrevEnd == blockNumOfCurrStart || blockNumOfPrevEnd + 1 == blockNumOfCurrStart) {
                     diff = __OSGetSystemTime() - LastReadFinished;
-                    ticks = OSMillisecondsToTicks(5);
-                    if (ticks < diff) {
+                    if (OSMillisecondsToTicks(5) < diff) {
                         DoJustRead(addr, length, offset, callback);
                     } else {
                         WaitBeforeRead(addr, length, offset, callback,
-                                       ticks - diff + OSMicrosecondsToTicks(500));
+                                       OSMillisecondsToTicks(5) - diff + OSMicrosecondsToTicks(500));
                     }
                 } else {
                     SeekTwiceBeforeRead(addr, length, offset, callback);

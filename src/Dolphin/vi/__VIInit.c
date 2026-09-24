@@ -31,20 +31,31 @@ typedef struct {
 } VITiming;
 
 VITiming* getTiming(unsigned long mode);
+void __VIInitPhilips(void);
+// Constant in this SDK, so the Philips branches fold away; its local still puts `a` at 0x1c.
+inline static u32 getEncoderType(void) { return 1; }
 
 void __VIInit(int mode)
 {
-    volatile u32 a;
     VITiming* tm;
     u32 nonInter;
     u32 tv;
-
+    volatile u32 a;
     u16 hct;
     u16 vct;
+    u32 encoderType;
+
+    encoderType = getEncoderType();
+    if (encoderType == 0) {
+        __VIInitPhilips();
+    }
 
     nonInter = mode & 2;
     tv = (u32)mode >> 2;
     *(u32*)0x800000CC = tv;
+    if (encoderType == 0) {
+        tv = 3;
+    }
     tm = getTiming(mode);
     __VIRegs[1] = 2;
 
@@ -55,6 +66,10 @@ void __VIInit(int mode)
     __VIRegs[2] = tm->hce | (tm->hcs << 8);
     __VIRegs[5] = tm->hsy | (tm->hbe640 << 7);
     __VIRegs[4] = (tm->hbs640 & 0x7FFF) << 1;
+    if (encoderType == 0) {
+        __VIRegs[0x39] = tm->hbeCCIR656 | 0x8000;
+        __VIRegs[0x3A] = (u32)tm->hbsCCIR656;
+    }
     __VIRegs[0] = (u32)tm->equ;
     __VIRegs[7] = (u32)(tm->prbOdd + (tm->acv * 2) - 2);
     __VIRegs[6] = (u32)(tm->psbOdd + 2);

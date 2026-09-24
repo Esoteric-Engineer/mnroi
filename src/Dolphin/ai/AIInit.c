@@ -22,23 +22,23 @@ extern void __OSUnmaskInterrupts(u32 mask);
 extern void __AI_set_stream_sample_rate(u32 rate);
 extern void AISetDSPSampleRate(u32 rate);
 extern void __AISHandler(void);
-extern void fn_8018BC20(void);
+extern void __AIDHandler(void);
 
 #define OS_TIMER_CLOCK (__OSBusClock / 4)
 #define NS_TO_TICKS(ns) ((u64)(((ns) * (OS_TIMER_CLOCK / 125000)) / 8000))
 
-static inline void SetVolLeft(u8 vol)
+// Plain C, not __rlwimi: inlined with vol = 0 this must compile to `ori r0,r0,0`.
+#define SET_REG_FIELD(reg, size, shift, val) \
+    ((reg) = ((u32)(reg) & ~(((1 << (size)) - 1) << (shift))) | ((u32)(val) << (shift)))
+
+static inline void AISetStreamVolLeft(u8 vol)
 {
-    u32 reg = __AIRegs[1];
-    reg = (u32)__rlwimi((int)(reg & 0xFFFFFF00), (int)vol, 0, 24, 31);
-    __AIRegs[1] = reg;
+    SET_REG_FIELD(__AIRegs[1], 8, 0, vol);
 }
 
-static inline void SetVolRight(u8 vol)
+static inline void AISetStreamVolRight(u8 vol)
 {
-    u32 reg = __AIRegs[1];
-    reg = (u32)__rlwimi((int)(reg & 0xFFFF00FF), (int)vol, 8, 16, 23);
-    __AIRegs[1] = reg;
+    SET_REG_FIELD(__AIRegs[1], 8, 8, vol);
 }
 
 void AIInit(u8* stack)
@@ -50,8 +50,8 @@ void AIInit(u8* stack)
         lbl_8066F430 = NS_TO_TICKS(42000);
         lbl_8066F438 = NS_TO_TICKS(63000);
         lbl_8066F440 = NS_TO_TICKS(3000);
-        SetVolRight(0);
-        SetVolLeft(0);
+        AISetStreamVolRight(0);
+        AISetStreamVolLeft(0);
         __AIRegs[3] = 0;
         __AIRegs[0] = (__AIRegs[0] & 0xFFFFFFDF) | 0x20;
         __AI_set_stream_sample_rate(1);
@@ -59,7 +59,7 @@ void AIInit(u8* stack)
         lbl_8066F408 = 0;
         lbl_8066F40C = 0;
         lbl_8066F410 = stack;
-        __OSSetInterruptHandler(5, fn_8018BC20);
+        __OSSetInterruptHandler(5, __AIDHandler);
         __OSUnmaskInterrupts(0x04000000);
         __OSSetInterruptHandler(8, __AISHandler);
         __OSUnmaskInterrupts(0x800000);
