@@ -243,6 +243,9 @@ Runtime.PPCEABI.H/vfprintf.c:
 Runtime.PPCEABI.H/_vfiwrite.c:
 	.text       start:0x80175704 end:0x801757D8
 
+Runtime.PPCEABI.H/_vfiprintf_r.c:
+	.text       start:0x801757D8 end:0x80176E54
+
 Runtime.PPCEABI.H/_strtol_r.c:
 	.text       start:0x80176E54 end:0x80177004
 
