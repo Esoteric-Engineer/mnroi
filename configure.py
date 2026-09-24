@@ -310,6 +310,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/__kernel_sinf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__kernel_tanf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_rem_pio2f.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__kernel_rem_pio2.c"),
             Object(Matching, "Runtime.PPCEABI.H/__kernel_rem_pio2f.c"),
             Object(Matching, "Runtime.PPCEABI.H/floorf.c"),
             Object(Matching, "Runtime.PPCEABI.H/scalbn.c"),
