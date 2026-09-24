@@ -14,7 +14,7 @@ BOOL OSDisableInterrupts(void);
 void OSRestoreInterrupts(BOOL level);
 void __DVDClearWaitingQueue(void);
 DVDCommandBlock* __DVDPopWaitingQueue(void);
-int fn_80186028(DVDCommandBlock* block, void (*callback)(long, DVDCommandBlock*)); // DVDCancelAsync
+int DVDCancelAsync(DVDCommandBlock* block, void (*callback)(long, DVDCommandBlock*));
 void stateReady(void);
 
 static inline void DVDPause(void)
@@ -51,10 +51,10 @@ static inline int DVDCancelAllAsync(void (*callback)(long, DVDCommandBlock*))
     enabled = OSDisableInterrupts();
     DVDPause();
     while ((p = __DVDPopWaitingQueue()) != 0) {
-        fn_80186028(p, 0);
+        DVDCancelAsync(p, 0);
     }
     if (executing) {
-        retVal = fn_80186028(executing, callback);
+        retVal = DVDCancelAsync(executing, callback);
     } else {
         retVal = 1;
         if (callback) {

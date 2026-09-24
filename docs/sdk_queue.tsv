@@ -113,9 +113,9 @@ addr	size	name	library	confidence	notes	status
 0x80181E3C	0xCC	SIRegisterPollingHandler	si	exact	ac-decomp size 0xcc	matched
 0x80181F08	0xF4	SIUnregisterPollingHandler	si	exact	ac-decomp size 0xf4	matched
 0x80181FFC	0xB4	SIInit	si	known	Named by dtk-dev from OSInit; ac-decomp size 0xa4; matched in Dolphin/si/SIInit.c	matched
-0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270	open
+0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270 (+0xC: game sets executing = &DummyCommandBlock in the motor-stopped case); 99.94%, frame -0x20 vs -0x28; see nonmatching.md	stalled
 0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	matched
-0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4; blocked: jump table 0x804D227C is 4-mod-8, needs DVDCancelAsync (fn_80186028) tables/unit merged first	open
+0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4; blocked: jump table 0x804D227C is 4-mod-8, DVDCancelAsync (0x80186028) now claims .data 0x804D2248-0x804D227C; jump table 0x804D227C still 4-mod-8, needs DVDCheckDisk in the same unit as DVDCancelAsync or after it matches	open
 0x80186474	0x11C	__DVDPrepareResetAsync	dvd	exact	ac-decomp size 0x11c	matched
 0x801867C0	0x11C	ErrorCode2Num	dvd	known	symbol already named; just needs split + match	matched
 0x801868DC	0x7C	__DVDStoreErrorCode	dvd	known	symbol already named; just needs split + match	matched

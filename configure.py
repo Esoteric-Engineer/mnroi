@@ -632,6 +632,7 @@ config.libs = [
             Object(Matching, "Dolphin/dvd/DVDGetDriveStatus.c"),
             Object(Matching, "Dolphin/dvd/DVDSetAutoInvalidation.c"),
             Object(Matching, "Dolphin/dvd/DVDResume.c"),
+            Object(NonMatching, "Dolphin/dvd/DVDCancelAsync.c"),
             Object(Matching, "Dolphin/dvd/DVDCancel.c"),
             Object(Matching, "Dolphin/dvd/cbForCancelSync.c"),
             Object(Matching, "Dolphin/dvd/DVDGetCurrentDiskID.c"),

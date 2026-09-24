@@ -10,7 +10,7 @@ extern char __DVDThreadQueue[8];
 BOOL OSDisableInterrupts(void);
 void OSRestoreInterrupts(BOOL level);
 void OSSleepThread(void* queue); 
-int fn_80186028(volatile DVDCommandBlock* block, void (*callback)(long, DVDCommandBlock*)); // DVDCancelAsync
+int DVDCancelAsync(volatile DVDCommandBlock* block, void (*callback)(long, DVDCommandBlock*));
 void cbForCancelSync(long result, DVDCommandBlock* block);
 
 long DVDCancel(volatile DVDCommandBlock* block) {
@@ -19,7 +19,7 @@ long DVDCancel(volatile DVDCommandBlock* block) {
     unsigned long command;
     BOOL enabled;
 
-    result = fn_80186028(block, cbForCancelSync);
+    result = DVDCancelAsync(block, cbForCancelSync);
     if (result == 0) {
         return -1;
     }
