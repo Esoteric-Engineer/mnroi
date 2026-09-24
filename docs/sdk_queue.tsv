@@ -148,7 +148,7 @@ addr	size	name	library	confidence	notes	status
 0x80189894	0x98	VIGetCurrentLine	vi	exact	NonMatching 99.82%: frame -0x10 vs -0x20, see docs/nonmatching.md	stalled
 0x8018992C	0x68	VIGetTvFormat	vi	known	code 99.4% (only jump-table symbol name differs); blocked: table @724 at 0x804D2C34 is 4-mod-8 and the unclaimed strings before it (0x804D2AE0, VIConfigure text) must be claimed first; retry after VIConfigure	stalled
 0x80189994	0x21C		vi	unidentified		open
-0x80189BB0	0x60	VIGetDTVStatus	vi	guess	ac-decomp size 0x3c	open
+0x80189BB0	0x60	__VIGetCurrentPosition	vi	known	Was VIGetDTVStatus (size/order only, wrong). Retrace handler calls it with (s16 x, s16 y) before PositionCallback; body is the stable vcount/hcount read then fn_80189994 (GetCurrentDisplayPosition, unclaimed, 0x21C)	matched
 0x80189C10	0x1A4	UpdateOrigin	pad	exact	ac-decomp size 0x1a4	matched
 0x80189DB4	0xC4	PADOriginCallback	pad	exact	NonMatching 99.29%: r4/r5 swap in inlined DoReset, see docs/nonmatching.md	stalled
 0x80189E78	0xCC	PADOriginUpdateCallback	pad	guess	ac-decomp size 0xc0	open

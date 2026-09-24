@@ -29,7 +29,7 @@ void OSClearContext(OSContext* context);
 void OSSetCurrentContext(OSContext* context);
 void OSWakeupThread(void* queue);
 void SIRefreshSamplingRate(void);
-void fn_80189BB0(s16* x, s16* y);
+void __VIGetCurrentPosition(s16* x, s16* y);
 u32 getCurrentFieldEvenOdd(void);
 
 static inline s32 cntlzd(u64 bit)
@@ -101,7 +101,7 @@ void __VIRetraceHandler(s32 unused, OSContext* context)
         OSClearContext((OSContext*)ctx);
         OSSetCurrentContext((OSContext*)ctx);
         if (lbl_8066F394) {
-            fn_80189BB0(&x, &y);
+            __VIGetCurrentPosition(&x, &y);
             lbl_8066F394(x, y);
         }
         OSClearContext((OSContext*)ctx);
