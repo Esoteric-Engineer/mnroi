@@ -169,8 +169,8 @@ addr	size	name	library	confidence	notes	status
 0x8018B4F4	0x60	SamplingHandler	pad	exact	ac-decomp size 0x60	matched
 0x8018B554	0x54	PADSetSamplingCallback	pad	exact	ac-decomp size 0x54	matched
 0x8018B5A8	0x7C	__PADDisableRecalibration	pad	exact	ac-decomp size 0x7c	matched
-0x8018BF08	0x26C	GXSetVtxDesc	gx	guess	Order in ac-decomp GXAttr.c (GXSetVtxDesc, GXSetVtxDescv, __GXSetVCD, __GXCalculateVLim); verify body	open
-0x8018C174	0x288	GXSetVtxDescv	gx	guess	Order in ac-decomp GXAttr.c; verify body	open
+0x8018BF08	0x26C	GXSetVtxDesc	gx	guess	ac-decomp GXAttr.c; SETVCDATTR inlined, jump table 0x804D2CF0 claimed; type param is int (cmpwi)	matched
+0x8018C174	0x288	GXSetVtxDescv	gx	guess	ac-decomp GXAttr.c; needs static inline SETVCDATTR(GXAttr,GXAttrType) with enum params	matched
 0x8018C3FC	0xBC	__GXSetVCD	gx	guess	Verified: ac-decomp __GXSetVCD with the later-SDK __GXXfVtxSpecs inlined (cntlzw color/tex counts); 99.79% NonMatching, see docs/nonmatching.md	stalled
 0x8018C4B8	0x124	__GXCalculateVLim	gx	exact	Was mislabelled __ARQServiceQueueLo; called from __GXSetDirtyState (dirty & 0x18). Body is ac-decomp GXAttr.c __GXCalculateVLim, 100% first try	matched
 0x8018C5DC	0x1B4		gx	unidentified		open
