@@ -901,6 +901,12 @@ config.libs = [
             Object(Matching, "Dolphin/dsp/DSPCheckInit.c"),
         ],
     ),
+    DolphinLib(
+        "card",
+        [
+            Object(Matching, "Dolphin/card/__CARDDefaultApiCallback.c"),
+        ],
+    ),
 ]
 
 
