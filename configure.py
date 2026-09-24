@@ -734,6 +734,7 @@ config.libs = [
             Object(Matching, "Dolphin/pad/PADSetSpec.c"),
             Object(Matching, "Dolphin/pad/SPEC0_MakeStatus.c"),
             Object(Matching, "Dolphin/pad/SPEC1_MakeStatus.c"),
+            Object(NonMatching, "Dolphin/pad/SPEC2_MakeStatus.c"),
             Object(Matching, "Dolphin/pad/OnReset.c"),
             Object(Matching, "Dolphin/pad/SamplingHandler.c"),
             Object(Matching, "Dolphin/pad/PADSetSamplingCallback.c"),
