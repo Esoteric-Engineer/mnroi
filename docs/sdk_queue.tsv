@@ -242,6 +242,78 @@ addr	size	name	library	confidence	notes	status
 0x80400038	0x1C8	__ieee754_fmodf	libc	guess	Newlib ef_fmod.c (float): (x*y)/(x*y) for y==0 / non-finite, |x|<|y| returns x, Zero[sx] on equality, 0x7f7fffff / 0x7f800000 / 0x007fffff breakpoints, shift-subtract loop. Not in CFTKK. Caller is game code (0x802794BC)	open
 0x80400200	0x280	__ieee754_logf	libc	exact	Newlib ef_log.c body (float, no errno wrapper): hx<=0 -> -two25/zero or (x-x)/zero, k+=-25 for subnormals, 0x004afb20 / 0x0035c288 split, R = z*z*(Lg1..Lg4) polynomial. CFTKK __ieee754_logf is 0x280, equal size. Caller is game code (0x802A11DC)	open
 0x80400480	0xC4	ceilf	libc	guess	Newlib sf_ceil.c: exponent j0 = ((i0>>23)&0xff)-0x7f, j0<0 -> 0x80000000 / 0x3f800000 / x under huge+x>0, mask 0x007fffff>>j0, j0==0x80 -> x+x. CFTKK ceilf is 0xD8 (ours 0xC4: version drift, like sqrtf/atan2f). Caller is game code (0x802A0F00)	open
+0x80400544	0x1C	tolower	libc	exact	CFTKK size 0x1C (GCC Newlib); ctype _U test +0x20; called by DVD 0x80183194	open
+0x80400560	0xB8	fclose	libc	guess	CHECK_INIT/__sinit, __SWR -> fflush; Newlib	open
+0x80400618	0x94	fprintf	libc	guess	varargs -> vfprintf(fp, fmt, ap)	open
+0x804006AC	0xAC	printf	libc	exact	CFTKK size 0xAC, followed by vprintf as in CFTKK	open
+0x80400758	0xDC	snprintf	libc	guess	string FILE (flags 0x208), size arg -> vfprintf	open
+0x80400834	0x34	vprintf	libc	known	symbol already named; just needs split + match	open
+0x80400868	0xAC	strncat	libc	guess	word-at-a-time end scan, copies n bytes, NUL-terminates	open
+0x80400914	0xB0	__floatdisf	libc	guess	libgcc s64 -> float, 0x1FFFFF/0x7FF rounding guard	open
+0x804009C4	0xE8	VMInit	vm	guess	CFTKK 0x9C; calls OSGetArenaHi/PPCHalt/VMBASEInit; precedes VMSetLogStatsCallback	open
+0x80400AAC	0x8	VMSetLogStatsCallback	vm	exact	CFTKK 0x8, first of four 0x8 VM getters after VMInit	open
+0x80400AB4	0x8	__VMGetNumPagesInMRAM	vm	exact	CFTKK 0x8; called by the page-replacement functions	open
+0x80400ABC	0x8	VMGetARAMSize	vm	exact	CFTKK 0x8; called by VMAlloc	open
+0x80400AC4	0x8	VMGetARAMBase	vm	exact	CFTKK 0x8; called by VMAlloc	open
+0x80400ACC	0x30	__VMAllocMRAMSwapSpace	vm	exact	CFTKK size run of 5	open
+0x80400AFC	0x1F0	__VMSwapPageIn	vm	guess	CFTKK 0x1FC; calls __VMGetPageToReplace, VMBASE helpers	open
+0x80400CEC	0x44	__VMGetPageToReplace	vm	exact	CFTKK size run of 12	open
+0x80400D30	0x1D0	__VMPageReplacementLRU	vm	exact	CFTKK size run of 12	open
+0x80400F00	0x94	__VMPageReplacementRandom	vm	exact	CFTKK size run of 12	open
+0x80400F94	0x6C	__VMPageReplacementFIFO	vm	exact	CFTKK size run of 12	open
+0x80401000	0x100	VMAlloc	vm	exact	CFTKK size run of 12	open
+0x80401100	0x40	__VMTranslateVMPageToARAMPage	vm	exact	CFTKK size run of 12	open
+0x80401140	0x20	__VMDoesMappingExist	vm	exact	CFTKK size run of 12	open
+0x80401160	0x38	__VMMappingErrorAlert	vm	exact	CFTKK size run of 12	open
+0x80401198	0x18	__VMSetARAMPageAsDirty	vm	exact	CFTKK size run of 12	open
+0x804011B0	0x14	__VMIsARAMPageDirty	vm	exact	CFTKK size run of 12	open
+0x804011C4	0xA8	__VMAllocVirtualToARAMLUT	vm	exact	CFTKK size run of 12	open
+0x8040126C	0xA0	__VMAllocARAMToVirtualLUT	vm	exact	CFTKK size run of 12	open
+0x8040130C	0xA4	VMBASEInit	vm	guess	CFTKK 0xCC; calls the __VMBASEInit*/Setup* asm labels	open
+0x804013B0	0x6C	VMBASESetPageTableEntry	vm	guess	CFTKK 0x94; DCStoreRange	open
+0x8040141C	0x6C	VMBASEClearPageTableEntry	vm	guess	CFTKK 0x8C; DCStoreRange	open
+0x80401488	0x28	VMBASEIsPageReferenced	vm	guess	0x28 getter called by __VMPageReplacementLRU (3 same-size getters; order unconfirmed)	open
+0x804014B0	0x28	VMBASEIsPageDirty	vm	guess	0x28 getter called by __VMPageReplacementLRU	open
+0x804014D8	0x28	VMBASESetPageLocked	vm	guess	0x28; called by __VMSwapPageIn and LRU	open
+0x80401500	0x50	__VMBASEDSIServiceExceptionPrep	vm	exact	CFTKK size 0x50	open
+0x80401E00	0x4C	__VMBASEISIServiceExceptionPrep	vm	exact	CFTKK size 0x4C	open
+0x80401E4C	0x64	__VMBASEISIServiceException	vm	guess	CFTKK 0x58 (DSI one is 0x64); OSClearContext/OSSetCurrentContext/OSLoadContext	open
+0x80401EB0	0x4C	__save_gpr	runtime	known	symbol already named; just needs split + match	open
+0x80401EFC	0x4C	__restore_gpr	runtime	known	symbol already named; just needs split + match	open
+0x80401F48	0xFC	OSAllocFromHeap	os	exact	ac/CFTKK 0xFC; HeapArray walk, 32-byte rounding	open
+0x80402044	0x10	OSSetCurrentHeap	os	exact	CFTKK 0x10	open
+0x80402054	0x70	OSInitAlloc	os	exact	ac/CFTKK 0x70; sets __OSCurrHeap (0x8066CEA8) = -1	open
+0x804020C4	0x6C	OSCreateHeap	os	exact	CFTKK 0x6C	open
+0x80402130	0x3DC	ScreenReport	os	guess	OSFatal.c; calls OSGetFontTexel	open
+0x8040250C	0xFC	ConfigureVideo	os	guess	OSFatal.c; VIGetTvFormat/VIConfigure/VIConfigurePan	open
+0x80402608	0x1D8	OSFatal	os	exact	stops audio, VIInit, reset callbacks, EXI release, GXAbortFrame, arena 0x81400000, OSSwitchStack to Halt	open
+0x804027E0	0x5E0	Halt	os	guess	OSFatal.c; target of OSSwitchStack; OSLoadFont, strlen, OSAllocFromArenaLo	open
+0x80402DC0	0x174	GetFontCode	os	exact	CFTKK size run of 4	open
+0x80402F34	0x174	Decode	os	exact	CFTKK size run of 4	open
+0x804030A8	0x64	OSGetFontEncode	os	exact	CFTKK size run of 4	open
+0x8040310C	0x324	ReadFont	os	exact	CFTKK size run of 4	open
+0x80403430	0x140	OSLoadFont	os	guess	calls ReadFont; called from Halt	open
+0x80403570	0x13C	ParseStringS	os	exact	CFTKK 0x13C; calls GetFontCode	open
+0x804036AC	0x2A0	OSGetFontTexel	os	guess	called from ScreenReport; between ParseStringS and ExpandFontSheet	open
+0x8040394C	0x3AC	ExpandFontSheet	os	exact	CFTKK size run of 3	open
+0x80403CF8	0x20C	OSInitFont	os	exact	CFTKK size run of 3	open
+0x80403F04	0x170	OSGetFontTexture	os	exact	CFTKK size run of 3	open
+0x80404074	0xD4	OSGetFontWidth	os	guess	last OSFont function; VI font-encode check inline	open
+0x80404148	0x60	OSInitMessageQueue	os	exact	CFTKK size run of 3	open
+0x804041A8	0xC8	OSSendMessage	os	exact	CFTKK size run of 3	open
+0x80404270	0xDC	OSReceiveMessage	os	exact	CFTKK size run of 3	open
+0x8040434C	0x58	OSInitSemaphore	os	exact	CFTKK 0x58; OSInitThreadQueue	open
+0x804043A4	0x70	OSWaitSemaphore	os	exact	CFTKK 0x70; OSSleepThread	open
+0x80404414	0x54	OSTryWaitSemaphore	os	guess	0x54 between OSWaitSemaphore and OSSignalSemaphore	open
+0x80404468	0x60	OSSignalSemaphore	os	exact	CFTKK 0x60; OSWakeupThread	open
+0x804044C8	0x2C	PSMTXIdentity	mtx	exact	ac/CFTKK 0x2C	open
+0x804044F4	0xCC	PSMTXConcat	mtx	exact	ac 0xCC, paired-single	open
+0x804045C0	0x50	PSMTXTranspose	mtx	guess	0x50 paired-single, between Concat and Inverse	open
+0x80404610	0xF8	PSMTXInverse	mtx	exact	ac 0xF8	open
+0x80404708	0x34	PSMTXTrans	mtx	exact	ac 0x34	open
+0x8040473C	0x28	PSMTXScale	mtx	exact	ac 0x28	open
+0x80404764	0xD0	C_MTXPerspective	mtx	guess	0xD0, calls tanf	open
+0x80404834	0x98	C_MTXOrtho	mtx	exact	ac/CFTKK 0x98	open
 0x804048CC	0x44	ARRegisterDMACallback	ar	exact	CFTKK size run of 5; equal size in CFTKK ARRegisterDMACallback size 0x44 and ac-decomp ARRegisterDMACallback size 0x44	matched
 0x80404910	0x3C	ARGetDMAStatus	ar	exact	CFTKK size run of 5; equal size in CFTKK ARGetDMAStatus size 0x3c	matched
 0x8040494C	0xF0	ARStartDMA	ar	exact	CFTKK size run of 5; equal size in CFTKK ARStartDMA size 0xf0 and ac-decomp ARStartDMA size 0xf0	open
@@ -430,3 +502,8 @@ addr	size	name	library	confidence	notes	status
 0x80410E64	0x64	__CARDWrite	card	exact	ac 0x64; equal size in ac-decomp __CARDWrite size 0x64	open
 0x80410EC8	0xA4	__CARDGetStatusEx	card	guess	ac 0xBC; CARDStatEx.c	open
 0x80410F6C	0x29C	__CARDSetStatusExAsync	card	guess	ac 0x254; __CARDIsWritable, memcmp	open
+0x80411208	0xCC	GXBeginDisplayList	gx	exact	CFTKK 0xCC	open
+0x804112D4	0xC4	GXEndDisplayList	gx	exact	CFTKK 0xC4	open
+0x80411398	0x70	GXCallDisplayList	gx	exact	CFTKK 0x70	open
+0x80411408	0x10	TEXGet	texpalette	guess	`&pal->descriptorArray[id]` (load +8, index * 8); texPalette.c, unconfirmed	open
+0x80411418	0xD4	TEXGetGXTexObjFromPalette	texpalette	guess	GXInitTexObj + GXInitTexObjLOD, header min/max LOD at 0x21/0x22; texPalette.c, unconfirmed	open

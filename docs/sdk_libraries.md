@@ -76,8 +76,7 @@ Verdict: **all 8 are Newlib/fdlibm libm, i.e. SDK-side libc, not game code and n
 Confidence: `__ieee754_asinf` and `__ieee754_logf` are `exact` (CFTKK size plus code shape). The rest are `guess`
 (code shape and constants match Newlib, no CFTKK counterpart). The queue rows are `open`, library `libc`. Nothing was
 split or renamed. The double sqrt at 0x8016C790 and `__ieee754_asin`'s use of it are worth a look when the first-cluster
-libm region gets split. `sdk_scout.py`'s `LIBS` now labels this range `libc`; `queue` still scans only the AR/ARQ/AX/DSP/CARD part
-of the second cluster (RANGES is unchanged), and the rows here were added by hand and survive a refresh.
+libm region gets split. `sdk_scout.py`'s `LIBS` now labels this range `libc`; `queue` now scans the whole second cluster (RANGES starts at 0x803FF3B0), and the rows here were added by hand and survive a refresh.
 
 Between 0x80196884 and 0x803FF3B0, and from 0x804114EC on, the code is game or middleware. The earlier
 note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFatal/OSFont.
@@ -90,16 +89,15 @@ note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFata
   at 0x802420A8, 0x802CBFC4, 0x8042706C, 0x8042DB20, 0x80440490 (GCC frame-pointer game code), the
   inline GX FIFO helpers in game code, and the paired-single block 0x802DF3F0-0x802E013C (no
   reference match; probably engine math). Unresolved: 0x803FF3B0-0x80400544 and texPalette.
-- `sdk_scout.py` scans both clusters (`RANGES`: 0x80169000-0x80196884 and 0x80400544-0x804114EC), but
-  only queues the second cluster's AR, ARQ, AX, DSP and CARD functions. The rest of it (libc, VM, OS,
-  MTX, GX display lists, texPalette) is labelled by `lib_of` and has no queue rows yet.
-  `report-sdk-progress/sdk_remaining.py` (`--hi`) still only covers the first cluster; run it a second
-  time with `--lo 0x80400544 --hi 0x804114EC` (see `docs/sdk_scout_findings.md`, "Upper bound").
+- `sdk_scout.py` (`RANGES`: 0x80169000-0x80196884 and 0x803FF3B0-0x804114EC) and
+  `report-sdk-progress/sdk_remaining.py` both scan the two clusters by default. New second-cluster
+  queue rows take their name and confidence from the proposal table in `docs/sdk_scout_findings.md`.
 
 ## Work queue
 
-`docs/sdk_queue.tsv` lists every unsplit function in the first cluster, plus the AR, ARQ, AX, DSP and CARD
-functions of the second cluster (0x804048CC-0x80411208, 188 rows, all `open`), with a library, a proposed
+`docs/sdk_queue.tsv` lists every unsplit function in the first cluster, plus every function of the
+second cluster (0x803FF3B0-0x804114EC: libm/libc, VM, OS, MTX, AR, ARQ, AX, DSP, CARD, GX display lists,
+texPalette), with a library, a proposed
 name and a confidence. Second-cluster names and evidence come from `docs/sdk_scout_findings.md`; an
 `exact` row there needs an equal-size same-name function in CFTKK or ac-decomp (or, for the `*Init`
 functions, the `__XXVersion` pointer load), otherwise it is `guess`. See the `decomp-next` skill for how it is used.

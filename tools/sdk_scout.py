@@ -28,9 +28,11 @@ QUEUE = "docs/sdk_queue.tsv"
 AC_DIR = os.environ.get("AC_DECOMP", "../ac-decomp/config/GAFE01_00")
 LO, HI = 0x80169000, 0x80196884  # confirmed SDK range (first cluster), see docs/sdk_libraries.md
 LO2, HI2 = 0x80400544, 0x804114EC  # second cluster, inside the game's .text (docs/sdk_libraries.md)
+LO3 = 0x803FF3B0  # start of the second libm run in front of the second cluster's libc
+FINDINGS = "docs/sdk_scout_findings.md"
 # Ranges the queue scans, with the libraries that get rows (None = all). The second cluster also holds
-# libc, VM, OS, MTX, GX display lists and texPalette; those are labelled by lib_of but not queued yet.
-RANGES = [(LO, HI, None), (LO2, HI2, {"ar", "arq", "ax", "dsp", "card"})]
+# libc, VM, OS, MTX, GX display lists and texPalette; all of it is queued.
+RANGES = [(LO, HI, None), (LO3, HI2, None)]
 
 # (start, end, our library, ac-decomp libraries it may match, or None to skip matching)
 LIBS = [
@@ -255,6 +257,19 @@ NOTE_LIBC = ("Newlib libc / libgcc, not MSL (see docs/sdk_libraries.md); names c
 AUTO_NOTE_RE = re.compile(r"^ac-decomp size 0x[0-9a-f]+$")
 
 
+def findings():
+    """{addr: (name, confidence, note)} from the proposal table in docs/sdk_scout_findings.md."""
+    out = {}
+    if not os.path.exists(FINDINGS):
+        return out
+    row = re.compile(r"^\|\s*0x([0-9A-Fa-f]{8})\s*\|[^|]*\|[^|]*\|\s*`([^`]+)`\s*\|\s*(exact|guess)\s*\|([^|]*)\|")
+    for line in open(FINDINGS):
+        m = row.match(line)
+        if m:
+            out[int(m[1], 16)] = (m[2], m[3], m[4].strip())
+    return out
+
+
 def curated(note):
     """True if a person wrote this note, i.e. it is neither empty nor one the queue command generates."""
     return bool(note) and note not in (NOTE_NAMED, NOTE_LIBC, NOTE_SECOND) and not AUTO_NOTE_RE.match(note)
@@ -264,6 +279,7 @@ def cmd_queue(args):
     ours_spans = load_splits(SPLITS)
     split = lambda a: any(s <= a < e for s, e, _ in ours_spans)
     props = propose()
+    found = findings()
     old = {}
     if os.path.exists(QUEUE):
         for line in open(QUEUE).read().splitlines()[1:]:
@@ -289,7 +305,9 @@ def cmd_queue(args):
             if c[6] == "open" and c[4] != "known" and not curated(c[5]):
                 c[4], c[5] = "known", NOTE_NAMED
         elif c[4] == "unidentified" and not curated(c[5]):  # only re-guess rows nobody curated
-            if a >= LO2:
+            if a >= LO3 and a in found:
+                c[2], c[4], c[5] = found[a]
+            elif a >= LO3:
                 c[5] = NOTE_SECOND
             elif lib_of(a) == "libc":
                 c[5] = NOTE_LIBC

@@ -150,8 +150,8 @@ i.e. they are game code that *uses* the SDK, not part of it. The first cluster e
 The SDK is not one range any more, so raising the single upper bound would sweep in about 2.5 MB of
 game code (0x80196884-0x80400544). Suggested instead (not changed):
 
-- Keep `HI = 0x80196884` in `tools/sdk_scout.py` and `--hi 0x80196884` in
-  `.agents/skills/report-sdk-progress/sdk_remaining.py` for the first cluster.
+- Keep `HI = 0x80196884` in `tools/sdk_scout.py` for the first cluster. (Update: both scripts now scan
+  both clusters by default.)
 - Add a second range: **0x80400544-0x804114EC** (or 0x80401F48-0x80411408 for Dolphin SDK only,
   excluding libc, VM, the runtime helpers and the unconfirmed texPalette). In `sdk_scout.py` that means
   making `LO, HI` a list of ranges and adding LIBS rows for the table above; `sdk_remaining.py`

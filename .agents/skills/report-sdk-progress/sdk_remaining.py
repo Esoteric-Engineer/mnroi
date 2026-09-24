@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Report how much SDK code is still unsplit, by comparing symbols.txt to splits.txt.
 
-Usage: sdk_remaining.py [--version GVLE69] [--lo 0x80169000] [--hi 0x80196884] [--list]
+Scans both SDK clusters by default (0x80169000-0x80196884 and 0x803FF3B0-0x804114EC, see
+docs/sdk_libraries.md). Pass --lo/--hi to scan a single custom range instead.
+
+Usage: sdk_remaining.py [--version GVLE69] [--lo 0x80169000 --hi 0x80196884] [--list]
 """
 import argparse
 import collections
@@ -10,10 +13,13 @@ from pathlib import Path
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--version", default="GVLE69")
-ap.add_argument("--lo", type=lambda x: int(x, 0), default=0x80169000)
-ap.add_argument("--hi", type=lambda x: int(x, 0), default=0x80196884)
+ap.add_argument("--lo", type=lambda x: int(x, 0), default=None)
+ap.add_argument("--hi", type=lambda x: int(x, 0), default=None)
 ap.add_argument("--list", action="store_true", help="also list unsplit fn_ functions")
 args = ap.parse_args()
+CLUSTERS = [(0x80169000, 0x80196884), (0x803FF3B0, 0x804114EC)]
+if args.lo is not None or args.hi is not None:
+    CLUSTERS = [(args.lo if args.lo is not None else CLUSTERS[0][0], args.hi if args.hi is not None else CLUSTERS[0][1])]
 
 cfg = Path("config") / args.version
 
@@ -41,7 +47,7 @@ def is_split(addr):
     return any(a <= addr < b for a, b, _ in splits)
 
 
-in_range = [s for s in syms if args.lo <= s[0] < args.hi]
+in_range = [s for s in syms if any(lo <= s[0] < hi for lo, hi in CLUSTERS)]
 unsplit = [s for s in in_range if not is_split(s[0])]
 named = [s for s in unsplit if not s[1].startswith("fn_")]
 anon = [s for s in unsplit if s[1].startswith("fn_")]
@@ -49,7 +55,10 @@ anon = [s for s in unsplit if s[1].startswith("fn_")]
 lib = lambda p: p.rsplit("/", 1)[0]
 per_lib = collections.Counter(lib(p) for a, b, p in splits)
 
-print(f"Range {args.lo:#x}-{args.hi:#x}: {len(in_range)} functions")
+print("Ranges: " + ", ".join(f"{lo:#x}-{hi:#x}" for lo, hi in CLUSTERS) + f": {len(in_range)} functions")
+for lo, hi in CLUSTERS:
+    n = [s for s in unsplit if lo <= s[0] < hi]
+    print(f"  {lo:#x}-{hi:#x}: {sum(1 for s in in_range if lo <= s[0] < hi)} functions, {len(n)} unsplit ({sum(s[2] for s in n)} bytes)")
 print(f"  split:   {len(in_range) - len(unsplit)}")
 print(f"  unsplit: {len(unsplit)} ({sum(s[2] for s in unsplit)} bytes)")
 print(f"    named (real SDK names): {len(named)}")
