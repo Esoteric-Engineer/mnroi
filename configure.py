@@ -342,6 +342,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/strtok.c"),
             Object(Matching, "Runtime.PPCEABI.H/strtok_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80172CC4.c"),
+            Object(Matching, "Runtime.PPCEABI.H/asctime_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80172D78.c"),
             Object(Matching, "Runtime.PPCEABI.H/strround.c"),
             Object(Matching, "Runtime.PPCEABI.H/strrev.c"),

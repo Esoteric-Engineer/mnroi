@@ -158,6 +158,7 @@ Scope: everything in `Runtime.PPCEABI.H` that comes from Newlib or libgcc (strin
 - Reference `.sdata` floats by bare name in MWCC inline asm (`lfs f2, lbl_8066C17C`); `@sda21(r0)` is a syntax error.
 - Reference unclaimed `.data` as `extern char lbl_804D02A8[]` and use `@ha`/`@l` (like `isdigit`'s `lbl_8049C6A1`).
 - A function that has its own symbol in `symbols.txt` needs its own `asm` function, even when it directly follows a no-return call (`terminate` after `fn_8017A5CC`'s `bl fn_8017A608`). Written as an `entry` label inside the preceding function, the bytes and `main.dol` still match, but objdiff sees one `0x3C` symbol against two targets and reports both at 0%. Keep `entry` for labels without their own function symbol, such as `__OSDBINTEND`.
+- **`crclr cr1eq` fails to assemble** (`illegal forward label ... (cr1eq)`): write the bit number, `crclr 4*cr1+eq` (or `crclr 6`), before a varargs `bl sprintf` (`asctime_r`, `0x80172CEC`).
 - Calls to real functions are plain `bl name`; other units' callers reference renamed functions by name in their own asm, so a rename means grepping `src/` for the old `fn_` name.
 - `char` is signed on this target (`extsb`), so Newlib's `u_char` is `char`.
 
