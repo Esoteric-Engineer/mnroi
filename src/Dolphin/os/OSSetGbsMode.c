@@ -12,7 +12,7 @@ extern SramControlBlock Scb;
 
 extern BOOL OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(BOOL level);
-extern void fn_8017F2E4(BOOL commit, unsigned long offset);
+extern void UnlockSram(BOOL commit, unsigned long offset);
 
 // - sanitises `mode` (bits 0x7C00 == 0x5000 or 0xC0 both set -> 0)
 // - locks SRAM
@@ -62,13 +62,13 @@ L_locked:
     bne     L_write
     li      r3, 0
     li      r4, 0x14
-    bl      fn_8017F2E4
+    bl      UnlockSram
     b       L_end
 L_write:
     sth     r30, 0x28(r4)
     li      r3, 1
     li      r4, 0x14
-    bl      fn_8017F2E4
+    bl      UnlockSram
 L_end:
     lwz     r0, 0x24(r1)
     lwz     r31, 0x1c(r1)

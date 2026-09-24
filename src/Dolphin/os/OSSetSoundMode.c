@@ -24,7 +24,7 @@ extern SramControlBlock Scb;
 
 extern BOOL OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(BOOL level);
-extern void fn_8017F2E4(BOOL commit, unsigned long offset);
+extern void UnlockSram(BOOL commit, unsigned long offset);
 
 static inline void* LockSram(unsigned long offset)
 {
@@ -53,10 +53,10 @@ void OSSetSoundMode(unsigned long mode)
     OSSram* sram = __OSLockSramI();
 
     if (flag == (sram->flags & 4)) {
-        fn_8017F2E4(0, 0);
+        UnlockSram(0, 0);
     } else {
         sram->flags &= ~4;
         sram->flags |= flag;
-        fn_8017F2E4(1, 0);
+        UnlockSram(1, 0);
     }
 }

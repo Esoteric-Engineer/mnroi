@@ -746,7 +746,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/WriteSram.c"),
             Object(NonMatching, "Dolphin/os/__OSInitSram.c"),
             Object(Matching, "Dolphin/os/OSLockSram.c"),
-            Object(Matching, "Dolphin/os/OSUnlockSram.c"),
+            Object(NonMatching, "Dolphin/os/OSUnlockSram.c"),
             Object(Matching, "Dolphin/os/__OSSyncSram.c"),
             Object(Matching, "Dolphin/os/OSGetSoundMode.c"),
             Object(Matching, "Dolphin/os/OSSetSoundMode.c"),

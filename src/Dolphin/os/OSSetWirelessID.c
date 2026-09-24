@@ -17,7 +17,7 @@ extern SramControlBlock Scb;
 
 extern BOOL OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(BOOL level);
-extern void fn_8017F2E4(BOOL commit, unsigned long offset);
+extern void UnlockSram(BOOL commit, unsigned long offset);
 
 static inline void* LockSram(unsigned long offset)
 {
@@ -45,8 +45,8 @@ void OSSetWirelessID(long chan, unsigned short id)
 
     if (sram->wirelessPadID[chan] != id) {
         sram->wirelessPadID[chan] = id;
-        fn_8017F2E4(1, 0x14);
+        UnlockSram(1, 0x14);
     } else {
-        fn_8017F2E4(0, 0x14);
+        UnlockSram(0, 0x14);
     }
 }

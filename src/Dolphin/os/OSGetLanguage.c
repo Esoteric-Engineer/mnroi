@@ -24,7 +24,7 @@ extern SramControlBlock Scb;
 
 extern BOOL OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(BOOL level);
-extern void fn_8017F2E4(BOOL commit, unsigned long offset);
+extern void UnlockSram(BOOL commit, unsigned long offset);
 
 static inline void* LockSram(unsigned long offset)
 {
@@ -50,6 +50,6 @@ unsigned char OSGetLanguage(void)
 {
     OSSram* sram = __OSLockSramI();
     unsigned char language = sram->language;
-    fn_8017F2E4(0, 0);
+    UnlockSram(0, 0);
     return language;
 }
