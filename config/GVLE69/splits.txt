@@ -1127,6 +1127,9 @@ Dolphin/gx/GXSetIndTexMtx.c:
 Dolphin/gx/GXSetIndTexCoordScale.c:
 	.text       start:0x8018EF60 end:0x8018F0A4
 
+Dolphin/gx/GXSetIndTexOrder.c:
+	.text       start:0x8018F0A4 end:0x8018F190
+
 Dolphin/gx/GXSetNumIndStages.c:
 	.text       start:0x8018F190 end:0x8018F1B4
 

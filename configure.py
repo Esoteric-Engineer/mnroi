@@ -474,6 +474,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetTevIndirect.c"),
             Object(Matching, "Dolphin/gx/GXSetIndTexMtx.c"),
             Object(Matching, "Dolphin/gx/GXSetIndTexCoordScale.c"),
+            Object(Matching, "Dolphin/gx/GXSetIndTexOrder.c"),
             Object(Matching, "Dolphin/gx/GXSetNumIndStages.c"),
             Object(Matching, "Dolphin/gx/GXSetTevDirect.c"),
             Object(Matching, "Dolphin/gx/GXSetTevIndRepeat.c"),
