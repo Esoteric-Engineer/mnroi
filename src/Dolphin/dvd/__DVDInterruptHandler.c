@@ -31,7 +31,7 @@ extern volatile u32 ResetOccurred;
 extern volatile BOOL WaitingCoverClose;
 extern volatile BOOL lbl_8066F350;
 extern volatile OSTime LastReadFinished;
-extern volatile BOOL lbl_8066F370;
+extern volatile BOOL LastCommandWasRead;
 extern volatile u32 NextCommandNumber;
 
 // DVDLowRead.c's pooled .bss (0x8057D348), addressed off one base register
@@ -83,7 +83,7 @@ void __DVDInterruptHandler(s32 interrupt, void* context)
     u32 mask;
     DVDLowBss* bss = &CommandList;
 
-    if (lbl_8066F370) {
+    if (LastCommandWasRead) {
         LastReadFinished = __OSGetSystemTime();
         FirstRead = 0;
         bss->Prev.addr = bss->Curr.addr;
@@ -94,7 +94,7 @@ void __DVDInterruptHandler(s32 interrupt, void* context)
         }
     }
 
-    lbl_8066F370 = 0;
+    LastCommandWasRead = 0;
     StopAtNextInt = 0;
     reg = __DIRegs[0];
     mask = reg & 0x2a;

@@ -29,6 +29,9 @@ extern volatile u32 __DIRegs[0x20] : 0xCC006000;
 
 extern s32 FirstRead;
 extern volatile BOOL StopAtNextInt;
+extern volatile BOOL LastCommandWasRead;
+extern OSTime LastReadIssued;
+extern u32 LastLength;
 extern DVDLowCallback Callback;
 extern volatile u32 WorkAroundType;
 extern u32 WorkAroundSeekLocation;
@@ -38,6 +41,7 @@ extern s32 NextCommandNumber;
 // Declare-at-address (as in os.h), not a pointer cast: changes the tick-math registers.
 u32 __OSBusClock : 0x800000F8;
 #define OS_TIMER_CLOCK (__OSBusClock / 4)
+#define OSSecondsToTicks(sec) (OS_TIMER_CLOCK * (sec))
 #define OSMillisecondsToTicks(msec) ((OS_TIMER_CLOCK / 1000) * (msec))
 #define OSMicrosecondsToTicks(usec) (((OS_TIMER_CLOCK / 125000) * (usec)) / 8)
 
@@ -53,8 +57,65 @@ void OSCreateAlarm(void* alarm);
 void OSSetAlarm(void* alarm, OSTime tick, void* handler);
 DVDDiskID* DVDGetCurrentDiskID(void);
 void AlarmHandler_80186FE0(void* alarm, void* context);
-void Read(void* addr, u32 length, u32 offset, DVDLowCallback callback);
-void SeekTwiceBeforeRead(void* addr, u32 length, u32 offset, DVDLowCallback callback);
+void AlarmHandlerForTimeout(void* alarm, void* context);
+BOOL DVDLowSeek(u32 offset, DVDLowCallback callback);
+
+static inline void SetTimeoutAlarm(OSTime timeout)
+{
+    OSCreateAlarm(AlarmForTimeout);
+    OSSetAlarm(AlarmForTimeout, timeout, AlarmHandlerForTimeout);
+}
+
+void Read(void* addr, u32 length, u32 offset, DVDLowCallback callback)
+{
+    (void)CommandList;
+    (void)AlarmForWA;
+    (void)AlarmForTimeout;
+    (void)AlarmForBreak;
+    (void)Prev;
+    (void)Curr;
+
+    Callback = callback;
+    StopAtNextInt = 0;
+    LastCommandWasRead = 1;
+    LastReadIssued = __OSGetSystemTime();
+
+    __DIRegs[2] = 0xA8000000;
+    __DIRegs[3] = offset / 4;
+    __DIRegs[4] = length;
+    __DIRegs[5] = (u32)addr;
+    __DIRegs[6] = length;
+    LastLength = length;
+    __DIRegs[7] = 3;
+
+    if (length > 0xA00000) {
+        SetTimeoutAlarm(OSSecondsToTicks(20));
+    } else {
+        SetTimeoutAlarm(OSSecondsToTicks(10));
+    }
+}
+
+void SeekTwiceBeforeRead(void* addr, u32 length, u32 offset, DVDLowCallback callback)
+{
+    u32 newOffset;
+    DVDCommand* list = CommandList;
+    if ((offset & ~0x7FFF) == 0) {
+        newOffset = 0;
+    } else {
+        newOffset = (offset & ~0x7FFF) + WorkAroundSeekLocation;
+    }
+    list[0].cmd = 2;
+    list[0].offset = newOffset;
+    list[0].callback = callback;
+    list[1].cmd = 1;
+    list[1].addr = addr;
+    list[1].length = length;
+    list[1].offset = offset;
+    list[1].callback = callback;
+    list[2].cmd = -1;
+    NextCommandNumber = 0;
+    DVDLowSeek(newOffset, callback);
+}
 
 static inline BOOL AudioBufferOn(void)
 {
@@ -102,13 +163,6 @@ BOOL DVDLowRead(void* addr, u32 length, u32 offset, DVDLowCallback callback)
     u32 blockNumOfPrevEnd;
     u32 blockNumOfCurrStart;
     OSTime diff;
-
-    (void)CommandList;
-    (void)AlarmForWA;
-    (void)AlarmForTimeout;
-    (void)AlarmForBreak;
-    (void)Prev;
-    (void)Curr;
 
     __DIRegs[6] = length;
     Curr.addr = addr;
