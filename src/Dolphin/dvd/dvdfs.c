@@ -42,7 +42,7 @@ typedef struct DVDFileInfo
 #define filePosition(i) (FstStart[i].parentOrPosition)
 #define fileLength(i) (FstStart[i].nextEntryOrLength)
 
-extern OSBootInfo* BootInfo;
+extern OSBootInfo* BootInfo_8066F2A0;
 extern FSTEntry* FstStart;
 extern char* FstStringStart;
 extern u32 MaxEntryNum;
@@ -72,8 +72,8 @@ extern char lbl_804D1E08[0x38]; // "Warning: DVDOpen(): file '%s' was not found 
 
 void __DVDFSInit(void)
 {
-    BootInfo = (OSBootInfo*)0x80000000;
-    FstStart = BootInfo->FSTLocation;
+    BootInfo_8066F2A0 = (OSBootInfo*)0x80000000;
+    FstStart = BootInfo_8066F2A0->FSTLocation;
     if (FstStart) {
         MaxEntryNum = FstStart->nextEntryOrLength;
         FstStringStart = (char*)FstStart + (MaxEntryNum * 0xC);

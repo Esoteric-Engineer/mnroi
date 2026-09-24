@@ -2,7 +2,7 @@ typedef unsigned int u32;
 
 extern u32 lbl_8066C4A8;
 extern void* lbl_8066C4AC;
-extern u32 lbl_8066F404;
+extern u32 __PADSpec;
 
 extern void SPEC0_MakeStatus(void);
 extern void SPEC1_MakeStatus(void);
@@ -10,7 +10,7 @@ extern void fn_8018AFC8(void);
 
 void PADSetSpec(u32 spec)
 {
-    lbl_8066F404 = 0;
+    __PADSpec = 0;
     switch (spec) {
     case 0:
         lbl_8066C4AC = SPEC0_MakeStatus;

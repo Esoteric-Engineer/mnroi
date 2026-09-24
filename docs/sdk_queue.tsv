@@ -69,8 +69,8 @@ addr	size	name	library	confidence	notes	status
 0x80179C30	0x20	__pure_virtual	libc	exact	Matched as asm: calls terminate (0x8017A5DC, split out of fn_8017A5CC); -8 frame is not MWCC output	matched
 0x80179C50	0x4E4	__udivdi3	libc	exact	CFTKK-Decomp size/order match (libgcc); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
 0x8017A134	0x498	__umoddi3	libc	exact	CFTKK-Decomp size/order match (libgcc); reconstruct from upstream Newlib/fdlibm/libgcc source, no MSL	open
-0x8017AAAC	0x4E0		os	unidentified		open
-0x8017AF8C	0x280		os	unidentified		open
+0x8017AAAC	0x4E0	OSInit	os	known	2003-era OS.c (perf-monitor resets, __OSGetExecParams, OSRegisterVersion, no consoleType fixup); matched in the merged Dolphin/os/OS.c unit (0x8017A920-0x8017B3EC) with OSExceptionInit	matched
+0x8017AF8C	0x280	OSExceptionInit	os	known	Shares OS.c .data pool with OSInit, so only matches in the same unit; plain ac-decomp port	matched
 0x8017C400	0x128	__OSSaveFPUContext	os	known	symbol already named; just needs split + match	matched
 0x8017CF40	0x2E8	__OSUnhandledException	os	known	symbol already named; just needs split + match	matched
 0x8017D228	0x188		os	unidentified		open
@@ -80,29 +80,30 @@ addr	size	name	library	confidence	notes	status
 0x8017E060	0x344	__OSDispatchInterrupt	os	exact	ac-decomp size 0x344	matched
 0x8017E448	0x6C	MEMIntrruptHandler	os	exact	ac-decomp size 0x6c	matched
 0x8017E4B4	0x80	Config24MB	os	exact	ac-decomp size 0x80; static asm Config24MB in OSMemory.c (ac-decomp), merged into that unit, global for RealMode ref	matched
-0x8017E5E0	0x104	__OSInitMemoryProtection	os	guess	ac-decomp size 0x120	open
+0x8017E534	0x80	Config48MB	os	known	Named by dtk-dev from OSInit (was lbl_8017E534, the unclaimed gap between Config24MB and RealMode); ac-decomp static asm in OSMemory.c	open
+0x8017E5CC	0x118	__OSInitMemoryProtection	os	known	Starts at 0x8017E5CC (old fn_8017E5E0 began mid-prologue; skip_cfa end moved); named by dtk-dev from OSInit; ac-decomp size 0x120	open
 0x8017E9B4	0x200		os	unidentified		open
 0x8017EBEC	0xF4	__OSResetSWInterruptHandler	os	exact	ac-decomp size 0xf4; stalled 86.4%: frame -0x28 vs -0x20 and constant scheduling, see docs/nonmatching.md	stalled
 0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298; matched (GameChoice mask is 0x1F here, not ac-decomp 0x3F)	matched
 0x8017EF78	0x60	WriteSramCallback	os	exact	ac-decomp size 0x60	matched
 0x8017EFD8	0x118	WriteSram	os	exact	ac-decomp size 0x118	matched
-0x8017F0F0	0x13C	__OSInitSram	os	guess	ac-decomp size 0x134	open
+0x8017F0F0	0x13C	__OSInitSram	os	known	Named by dtk-dev from OSInit; ac-decomp size 0x134	open
 0x8017F2E4	0x33C	UnlockSram	os	guess	ac-decomp size 0x308	open
 0x8017F678	0x124		os	unidentified		open
 0x8017F79C	0x80	OSGetSoundMode	os	exact	ac-decomp size 0x80	matched
 0x8017F81C	0xA4	OSSetSoundMode	os	exact	ac-decomp size 0xa4	matched
-0x8017F8C0	0x6C	OSGetProgressiveMode	os	guess	ac-decomp size 0x70	open
-0x8017F92C	0x84	OSSetProgressiveMode	os	guess	ac-decomp size 0xa4	open
-0x8017F9B0	0xAC	__OSSetBootMode	os	guess	ac-decomp size 0xa4	open
-0x8017FA5C	0x70	OSGetWirelessID	os	guess	ac-decomp size 0x84	open
-0x8017FACC	0xB8	OSSetWirelessID	os	guess	ac-decomp size 0xac	open
+0x8017F8C0	0x6C	OSGetLanguage	os	guess	Was OSGetProgressiveMode (size/order only); code returns sram->language (byte 0x12) via the OSGetSoundMode LockSram template	open
+0x8017F92C	0x84	OSGetWirelessID	os	guess	Was OSSetProgressiveMode (size/order only); code returns SramEx u16 at +0x1C + chan*2	open
+0x8017F9B0	0xAC	OSSetWirelessID	os	guess	Was __OSSetBootMode (size/order only); writes SramEx u16 at +0x1C + chan*2, commits only if changed	open
+0x8017FA5C	0x70	OSGetGbsMode	os	known	Was OSGetWirelessID (size/order only); named by dtk-dev from OSInit	open
+0x8017FACC	0xB8	OSSetGbsMode	os	known	Was OSSetWirelessID (size/order only); named by dtk-dev from OSInit	open
 0x8017FBA4	0x64	__OSInitSystemCall	os	exact	ac-decomp size 0x64	matched
 0x8017FC08	0x4		os	unidentified		open
-0x8017FC0C	0x158		os	unidentified		open
+0x8017FC0C	0x158	__OSThreadInit	os	known	Named by dtk-dev from OSInit	open
 0x80180BFC	0xEC	OSSleepThread	os	exact	ac-decomp size 0xec	matched
 0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	matched
 0x80180DEC	0xC0	OSSetThreadPriority	os	exact	ac-decomp size 0xc0	matched
-0x80180EAC	0xAC	CheckThreadQueue	os	guess	ac-decomp size 0x9c	open
+0x80180EAC	0xAC	OSClearStack	os	known	Was CheckThreadQueue (size/order only); named by dtk-dev from OSInit	open
 0x801814F4	0xDC	EXIDetach	exi	guess	ac-decomp size 0xbc	open
 0x801815D0	0xC8	EXIIntrruptHandler	exi	exact	duplicate guess: the real EXIIntrruptHandler is 0x80194CEC (matched); this address is in the os/si range, re-identify	wrong-name
 0x80181698	0x70		exi	unidentified	size matches InitializeUART but that already exists at 0x80195B78	open
@@ -111,7 +112,7 @@ addr	size	name	library	confidence	notes	status
 0x80181DA4	0x98	SIEnablePollingInterrupt	si	exact	ac-decomp size 0x98	matched
 0x80181E3C	0xCC	SIRegisterPollingHandler	si	exact	ac-decomp size 0xcc	matched
 0x80181F08	0xF4	SIUnregisterPollingHandler	si	exact	ac-decomp size 0xf4	matched
-0x80181FFC	0xB4	SIInit	si	guess	ac-decomp size 0xa4	open
+0x80181FFC	0xB4	SIInit	si	known	Named by dtk-dev from OSInit; ac-decomp size 0xa4	open
 0x80186028	0x27C	DVDCancelAsync	dvd	guess	ac-decomp size 0x270	open
 0x801862A4	0xAC	DVDCancel	dvd	exact	ac-decomp size 0xac	matched
 0x8018637C	0xF8	DVDCheckDisk	dvd	guess	ac-decomp size 0xe4	open

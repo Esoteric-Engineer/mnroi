@@ -65,7 +65,7 @@ extern volatile long RunQueueHint;
 extern volatile u32 RunQueueBits;
 extern OSThreadQueue RunQueue[32];
 extern long Reschedule;
-extern OSSwitchThreadCallback lbl_8066C3E0;
+extern OSSwitchThreadCallback SwitchThreadCallback;
 
 OSThread* __gCurrentThread : 0x800000E4;
 
@@ -125,7 +125,7 @@ OSThread* SelectThread(int yield)
     }
 
     if (RunQueueBits == 0) {
-        lbl_8066C3E0(__gCurrentThread, 0);
+        SwitchThreadCallback(__gCurrentThread, 0);
         __gCurrentThread = 0;
         OSSetCurrentContext((OSContext*)((u8*)rq + 0x730));
         do {
@@ -158,7 +158,7 @@ OSThread* SelectThread(int yield)
     }
     nextThread->queue = 0;
     nextThread->state = 2;
-    lbl_8066C3E0(__gCurrentThread, nextThread);
+    SwitchThreadCallback(__gCurrentThread, nextThread);
     __gCurrentThread = nextThread;
     OSSetCurrentContext(&nextThread->context);
     OSLoadContext(&nextThread->context);

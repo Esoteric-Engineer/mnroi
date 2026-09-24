@@ -319,26 +319,14 @@ Dolphin/os/fn_8017A75C.c:
 	.text       start:0x8017A75C end:0x8017A800
 
 Dolphin/os/PPCArch.c:
-	.text       start:0x8017A800 end:0x8017AAAC
-	.sbss       start:0x8066F1D0 end:0x8066F1F0
+	.text       start:0x8017A800 end:0x8017A920
 
-Dolphin/os/OSExceptionHandler.c:
-	.text       start:0x8017B234 end:0x8017B264
-
-Dolphin/os/OSExceptionVector.c:
-	.text       start:0x8017B264 end:0x8017B300
-
-Dolphin/os/OSDefaultExceptionHandler.c:
-	.text       start:0x8017B300 end:0x8017B358
-
-Dolphin/os/__OSPSInit.c:
-	.text       start:0x8017B358 end:0x8017B3AC
-
-Dolphin/os/__OSGetDIConfig.c:
-	.text       start:0x8017B3AC end:0x8017B3C0
-
-Dolphin/os/OSRegisterVersion.c:
-	.text       start:0x8017B3C0 end:0x8017B3EC
+Dolphin/os/OS.c:
+	.text       start:0x8017A920 end:0x8017B3EC
+	.data       start:0x804D0680 end:0x804D0878
+	.bss        start:0x8057C500 end:0x8057C570
+	.sdata      start:0x8066C3B8 end:0x8066C3C8
+	.sbss       start:0x8066F1D0 end:0x8066F208
 
 Dolphin/os/OSInitAlarm.c:
 	.text       start:0x8017B3EC end:0x8017B444

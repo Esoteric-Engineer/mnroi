@@ -6,7 +6,7 @@ typedef s64 OSTime;
 
 extern volatile u32 __PIRegs[0x20] : 0xCC003000;
 
-extern OSTime lbl_8066F200;
+extern OSTime __OSStartTime;
 extern int lbl_8066F254;
 extern int lbl_8066F258;
 extern OSTime lbl_8066F260;
@@ -58,7 +58,7 @@ BOOL OSGetResetButtonState(void)
 
     if (GameChoice & 0x1F) {
         OSTime fire = (GameChoice & 0x1F) * 60;
-        fire = lbl_8066F200 + OSSecondsToTicks(fire);
+        fire = __OSStartTime + OSSecondsToTicks(fire);
         if (fire < now) {
             now -= fire;
             now = OSTicksToSeconds(now) / 2;
