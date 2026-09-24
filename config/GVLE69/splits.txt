@@ -538,6 +538,9 @@ Dolphin/os/OSUnlockSram.c:
 Dolphin/os/__OSSyncSram.c:
 	.text       start:0x8017F668 end:0x8017F678
 
+Dolphin/os/__OSReadROM.c:
+	.text       start:0x8017F678 end:0x8017F79C
+
 Dolphin/os/OSGetSoundMode.c:
 	.text       start:0x8017F79C end:0x8017F81C
 
@@ -1237,6 +1240,9 @@ Dolphin/gx/GXSetGPFifo.c:
 
 Dolphin/gx/GXSaveCPUFifo.c:
 	.text       start:0x80191CF4 end:0x80191D28
+
+Dolphin/gx/__GXSaveCPUFifoAux.c:
+	.text       start:0x80191D28 end:0x80191DF0
 
 Dolphin/gx/GXSetBreakPtCallback.c:
 	.text       start:0x80191DF0 end:0x80191E34
