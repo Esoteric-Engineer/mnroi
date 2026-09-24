@@ -336,6 +336,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/strlen.c"),
             Object(Matching, "Runtime.PPCEABI.H/strlwr.c"),
             Object(Matching, "Runtime.PPCEABI.H/strnicmp.c"),
+            Object(Matching, "Runtime.PPCEABI.H/strncmp.c"),
             Object(Matching, "Runtime.PPCEABI.H/strncpy.c"),
             Object(Matching, "Runtime.PPCEABI.H/strrchr.c"),
             Object(Matching, "Runtime.PPCEABI.H/strspn.c"),

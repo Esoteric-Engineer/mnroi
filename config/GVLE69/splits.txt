@@ -156,6 +156,9 @@ Runtime.PPCEABI.H/strlwr.c:
 Runtime.PPCEABI.H/strnicmp.c:
 	.text       start:0x80172858 end:0x80172904
 
+Runtime.PPCEABI.H/strncmp.c:
+	.text       start:0x80172904 end:0x801729E4
+
 Runtime.PPCEABI.H/strncpy.c:
 	.text       start:0x801729E4 end:0x80172AB0
 
