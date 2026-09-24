@@ -215,7 +215,7 @@ addr	size	name	library	confidence	notes	status
 0x80195270	0xF4	EXILock	exi	exact	mkdd/ac-decomp EXI size/order match; ac-decomp has the source	matched
 0x80195364	0xDC	EXIUnlock	exi	exact	matched in Dolphin/exi/EXIUnlock.c (100%, main.dol OK); calls SetExiInterruptMask and fn_8017232C (memmove)	matched
 0x80195480	0x3B0	EXIGetID	exi	guess	Matched as Dolphin/exi/EXIGetID.c (100% first shape after one fix): later SDK form with the IDSerialPort1 shortcut for chan 0/dev 2, __EXIAttach/EXIUnlock/EXIDetach inlined as static inlines, EXILock..EXIDeselect wrapped in OSDisableInterrupts/OSRestoreInterrupts	matched
-0x80195830	0x18C	ProbeBarnacle	exi	guess	ac-decomp EXIUart.c static ProbeBarnacle(chan, dev, &revision): EXIAttach/EXILock/EXISelect/EXIImm x2 with EXISync/EXIDeselect/EXIUnlock/EXIDetach; callee of __OSEnableBarnacle; not yet claimed (symbol still fn_80195830)	open
+0x80195830	0x18C	ProbeBarnacle	exi	guess	Matched as Dolphin/exi/ProbeBarnacle.c (100% first try, ac-decomp EXIUart.c body; no pragmas needed, `sizeof(revision)` is the pointer size = 4); caller __OSEnableBarnacle	matched
 0x801959BC	0x1BC	__OSEnableBarnacle	exi	guess	Matched as Dolphin/exi/__OSEnableBarnacle.c (100% first try, ac-decomp EXIUart.c body; id is s32, binary-search switch, no jump table; Chan/Dev/Enabled/BarnacleEnabled = lbl_8066F4B0..BC); ProbeBarnacle (fn_80195830) stays an extern	matched
 0x80195BE8	0x21C		exi	unidentified		open
 0x80195E04	0x4	DBOpen	odenotstub	guess	4-byte empty stub; order follows ac-decomp (DBOpen, DBClose), bodies are indistinguishable	matched

@@ -7,7 +7,7 @@ extern u32 lbl_8066F4B8;
 extern u32 lbl_8066F4BC;
 
 extern s32 EXIGetID(s32 chan, u32 dev, s32* id);
-extern int fn_80195830(s32 chan, u32 dev, s32* revision);
+extern int ProbeBarnacle(s32 chan, u32 dev, s32* revision);
 
 void __OSEnableBarnacle(s32 chan, u32 dev)
 {
@@ -41,7 +41,7 @@ void __OSEnableBarnacle(s32 chan, u32 dev)
     case 0xFFFFFFFF:
         break;
     default:
-        if (fn_80195830(chan, dev, &id)) {
+        if (ProbeBarnacle(chan, dev, &id)) {
             lbl_8066F4B0 = chan;
             lbl_8066F4B4 = dev;
             lbl_8066F4B8 = lbl_8066F4BC = 0xA5FF005A;
