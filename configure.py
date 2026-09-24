@@ -303,6 +303,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/scalbnf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__kernel_cos.c"),
             Object(Matching, "Runtime.PPCEABI.H/__kernel_sin.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__ieee754_rem_pio2.c"),
             Object(Matching, "Runtime.PPCEABI.H/fabs.c"),
             Object(Matching, "Runtime.PPCEABI.H/__kernel_cosf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__kernel_sinf.c"),
