@@ -115,12 +115,12 @@ functions, the `__XXVersion` pointer load), otherwise it is `guess`. See the `de
 - printf: `_vfprintf_r` 0x80173D8C (float variant, calls `fftoa` 0x801736F8, `__ieee754_log10`, `fmod`,
   `floor`) and `_vfiprintf_r` 0x801757D8 (integer variant). `_vfwrite` is a CFTKK-local buffered writer, two
   copies (0x80173BE0 and 0x80175704); the second is named `_vfiwrite` here to keep names unique.
-  0x8017557C (0x188) is a `,` digit-grouping helper used by both bodies; it is neither Newlib nor in CFTKK,
-  so it stays `unidentified`.
-- Boundary problem: 0x8016D000 (0x64) is not a function. It is the tail of a 0x24C function that starts at
-  0x8016CE18 (asin/acos family: p/q polynomial plus the sqrt at 0x8016D978), inside the unsplit
-  `pad_01_8016B5AC_text` region (0x8016B5AC-0x8016D000), which is more libm (e.g. the `floor`-like callee at
-  0x8016CBDC). The libm start is earlier than 0x8016D000; split that region before naming.
+  0x8017557C (0x188) is a `,` digit-grouping helper for the `'` printf flag (0x200, hard-coded comma, no
+  locale); it is neither Newlib nor in CFTKK, so it stays `unidentified` (see its queue row for what was checked).
+- Boundary fixed: the old `fn_8016D000` (0x64) was the tail of `__ieee754_acosf` 0x8016CE18 (0x24C, Newlib
+  ef_acos.c; CFTKK `acosf` 0x250), which dtk had cut at the end of the pad region. It is split out and matched. The rest of
+  the unsplit `pad_01_8016B5AC_text` region (0x8016B5AC-0x8016CE18) is still more libm (e.g. the `floor`-like callee at
+  0x8016CBDC); the libm start is earlier than 0x8016D000 and that region still needs splitting.
 - Ruled out as references: every MSL_C-based project (melee, sms, ttyd, pikmin 1/2, tp, tww, prime,
   mkdd, ...). mkdd is useful only for EXI.
 

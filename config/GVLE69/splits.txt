@@ -30,6 +30,9 @@ Dolphin/os/__mod2i.c:
 Dolphin/os/__shr2i.c:
 	.text       start:0x8016B5AC end:0x8016B5B0
 
+Runtime.PPCEABI.H/__ieee754_acosf.c:
+	.text       start:0x8016CE18 end:0x8016D064
+
 Runtime.PPCEABI.H/atan2f.c:
 	.text       start:0x8016D064 end:0x8016D284
 
