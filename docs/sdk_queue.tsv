@@ -92,7 +92,7 @@ addr	size	name	library	confidence	notes	status
 0x8017F678	0x124		os	unidentified		open
 0x8017F79C	0x80	OSGetSoundMode	os	exact	ac-decomp size 0x80	matched
 0x8017F81C	0xA4	OSSetSoundMode	os	exact	ac-decomp size 0xa4	matched
-0x8017F8C0	0x6C	OSGetLanguage	os	guess	Was OSGetProgressiveMode (size/order only); code returns sram->language (byte 0x12) via the OSGetSoundMode LockSram template	open
+0x8017F8C0	0x6C	OSGetLanguage	os	guess	Matched: LockSram template (OSGetSoundMode) + lbz sram->language	matched
 0x8017F92C	0x84	OSGetWirelessID	os	guess	Was OSSetProgressiveMode (size/order only); code returns SramEx u16 at +0x1C + chan*2	open
 0x8017F9B0	0xAC	OSSetWirelessID	os	guess	Was __OSSetBootMode (size/order only); writes SramEx u16 at +0x1C + chan*2, commits only if changed	open
 0x8017FA5C	0x70	OSGetGbsMode	os	known	Was OSGetWirelessID (size/order only); named by dtk-dev from OSInit; reads SramEx u16 at +0x28 (LockSram(0x14) inline template)	matched

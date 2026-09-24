@@ -529,6 +529,9 @@ Dolphin/os/OSGetSoundMode.c:
 Dolphin/os/OSSetSoundMode.c:
 	.text       start:0x8017F81C end:0x8017F8C0
 
+Dolphin/os/OSGetLanguage.c:
+	.text       start:0x8017F8C0 end:0x8017F92C
+
 Dolphin/os/OSGetGbsMode.c:
 	.text       start:0x8017FA5C end:0x8017FACC
 
