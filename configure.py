@@ -707,6 +707,7 @@ config.libs = [
             Object(Matching, "Dolphin/vi/VIWaitForRetrace.c"),
             Object(Matching, "Dolphin/vi/setFbbRegs.c"),
             Object(Matching, "Dolphin/vi/setVerticalRegs.c"),
+            Object(Matching, "Dolphin/vi/VIConfigure.c"),
             Object(NonMatching, "Dolphin/vi/VIConfigurePan.c"),
             Object(Matching, "Dolphin/vi/VIFlush.c"),
             Object(Matching, "Dolphin/vi/VISetNextFrameBuffer.c"),

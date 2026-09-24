@@ -4,7 +4,7 @@ extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int level);
 extern u32 CurrTvMode;
 
-// VIConfigure's OSReport strings (VIConfigure is still unsplit asm).
+// VIConfigure's OSReport strings (VIConfigure is asm in its own unit).
 // They share VI.c's .data with this function's jump table, which sits 4-mod-8, so the unit has to claim from the 8-aligned start of the strings.
 // VIConfigure reaches them off the lbl_804D2880 pool base, not by symbol, so keep them from being stripped.
 #pragma force_active on
