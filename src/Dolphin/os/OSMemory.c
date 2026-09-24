@@ -71,3 +71,41 @@ asm void Config24MB(void)
     mtspr 0x1a, r3
     rfi
 }
+
+asm void Config48MB(void)
+{
+    nofralloc
+
+    li r7, 0
+    lis r4, 0x0000
+    addi r4, r4, 0x0002
+    lis r3, 0x8000
+    addi r3, r3, 0x03FF
+    lis r6, 0x0200
+    addi r6, r6, 0x0002
+    lis r5, 0x8200
+    addi r5, r5, 0x01FF
+    isync
+    mtdbatu 0, r7
+    mtdbatl 0, r4
+    mtdbatu 0, r3
+    isync
+    mtibatu 0, r7
+    mtibatl 0, r4
+    mtibatu 0, r3
+    isync
+    mtdbatu 2, r7
+    mtdbatl 2, r6
+    mtdbatu 2, r5
+    isync
+    mtibatu 2, r7
+    mtibatl 2, r6
+    mtibatu 2, r5
+    isync
+    mfmsr r3
+    ori r3, r3, 0x30
+    mtspr 0x1b, r3
+    mflr r3
+    mtspr 0x1a, r3
+    rfi
+}
