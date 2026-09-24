@@ -716,6 +716,9 @@ Dolphin/dvd/__DVDInitWA.c:
 Dolphin/dvd/__DVDInterruptHandler.c:
 	.text       start:0x80186D00 end:0x80186FE0
 
+Dolphin/dvd/AlarmHandler_80186FE0.c:
+	.text       start:0x80186FE0 end:0x80187064
+
 Dolphin/dvd/AlarmHandlerForTimeout.c:
 	.text       start:0x80187064 end:0x801870D4
 

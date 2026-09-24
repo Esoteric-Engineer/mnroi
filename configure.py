@@ -648,6 +648,7 @@ config.libs = [
             Object(Matching, "Dolphin/dvd/fstload.c"),
             Object(Matching, "Dolphin/dvd/__DVDInitWA.c"),
             Object(Matching, "Dolphin/dvd/__DVDInterruptHandler.c"),
+            Object(Matching, "Dolphin/dvd/AlarmHandler_80186FE0.c"),
             Object(Matching, "Dolphin/dvd/AlarmHandlerForTimeout.c"),
             Object(Matching, "Dolphin/dvd/SeekTwiceBeforeRead.c"),
             Object(NonMatching, "Dolphin/dvd/DVDLowRead.c"),
