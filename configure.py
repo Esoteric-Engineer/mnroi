@@ -416,6 +416,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/__GXSetVAT.c"),
             Object(Matching, "Dolphin/gx/GXSetNumTexGens.c"),
             Object(Matching, "Dolphin/gx/__GXSetDirtyState.c"),
+            Object(Matching, "Dolphin/gx/GXBegin.c"),
             Object(Matching, "Dolphin/gx/__GXSendFlushPrim.c"),
             Object(Matching, "Dolphin/gx/GXSetLineWidth.c"),
             Object(Matching, "Dolphin/gx/GXSetPointSize.c"),
