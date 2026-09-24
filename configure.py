@@ -883,6 +883,12 @@ config.libs = [
         ],
     ),
     DolphinLib(
+        "ax",
+        [
+            Object(Matching, "Dolphin/ax/__AXPushCallbackStack.c"),
+        ],
+    ),
+    DolphinLib(
         "dsp",
         [
             Object(Matching, "Dolphin/dsp/DSPCheckMailToDSP.c"),
