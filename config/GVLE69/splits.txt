@@ -1723,6 +1723,9 @@ Dolphin/arq/__ARQServiceQueueLo.c:
 Dolphin/arq/__ARQCallbackHack.c:
 	.text       start:0x804064A4 end:0x804064A8
 
+Dolphin/ax/AXInit.c:
+	.text       start:0x80406828 end:0x8040684C
+
 Dolphin/ax/__AXGetStackHead.c:
 	.text       start:0x804068CC end:0x804068E4
 
