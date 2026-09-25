@@ -893,6 +893,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/__VMSetARAMPageAsDirty.c"),
             Object(Matching, "Dolphin/vm/__VMIsARAMPageDirty.c"),
             Object(Matching, "Dolphin/vm/VMAlloc.c"),
+            Object(Matching, "Dolphin/vm/__VMTranslateVMPageToARAMPage.c"),
             Object(Matching, "Dolphin/vm/__VMDoesMappingExist.c"),
             Object(Matching, "Dolphin/vm/__VMMappingErrorAlert.c"),
         ],

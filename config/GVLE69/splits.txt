@@ -1681,6 +1681,9 @@ Dolphin/vm/__VMAllocMRAMSwapSpace.c:
 Dolphin/vm/VMAlloc.c:
 	.text       start:0x80401000 end:0x80401100
 
+Dolphin/vm/__VMTranslateVMPageToARAMPage.c:
+	.text       start:0x80401100 end:0x80401140
+
 Dolphin/vm/__VMDoesMappingExist.c:
 	.text       start:0x80401140 end:0x80401160
 
