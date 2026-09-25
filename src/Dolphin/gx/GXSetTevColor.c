@@ -30,14 +30,16 @@ void GXSetTevColor(u32 id, GXColor color)
 {
     u32 regRA;
     u32 regBG;
+    u32 c;
 
+    c = *(u32*)&color;
     regRA = (224 + id * 2) << 24;
-    SET_REG_FIELD(regRA, 8, 0, *(u32*)&color >> 24);
-    SET_REG_FIELD(regRA, 8, 12, *(u32*)&color);
+    SET_REG_FIELD(regRA, 8, 0, (c >> 24) & 0xFF);
+    SET_REG_FIELD(regRA, 8, 12, c & 0xFF);
 
     regBG = (225 + id * 2) << 24;
-    SET_REG_FIELD(regBG, 8, 0, *(u32*)&color >> 8);
-    SET_REG_FIELD(regBG, 8, 12, *(u32*)&color >> 16);
+    SET_REG_FIELD(regBG, 8, 0, (c >> 8) & 0xFF);
+    SET_REG_FIELD(regBG, 8, 12, (c >> 16) & 0xFF);
 
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = regRA;

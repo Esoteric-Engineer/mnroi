@@ -623,7 +623,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetTevAlphaIn.c"),
             Object(Matching, "Dolphin/gx/GXSetTevColorOp.c"),
             Object(Matching, "Dolphin/gx/GXSetTevAlphaOp.c"),
-            Object(NonMatching, "Dolphin/gx/GXSetTevColor.c"),
+            Object(Matching, "Dolphin/gx/GXSetTevColor.c"),
             Object(Matching, "Dolphin/gx/GXSetTevKColor.c"),
             Object(Matching, "Dolphin/gx/GXSetTevKColorSel.c"),
             Object(Matching, "Dolphin/gx/GXSetTevKAlphaSel.c"),

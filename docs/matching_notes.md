@@ -18,7 +18,7 @@ Scope: found on `Dolphin/gx` (`GC/1.2.5n`); untested on game code. For a GX sett
 
 Smaller findings:
 
-- **`u32 c = *(u32*)&color;`** for a by-value `GXColor` (`GXSetTevKColor`). Declare it at its point of use: an inline `*(u32*)&color` hoists the `rlwimi` early (`GXSetFog`).
+- **`u32 c = *(u32*)&color;`** for a by-value `GXColor` (`GXSetTevKColor`). Declare it at its point of use: an inline `*(u32*)&color` hoists the `rlwimi` early (`GXSetFog`). Mask every byte field even when the shift already narrows it (`(c >> 24) & 0xFF`, `c & 0xFF`, `(c >> 8) & 0xFF`): the mask emits nothing, but without it `GXSetTevColor` gets an extra `addi rX,rY,0` accumulator copy after the first `rlwimi` and hoists the second register's setup. `GXSetTevKColor` matches with or without the masks.
 - **`phyAddr = (u32)dest & 0x3FFFFFFF;` temp** in `GXCopyDisp`/`GXCopyTex`. The mask emits nothing, but inlining `(u32)dest >> 5` changes the code.
 - **`u8` for `GXBool` params** even when only forwarded (`GXSetCoPlanar`). If register allocation is off in a tiny setter, try the narrower param type (`GXSetDither`, `GXSetColorUpdate`, `GXSetAlphaUpdate`).
 - **Named local for a compound `__rlwimi`** (`GXSetCullMode` `hwMode`), else it lands in `r0`.
