@@ -773,6 +773,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/fn_8017A75C.c"),
             Object(Matching, "Dolphin/os/PPCArch.c"),
             Object(Matching, "Dolphin/os/OS.c"),
+            Object(Matching, "Dolphin/os/__cvt_fp2unsigned.c"),
             Object(Matching, "Dolphin/os/__shr2u.c"),
             Object(Matching, "Dolphin/os/__div2i.c"),
             Object(Matching, "Dolphin/os/__shl2i.c"),
