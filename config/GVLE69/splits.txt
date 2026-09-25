@@ -108,8 +108,20 @@ Dolphin/os/__mod2u.c:
 SN/fn_8016B6AC.c:
 	.text       start:0x8016B6AC end:0x8016B6B4
 
+SN/fn_8016BEE4.c:
+	.text       start:0x8016BEE4 end:0x8016BF04
+
+SN/fn_8016BF04.c:
+	.text       start:0x8016BF04 end:0x8016BF28
+
+SN/fn_8016C074.c:
+	.text       start:0x8016C074 end:0x8016C094
+
 SN/fn_8016C134.c:
 	.text       start:0x8016C134 end:0x8016C148
+
+SN/fn_8016C3BC.c:
+	.text       start:0x8016C3BC end:0x8016C3DC
 
 Runtime.PPCEABI.H/__ieee754_acosf.c:
 	.text       start:0x8016CE18 end:0x8016D064
