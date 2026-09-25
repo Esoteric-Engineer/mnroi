@@ -466,13 +466,13 @@ addr	size	name	library	confidence	notes	status
 0x8040B35C	0x84	CARDGetSectorSize	card	exact	ac 0x84; equal size in ac-decomp CARDGetSectorSize size 0x84	open
 0x8040B3E0	0x98	__CARDSync	card	exact	ac-decomp size run of 4; equal size in CFTKK __CARDSync size 0x98 and ac-decomp __CARDSync size 0x98	open
 0x8040B478	0x50	OnReset	card	exact	ac-decomp size run of 4; equal size in CFTKK OnReset size 0x50 and ac-decomp OnReset size 0x50	open
-0x8040B4C8	0x8	__CARDGetFatBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDGetFatBlock size 0x8 and ac-decomp __CARDGetFatBlock size 0x8	open
+0x8040B4C8	0x8	__CARDGetFatBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDGetFatBlock size 0x8 and ac-decomp __CARDGetFatBlock size 0x8	matched
 0x8040B4D0	0xD4	WriteCallback	card	exact	CFTKK size run of 16; equal size in CFTKK WriteCallback size 0xd4 and ac-decomp WriteCallback size 0xd4; static, name repeats across CARD files (file-local name needed when splitting)	open
 0x8040B5A4	0xC8	EraseCallback	card	exact	CFTKK size run of 16; equal size in CFTKK EraseCallback size 0xc8 and ac-decomp EraseCallback size 0xc8; static, name repeats across CARD files (file-local name needed when splitting)	open
 0x8040B66C	0x118	__CARDAllocBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDAllocBlock size 0x118 and ac-decomp __CARDAllocBlock size 0x118	open
 0x8040B784	0x9C	__CARDFreeBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDFreeBlock size 0x9c and ac-decomp __CARDFreeBlock size 0x9c	open
 0x8040B820	0xAC	__CARDUpdateFatBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDUpdateFatBlock size 0xac and ac-decomp __CARDUpdateFatBlock size 0xac	open
-0x8040B8CC	0x8	__CARDGetDirBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDGetDirBlock size 0x8 and ac-decomp __CARDGetDirBlock size 0x8	open
+0x8040B8CC	0x8	__CARDGetDirBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDGetDirBlock size 0x8 and ac-decomp __CARDGetDirBlock size 0x8	matched
 0x8040B8D4	0xD0	WriteCallback	card	exact	CFTKK size run of 16; equal size in CFTKK WriteCallback size 0xd0 and ac-decomp WriteCallback size 0xd0; static, name repeats across CARD files (file-local name needed when splitting)	open
 0x8040B9A4	0xC8	EraseCallback	card	exact	CFTKK size run of 16; equal size in CFTKK EraseCallback size 0xc8 and ac-decomp EraseCallback size 0xc8; static, name repeats across CARD files (file-local name needed when splitting)	open
 0x8040BA6C	0xC4	__CARDUpdateDir	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDUpdateDir size 0xc4 and ac-decomp __CARDUpdateDir size 0xc4	open
@@ -502,7 +502,7 @@ addr	size	name	library	confidence	notes	status
 0x8040E1BC	0x104	CARDFastOpen	card	guess	ac 0x160; control block + dir block + __CARDIsWritable	open
 0x8040E2C0	0x11C	CARDOpen	card	exact	CFTKK size run of 5; equal size in CFTKK CARDOpen size 0x11c	open
 0x8040E3DC	0x54	CARDClose	card	exact	CFTKK size run of 5; equal size in CFTKK CARDClose size 0x54 and ac-decomp CARDClose size 0x54	open
-0x8040E430	0x8	__CARDIsOpened	card	exact	CFTKK size run of 5; equal size in CFTKK __CARDIsOpened size 0x8 and ac-decomp __CARDIsOpened size 0x8	open
+0x8040E430	0x8	__CARDIsOpened	card	exact	CFTKK size run of 5; equal size in CFTKK __CARDIsOpened size 0x8 and ac-decomp __CARDIsOpened size 0x8	matched
 0x8040E438	0x130	CreateCallbackFat	card	exact	CFTKK size run of 5; equal size in CFTKK CreateCallbackFat size 0x130 and ac-decomp CreateCallbackFat size 0x130	open
 0x8040E568	0x220	CARDCreateAsync	card	exact	CFTKK size run of 5; equal size in CFTKK CARDCreateAsync size 0x220 and ac-decomp CARDCreateAsync size 0x220	open
 0x8040E788	0x48	CARDCreate	card	exact	0x48 sync wrapper of CARDCreateAsync; equal size in ac-decomp CARDCreate size 0x48	open

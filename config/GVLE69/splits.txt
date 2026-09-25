@@ -1741,5 +1741,14 @@ Dolphin/card/__CARDDefaultApiCallback.c:
 Dolphin/card/__CARDGetFontEncode.c:
 	.text       start:0x8040B0B0 end:0x8040B0B8
 
+Dolphin/card/__CARDGetFatBlock.c:
+	.text       start:0x8040B4C8 end:0x8040B4D0
+
+Dolphin/card/__CARDGetDirBlock.c:
+	.text       start:0x8040B8CC end:0x8040B8D4
+
+Dolphin/card/__CARDIsOpened.c:
+	.text       start:0x8040E430 end:0x8040E438
+
 Dolphin/os/__start.c:
 	.init       start:0x80003100 end:0x80003254
