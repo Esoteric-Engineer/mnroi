@@ -974,6 +974,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDSyncCallback.c"),
             Object(Matching, "Dolphin/card/UnlockedCallback.c"),
             Object(Matching, "Dolphin/card/__CARDGetFontEncode.c"),
+            Object(Matching, "Dolphin/card/__CARDSetDiskID.c"),
             Object(Matching, "Dolphin/card/__CARDGetFatBlock.c"),
             Object(Matching, "Dolphin/card/__CARDGetDirBlock.c"),
             Object(Matching, "Dolphin/card/__CARDIsOpened.c"),
