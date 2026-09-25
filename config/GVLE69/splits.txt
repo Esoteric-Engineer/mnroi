@@ -30,6 +30,9 @@ SN/fn_80169134.c:
 SN/fn_80169150.c:
 	.text       start:0x80169150 end:0x80169164
 
+SN/fn_80169164.c:
+	.text       start:0x80169164 end:0x8016918C
+
 SN/fn_8016918C.c:
 	.text       start:0x8016918C end:0x801691A4
 
