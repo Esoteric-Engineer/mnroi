@@ -93,6 +93,9 @@ Dolphin/os/__div2u.c:
 Dolphin/os/__mod2u.c:
 	.text       start:0x8016B5B4 end:0x8016B5B8
 
+SN/fn_8016B6AC.c:
+	.text       start:0x8016B6AC end:0x8016B6B4
+
 Runtime.PPCEABI.H/__ieee754_acosf.c:
 	.text       start:0x8016CE18 end:0x8016D064
 
