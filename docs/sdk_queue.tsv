@@ -280,7 +280,7 @@ addr	size	name	library	confidence	notes	status
 0x80400544	0x1C	tolower2	libc	exact	CFTKK size 0x1C (GCC Newlib); ctype _U test +0x20; called by DVD 0x80183194. Byte-identical second copy of tolower 0x80177368 (unit tolower2.c)	matched
 0x80400560	0xB8	fclose	libc	guess	CHECK_INIT/__sinit, __SWR -> fflush; Newlib	open
 0x80400618	0x94	fprintf	libc	guess	varargs -> vfprintf(fp, fmt, ap)	open
-0x804006AC	0xAC	printf	libc	exact	CFTKK size 0xAC, followed by vprintf as in CFTKK	open
+0x804006AC	0xAC	printf	libc	exact	CFTKK size 0xAC, followed by vprintf as in CFTKK	matched
 0x80400758	0xDC	snprintf	libc	guess	string FILE (flags 0x208), size arg -> vfprintf	open
 0x80400834	0x34	vprintf	libc	known	symbol already named; just needs split + match	matched
 0x80400868	0xAC	strncat	libc	guess	word-at-a-time end scan, copies n bytes, NUL-terminates	open
