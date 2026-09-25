@@ -48,9 +48,14 @@ typedef struct {
     VITiming* timing;
 } SomeVIStruct;
 
-u16 lbl_8057D418[59];
-u16 shdwRegs[59];
-SomeVIStruct HorVer;
+typedef struct {
+    u16 regs[59];
+    u16 shdwRegs[59];
+    u8 pad[4];
+    SomeVIStruct HorVer;
+} VIBss;
+
+extern VIBss lbl_8057D418;
 extern volatile u64 lbl_8066F3A8;
 extern s16 lbl_8066F39C;
 extern s16 lbl_8066F39E;
@@ -62,7 +67,8 @@ void setFbbRegs(SomeVIStruct* horVer, u32* tfbb, u32* bfbb, u32* rtfbb, u32* rbf
 void setVerticalRegs(u16 dispPosY, u16 dispSizeY, u8 equ, u16 acv, u16 prbOdd, u16 prbEven,
                      u16 psbOdd, u16 psbEven, int black);
 
-#define regs lbl_8057D418
+#define regs ((u16*)tbl)
+#define HorVer (((VIBss*)tbl)->HorVer)
 #define displayOffsetH lbl_8066F39C
 #define displayOffsetV lbl_8066F39E
 #define FBSet lbl_8066F3D0
@@ -72,7 +78,7 @@ void setVerticalRegs(u16 dispPosY, u16 dispSizeY, u8 equ, u16 acv, u16 prbOdd, u
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define CLAMP(val, min, max) ((val) > (max) ? (max) : (val) < (min) ? (min) : (val))
 
-static inline void AdjustPosition(u16 acv)
+static inline void AdjustPosition(u8* tbl, u16 acv)
 {
     s32 coeff;
     s32 frac;
@@ -96,7 +102,7 @@ static inline void AdjustPosition(u16 acv)
          coeff);
 }
 
-static inline void setScalingRegs(u16 panSizeX, u16 dispSizeX, int threeD)
+static inline void setScalingRegs(u8* tbl, u16 panSizeX, u16 dispSizeX, int threeD)
 {
     u32 scale;
 
@@ -113,7 +119,7 @@ static inline void setScalingRegs(u16 panSizeX, u16 dispSizeX, int threeD)
     }
 }
 
-static inline void setPicConfig(u16 fbSizeX, int xfbMode, u16 panPosX, u16 panSizeX,
+static inline void setPicConfig(u8* tbl, u16 fbSizeX, int xfbMode, u16 panPosX, u16 panSizeX,
                                 u8* wordPerLine, u8* std, u8* wpl, u8* xof)
 {
     *wordPerLine = (fbSizeX + 15) / 16;
@@ -126,12 +132,10 @@ static inline void setPicConfig(u16 fbSizeX, int xfbMode, u16 panPosX, u16 panSi
 
 void VIConfigurePan(u16 xOrg, u16 yOrg, u16 width, u16 height)
 {
+    u8* tbl = (u8*)&lbl_8057D418;
     int enabled;
     VITiming* tm;
 
-    (void)lbl_8057D418;
-    (void)shdwRegs;
-    (void)HorVer;
     enabled = OSDisableInterrupts();
     HorVer.PanPosX = xOrg;
     HorVer.PanPosY = yOrg;
@@ -142,9 +146,9 @@ void VIConfigurePan(u16 xOrg, u16 yOrg, u16 width, u16 height)
                        : (HorVer.FBMode == 0)   ? (u16)(HorVer.PanSizeY * 2)
                                                 : HorVer.PanSizeY;
     tm = HorVer.timing;
-    AdjustPosition(tm->acv);
-    setScalingRegs(HorVer.PanSizeX, HorVer.DispSizeX, HorVer.threeD);
-    setPicConfig(HorVer.FBSizeX, HorVer.FBMode, HorVer.PanPosX, HorVer.PanSizeX,
+    AdjustPosition(tbl, tm->acv);
+    setScalingRegs(tbl, HorVer.PanSizeX, HorVer.DispSizeX, HorVer.threeD);
+    setPicConfig(tbl, HorVer.FBSizeX, HorVer.FBMode, HorVer.PanPosX, HorVer.PanSizeX,
                  &HorVer.wordPerLine, &HorVer.std, &HorVer.wpl, &HorVer.xof);
     if (FBSet != 0) {
         setFbbRegs(&HorVer, &HorVer.tfbb, &HorVer.bfbb, &HorVer.rtfbb, &HorVer.rbfbb);

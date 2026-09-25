@@ -1193,15 +1193,10 @@ Dolphin/dvd/DVDLowSetCoverCallback.c:
 Dolphin/dvd/DVDLowSetResetCoverCallback.c:
 	.text       start:0x80187DF4 end:0x80187E38
 
-Dolphin/vi/getTiming.c:
-	.text       start:0x80187E38 end:0x80187ED8
-	.data       start:0x804D2880 end:0x804D2AE0
-
-Dolphin/vi/__VIInit.c:
-	.text       start:0x80187ED8 end:0x801880D8
-
 Dolphin/vi/VIInit.c:
-	.text       start:0x801880D8 end:0x80188588
+	.text       start:0x80187E38 end:0x80188588
+	.data       start:0x804D2880 end:0x804D2AE0
+	.bss        start:0x8057D418 end:0x8057D560
 
 Dolphin/vi/VIWaitForRetrace.c:
 	.text       start:0x80188588 end:0x801885DC
@@ -1217,7 +1212,6 @@ Dolphin/vi/VIConfigure.c:
 
 Dolphin/vi/VIConfigurePan.c:
 	.text       start:0x80189278 end:0x8018960C
-	.bss        start:0x8057D418 end:0x8057D560
 
 Dolphin/vi/VIFlush.c:
 	.text       start:0x8018960C end:0x8018973C

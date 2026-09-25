@@ -260,13 +260,13 @@ addr	size	name	library	confidence	notes	status
 0x801878AC	0x8C	DVDLowRequestAudioStatus	dvd	exact	CFTKK-Decomp size 0x8C. DI cmd 0xE2000000 | subcmd	matched
 0x80187938	0x9C	DVDLowAudioBufferConfig	dvd	known	symbol already named; just needs split + match	matched
 0x801879D4	0xBC	DVDLowReset	dvd	known	matched: SDK OSMicrosecondsToTicks(12) inline in the loop condition with the declare-at-address __OSBusClock; unit defines ResetOccurred/LastResetEnd as globals	matched
-0x80187E38	0xA0	getTiming	vi	known	Matched; VI .data pool (version string, timing[10], taps) claimed with it	matched
-0x80187ED8	0x200	__VIInit	vi	guess	Name confirmed (ac-decomp body). matched: the SDK's constant inline getEncoderType() (returns 1) folds the Philips branches and its local puts `a` at 0x1c	matched
-0x801880D8	0x4B0	VIInit	vi	exact	CFTKK-Decomp size 0x4B0 (ac-decomp 0x478). OSRegisterVersion, __VIInit, __OSLockSram/__OSUnlockSram (EuRgb60/progressive flags), getTiming, OSInitThreadQueue, __OSSetInterruptHandler + __OSUnmaskInterrupts. Confirms the proposed name. Claimed as Dolphin/vi/VIInit.c: 97.29%, size exact; blocked on register allocation, see nonmatching.md	stalled
+0x80187E38	0xA0	getTiming	vi	known	Matched; VI .data pool (version string, timing[10], taps) claimed with it. Merged into Dolphin/vi/VIInit.c with __VIInit and VIInit (the unit owns the VI .data and .bss pools)	matched
+0x80187ED8	0x200	__VIInit	vi	guess	Name confirmed (ac-decomp body). matched: the SDK's constant inline getEncoderType() (returns 1) folds the Philips branches and its local puts `a` at 0x1c. Merged into Dolphin/vi/VIInit.c	matched
+0x801880D8	0x4B0	VIInit	vi	exact	CFTKK-Decomp size 0x4B0 (ac-decomp 0x478). OSRegisterVersion, __VIInit, __OSLockSram/__OSUnlockSram (EuRgb60/progressive flags), getTiming, OSInitThreadQueue, __OSSetInterruptHandler + __OSUnmaskInterrupts. Confirms the proposed name. Matched in Dolphin/vi/VIInit.c (0x80187E38-0x80188588 with getTiming and __VIInit), which defines the VI .data and .bss pools	matched
 0x801885DC	0x2D4	setFbbRegs	vi	exact	ac-decomp vi.c setFbbRegs (calcFbbs inlined x2); matched in Dolphin/vi/setFbbRegs.c	matched
 0x801888B0	0x1A0	setVerticalRegs	vi	exact	ac-decomp size 0x1a0	matched
 0x80188A50	0x828	VIConfigure	vi	guess	Identity confirmed (callees: OSDisableInterrupts, 7x OSReport error strings, OSPanic, getTiming, setFbbRegs, setVerticalRegs, OSRestoreInterrupts). Size 0x828 vs CFTKK 0x808 / ac-decomp 0x79C: this game's body has an OSPanic tv-mode check (line 0x774) and inlines AdjustPosition/setInterruptRegs/setScalingRegs/setHorizontalRegs/setBBIntervalRegs/setPicConfig (18 saved regs, stmw r14). Matched as nofralloc asm generated from dtk .s (pool base lbl_804D2880 for the strings, HorVer via lbl_8057D418+0xF0..); a C rebuild is the open follow-up if VIInit/VIConfigurePan ever need the whole vi.c TU	matched
-0x80189278	0x394	VIConfigurePan	vi	exact	ac-decomp size 0x394; 94.4% NonMatching, see docs/nonmatching.md	stalled
+0x80189278	0x394	VIConfigurePan	vi	exact	ac-decomp size 0x394; 87.1% NonMatching (externs; the .bss pool is now defined in VIInit.c), see docs/nonmatching.md	stalled
 0x8018960C	0x130	VIFlush	vi	guess	ac-decomp size 0x11c	matched
 0x8018973C	0x6C	VISetNextFrameBuffer	vi	exact	ac-decomp size 0x6c	matched
 0x801897A8	0x7C	VISetBlack	vi	exact	ac-decomp size 0x7c	matched
