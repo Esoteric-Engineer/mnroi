@@ -54,6 +54,9 @@ SN/fn_8016A078.c:
 SN/fn_8016A1A4.c:
 	.text       start:0x8016A1A4 end:0x8016A1B4
 
+SN/fn_8016AAA4.c:
+	.text       start:0x8016AAA4 end:0x8016AAD0
+
 SN/fn_8016AAD0.c:
 	.text       start:0x8016AAD0 end:0x8016AAD8
 
