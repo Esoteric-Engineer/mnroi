@@ -49,20 +49,24 @@ static inline u32 __GXReadMEMCounterU32(u32 regAddrL, u32 regAddrH)
     return (ctrH0 << 16) | ctrL;
 }
 
+static inline void __GXAbortWaitPECopyDone(void)
+{
+    u32 peCnt0;
+    u32 peCnt1;
+
+    peCnt0 = __GXReadMEMCounterU32(0x28, 0x27);
+    do {
+        peCnt1 = peCnt0;
+        __GXAbortWait(32);
+
+        peCnt0 = __GXReadMEMCounterU32(0x28, 0x27);
+    } while (peCnt0 != peCnt1);
+}
+
 void __GXAbort(void)
 {
-    u32 prev;
-    u32 cur;
-    u32 old;
-
     if (__GXData->unk5AA != 0 && GXGetGPFifo() != 0) {
-        prev = __GXReadMEMCounterU32(0x28, 0x27);
-        do {
-            __GXAbortWait(32);
-            cur = __GXReadMEMCounterU32(0x28, 0x27);
-            old = prev;
-            prev = cur;
-        } while (cur != old);
+        __GXAbortWaitPECopyDone();
     }
     __PIRegs[6] = 1;
     __GXAbortWait(200);
