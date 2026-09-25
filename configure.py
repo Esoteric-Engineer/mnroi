@@ -925,6 +925,10 @@ config.libs = [
             Object(Matching, "Dolphin/ax/__AXDSPInitCallback.c"),
             Object(Matching, "Dolphin/ax/__AXGetStudio.c"),
             Object(Matching, "Dolphin/ax/__AXGetPBs.c"),
+            Object(Matching, "Dolphin/ax/__AXGetAuxBOutputDPL2.c"),
+            Object(Matching, "Dolphin/ax/__AXGetAuxBForDPL2.c"),
+            Object(Matching, "Dolphin/ax/__AXGetAuxBOutput.c"),
+            Object(Matching, "Dolphin/ax/__AXGetAuxAOutput.c"),
         ],
     ),
     DolphinLib(
