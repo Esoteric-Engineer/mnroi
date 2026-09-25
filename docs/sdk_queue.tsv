@@ -317,7 +317,7 @@ addr	size	name	library	confidence	notes	status
 0x80401EB0	0x4C	__save_gpr	runtime	known	symbol already named; just needs split + match	matched
 0x80401EFC	0x4C	__restore_gpr	runtime	known	symbol already named; just needs split + match	matched
 0x80401F48	0xFC	OSAllocFromHeap	os	exact	ac/CFTKK 0xFC; HeapArray walk, 32-byte rounding	open
-0x80402044	0x10	OSSetCurrentHeap	os	exact	CFTKK 0x10	open
+0x80402044	0x10	OSSetCurrentHeap	os	exact	CFTKK 0x10	matched
 0x80402054	0x70	OSInitAlloc	os	exact	ac/CFTKK 0x70; sets __OSCurrHeap (0x8066CEA8) = -1	open
 0x804020C4	0x6C	OSCreateHeap	os	exact	CFTKK 0x6C	open
 0x80402130	0x3DC	ScreenReport	os	guess	OSFatal.c; calls OSGetFontTexel	open
