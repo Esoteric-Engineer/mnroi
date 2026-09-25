@@ -294,6 +294,9 @@ SN/fn_8016C094.c:
 SN/fn_8016C134.c:
 	.text       start:0x8016C134 end:0x8016C148
 
+SN/fn_8016C148.c:
+	.text       start:0x8016C148 end:0x8016C3BC
+
 SN/fn_8016C3BC.c:
 	.text       start:0x8016C3BC end:0x8016C3DC
 
