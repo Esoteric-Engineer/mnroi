@@ -22,7 +22,7 @@ typedef struct {
     u32 tevTcEnab;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
+extern __GXDataStruct* const __GXData;
 
 typedef union {
     volatile u8 u8;
@@ -36,7 +36,7 @@ typedef union {
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
                           (32 - (shift) - (size)), (31 - (shift)))
 
-#define GET_REG_FIELD(reg, size, shift) ((((u32)(reg)) >> (shift)) & ((1 << (size)) - 1))
+#define GET_REG_FIELD(reg, size, shift) ((int)((reg) >> (shift)) & ((1 << (size)) - 1))
 
 #define GX_WRITE_RAS_REG(value) \
     do {                        \
@@ -49,23 +49,22 @@ typedef union {
 #pragma dont_inline on
 static void __SetSURegs(u32 tmap, u32 tcoord)
 {
-    __GXDataStruct* g = __GXData;
     u32 w;
     u32 h;
     u8 s_bias;
     u8 t_bias;
 
-    w = GET_REG_FIELD(g->tImage0[tmap], 10, 0);
-    h = GET_REG_FIELD(g->tImage0[tmap], 10, 10);
-    SET_REG_FIELD(g->suTs0[tcoord], 16, 0, w);
-    SET_REG_FIELD(g->suTs1[tcoord], 16, 0, h);
-    s_bias = GET_REG_FIELD(g->tMode0[tmap], 2, 0) == 1;
-    t_bias = GET_REG_FIELD(g->tMode0[tmap], 2, 2) == 1;
-    SET_REG_FIELD(g->suTs0[tcoord], 1, 16, s_bias);
-    SET_REG_FIELD(g->suTs1[tcoord], 1, 16, t_bias);
-    GX_WRITE_RAS_REG(g->suTs0[tcoord]);
-    GX_WRITE_RAS_REG(g->suTs1[tcoord]);
-    g->bpSentNot = 0;
+    w = GET_REG_FIELD(gx->tImage0[tmap], 10, 0);
+    h = GET_REG_FIELD(gx->tImage0[tmap], 10, 10);
+    SET_REG_FIELD(gx->suTs0[tcoord], 16, 0, w);
+    SET_REG_FIELD(gx->suTs1[tcoord], 16, 0, h);
+    s_bias = GET_REG_FIELD(gx->tMode0[tmap], 2, 0) == 1;
+    t_bias = GET_REG_FIELD(gx->tMode0[tmap], 2, 2) == 1;
+    SET_REG_FIELD(gx->suTs0[tcoord], 1, 16, s_bias);
+    SET_REG_FIELD(gx->suTs1[tcoord], 1, 16, t_bias);
+    GX_WRITE_RAS_REG(gx->suTs0[tcoord]);
+    GX_WRITE_RAS_REG(gx->suTs1[tcoord]);
+    gx->bpSentNot = 0;
 }
 
 #pragma dont_inline reset
