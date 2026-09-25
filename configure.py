@@ -917,6 +917,7 @@ config.libs = [
             Object(Matching, "Dolphin/ax/__AXClQuit.c"),
             Object(Matching, "Dolphin/ax/__AXSPBQuit.c"),
             Object(Matching, "Dolphin/ax/__AXVPBQuit.c"),
+            Object(Matching, "Dolphin/ax/AXRegisterAuxACallback.c"),
         ],
     ),
     DolphinLib(

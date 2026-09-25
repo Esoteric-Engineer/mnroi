@@ -1708,6 +1708,9 @@ Dolphin/ax/__AXPushCallbackStack.c:
 Dolphin/ax/__AXAuxQuit.c:
 	.text       start:0x80406E78 end:0x80406E88
 
+Dolphin/ax/AXRegisterAuxACallback.c:
+	.text       start:0x8040721C end:0x80407228
+
 Dolphin/ax/__AXGetCommandListCycles.c:
 	.text       start:0x80407228 end:0x80407230
 
