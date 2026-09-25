@@ -292,7 +292,7 @@ addr	size	name	library	confidence	notes	status
 0x80400AC4	0x8	VMGetARAMBase	vm	exact	CFTKK 0x8; called by VMAlloc	matched
 0x80400ACC	0x30	__VMAllocMRAMSwapSpace	vm	exact	CFTKK size run of 5	matched
 0x80400AFC	0x1F0	__VMSwapPageIn	vm	guess	CFTKK 0x1FC; calls __VMGetPageToReplace, VMBASE helpers	open
-0x80400CEC	0x44	__VMGetPageToReplace	vm	exact	CFTKK size run of 12	open
+0x80400CEC	0x44	__VMGetPageToReplace	vm	exact	CFTKK size run of 12	matched
 0x80400D30	0x1D0	__VMPageReplacementLRU	vm	exact	CFTKK size run of 12	open
 0x80400F00	0x94	__VMPageReplacementRandom	vm	exact	CFTKK size run of 12	open
 0x80400F94	0x6C	__VMPageReplacementFIFO	vm	exact	CFTKK size run of 12	open

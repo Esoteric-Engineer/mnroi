@@ -1678,6 +1678,9 @@ Dolphin/vm/VMGetARAMBase.c:
 Dolphin/vm/__VMAllocMRAMSwapSpace.c:
 	.text       start:0x80400ACC end:0x80400AFC
 
+Dolphin/vm/__VMGetPageToReplace.c:
+	.text       start:0x80400CEC end:0x80400D30
+
 Dolphin/vm/VMAlloc.c:
 	.text       start:0x80401000 end:0x80401100
 
