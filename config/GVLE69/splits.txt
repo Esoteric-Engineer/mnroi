@@ -2017,6 +2017,9 @@ Dolphin/vm/VMBASESetPageLocked.c:
 Dolphin/vm/__VMBASESetSwapPageCallback.c:
 	.text       start:0x804015B4 end:0x804015BC
 
+Dolphin/vm/__VMBASEInitPageTable.c:
+	.text       start:0x804015BC end:0x804015F8
+
 Dolphin/vm/__VMBASEInitLockedPageTable.c:
 	.text       start:0x804015F8 end:0x80401628
 
