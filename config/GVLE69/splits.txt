@@ -9,6 +9,9 @@ Sections:
 	.sbss       type:bss align:4
 	.sdata2     type:rodata align:32
 
+SN/fn_801687E8.c:
+	.text       start:0x801687E8 end:0x801687F8
+
 SN/EnableMetroTRKInterrupts.c:
 	.text       start:0x801688E8 end:0x8016894C
 
@@ -17,6 +20,9 @@ SN/fn_80169134.c:
 
 SN/fn_80169150.c:
 	.text       start:0x80169150 end:0x80169164
+
+SN/fn_8016A1A4.c:
+	.text       start:0x8016A1A4 end:0x8016A1B4
 
 Dolphin/os/__cvt_fp2unsigned.c:
 	.text       start:0x8016B554 end:0x8016B59C

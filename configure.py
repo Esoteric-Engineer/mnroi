@@ -431,9 +431,11 @@ config.libs = [
         "cflags": cflags_base,
         "progress_category": "sdk",
         "objects": [
+            Object(Matching, "SN/fn_801687E8.c"),
             Object(Matching, "SN/EnableMetroTRKInterrupts.c"),
             Object(Matching, "SN/fn_80169134.c"),
             Object(Matching, "SN/fn_80169150.c"),
+            Object(Matching, "SN/fn_8016A1A4.c"),
         ],
     },
     DolphinLib(
