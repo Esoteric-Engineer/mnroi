@@ -891,6 +891,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/VMGetARAMBase.c"),
             Object(Matching, "Dolphin/vm/__VMSetARAMPageAsDirty.c"),
             Object(Matching, "Dolphin/vm/__VMIsARAMPageDirty.c"),
+            Object(Matching, "Dolphin/vm/__VMDoesMappingExist.c"),
         ],
     ),
     DolphinLib(
