@@ -51,7 +51,7 @@ extern u32 __DVDLongFileNameFlag;
 extern char lbl_8066C408[8]; // this TU's __FILE__ string; unnamed, compiler-synthesized
 extern char lbl_804D1D40[]; // the OSPanic() format string below, same reasoning
 extern void OSPanic(const char* file, int line, const char* msg, ...);
-extern int fn_80400544(int c); // likely tolower, unconfirmed
+extern int tolower2(int c);
 extern s32 DVDGetCurrentDir(char* path, u32 maxlen);
 extern char lbl_804D1ECC[];
 extern char lbl_804D1E40[0x34]; // "DVDReadAsync(): specified area is out of the file  "
@@ -245,12 +245,12 @@ L8018339C:
     lbz     r0, 0(r20)
     addi    r20, r20, 1
     extsb   r3, r0
-    bl      fn_80400544
+    bl      tolower2
     lbz     r0, 0(r21)
     addi    r22, r3, 0
     addi    r21, r21, 1
     extsb   r3, r0
-    bl      fn_80400544
+    bl      tolower2
     cmpw    r3, r22
     beq     L801833D0
     li      r0, 0
