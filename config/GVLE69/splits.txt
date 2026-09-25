@@ -1622,6 +1622,7 @@ Dolphin/gx/GXLoadTexMtxImm.c:
 
 Dolphin/gx/GXSetViewport.c:
 	.text       start:0x80190248 end:0x80190320
+	.sdata2     start:0x80670778 end:0x80670780
 
 Dolphin/gx/GXSetScissor.c:
 	.text       start:0x80190320 end:0x80190398

@@ -1,3 +1,7 @@
+// The unit owns its .sdata2 literal pool (0.5, 342.0; see splits.txt).
+// dtk's bake-sda rewrites every .sdata2 access into a fixed r13 offset and drops the relocation, which leaves the pool unreferenced and lets mwld dead-strip it. force_active keeps it linked.
+#pragma force_active on
+
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
@@ -18,9 +22,7 @@ typedef struct {
     f32 zScale;
 } __GXDataStruct;
 
-extern __GXDataStruct* __GXData;
-extern const f32 lbl_80670778;
-extern const f32 lbl_8067077C;
+extern __GXDataStruct* const __GXData;
 
 typedef union {
     volatile u8 u8;
@@ -28,24 +30,24 @@ typedef union {
     volatile f32 f32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 #pragma fp_contract off
 void __GXSetViewport(void)
 {
-    __GXDataStruct* gx = __GXData;
-    f32 sx, sy, sz, ox, oy, oz;
-    f32 zmin, zmax;
+    f32 sx, sy, sz, ox, oy, oz, zmin, zmax;
     u32 reg;
 
-    sx = gx->vpWd * lbl_80670778;
-    zmax = gx->vpFarz * gx->zScale;
-    ox = lbl_8067077C + (gx->vpLeft + sx);
-    sy = -gx->vpHt * lbl_80670778;
-    oy = lbl_8067077C + (gx->vpTop + gx->vpHt * lbl_80670778);
-    zmin = gx->vpNearz * gx->zScale;
+    sx = __GXData->vpWd / 2.0f;
+    sy = -__GXData->vpHt / 2.0f;
+    ox = 342.0f + (__GXData->vpLeft + (__GXData->vpWd / 2.0f));
+    oy = 342.0f + (__GXData->vpTop + (__GXData->vpHt / 2.0f));
+
+    zmin = __GXData->vpNearz * __GXData->zScale;
+    zmax = __GXData->vpFarz * __GXData->zScale;
+
     sz = zmax - zmin;
-    oz = zmax + gx->zOffset;
+    oz = zmax + __GXData->zOffset;
 
     reg = 0x5101A;
     GXWGFifo.u8 = 0x10;
@@ -60,14 +62,12 @@ void __GXSetViewport(void)
 
 void GXSetViewport(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz)
 {
-    __GXDataStruct* gx = __GXData;
-
-    gx->vpLeft = left;
-    gx->vpTop = top;
-    gx->vpWd = wd;
-    gx->vpHt = ht;
-    gx->vpNearz = nearz;
-    gx->vpFarz = farz;
+    __GXData->vpLeft = left;
+    __GXData->vpTop = top;
+    __GXData->vpWd = wd;
+    __GXData->vpHt = ht;
+    __GXData->vpNearz = nearz;
+    __GXData->vpFarz = farz;
     __GXSetViewport();
     __GXData->bpSentNot = 1;
 }

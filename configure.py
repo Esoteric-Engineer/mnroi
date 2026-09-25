@@ -651,7 +651,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXLoadNrmMtxImm.c"),
             Object(Matching, "Dolphin/gx/GXSetCurrentMtx.c"),
             Object(Matching, "Dolphin/gx/GXLoadTexMtxImm.c"),
-            Object(NonMatching, "Dolphin/gx/GXSetViewport.c"),
+            Object(Matching, "Dolphin/gx/GXSetViewport.c"),
             Object(Matching, "Dolphin/gx/GXSetScissor.c"),
             Object(Matching, "Dolphin/gx/GXSetScissorBoxOffset.c"),
             Object(Matching, "Dolphin/gx/GXSetClipMode.c"),
