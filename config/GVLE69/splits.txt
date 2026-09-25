@@ -1987,6 +1987,18 @@ Dolphin/vm/__VMIsARAMPageDirty.c:
 Dolphin/vm/__VMBASEClearPageFromTLB.c:
 	.text       start:0x80401550 end:0x80401560
 
+Dolphin/vm/VMBASEGetVirtualAddrFromPageInMRAM.c:
+	.text       start:0x80401560 end:0x80401570
+
+Dolphin/vm/__VMBASESetVirtualAddressForPageInMRAM.c:
+	.text       start:0x80401570 end:0x80401580
+
+Dolphin/vm/VMBASEIsPageLocked.c:
+	.text       start:0x80401580 end:0x8040158C
+
+Dolphin/vm/VMBASESetPageLocked.c:
+	.text       start:0x8040158C end:0x804015B4
+
 Dolphin/vm/__VMBASESetSwapPageCallback.c:
 	.text       start:0x804015B4 end:0x804015BC
 

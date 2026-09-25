@@ -215,6 +215,7 @@ Scope: everything in `Runtime.PPCEABI.H` that comes from Newlib or libgcc (strin
 
   The same applies to `.data` statics with cross-object callers: claiming a range to define `Si` as a true `static` broke the link (`undefined: 'Si_804D1BBC'`) from still-unclaimed functions. Override `scope:local` to `scope:global` in `symbols.txt` and use a plain `extern` instead. Hand-set attributes persist across regeneration.
 
+- **Original loads `lwz rX, sym+0x8@sda21(r0)` (a scalar at an offset into a multi-word `.sbss` symbol): split the symbol in `symbols.txt` into one 4-byte entry per word and `extern` each as a scalar.** An array or struct extern covering the blob gives `li rX, sym@sda21` + `lwz 0x8(rX)` (or `lis`/`addi` when it is over the small-data threshold), and an over-sized array indexed past its end does not help. Other units' asm is regenerated against the new names (`VMBASEIsPageLocked`, `lbl_8066F97C` -> `lbl_8066F97C`/`80`/`84`/`88`).
 - **`addi` does not accept the bare-symbol sda21 trick:** "Bare symbol name, no base register" only works for instructions with a real `d(rA)` operand such as `lwz` or `lfd`. For address computations, use `la rD, symbol` and give the symbol a sized declaration such as `extern char lbl_8066C408[8];` rather than `[]`; the size is what fixes the relocation type.
 
   Getting it wrong produces the wrong relocation, visible via `tools/objdiff_mismatches.py`, not a byte diff.
