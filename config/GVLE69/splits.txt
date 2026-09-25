@@ -192,6 +192,12 @@ SN/fn_8016AB20.c:
 SN/fn_8016AB28.c:
 	.text       start:0x8016AB28 end:0x8016AB30
 
+SN/SNOpen.c:
+	.text       start:0x8016B0A8 end:0x8016B0AC
+
+SN/SNClose.c:
+	.text       start:0x8016B0AC end:0x8016B0B0
+
 SN/fn_8016B24C.c:
 	.text       start:0x8016B24C end:0x8016B29C
 

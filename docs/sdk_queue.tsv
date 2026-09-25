@@ -70,8 +70,8 @@ addr	size	name	library	confidence	notes	status
 0x8016ACCC	0x88	SNQueryData	sn	exact	CFTKK-Decomp SNQueryData (0x88); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
 0x8016AD54	0x1BC	SNRead	sn	exact	CFTKK-Decomp SNRead (0x1BC); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
 0x8016AF10	0x198	SNWrite	sn	exact	CFTKK-Decomp SNWrite (0x198); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
-0x8016B0A8	0x4	SNOpen	sn	exact	CFTKK-Decomp SNOpen (0x4); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
-0x8016B0AC	0x4	SNClose	sn	exact	CFTKK-Decomp SNClose (0x4); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
+0x8016B0A8	0x4	SNOpen	sn	exact	CFTKK-Decomp SNOpen (0x4); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
+0x8016B0AC	0x4	SNClose	sn	exact	CFTKK-Decomp SNClose (0x4); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
 0x8016B0B0	0x54	SNHandler	sn	exact	CFTKK-Decomp SNHandler (0x54); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
 0x8016B104	0x18	SNSelect	sn	guess	CFTKK-Decomp SNSelect is 0x10 (ours 0x18), same position in the SN comm layer. Hand-written asm	open
 0x8016B11C	0x14	SNDeselect	sn	guess	CFTKK-Decomp SNDeselect is 0x10 (ours 0x14), same position in the SN comm layer. Hand-written asm	open
