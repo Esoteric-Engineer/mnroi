@@ -1834,6 +1834,9 @@ Dolphin/dsp/DSPCheckInit.c:
 Dolphin/card/__CARDDefaultApiCallback.c:
 	.text       start:0x8040A190 end:0x8040A194
 
+Dolphin/card/UnlockedCallback.c:
+	.text       start:0x8040AA10 end:0x8040AB20
+
 Dolphin/card/__CARDGetFontEncode.c:
 	.text       start:0x8040B0B0 end:0x8040B0B8
 
