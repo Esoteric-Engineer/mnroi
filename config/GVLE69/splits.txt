@@ -15,6 +15,9 @@ SN/fn_80168770.c:
 SN/fn_801687E8.c:
 	.text       start:0x801687E8 end:0x801687F8
 
+SN/fn_801687F8.c:
+	.text       start:0x801687F8 end:0x801688E8
+
 SN/EnableMetroTRKInterrupts.c:
 	.text       start:0x801688E8 end:0x8016894C
 

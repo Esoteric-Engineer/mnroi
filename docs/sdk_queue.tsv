@@ -8,7 +8,7 @@ addr	size	name	library	confidence	notes	status
 0x80003468	0x24	__init_hardware	init	exact	Same as ac-decomp __ppc_eabi_init __init_hardware, plus a `bl __OSInitFPRs` between __OSPSInit and __OSCacheInit (older SDK). Rename in src/Dolphin/os/__start.c too	matched
 0x80168770	0x78		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
 0x801687E8	0x10		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
-0x801687F8	0xF0		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
+0x801687F8	0xF0		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
 0x801688E8	0x64	EnableMetroTRKInterrupts	sn	known	symbol already named; just needs split + match	matched
 0x8016894C	0x250		sn	known	Called from __start when the debugger is present; patches the exception vectors (probably CFTKK's SNDebugInit, 0x218 there, not size-matched). SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
 0x80168B9C	0x14		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
