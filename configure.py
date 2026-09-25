@@ -848,6 +848,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/fn_80003254.c"),
             Object(Matching, "Dolphin/os/__check_pad3.c"),
             Object(Matching, "Dolphin/os/fn_80003300.c"),
+            Object(Matching, "Dolphin/os/fn_80003334.c"),
             Object(Matching, "Dolphin/os/fn_80003464.c"),
             Object(Matching, "Dolphin/os/__init_hardware.c"),
             Object(Matching, "Dolphin/os/fn_8017A5CC.c"),

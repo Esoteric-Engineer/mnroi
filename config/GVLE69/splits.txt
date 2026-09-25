@@ -2186,6 +2186,9 @@ Dolphin/os/__check_pad3.c:
 Dolphin/os/fn_80003300.c:
 	.init       start:0x80003300 end:0x80003328
 
+Dolphin/os/fn_80003334.c:
+	.init       start:0x80003328 end:0x80003464
+
 Dolphin/os/fn_80003464.c:
 	.init       start:0x80003464 end:0x80003468
 
