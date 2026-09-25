@@ -21,7 +21,7 @@ addr	size	name	library	confidence	notes	status
 0x80168D98	0x9C		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
 0x80168E34	0xF0		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
 0x80168F24	0x48		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
-0x80168F6C	0xA0		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
+0x80168F6C	0xA0		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
 0x8016900C	0x128		sn	known	Entry in the SN command dispatch table at 0x804CFD00. SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	open
 0x80169164	0x28		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	matched
 0x8016918C	0x18		sn	known	Reads the DI status register (0xCC006000), masks 0x14 (result unused), returns 0. SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	matched
