@@ -582,7 +582,7 @@ addr	size	name	library	confidence	notes	status
 0x8040B20C	0x150	CARDFreeBlocks	card	exact	CFTKK size run of 6; equal size in CFTKK CARDFreeBlocks size 0x150 and ac-decomp CARDFreeBlocks size 0x150	open
 0x8040B35C	0x84	CARDGetSectorSize	card	exact	ac 0x84; equal size in ac-decomp CARDGetSectorSize size 0x84	open
 0x8040B3E0	0x98	__CARDSync	card	exact	ac-decomp size run of 4; equal size in CFTKK __CARDSync size 0x98 and ac-decomp __CARDSync size 0x98	open
-0x8040B478	0x50	OnReset	card	exact	ac-decomp size run of 4; equal size in CFTKK OnReset size 0x50 and ac-decomp OnReset size 0x50	open
+0x8040B478	0x50	OnReset_8040B478	card	exact	ac-decomp size run of 4; equal size in CFTKK OnReset size 0x50 and ac-decomp OnReset size 0x50; static OnReset of CARDBios.c (ResetFunctionInfo callback): CARDUnmount(0/1)==-1 -> FALSE. Callee fn_8040D4AC is CARDUnmount (0xAC); symbol suffixed like pad OnReset_8018B438 to avoid clashing with os OnReset	matched
 0x8040B4C8	0x8	__CARDGetFatBlock	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDGetFatBlock size 0x8 and ac-decomp __CARDGetFatBlock size 0x8	matched
 0x8040B4D0	0xD4	WriteCallback	card	exact	CFTKK size run of 16; equal size in CFTKK WriteCallback size 0xd4 and ac-decomp WriteCallback size 0xd4; static, name repeats across CARD files (file-local name needed when splitting)	open
 0x8040B5A4	0xC8	EraseCallback	card	exact	CFTKK size run of 16; equal size in CFTKK EraseCallback size 0xc8 and ac-decomp EraseCallback size 0xc8; static, name repeats across CARD files (file-local name needed when splitting)	open

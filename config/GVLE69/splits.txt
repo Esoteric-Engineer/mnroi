@@ -2202,6 +2202,9 @@ Dolphin/card/__CARDSetDiskID.c:
 	.text       start:0x8040B0B8 end:0x8040B0F0
 	.bss        start:0x80668900 end:0x80668B40
 
+Dolphin/card/OnReset.c:
+	.text       start:0x8040B478 end:0x8040B4C8
+
 Dolphin/card/__CARDGetFatBlock.c:
 	.text       start:0x8040B4C8 end:0x8040B4D0
 
