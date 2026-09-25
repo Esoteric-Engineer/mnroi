@@ -1,4 +1,4 @@
-extern double lbl_8016CBDC(double x);
+extern double fn_8016CBDC(double x);
 extern double lbl_8066C300;
 extern double lbl_8066C308;
 extern double lbl_8066C310;
@@ -159,7 +159,7 @@ L_8016EE60:
     lfd     f0, lbl_8066C320
     fmr     f31, f1
     fmul    f1, f31, f0
-    bl      lbl_8016CBDC
+    bl      fn_8016CBDC
     lfd     f0, lbl_8066C328
     mr      r9, r11
     lis     r10, 0x4330

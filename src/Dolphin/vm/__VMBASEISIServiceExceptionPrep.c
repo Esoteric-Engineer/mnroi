@@ -1,10 +1,11 @@
 extern void fn_80401E4C(void);
 
-// Saves r1/r2/r6-r31 and GQR1-7 into the exception context in r3, loads DAR into r4, then joins the shared handler. Hand-written asm.
+// Saves r0-r2/r6-r31 and GQR1-7 into the exception context in r3, loads DAR into r4, then joins the shared handler. Hand-written asm.
 asm void __VMBASEISIServiceExceptionPrep(void)
 {
     // clang-format off
     nofralloc
+    stw     r0, 0x0(r3)
     stw     r1, 0x4(r3)
     stw     r2, 0x8(r3)
     stmw    r6, 0x18(r3)

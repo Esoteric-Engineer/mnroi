@@ -1,4 +1,4 @@
-extern void lbl_8016AB00(void);
+extern void fn_8016AB00(void);
 
 asm void fn_8017A71C(void)
 {
@@ -7,7 +7,7 @@ asm void fn_8017A71C(void)
     stwu    r1, -8(r1)
     mflr    r0
     stw     r0, 12(r1)
-    bl      lbl_8016AB00
+    bl      fn_8016AB00
     lwz     r0, 12(r1)
     mtlr    r0
     addi    r1, r1, 8

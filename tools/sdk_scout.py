@@ -37,8 +37,9 @@ RANGES = [(LO, HI, None), (LO3, HI2, None)]
 # (start, end, our library, ac-decomp libraries it may match, or None to skip matching)
 LIBS = [
     (0x80168770, 0x8016B554, "sn", None),  # SN Systems ProDG debug stub, not Dolphin SDK
-    (0x8016B554, 0x8016B5B0, "runtime", None),  # __cvt_fp2unsigned, __shr2u .. __shr2i
-    (0x8016B5B0, 0x8017A5CC, "libc", None),  # libm starts at 0x8016B5B0, not 0x8016D000
+    (0x8016B554, 0x8016B6AC, "runtime", None),  # __cvt_fp2unsigned, __shr2u .. __mod2u, __va_arg
+    (0x8016B6AC, 0x8016C514, "sn", None),  # second SN run: file I/O and EXI debug comms, after the runtime
+    (0x8016C514, 0x8017A5CC, "libc", None),  # libm starts at __ieee754_acos 0x8016C514
     (0x8017A5CC, 0x801814F4, "os", {"os"}),
     (0x801814F4, 0x80181708, "exi", {"exi"}),
     (0x80181708, 0x80183070, "si", {"si"}),

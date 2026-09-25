@@ -36,7 +36,8 @@ Human-facing references (read the relevant one instead of guessing):
 ## Loop
 
 1. **Choose.** Take the next `open` row in `docs/sdk_queue.tsv`. Prefer, in order: `known`
-   (already named in `symbols.txt`), `exact` (size matches the reference), then `guess`, and within a
+   (already named in `symbols.txt`, or an `fn_` row whose note says no reference names it: `sn`, some `init`,
+   the second `floor`; keep the `fn_` name for the unit and symbol), `exact` (size matches the reference), then `guess`, and within a
    tier the smallest size. Skip `unidentified` rows (they need scouting, not matching) and anything listed in
    `docs/nonmatching.md`. Library ranges are in `docs/sdk_libraries.md`. If the user named a specific function or unit instead, work that one.
    `tools/find_candidates.py` (small leaf functions only) is a fallback, not the main chooser.

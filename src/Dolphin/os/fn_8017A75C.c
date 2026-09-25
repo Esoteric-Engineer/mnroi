@@ -1,6 +1,6 @@
-extern void lbl_8016AAD8(void);
-extern void lbl_8016AAE0(void);
-extern void lbl_8016AAE8(void);
+extern void fn_8016AAD8(void);
+extern void fn_8016AAE0(void);
+extern void fn_8016AAE8(void);
 
 asm void fn_8017A75C(void)
 {
@@ -32,10 +32,10 @@ L_a:
     beq     L_b
     mr      r3, r30
     li      r4, 0
-    bl      lbl_8016AAD8
+    bl      fn_8016AAD8
     cmpwi   r3, -1
     beq     L_b
-    bl      lbl_8016AAE8
+    bl      fn_8016AAE8
     cmpwi   r3, 0
     li      r3, -1
     bne     L_c
@@ -43,7 +43,7 @@ L_b:
     mr      r3, r30
     mr      r4, r31
     li      r5, 0
-    bl      lbl_8016AAE0
+    bl      fn_8016AAE0
 L_c:
     lwz     r0, 0x7c(r1)
     mtlr    r0

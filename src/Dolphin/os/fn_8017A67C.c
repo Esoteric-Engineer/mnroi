@@ -1,4 +1,4 @@
-extern int lbl_8016AAF8(int);
+extern int fn_8016AAF8(int);
 extern void* fn_8017A620(void* a, void* b);
 
 asm int fn_8017A67C(register int handle, register void* buf, register void* count)
@@ -16,7 +16,7 @@ asm int fn_8017A67C(register int handle, register void* buf, register void* coun
     li      r3, -1
     beq     L_end
     mr      r3, r9
-    bl      lbl_8016AAF8
+    bl      fn_8016AAF8
     b       L_end
 L_write:
     mr      r3, r4

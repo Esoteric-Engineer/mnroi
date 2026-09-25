@@ -1,8 +1,8 @@
 extern char lbl_80573680[];
 extern char lbl_804CFD58[];
 extern void OSReport(const char* msg, ...);
-extern void lbl_8016BE74(void);
-extern void lbl_8016C3DC(void);
+extern void fn_8016BE74(void);
+extern void fn_8016C3DC(void);
 
 asm void EnableMetroTRKInterrupts(void)
 {
@@ -26,8 +26,8 @@ asm void EnableMetroTRKInterrupts(void)
     lwz     r3, 0x6CC(r31)
     cmpwi   r3, 4
     bne     L_end
-    bl      lbl_8016BE74
-    bl      lbl_8016C3DC
+    bl      fn_8016BE74
+    bl      fn_8016C3DC
 L_end:
     lwz     r31, 8(r1)
     addi    r1, r1, 16
