@@ -1864,6 +1864,9 @@ Dolphin/card/__CARDExiHandler.c:
 Dolphin/card/UnlockedCallback.c:
 	.text       start:0x8040AA10 end:0x8040AB20
 
+Dolphin/card/__CARDWritePage.c:
+	.text       start:0x8040AE08 end:0x8040AF24
+
 Dolphin/card/__CARDGetFontEncode.c:
 	.text       start:0x8040B0B0 end:0x8040B0B8
 
