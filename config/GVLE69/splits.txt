@@ -27,6 +27,9 @@ SN/fn_80168CC4.c:
 SN/fn_80168CC8.c:
 	.text       start:0x80168CC8 end:0x80168D08
 
+SN/fn_80168D08.c:
+	.text       start:0x80168D08 end:0x80168D48
+
 SN/fn_80169134.c:
 	.text       start:0x80169134 end:0x80169150
 

@@ -16,7 +16,7 @@ addr	size	name	library	confidence	notes	status
 0x80168C9C	0x28		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
 0x80168CC4	0x4		sn	known	`blr` stub filling the unsupported slots of the SN dispatch table 0x804CFD00. SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
 0x80168CC8	0x40		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
-0x80168D08	0x40		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
+0x80168D08	0x40		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
 0x80168D48	0x50		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
 0x80168D98	0x9C		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
 0x80168E34	0xF0		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
