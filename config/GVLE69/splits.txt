@@ -1864,6 +1864,9 @@ Dolphin/dsp/DSPCheckInit.c:
 Dolphin/dsp/DSPCancelTask.c:
 	.text       start:0x804097B4 end:0x804097F4
 
+Dolphin/dsp/__DSP_debug_printf.c:
+	.text       start:0x804098BC end:0x8040990C
+
 Dolphin/card/__CARDDefaultApiCallback.c:
 	.text       start:0x8040A190 end:0x8040A194
 
