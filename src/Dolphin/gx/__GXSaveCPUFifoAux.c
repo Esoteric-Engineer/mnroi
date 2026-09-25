@@ -22,19 +22,18 @@ extern u8 lbl_8066F47C; // CPGPLinked
 
 void __GXSaveCPUFifoAux(__GXFifoObj* realFifo)
 {
-    u32 temp;
     int enabled = OSDisableInterrupts();
 
     realFifo->base = (u8*)(__piReg[3] + 0x80000000);
     realFifo->top = (u8*)(__piReg[4] + 0x80000000);
     realFifo->wrPtr = (u8*)((__piReg[5] & 0xFBFFFFFF) + 0x80000000);
     if (lbl_8066F47C) {
-        temp = __cpReg[29] << 16;
-        temp |= __cpReg[28];
-        realFifo->rdPtr = (u8*)(temp + 0x80000000);
-        temp = __cpReg[25] << 16;
-        temp |= __cpReg[24];
-        realFifo->count = temp;
+        u32 reg2 = __cpReg[29];
+        u32 reg1 = __cpReg[28];
+        realFifo->rdPtr = (u8*)(((reg2 << 16) | reg1) + 0x80000000);
+        reg2 = __cpReg[25];
+        reg1 = __cpReg[24];
+        realFifo->count = (reg2 << 16) | reg1;
     } else {
         realFifo->count = realFifo->wrPtr - realFifo->rdPtr;
         if (realFifo->count < 0)
