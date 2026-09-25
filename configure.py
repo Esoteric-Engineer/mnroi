@@ -978,6 +978,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDGetFatBlock.c"),
             Object(Matching, "Dolphin/card/__CARDGetDirBlock.c"),
             Object(Matching, "Dolphin/card/__CARDIsOpened.c"),
+            Object(Matching, "Dolphin/card/CARDDeleteAsync.c"),
         ],
     ),
 ]

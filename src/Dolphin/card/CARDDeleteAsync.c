@@ -1,0 +1,58 @@
+typedef unsigned char u8;
+typedef unsigned short u16;
+typedef long s32;
+
+typedef void (*CARDCallback)(s32, s32);
+
+typedef struct CARDControl {
+    u8 pad0[0xBE];
+    u16 startBlock;
+    u8 pad1[0xD0 - 0xC0];
+    CARDCallback apiCallback;
+    u8 pad2[0x110 - 0xD4];
+} CARDControl;
+
+typedef struct CARDDir {
+    u8 pad0[0x36];
+    u16 startBlock;
+    u8 pad1[0x40 - 0x38];
+} CARDDir;
+
+extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
+extern s32 fn_8040B1A8(CARDControl* card, s32 result);
+extern s32 fn_8040E06C(CARDControl* card, const char* fileName, s32* fileNo);
+extern int __CARDIsOpened(CARDControl* card, s32 fileNo);
+extern CARDDir* __CARDGetDirBlock(CARDControl* card);
+extern void* memset(void* dst, int val, unsigned long n);
+extern s32 fn_8040BA6C(s32 chan, CARDCallback callback);
+extern void __CARDDefaultApiCallback(s32 chan, s32 result);
+extern void fn_8040EFC0(s32 chan, s32 result);
+
+s32 CARDDeleteAsync(s32 chan, const char* fileName, CARDCallback callback)
+{
+    CARDControl* card;
+    s32 fileNo;
+    s32 result;
+    CARDDir* dir;
+    CARDDir* ent;
+
+    result = fn_8040B0F0(chan, &card);
+    if (result < 0)
+        return result;
+    result = fn_8040E06C(card, fileName, &fileNo);
+    if (result < 0)
+        return fn_8040B1A8(card, result);
+    if (__CARDIsOpened(card, fileNo))
+        return fn_8040B1A8(card, -1);
+
+    dir = __CARDGetDirBlock(card);
+    ent = &dir[fileNo];
+    card->startBlock = ent->startBlock;
+    memset(ent, 0xff, sizeof(CARDDir));
+
+    card->apiCallback = callback ? callback : __CARDDefaultApiCallback;
+    result = fn_8040BA6C(chan, fn_8040EFC0);
+    if (result < 0)
+        fn_8040B1A8(card, result);
+    return result;
+}

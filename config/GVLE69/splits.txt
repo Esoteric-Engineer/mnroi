@@ -1862,5 +1862,8 @@ Dolphin/card/__CARDGetDirBlock.c:
 Dolphin/card/__CARDIsOpened.c:
 	.text       start:0x8040E430 end:0x8040E438
 
+Dolphin/card/CARDDeleteAsync.c:
+	.text       start:0x8040F1D8 end:0x8040F2E8
+
 Dolphin/os/__start.c:
 	.init       start:0x80003100 end:0x80003254
