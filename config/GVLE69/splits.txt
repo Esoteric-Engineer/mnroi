@@ -177,6 +177,9 @@ SN/fn_8016B740.c:
 SN/fn_8016BC70.c:
 	.text       start:0x8016BC70 end:0x8016BCC4
 
+SN/fn_8016BE74.c:
+	.text       start:0x8016BE74 end:0x8016BEE4
+
 SN/fn_8016BEE4.c:
 	.text       start:0x8016BEE4 end:0x8016BF04
 
