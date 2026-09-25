@@ -893,6 +893,12 @@ config.libs = [
         ],
     ),
     DolphinLib(
+        "mtx",
+        [
+            Object(Matching, "Dolphin/mtx/PSMTXIdentity.c"),
+        ],
+    ),
+    DolphinLib(
         "ar",
         [
             Object(Matching, "Dolphin/ar/ARRegisterDMACallback.c"),
