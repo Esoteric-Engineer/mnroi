@@ -61,6 +61,7 @@ Smaller findings:
   The fix is adding `#pragma peephole on` immediately after the asm function closes. `#pragma scheduling on` is not needed. This matters in any unit that mixes an early asm function with later plain C, since address order often forces the asm function to appear first. Exception: when the original function *also* has peephole off (its real TU had an earlier asm function), keep it off, or `lis` hoists above the prologue (`__OSContextInit`).
 
 - **CodeWarrior treats an undeclared data symbol in `asm` as a local label:** declaring the existing external object before the asm function is required for `@ha`/`@l` relocations to compile.
+- **Raw words in MWCC `asm` (trailing zero padding, data-as-code): `opword 0`, not `.long`/`.4byte`** (`.long` gives `end of line expected`). `fn_80169AF4` (`0x80169AF4`) ends with four `opword 0`.
 - **Hardware-register arrays must use CodeWarrior's declare-at-address form, not a pointer-cast macro:**
 
   ```c
