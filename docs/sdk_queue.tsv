@@ -408,7 +408,7 @@ addr	size	name	library	confidence	notes	status
 0x804014B0	0x28	VMBASEIsPageReferenced	vm	guess	Extracts PTE word-1 bit 0x100 (R). Was proposed as VMBASEIsPageDirty (shifted by one). CFTKK size 0x28	open
 0x804014D8	0x28	VMBASEIsPageDirty	vm	guess	Extracts PTE word-1 bit 0x80 (C). Was proposed as VMBASESetPageLocked, which is 0x8040158C. CFTKK size 0x28	open
 0x80401500	0x50	VMBASESetPageReferenced	vm	guess	Sets/clears PTE bit 0x100 via __VMBASEVirtualAddrToPageTableAddr; CFTKK VMBASESetPageReferenced is 0x90 (ours 0x50), same position. Was wrong-named __VMBASEDSIServiceExceptionPrep (that is 0x80401C54)	open
-0x80401550	0x10	__VMBASEClearPageFromTLB	vm	exact	CFTKK-Decomp __VMBASEClearPageFromTLB, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
+0x80401550	0x10	__VMBASEClearPageFromTLB	vm	exact	CFTKK-Decomp __VMBASEClearPageFromTLB, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
 0x80401560	0x10	VMBASEGetVirtualAddrFromPageInMRAM	vm	exact	CFTKK-Decomp VMBASEGetVirtualAddrFromPageInMRAM, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
 0x80401570	0x10	__VMBASESetVirtualAddressForPageInMRAM	vm	exact	CFTKK-Decomp __VMBASESetVirtualAddressForPageInMRAM, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
 0x80401580	0xC	VMBASEIsPageLocked	vm	exact	CFTKK-Decomp VMBASEIsPageLocked, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
