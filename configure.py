@@ -994,6 +994,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/CARDSetStatus.c"),
             Object(Matching, "Dolphin/card/CARDRead.c"),
             Object(Matching, "Dolphin/card/CARDCreate.c"),
+            Object(Matching, "Dolphin/card/CARDClose.c"),
         ],
     ),
 ]

@@ -1883,6 +1883,9 @@ Dolphin/card/__CARDGetDirBlock.c:
 Dolphin/card/CARDMount.c:
 	.text       start:0x8040D3C8 end:0x8040D410
 
+Dolphin/card/CARDClose.c:
+	.text       start:0x8040E3DC end:0x8040E430
+
 Dolphin/card/__CARDIsOpened.c:
 	.text       start:0x8040E430 end:0x8040E438
 
