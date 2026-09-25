@@ -496,6 +496,7 @@ config.libs = [
             Object(Matching, "SN/SNInitInterrupts.c"),
             Object(Matching, "SN/SNOpen.c"),
             Object(Matching, "SN/SNClose.c"),
+            Object(Matching, "SN/SNHandler.c"),
             Object(Matching, "SN/SNSync.c"),
             Object(Matching, "SN/SNRead8.c"),
             Object(Matching, "SN/SNWrite8.c"),

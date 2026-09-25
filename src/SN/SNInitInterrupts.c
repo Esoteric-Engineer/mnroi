@@ -1,7 +1,7 @@
 void __OSMaskInterrupts(void);
 void __OSSetInterruptHandler(void);
 void __OSUnmaskInterrupts(void);
-void fn_8016B0B0(void);
+void SNHandler(void);
 
 asm void SNInitInterrupts(void)
 {
@@ -15,8 +15,8 @@ asm void SNInitInterrupts(void)
     bl      __OSMaskInterrupts
     li      r3, 0x40
     bl      __OSMaskInterrupts
-    lis     r4, fn_8016B0B0@h
-    ori     r4, r4, fn_8016B0B0@l
+    lis     r4, SNHandler@h
+    ori     r4, r4, SNHandler@l
     li      r3, 0x19
     bl      __OSSetInterruptHandler
     li      r3, 0x40
