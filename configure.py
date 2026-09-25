@@ -504,6 +504,7 @@ config.libs = [
             Object(Matching, "SN/fn_8016C134.c"),
             Object(Matching, "SN/fn_8016C3BC.c"),
             Object(Matching, "SN/fn_8016C3DC.c"),
+            Object(Matching, "SN/fn_8016C458.c"),
         ],
     },
     DolphinLib(
