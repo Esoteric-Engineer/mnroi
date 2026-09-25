@@ -1741,6 +1741,9 @@ Dolphin/arq/__ARQCallbackHack.c:
 Dolphin/ax/AXInit.c:
 	.text       start:0x80406828 end:0x8040684C
 
+Dolphin/ax/AXInitEx.c:
+	.text       start:0x8040684C end:0x80406898
+
 Dolphin/ax/AXQuit.c:
 	.text       start:0x80406898 end:0x804068CC
 

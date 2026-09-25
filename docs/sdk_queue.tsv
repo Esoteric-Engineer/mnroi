@@ -366,7 +366,7 @@ addr	size	name	library	confidence	notes	status
 0x804065E4	0x15C	ARQPostRequest	arq	exact	CFTKK size run of 10; equal size in CFTKK ARQPostRequest size 0x15c and ac-decomp ARQPostRequest size 0x15c	open
 0x80406740	0xE8	ARQRemoveRequest	arq	guess	0xE8; unlinks one request pointer from both ARQ queues	open
 0x80406828	0x24	AXInit	ax	exact	CFTKK 0x24; wrapper before AXInitEx; equal size in CFTKK AXInit size 0x24	matched
-0x8040684C	0x4C	AXInitEx	ax	exact	__AXVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK 0x4C; loads __AXVersion and calls OSRegisterVersion	open
+0x8040684C	0x4C	AXInitEx	ax	exact	__AXVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK 0x4C; loads __AXVersion and calls OSRegisterVersion	matched
 0x80406898	0x34	AXQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK AXQuit size 0x34	matched
 0x804068CC	0x18	__AXGetStackHead	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetStackHead size 0x18	matched
 0x804068E4	0x74	__AXServiceCallbackStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXServiceCallbackStack size 0x74	open
