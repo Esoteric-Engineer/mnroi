@@ -1,6 +1,6 @@
 void fn_8016B104(void);
 void fn_8016B130(void);
-int fn_8016B16C(void);
+int SNRead8(void);
 void SNWrite8(int);
 
 asm void fn_8016B24C(void)
@@ -13,12 +13,12 @@ asm void fn_8016B24C(void)
     stmw    r28, 8(r1)
     bl      fn_8016B104
 L_8016B260:
-    bl      fn_8016B16C
+    bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016B260
 L_8016B26C:
     bl      fn_8016B130
-    bl      fn_8016B16C
+    bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016B26C
     bl      fn_8016B130

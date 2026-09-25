@@ -1,5 +1,5 @@
 void fn_8016B130(void);
-int fn_8016B16C(void);
+int SNRead8(void);
 void SNSync(void);
 
 asm void fn_8016B448(void)
@@ -14,12 +14,12 @@ asm void fn_8016B448(void)
     mr      r30, r3
     bl      fn_8016B130
 L_8016B464:
-    bl      fn_8016B16C
+    bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016B464
 L_8016B470:
     bl      fn_8016B130
-    bl      fn_8016B16C
+    bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016B470
     bl      fn_8016B130
