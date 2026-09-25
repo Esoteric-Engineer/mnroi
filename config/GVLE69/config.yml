@@ -30,6 +30,7 @@ force_active:
 - fn_80168B9C
 - fn_8016C134
 - fn_8016A060
+- fn_8016B448
 ldscript_template: config/GVLE69/ldscript.lcf
 # Change this to match the linker version. See config.example.yml for a list.
 # NOTE: 11 is a guess (CW 2.7+). Revisit once the real compiler version is known.
