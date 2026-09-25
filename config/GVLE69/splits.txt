@@ -201,6 +201,9 @@ SN/SNClose.c:
 SN/SNSync.c:
 	.text       start:0x8016B158 end:0x8016B16C
 
+SN/SNWrite32.c:
+	.text       start:0x8016B21C end:0x8016B24C
+
 SN/fn_8016B24C.c:
 	.text       start:0x8016B24C end:0x8016B29C
 

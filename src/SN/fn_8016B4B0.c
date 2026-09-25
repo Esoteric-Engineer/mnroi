@@ -2,7 +2,7 @@ void fn_8016B11C(void);
 void fn_8016B130(void);
 int fn_8016B16C(void);
 void fn_8016B1AC(void);
-void fn_8016B21C(void);
+void SNWrite32(void);
 
 asm void fn_8016B4B0(void)
 {
@@ -30,7 +30,7 @@ L_8016B4D8:
     li      r29, 0
 L_8016B4F8:
     lwzx    r3, r30, r29
-    bl      fn_8016B21C
+    bl      SNWrite32
     addi    r29, r29, 4
     cmpw    r29, r28
     blt     L_8016B4F8
