@@ -1684,6 +1684,9 @@ Dolphin/vm/VMAlloc.c:
 Dolphin/vm/__VMDoesMappingExist.c:
 	.text       start:0x80401140 end:0x80401160
 
+Dolphin/vm/__VMMappingErrorAlert.c:
+	.text       start:0x80401160 end:0x80401198
+
 Dolphin/vm/__VMSetARAMPageAsDirty.c:
 	.text       start:0x80401198 end:0x804011B0
 
