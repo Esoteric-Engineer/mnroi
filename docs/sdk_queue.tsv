@@ -381,11 +381,11 @@ addr	size	name	library	confidence	notes	status
 0x80406D94	0xE4	__AXAuxInit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAuxInit size 0xe4	open
 0x80406E78	0x10	__AXAuxQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAuxQuit size 0x10	matched
 0x80406E88	0x34	__AXGetAuxAInput	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAInput size 0x34	open
-0x80406EBC	0x20	__AXGetAuxAInputDpl2	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAInputDpl2 size 0x20	open
+0x80406EBC	0x20	__AXGetAuxAInputDpl2	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAInputDpl2 size 0x20	matched
 0x80406EDC	0x1C	__AXGetAuxAOutput	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutput size 0x1c	matched
-0x80406EF8	0x20	__AXGetAuxAOutputDpl2R	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutputDpl2R size 0x20	open
-0x80406F18	0x20	__AXGetAuxAOutputDpl2Ls	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutputDpl2Ls size 0x20	open
-0x80406F38	0x20	__AXGetAuxAOutputDpl2Rs	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutputDpl2Rs size 0x20	open
+0x80406EF8	0x20	__AXGetAuxAOutputDpl2R	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutputDpl2R size 0x20	matched
+0x80406F18	0x20	__AXGetAuxAOutputDpl2Ls	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutputDpl2Ls size 0x20	matched
+0x80406F38	0x20	__AXGetAuxAOutputDpl2Rs	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAOutputDpl2Rs size 0x20	matched
 0x80406F58	0x34	__AXGetAuxBInput	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxBInput size 0x34	open
 0x80406F8C	0x1C	__AXGetAuxBOutput	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxBOutput size 0x1c	matched
 0x80406FA8	0x1C	__AXGetAuxBForDPL2	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxBForDPL2 size 0x1c	matched
