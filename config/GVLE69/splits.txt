@@ -1660,6 +1660,18 @@ Runtime.PPCEABI.H/tolower2.c:
 Runtime.PPCEABI.H/vprintf.c:
 	.text       start:0x80400834 end:0x80400868
 
+Dolphin/vm/VMSetLogStatsCallback.c:
+	.text       start:0x80400AAC end:0x80400AB4
+
+Dolphin/vm/__VMGetNumPagesInMRAM.c:
+	.text       start:0x80400AB4 end:0x80400ABC
+
+Dolphin/vm/VMGetARAMSize.c:
+	.text       start:0x80400ABC end:0x80400AC4
+
+Dolphin/vm/VMGetARAMBase.c:
+	.text       start:0x80400AC4 end:0x80400ACC
+
 Runtime.PPCEABI.H/__save_gpr.c:
 	.text       start:0x80401EB0 end:0x80401EFC
 

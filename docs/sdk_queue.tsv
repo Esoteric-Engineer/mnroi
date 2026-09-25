@@ -286,10 +286,10 @@ addr	size	name	library	confidence	notes	status
 0x80400868	0xAC	strncat	libc	guess	word-at-a-time end scan, copies n bytes, NUL-terminates	open
 0x80400914	0xB0	__floatdisf	libc	guess	libgcc s64 -> float, 0x1FFFFF/0x7FF rounding guard	open
 0x804009C4	0xE8	VMInit	vm	guess	CFTKK 0x9C; calls OSGetArenaHi/PPCHalt/VMBASEInit; precedes VMSetLogStatsCallback	open
-0x80400AAC	0x8	VMSetLogStatsCallback	vm	exact	CFTKK 0x8, first of four 0x8 VM getters after VMInit	open
-0x80400AB4	0x8	__VMGetNumPagesInMRAM	vm	exact	CFTKK 0x8; called by the page-replacement functions	open
-0x80400ABC	0x8	VMGetARAMSize	vm	exact	CFTKK 0x8; called by VMAlloc	open
-0x80400AC4	0x8	VMGetARAMBase	vm	exact	CFTKK 0x8; called by VMAlloc	open
+0x80400AAC	0x8	VMSetLogStatsCallback	vm	exact	CFTKK 0x8, first of four 0x8 VM getters after VMInit	matched
+0x80400AB4	0x8	__VMGetNumPagesInMRAM	vm	exact	CFTKK 0x8; called by the page-replacement functions	matched
+0x80400ABC	0x8	VMGetARAMSize	vm	exact	CFTKK 0x8; called by VMAlloc	matched
+0x80400AC4	0x8	VMGetARAMBase	vm	exact	CFTKK 0x8; called by VMAlloc	matched
 0x80400ACC	0x30	__VMAllocMRAMSwapSpace	vm	exact	CFTKK size run of 5	open
 0x80400AFC	0x1F0	__VMSwapPageIn	vm	guess	CFTKK 0x1FC; calls __VMGetPageToReplace, VMBASE helpers	open
 0x80400CEC	0x44	__VMGetPageToReplace	vm	exact	CFTKK size run of 12	open

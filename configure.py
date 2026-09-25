@@ -882,6 +882,15 @@ config.libs = [
         ],
     ),
     DolphinLib(
+        "vm",
+        [
+            Object(Matching, "Dolphin/vm/VMSetLogStatsCallback.c"),
+            Object(Matching, "Dolphin/vm/__VMGetNumPagesInMRAM.c"),
+            Object(Matching, "Dolphin/vm/VMGetARAMSize.c"),
+            Object(Matching, "Dolphin/vm/VMGetARAMBase.c"),
+        ],
+    ),
+    DolphinLib(
         "ar",
         [
             Object(Matching, "Dolphin/ar/ARRegisterDMACallback.c"),
