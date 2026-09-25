@@ -948,6 +948,7 @@ config.libs = [
             Object(Matching, "Dolphin/ax/__AXGetAuxAOutputDpl2Ls.c"),
             Object(Matching, "Dolphin/ax/__AXGetAuxAOutputDpl2R.c"),
             Object(Matching, "Dolphin/ax/__AXGetAuxAInputDpl2.c"),
+            Object(Matching, "Dolphin/ax/__AXDSPDoneCallback.c"),
         ],
     ),
     DolphinLib(

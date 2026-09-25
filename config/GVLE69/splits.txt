@@ -1783,6 +1783,9 @@ Dolphin/ax/AXSetMode.c:
 Dolphin/ax/__AXDSPInitCallback.c:
 	.text       start:0x80407BD4 end:0x80407BE0
 
+Dolphin/ax/__AXDSPDoneCallback.c:
+	.text       start:0x80407C38 end:0x80407C64
+
 Dolphin/ax/__AXGetStudio.c:
 	.text       start:0x80408128 end:0x80408134
 
