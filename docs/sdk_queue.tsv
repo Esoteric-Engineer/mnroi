@@ -224,7 +224,7 @@ addr	size	name	library	confidence	notes	status
 0x8017FBA4	0x64	__OSInitSystemCall	os	exact	ac-decomp size 0x64	matched
 0x8017FC08	0x4	DefaultSwitchThreadCallback	os	exact	CFTKK-Decomp size 0x4 (blr); the initial value of the thread-switch callback slot	matched
 0x8017FC0C	0x158	__OSThreadInit	os	known	Named by dtk-dev from OSInit; matched: RunQueue block struct + rq local, own unit (original TU is OSThread.c, split into separate units here)	matched
-0x8018037C	0x1E8	fn_8018037C	os	known	registered NonMatching at 99.51%; blockers in docs/nonmatching.md	stalled
+0x8018037C	0x1E8	OSCreateThread	os	known	later-SDK version (error/specific fields, FPE setup via __OSErrorTable[16]); renamed from fn_8018037C	matched
 0x80180BFC	0xEC	OSSleepThread	os	exact	ac-decomp size 0xec	matched
 0x80180CE8	0x104	OSWakeupThread	os	known	symbol already named; just needs split + match	matched
 0x80180DEC	0xC0	OSSetThreadPriority	os	exact	ac-decomp size 0xc0	matched

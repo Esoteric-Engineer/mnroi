@@ -51,29 +51,31 @@ struct OSThread {
     void* specific[2];
 };
 
-struct OSFpuInfo {
-    char pad[0x40];
-    u32 enabled;
-};
+typedef void (*OSErrorHandler)(u16 error, void* context, ...);
 
-extern struct OSFpuInfo lbl_8057C570;
+extern OSErrorHandler __OSErrorTable[17];
 extern u32 __OSFpscrEnableBits;
 
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
-extern void lbl_8017C74C(OSContext* context, u32 pc, u32 sp);
+extern void OSInitContext(OSContext* context, u32 pc, u32 newsp);
 extern void OSExitThread(void* val);
 
 OSThreadQueue __OSActiveThreadQueue : 0x800000DC;
 
+/* Not a known SDK helper: its local supplies the frame's 8-byte slot and the addi copy. */
+static inline OSContext* GetContext(OSThread* thread)
+{
+    OSContext* context = &thread->context;
+    return context;
+}
 
-int fn_8018037C(OSThread* thread, void* (*func)(void*), void* param, void* stack,
-                u32 stackSize, s32 priority, u16 attr)
+int OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stack,
+                   u32 stackSize, s32 priority, u16 attr)
 {
     int enabled;
     u32 sp;
     int i;
-    u64 fill = (u64)-1;
 
     if (priority < 0 || priority > 31) {
         return 0;
@@ -96,7 +98,7 @@ int fn_8018037C(OSThread* thread, void* (*func)(void*), void* param, void* stack
     sp -= 8;
     ((u32*)sp)[0] = 0;
     ((u32*)sp)[1] = 0;
-    lbl_8017C74C(&thread->context, (u32)func, sp);
+    OSInitContext(GetContext(thread), (u32)func, sp);
     thread->context.lr = (u32)OSExitThread;
     thread->context.gpr[3] = (u32)param;
     thread->stackBase = stack;
@@ -108,7 +110,7 @@ int fn_8018037C(OSThread* thread, void* (*func)(void*), void* param, void* stack
 
     enabled = OSDisableInterrupts();
 
-    if (lbl_8057C570.enabled != 0) {
+    if (__OSErrorTable[16] != 0) {
         thread->context.srr1 |= 0x900;
         thread->context.state |= 1;
         thread->context.fpscr = (__OSFpscrEnableBits & 0xF8) | 4;
