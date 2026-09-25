@@ -419,6 +419,8 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/__pure_virtual.c"),
             Object(Matching, "Runtime.PPCEABI.H/__udivdi3.c"),
             Object(Matching, "Runtime.PPCEABI.H/__umoddi3.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__save_gpr.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__restore_gpr.c"),
         ],
     },
     {
