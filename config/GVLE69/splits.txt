@@ -213,6 +213,9 @@ SN/fn_8016C134.c:
 SN/fn_8016C3BC.c:
 	.text       start:0x8016C3BC end:0x8016C3DC
 
+SN/fn_8016C3DC.c:
+	.text       start:0x8016C3DC end:0x8016C458
+
 Runtime.PPCEABI.H/__ieee754_acosf.c:
 	.text       start:0x8016CE18 end:0x8016D064
 
