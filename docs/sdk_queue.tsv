@@ -415,8 +415,8 @@ addr	size	name	library	confidence	notes	status
 0x8040158C	0x28	VMBASESetPageLocked	vm	exact	CFTKK-Decomp VMBASESetPageLocked, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
 0x804015B4	0x8	__VMBASESetSwapPageCallback	vm	exact	CFTKK-Decomp __VMBASESetSwapPageCallback, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
 0x804015BC	0x3C	__VMBASEInitPageTable	vm	exact	CFTKK-Decomp __VMBASEInitPageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
-0x804015F8	0x30	__VMBASEInitLockedPageTable	vm	exact	CFTKK-Decomp __VMBASEInitLockedPageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
-0x80401628	0x30	__VMBASEInitReversePageTable	vm	exact	CFTKK-Decomp __VMBASEInitReversePageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
+0x804015F8	0x30	__VMBASEInitLockedPageTable	vm	exact	CFTKK-Decomp __VMBASEInitLockedPageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
+0x80401628	0x30	__VMBASEInitReversePageTable	vm	exact	CFTKK-Decomp __VMBASEInitReversePageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
 0x80401658	0x13C	__VMBASEInvalidatePageTable	vm	guess	CFTKK-Decomp __VMBASEInvalidatePageTable is 0x158 (ours 0x13C), same position in VMBASE (was label-only; boundaries set 2026-09-24)	open
 0x80401794	0xD8	__VMBASEInvalidateLockedPageTable	vm	exact	CFTKK-Decomp __VMBASEInvalidateLockedPageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
 0x8040186C	0x78	__VMBASEInvalidateReversePageTable	vm	exact	CFTKK-Decomp __VMBASEInvalidateReversePageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open

@@ -1007,6 +1007,8 @@ config.libs = [
             Object(Matching, "Dolphin/vm/VMBASEIsPageLocked.c"),
             Object(Matching, "Dolphin/vm/VMBASESetPageLocked.c"),
             Object(Matching, "Dolphin/vm/__VMBASESetSwapPageCallback.c"),
+            Object(Matching, "Dolphin/vm/__VMBASEInitLockedPageTable.c"),
+            Object(Matching, "Dolphin/vm/__VMBASEInitReversePageTable.c"),
             Object(Matching, "Dolphin/vm/__VMBASEVirtualAddrToPageTableAddr.c"),
             Object(Matching, "Dolphin/vm/__VMBASEISIServiceExceptionPrep.c"),
         ],
