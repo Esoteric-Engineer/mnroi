@@ -1717,6 +1717,9 @@ Dolphin/ax/__AXGetCommandListCycles.c:
 Dolphin/ax/__AXClQuit.c:
 	.text       start:0x80407940 end:0x80407944
 
+Dolphin/ax/AXSetMode.c:
+	.text       start:0x80407944 end:0x80407958
+
 Dolphin/ax/__AXSPBQuit.c:
 	.text       start:0x80408558 end:0x8040855C
 
