@@ -129,6 +129,9 @@ SN/fn_8016AB28.c:
 SN/fn_8016B24C.c:
 	.text       start:0x8016B24C end:0x8016B29C
 
+SN/fn_8016B29C.c:
+	.text       start:0x8016B29C end:0x8016B30C
+
 SN/fn_8016B374.c:
 	.text       start:0x8016B374 end:0x8016B3D8
 

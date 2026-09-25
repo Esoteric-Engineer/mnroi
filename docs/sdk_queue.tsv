@@ -82,7 +82,7 @@ addr	size	name	library	confidence	notes	status
 0x8016B1E0	0x3C	SNRead32	sn	exact	CFTKK-Decomp SNRead32 (0x3C); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
 0x8016B21C	0x30	SNWrite32	sn	exact	CFTKK-Decomp SNWrite32 (0x30); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
 0x8016B24C	0x50		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	matched
-0x8016B29C	0x70		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	open
+0x8016B29C	0x70		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	matched
 0x8016B30C	0x68		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	open
 0x8016B374	0x64		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	matched
 0x8016B3D8	0x70		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	open
