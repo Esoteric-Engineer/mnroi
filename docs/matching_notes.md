@@ -62,6 +62,7 @@ Smaller findings:
 
 - **CodeWarrior treats an undeclared data symbol in `asm` as a local label:** declaring the existing external object before the asm function is required for `@ha`/`@l` relocations to compile.
 - **Raw words in MWCC `asm` (trailing zero padding, data-as-code): `opword 0`, not `.long`/`.4byte`** (`.long` gives `end of line expected`). `fn_80169AF4` (`0x80169AF4`) ends with four `opword 0`.
+- **MWCC `asm` cannot write `b sym+addend` (`illegal operand`; a `void` function extern accepts a bare `b sym` but drops the addend), so a branch whose target is mid-object (an SN stub's `b lbl_80573680+0x8708`) can only be emitted as `opword 0x484121E4`.** `main.dol` and `diff_dol.py` are byte-identical, but objdiff scores the function 99.89% because the original word carries an `R_PPC_REL24` reloc. Splitting a symbol at the target to fix it fails (`overlaps with symbol`) unless the enclosing blob is shrunk, which re-relocates every unit that indexes it (`fn_80169B48`, `0x80169B48`).
 - **Hardware-register arrays must use CodeWarrior's declare-at-address form, not a pointer-cast macro:**
 
   ```c
