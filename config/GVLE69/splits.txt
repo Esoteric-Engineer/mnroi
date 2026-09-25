@@ -117,6 +117,9 @@ SN/fn_8016A094.c:
 SN/fn_8016A1A4.c:
 	.text       start:0x8016A1A4 end:0x8016A1B4
 
+SN/fn_8016A1B4.c:
+	.text       start:0x8016A1B4 end:0x8016A2DC
+
 SN/fn_8016A408.c:
 	.text       start:0x8016A408 end:0x8016A440
 
