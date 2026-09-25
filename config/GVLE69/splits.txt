@@ -789,7 +789,7 @@ Dolphin/os/OSCache.c:
 
 Dolphin/os/__OSCacheInit.c:
 	.text       start:0x8017C088 end:0x8017C2DC
-	.data       start:0x804D0AF0 end:0x804D0D1C
+	.data       start:0x804D0AF0 end:0x804D0D20
 
 Dolphin/os/__OSLoadFPUContext.c:
 	.text       start:0x8017C2DC end:0x8017C400
@@ -860,7 +860,7 @@ Dolphin/os/fn_8017D4A4.c:
 
 Dolphin/os/__OSBootDolSimple.c:
 	.text       start:0x8017D568 end:0x8017D9EC
-	.data       start:0x804D1218 end:0x804D1224
+	.data       start:0x804D1218 end:0x804D1228
 
 Dolphin/os/__OSBootDol.c:
 	.text       start:0x8017D9EC end:0x8017DB88

@@ -1,4 +1,4 @@
-extern char lbl_80573680[];
+extern char lbl_8057BD88[];
 extern void DCInvalidateRange(void);
 extern void fn_80168770(void);
 extern void fn_80168C9C(void);
@@ -12,8 +12,8 @@ asm void fn_801691B8(void)
     mflr    r30
     bl      fn_8016918C
     bne     L_80169218
-    lis     r3, (lbl_80573680 + 0x8820)@h
-    ori     r3, r3, (lbl_80573680 + 0x8820)@l
+    lis     r3, (lbl_8057BD88 + 0x118)@h
+    ori     r3, r3, (lbl_8057BD88 + 0x118)@l
     li      r4, 0x20
     bl      DCInvalidateRange
     lis     r3, 0xcc00
@@ -25,8 +25,8 @@ asm void fn_801691B8(void)
     li      r4, 0
     stw     r4, 0xc(r3)
     stw     r4, 0x10(r3)
-    lis     r4, (lbl_80573680 + 0x8820)@h
-    ori     r4, r4, (lbl_80573680 + 0x8820)@l
+    lis     r4, (lbl_8057BD88 + 0x118)@h
+    ori     r4, r4, (lbl_8057BD88 + 0x118)@l
     stw     r4, 0x14(r3)
     li      r4, 0x20
     stw     r4, 0x18(r3)
@@ -43,8 +43,8 @@ L_80169218:
     lwzu    r5, 0x4(r4)
     stwu    r5, 0x4(r3)
     addi    r3, r3, 4
-    lis     r4, (lbl_80573680 + 0x8820)@h
-    ori     r4, r4, (lbl_80573680 + 0x8820)@l
+    lis     r4, (lbl_8057BD88 + 0x118)@h
+    ori     r4, r4, (lbl_8057BD88 + 0x118)@l
     li      r5, 0x20
     bl      fn_80168770
     li      r4, 0x2c

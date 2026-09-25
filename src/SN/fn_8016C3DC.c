@@ -1,5 +1,5 @@
 extern char lbl_804CFF30[];
-extern char lbl_80573680[];
+extern char lbl_8057BD88[];
 extern void fn_8016BF04(void);
 extern void fn_8016C094(void);
 extern void __OSSetExceptionHandler(void);
@@ -17,19 +17,19 @@ asm void fn_8016C3DC(void)
     bne     L_end
     li      r0, 0
     li      r6, 1
-    lis     r4, (lbl_80573680+0x88E0)@ha
-    lis     r5, (lbl_80573680+0x88A0)@ha
-    lis     r8, (lbl_80573680+0x88E4)@ha
+    lis     r4, (lbl_8057BD88+0x1D8)@ha
+    lis     r5, (lbl_8057BD88+0x198)@ha
+    lis     r8, (lbl_8057BD88+0x1DC)@ha
     li      r11, -1
-    lis     r10, (lbl_80573680+0x88EC)@ha
-    lis     r7, (lbl_80573680+0x88F1)@ha
-    lis     r9, (lbl_80573680+0x88F0)@ha
-    stw     r0, (lbl_80573680+0x88E0)@l(r4)
-    stw     r11, (lbl_80573680+0x88E4)@l(r8)
-    stw     r0, (lbl_80573680+0x88EC)@l(r10)
-    stb     r6, (lbl_80573680+0x88F0)@l(r9)
-    stw     r0, (lbl_80573680+0x88A0)@l(r5)
-    stb     r6, (lbl_80573680+0x88F1)@l(r7)
+    lis     r10, (lbl_8057BD88+0x1E4)@ha
+    lis     r7, (lbl_8057BD88+0x1E9)@ha
+    lis     r9, (lbl_8057BD88+0x1E8)@ha
+    stw     r0, (lbl_8057BD88+0x1D8)@l(r4)
+    stw     r11, (lbl_8057BD88+0x1DC)@l(r8)
+    stw     r0, (lbl_8057BD88+0x1E4)@l(r10)
+    stb     r6, (lbl_8057BD88+0x1E8)@l(r9)
+    stw     r0, (lbl_8057BD88+0x198)@l(r5)
+    stb     r6, (lbl_8057BD88+0x1E9)@l(r7)
     bl      fn_8016BF04
     lis     r4, fn_8016C094@ha
     li      r3, 2

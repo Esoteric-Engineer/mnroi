@@ -1,5 +1,6 @@
 extern char lbl_804CFC80[];
 void fn_80169BF8(void);
+void lbl_8057BD88(void);
 
 asm void fn_80169B48(void)
 {
@@ -28,7 +29,7 @@ asm void fn_80169B48(void)
     mfsprg  r31, 1
     mtxer   r31
     lwz     r31, 0xdf8(r0)
-    opword  0x484121E4
+    b       lbl_8057BD88
 L_80169BA8:
     mfsprg  r31, 0
     mtcrf   255, r31

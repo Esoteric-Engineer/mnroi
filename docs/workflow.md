@@ -146,6 +146,8 @@ For an unlinked object, raw objdump output is noisy. This tool wraps the bundled
 python3 tools/objdiff_mismatches.py Dolphin/dvd/dvdfs DVDConvertPathToEntrynum
 ```
 
+It is stricter than the progress numbers. `report.json` runs objdiff with the default `functionRelocDiffs=none`, which flags a relocation only when the other side has none, so a reloc to the wrong symbol or addend still counts as 100% there. After renaming, splitting or resizing a symbol that matched units reference, check those units with this tool, or run `build/tools/objdiff-cli report generate --config functionRelocDiffs=all -o <file>` and look for anything below 100%.
+
 ### Decoding a data constant before you use it
 
 When a function references a string or table you intend to reproduce, read the original bytes first rather than guessing:

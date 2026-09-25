@@ -1,4 +1,4 @@
-extern char lbl_80573680[];
+extern char lbl_8057BD88[];
 extern void fn_8016B374(void);
 extern void fn_8016B4B0(void);
 
@@ -17,9 +17,9 @@ L_loop:
     stb     r0, 0(r9)
     addi    r9, r9, 1
     bdnz    L_loop
-    lis     r9, (lbl_80573680+0x8874)@ha
+    lis     r9, (lbl_8057BD88+0x16C)@ha
     li      r0, 0x10
-    lwz     r11, (lbl_80573680+0x8874)@l(r9)
+    lwz     r11, (lbl_8057BD88+0x16C)@l(r9)
     slwi    r0, r0, 8
     li      r9, 9
     sth     r0, 0xa(r1)
