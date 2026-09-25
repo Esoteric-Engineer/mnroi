@@ -27,6 +27,7 @@ force_active:
 - __kernel_cos
 - __ieee754_rem_pio2
 - fn_8016A1A4
+- fn_80168B9C
 ldscript_template: config/GVLE69/ldscript.lcf
 # Change this to match the linker version. See config.example.yml for a list.
 # NOTE: 11 is a guess (CW 2.7+). Revisit once the real compiler version is known.

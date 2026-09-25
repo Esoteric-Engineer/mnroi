@@ -433,6 +433,7 @@ config.libs = [
         "objects": [
             Object(Matching, "SN/fn_801687E8.c"),
             Object(Matching, "SN/EnableMetroTRKInterrupts.c"),
+            Object(Matching, "SN/fn_80168B9C.c"),
             Object(Matching, "SN/fn_80168CC4.c"),
             Object(Matching, "SN/fn_80169134.c"),
             Object(Matching, "SN/fn_80169150.c"),
