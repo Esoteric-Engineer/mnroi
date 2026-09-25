@@ -312,7 +312,7 @@ addr	size	name	library	confidence	notes	status
 0x804014D8	0x28	VMBASESetPageLocked	vm	guess	0x28; called by __VMSwapPageIn and LRU	open
 0x80401500	0x50	__VMBASEDSIServiceExceptionPrep	vm	exact	CFTKK size 0x50	open
 0x80401550	0x8B0		vm	unidentified	label-only code (no function symbol in symbols.txt): add function boundaries, then split + match. VMBASE asm	open
-0x80401E00	0x4C	__VMBASEISIServiceExceptionPrep	vm	exact	CFTKK size 0x4C	open
+0x80401E00	0x4C	__VMBASEISIServiceExceptionPrep	vm	exact	CFTKK size 0x4C	matched
 0x80401E4C	0x64	__VMBASEISIServiceException	vm	guess	CFTKK 0x58 (DSI one is 0x64); OSClearContext/OSSetCurrentContext/OSLoadContext	open
 0x80401EB0	0x4C	__save_gpr	runtime	known	symbol already named; just needs split + match	matched
 0x80401EFC	0x4C	__restore_gpr	runtime	known	symbol already named; just needs split + match	matched

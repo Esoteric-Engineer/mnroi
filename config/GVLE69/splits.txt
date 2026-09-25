@@ -1699,6 +1699,9 @@ Dolphin/vm/__VMSetARAMPageAsDirty.c:
 Dolphin/vm/__VMIsARAMPageDirty.c:
 	.text       start:0x804011B0 end:0x804011C4
 
+Dolphin/vm/__VMBASEISIServiceExceptionPrep.c:
+	.text       start:0x80401E00 end:0x80401E4C
+
 Runtime.PPCEABI.H/__save_gpr.c:
 	.text       start:0x80401EB0 end:0x80401EFC
 

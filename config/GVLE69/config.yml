@@ -19,6 +19,7 @@ force_active:
 - __moddi3
 - __OSClearAlarm
 - GXReadGPMetric
+- __VMBASEISIServiceExceptionPrep
 - __OSLoadFPUContext
 - __kernel_sin
 - __kernel_cos
