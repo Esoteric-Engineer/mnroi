@@ -421,7 +421,7 @@ addr	size	name	library	confidence	notes	status
 0x80409208	0x4	__AXVPBQuit	ax	exact	CFTKK size run of 3; equal size in CFTKK __AXVPBQuit size 0x4	matched
 0x8040920C	0xC4	AXSetVoiceSrcType	ax	exact	CFTKK size run of 3; equal size in CFTKK AXSetVoiceSrcType size 0xc4	open
 0x804092D0	0x5C	AXSetVoiceState	ax	exact	CFTKK size run of 3; equal size in CFTKK AXSetVoiceState size 0x5c	open
-0x8040932C	0x110	AXSetVoiceAddr	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceAddr size 0x110	open
+0x8040932C	0x110	AXSetVoiceAddr	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceAddr size 0x110	matched
 0x8040943C	0xA4	AXSetVoiceAdpcm	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceAdpcm size 0xa4	open
 0x804094E0	0x98	AXSetVoiceSrc	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceSrc size 0x98	open
 0x80409578	0x6C	AXSetVoiceAdpcmLoop	ax	exact	CFTKK size run of 3; equal size in CFTKK AXSetVoiceAdpcmLoop size 0x6c	open

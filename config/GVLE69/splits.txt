@@ -1774,6 +1774,9 @@ Dolphin/ax/__AXGetPBs.c:
 Dolphin/ax/__AXVPBQuit.c:
 	.text       start:0x80409208 end:0x8040920C
 
+Dolphin/ax/AXSetVoiceAddr.c:
+	.text       start:0x8040932C end:0x8040943C
+
 Dolphin/dsp/DSPCheckMailToDSP.c:
 	.text       start:0x8040962C end:0x8040963C
 
