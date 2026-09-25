@@ -225,6 +225,9 @@ SN/fn_8016B8CC.c:
 SN/fn_8016BAF0.c:
 	.text       start:0x8016BAF0 end:0x8016BB98
 
+SN/fn_8016BB98.c:
+	.text       start:0x8016BB98 end:0x8016BC70
+
 SN/fn_8016BC70.c:
 	.text       start:0x8016BC70 end:0x8016BCC4
 
