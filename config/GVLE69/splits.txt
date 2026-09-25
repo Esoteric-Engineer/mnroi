@@ -204,6 +204,9 @@ SN/SNSync.c:
 SN/SNWrite8.c:
 	.text       start:0x8016B1AC end:0x8016B1E0
 
+SN/SNRead32.c:
+	.text       start:0x8016B1E0 end:0x8016B21C
+
 SN/SNWrite32.c:
 	.text       start:0x8016B21C end:0x8016B24C
 
