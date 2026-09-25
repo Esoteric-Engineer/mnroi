@@ -888,6 +888,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/__VMGetNumPagesInMRAM.c"),
             Object(Matching, "Dolphin/vm/VMGetARAMSize.c"),
             Object(Matching, "Dolphin/vm/VMGetARAMBase.c"),
+            Object(Matching, "Dolphin/vm/__VMIsARAMPageDirty.c"),
         ],
     ),
     DolphinLib(

@@ -1672,6 +1672,9 @@ Dolphin/vm/VMGetARAMSize.c:
 Dolphin/vm/VMGetARAMBase.c:
 	.text       start:0x80400AC4 end:0x80400ACC
 
+Dolphin/vm/__VMIsARAMPageDirty.c:
+	.text       start:0x804011B0 end:0x804011C4
+
 Runtime.PPCEABI.H/__save_gpr.c:
 	.text       start:0x80401EB0 end:0x80401EFC
 
