@@ -6,7 +6,7 @@ addr	size	name	library	confidence	notes	status
 0x80003334	0x130		init	known	Zeroes f0-f31 (paired singles when HID2[PSE]) and sets FPSCR; second call in __start. Reads the 12 bytes of .init data before it (lbl_80003328 double 0.0, lbl_8000332C ps pair, dtk pad_00_80003328_init), which its unit must also cover; ac-decomp's __start.c inlines it, so no reference name: keep the fn_ name, nofralloc asm in section .init (unit Dolphin/os/<name>.c)	open
 0x80003464	0x4		init	known	Empty `blr`, called twice from __start (where the CW __start calls __init_user); ac-decomp's __start.c inlines it, so no reference name: keep the fn_ name, nofralloc asm in section .init (unit Dolphin/os/<name>.c)	matched
 0x80003468	0x24	__init_hardware	init	exact	Same as ac-decomp __ppc_eabi_init __init_hardware, plus a `bl __OSInitFPRs` between __OSPSInit and __OSCacheInit (older SDK). Rename in src/Dolphin/os/__start.c too	matched
-0x80168770	0x78		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
+0x80168770	0x78		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
 0x801687E8	0x10		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	matched
 0x801687F8	0xF0		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c)	open
 0x801688E8	0x64	EnableMetroTRKInterrupts	sn	known	symbol already named; just needs split + match	matched
