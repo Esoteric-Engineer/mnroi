@@ -1945,3 +1945,18 @@ Dolphin/texPalette/TEXGet.c:
 
 Dolphin/os/__start.c:
 	.init       start:0x80003100 end:0x80003254
+
+Dolphin/os/fn_80003254.c:
+	.init       start:0x80003254 end:0x800032C0
+
+Dolphin/os/__check_pad3.c:
+	.init       start:0x800032C0 end:0x80003300
+
+Dolphin/os/fn_80003300.c:
+	.init       start:0x80003300 end:0x80003328
+
+Dolphin/os/fn_80003464.c:
+	.init       start:0x80003464 end:0x80003468
+
+Dolphin/os/__init_hardware.c:
+	.init       start:0x80003468 end:0x8000348C

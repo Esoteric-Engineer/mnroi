@@ -11,9 +11,9 @@ extern char lbl_804CFC20[];
 extern void memset(void);
 extern void fn_80003300(void);
 extern void fn_80003334(void);
-extern void fn_80003468(void);
+extern void __init_hardware(void);
 extern void fn_80003254(void);
-extern void fn_800032C0(void);
+extern void __check_pad3(void);
 extern void fn_80003464(void);
 extern void fn_8016894C(void);
 extern void fn_801813D4(void);
@@ -35,7 +35,7 @@ __declspec(section ".init") asm void __start(void)
     ori r13, r13, _SDA_BASE_@l
     bl fn_80003300
     bl fn_80003334
-    bl fn_80003468
+    bl __init_hardware
     li r0, -0x1
     stwu r1, -0x8(r1)
     stw r0, 0x4(r1)
@@ -82,7 +82,7 @@ L_800031A4:
     cmplwi r3, 0x1
     bne L_800031D8
 L_800031D4:
-    bl fn_800032C0
+    bl __check_pad3
 L_800031D8:
     bl fn_80003464
     mr r3, r30
