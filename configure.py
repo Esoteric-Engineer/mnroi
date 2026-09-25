@@ -999,6 +999,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/__VMTranslateVMPageToARAMPage.c"),
             Object(Matching, "Dolphin/vm/__VMDoesMappingExist.c"),
             Object(Matching, "Dolphin/vm/__VMMappingErrorAlert.c"),
+            Object(Matching, "Dolphin/vm/__VMBASESetSwapPageCallback.c"),
             Object(Matching, "Dolphin/vm/__VMBASEISIServiceExceptionPrep.c"),
         ],
     ),
