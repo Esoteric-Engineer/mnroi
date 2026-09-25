@@ -1,6 +1,6 @@
 void fn_8016B130(void);
 int fn_8016B16C(void);
-void fn_8016B158(void);
+void SNSync(void);
 
 asm void fn_8016B30C(void)
 {
@@ -28,7 +28,7 @@ L_8016B334:
     stw     r31, 0x6830(r29)
     li      r3, 3
     stw     r3, 0x6834(r29)
-    bl      fn_8016B158
+    bl      SNSync
     lwz     r0, 0x1c(r1)
     mtlr    r0
     lmw     r28, 8(r1)

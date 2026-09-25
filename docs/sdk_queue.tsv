@@ -76,7 +76,7 @@ addr	size	name	library	confidence	notes	status
 0x8016B104	0x18	SNSelect	sn	guess	CFTKK-Decomp SNSelect is 0x10 (ours 0x18), same position in the SN comm layer. Hand-written asm	open
 0x8016B11C	0x14	SNDeselect	sn	guess	CFTKK-Decomp SNDeselect is 0x10 (ours 0x14), same position in the SN comm layer. Hand-written asm	open
 0x8016B130	0x28	SNWiggleSelect	sn	guess	CFTKK-Decomp SNWiggleSelect is 0x24 (ours 0x28), same position in the SN comm layer. Hand-written asm	open
-0x8016B158	0x14	SNSync	sn	exact	CFTKK-Decomp SNSync (0x14); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
+0x8016B158	0x14	SNSync	sn	exact	CFTKK-Decomp SNSync (0x14); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
 0x8016B16C	0x40	SNRead8	sn	exact	CFTKK-Decomp SNRead8 (0x40); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
 0x8016B1AC	0x34	SNWrite8	sn	exact	CFTKK-Decomp SNWrite8 (0x34); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
 0x8016B1E0	0x3C	SNRead32	sn	exact	CFTKK-Decomp SNRead32 (0x3C); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	open
