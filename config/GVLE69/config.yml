@@ -17,6 +17,8 @@ force_active:
 - __lshrdi3
 - fn_801796B8
 - __moddi3
+- __div2u
+- __mod2u
 - __OSClearAlarm
 - GXReadGPMetric
 - __VMBASEISIServiceExceptionPrep

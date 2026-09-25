@@ -794,6 +794,8 @@ config.libs = [
             Object(Matching, "Dolphin/os/__shl2i.c"),
             Object(Matching, "Dolphin/os/__mod2i.c"),
             Object(Matching, "Dolphin/os/__shr2i.c"),
+            Object(Matching, "Dolphin/os/__div2u.c"),
+            Object(Matching, "Dolphin/os/__mod2u.c"),
             Object(Matching, "Dolphin/os/OSInitAlarm.c"),
             Object(Matching, "Dolphin/os/fn_8017B444.c"),
             Object(Matching, "Dolphin/os/InsertAlarm.c"),

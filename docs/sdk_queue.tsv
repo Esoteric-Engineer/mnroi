@@ -89,8 +89,8 @@ addr	size	name	library	confidence	notes	status
 0x8016B448	0x68		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	open
 0x8016B4B0	0xA4		sn	known	SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	open
 0x8016B554	0x48	__cvt_fp2unsigned	runtime	known	named, but only a label in symbols.txt: add a function symbol, then split + match. 30 callers. Matched as Dolphin/os/__cvt_fp2unsigned.c (asm; GCC-style body, not the ac-decomp MSL version; constant is lbl_8049C190+0x38)	matched
-0x8016B5B0	0x4	__div2u	runtime	known	4-byte branch stub after __shr2i, CFTKK order (__div2u, __mod2u, __va_arg); named in symbols.txt like __div2i	open
-0x8016B5B4	0x4	__mod2u	runtime	known	4-byte branch stub after __div2u, CFTKK order; named in symbols.txt like __mod2i	open
+0x8016B5B0	0x4	__div2u	runtime	known	4-byte branch stub after __shr2i, CFTKK order (__div2u, __mod2u, __va_arg); named in symbols.txt like __div2i	matched
+0x8016B5B4	0x4	__mod2u	runtime	known	4-byte branch stub after __div2u, CFTKK order; named in symbols.txt like __mod2i	matched
 0x8016B5B8	0xF4	__va_arg	runtime	exact	CFTKK-Decomp __va_arg, same size 0xF4 and position (after __mod2u); source in ac-decomp Runtime.PPCEABI.H/__va_arg.c	open
 0x8016B6AC	0x8		sn	known	SN ProDG debug stub (second SN run, after the runtime), no public source: keep the fn_ name. Compiled C (stwu/mflr frames, 0x8058xxxx globals): write C if it matches, else nofralloc asm. Boundaries set by reachability 2026-09-24	open
 0x8016B6B4	0x8C		sn	known	SN ProDG debug stub (second SN run, after the runtime), no public source: keep the fn_ name. Compiled C (stwu/mflr frames, 0x8058xxxx globals): write C if it matches, else nofralloc asm. Boundaries set by reachability 2026-09-24	open
