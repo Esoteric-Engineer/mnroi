@@ -444,7 +444,7 @@ addr	size	name	library	confidence	notes	status
 0x8040A190	0x4	__CARDDefaultApiCallback	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDDefaultApiCallback size 0x4 and ac-decomp __CARDDefaultApiCallback size 0x4	matched
 0x8040A194	0x34	__CARDSyncCallback	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDSyncCallback size 0x34 and ac-decomp __CARDSyncCallback size 0x34	matched
 0x8040A1C8	0xD8	__CARDExtHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDExtHandler size 0xd8 and ac-decomp __CARDExtHandler size 0xd8	open
-0x8040A2A0	0x118	__CARDExiHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDExiHandler size 0x118 and ac-decomp __CARDExiHandler size 0x118	open
+0x8040A2A0	0x118	__CARDExiHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDExiHandler size 0x118 and ac-decomp __CARDExiHandler size 0x118	matched
 0x8040A3B8	0xA8	__CARDTxHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDTxHandler size 0xa8 and ac-decomp __CARDTxHandler size 0xa8	open
 0x8040A460	0x84	__CARDUnlockedHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDUnlockedHandler size 0x84 and ac-decomp __CARDUnlockedHandler size 0x84	open
 0x8040A4E4	0xC0	__CARDEnableInterrupt	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDEnableInterrupt size 0xc0 and ac-decomp __CARDEnableInterrupt size 0xc0	open
