@@ -259,6 +259,7 @@ Scope: everything in `Runtime.PPCEABI.H` that comes from Newlib or libgcc (strin
 
 - Comments and whitespace do not affect output, except for `__LINE__`/`__FILE__` and whitespace inside string literals.
 - Register allocation differences usually indicate a different expression shape or variable lifetime. Try reordering locals or introducing/removing a temporary.
+- **Keep no-op statements and "redundant" locals from the reference source; they change register allocation.** ac-decomp's `GXSetTexCopyDst` (`0x801929BC`) has `peTexFmtH = (peTexFmt >> 3) & 1; !peTexFmt;` before the insert. Both emit nothing, but without them the argument copies before the `bl` come out in a different order and `__GXData` lands in r6 instead of r4. Paste the reference body verbatim before reshaping it.
 - Instruction scheduling differences often come from the compiler hoisting a constant. Match the source structure rather than the instruction order directly.
 - If you're stuck around 95% on register choice, [decomp-permuter](https://github.com/simonlindholm/decomp-permuter) can brute-force equivalent C forms.
 - **A hardware-register store where the original is `lis`/`addi r3,r3,0x2000` then `sth r0,2(r3)` (base register with a separate offset)** can't be written in C: every form of `__VIRegs[1] = 0` (address-declared array, cast local, `register`, `vi + 1`) folds the offset into the store (`sth 0x2002(r3)`). Write it as `asm` (`__OSDoHotReset`, `fn_8017A6EC`).

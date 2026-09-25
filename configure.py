@@ -701,7 +701,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXSetDispCopySrc.c"),
             Object(Matching, "Dolphin/gx/GXSetTexCopySrc.c"),
             Object(Matching, "Dolphin/gx/GXSetDispCopyDst.c"),
-            Object(NonMatching, "Dolphin/gx/GXSetTexCopyDst.c"),
+            Object(Matching, "Dolphin/gx/GXSetTexCopyDst.c"),
             Object(Matching, "Dolphin/gx/GXSetDispCopyFrame2Field.c"),
             Object(Matching, "Dolphin/gx/GXSetCopyClamp.c"),
             Object(Matching, "Dolphin/gx/GXSetDispCopyYScale.c"),

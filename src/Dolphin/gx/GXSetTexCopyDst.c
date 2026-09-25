@@ -23,7 +23,7 @@ void GXSetTexCopyDst(u16 wd, u16 ht, int fmt, u8 mipmap)
     u32 colTiles;
     u32 cmpTiles;
     u32 peTexFmt;
-    __GXDataStruct* gx;
+    u32 peTexFmtH;
 
     __GXData->cpTexZ = 0;
     peTexFmt = fmt & 0xF;
@@ -44,14 +44,16 @@ void GXSetTexCopyDst(u16 wd, u16 ht, int fmt, u8 mipmap)
     }
 
     __GXData->cpTexZ = (fmt & 0x10) == 0x10;
-    __GXData->cpTex = (u32)__rlwimi((int)__GXData->cpTex, (int)peTexFmt, 0, 28, 28);
+    peTexFmtH = (peTexFmt >> 3) & 1;
+    // SDK statement with no effect; removing it changes the register allocation.
+    !peTexFmt;
+    SET_REG_FIELD(__GXData->cpTex, 1, 3, peTexFmtH);
     peTexFmt = peTexFmt & 7;
     __GetImageTileCount(fmt, wd, ht, &rowTiles, &colTiles, &cmpTiles);
 
-    gx = __GXData;
-    gx->cpTexStride = 0;
-    SET_REG_FIELD(gx->cpTexStride, 10, 0, rowTiles * cmpTiles);
-    SET_REG_FIELD(gx->cpTexStride, 8, 24, 0x4D);
-    SET_REG_FIELD(gx->cpTex, 1, 9, mipmap);
-    SET_REG_FIELD(gx->cpTex, 3, 4, peTexFmt);
+    __GXData->cpTexStride = 0;
+    SET_REG_FIELD(__GXData->cpTexStride, 10, 0, rowTiles * cmpTiles);
+    SET_REG_FIELD(__GXData->cpTexStride, 8, 24, 0x4D);
+    SET_REG_FIELD(__GXData->cpTex, 1, 9, mipmap);
+    SET_REG_FIELD(__GXData->cpTex, 3, 4, peTexFmt);
 }
