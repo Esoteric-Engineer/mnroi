@@ -164,4 +164,11 @@ Finish with: functions matched (name + address), the unit's final state (`Matchi
 rows you changed.
 
 Suggest a single-line commit message for the user to use (don't commit it yourself), e.g.
-`Match <FunctionName> (<unit path>)`.
+`Match <FunctionName> (<unit path>)`. Always put it alone in a fenced code block (no
+surrounding text or inline backticks) so the terminal offers a copy button:
+
+````
+```
+Match <FunctionName> (<unit path>)
+```
+````
