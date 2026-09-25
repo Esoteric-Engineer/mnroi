@@ -1693,6 +1693,9 @@ Dolphin/os/OSSetCurrentHeap.c:
 Dolphin/mtx/PSMTXIdentity.c:
 	.text       start:0x804044C8 end:0x804044F4
 
+Dolphin/mtx/PSMTXTrans.c:
+	.text       start:0x80404708 end:0x8040473C
+
 Dolphin/mtx/PSMTXScale.c:
 	.text       start:0x8040473C end:0x80404764
 
