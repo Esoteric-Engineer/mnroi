@@ -2144,6 +2144,9 @@ Dolphin/ax/__AXDSPInitCallback.c:
 Dolphin/ax/__AXDSPDoneCallback.c:
 	.text       start:0x80407C38 end:0x80407C64
 
+Dolphin/ax/__AXOutQuit.c:
+	.text       start:0x804080D0 end:0x80408128
+
 Dolphin/ax/__AXGetStudio.c:
 	.text       start:0x80408128 end:0x80408134
 
