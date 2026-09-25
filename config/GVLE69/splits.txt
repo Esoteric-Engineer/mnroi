@@ -36,6 +36,9 @@ SN/fn_8016AAD8.c:
 SN/fn_8016AAE0.c:
 	.text       start:0x8016AAE0 end:0x8016AAE8
 
+SN/fn_8016AAE8.c:
+	.text       start:0x8016AAE8 end:0x8016AAF0
+
 Dolphin/os/__cvt_fp2unsigned.c:
 	.text       start:0x8016B554 end:0x8016B59C
 
