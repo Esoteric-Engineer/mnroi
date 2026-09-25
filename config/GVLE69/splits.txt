@@ -9,6 +9,9 @@ Sections:
 	.sbss       type:bss align:4
 	.sdata2     type:rodata align:32
 
+SN/EnableMetroTRKInterrupts.c:
+	.text       start:0x801688E8 end:0x8016894C
+
 SN/fn_80169134.c:
 	.text       start:0x80169134 end:0x80169150
 

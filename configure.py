@@ -430,6 +430,7 @@ config.libs = [
         "cflags": cflags_base,
         "progress_category": "sdk",
         "objects": [
+            Object(Matching, "SN/EnableMetroTRKInterrupts.c"),
             Object(Matching, "SN/fn_80169134.c"),
             Object(Matching, "SN/fn_80169150.c"),
         ],

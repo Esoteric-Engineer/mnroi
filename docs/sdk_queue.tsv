@@ -9,7 +9,7 @@ addr	size	name	library	confidence	notes	status
 0x80168770	0x78		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
 0x801687E8	0x10		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
 0x801687F8	0xF0		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
-0x801688E8	0x64	EnableMetroTRKInterrupts	sn	known	symbol already named; just needs split + match	open
+0x801688E8	0x64	EnableMetroTRKInterrupts	sn	known	symbol already named; just needs split + match	matched
 0x8016894C	0x250		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
 0x80168B9C	0x14		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
 0x80168BB0	0xEC		sn	unidentified	SN Systems ProDG debug stub, not Dolphin SDK (see docs/sdk_libraries.md)	open
