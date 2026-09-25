@@ -2006,6 +2006,9 @@ Dolphin/vm/__VMBASEInitReversePageTable.c:
 Dolphin/vm/__VMBASEVirtualAddrToPageTableAddr.c:
 	.text       start:0x804018E4 end:0x804018FC
 
+Dolphin/vm/__VMBASESetupSDR1.c:
+	.text       start:0x8040199C end:0x804019E4
+
 Dolphin/vm/__VMBASEISIServiceExceptionPrep.c:
 	.text       start:0x80401DFC end:0x80401E4C
 
