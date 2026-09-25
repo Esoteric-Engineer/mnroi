@@ -338,7 +338,7 @@ addr	size	name	library	confidence	notes	status
 0x80404148	0x60	OSInitMessageQueue	os	exact	CFTKK size run of 3	open
 0x804041A8	0xC8	OSSendMessage	os	exact	CFTKK size run of 3	open
 0x80404270	0xDC	OSReceiveMessage	os	exact	CFTKK size run of 3	open
-0x8040434C	0x58	OSInitSemaphore	os	exact	CFTKK 0x58; OSInitThreadQueue	open
+0x8040434C	0x58	OSInitSemaphore	os	exact	CFTKK 0x58; OSInitThreadQueue	matched
 0x804043A4	0x70	OSWaitSemaphore	os	exact	CFTKK 0x70; OSSleepThread	open
 0x80404414	0x54	OSTryWaitSemaphore	os	guess	0x54 between OSWaitSemaphore and OSSignalSemaphore	open
 0x80404468	0x60	OSSignalSemaphore	os	exact	CFTKK 0x60; OSWakeupThread	open
