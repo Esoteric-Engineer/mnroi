@@ -766,6 +766,7 @@ config.libs = [
     DolphinLib(
         "os",
         [
+            Object(Matching, "Dolphin/os/__start.c"),
             Object(Matching, "Dolphin/os/fn_8017A5CC.c"),
             Object(Matching, "Dolphin/os/fn_8017A620.c"),
             Object(Matching, "Dolphin/os/fn_8017A67C.c"),

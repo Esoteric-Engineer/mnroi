@@ -1,5 +1,5 @@
 addr	size	name	library	confidence	notes	status
-0x80003100	0x154	__start	init	known	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
+0x80003100	0x154	__start	init	known	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text; matched as nofralloc asm (this SN-era __start inlines __init_registers, memset of .sbss/.sdata, SN stub call fn_8016894C)	matched
 0x80003254	0x6C		init	unidentified	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
 0x800032C0	0x40		init	unidentified	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
 0x80003300	0x28		init	unidentified	.init boot/runtime code (__start and helpers); not scanned by sdk_scout queue, which only reads .text	open
