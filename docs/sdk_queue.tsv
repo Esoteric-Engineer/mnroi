@@ -395,7 +395,7 @@ addr	size	name	library	confidence	notes	status
 0x80407228	0x8	__AXGetCommandListCycles	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetCommandListCycles size 0x8	matched
 0x80407230	0x3C	__AXGetCommandListAddress	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetCommandListAddress size 0x3c	open
 0x8040726C	0x6B0	__AXNextFrame	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXNextFrame size 0x6b0	open
-0x8040791C	0x24	__AXClInit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXClInit size 0x24	open
+0x8040791C	0x24	__AXClInit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXClInit size 0x24	matched
 0x80407940	0x4	__AXClQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXClQuit size 0x4	matched
 0x80407944	0x14	AXSetMode	ax	exact	CFTKK size run of 33; equal size in CFTKK AXSetMode size 0x14	matched
 0x80407958	0x8	AXGetMode	ax	guess	0x8 getter after AXSetMode	open

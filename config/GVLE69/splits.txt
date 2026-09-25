@@ -1771,6 +1771,9 @@ Dolphin/ax/AXRegisterAuxACallback.c:
 Dolphin/ax/__AXGetCommandListCycles.c:
 	.text       start:0x80407228 end:0x80407230
 
+Dolphin/ax/__AXClInit.c:
+	.text       start:0x8040791C end:0x80407940
+
 Dolphin/ax/__AXClQuit.c:
 	.text       start:0x80407940 end:0x80407944
 
