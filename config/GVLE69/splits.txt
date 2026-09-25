@@ -2005,6 +2005,9 @@ Dolphin/vm/VMBASESetPageLocked.c:
 Dolphin/vm/__VMBASESetSwapPageCallback.c:
 	.text       start:0x804015B4 end:0x804015BC
 
+Dolphin/vm/__VMBASEVirtualAddrToPageTableAddr.c:
+	.text       start:0x804018E4 end:0x804018FC
+
 Dolphin/vm/__VMBASEISIServiceExceptionPrep.c:
 	.text       start:0x80401DFC end:0x80401E4C
 
