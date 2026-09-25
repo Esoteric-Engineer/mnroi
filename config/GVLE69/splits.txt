@@ -1654,6 +1654,9 @@ Dolphin/OdemuExi2/DBGEXIImm.c:
 Runtime.PPCEABI.H/tolower2.c:
 	.text       start:0x80400544 end:0x80400560
 
+Runtime.PPCEABI.H/vprintf.c:
+	.text       start:0x80400834 end:0x80400868
+
 Dolphin/ar/ARRegisterDMACallback.c:
 	.text       start:0x804048CC end:0x80404910
 
