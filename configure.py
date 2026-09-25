@@ -905,6 +905,7 @@ config.libs = [
     DolphinLib(
         "arq",
         [
+            Object(Matching, "Dolphin/arq/__ARQServiceQueueLo.c"),
             Object(Matching, "Dolphin/arq/__ARQCallbackHack.c"),
         ],
     ),
