@@ -105,6 +105,9 @@ SN/fn_80169AF4.c:
 SN/fn_80169B48.c:
 	.text       start:0x80169B48 end:0x80169BF8
 
+SN/fn_80169ECC.c:
+	.text       start:0x80169ECC end:0x8016A060
+
 SN/fn_8016A060.c:
 	.text       start:0x8016A060 end:0x8016A078
 
