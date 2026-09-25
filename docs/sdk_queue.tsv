@@ -505,7 +505,7 @@ addr	size	name	library	confidence	notes	status
 0x8040E430	0x8	__CARDIsOpened	card	exact	CFTKK size run of 5; equal size in CFTKK __CARDIsOpened size 0x8 and ac-decomp __CARDIsOpened size 0x8	matched
 0x8040E438	0x130	CreateCallbackFat	card	exact	CFTKK size run of 5; equal size in CFTKK CreateCallbackFat size 0x130 and ac-decomp CreateCallbackFat size 0x130	open
 0x8040E568	0x220	CARDCreateAsync	card	exact	CFTKK size run of 5; equal size in CFTKK CARDCreateAsync size 0x220 and ac-decomp CARDCreateAsync size 0x220	open
-0x8040E788	0x48	CARDCreate	card	exact	0x48 sync wrapper of CARDCreateAsync; equal size in ac-decomp CARDCreate size 0x48	open
+0x8040E788	0x48	CARDCreate	card	exact	0x48 sync wrapper of CARDCreateAsync; equal size in ac-decomp CARDCreate size 0x48	matched
 0x8040E7D0	0x1B8	__CARDSeek	card	exact	CFTKK size run of 3; equal size in CFTKK __CARDSeek size 0x1b8 and ac-decomp __CARDSeek size 0x1b8	open
 0x8040E988	0x130	ReadCallback	card	exact	CFTKK size run of 3; equal size in CFTKK ReadCallback size 0x130 and ac-decomp ReadCallback size 0x130	open
 0x8040EAB8	0x144	CARDReadAsync	card	exact	CFTKK size run of 3; equal size in CFTKK CARDReadAsync size 0x144	open
