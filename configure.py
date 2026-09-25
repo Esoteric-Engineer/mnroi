@@ -583,7 +583,7 @@ config.libs = [
             Object(Matching, "Dolphin/gx/GXInitLightPos.c"),
             Object(Matching, "Dolphin/gx/GXInitLightDir.c"),
             Object(Matching, "Dolphin/gx/GXInitLightColor.c"),
-            Object(NonMatching, "Dolphin/gx/GXLoadLightObjImm.c"),
+            Object(Matching, "Dolphin/gx/GXLoadLightObjImm.c"),
             Object(Matching, "Dolphin/gx/GXSetChanAmbColor.c"),
             Object(Matching, "Dolphin/gx/GXSetChanMatColor.c"),
             Object(Matching, "Dolphin/gx/GXSetNumChans.c"),

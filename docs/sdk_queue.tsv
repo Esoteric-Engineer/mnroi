@@ -305,7 +305,7 @@ addr	size	name	library	confidence	notes	status
 0x8018D440	0xD0	GXBegin	gx	guess	Matched: ac-decomp GXBegin (non-debug) with __GXSetDirtyState as a static inline; the game code inlines it	matched
 0x8018D510	0x88	__GXSendFlushPrim	gx	exact	ac-decomp size 0x88	matched
 0x8018D70C	0x190	GXInitLightSpot	gx	exact	CFTKK-Decomp size 0x190. Only callee is cosf; cutoff/spot-function switch computing the a0..a2 coefficients (not in ac-decomp); matched with the older reciprocal form (d=1/(..), multiplies) and fp_contract off	matched
-0x8018D8D4	0x7C	GXLoadLightObjImm	gx	known	registered NonMatching at 92.42%; blockers in docs/nonmatching.md	stalled
+0x8018D8D4	0x7C	GXLoadLightObjImm	gx	known	light is a bitmask (31 - cntlzw, & 7), not ac-decomp's switch; asm helper uses register locals	matched
 0x8018E0E0	0x48	GXInitTexObjCI	gx	exact	ac-decomp size 0x48	matched
 0x8018E128	0x164	GXInitTexObjLOD	gx	guess	ac-decomp size 0x194; matched in __GXGetTexTileShift.c (this game has no asserts; size 0x164)	matched
 0x8018E80C	0xA0	__SetSURegs	gx	known	ac-decomp GXTexture.c __SetSURegs as-is, with the SDK's `(int)` GET_REG_FIELD and `* const __GXData`; 100%, main.dol OK	matched
