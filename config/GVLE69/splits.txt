@@ -1711,6 +1711,9 @@ Dolphin/ax/__AXGetStackHead.c:
 Dolphin/ax/__AXPushCallbackStack.c:
 	.text       start:0x80406AE0 end:0x80406AF0
 
+Dolphin/ax/__AXPopCallbackStack.c:
+	.text       start:0x80406AF0 end:0x80406B0C
+
 Dolphin/ax/__AXAuxQuit.c:
 	.text       start:0x80406E78 end:0x80406E88
 

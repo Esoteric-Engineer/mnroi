@@ -914,6 +914,7 @@ config.libs = [
             Object(Matching, "Dolphin/ax/__AXGetStackHead.c"),
             Object(Matching, "Dolphin/ax/__AXGetNumVoices.c"),
             Object(Matching, "Dolphin/ax/__AXPushCallbackStack.c"),
+            Object(Matching, "Dolphin/ax/__AXPopCallbackStack.c"),
             Object(Matching, "Dolphin/ax/__AXAuxQuit.c"),
             Object(Matching, "Dolphin/ax/__AXGetCommandListCycles.c"),
             Object(Matching, "Dolphin/ax/__AXClQuit.c"),
