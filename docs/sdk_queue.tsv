@@ -421,7 +421,7 @@ addr	size	name	library	confidence	notes	status
 0x80401794	0xD8	__VMBASEInvalidateLockedPageTable	vm	exact	CFTKK-Decomp __VMBASEInvalidateLockedPageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
 0x8040186C	0x78	__VMBASEInvalidateReversePageTable	vm	exact	CFTKK-Decomp __VMBASEInvalidateReversePageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
 0x804018E4	0x18	__VMBASEVirtualAddrToPageTableAddr	vm	exact	CFTKK-Decomp __VMBASEVirtualAddrToPageTableAddr, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
-0x804018FC	0x58	__VMBASEInvalidateEntireTLB	vm	exact	CFTKK-Decomp __VMBASEInvalidateEntireTLB, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
+0x804018FC	0x58	__VMBASEInvalidateEntireTLB	vm	exact	CFTKK-Decomp __VMBASEInvalidateEntireTLB, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
 0x80401954	0x48	__VMBASESetupVMRegisters	vm	guess	CFTKK-Decomp __VMBASESetupVMRegisters is 0x54 (ours 0x48), same position in VMBASE (was label-only; boundaries set 2026-09-24)	open
 0x8040199C	0x48	__VMBASESetupSDR1	vm	exact	CFTKK-Decomp __VMBASESetupSDR1, same size and order in VMBASE (was label-only; boundaries set 2026-09-24). rfi targets lbl_804019B4/lbl_804019DC inside it (CFTKK __VMBASESetupVMRegisters_SetSDR1/_End): `entry` labels. Local in CFTKK	matched
 0x804019E4	0x17C	__VMBASESetupExceptionHandlers	vm	exact	CFTKK-Decomp __VMBASESetupExceptionHandlers, same size and order in VMBASE (was label-only; boundaries set 2026-09-24). Patches lbl_80401C4C/C50 and lbl_80401DF4/DF8 (the handlers' nop slots) and the 0x300/0x400 vectors	open

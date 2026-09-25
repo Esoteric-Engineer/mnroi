@@ -1008,6 +1008,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/__VMBASEInitLockedPageTable.c"),
             Object(Matching, "Dolphin/vm/__VMBASEInitReversePageTable.c"),
             Object(Matching, "Dolphin/vm/__VMBASEVirtualAddrToPageTableAddr.c"),
+            Object(Matching, "Dolphin/vm/__VMBASEInvalidateEntireTLB.c"),
             Object(Matching, "Dolphin/vm/__VMBASEDSIServiceExceptionPrep.c"),
             Object(Matching, "Dolphin/vm/__VMBASEISIServiceExceptionPrep.c"),
             Object(Matching, "Dolphin/vm/__VMBASESetupSDR1.c"),

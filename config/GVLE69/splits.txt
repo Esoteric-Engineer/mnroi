@@ -2009,6 +2009,9 @@ Dolphin/vm/__VMBASEInitReversePageTable.c:
 Dolphin/vm/__VMBASEVirtualAddrToPageTableAddr.c:
 	.text       start:0x804018E4 end:0x804018FC
 
+Dolphin/vm/__VMBASEInvalidateEntireTLB.c:
+	.text       start:0x804018FC end:0x80401954
+
 Dolphin/vm/__VMBASESetupSDR1.c:
 	.text       start:0x8040199C end:0x804019E4
 
