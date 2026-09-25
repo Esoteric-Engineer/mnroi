@@ -49,6 +49,7 @@ static inline u8 ClampU8(u8 var, u8 org)
 void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2])
 {
     PADStatus* origin;
+    s8 stick;
 
     status->button = (u16)((data[0] >> 16) & PAD_ALL);
     status->stickX = (s8)(data[0] >> 8);
@@ -116,10 +117,14 @@ void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2])
     lbl_8066F3F4 &= ~(0x80000000 >> chan);
 
     origin = &Origin[chan];
-    status->stickX = ClampS8(status->stickX, origin->stickX);
-    status->stickY = ClampS8(status->stickY, origin->stickY);
-    status->substickX = ClampS8(status->substickX, origin->substickX);
-    status->substickY = ClampS8(status->substickY, origin->substickY);
+    stick = status->stickX;
+    status->stickX = ClampS8(stick, origin->stickX);
+    stick = status->stickY;
+    status->stickY = ClampS8(stick, origin->stickY);
+    stick = status->substickX;
+    status->substickX = ClampS8(stick, origin->substickX);
+    stick = status->substickY;
+    status->substickY = ClampS8(stick, origin->substickY);
     status->triggerLeft = ClampU8(status->triggerLeft, origin->triggerLeft);
     status->triggerRight = ClampU8(status->triggerRight, origin->triggerRight);
 }
