@@ -1720,11 +1720,20 @@ Dolphin/ax/__AXClQuit.c:
 Dolphin/ax/AXSetMode.c:
 	.text       start:0x80407944 end:0x80407958
 
+Dolphin/ax/__AXDSPInitCallback.c:
+	.text       start:0x80407BD4 end:0x80407BE0
+
+Dolphin/ax/__AXGetStudio.c:
+	.text       start:0x80408128 end:0x80408134
+
 Dolphin/ax/__AXSPBQuit.c:
 	.text       start:0x80408558 end:0x8040855C
 
 Dolphin/ax/__AXGetNumVoices.c:
 	.text       start:0x804085F0 end:0x804085F8
+
+Dolphin/ax/__AXGetPBs.c:
+	.text       start:0x80408FBC end:0x80408FC8
 
 Dolphin/ax/__AXVPBQuit.c:
 	.text       start:0x80409208 end:0x8040920C
