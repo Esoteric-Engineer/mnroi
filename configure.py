@@ -484,6 +484,7 @@ config.libs = [
             Object(Matching, "SN/fn_8016B6B4.c"),
             Object(Matching, "SN/fn_8016B740.c"),
             Object(Matching, "SN/fn_8016B79C.c"),
+            Object(Matching, "SN/fn_8016B828.c"),
             Object(Matching, "SN/fn_8016B8CC.c"),
             Object(Matching, "SN/fn_8016BC70.c"),
             Object(Matching, "SN/fn_8016BCC4.c"),
