@@ -347,7 +347,7 @@ addr	size	name	library	confidence	notes	status
 0x804045C0	0x50	PSMTXTranspose	mtx	guess	0x50 paired-single, between Concat and Inverse	open
 0x80404610	0xF8	PSMTXInverse	mtx	exact	ac 0xF8	open
 0x80404708	0x34	PSMTXTrans	mtx	exact	ac 0x34	open
-0x8040473C	0x28	PSMTXScale	mtx	exact	ac 0x28	open
+0x8040473C	0x28	PSMTXScale	mtx	exact	ac 0x28	matched
 0x80404764	0xD0	C_MTXPerspective	mtx	guess	0xD0, calls tanf	open
 0x80404834	0x98	C_MTXOrtho	mtx	exact	ac/CFTKK 0x98	open
 0x804048CC	0x44	ARRegisterDMACallback	ar	exact	CFTKK size run of 5; equal size in CFTKK ARRegisterDMACallback size 0x44 and ac-decomp ARRegisterDMACallback size 0x44	matched

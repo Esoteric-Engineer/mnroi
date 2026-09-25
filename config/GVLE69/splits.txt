@@ -1690,6 +1690,9 @@ Dolphin/os/OSSetCurrentHeap.c:
 Dolphin/mtx/PSMTXIdentity.c:
 	.text       start:0x804044C8 end:0x804044F4
 
+Dolphin/mtx/PSMTXScale.c:
+	.text       start:0x8040473C end:0x80404764
+
 Dolphin/ar/ARRegisterDMACallback.c:
 	.text       start:0x804048CC end:0x80404910
 
