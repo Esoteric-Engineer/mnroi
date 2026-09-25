@@ -1750,6 +1750,9 @@ Dolphin/ax/__AXPopCallbackStack.c:
 Dolphin/ax/__AXAuxQuit.c:
 	.text       start:0x80406E78 end:0x80406E88
 
+Dolphin/ax/__AXGetAuxAInput.c:
+	.text       start:0x80406E88 end:0x80406EBC
+
 Dolphin/ax/__AXGetAuxAInputDpl2.c:
 	.text       start:0x80406EBC end:0x80406EDC
 
@@ -1764,6 +1767,9 @@ Dolphin/ax/__AXGetAuxAOutputDpl2Ls.c:
 
 Dolphin/ax/__AXGetAuxAOutputDpl2Rs.c:
 	.text       start:0x80406F38 end:0x80406F58
+
+Dolphin/ax/__AXGetAuxBInput.c:
+	.text       start:0x80406F58 end:0x80406F8C
 
 Dolphin/ax/__AXGetAuxBOutput.c:
 	.text       start:0x80406F8C end:0x80406FA8
