@@ -291,6 +291,7 @@ config.libs = [
         "cflags": cflags_runtime,
         "progress_category": "sdk",  # str | List[str]
         "objects": [
+            Object(Matching, "Runtime.PPCEABI.H/fn_8016CBDC.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_acosf.c"),
             Object(Matching, "Runtime.PPCEABI.H/atan2f.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_powf.c"),
