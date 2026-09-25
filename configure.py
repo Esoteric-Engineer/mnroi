@@ -968,6 +968,7 @@ config.libs = [
             Object(Matching, "Dolphin/dsp/DSPReadMailFromDSP.c"),
             Object(Matching, "Dolphin/dsp/DSPCheckInit.c"),
             Object(Matching, "Dolphin/dsp/DSPSendMailToDSP.c"),
+            Object(Matching, "Dolphin/dsp/DSPCancelTask.c"),
         ],
     ),
     DolphinLib(
