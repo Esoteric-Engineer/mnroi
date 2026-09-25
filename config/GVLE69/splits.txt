@@ -36,6 +36,9 @@ SN/fn_8016918C.c:
 SN/fn_801691A4.c:
 	.text       start:0x801691A4 end:0x801691B8
 
+SN/fn_801694B8.c:
+	.text       start:0x801694B8 end:0x801694DC
+
 SN/fn_8016A060.c:
 	.text       start:0x8016A060 end:0x8016A078
 
