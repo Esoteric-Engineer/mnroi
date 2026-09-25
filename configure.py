@@ -985,6 +985,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/CARDWriteAsync.c"),
             Object(Matching, "Dolphin/card/CARDDelete.c"),
             Object(Matching, "Dolphin/card/CARDGetStatus.c"),
+            Object(Matching, "Dolphin/card/CARDRead.c"),
         ],
     ),
 ]
