@@ -1001,6 +1001,12 @@ config.libs = [
             Object(Matching, "Dolphin/card/CARDOpen.c"),
         ],
     ),
+    DolphinLib(
+        "texPalette",
+        [
+            Object(Matching, "Dolphin/texPalette/TEXGet.c"),
+        ],
+    ),
 ]
 
 

@@ -541,5 +541,5 @@ addr	size	name	library	confidence	notes	status
 0x80411208	0xCC	GXBeginDisplayList	gx	exact	CFTKK 0xCC	open
 0x804112D4	0xC4	GXEndDisplayList	gx	exact	CFTKK 0xC4	open
 0x80411398	0x70	GXCallDisplayList	gx	exact	CFTKK 0x70	open
-0x80411408	0x10	TEXGet	texpalette	guess	`&pal->descriptorArray[id]` (load +8, index * 8); texPalette.c, unconfirmed	open
+0x80411408	0x10	TEXGet	texpalette	guess	`&pal->descriptorArray[id]` (load +8, index * 8); texPalette.c, unconfirmed	matched
 0x80411418	0xD4	TEXGetGXTexObjFromPalette	texpalette	guess	GXInitTexObj + GXInitTexObjLOD, header min/max LOD at 0x21/0x22; texPalette.c, unconfirmed	open
