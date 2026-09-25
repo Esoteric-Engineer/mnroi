@@ -1871,5 +1871,8 @@ Dolphin/card/CARDWriteAsync.c:
 Dolphin/card/CARDDeleteAsync.c:
 	.text       start:0x8040F1D8 end:0x8040F2E8
 
+Dolphin/card/CARDDelete.c:
+	.text       start:0x8040F2E8 end:0x8040F330
+
 Dolphin/os/__start.c:
 	.init       start:0x80003100 end:0x80003254
