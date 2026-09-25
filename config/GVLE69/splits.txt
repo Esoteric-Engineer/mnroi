@@ -54,6 +54,9 @@ SN/fn_80168F24.c:
 SN/fn_80168F6C.c:
 	.text       start:0x80168F6C end:0x8016900C
 
+SN/fn_8016900C.c:
+	.text       start:0x8016900C end:0x80169134
+
 SN/fn_80169134.c:
 	.text       start:0x80169134 end:0x80169150
 
