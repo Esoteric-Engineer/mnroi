@@ -51,6 +51,9 @@ SN/fn_8016AAF0.c:
 SN/fn_8016AAF8.c:
 	.text       start:0x8016AAF8 end:0x8016AB00
 
+SN/fn_8016AB00.c:
+	.text       start:0x8016AB00 end:0x8016AB08
+
 Dolphin/os/__cvt_fp2unsigned.c:
 	.text       start:0x8016B554 end:0x8016B59C
 
