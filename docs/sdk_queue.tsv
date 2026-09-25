@@ -211,8 +211,8 @@ addr	size	name	library	confidence	notes	status
 0x8017ECE0	0x298	OSGetResetButtonState	os	exact	ac-decomp size 0x298; matched (GameChoice mask is 0x1F here, not ac-decomp 0x3F)	matched
 0x8017EF78	0x60	WriteSramCallback	os	exact	ac-decomp size 0x60	matched
 0x8017EFD8	0x118	WriteSram	os	exact	ac-decomp size 0x118	matched
-0x8017F0F0	0x13C	__OSInitSram	os	known	Named by dtk-dev from OSInit; ac-decomp size 0x134; matched: unit defines Scb (claims .bss 0x8057C5C0-0x8057C618), which gives the addi r3,r30,0 copy	matched
-0x8017F2E4	0x33C	UnlockSram	os	exact	OSRtc.c UnlockSram (static in the SDK, global here: sibling units call it); ac-decomp body + gbs sanitise (Scb.offset <= 0x14) + WriteSram inlined; 98.07%, two addi/lwz scheduling swaps, see docs/nonmatching.md	stalled
+0x8017F0F0	0x13C	__OSInitSram	os	known	Named by dtk-dev from OSInit; ac-decomp size 0x134; matched: unit defines Scb (claims .bss 0x8057C5C0-0x8057C614), which gives the addi r3,r30,0 copy. Unit spans 0x8017F0F0-0x8017F668 (__OSInitSram through __OSUnlockSramEx, merged for UnlockSram)	matched
+0x8017F2E4	0x33C	UnlockSram	os	exact	OSRtc.c UnlockSram (static in the SDK, global here: sibling units call it); plain ac-decomp body + gbs sanitise (Scb.offset <= 0x14, unsigned masks for cmplwi) + WriteSram inlined. Matched in Dolphin/os/__OSInitSram.c, which defines Scb (pooled .bss gives the hoisted addi r30,r31,0x40 schedule)	matched
 0x8017F678	0x124	__OSReadROM	os	exact	CFTKK-Decomp size 0x124. EXILock, EXISelect, EXIImm command word then EXIDma read, EXIDeselect, EXIUnlock, DCInvalidateRange on the destination; caller is game code (not in ac-decomp)	matched
 0x8017F79C	0x80	OSGetSoundMode	os	exact	ac-decomp size 0x80	matched
 0x8017F81C	0xA4	OSSetSoundMode	os	exact	ac-decomp size 0xa4	matched

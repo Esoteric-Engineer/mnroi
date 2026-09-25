@@ -944,14 +944,8 @@ Dolphin/os/WriteSram.c:
 	.text       start:0x8017EFD8 end:0x8017F0F0
 
 Dolphin/os/__OSInitSram.c:
-	.text       start:0x8017F0F0 end:0x8017F22C
+	.text       start:0x8017F0F0 end:0x8017F668
 	.bss        start:0x8057C5C0 end:0x8057C614
-
-Dolphin/os/OSLockSram.c:
-	.text       start:0x8017F22C end:0x8017F2E4
-
-Dolphin/os/OSUnlockSram.c:
-	.text       start:0x8017F2E4 end:0x8017F668
 
 Dolphin/os/__OSSyncSram.c:
 	.text       start:0x8017F668 end:0x8017F678
