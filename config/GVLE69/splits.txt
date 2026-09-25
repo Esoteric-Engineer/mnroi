@@ -156,6 +156,9 @@ Dolphin/os/__mod2u.c:
 SN/fn_8016B6AC.c:
 	.text       start:0x8016B6AC end:0x8016B6B4
 
+SN/fn_8016B740.c:
+	.text       start:0x8016B740 end:0x8016B79C
+
 SN/fn_8016BC70.c:
 	.text       start:0x8016BC70 end:0x8016BCC4
 
