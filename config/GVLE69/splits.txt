@@ -1675,6 +1675,9 @@ Dolphin/vm/VMGetARAMSize.c:
 Dolphin/vm/VMGetARAMBase.c:
 	.text       start:0x80400AC4 end:0x80400ACC
 
+Dolphin/vm/__VMAllocMRAMSwapSpace.c:
+	.text       start:0x80400ACC end:0x80400AFC
+
 Dolphin/vm/VMAlloc.c:
 	.text       start:0x80401000 end:0x80401100
 
