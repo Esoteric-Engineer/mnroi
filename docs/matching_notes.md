@@ -14,7 +14,7 @@ Scope: found on `Dolphin/gx` (`GC/1.2.5n`); untested on game code. For a GX sett
 
 - **`extern __GXDataStruct* const __GXData;`** Without `const`, a late extra `lwz rX,-11608(r13)` appears or `gx` lands a register too high (MWCC assumes stores may alias the pointer). Highest yield.
 - **Direct `__GXData->field` over a `gx` local**, once `const` is in. Keep a local only where the original really reloads (`GXCopyDisp`/`GXCopyTex` use both).
-- **`volatile GXFifoObj GXWGFifo : 0xCC008000;`** instead of the cast macro. It changes scheduling, not just addressing, and is per-function (`GXSetTevOrder` prefers the macro, `__GXSetViewport` needs the declare-at-address form).
+- **`volatile GXFifoObj GXWGFifo : 0xCC008000;`** instead of the cast macro. It changes scheduling, not just addressing, and is per-function (`GXSetTevOrder` prefers the macro, `__GXSetViewport` needs the declare-at-address form). Tell: a `lwz rX,__GXData` reload that the original schedules above the FIFO `stb`/`stw` and ours leaves below them, with registers otherwise identical, needs the declare-at-address form (`GXSetProjection`, `0x8018FF90`).
 
 Smaller findings:
 

@@ -21,7 +21,7 @@ typedef union {
     volatile f32 f32;
 } GXFifoObj;
 
-#define GXWGFifo (*(GXFifoObj*)0xCC008000)
+volatile GXFifoObj GXWGFifo : 0xCC008000;
 
 static inline void WriteProjPS(const register f32 src[6], register volatile void* dst)
 {

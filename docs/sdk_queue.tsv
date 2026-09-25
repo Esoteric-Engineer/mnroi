@@ -312,7 +312,7 @@ addr	size	name	library	confidence	notes	status
 0x8018EDE8	0x178	GXSetIndTexMtx	gx	guess	ac-decomp GXBump.c GXSetIndTexMtx; body verified (3x fmuls 1024.0 / fctiwz, id switch on ITM 1-3/5-7/9-11); 100%, main.dol OK	matched
 0x8018F0A4	0xEC	GXSetIndTexOrder	gx	guess	Shape identical to ac-decomp GXBump.c GXSetIndTexOrder (0x138): tex_map/tex_coord 0xFF -> 0, switch on ind_stage writing gx->iref (+0x120) 3-bit fields (shifts 0/3/6/9/12/15/18/21), BP reg 0x61, dirtyState |= 3. Size 0xEC here (no asserts, older). Between GXSetIndTexCoordScale and GXSetNumIndStages as in ac-decomp	matched
 0x8018F480	0x60	GXSetTevColor	gx	known	ac-decomp GXTev.c GXSetTevColor; 8-bit fields from one `*(u32*)&color` word, each masked `& 0xFF`; 100%, main.dol OK	matched
-0x8018FF90	0xA4	GXSetProjection	gx	known	registered NonMatching at 97.37%; blockers in docs/nonmatching.md	stalled
+0x8018FF90	0xA4	GXSetProjection	gx	known	SDK inline `asm` WriteProjPS, direct `__GXData->` access, declare-at-address GXWGFifo (the cast macro leaves the post-branch `lwz __GXData` below the FIFO stores); GXSetProjectionv in the same unit; 100%, main.dol OK	matched
 0x80190248	0x90	__GXSetViewport	gx	known	later-SDK __GXSetViewport body with real literals (`/ 2.0f`, `342.0f`; unit claims .sdata2 0x80670778-0x80670780), declare-at-address GXWGFifo, fp_contract off; GXSetViewport in the same unit; 100%, main.dol OK	matched
 0x80190398	0x40	GXSetScissorBoxOffset	gx	known	unsigned-shifted locals `x = (u32)(x_off + 342) >> 1`; 100%, main.dol OK	matched
 0x80190484	0xFC	__GXDefaultTexRegionCallback	gx	known	symbol already named; just needs split + match	matched
