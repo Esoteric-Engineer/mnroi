@@ -1,7 +1,7 @@
 void fn_8016B104(void);
 void fn_8016B130(void);
 int fn_8016B16C(void);
-void fn_8016B1AC(int);
+void SNWrite8(int);
 
 asm void fn_8016B374(int arg)
 {
@@ -24,11 +24,11 @@ L_8016B398:
     beq     L_8016B398
     bl      fn_8016B130
     li      r3, 3
-    bl      fn_8016B1AC
+    bl      SNWrite8
     srwi    r3, r31, 8
-    bl      fn_8016B1AC
+    bl      SNWrite8
     mr      r3, r31
-    bl      fn_8016B1AC
+    bl      SNWrite8
     lwz     r0, 0x1c(r1)
     mtlr    r0
     lmw     r28, 8(r1)
