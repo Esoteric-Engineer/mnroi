@@ -372,7 +372,7 @@ addr	size	name	library	confidence	notes	status
 0x804068E4	0x74	__AXServiceCallbackStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXServiceCallbackStack size 0x74	open
 0x80406958	0xB4	__AXAllocInit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAllocInit size 0xb4	open
 0x80406A0C	0xB4	__AXAllocQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAllocQuit size 0xb4	open
-0x80406AC0	0x20	__AXPushFreeStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXPushFreeStack size 0x20	open
+0x80406AC0	0x20	__AXPushFreeStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXPushFreeStack size 0x20	matched
 0x80406AE0	0x10	__AXPushCallbackStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXPushCallbackStack size 0x10	matched
 0x80406AF0	0x1C	__AXPopCallbackStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXPopCallbackStack size 0x1c	matched
 0x80406B0C	0x94	__AXRemoveFromStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXRemoveFromStack size 0x94	open
