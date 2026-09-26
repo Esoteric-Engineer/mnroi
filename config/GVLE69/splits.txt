@@ -2230,6 +2230,9 @@ Dolphin/ax/__AXDSPResumeCallback.c:
 Dolphin/ax/__AXDSPDoneCallback.c:
 	.text       start:0x80407C38 end:0x80407C64
 
+Dolphin/ax/__AXOutInitDSP.c:
+	.text       start:0x80407C64 end:0x80407D30
+
 Dolphin/ax/__AXOutQuit.c:
 	.text       start:0x804080D0 end:0x80408128
 
