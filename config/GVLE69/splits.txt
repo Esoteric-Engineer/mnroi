@@ -2202,6 +2202,9 @@ Dolphin/ax/__AXClQuit.c:
 Dolphin/ax/AXSetMode.c:
 	.text       start:0x80407944 end:0x80407958
 
+Dolphin/ax/__AXOutAiCallback.c:
+	.text       start:0x80407B18 end:0x80407BD4
+
 Dolphin/ax/__AXDSPInitCallback.c:
 	.text       start:0x80407BD4 end:0x80407BE0
 
