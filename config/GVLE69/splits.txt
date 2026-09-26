@@ -2298,6 +2298,9 @@ Dolphin/card/CARDGetStatus.c:
 Dolphin/card/CARDSetStatus.c:
 	.text       start:0x8040F7B0 end:0x8040F7F8
 
+Dolphin/card/__CARDRead.c:
+	.text       start:0x80410D24 end:0x80410D88
+
 Dolphin/texPalette/TEXGet.c:
 	.text       start:0x80411408 end:0x80411418
 
