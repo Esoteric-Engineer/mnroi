@@ -443,7 +443,7 @@ addr	size	name	library	confidence	notes	status
 0x804027E0	0x5E0	Halt	os	guess	OSFatal.c; target of OSSwitchStack; OSLoadFont, strlen, OSAllocFromArenaLo	open
 0x80402DC0	0x174	GetFontCode	os	exact	CFTKK size run of 4	open
 0x80402F34	0x174	Decode	os	exact	CFTKK size run of 4	open
-0x804030A8	0x64	OSGetFontEncode	os	exact	CFTKK size run of 4	open
+0x804030A8	0x64	OSGetFontEncode	os	exact	OSFont.c; matched (Dolphin/os/OSGetFontEncode.c): fontEncode static (lbl_8066CEB8, .sdata, left unclaimed) then, this game's version, stores ParseStringS (0x80403570) into lbl_8066F9B4 (.sbss) before returning; reads __VIRegs[55] (DTV_STAT) for NTSC	matched
 0x8040310C	0x324	ReadFont	os	exact	CFTKK size run of 4	open
 0x80403430	0x140	OSLoadFont	os	guess	calls ReadFont; called from Halt	open
 0x80403570	0x13C	ParseStringS	os	exact	CFTKK 0x13C; calls GetFontCode	open
