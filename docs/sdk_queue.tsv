@@ -419,7 +419,7 @@ addr	size	name	library	confidence	notes	status
 0x80401628	0x30	__VMBASEInitReversePageTable	vm	exact	CFTKK-Decomp __VMBASEInitReversePageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
 0x80401658	0x13C	__VMBASEInvalidatePageTable	vm	guess	CFTKK-Decomp __VMBASEInvalidatePageTable is 0x158 (ours 0x13C), same position in VMBASE (was label-only; boundaries set 2026-09-24)	open
 0x80401794	0xD8	__VMBASEInvalidateLockedPageTable	vm	exact	CFTKK-Decomp __VMBASEInvalidateLockedPageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
-0x8040186C	0x78	__VMBASEInvalidateReversePageTable	vm	exact	CFTKK-Decomp __VMBASEInvalidateReversePageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	open
+0x8040186C	0x78	__VMBASEInvalidateReversePageTable	vm	exact	CFTKK-Decomp __VMBASEInvalidateReversePageTable, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
 0x804018E4	0x18	__VMBASEVirtualAddrToPageTableAddr	vm	exact	CFTKK-Decomp __VMBASEVirtualAddrToPageTableAddr, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
 0x804018FC	0x58	__VMBASEInvalidateEntireTLB	vm	exact	CFTKK-Decomp __VMBASEInvalidateEntireTLB, same size and order in VMBASE (was label-only; boundaries set 2026-09-24)	matched
 0x80401954	0x48	__VMBASESetupVMRegisters	vm	guess	CFTKK-Decomp __VMBASESetupVMRegisters is 0x54 (ours 0x48), same position in VMBASE (was label-only; boundaries set 2026-09-24)	open
