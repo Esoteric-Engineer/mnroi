@@ -2069,6 +2069,9 @@ Dolphin/os/ParseStringS.c:
 Dolphin/os/OSInitMessageQueue.c:
 	.text       start:0x80404148 end:0x804041A8
 
+Dolphin/os/OSSendMessage.c:
+	.text       start:0x804041A8 end:0x80404270
+
 Dolphin/os/OSInitSemaphore.c:
 	.text       start:0x8040434C end:0x804043A4
 
