@@ -624,7 +624,7 @@ addr	size	name	library	confidence	notes	status
 0x8040E568	0x220	CARDCreateAsync	card	exact	CFTKK size run of 5; equal size in CFTKK CARDCreateAsync size 0x220 and ac-decomp CARDCreateAsync size 0x220	open
 0x8040E788	0x48	CARDCreate	card	exact	0x48 sync wrapper of CARDCreateAsync; equal size in ac-decomp CARDCreate size 0x48	matched
 0x8040E7D0	0x1B8	__CARDSeek	card	exact	CFTKK size run of 3; equal size in CFTKK __CARDSeek size 0x1b8 and ac-decomp __CARDSeek size 0x1b8	open
-0x8040E988	0x130	ReadCallback	card	exact	CFTKK size run of 3; equal size in CFTKK ReadCallback size 0x130 and ac-decomp ReadCallback size 0x130	open
+0x8040E988	0x130	ReadCallback	card	exact	CFTKK size run of 3; equal size in CFTKK ReadCallback size 0x130 and ac-decomp ReadCallback size 0x130	matched
 0x8040EAB8	0x144	CARDReadAsync	card	exact	CFTKK size run of 3; equal size in CFTKK CARDReadAsync size 0x144	open
 0x8040EBFC	0x48	CARDRead	card	exact	0x48 sync wrapper of CARDReadAsync; equal size in ac-decomp CARDRead size 0x48	matched
 0x8040EC44	0x170	WriteCallback	card	exact	CFTKK size run of 3; equal size in CFTKK WriteCallback size 0x170 and ac-decomp WriteCallback size 0x170; static, name repeats across CARD files (file-local name needed when splitting)	open

@@ -2360,6 +2360,9 @@ Dolphin/card/CreateCallbackFat.c:
 Dolphin/card/CARDCreate.c:
 	.text       start:0x8040E788 end:0x8040E7D0
 
+Dolphin/card/ReadCallback.c:
+	.text       start:0x8040E988 end:0x8040EAB8
+
 Dolphin/card/CARDRead.c:
 	.text       start:0x8040EBFC end:0x8040EC44
 
