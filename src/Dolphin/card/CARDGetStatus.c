@@ -43,7 +43,7 @@ typedef struct CARDStat {
 extern s32 __CARDGetControlBlock(s32 chan, CARDControl** card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
-extern s32 fn_8040DF78(CARDControl* card, CARDDir* ent);
+extern s32 __CARDIsReadable(CARDControl* card, CARDDir* ent);
 extern void fn_8040F330(CARDDir* ent, CARDStat* stat);
 
 s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat)
@@ -62,7 +62,7 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat)
 
     dir = __CARDGetDirBlock(card);
     ent = &dir[fileNo];
-    result = fn_8040DF78(card, ent);
+    result = __CARDIsReadable(card, ent);
 
     if (result >= 0) {
         memcpy(stat->gameName, ent->gameName, 4);

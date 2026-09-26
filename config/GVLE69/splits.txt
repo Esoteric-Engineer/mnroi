@@ -2461,6 +2461,9 @@ Dolphin/card/__CARDAccess.c:
 Dolphin/card/__CARDIsWritable.c:
 	.text       start:0x8040DE44 end:0x8040DF78
 
+Dolphin/card/__CARDIsReadable.c:
+	.text       start:0x8040DF78 end:0x8040E06C
+
 Dolphin/card/CARDOpen.c:
 	.text       start:0x8040E2C0 end:0x8040E3DC
 
