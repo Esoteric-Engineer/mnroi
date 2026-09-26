@@ -566,7 +566,7 @@ addr	size	name	library	confidence	notes	status
 0x8040A460	0x84	__CARDUnlockedHandler	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDUnlockedHandler size 0x84 and ac-decomp __CARDUnlockedHandler size 0x84	matched
 0x8040A4E4	0xC0	__CARDEnableInterrupt	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDEnableInterrupt size 0xc0 and ac-decomp __CARDEnableInterrupt size 0xc0	open
 0x8040A5A4	0xF0	__CARDReadStatus	card	exact	CFTKK size run of 23; equal size in CFTKK __CARDReadStatus size 0xf0 and ac-decomp __CARDReadStatus size 0xf0	open
-0x8040A694	0xAC	__CARDClearStatus	card	exact	CFTKK size run of 3; equal size in CFTKK __CARDClearStatus size 0xac and ac-decomp __CARDClearStatus size 0xac	open
+0x8040A694	0xAC	__CARDClearStatus	card	exact	CFTKK size run of 3; equal size in CFTKK __CARDClearStatus size 0xac and ac-decomp __CARDClearStatus size 0xac	matched
 0x8040A740	0xA4	TimeoutHandler	card	exact	CFTKK size run of 3; equal size in CFTKK TimeoutHandler size 0xa4 and ac-decomp TimeoutHandler size 0xa4	open
 0x8040A7E4	0x22C	Retry	card	exact	ac 0x22C (CFTKK 0x2A0); equal size in ac-decomp Retry size 0x22c	open
 0x8040AA10	0x110	UnlockedCallback	card	exact	ac-decomp size run of 16; equal size in CFTKK UnlockedCallback size 0x110 and ac-decomp UnlockedCallback size 0x110	matched

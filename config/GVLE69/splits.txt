@@ -2278,6 +2278,9 @@ Dolphin/card/__CARDExiHandler.c:
 Dolphin/card/__CARDUnlockedHandler.c:
 	.text       start:0x8040A460 end:0x8040A4E4
 
+Dolphin/card/__CARDClearStatus.c:
+	.text       start:0x8040A694 end:0x8040A740
+
 Dolphin/card/UnlockedCallback.c:
 	.text       start:0x8040AA10 end:0x8040AB20
 
