@@ -2488,6 +2488,9 @@ Dolphin/card/DummyLen.c:
 Dolphin/card/InitCallback.c:
 	.text       start:0x804108B4 end:0x80410924
 
+Dolphin/card/BlockReadCallback.c:
+	.text       start:0x80410C48 end:0x80410D24
+
 Dolphin/card/__CARDRead.c:
 	.text       start:0x80410D24 end:0x80410D88
 

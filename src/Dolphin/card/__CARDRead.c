@@ -17,7 +17,7 @@ typedef struct CARDControl {
 
 extern CARDControl __CARDBlock[2];
 
-extern void fn_80410C48(s32 chan, s32 result);
+extern void BlockReadCallback(s32 chan, s32 result);
 extern s32 __CARDReadSegment(s32 chan, CARDCallback callback);
 
 s32 __CARDRead(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback)
@@ -32,5 +32,5 @@ s32 __CARDRead(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback)
     card->repeat = length / 512u;
     card->addr = addr;
     card->buffer = dst;
-    return __CARDReadSegment(chan, fn_80410C48);
+    return __CARDReadSegment(chan, BlockReadCallback);
 }
