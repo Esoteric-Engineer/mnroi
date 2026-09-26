@@ -655,7 +655,7 @@ addr	size	name	library	confidence	notes	status
 0x80410E64	0x64	__CARDWrite	card	exact	ac 0x64; equal size in ac-decomp __CARDWrite size 0x64	matched
 0x80410EC8	0xA4	__CARDGetStatusEx	card	guess	ac 0xBC; CARDStatEx.c	open
 0x80410F6C	0x29C	__CARDSetStatusExAsync	card	guess	ac 0x254; __CARDIsWritable, memcmp	open
-0x80411208	0xCC	GXBeginDisplayList	gx	exact	CFTKK 0xCC	open
+0x80411208	0xCC	GXBeginDisplayList	gx	exact	CFTKK 0xCC; merged into Dolphin/gx/GXEndDisplayList.c (same TU: pooled .bss DisplayListFifo + __savedGXdata; needs (void)DisplayListFifo pin first)	matched
 0x804112D4	0xC4	GXEndDisplayList	gx	exact	CFTKK 0xC4; matched as Dolphin/gx/GXEndDisplayList.c, which defines the pooled .bss (DisplayListFifo 0x24 + __savedGXdata 0x5B0) that GXBeginDisplayList (0x80411208, still asm) also uses; Begin joins this unit when claimed	matched
 0x80411398	0x70	GXCallDisplayList	gx	exact	CFTKK 0x70. Matched as plain C from ac-decomp GXDisplayList.c (release shape, no asserts) in its own unit Dolphin/gx/GXCallDisplayList.c, registered as a second "gx" library entry between card and texPalette (by address)	matched
 0x80411408	0x10	TEXGet	texpalette	guess	`&pal->descriptorArray[id]` (load +8, index * 8); texPalette.c, unconfirmed	matched

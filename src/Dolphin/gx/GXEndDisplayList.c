@@ -19,7 +19,8 @@ typedef struct {
     u8 pad1[0x5A8 - 0xC];
     u8 inDispList;
     u8 dlSaveContext;
-    u8 pad2[0x5B0 - 0x5AA];
+    u8 pad2[0x5AC - 0x5AA];
+    u32 dirtyState;
 } __GXDataStruct;
 
 extern __GXDataStruct* const __GXData;
@@ -32,9 +33,38 @@ extern void* memcpy(void* dst, const void* src, u32 n);
 extern void GXFlush(void);
 extern void GXSetCPUFifo(__GXFifoObj* fifo);
 extern void __GXSaveCPUFifoAux(__GXFifoObj* fifo);
+extern __GXFifoObj* GXGetCPUFifo(void);
+extern void GXSaveCPUFifo(__GXFifoObj* fifo);
+extern void GXResetWriteGatherPipe(void);
+extern void __GXSetDirtyState(void);
 
 __GXFifoObj DisplayListFifo;
 __GXDataStruct __savedGXdata;
+
+void GXBeginDisplayList(void* list, u32 size)
+{
+    __GXFifoObj* CPUFifo = GXGetCPUFifo();
+
+    (void)DisplayListFifo;
+
+    if (__GXData->dirtyState != 0) {
+        __GXSetDirtyState();
+    }
+    if (__GXData->dlSaveContext != 0) {
+        memcpy(&__savedGXdata, __GXData, sizeof(__GXDataStruct));
+    }
+    DisplayListFifo.base = (u8*)list;
+    DisplayListFifo.top = (u8*)list + size - 4;
+    DisplayListFifo.size = size;
+    DisplayListFifo.count = 0;
+    DisplayListFifo.rdPtr = list;
+    DisplayListFifo.wrPtr = list;
+    __GXData->inDispList = 1;
+    GXSaveCPUFifo(CPUFifo);
+    lbl_8066FB18 = CPUFifo;
+    GXSetCPUFifo(&DisplayListFifo);
+    GXResetWriteGatherPipe();
+}
 
 u32 GXEndDisplayList(void)
 {
