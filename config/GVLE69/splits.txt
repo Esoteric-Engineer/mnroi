@@ -2277,6 +2277,9 @@ Dolphin/card/__CARDPutControlBlock.c:
 Dolphin/card/CARDGetSectorSize.c:
 	.text       start:0x8040B35C end:0x8040B3E0
 
+Dolphin/card/__CARDSync.c:
+	.text       start:0x8040B3E0 end:0x8040B478
+
 Dolphin/card/OnReset.c:
 	.text       start:0x8040B478 end:0x8040B4C8
 

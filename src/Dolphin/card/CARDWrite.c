@@ -7,7 +7,7 @@ typedef struct CARDFileInfo {
 } CARDFileInfo;
 
 extern s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offset, CARDCallback callback);
-extern s32 fn_8040B3E0(s32 chan);
+extern s32 __CARDSync(s32 chan);
 extern void __CARDSyncCallback(s32 chan, s32 result);
 
 s32 CARDWrite(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offset)
@@ -16,5 +16,5 @@ s32 CARDWrite(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offset)
 
     if (result < 0)
         return result;
-    return fn_8040B3E0(fileInfo->chan);
+    return __CARDSync(fileInfo->chan);
 }
