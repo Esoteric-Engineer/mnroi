@@ -53,7 +53,7 @@ extern u32 __OSBusClock : 0x800000F8;
 
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
-extern s32 fn_8040BA6C(s32 chan, CARDCallback callback);
+extern s32 __CARDUpdateDir(s32 chan, CARDCallback callback);
 extern s64 OSGetTime(void);
 extern void* memcpy(void* dst, const void* src, unsigned long n);
 extern CARDControl __CARDBlock[2];
@@ -86,7 +86,7 @@ void CreateCallbackFat(s32 chan, s32 result)
         card->fileInfo->offset = 0;
         card->fileInfo->iBlock = ent->startBlock;
         ent->time = OSGetTime() / (__OSBusClock / 4);
-        result = fn_8040BA6C(chan, callback);
+        result = __CARDUpdateDir(chan, callback);
         if (result < 0)
             goto after;
     } else {
