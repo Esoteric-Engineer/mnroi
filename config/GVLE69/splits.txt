@@ -2503,6 +2503,9 @@ Dolphin/card/CARDGetStatus.c:
 Dolphin/card/CARDSetStatus.c:
 	.text       start:0x8040F7B0 end:0x8040F7F8
 
+Dolphin/card/ReadArrayUnlock.c:
+	.text       start:0x8040FB54 end:0x8040FC98
+
 Dolphin/card/DummyLen.c:
 	.text       start:0x8040FC98 end:0x8040FD5C
 

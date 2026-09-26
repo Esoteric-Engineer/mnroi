@@ -644,7 +644,7 @@ addr	size	name	library	confidence	notes	status
 0x8040F8BC	0xE4	CARDSetAttributesAsync	card	guess	0xE4; __CARDGetStatusEx + __CARDSetStatusExAsync	open
 0x8040F9A0	0x48	CARDSetAttributes	card	guess	0x48 sync wrapper of the above	open
 0x8040F9E8	0x16C	bitrev	card	exact	CFTKK size run of 7; equal size in CFTKK bitrev size 0x16c	open
-0x8040FB54	0x144	ReadArrayUnlock	card	exact	CFTKK size run of 7; equal size in CFTKK ReadArrayUnlock size 0x144	open
+0x8040FB54	0x144	ReadArrayUnlock	card	exact	CFTKK size run of 7; equal size in CFTKK ReadArrayUnlock size 0x144	matched
 0x8040FC98	0xC4	DummyLen	card	exact	CFTKK size run of 7; equal size in CFTKK DummyLen size 0xc4; static in CARDUnlock.c, kept non-static as callers (fn_8040FD5C, fn_80410924) are unclaimed; srand/rand inlined on seed lbl_8066CF00 (.sdata, shared with GetInitVal-style neighbours)	matched
 0x8040FD5C	0xB58	__CARDUnlock	card	exact	CFTKK size run of 7; equal size in CFTKK __CARDUnlock size 0xb58	open
 0x804108B4	0x70	InitCallback	card	exact	CFTKK size run of 7; equal size in CFTKK InitCallback size 0x70; verified against ac-decomp CARDUnlock.c InitCallback (static there; defined global here since fn_8040FD5C references it by symbol)	matched

@@ -1196,6 +1196,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDCompareFileName.c"),
             Object(Matching, "Dolphin/card/__CARDAccess.c"),
             Object(Matching, "Dolphin/card/__CARDIsWritable.c"),
+            Object(Matching, "Dolphin/card/ReadArrayUnlock.c"),
             Object(Matching, "Dolphin/card/DummyLen.c"),
             Object(Matching, "Dolphin/card/InitCallback.c"),
             Object(Matching, "Dolphin/card/BlockReadCallback.c"),
