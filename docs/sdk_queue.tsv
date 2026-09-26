@@ -519,7 +519,7 @@ addr	size	name	library	confidence	notes	status
 0x80407960	0x1B8	__AXOutNewFrame	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutNewFrame size 0x1b8	open
 0x80407B18	0xBC	__AXOutAiCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutAiCallback size 0xbc	open
 0x80407BD4	0xC	__AXDSPInitCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXDSPInitCallback size 0xc	matched
-0x80407BE0	0x58	__AXDSPResumeCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXDSPResumeCallback size 0x58	open
+0x80407BE0	0x58	__AXDSPResumeCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXDSPResumeCallback size 0x58	matched
 0x80407C38	0x2C	__AXDSPDoneCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXDSPDoneCallback size 0x2c	matched
 0x80407C64	0xCC	__AXOutInitDSP	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutInitDSP size 0xcc	open
 0x80407D30	0x3A0	__AXOutInit	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutInit size 0x3a0	open
