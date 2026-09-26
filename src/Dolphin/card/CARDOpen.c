@@ -27,7 +27,7 @@ typedef struct CARDFileInfo {
 extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
-extern s32 fn_8040DDB0(CARDControl* card, CARDDir* ent);
+extern s32 __CARDAccess(CARDControl* card, CARDDir* ent);
 extern s32 __CARDCompareFileName(CARDDir* ent, const char* fileName);
 
 static inline s32 GetFileNo(CARDControl* card, const char* fileName, s32* pfileNo)
@@ -42,7 +42,7 @@ static inline s32 GetFileNo(CARDControl* card, const char* fileName, s32* pfileN
     dir = __CARDGetDirBlock(card);
     for (fileNo = 0; fileNo < 127; fileNo++) {
         ent = &dir[fileNo];
-        if (fn_8040DDB0(card, ent) >= 0 && __CARDCompareFileName(ent, fileName) != 0) {
+        if (__CARDAccess(card, ent) >= 0 && __CARDCompareFileName(ent, fileName) != 0) {
             *pfileNo = fileNo;
             return 0;
         }
