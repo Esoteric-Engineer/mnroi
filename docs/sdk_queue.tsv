@@ -540,7 +540,7 @@ addr	size	name	library	confidence	notes	status
 0x804092D0	0x5C	AXSetVoiceState	ax	exact	CFTKK size run of 3; equal size in CFTKK AXSetVoiceState size 0x5c	matched
 0x8040932C	0x110	AXSetVoiceAddr	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceAddr size 0x110	matched
 0x8040943C	0xA4	AXSetVoiceAdpcm	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceAdpcm size 0xa4	open
-0x804094E0	0x98	AXSetVoiceSrc	ax	exact	CFTKK size run of 4; equal size in CFTKK AXSetVoiceSrc size 0x98	open
+0x804094E0	0x98	AXSetVoiceSrcRatio	ax	exact	takes f32 ratio (65536.0f * ratio, clamp 0x40000, ratioHi/Lo at pb+0x1DE/0x1E0, sync |= 0x80000); CFTKK has AXSetVoiceSrc and AXSetVoiceSrcRatio both 0x98, this is the Ratio one	matched
 0x80409578	0x6C	AXSetVoiceAdpcmLoop	ax	exact	CFTKK size run of 3; equal size in CFTKK AXSetVoiceAdpcmLoop size 0x6c	matched
 0x804095E4	0x48	__AXGetCurrentProfile	ax	exact	CFTKK 0x48; called by __AXOutNewFrame; equal size in CFTKK __AXGetCurrentProfile size 0x48	matched
 0x8040962C	0x10	DSPCheckMailToDSP	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPCheckMailToDSP size 0x10 and ac-decomp DSPCheckMailToDSP size 0x10	matched
