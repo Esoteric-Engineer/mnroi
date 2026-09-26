@@ -1153,6 +1153,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/CARDInit.c"),
             Object(Matching, "Dolphin/card/__CARDGetControlBlock.c"),
             Object(Matching, "Dolphin/card/__CARDPutControlBlock.c"),
+            Object(Matching, "Dolphin/card/CARDFreeBlocks.c"),
             Object(Matching, "Dolphin/card/CARDGetSectorSize.c"),
             Object(Matching, "Dolphin/card/__CARDSync.c"),
             Object(Matching, "Dolphin/card/OnReset.c"),

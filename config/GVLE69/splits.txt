@@ -2383,6 +2383,9 @@ Dolphin/card/__CARDGetControlBlock.c:
 Dolphin/card/__CARDPutControlBlock.c:
 	.text       start:0x8040B1A8 end:0x8040B20C
 
+Dolphin/card/CARDFreeBlocks.c:
+	.text       start:0x8040B20C end:0x8040B35C
+
 Dolphin/card/CARDGetSectorSize.c:
 	.text       start:0x8040B35C end:0x8040B3E0
 
