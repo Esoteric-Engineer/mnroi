@@ -2319,6 +2319,9 @@ Dolphin/card/CARDGetStatus.c:
 Dolphin/card/CARDSetStatus.c:
 	.text       start:0x8040F7B0 end:0x8040F7F8
 
+Dolphin/card/InitCallback.c:
+	.text       start:0x804108B4 end:0x80410924
+
 Dolphin/card/__CARDRead.c:
 	.text       start:0x80410D24 end:0x80410D88
 

@@ -1136,6 +1136,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/CARDClose.c"),
             Object(Matching, "Dolphin/card/CARDOpen.c"),
             Object(Matching, "Dolphin/card/__CARDCompareFileName.c"),
+            Object(Matching, "Dolphin/card/InitCallback.c"),
             Object(Matching, "Dolphin/card/__CARDRead.c"),
             Object(Matching, "Dolphin/card/__CARDWrite.c"),
         ],
