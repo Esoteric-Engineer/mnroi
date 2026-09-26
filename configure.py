@@ -1138,6 +1138,12 @@ config.libs = [
         ],
     ),
     DolphinLib(
+        "gx",
+        [
+            Object(Matching, "Dolphin/gx/GXCallDisplayList.c"),
+        ],
+    ),
+    DolphinLib(
         "texPalette",
         [
             Object(Matching, "Dolphin/texPalette/TEXGet.c"),

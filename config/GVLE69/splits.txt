@@ -2316,6 +2316,9 @@ Dolphin/card/__CARDRead.c:
 Dolphin/card/__CARDWrite.c:
 	.text       start:0x80410E64 end:0x80410EC8
 
+Dolphin/gx/GXCallDisplayList.c:
+	.text       start:0x80411398 end:0x80411408
+
 Dolphin/texPalette/TEXGet.c:
 	.text       start:0x80411408 end:0x80411418
 
