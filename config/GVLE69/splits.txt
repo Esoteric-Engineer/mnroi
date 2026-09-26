@@ -2322,6 +2322,9 @@ Dolphin/card/__CARDDefaultApiCallback.c:
 Dolphin/card/__CARDSyncCallback.c:
 	.text       start:0x8040A194 end:0x8040A1C8
 
+Dolphin/card/__CARDExtHandler.c:
+	.text       start:0x8040A1C8 end:0x8040A2A0
+
 Dolphin/card/__CARDExiHandler.c:
 	.text       start:0x8040A2A0 end:0x8040A3B8
 

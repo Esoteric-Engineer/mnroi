@@ -1172,6 +1172,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/DeleteCallback.c"),
             Object(Matching, "Dolphin/card/CARDFastDeleteAsync.c"),
             Object(Matching, "Dolphin/card/CARDDeleteAsync.c"),
+            Object(Matching, "Dolphin/card/__CARDExtHandler.c"),
             Object(Matching, "Dolphin/card/__CARDExiHandler.c"),
             Object(Matching, "Dolphin/card/__CARDTxHandler.c"),
             Object(Matching, "Dolphin/card/EraseCallback_8040EDB4.c"),
