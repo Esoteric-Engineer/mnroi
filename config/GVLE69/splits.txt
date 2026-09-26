@@ -2311,11 +2311,8 @@ Dolphin/card/__CARDReadSegment.c:
 Dolphin/card/__CARDWritePage.c:
 	.text       start:0x8040AE08 end:0x8040AF24
 
-Dolphin/card/__CARDGetFontEncode.c:
-	.text       start:0x8040B0B0 end:0x8040B0B8
-
-Dolphin/card/__CARDSetDiskID.c:
-	.text       start:0x8040B0B8 end:0x8040B0F0
+Dolphin/card/CARDInit.c:
+	.text       start:0x8040B004 end:0x8040B0F0
 	.bss        start:0x80668900 end:0x80668B40
 
 Dolphin/card/__CARDGetControlBlock.c:
