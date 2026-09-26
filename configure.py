@@ -1193,6 +1193,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/InitCallback.c"),
             Object(Matching, "Dolphin/card/BlockReadCallback.c"),
             Object(Matching, "Dolphin/card/__CARDRead.c"),
+            Object(Matching, "Dolphin/card/BlockWriteCallback.c"),
             Object(Matching, "Dolphin/card/__CARDWrite.c"),
         ],
     ),
