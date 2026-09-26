@@ -578,7 +578,7 @@ addr	size	name	library	confidence	notes	status
 0x8040B0B0	0x8	__CARDGetFontEncode	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDGetFontEncode size 0x8	matched
 0x8040B0B8	0x38	__CARDSetDiskID	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDSetDiskID size 0x38 and ac-decomp __CARDSetDiskID size 0x38	matched
 0x8040B0F0	0xB8	__CARDGetControlBlock	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDGetControlBlock size 0xb8 and ac-decomp __CARDGetControlBlock size 0xb8	open
-0x8040B1A8	0x64	__CARDPutControlBlock	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDPutControlBlock size 0x64 and ac-decomp __CARDPutControlBlock size 0x64	open
+0x8040B1A8	0x64	__CARDPutControlBlock	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDPutControlBlock size 0x64 and ac-decomp __CARDPutControlBlock size 0x64	matched
 0x8040B20C	0x150	CARDFreeBlocks	card	exact	CFTKK size run of 6; equal size in CFTKK CARDFreeBlocks size 0x150 and ac-decomp CARDFreeBlocks size 0x150	open
 0x8040B35C	0x84	CARDGetSectorSize	card	exact	ac 0x84; equal size in ac-decomp CARDGetSectorSize size 0x84	open
 0x8040B3E0	0x98	__CARDSync	card	exact	ac-decomp size run of 4; equal size in CFTKK __CARDSync size 0x98 and ac-decomp __CARDSync size 0x98	open

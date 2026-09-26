@@ -10,7 +10,7 @@ typedef struct CARDFileInfo {
 } CARDFileInfo;
 
 extern s32 fn_8040B0F0(s32 chan, void** card);
-extern s32 fn_8040B1A8(void* card, s32 result);
+extern s32 __CARDPutControlBlock(void* card, s32 result);
 
 s32 CARDClose(CARDFileInfo* fileInfo)
 {
@@ -20,5 +20,5 @@ s32 CARDClose(CARDFileInfo* fileInfo)
     if (result < 0)
         return result;
     fileInfo->chan = -1;
-    return fn_8040B1A8(card, 0);
+    return __CARDPutControlBlock(card, 0);
 }

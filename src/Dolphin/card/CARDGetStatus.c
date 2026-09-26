@@ -41,7 +41,7 @@ typedef struct CARDStat {
 } CARDStat;
 
 extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
-extern s32 fn_8040B1A8(CARDControl* card, s32 result);
+extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern s32 fn_8040DF78(CARDControl* card, CARDDir* ent);
 extern void fn_8040F330(CARDDir* ent, CARDStat* stat);
@@ -77,5 +77,5 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat)
         stat->commentAddr = ent->commentAddr;
         fn_8040F330(ent, stat);
     }
-    return fn_8040B1A8(card, result);
+    return __CARDPutControlBlock(card, result);
 }

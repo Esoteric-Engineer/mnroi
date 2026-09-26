@@ -25,7 +25,7 @@ typedef struct CARDFileInfo {
 } CARDFileInfo;
 
 extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
-extern s32 fn_8040B1A8(CARDControl* card, s32 result);
+extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern s32 fn_8040DDB0(CARDControl* card, CARDDir* ent);
 extern s32 fn_8040DD48(CARDDir* ent, const char* fileName);
@@ -76,5 +76,5 @@ s32 CARDOpen(s32 chan, const char* fileName, CARDFileInfo* fileInfo)
             fileInfo->iBlock = ent->startBlock;
         }
     }
-    return fn_8040B1A8(card, result);
+    return __CARDPutControlBlock(card, result);
 }

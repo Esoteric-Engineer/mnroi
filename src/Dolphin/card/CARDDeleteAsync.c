@@ -19,7 +19,7 @@ typedef struct CARDDir {
 } CARDDir;
 
 extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
-extern s32 fn_8040B1A8(CARDControl* card, s32 result);
+extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern s32 fn_8040E06C(CARDControl* card, const char* fileName, s32* fileNo);
 extern int __CARDIsOpened(CARDControl* card, s32 fileNo);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
@@ -41,9 +41,9 @@ s32 CARDDeleteAsync(s32 chan, const char* fileName, CARDCallback callback)
         return result;
     result = fn_8040E06C(card, fileName, &fileNo);
     if (result < 0)
-        return fn_8040B1A8(card, result);
+        return __CARDPutControlBlock(card, result);
     if (__CARDIsOpened(card, fileNo))
-        return fn_8040B1A8(card, -1);
+        return __CARDPutControlBlock(card, -1);
 
     dir = __CARDGetDirBlock(card);
     ent = &dir[fileNo];
@@ -53,6 +53,6 @@ s32 CARDDeleteAsync(s32 chan, const char* fileName, CARDCallback callback)
     card->apiCallback = callback ? callback : __CARDDefaultApiCallback;
     result = fn_8040BA6C(chan, fn_8040EFC0);
     if (result < 0)
-        fn_8040B1A8(card, result);
+        __CARDPutControlBlock(card, result);
     return result;
 }
