@@ -16,7 +16,7 @@ typedef struct CARDControl {
 } CARDControl;
 
 extern CARDControl __CARDBlock[2];
-extern s32 fn_8040B820(s32 chan, u16* fat, CARDCallback callback);
+extern s32 __CARDUpdateFatBlock(s32 chan, u16* fat, CARDCallback callback);
 
 static inline u16* GetFat(CARDControl* card)
 {
@@ -45,5 +45,5 @@ s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback)
         ++fat[3];
     }
 
-    return fn_8040B820(chan, fat, callback);
+    return __CARDUpdateFatBlock(chan, fat, callback);
 }

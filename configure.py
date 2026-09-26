@@ -1136,6 +1136,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDGetFatBlock.c"),
             Object(Matching, "Dolphin/card/__CARDAllocBlock.c"),
             Object(Matching, "Dolphin/card/__CARDFreeBlock.c"),
+            Object(Matching, "Dolphin/card/__CARDUpdateFatBlock.c"),
             Object(Matching, "Dolphin/card/__CARDGetDirBlock.c"),
             Object(Matching, "Dolphin/card/__CARDVerify.c"),
             Object(Matching, "Dolphin/card/CARDCheck.c"),

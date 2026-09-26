@@ -2327,6 +2327,9 @@ Dolphin/card/__CARDAllocBlock.c:
 Dolphin/card/__CARDFreeBlock.c:
 	.text       start:0x8040B784 end:0x8040B820
 
+Dolphin/card/__CARDUpdateFatBlock.c:
+	.text       start:0x8040B820 end:0x8040B8CC
+
 Dolphin/card/__CARDGetDirBlock.c:
 	.text       start:0x8040B8CC end:0x8040B8D4
 
