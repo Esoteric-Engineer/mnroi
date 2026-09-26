@@ -631,7 +631,7 @@ addr	size	name	library	confidence	notes	status
 0x8040EDB4	0xB0	EraseCallback	card	exact	CFTKK size run of 3; equal size in CFTKK EraseCallback size 0xb0 and ac-decomp EraseCallback size 0xb0; static, name repeats across CARD files (file-local name needed when splitting)	open
 0x8040EE64	0x114	CARDWriteAsync	card	exact	CFTKK size run of 3; equal size in CFTKK CARDWriteAsync size 0x114 and ac-decomp CARDWriteAsync size 0x114	matched
 0x8040EF78	0x48	CARDWrite	card	exact	0x48 sync wrapper of CARDWriteAsync; equal size in ac-decomp CARDWrite size 0x48	matched
-0x8040EFC0	0xA4	DeleteCallback	card	exact	ac-decomp size run of 6; equal size in CFTKK DeleteCallback size 0xa4 and ac-decomp DeleteCallback size 0xa4	open
+0x8040EFC0	0xA4	DeleteCallback	card	exact	ac-decomp size run of 6; equal size in CFTKK DeleteCallback size 0xa4 and ac-decomp DeleteCallback size 0xa4	matched
 0x8040F064	0x12C	CARDFastDeleteAsync	card	exact	CFTKK 0x12C; wrapped by CARDFastDelete; equal size in CFTKK CARDFastDeleteAsync size 0x12c	matched
 0x8040F190	0x48	CARDFastDelete	card	guess	0x48 sync wrapper of CARDFastDeleteAsync; no same-size reference by name, name from callees	open
 0x8040F1D8	0x110	CARDDeleteAsync	card	exact	ac 0x110; equal size in ac-decomp CARDDeleteAsync size 0x110	matched

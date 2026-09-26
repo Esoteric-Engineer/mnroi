@@ -26,7 +26,7 @@ extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern void* memset(void* dst, int val, unsigned long n);
 extern s32 fn_8040BA6C(s32 chan, CARDCallback callback);
 extern void __CARDDefaultApiCallback(s32 chan, s32 result);
-extern void fn_8040EFC0(s32 chan, s32 result);
+extern void DeleteCallback(s32 chan, s32 result);
 
 s32 CARDDeleteAsync(s32 chan, const char* fileName, CARDCallback callback)
 {
@@ -51,7 +51,7 @@ s32 CARDDeleteAsync(s32 chan, const char* fileName, CARDCallback callback)
     memset(ent, 0xff, sizeof(CARDDir));
 
     card->apiCallback = callback ? callback : __CARDDefaultApiCallback;
-    result = fn_8040BA6C(chan, fn_8040EFC0);
+    result = fn_8040BA6C(chan, DeleteCallback);
     if (result < 0)
         __CARDPutControlBlock(card, result);
     return result;
