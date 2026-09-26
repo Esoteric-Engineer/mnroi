@@ -2422,6 +2422,9 @@ Dolphin/card/DoUnmount.c:
 Dolphin/card/CARDUnmount.c:
 	.text       start:0x8040D4AC end:0x8040D558
 
+Dolphin/card/FormatCallback.c:
+	.text       start:0x8040D558 end:0x8040D69C
+
 Dolphin/card/CARDFormat.c:
 	.text       start:0x8040DCF4 end:0x8040DD48
 
