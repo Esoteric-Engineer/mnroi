@@ -1125,6 +1125,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/CARDCreate.c"),
             Object(Matching, "Dolphin/card/CARDClose.c"),
             Object(Matching, "Dolphin/card/CARDOpen.c"),
+            Object(Matching, "Dolphin/card/__CARDCompareFileName.c"),
         ],
     ),
     DolphinLib(

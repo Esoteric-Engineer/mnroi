@@ -2253,6 +2253,9 @@ Dolphin/card/CARDMount.c:
 Dolphin/card/CARDFormat.c:
 	.text       start:0x8040DCF4 end:0x8040DD48
 
+Dolphin/card/__CARDCompareFileName.c:
+	.text       start:0x8040DD48 end:0x8040DDB0
+
 Dolphin/card/CARDOpen.c:
 	.text       start:0x8040E2C0 end:0x8040E3DC
 

@@ -611,13 +611,13 @@ addr	size	name	library	confidence	notes	status
 0x8040D558	0x144	FormatCallback	card	exact	CFTKK size run of 4; equal size in CFTKK FormatCallback size 0x144 and ac-decomp FormatCallback size 0x144	open
 0x8040D69C	0x658	__CARDFormatRegionAsync	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDFormatRegionAsync size 0x658 and ac-decomp __CARDFormatRegionAsync size 0x658	open
 0x8040DCF4	0x54	CARDFormat	card	exact	ac 0x54; __CARDGetFontEncode + __CARDFormatRegionAsync + __CARDSync; equal size in ac-decomp CARDFormat size 0x54	matched
-0x8040DD48	0x68	__CARDCompareFileName	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDCompareFileName size 0x68 and ac-decomp __CARDCompareFileName size 0x68	open
+0x8040DD48	0x68	__CARDCompareFileName	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDCompareFileName size 0x68 and ac-decomp __CARDCompareFileName size 0x68	matched
 0x8040DDB0	0x94	__CARDAccess	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDAccess size 0x94	open
 0x8040DE44	0x134	__CARDIsWritable	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDIsWritable size 0x134	open
 0x8040DF78	0xF4	__CARDIsReadable	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDIsReadable size 0xf4	open
 0x8040E06C	0x150	__CARDGetFileNo	card	exact	ac 0x150; called by CARDDeleteAsync; equal size in ac-decomp __CARDGetFileNo size 0x150	open
 0x8040E1BC	0x104	CARDFastOpen	card	guess	ac 0x160; control block + dir block + __CARDIsWritable	open
-0x8040E2C0	0x11C	CARDOpen	card	exact	CFTKK size run of 5; equal size in CFTKK CARDOpen size 0x11c Older CARDOpen: __CARDGetFileNo inlined (fn_8040DDB0 access check, fn_8040DD48 name compare), matched as C with a static inline GetFileNo	matched
+0x8040E2C0	0x11C	CARDOpen	card	exact	CFTKK size run of 5; equal size in CFTKK CARDOpen size 0x11c Older CARDOpen: __CARDGetFileNo inlined (fn_8040DDB0 access check, __CARDCompareFileName name compare), matched as C with a static inline GetFileNo	matched
 0x8040E3DC	0x54	CARDClose	card	exact	CFTKK size run of 5; equal size in CFTKK CARDClose size 0x54 and ac-decomp CARDClose size 0x54	matched
 0x8040E430	0x8	__CARDIsOpened	card	exact	CFTKK size run of 5; equal size in CFTKK __CARDIsOpened size 0x8 and ac-decomp __CARDIsOpened size 0x8	matched
 0x8040E438	0x130	CreateCallbackFat	card	exact	CFTKK size run of 5; equal size in CFTKK CreateCallbackFat size 0x130 and ac-decomp CreateCallbackFat size 0x130	open
