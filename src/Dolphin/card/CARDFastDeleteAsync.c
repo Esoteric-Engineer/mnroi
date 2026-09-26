@@ -22,7 +22,7 @@ extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern int __CARDIsOpened(CARDControl* card, s32 fileNo);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
-extern s32 fn_8040DE44(CARDControl* card, CARDDir* ent);
+extern s32 __CARDIsWritable(CARDControl* card, CARDDir* ent);
 extern void* memset(void* dst, int val, unsigned long n);
 extern s32 fn_8040BA6C(s32 chan, CARDCallback callback);
 extern void __CARDDefaultApiCallback(s32 chan, s32 result);
@@ -43,7 +43,7 @@ s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback)
 
     dir = __CARDGetDirBlock(card);
     ent = &dir[fileNo];
-    result = fn_8040DE44(card, ent);
+    result = __CARDIsWritable(card, ent);
     if (result < 0)
         return __CARDPutControlBlock(card, result);
     if (__CARDIsOpened(card, fileNo))

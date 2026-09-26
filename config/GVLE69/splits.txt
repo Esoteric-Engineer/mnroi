@@ -2351,6 +2351,9 @@ Dolphin/card/__CARDCompareFileName.c:
 Dolphin/card/__CARDAccess.c:
 	.text       start:0x8040DDB0 end:0x8040DE44
 
+Dolphin/card/__CARDIsWritable.c:
+	.text       start:0x8040DE44 end:0x8040DF78
+
 Dolphin/card/CARDOpen.c:
 	.text       start:0x8040E2C0 end:0x8040E3DC
 

@@ -613,7 +613,7 @@ addr	size	name	library	confidence	notes	status
 0x8040DCF4	0x54	CARDFormat	card	exact	ac 0x54; __CARDGetFontEncode + __CARDFormatRegionAsync + __CARDSync; equal size in ac-decomp CARDFormat size 0x54	matched
 0x8040DD48	0x68	__CARDCompareFileName	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDCompareFileName size 0x68 and ac-decomp __CARDCompareFileName size 0x68	matched
 0x8040DDB0	0x94	__CARDAccess	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDAccess size 0x94	matched
-0x8040DE44	0x134	__CARDIsWritable	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDIsWritable size 0x134; called as (card, ent) by CARDFastDeleteAsync/CARDWriteAsync, same shape as ac-decomp __CARDAccess: verify against CFTKK __CARDIsWritable before naming	open
+0x8040DE44	0x134	__CARDIsWritable	card	exact	CFTKK size run of 4; matches SDK __CARDIsWritable: inlined __CARDAccess, then GLOBAL(0x20)/COMPANY(0x40) permission fallback via lbl_8066CEFA mask; locals declared result, diskID, perm	matched
 0x8040DF78	0xF4	__CARDIsReadable	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDIsReadable size 0xf4	open
 0x8040E06C	0x150	__CARDGetFileNo	card	exact	ac 0x150; called by CARDDeleteAsync; equal size in ac-decomp __CARDGetFileNo size 0x150	open
 0x8040E1BC	0x104	CARDFastOpen	card	guess	ac 0x160; control block + dir block + __CARDIsWritable	open

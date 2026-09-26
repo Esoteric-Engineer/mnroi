@@ -32,7 +32,7 @@ typedef struct CARDDir {
 extern s32 fn_8040E7D0(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
-extern s32 fn_8040DE44(CARDControl* card, CARDDir* ent);
+extern s32 __CARDIsWritable(CARDControl* card, CARDDir* ent);
 extern void DCStoreRange(void* addr, u32 nBytes);
 extern void __CARDDefaultApiCallback(s32 chan, s32 result);
 extern s32 fn_8040AF24(s32 chan, u32 addr, CARDCallback callback);
@@ -54,7 +54,7 @@ s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offs
 
     dir = __CARDGetDirBlock(card);
     ent = &dir[fileInfo->fileNo];
-    result = fn_8040DE44(card, ent);
+    result = __CARDIsWritable(card, ent);
     if (result < 0)
         return __CARDPutControlBlock(card, result);
 
