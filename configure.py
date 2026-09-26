@@ -1067,6 +1067,7 @@ config.libs = [
             Object(Matching, "Dolphin/arq/__ARQCallbackHack.c"),
             Object(Matching, "Dolphin/arq/__ARQInterruptServiceRoutine.c"),
             Object(Matching, "Dolphin/arq/ARQInit.c"),
+            Object(Matching, "Dolphin/arq/ARQPostRequest.c"),
         ],
     ),
     DolphinLib(

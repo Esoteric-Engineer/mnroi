@@ -480,7 +480,7 @@ addr	size	name	library	confidence	notes	status
 0x804064A4	0x4	__ARQCallbackHack	arq	exact	CFTKK size run of 10; equal size in CFTKK __ARQCallbackHack size 0x4 and ac-decomp __ARQCallbackHack size 0x4	matched
 0x804064A8	0xCC	__ARQInterruptServiceRoutine	arq	exact	CFTKK size run of 10; equal size in CFTKK __ARQInterruptServiceRoutine size 0xcc and ac-decomp __ARQInterruptServiceRoutine size 0xcc. Matched as C (ac-decomp shape, with the inlined __ARQPopTaskQueueHi); own unit Dolphin/arq/__ARQInterruptServiceRoutine.c	matched
 0x80406574	0x70	ARQInit	arq	exact	__ARQVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK size run of 10	matched
-0x804065E4	0x15C	ARQPostRequest	arq	exact	CFTKK size run of 10; equal size in CFTKK ARQPostRequest size 0x15c and ac-decomp ARQPostRequest size 0x15c	open
+0x804065E4	0x15C	ARQPostRequest	arq	exact	CFTKK size run of 10; equal size in CFTKK ARQPostRequest size 0x15c and ac-decomp ARQPostRequest size 0x15c	matched
 0x80406740	0xE8	ARQRemoveRequest	arq	guess	0xE8; unlinks one request pointer from both ARQ queues	open
 0x80406828	0x24	AXInit	ax	exact	CFTKK 0x24; wrapper before AXInitEx; equal size in CFTKK AXInit size 0x24	matched
 0x8040684C	0x4C	AXInitEx	ax	exact	__AXVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK 0x4C; loads __AXVersion and calls OSRegisterVersion	matched
