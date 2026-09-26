@@ -1006,6 +1006,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/__VMTranslateVMPageToARAMPage.c"),
             Object(Matching, "Dolphin/vm/__VMDoesMappingExist.c"),
             Object(Matching, "Dolphin/vm/__VMMappingErrorAlert.c"),
+            Object(Matching, "Dolphin/vm/__VMAllocARAMToVirtualLUT.c"),
             Object(Matching, "Dolphin/vm/__VMBASEClearPageFromTLB.c"),
             Object(Matching, "Dolphin/vm/VMBASEGetVirtualAddrFromPageInMRAM.c"),
             Object(Matching, "Dolphin/vm/__VMBASESetVirtualAddressForPageInMRAM.c"),

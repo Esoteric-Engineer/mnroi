@@ -400,7 +400,7 @@ addr	size	name	library	confidence	notes	status
 0x80401198	0x18	__VMSetARAMPageAsDirty	vm	exact	CFTKK size run of 12	matched
 0x804011B0	0x14	__VMIsARAMPageDirty	vm	exact	CFTKK size run of 12	matched
 0x804011C4	0xA8	__VMAllocVirtualToARAMLUT	vm	exact	CFTKK size run of 12	open
-0x8040126C	0xA0	__VMAllocARAMToVirtualLUT	vm	exact	CFTKK size run of 12	open
+0x8040126C	0xA0	__VMAllocARAMToVirtualLUT	vm	exact	CFTKK size run of 12; callees OSGetArenaLo/OSSetArenaLo (0x4000 bytes, ARAM page -> virtual LUT stored in lbl_8066F970, as VMAlloc uses it). Matched as nofralloc asm	matched
 0x8040130C	0xA4	VMBASEInit	vm	guess	CFTKK 0xCC; calls the __VMBASEInit*/Setup* asm labels	open
 0x804013B0	0x6C	VMBASESetPageTableEntry	vm	guess	CFTKK 0x94; DCStoreRange	open
 0x8040141C	0x6C	VMBASEClearPageTableEntry	vm	guess	CFTKK 0x8C; DCStoreRange	open

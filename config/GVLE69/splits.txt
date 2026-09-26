@@ -1988,6 +1988,9 @@ Dolphin/vm/__VMSetARAMPageAsDirty.c:
 Dolphin/vm/__VMIsARAMPageDirty.c:
 	.text       start:0x804011B0 end:0x804011C4
 
+Dolphin/vm/__VMAllocARAMToVirtualLUT.c:
+	.text       start:0x8040126C end:0x8040130C
+
 Dolphin/vm/__VMBASEClearPageFromTLB.c:
 	.text       start:0x80401550 end:0x80401560
 
