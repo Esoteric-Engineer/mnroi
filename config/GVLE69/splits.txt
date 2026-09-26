@@ -2325,6 +2325,9 @@ Dolphin/card/CARDClose.c:
 Dolphin/card/__CARDIsOpened.c:
 	.text       start:0x8040E430 end:0x8040E438
 
+Dolphin/card/CreateCallbackFat.c:
+	.text       start:0x8040E438 end:0x8040E568
+
 Dolphin/card/CARDCreate.c:
 	.text       start:0x8040E788 end:0x8040E7D0
 
