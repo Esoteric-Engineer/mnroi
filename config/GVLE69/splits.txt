@@ -1964,6 +1964,9 @@ Dolphin/vm/__VMAllocMRAMSwapSpace.c:
 Dolphin/vm/__VMGetPageToReplace.c:
 	.text       start:0x80400CEC end:0x80400D30
 
+Dolphin/vm/__VMPageReplacementRandom.c:
+	.text       start:0x80400F00 end:0x80400F94
+
 Dolphin/vm/__VMPageReplacementFIFO.c:
 	.text       start:0x80400F94 end:0x80401000
 

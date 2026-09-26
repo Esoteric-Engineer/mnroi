@@ -1,7 +1,7 @@
 extern long lbl_8066CEA4;
 
 extern void fn_80400D30(void);
-extern void fn_80400F00(void);
+extern void __VMPageReplacementRandom(void);
 extern void __VMPageReplacementFIFO(void);
 
 // Dispatches on the replacement mode: 0 LRU, 1 random, else FIFO. GCC output, so asm.
@@ -20,7 +20,7 @@ asm void __VMGetPageToReplace(void)
 L_not_lru:
     cmpwi   r0, 1
     bne     L_fifo
-    bl      fn_80400F00
+    bl      __VMPageReplacementRandom
     b       L_done
 L_fifo:
     bl      __VMPageReplacementFIFO
