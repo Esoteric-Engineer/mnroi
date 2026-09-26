@@ -615,7 +615,7 @@ addr	size	name	library	confidence	notes	status
 0x8040DDB0	0x94	__CARDAccess	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDAccess size 0x94	matched
 0x8040DE44	0x134	__CARDIsWritable	card	exact	CFTKK size run of 4; matches SDK __CARDIsWritable: inlined __CARDAccess, then GLOBAL(0x20)/COMPANY(0x40) permission fallback via lbl_8066CEFA mask; locals declared result, diskID, perm	matched
 0x8040DF78	0xF4	__CARDIsReadable	card	exact	CFTKK size run of 4; equal size in CFTKK __CARDIsReadable size 0xf4 (calls __CARDAccess; unit Dolphin/card/__CARDIsReadable.c)	matched
-0x8040E06C	0x150	__CARDGetFileNo	card	exact	ac 0x150; called by CARDDeleteAsync; equal size in ac-decomp __CARDGetFileNo size 0x150	open
+0x8040E06C	0x150	__CARDGetFileNo	card	exact	ac 0x150; called by CARDDeleteAsync; equal size in ac-decomp __CARDGetFileNo size 0x150; inlines __CARDAccess and __CARDCompareFileName (static inline copies)	matched
 0x8040E1BC	0x104	CARDFastOpen	card	guess	ac 0x160; control block + dir block + __CARDIsWritable	open
 0x8040E2C0	0x11C	CARDOpen	card	exact	CFTKK size run of 5; equal size in CFTKK CARDOpen size 0x11c Older CARDOpen: __CARDGetFileNo inlined (__CARDAccess check, __CARDCompareFileName name compare), matched as C with a static inline GetFileNo	matched
 0x8040E3DC	0x54	CARDClose	card	exact	CFTKK size run of 5; equal size in CFTKK CARDClose size 0x54 and ac-decomp CARDClose size 0x54	matched

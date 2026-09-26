@@ -2473,6 +2473,9 @@ Dolphin/card/__CARDIsWritable.c:
 Dolphin/card/__CARDIsReadable.c:
 	.text       start:0x8040DF78 end:0x8040E06C
 
+Dolphin/card/__CARDGetFileNo.c:
+	.text       start:0x8040E06C end:0x8040E1BC
+
 Dolphin/card/CARDOpen.c:
 	.text       start:0x8040E2C0 end:0x8040E3DC
 

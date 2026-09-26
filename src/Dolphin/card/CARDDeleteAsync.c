@@ -20,7 +20,7 @@ typedef struct CARDDir {
 
 extern s32 __CARDGetControlBlock(s32 chan, CARDControl** card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
-extern s32 fn_8040E06C(CARDControl* card, const char* fileName, s32* fileNo);
+extern s32 __CARDGetFileNo(CARDControl* card, const char* fileName, s32* fileNo);
 extern int __CARDIsOpened(CARDControl* card, s32 fileNo);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern void* memset(void* dst, int val, unsigned long n);
@@ -39,7 +39,7 @@ s32 CARDDeleteAsync(s32 chan, const char* fileName, CARDCallback callback)
     result = __CARDGetControlBlock(chan, &card);
     if (result < 0)
         return result;
-    result = fn_8040E06C(card, fileName, &fileNo);
+    result = __CARDGetFileNo(card, fileName, &fileNo);
     if (result < 0)
         return __CARDPutControlBlock(card, result);
     if (__CARDIsOpened(card, fileNo))
