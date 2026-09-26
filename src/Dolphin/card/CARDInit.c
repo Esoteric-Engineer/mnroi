@@ -25,7 +25,7 @@ extern unsigned short lbl_8066FB10;
 
 extern unsigned short OSGetFontEncode(void);
 extern void OSRegisterVersion(char* version);
-extern void fn_80409678(void);
+extern void DSPInit(void);
 extern void OSInitAlarm(void);
 extern void OSInitThreadQueue(void* queue);
 extern void OSCreateAlarm(void* alarm);
@@ -40,7 +40,7 @@ void CARDInit(void)
     if (!__CARDBlock[0].diskID || !__CARDBlock[1].diskID) {
         lbl_8066FB10 = OSGetFontEncode();
         OSRegisterVersion(lbl_8066CEF0);
-        fn_80409678();
+        DSPInit();
         OSInitAlarm();
 
         for (chan = 0; chan < 2; ++chan) {
