@@ -22,7 +22,7 @@ typedef struct CARDControl {
 extern CARDControl __CARDBlock[2];
 
 extern void* memcpy(void* dst, const void* src, unsigned long n);
-extern s32 fn_8040AF24(s32 chan, u32 addr, CARDCallback callback);
+extern s32 __CARDEraseSector(s32 chan, u32 addr, CARDCallback callback);
 extern s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 
@@ -37,7 +37,7 @@ void FormatCallback(s32 chan, s32 result)
 
     ++card->formatStep;
     if (card->formatStep < 5) {
-        result = fn_8040AF24(chan, (u32)card->sectorSize * card->formatStep, FormatCallback);
+        result = __CARDEraseSector(chan, (u32)card->sectorSize * card->formatStep, FormatCallback);
         if (result >= 0)
             return;
     } else if (card->formatStep < 10) {

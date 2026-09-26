@@ -21,7 +21,7 @@ extern CARDControl __CARDBlock[2];
 
 extern void fn_8040BB30(void* ptr, s32 length, u16* checksum, u16* checksumInv);
 extern void DCStoreRange(void* addr, u32 nBytes);
-extern s32 fn_8040AF24(s32 chan, u32 addr, CARDCallback callback);
+extern s32 __CARDEraseSector(s32 chan, u32 addr, CARDCallback callback);
 extern void EraseCallback_8040B5A4(s32 chan, s32 result);
 
 s32 __CARDUpdateFatBlock(s32 chan, u16* fat, CARDCallback callback)
@@ -35,5 +35,5 @@ s32 __CARDUpdateFatBlock(s32 chan, u16* fat, CARDCallback callback)
     DCStoreRange(fat, 0x2000);
     card->eraseCallback = callback;
     addr = (((char*)fat - (char*)card->workArea) / 8192u) * card->sectorSize;
-    return fn_8040AF24(chan, addr, EraseCallback_8040B5A4);
+    return __CARDEraseSector(chan, addr, EraseCallback_8040B5A4);
 }

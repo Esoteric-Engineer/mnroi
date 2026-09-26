@@ -1145,6 +1145,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/UnlockedCallback.c"),
             Object(Matching, "Dolphin/card/__CARDReadSegment.c"),
             Object(Matching, "Dolphin/card/__CARDWritePage.c"),
+            Object(Matching, "Dolphin/card/__CARDEraseSector.c"),
             Object(Matching, "Dolphin/card/CARDInit.c"),
             Object(Matching, "Dolphin/card/__CARDGetControlBlock.c"),
             Object(Matching, "Dolphin/card/__CARDPutControlBlock.c"),

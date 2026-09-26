@@ -29,7 +29,7 @@ extern CARDControl __CARDBlock[2];
 
 extern void fn_8040BB30(void* ptr, s32 length, u16* checksum, u16* checksumInv);
 extern void DCStoreRange(void* addr, u32 nBytes);
-extern s32 fn_8040AF24(s32 chan, u32 addr, CARDCallback callback);
+extern s32 __CARDEraseSector(s32 chan, u32 addr, CARDCallback callback);
 extern void EraseCallback_8040B9A4(s32 chan, s32 result);
 
 static inline void* __CARDGetDirBlock(CARDControl* card)
@@ -56,5 +56,5 @@ s32 __CARDUpdateDir(s32 chan, CARDCallback callback)
     DCStoreRange(dir, 0x2000);
     card->eraseCallback = callback;
     addr = (((u32)dir - (u32)card->workArea) / 0x2000) * card->sectorSize;
-    return fn_8040AF24(chan, addr, EraseCallback_8040B9A4);
+    return __CARDEraseSector(chan, addr, EraseCallback_8040B9A4);
 }

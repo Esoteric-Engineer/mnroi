@@ -573,7 +573,7 @@ addr	size	name	library	confidence	notes	status
 0x8040AB20	0x1B4	__CARDStart	card	exact	ac 0x1B4; equal size in ac-decomp __CARDStart size 0x1b4	open
 0x8040ACD4	0x134	__CARDReadSegment	card	exact	ac-decomp size run of 16; equal size in CFTKK __CARDReadSegment size 0x134 and ac-decomp __CARDReadSegment size 0x134	matched
 0x8040AE08	0x11C	__CARDWritePage	card	exact	ac 0x11C; equal size in ac-decomp __CARDWritePage size 0x11c	matched
-0x8040AF24	0xE0	__CARDEraseSector	card	exact	ac 0xE0; equal size in ac-decomp __CARDEraseSector size 0xe0	open
+0x8040AF24	0xE0	__CARDEraseSector	card	exact	ac 0xE0; equal size in ac-decomp __CARDEraseSector size 0xe0	matched
 0x8040B004	0xAC	CARDInit	card	exact	__CARDVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK size run of 6. Matched in Dolphin/card/CARDInit.c together with __CARDGetFontEncode and __CARDSetDiskID (one unit, .bss 0x80668900-0x80668B40 defined there; the pooled __CARDBlock base in r30 needs the objects defined in the same unit)	matched
 0x8040B0B0	0x8	__CARDGetFontEncode	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDGetFontEncode size 0x8	matched
 0x8040B0B8	0x38	__CARDSetDiskID	card	exact	CFTKK size run of 6; equal size in CFTKK __CARDSetDiskID size 0x38 and ac-decomp __CARDSetDiskID size 0x38	matched

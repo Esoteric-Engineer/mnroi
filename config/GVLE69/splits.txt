@@ -2358,6 +2358,9 @@ Dolphin/card/__CARDReadSegment.c:
 Dolphin/card/__CARDWritePage.c:
 	.text       start:0x8040AE08 end:0x8040AF24
 
+Dolphin/card/__CARDEraseSector.c:
+	.text       start:0x8040AF24 end:0x8040B004
+
 Dolphin/card/CARDInit.c:
 	.text       start:0x8040B004 end:0x8040B0F0
 	.bss        start:0x80668900 end:0x80668B40
