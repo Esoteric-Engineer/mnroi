@@ -1,7 +1,7 @@
 extern long long OSGetTime(void);
 extern void AIInitDMA(void*, unsigned long);
 extern void fn_80407960(unsigned long);
-extern void fn_804097F4(void*);
+extern void DSPAssertTask(void*);
 
 extern char lbl_80652640[];
 extern char lbl_80657040[0x80];
@@ -20,7 +20,7 @@ void __AXOutAiCallback(void)
         fn_80407960(0);
     } else {
         lbl_8066FA68 = 2;
-        fn_804097F4(lbl_80657040);
+        DSPAssertTask(lbl_80657040);
     }
     if (lbl_8066FA90 == 1) {
         AIInitDMA(lbl_80652640 + lbl_8066FA64 * 0x280, 0x280);

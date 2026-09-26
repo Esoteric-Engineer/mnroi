@@ -2294,6 +2294,9 @@ Dolphin/dsp/DSPAddTask.c:
 Dolphin/dsp/DSPCancelTask.c:
 	.text       start:0x804097B4 end:0x804097F4
 
+Dolphin/dsp/DSPAssertTask.c:
+	.text       start:0x804097F4 end:0x804098BC
+
 Dolphin/dsp/__DSP_debug_printf.c:
 	.text       start:0x804098BC end:0x8040990C
 
