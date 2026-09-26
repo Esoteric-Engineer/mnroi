@@ -2207,6 +2207,9 @@ Dolphin/ax/__AXSPBInit.c:
 Dolphin/ax/__AXSPBQuit.c:
 	.text       start:0x80408558 end:0x8040855C
 
+Dolphin/ax/__AXDepopVoice.c:
+	.text       start:0x8040855C end:0x804085F0
+
 Dolphin/ax/__AXGetNumVoices.c:
 	.text       start:0x804085F0 end:0x804085F8
 
