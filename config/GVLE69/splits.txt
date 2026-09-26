@@ -2195,6 +2195,9 @@ Dolphin/ax/AXSetVoiceState.c:
 Dolphin/ax/AXSetVoiceAddr.c:
 	.text       start:0x8040932C end:0x8040943C
 
+Dolphin/ax/AXSetVoiceAdpcmLoop.c:
+	.text       start:0x80409578 end:0x804095E4
+
 Dolphin/ax/__AXGetCurrentProfile.c:
 	.text       start:0x804095E4 end:0x8040962C
 
