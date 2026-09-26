@@ -628,7 +628,7 @@ addr	size	name	library	confidence	notes	status
 0x8040EAB8	0x144	CARDReadAsync	card	exact	CFTKK size run of 3; equal size in CFTKK CARDReadAsync size 0x144	open
 0x8040EBFC	0x48	CARDRead	card	exact	0x48 sync wrapper of CARDReadAsync; equal size in ac-decomp CARDRead size 0x48	matched
 0x8040EC44	0x170	WriteCallback	card	exact	CFTKK size run of 3; equal size in CFTKK WriteCallback size 0x170 and ac-decomp WriteCallback size 0x170; static, name repeats across CARD files (file-local name needed when splitting)	open
-0x8040EDB4	0xB0	EraseCallback	card	exact	CFTKK size run of 3; equal size in CFTKK EraseCallback size 0xb0 and ac-decomp EraseCallback size 0xb0; static, name repeats across CARD files (file-local name needed when splitting)	open
+0x8040EDB4	0xB0	EraseCallback_8040EDB4	card	exact	CFTKK size run of 3; equal size in CFTKK EraseCallback size 0xb0 and ac-decomp EraseCallback size 0xb0; static, name repeats across CARD files (file-local name needed when splitting); matched as EraseCallback_8040EDB4 (CARDWrite.c static; suffix avoids clashing with the other CARD EraseCallbacks); WriteCallback partner is still fn_8040EC44	matched
 0x8040EE64	0x114	CARDWriteAsync	card	exact	CFTKK size run of 3; equal size in CFTKK CARDWriteAsync size 0x114 and ac-decomp CARDWriteAsync size 0x114	matched
 0x8040EF78	0x48	CARDWrite	card	exact	0x48 sync wrapper of CARDWriteAsync; equal size in ac-decomp CARDWrite size 0x48	matched
 0x8040EFC0	0xA4	DeleteCallback	card	exact	ac-decomp size run of 6; equal size in CFTKK DeleteCallback size 0xa4 and ac-decomp DeleteCallback size 0xa4	matched
