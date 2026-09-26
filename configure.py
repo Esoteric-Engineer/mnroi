@@ -1124,6 +1124,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDDefaultApiCallback.c"),
             Object(Matching, "Dolphin/card/__CARDSyncCallback.c"),
             Object(Matching, "Dolphin/card/__CARDUnlockedHandler.c"),
+            Object(Matching, "Dolphin/card/__CARDEnableInterrupt.c"),
             Object(Matching, "Dolphin/card/__CARDClearStatus.c"),
             Object(Matching, "Dolphin/card/TimeoutHandler.c"),
             Object(Matching, "Dolphin/card/UnlockedCallback.c"),

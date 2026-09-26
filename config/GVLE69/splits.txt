@@ -2290,6 +2290,9 @@ Dolphin/card/__CARDTxHandler.c:
 Dolphin/card/__CARDUnlockedHandler.c:
 	.text       start:0x8040A460 end:0x8040A4E4
 
+Dolphin/card/__CARDEnableInterrupt.c:
+	.text       start:0x8040A4E4 end:0x8040A5A4
+
 Dolphin/card/__CARDClearStatus.c:
 	.text       start:0x8040A694 end:0x8040A740
 
