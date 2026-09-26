@@ -2277,6 +2277,9 @@ Dolphin/card/CARDWriteAsync.c:
 Dolphin/card/CARDWrite.c:
 	.text       start:0x8040EF78 end:0x8040EFC0
 
+Dolphin/card/CARDFastDeleteAsync.c:
+	.text       start:0x8040F064 end:0x8040F190
+
 Dolphin/card/CARDDeleteAsync.c:
 	.text       start:0x8040F1D8 end:0x8040F2E8
 
