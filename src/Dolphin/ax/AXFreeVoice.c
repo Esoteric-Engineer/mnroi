@@ -1,0 +1,30 @@
+typedef struct AXVPB {
+    struct AXVPB* next;
+    void* pad4[2];
+    unsigned long priority;
+    unsigned char pad10[0x20 - 0x10];
+    unsigned long depop;
+    unsigned char pad24[0x146 - 0x24];
+    unsigned short state;
+} AXVPB;
+
+extern int OSDisableInterrupts(void);
+extern void OSRestoreInterrupts(int);
+extern void fn_80406B0C(AXVPB* p);
+extern void fn_80408FC8(AXVPB* p);
+extern AXVPB* lbl_8064F228[];
+
+void AXFreeVoice(AXVPB* p)
+{
+    int old = OSDisableInterrupts();
+
+    fn_80406B0C(p);
+    if (p->state == 1) {
+        p->depop = 1;
+    }
+    fn_80408FC8(p);
+    p->next = lbl_8064F228[0];
+    lbl_8064F228[0] = p;
+    p->priority = 0;
+    OSRestoreInterrupts(old);
+}
