@@ -2063,6 +2063,9 @@ Dolphin/os/OSCreateHeap.c:
 Dolphin/os/OSGetFontEncode.c:
 	.text       start:0x804030A8 end:0x8040310C
 
+Dolphin/os/ParseStringS.c:
+	.text       start:0x80403570 end:0x804036AC
+
 Dolphin/os/OSInitMessageQueue.c:
 	.text       start:0x80404148 end:0x804041A8
 

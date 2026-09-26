@@ -940,6 +940,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSInitAlloc.c"),
             Object(Matching, "Dolphin/os/OSCreateHeap.c"),
             Object(Matching, "Dolphin/os/OSGetFontEncode.c"),
+            Object(Matching, "Dolphin/os/ParseStringS.c"),
             Object(Matching, "Dolphin/os/OSInitMessageQueue.c"),
             Object(Matching, "Dolphin/os/OSInitSemaphore.c"),
             Object(Matching, "Dolphin/os/OSWaitSemaphore.c"),
