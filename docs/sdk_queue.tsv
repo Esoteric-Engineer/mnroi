@@ -603,7 +603,7 @@ addr	size	name	library	confidence	notes	status
 0x8040CA98	0xCC	IsCard	card	exact	ac-decomp size run of 11; equal size in CFTKK IsCard size 0xcc and ac-decomp IsCard size 0xcc	open
 0x8040CB64	0x17C	CARDProbeEx	card	exact	ac-decomp size run of 11; equal size in CFTKK CARDProbeEx size 0x17c and ac-decomp CARDProbeEx size 0x17c	open
 0x8040CCE0	0x410	DoMount	card	exact	ac 0x410 (CFTKK 0x454); equal size in ac-decomp DoMount size 0x410	open
-0x8040D0F0	0x138	__CARDMountCallback	card	exact	ac-decomp size run of 11; equal size in CFTKK __CARDMountCallback size 0x138 and ac-decomp __CARDMountCallback size 0x138	open
+0x8040D0F0	0x138	__CARDMountCallback	card	exact	ac-decomp size run of 11; equal size in CFTKK __CARDMountCallback size 0x138 and ac-decomp __CARDMountCallback size 0x138	matched
 0x8040D228	0x1A0	CARDMountAsync	card	exact	ac-decomp size run of 11; equal size in CFTKK CARDMountAsync size 0x1a0 and ac-decomp CARDMountAsync size 0x1a0	open
 0x8040D3C8	0x48	CARDMount	card	exact	0x48 sync wrapper of CARDMountAsync; equal size in ac-decomp CARDMount size 0x48	matched
 0x8040D410	0x9C	DoUnmount	card	exact	CFTKK size run of 4; equal size in CFTKK DoUnmount size 0x9c and ac-decomp DoUnmount size 0x9c	matched

@@ -1144,6 +1144,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDGetDirBlock.c"),
             Object(Matching, "Dolphin/card/__CARDVerify.c"),
             Object(Matching, "Dolphin/card/CARDCheck.c"),
+            Object(Matching, "Dolphin/card/__CARDMountCallback.c"),
             Object(Matching, "Dolphin/card/CARDMount.c"),
             Object(Matching, "Dolphin/card/DoUnmount.c"),
             Object(Matching, "Dolphin/card/CARDUnmount.c"),
