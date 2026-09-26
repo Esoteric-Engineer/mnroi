@@ -1153,6 +1153,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDFreeBlock.c"),
             Object(Matching, "Dolphin/card/__CARDUpdateFatBlock.c"),
             Object(Matching, "Dolphin/card/__CARDGetDirBlock.c"),
+            Object(Matching, "Dolphin/card/WriteCallback_8040B8D4.c"),
             Object(Matching, "Dolphin/card/EraseCallback_8040B9A4.c"),
             Object(Matching, "Dolphin/card/__CARDUpdateDir.c"),
             Object(Matching, "Dolphin/card/__CARDVerify.c"),
