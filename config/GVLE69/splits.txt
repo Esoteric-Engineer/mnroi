@@ -2371,6 +2371,9 @@ Dolphin/card/OnReset.c:
 Dolphin/card/__CARDGetFatBlock.c:
 	.text       start:0x8040B4C8 end:0x8040B4D0
 
+Dolphin/card/WriteCallback_8040B4D0.c:
+	.text       start:0x8040B4D0 end:0x8040B5A4
+
 Dolphin/card/EraseCallback_8040B5A4.c:
 	.text       start:0x8040B5A4 end:0x8040B66C
 

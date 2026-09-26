@@ -21,7 +21,7 @@ typedef struct CARDControl {
 
 extern CARDControl __CARDBlock[2];
 
-extern void fn_8040B4D0(s32 chan, s32 result);
+extern void WriteCallback_8040B4D0(s32 chan, s32 result);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback);
 
@@ -42,7 +42,7 @@ void EraseCallback_8040B5A4(s32 chan, s32 result)
     if (result >= 0) {
         fat = GetFat(card);
         addr = (((u32)fat - (u32)card->workArea) / 0x2000) * card->sectorSize;
-        result = __CARDWrite(chan, addr, 0x2000, fat, fn_8040B4D0);
+        result = __CARDWrite(chan, addr, 0x2000, fat, WriteCallback_8040B4D0);
         if (result >= 0)
             return;
     }
