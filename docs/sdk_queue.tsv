@@ -392,7 +392,7 @@ addr	size	name	library	confidence	notes	status
 0x80400CEC	0x44	__VMGetPageToReplace	vm	exact	CFTKK size run of 12	matched
 0x80400D30	0x1D0	__VMPageReplacementLRU	vm	exact	CFTKK size run of 12	open
 0x80400F00	0x94	__VMPageReplacementRandom	vm	exact	CFTKK size run of 12	open
-0x80400F94	0x6C	__VMPageReplacementFIFO	vm	exact	CFTKK size run of 12	open
+0x80400F94	0x6C	__VMPageReplacementFIFO	vm	exact	CFTKK size run of 12; nofralloc asm (GCC output), FIFO cursor lbl_8066F968 wrapping at __VMGetNumPagesInMRAM, skips VMBASEIsPageLocked pages	matched
 0x80401000	0x100	VMAlloc	vm	exact	CFTKK size run of 12	matched
 0x80401100	0x40	__VMTranslateVMPageToARAMPage	vm	exact	CFTKK size run of 12	matched
 0x80401140	0x20	__VMDoesMappingExist	vm	exact	CFTKK size run of 12	matched
