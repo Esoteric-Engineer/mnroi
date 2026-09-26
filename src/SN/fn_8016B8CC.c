@@ -1,5 +1,5 @@
 extern char lbl_8057BD88[];
-extern void fn_8016ACCC(void);
+extern void SNQueryData(void);
 extern void fn_8016B740(void);
 extern void fn_8016B24C(void);
 extern void fn_8016B30C(void);
@@ -16,7 +16,7 @@ asm void fn_8016B8CC(void)
     lis     r29, (lbl_8057BD88+0x160)@ha
     lwz     r30, (lbl_8057BD88+0x15C)@l(r9)
 L_wait:
-    bl      fn_8016ACCC
+    bl      SNQueryData
     cmpwi   r3, 0
     beq     L_wait
     lis     r9, 0xcc00

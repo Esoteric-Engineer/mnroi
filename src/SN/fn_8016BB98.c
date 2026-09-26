@@ -1,6 +1,6 @@
 extern char lbl_8057BD88[];
 extern char lbl_804CFF30[];
-extern int fn_8016ACCC(void);
+extern int SNQueryData(void);
 extern void fn_8016AD54(void);
 extern void fn_8016AF10(void);
 
@@ -19,7 +19,7 @@ asm void fn_8016BB98(void)
     cmpwi   r0, 0
     beq     L_8016BC28
 L_8016BBC0:
-    bl      fn_8016ACCC
+    bl      SNQueryData
     mr.     r3, r3
     beq     L_8016BBC0
     mr      r4, r3

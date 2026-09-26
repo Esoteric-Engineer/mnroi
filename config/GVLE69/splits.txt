@@ -195,6 +195,9 @@ SN/fn_8016AB28.c:
 SN/SNInitInterrupts.c:
 	.text       start:0x8016AC84 end:0x8016ACCC
 
+SN/SNQueryData.c:
+	.text       start:0x8016ACCC end:0x8016AD54
+
 SN/SNOpen.c:
 	.text       start:0x8016B0A8 end:0x8016B0AC
 
