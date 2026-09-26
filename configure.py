@@ -1109,6 +1109,7 @@ config.libs = [
         [
             Object(Matching, "Dolphin/card/__CARDDefaultApiCallback.c"),
             Object(Matching, "Dolphin/card/__CARDSyncCallback.c"),
+            Object(Matching, "Dolphin/card/__CARDUnlockedHandler.c"),
             Object(Matching, "Dolphin/card/UnlockedCallback.c"),
             Object(Matching, "Dolphin/card/__CARDWritePage.c"),
             Object(Matching, "Dolphin/card/__CARDGetFontEncode.c"),
