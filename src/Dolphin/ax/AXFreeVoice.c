@@ -10,7 +10,7 @@ typedef struct AXVPB {
 
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int);
-extern void fn_80406B0C(AXVPB* p);
+extern void __AXRemoveFromStack(AXVPB* p);
 extern void fn_80408FC8(AXVPB* p);
 extern AXVPB* lbl_8064F228[];
 
@@ -18,7 +18,7 @@ void AXFreeVoice(AXVPB* p)
 {
     int old = OSDisableInterrupts();
 
-    fn_80406B0C(p);
+    __AXRemoveFromStack(p);
     if (p->state == 1) {
         p->depop = 1;
     }

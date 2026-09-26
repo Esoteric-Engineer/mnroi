@@ -2126,6 +2126,9 @@ Dolphin/ax/__AXPushCallbackStack.c:
 Dolphin/ax/__AXPopCallbackStack.c:
 	.text       start:0x80406AF0 end:0x80406B0C
 
+Dolphin/ax/__AXRemoveFromStack.c:
+	.text       start:0x80406B0C end:0x80406BA0
+
 Dolphin/ax/AXFreeVoice.c:
 	.text       start:0x80406BA0 end:0x80406C20
 

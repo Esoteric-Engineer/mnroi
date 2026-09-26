@@ -5,7 +5,7 @@ typedef struct AXVPB {
 } AXVPB;
 
 extern AXVPB* __AXPopCallbackStack(void);
-extern void fn_80406B0C(AXVPB* p);
+extern void __AXRemoveFromStack(AXVPB* p);
 extern void __AXPushFreeStack(AXVPB* p);
 
 void __AXServiceCallbackStack(void)
@@ -17,7 +17,7 @@ void __AXServiceCallbackStack(void)
             if (p->callback != 0) {
                 p->callback(p);
             }
-            fn_80406B0C(p);
+            __AXRemoveFromStack(p);
             __AXPushFreeStack(p);
         }
         p = __AXPopCallbackStack();
