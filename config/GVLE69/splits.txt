@@ -2039,6 +2039,9 @@ Runtime.PPCEABI.H/__restore_gpr.c:
 Dolphin/os/OSSetCurrentHeap.c:
 	.text       start:0x80402044 end:0x80402054
 
+Dolphin/os/OSInitAlloc.c:
+	.text       start:0x80402054 end:0x804020C4
+
 Dolphin/os/OSCreateHeap.c:
 	.text       start:0x804020C4 end:0x80402130
 

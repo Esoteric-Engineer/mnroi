@@ -936,6 +936,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/ExternalInterruptHandler.c"),
             Object(Matching, "Dolphin/os/__OSModuleInit.c"),
             Object(Matching, "Dolphin/os/OSSetCurrentHeap.c"),
+            Object(Matching, "Dolphin/os/OSInitAlloc.c"),
             Object(Matching, "Dolphin/os/OSCreateHeap.c"),
             Object(Matching, "Dolphin/os/OSGetFontEncode.c"),
             Object(Matching, "Dolphin/os/OSInitMessageQueue.c"),
