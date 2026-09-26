@@ -938,6 +938,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSSetCurrentHeap.c"),
             Object(Matching, "Dolphin/os/OSInitMessageQueue.c"),
             Object(Matching, "Dolphin/os/OSInitSemaphore.c"),
+            Object(Matching, "Dolphin/os/OSSignalSemaphore.c"),
             Object(Matching, "Dolphin/os/OSMemory.c"),
             Object(Matching, "Dolphin/os/RealMode.c"),
             Object(Matching, "Dolphin/os/__OSInitMemoryProtection.c"),
