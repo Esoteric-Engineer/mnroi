@@ -2168,6 +2168,9 @@ Dolphin/ax/__AXGetPBs.c:
 Dolphin/ax/__AXVPBQuit.c:
 	.text       start:0x80409208 end:0x8040920C
 
+Dolphin/ax/AXSetVoiceState.c:
+	.text       start:0x804092D0 end:0x8040932C
+
 Dolphin/ax/AXSetVoiceAddr.c:
 	.text       start:0x8040932C end:0x8040943C
 
