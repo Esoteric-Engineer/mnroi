@@ -1147,6 +1147,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDSync.c"),
             Object(Matching, "Dolphin/card/OnReset.c"),
             Object(Matching, "Dolphin/card/__CARDGetFatBlock.c"),
+            Object(Matching, "Dolphin/card/EraseCallback_8040B5A4.c"),
             Object(Matching, "Dolphin/card/__CARDAllocBlock.c"),
             Object(Matching, "Dolphin/card/__CARDFreeBlock.c"),
             Object(Matching, "Dolphin/card/__CARDUpdateFatBlock.c"),
