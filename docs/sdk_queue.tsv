@@ -472,7 +472,7 @@ addr	size	name	library	confidence	notes	status
 0x8040494C	0xF0	ARStartDMA	ar	exact	CFTKK size run of 5; equal size in CFTKK ARStartDMA size 0xf0 and ac-decomp ARStartDMA size 0xf0	open
 0x80404A3C	0xC4	ARInit	ar	exact	__ARVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK size run of 5	open
 0x80404B00	0x8	ARGetBaseAddress	ar	exact	li r3,0x4000; ARGetSize is stripped; equal size in CFTKK ARGetBaseAddress size 0x8 and ac-decomp ARGetBaseAddress size 0x8	matched
-0x80404B08	0x78	__ARHandler	ar	exact	CFTKK size run of 10; equal size in CFTKK __ARHandler size 0x78 and ac-decomp __ARHandler size 0x78	open
+0x80404B08	0x78	__ARHandler	ar	exact	CFTKK size run of 10; equal size in CFTKK __ARHandler size 0x78 and ac-decomp __ARHandler size 0x78	matched
 0x80404B80	0x20	__ARClearInterrupt	ar	exact	CFTKK size run of 10; equal size in CFTKK __ARClearInterrupt size 0x20	matched
 0x80404BA0	0x10	__ARGetInterruptStatus	ar	exact	CFTKK size run of 10; equal size in CFTKK __ARGetInterruptStatus size 0x10	matched
 0x80404BB0	0x17F4	__ARChecksize	ar	exact	CFTKK size run of 10; equal size in CFTKK __ARChecksize size 0x17f4	open

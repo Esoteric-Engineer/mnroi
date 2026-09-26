@@ -2081,6 +2081,9 @@ Dolphin/ar/ARGetDMAStatus.c:
 Dolphin/ar/ARGetBaseAddress.c:
 	.text       start:0x80404B00 end:0x80404B08
 
+Dolphin/ar/__ARHandler.c:
+	.text       start:0x80404B08 end:0x80404B80
+
 Dolphin/ar/__ARClearInterrupt.c:
 	.text       start:0x80404B80 end:0x80404BA0
 
