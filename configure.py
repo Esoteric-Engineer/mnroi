@@ -1064,6 +1064,8 @@ config.libs = [
             Object(Matching, "Dolphin/ax/__AXGetStackHead.c"),
             Object(Matching, "Dolphin/ax/__AXServiceCallbackStack.c"),
             Object(Matching, "Dolphin/ax/__AXGetNumVoices.c"),
+            Object(Matching, "Dolphin/ax/__AXAllocInit.c"),
+            Object(Matching, "Dolphin/ax/__AXAllocQuit.c"),
             Object(Matching, "Dolphin/ax/__AXPushFreeStack.c"),
             Object(Matching, "Dolphin/ax/__AXPushCallbackStack.c"),
             Object(Matching, "Dolphin/ax/__AXPopCallbackStack.c"),

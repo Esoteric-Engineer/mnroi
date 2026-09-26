@@ -2130,6 +2130,12 @@ Dolphin/ax/__AXGetStackHead.c:
 Dolphin/ax/__AXServiceCallbackStack.c:
 	.text       start:0x804068E4 end:0x80406958
 
+Dolphin/ax/__AXAllocInit.c:
+	.text       start:0x80406958 end:0x80406A0C
+
+Dolphin/ax/__AXAllocQuit.c:
+	.text       start:0x80406A0C end:0x80406AC0
+
 Dolphin/ax/__AXPushFreeStack.c:
 	.text       start:0x80406AC0 end:0x80406AE0
 
