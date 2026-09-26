@@ -2039,6 +2039,9 @@ Dolphin/vm/__VMBASEInvalidateEntireTLB.c:
 Dolphin/vm/__VMBASESetupSDR1.c:
 	.text       start:0x8040199C end:0x804019E4
 
+Dolphin/vm/__VMBASEDSIExceptionHandler.c:
+	.text       start:0x80401B60 end:0x80401C54
+
 Dolphin/vm/__VMBASEDSIServiceExceptionPrep.c:
 	.text       start:0x80401C54 end:0x80401CA4
 
