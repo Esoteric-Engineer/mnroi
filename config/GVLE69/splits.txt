@@ -2324,6 +2324,9 @@ Dolphin/card/CARDCheck.c:
 Dolphin/card/CARDMount.c:
 	.text       start:0x8040D3C8 end:0x8040D410
 
+Dolphin/card/DoUnmount.c:
+	.text       start:0x8040D410 end:0x8040D4AC
+
 Dolphin/card/CARDFormat.c:
 	.text       start:0x8040DCF4 end:0x8040DD48
 
