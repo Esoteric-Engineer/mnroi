@@ -1041,6 +1041,7 @@ config.libs = [
         [
             Object(Matching, "Dolphin/ar/ARRegisterDMACallback.c"),
             Object(Matching, "Dolphin/ar/ARGetDMAStatus.c"),
+            Object(Matching, "Dolphin/ar/ARInit.c"),
             Object(Matching, "Dolphin/ar/ARGetBaseAddress.c"),
             Object(Matching, "Dolphin/ar/__ARHandler.c"),
             Object(Matching, "Dolphin/ar/__ARClearInterrupt.c"),
