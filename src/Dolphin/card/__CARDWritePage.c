@@ -22,7 +22,7 @@ typedef struct CARDControl {
 extern CARDControl __CARDBlock[2];
 
 extern s32 fn_8040AB20(s32 chan, s32 dev, CARDCallback callback);
-extern void fn_8040A3B8(s32 chan, s32 result);
+extern void __CARDTxHandler(s32 chan, s32 result);
 extern int EXIImmEx(s32 chan, void* buf, s32 len, s32 type);
 extern int EXIDma(s32 chan, void* buf, s32 len, s32 type, CARDCallback callback);
 extern int EXIDeselect(s32 chan);
@@ -47,7 +47,7 @@ s32 __CARDWritePage(s32 chan, CARDCallback callback)
     if (result == -1) {
         result = 0;
     } else if (result >= 0) {
-        if (!EXIImmEx(chan, card->cmd, card->cmdlen, 1) || !EXIDma(chan, card->buffer, 128, card->mode, fn_8040A3B8)) {
+        if (!EXIImmEx(chan, card->cmd, card->cmdlen, 1) || !EXIDma(chan, card->buffer, 128, card->mode, __CARDTxHandler)) {
             card->exiCallback = 0;
             EXIDeselect(chan);
             EXIUnlock(chan);

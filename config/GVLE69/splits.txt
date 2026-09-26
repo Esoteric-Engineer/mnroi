@@ -2281,6 +2281,9 @@ Dolphin/card/__CARDSyncCallback.c:
 Dolphin/card/__CARDExiHandler.c:
 	.text       start:0x8040A2A0 end:0x8040A3B8
 
+Dolphin/card/__CARDTxHandler.c:
+	.text       start:0x8040A3B8 end:0x8040A460
+
 Dolphin/card/__CARDUnlockedHandler.c:
 	.text       start:0x8040A460 end:0x8040A4E4
 
