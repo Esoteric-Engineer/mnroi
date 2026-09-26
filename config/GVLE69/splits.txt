@@ -2222,6 +2222,9 @@ Dolphin/dsp/DSPSendMailToDSP.c:
 Dolphin/dsp/DSPCheckInit.c:
 	.text       start:0x8040973C end:0x80409744
 
+Dolphin/dsp/DSPAddTask.c:
+	.text       start:0x80409744 end:0x804097B4
+
 Dolphin/dsp/DSPCancelTask.c:
 	.text       start:0x804097B4 end:0x804097F4
 

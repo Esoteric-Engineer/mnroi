@@ -549,7 +549,7 @@ addr	size	name	library	confidence	notes	status
 0x80409664	0x14	DSPSendMailToDSP	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPSendMailToDSP size 0x14 and ac-decomp DSPSendMailToDSP size 0x14	matched
 0x80409678	0xC4	DSPInit	dsp	exact	__DSPVersion pointer (.sdata) loaded here and passed to OSRegisterVersion; string '<< Dolphin SDK - ...' verified in main.dol. CFTKK size run of 23	open
 0x8040973C	0x8	DSPCheckInit	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPCheckInit size 0x8	matched
-0x80409744	0x70	DSPAddTask	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPAddTask size 0x70	open
+0x80409744	0x70	DSPAddTask	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPAddTask size 0x70	matched
 0x804097B4	0x40	DSPCancelTask	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPCancelTask size 0x40	matched
 0x804097F4	0xC8	DSPAssertTask	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPAssertTask size 0xc8	open
 0x804098BC	0x50	__DSP_debug_printf	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_debug_printf size 0x50	matched
