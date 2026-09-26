@@ -9,7 +9,7 @@ typedef struct CARDControl {
     u32 sectorSize;
 } CARDControl;
 
-extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
+extern s32 __CARDGetControlBlock(s32 chan, CARDControl** card);
 extern BOOL OSDisableInterrupts(void);
 extern BOOL OSRestoreInterrupts(BOOL level);
 
@@ -31,7 +31,7 @@ s32 CARDGetSectorSize(s32 chan, u32* size)
     CARDControl* card;
     s32 result;
 
-    result = fn_8040B0F0(chan, &card);
+    result = __CARDGetControlBlock(chan, &card);
     if (result < 0) {
         return result;
     }

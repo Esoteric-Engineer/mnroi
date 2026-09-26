@@ -14,7 +14,7 @@ typedef struct CARDControl {
 
 extern CARDControl __CARDBlock[2];
 
-extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
+extern s32 __CARDGetControlBlock(s32 chan, CARDControl** card);
 extern BOOL OSDisableInterrupts(void);
 extern BOOL OSRestoreInterrupts(BOOL level);
 extern void OSCancelAlarm(void* alarm);
@@ -44,7 +44,7 @@ s32 CARDUnmount(s32 chan)
     CARDControl* card;
     s32 result;
 
-    result = fn_8040B0F0(chan, &card);
+    result = __CARDGetControlBlock(chan, &card);
     if (result < 0) {
         return result;
     }

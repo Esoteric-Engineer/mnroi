@@ -1132,6 +1132,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDWritePage.c"),
             Object(Matching, "Dolphin/card/__CARDGetFontEncode.c"),
             Object(Matching, "Dolphin/card/__CARDSetDiskID.c"),
+            Object(Matching, "Dolphin/card/__CARDGetControlBlock.c"),
             Object(Matching, "Dolphin/card/__CARDPutControlBlock.c"),
             Object(Matching, "Dolphin/card/CARDGetSectorSize.c"),
             Object(Matching, "Dolphin/card/__CARDSync.c"),

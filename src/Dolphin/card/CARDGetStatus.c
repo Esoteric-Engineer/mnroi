@@ -40,7 +40,7 @@ typedef struct CARDStat {
     u32 commentAddr;
 } CARDStat;
 
-extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
+extern s32 __CARDGetControlBlock(s32 chan, CARDControl** card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern s32 fn_8040DF78(CARDControl* card, CARDDir* ent);
@@ -56,7 +56,7 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat)
     if (fileNo < 0 || fileNo >= 127)
         return -128;
 
-    result = fn_8040B0F0(chan, &card);
+    result = __CARDGetControlBlock(chan, &card);
     if (result < 0)
         return result;
 

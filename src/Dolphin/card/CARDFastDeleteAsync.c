@@ -18,7 +18,7 @@ typedef struct CARDDir {
     u8 pad1[0x40 - 0x38];
 } CARDDir;
 
-extern s32 fn_8040B0F0(s32 chan, CARDControl** card);
+extern s32 __CARDGetControlBlock(s32 chan, CARDControl** card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern int __CARDIsOpened(CARDControl* card, s32 fileNo);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
@@ -37,7 +37,7 @@ s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback)
 
     if (fileNo < 0 || 127 <= fileNo)
         return -128;
-    result = fn_8040B0F0(chan, &card);
+    result = __CARDGetControlBlock(chan, &card);
     if (result < 0)
         return result;
 
