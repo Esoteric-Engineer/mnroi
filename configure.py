@@ -1028,6 +1028,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/__VMBASEDSIExceptionHandler.c"),
             Object(Matching, "Dolphin/vm/__VMBASEDSIServiceExceptionPrep.c"),
             Object(Matching, "Dolphin/vm/__VMBASEDSIServiceException.c"),
+            Object(Matching, "Dolphin/vm/__VMBASEISIExceptionHandler.c"),
             Object(Matching, "Dolphin/vm/__VMBASEISIServiceExceptionPrep.c"),
             Object(Matching, "Dolphin/vm/__VMBASEISIServiceException.c"),
             Object(Matching, "Dolphin/vm/__VMBASESetupSDR1.c"),
