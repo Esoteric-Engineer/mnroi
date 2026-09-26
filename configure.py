@@ -1179,6 +1179,7 @@ config.libs = [
     DolphinLib(
         "gx",
         [
+            Object(Matching, "Dolphin/gx/GXEndDisplayList.c"),
             Object(Matching, "Dolphin/gx/GXCallDisplayList.c"),
         ],
     ),
