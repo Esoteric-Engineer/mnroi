@@ -2110,6 +2110,9 @@ Dolphin/ar/ARRegisterDMACallback.c:
 Dolphin/ar/ARGetDMAStatus.c:
 	.text       start:0x80404910 end:0x8040494C
 
+Dolphin/ar/ARStartDMA.c:
+	.text       start:0x8040494C end:0x80404A3C
+
 Dolphin/ar/ARInit.c:
 	.text       start:0x80404A3C end:0x80404B00
 

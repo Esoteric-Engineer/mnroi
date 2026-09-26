@@ -17,15 +17,15 @@ extern ARQRequest* lbl_8066F9F4;
 extern void (*lbl_8066F9F8)(u32);
 extern void (*lbl_8066F9FC)(u32);
 
-extern void fn_8040494C(u32 type, u32 mainmem, u32 aram, u32 length);
+extern void ARStartDMA(u32 type, u32 mainmem, u32 aram, u32 length);
 extern void __ARQServiceQueueLo(void);
 
 inline void __ARQPopTaskQueueHi(void) {
     if (lbl_8066F9D8) {
         if (lbl_8066F9D8->type == 0) {
-            fn_8040494C(lbl_8066F9D8->type, lbl_8066F9D8->source, lbl_8066F9D8->dest, lbl_8066F9D8->length);
+            ARStartDMA(lbl_8066F9D8->type, lbl_8066F9D8->source, lbl_8066F9D8->dest, lbl_8066F9D8->length);
         } else {
-            fn_8040494C(lbl_8066F9D8->type, lbl_8066F9D8->dest, lbl_8066F9D8->source, lbl_8066F9D8->length);
+            ARStartDMA(lbl_8066F9D8->type, lbl_8066F9D8->dest, lbl_8066F9D8->source, lbl_8066F9D8->length);
         }
         lbl_8066F9F8 = lbl_8066F9D8->callback;
         lbl_8066F9F0 = lbl_8066F9D8;
