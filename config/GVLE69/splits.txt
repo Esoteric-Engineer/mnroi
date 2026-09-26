@@ -2125,6 +2125,9 @@ Dolphin/arq/__ARQServiceQueueLo.c:
 Dolphin/arq/__ARQCallbackHack.c:
 	.text       start:0x804064A4 end:0x804064A8
 
+Dolphin/arq/__ARQInterruptServiceRoutine.c:
+	.text       start:0x804064A8 end:0x80406574
+
 Dolphin/arq/ARQInit.c:
 	.text       start:0x80406574 end:0x804065E4
 
