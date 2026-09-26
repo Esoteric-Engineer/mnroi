@@ -2063,6 +2063,9 @@ Runtime.PPCEABI.H/__save_gpr.c:
 Runtime.PPCEABI.H/__restore_gpr.c:
 	.text       start:0x80401EFC end:0x80401F48
 
+Dolphin/os/OSAllocFromHeap.c:
+	.text       start:0x80401F48 end:0x80402044
+
 Dolphin/os/OSSetCurrentHeap.c:
 	.text       start:0x80402044 end:0x80402054
 
