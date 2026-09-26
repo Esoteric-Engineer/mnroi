@@ -1082,6 +1082,7 @@ config.libs = [
             Object(Matching, "Dolphin/ax/__AXVPBQuit.c"),
             Object(Matching, "Dolphin/ax/AXRegisterAuxACallback.c"),
             Object(Matching, "Dolphin/ax/AXSetMode.c"),
+            Object(Matching, "Dolphin/ax/AXSetVoiceSrcType.c"),
             Object(Matching, "Dolphin/ax/AXSetVoiceState.c"),
             Object(Matching, "Dolphin/ax/AXSetVoiceAddr.c"),
             Object(Matching, "Dolphin/ax/AXSetVoiceAdpcm.c"),
