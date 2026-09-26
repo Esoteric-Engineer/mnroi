@@ -2376,6 +2376,9 @@ Dolphin/card/__CARDUpdateFatBlock.c:
 Dolphin/card/__CARDGetDirBlock.c:
 	.text       start:0x8040B8CC end:0x8040B8D4
 
+Dolphin/card/EraseCallback_8040B9A4.c:
+	.text       start:0x8040B9A4 end:0x8040BA6C
+
 Dolphin/card/__CARDUpdateDir.c:
 	.text       start:0x8040BA6C end:0x8040BB30
 
