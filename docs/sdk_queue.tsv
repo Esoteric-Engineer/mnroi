@@ -402,8 +402,8 @@ addr	size	name	library	confidence	notes	status
 0x804011C4	0xA8	__VMAllocVirtualToARAMLUT	vm	exact	CFTKK size run of 12. Matched as nofralloc asm: sibling of __VMAllocARAMToVirtualLUT (arena 0x8000 zeroed, stores lbl_8066F974)	matched
 0x8040126C	0xA0	__VMAllocARAMToVirtualLUT	vm	exact	CFTKK size run of 12; callees OSGetArenaLo/OSSetArenaLo (0x4000 bytes, ARAM page -> virtual LUT stored in lbl_8066F970, as VMAlloc uses it). Matched as nofralloc asm	matched
 0x8040130C	0xA4	VMBASEInit	vm	guess	CFTKK 0xCC; calls the __VMBASEInit*/Setup* asm labels	open
-0x804013B0	0x6C	VMBASESetPageTableEntry	vm	guess	CFTKK 0x94; DCStoreRange	open
-0x8040141C	0x6C	VMBASEClearPageTableEntry	vm	guess	CFTKK 0x8C; DCStoreRange	open
+0x804013B0	0x6C	VMBASESetPageTableEntry	vm	guess	CFTKK 0x94; DCStoreRange	matched
+0x8040141C	0x6C	VMBASEClearPageTableEntry	vm	guess	CFTKK 0x8C; DCStoreRange	matched
 0x80401488	0x28	VMBASEIsPageValid	vm	guess	Was proposed as VMBASEIsPageReferenced; the three 0x28 getters are Valid/Referenced/Dirty in CFTKK order (0x804014B0 extracts PTE bit 0x100 = R, 0x804014D8 bit 0x80 = C). CFTKK size 0x28	matched
 0x804014B0	0x28	VMBASEIsPageReferenced	vm	guess	Extracts PTE word-1 bit 0x100 (R). Was proposed as VMBASEIsPageDirty (shifted by one). CFTKK size 0x28	matched
 0x804014D8	0x28	VMBASEIsPageDirty	vm	guess	Extracts PTE word-1 bit 0x80 (C). Was proposed as VMBASESetPageLocked, which is 0x8040158C. CFTKK size 0x28	matched
