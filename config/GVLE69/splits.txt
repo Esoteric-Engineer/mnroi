@@ -2033,6 +2033,9 @@ Dolphin/vm/VMBASEIsPageReferenced.c:
 Dolphin/vm/VMBASEIsPageDirty.c:
 	.text       start:0x804014D8 end:0x80401500
 
+Dolphin/vm/VMBASESetPageReferenced.c:
+	.text       start:0x80401500 end:0x80401550
+
 Dolphin/vm/__VMBASEClearPageFromTLB.c:
 	.text       start:0x80401550 end:0x80401560
 

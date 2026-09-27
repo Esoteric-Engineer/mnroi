@@ -7,7 +7,7 @@ extern unsigned long VMBASEIsPageLocked(unsigned long page);
 extern unsigned long VMBASEIsPageValid(unsigned long addr);
 extern unsigned long VMBASEIsPageReferenced(unsigned long addr);
 extern unsigned long VMBASEIsPageDirty(unsigned long addr);
-extern void fn_80401500(unsigned long addr, unsigned long set);
+extern void VMBASESetPageReferenced(unsigned long addr, unsigned long set);
 void _savegpr_24(void);
 void _restgpr_24(void);
 
@@ -94,7 +94,7 @@ L_80400E3C:
     beq     L_80400E50
     mr      r3, r24
     li      r4, 0
-    bl      fn_80401500
+    bl      VMBASESetPageReferenced
 L_80400E50:
     lwz     r3, lbl_8066F968
     cmplw   r29, r3

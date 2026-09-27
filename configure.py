@@ -1032,6 +1032,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/VMBASEIsPageValid.c"),
             Object(Matching, "Dolphin/vm/VMBASEIsPageReferenced.c"),
             Object(Matching, "Dolphin/vm/VMBASEIsPageDirty.c"),
+            Object(Matching, "Dolphin/vm/VMBASESetPageReferenced.c"),
             Object(Matching, "Dolphin/vm/__VMBASEClearPageFromTLB.c"),
             Object(Matching, "Dolphin/vm/VMBASEGetVirtualAddrFromPageInMRAM.c"),
             Object(Matching, "Dolphin/vm/__VMBASESetVirtualAddressForPageInMRAM.c"),
