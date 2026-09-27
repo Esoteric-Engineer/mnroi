@@ -2508,6 +2508,9 @@ Dolphin/card/VerifyID.c:
 Dolphin/card/VerifyDir.c:
 	.text       start:0x8040BF64 end:0x8040C1A4
 
+Dolphin/card/VerifyFAT.c:
+	.text       start:0x8040C1A4 end:0x8040C428
+
 Dolphin/card/__CARDVerify.c:
 	.text       start:0x8040C428 end:0x8040C4B4
 

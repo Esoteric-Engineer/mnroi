@@ -596,7 +596,7 @@ addr	size	name	library	confidence	notes	status
 0x8040BB30	0x1B0	__CARDCheckSum	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDCheckSum size 0x1b0 and ac-decomp __CARDCheckSum size 0x1b0	matched
 0x8040BCE0	0x284	VerifyID	card	exact	CFTKK size run of 16; equal size in CFTKK VerifyID size 0x284 and ac-decomp VerifyID size 0x284. Matched as Dolphin/card/VerifyID.c first try; this game checks the encoding (via __CARDGetFontEncode) after the serial loop, not before, and has no asserts	matched
 0x8040BF64	0x240	VerifyDir	card	exact	CFTKK size run of 16; equal size in CFTKK VerifyDir size 0x240 and ac-decomp VerifyDir size 0x240	matched
-0x8040C1A4	0x284	VerifyFAT	card	exact	CFTKK size run of 16; equal size in CFTKK VerifyFAT size 0x284 and ac-decomp VerifyFAT size 0x284	open
+0x8040C1A4	0x284	VerifyFAT	card	exact	CFTKK size run of 16; equal size in CFTKK VerifyFAT size 0x284 and ac-decomp VerifyFAT size 0x284. Matched as Dolphin/card/VerifyFAT.c (ac-decomp source verbatim, CARD_FAT_CHECKCODE=2)	matched
 0x8040C428	0x8C	__CARDVerify	card	exact	CFTKK size run of 16; equal size in CFTKK __CARDVerify size 0x8c and ac-decomp __CARDVerify size 0x8c. Matched as Dolphin/card/__CARDVerify.c, calling VerifyID/VerifyDir/VerifyFAT (fn_8040BCE0/BF64/C1A4) as externs	matched
 0x8040C4B4	0x590	CARDCheckExAsync	card	exact	CFTKK size run of 16; equal size in CFTKK CARDCheckExAsync size 0x590 and ac-decomp CARDCheckExAsync size 0x590	open
 0x8040CA44	0x54	CARDCheck	card	exact	ac 0x54; CARDCheckExAsync + __CARDSync; equal size in ac-decomp CARDCheck size 0x54; CARDCheckEx inlined (static inline in the unit); calls fn_8040C4B4 (CARDCheckExAsync) and fn_8040B3E0 (__CARDSync)	matched
