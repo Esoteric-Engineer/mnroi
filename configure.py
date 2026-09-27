@@ -1202,6 +1202,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/VerifyDir.c"),
             Object(Matching, "Dolphin/card/VerifyFAT.c"),
             Object(Matching, "Dolphin/card/__CARDVerify.c"),
+            Object(Matching, "Dolphin/card/CARDCheckExAsync.c"),
             Object(Matching, "Dolphin/card/CARDCheck.c"),
             Object(Matching, "Dolphin/card/IsCard.c"),
             Object(Matching, "Dolphin/card/CARDProbeEx.c"),
