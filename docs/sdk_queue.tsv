@@ -648,7 +648,7 @@ addr	size	name	library	confidence	notes	status
 0x8040FC98	0xC4	DummyLen	card	exact	CFTKK size run of 7; equal size in CFTKK DummyLen size 0xc4; static in CARDUnlock.c, kept non-static as callers (fn_8040FD5C, fn_80410924) are unclaimed; srand/rand inlined on seed lbl_8066CF00 (.sdata, shared with GetInitVal-style neighbours)	matched
 0x8040FD5C	0xB58	__CARDUnlock	card	exact	CFTKK size run of 7; equal size in CFTKK __CARDUnlock size 0xb58	open
 0x804108B4	0x70	InitCallback	card	exact	CFTKK size run of 7; equal size in CFTKK InitCallback size 0x70; verified against ac-decomp CARDUnlock.c InitCallback (static there; defined global here since fn_8040FD5C references it by symbol)	matched
-0x80410924	0x324	DoneCallback	card	exact	CFTKK size run of 7; equal size in CFTKK DoneCallback size 0x324	open
+0x80410924	0x324	DoneCallback	card	exact	CFTKK size run of 7; equal size in CFTKK DoneCallback size 0x324. Matched as Dolphin/card/DoneCallback.c first try (ac-decomp CARDUnlock.c source minus asserts; exnor as a static inline, unrolled x8 by the compiler; sizeof(CARDDecParam)=0x10 folded into the workArea round-up)	matched
 0x80410C48	0xDC	BlockReadCallback	card	exact	ac 0xDC (CARDRdwr.c, linked after CARDUnlock); equal size in CFTKK BlockReadCallback size 0xdc and ac-decomp BlockReadCallback size 0xdc	matched
 0x80410D24	0x64	__CARDRead	card	exact	ac 0x64; called by CARDReadAsync/DoMount; equal size in CFTKK __CARDRead size 0x64 and ac-decomp __CARDRead size 0x64	matched
 0x80410D88	0xDC	BlockWriteCallback	card	exact	ac 0xDC; equal size in ac-decomp BlockWriteCallback size 0xdc	matched
