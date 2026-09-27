@@ -554,7 +554,7 @@ addr	size	name	library	confidence	notes	status
 0x804097F4	0xC8	DSPAssertTask	dsp	exact	CFTKK size run of 23; equal size in CFTKK DSPAssertTask size 0xc8	matched
 0x804098BC	0x50	__DSP_debug_printf	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_debug_printf size 0x50	matched
 0x8040990C	0x424	__DSPHandler	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSPHandler size 0x424	open
-0x80409D30	0x1A0	__DSP_exec_task	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_exec_task size 0x1a0	open
+0x80409D30	0x1A0	__DSP_exec_task	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_exec_task size 0x1a0; verified against the Dolphin __DSP_exec_task shape: curr (or three zeros) then next iram, then init vector + zeros or resume vector + dram mails	matched
 0x80409ED0	0x18C	__DSP_boot_task	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_boot_task size 0x18c; verified against the code shape: 9 mail sends to DSP + 6 __DSP_debug_printf strings in .data (0x804F2A40-0x804F2B50, split per string). CFTKK-style body (ac-decomp has no dsp_task.c)	matched
 0x8040A05C	0xA0	__DSP_insert_task	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_insert_task size 0xa0	matched
 0x8040A0FC	0x94	__DSP_remove_task	dsp	exact	CFTKK size run of 23; equal size in CFTKK __DSP_remove_task size 0x94. Verified against the Dolphin __DSP_remove_task list unlink: lbl_8066FB00 = __DSP_last_task, __DSP_first_task, lbl_8066FB08 = __DSP_curr_task (unrenamed); DSPTaskInfo next/prev at 0x38/0x3C	matched

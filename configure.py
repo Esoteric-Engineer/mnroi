@@ -1143,6 +1143,7 @@ config.libs = [
             Object(Matching, "Dolphin/dsp/DSPCancelTask.c"),
             Object(Matching, "Dolphin/dsp/DSPAssertTask.c"),
             Object(Matching, "Dolphin/dsp/__DSP_debug_printf.c"),
+            Object(Matching, "Dolphin/dsp/__DSP_exec_task.c"),
             Object(Matching, "Dolphin/dsp/__DSP_boot_task.c"),
             Object(Matching, "Dolphin/dsp/__DSP_insert_task.c"),
             Object(Matching, "Dolphin/dsp/__DSP_remove_task.c"),
