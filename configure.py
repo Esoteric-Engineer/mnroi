@@ -1135,6 +1135,7 @@ config.libs = [
             Object(Matching, "Dolphin/ax/__AXPrintStudio.c"),
             Object(Matching, "Dolphin/ax/__AXSyncPBs.c"),
             Object(Matching, "Dolphin/ax/__AXGetPBs.c"),
+            Object(Matching, "Dolphin/ax/__AXSetPBDefault.c"),
             Object(Matching, "Dolphin/ax/__AXGetAuxBOutputDPL2.c"),
             Object(Matching, "Dolphin/ax/__AXProcessAux.c"),
             Object(Matching, "Dolphin/ax/__AXGetAuxBForDPL2.c"),

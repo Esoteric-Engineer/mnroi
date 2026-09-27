@@ -1,6 +1,6 @@
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int);
-extern void fn_80408FC8(void);
+extern void __AXSetPBDefault(void);
 extern void* lbl_8064F228[];
 
 asm void* AXAcquireVoice(void)
@@ -100,7 +100,7 @@ L_80406D60:
     mr      r3, r26
     stw     r29, 0x10(r26)
     stw     r30, 0x14(r26)
-    bl      fn_80408FC8
+    bl      __AXSetPBDefault
 L_80406D74:
     mr      r3, r31
     bl      OSRestoreInterrupts
