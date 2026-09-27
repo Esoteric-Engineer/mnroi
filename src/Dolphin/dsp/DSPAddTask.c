@@ -7,7 +7,7 @@ typedef struct DSPTaskInfo {
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int);
 extern void __DSP_insert_task(DSPTaskInfo* task);
-extern void fn_80409ED0(DSPTaskInfo* task);
+extern void __DSP_boot_task(DSPTaskInfo* task);
 extern DSPTaskInfo* __DSP_first_task;
 
 DSPTaskInfo* DSPAddTask(DSPTaskInfo* task)
@@ -18,7 +18,7 @@ DSPTaskInfo* DSPAddTask(DSPTaskInfo* task)
     task->flags = 1;
     OSRestoreInterrupts(old);
     if (task == __DSP_first_task) {
-        fn_80409ED0(task);
+        __DSP_boot_task(task);
     }
     return task;
 }
