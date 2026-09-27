@@ -36,7 +36,7 @@ extern OSFontHeader* lbl_8066F9A8;
 extern OSFontHeader* lbl_8066F9AC;
 extern volatile u16 __VIRegs[0x100] : 0xCC002000;
 
-extern u32 fn_8040310C(void* src, u32 encode, OSFontHeader* dst);
+extern u32 ReadFont(void* src, u16 encode, OSFontHeader* dst);
 extern void fn_8040394C(OSFontHeader* font, u8* src, u8* dst);
 
 static inline u16 GetFontEncode(void)
@@ -69,7 +69,7 @@ int OSInitFont(OSFontHeader* fontData)
     case 0:
         lbl_8066F9A8 = fontData;
         data = (u8*)fontData + 0x1D120;
-        if (fn_8040310C(data, 0, lbl_8066F9A8) == 0) {
+        if (ReadFont(data, 0, lbl_8066F9A8) == 0) {
             return 0;
         }
         src = (u8*)lbl_8066F9A8 + lbl_8066F9A8->sheetImage;
@@ -79,7 +79,7 @@ int OSInitFont(OSFontHeader* fontData)
     case 1:
         lbl_8066F9AC = fontData;
         data = (u8*)fontData + 0xD3F00;
-        if (fn_8040310C(data, 1, lbl_8066F9AC) == 0) {
+        if (ReadFont(data, 1, lbl_8066F9AC) == 0) {
             return 0;
         }
         src = (u8*)lbl_8066F9AC + lbl_8066F9AC->sheetImage;
@@ -91,14 +91,14 @@ int OSInitFont(OSFontHeader* fontData)
     case 5:
         lbl_8066F9A8 = fontData;
         data = (u8*)fontData + 0xF4020;
-        if (fn_8040310C(data, 0, lbl_8066F9A8) == 0) {
+        if (ReadFont(data, 0, lbl_8066F9A8) == 0) {
             return 0;
         }
         src = (u8*)lbl_8066F9A8 + lbl_8066F9A8->sheetImage;
         lbl_8066F9A8->sheetImage = (lbl_8066F9A8->sheetImage + 0x1F) & ~0x1F;
         fn_8040394C(lbl_8066F9A8, src, (u8*)lbl_8066F9A8 + lbl_8066F9A8->sheetImage);
         lbl_8066F9AC = (OSFontHeader*)((u8*)lbl_8066F9A8 + 0x20120);
-        if (fn_8040310C(data, 1, lbl_8066F9AC) == 0) {
+        if (ReadFont(data, 1, lbl_8066F9AC) == 0) {
             return 0;
         }
         src = (u8*)lbl_8066F9AC + lbl_8066F9AC->sheetImage;
