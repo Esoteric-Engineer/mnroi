@@ -2090,6 +2090,9 @@ Dolphin/os/OSInitAlloc.c:
 Dolphin/os/OSCreateHeap.c:
 	.text       start:0x804020C4 end:0x80402130
 
+Dolphin/os/OSFatal.c:
+	.text       start:0x80402608 end:0x804027E0
+
 Dolphin/os/GetFontCode.c:
 	.text       start:0x80402DC0 end:0x80402F34
 
