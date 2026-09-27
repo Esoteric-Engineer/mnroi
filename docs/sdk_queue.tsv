@@ -461,7 +461,7 @@ addr	size	name	library	confidence	notes	status
 0x80404468	0x60	OSSignalSemaphore	os	exact	CFTKK 0x60; OSWakeupThread	matched
 0x804044C8	0x2C	PSMTXIdentity	mtx	exact	ac/CFTKK 0x2C	matched
 0x804044F4	0xCC	PSMTXConcat	mtx	exact	ac 0xCC, paired-single	matched
-0x804045C0	0x50	PSMTXTranspose	mtx	guess	0x50 paired-single, between Concat and Inverse	open
+0x804045C0	0x50	PSMTXTranspose	mtx	guess	0x50 paired-single, between Concat and Inverse	matched
 0x80404610	0xF8	PSMTXInverse	mtx	exact	ac 0xF8	matched
 0x80404708	0x34	PSMTXTrans	mtx	exact	ac 0x34	matched
 0x8040473C	0x28	PSMTXScale	mtx	exact	ac 0x28	matched
