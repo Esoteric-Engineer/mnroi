@@ -27,14 +27,14 @@ typedef struct AXOutBss {
     AXProfile profile;
 } AXOutBss;
 
-extern AXOutBss lbl_80652640;
+extern AXOutBss __AXOutBuffer;
 extern unsigned long lbl_8066FA60;
 extern void (*lbl_8066FA78)(void);
 extern unsigned long lbl_8066FA90;
 
 void __AXOutNewFrame(unsigned long lessDspCycles)
 {
-    AXOutBss* b = &lbl_80652640;
+    AXOutBss* b = &__AXOutBuffer;
     unsigned long cl;
     unsigned char* d;
     int i;

@@ -3,7 +3,7 @@ extern void AIInitDMA(void*, unsigned long);
 extern void __AXOutNewFrame(unsigned long);
 extern void DSPAssertTask(void*);
 
-extern char lbl_80652640[];
+extern char __AXOutBuffer[];
 extern char lbl_80657040[0x80];
 extern unsigned long lbl_8066FA64;
 extern unsigned long lbl_8066FA68;
@@ -23,7 +23,7 @@ void __AXOutAiCallback(void)
         DSPAssertTask(lbl_80657040);
     }
     if (lbl_8066FA90 == 1) {
-        AIInitDMA(lbl_80652640 + lbl_8066FA64 * 0x280, 0x280);
+        AIInitDMA(__AXOutBuffer + lbl_8066FA64 * 0x280, 0x280);
         lbl_8066FA64 = lbl_8066FA64 + 1;
         lbl_8066FA64 = lbl_8066FA64 % 3;
     }

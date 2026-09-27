@@ -6,7 +6,7 @@ extern void fn_80409008(void);
 extern void __AXSPBInit(void);
 extern void __AXAuxInit(void);
 extern void __AXClInit(void);
-extern void fn_80407D30(unsigned long outputMode);
+extern void __AXOutInit(unsigned long outputMode);
 
 void AXInitEx(unsigned long outputMode)
 {
@@ -16,5 +16,5 @@ void AXInitEx(unsigned long outputMode)
     __AXSPBInit();
     __AXAuxInit();
     __AXClInit();
-    fn_80407D30(outputMode);
+    __AXOutInit(outputMode);
 }

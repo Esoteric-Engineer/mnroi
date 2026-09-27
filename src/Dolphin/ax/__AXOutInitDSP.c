@@ -29,7 +29,7 @@ typedef struct AXOutBss {
     AXDSPTask task;
 } AXOutBss;
 
-extern AXOutBss lbl_80652640;
+extern AXOutBss __AXOutBuffer;
 extern char lbl_804F0B00[];
 extern unsigned short lbl_8066CEE0;
 extern unsigned long lbl_8066FA80;
@@ -38,7 +38,7 @@ extern unsigned long lbl_8066FA88[2];
 
 void __AXOutInitDSP(void)
 {
-    AXOutBss* b = &lbl_80652640;
+    AXOutBss* b = &__AXOutBuffer;
     b->task.iram_mmem_addr = (unsigned short*)lbl_804F0B00;
     b->task.iram_length = lbl_8066CEE0;
     b->task.iram_addr = 0;
