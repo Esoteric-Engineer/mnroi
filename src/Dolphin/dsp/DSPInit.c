@@ -9,7 +9,7 @@ extern BOOL OSDisableInterrupts(void);
 extern BOOL OSRestoreInterrupts(BOOL enabled);
 extern void __OSSetInterruptHandler(short interrupt, void* handler);
 extern unsigned long __OSUnmaskInterrupts(unsigned long mask);
-extern void fn_8040990C(void); /* __DSPHandler */
+extern void __DSPHandler(void);
 
 extern BOOL lbl_8066FAE0;      /* __DSP_init_flag */
 extern void* lbl_8066FAFC;     /* __DSP_tmp_task */
@@ -33,7 +33,7 @@ void DSPInit(void)
     OSRegisterVersion(lbl_8066CEE8);
 
     old = OSDisableInterrupts();
-    __OSSetInterruptHandler(7, fn_8040990C);
+    __OSSetInterruptHandler(7, __DSPHandler);
     __OSUnmaskInterrupts(0x1000000);
 
     tmp = __DSPRegs[5];

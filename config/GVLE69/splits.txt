@@ -2405,6 +2405,9 @@ Dolphin/dsp/DSPAssertTask.c:
 Dolphin/dsp/__DSP_debug_printf.c:
 	.text       start:0x804098BC end:0x8040990C
 
+Dolphin/dsp/__DSPHandler.c:
+	.text       start:0x8040990C end:0x80409D30
+
 Dolphin/dsp/__DSP_exec_task.c:
 	.text       start:0x80409D30 end:0x80409ED0
 
