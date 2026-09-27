@@ -7,8 +7,8 @@ extern unsigned long lbl_8066FA34;
 extern unsigned long lbl_8066FA38;
 extern unsigned long lbl_8066FA3C;
 extern unsigned long lbl_8066FA40;
-extern unsigned long lbl_8064F340[];
-extern unsigned long lbl_806509C0[];
+extern unsigned long __AXBufferAuxA[];
+extern unsigned long __AXBufferAuxB[];
 
 void __AXAuxInit(void)
 {
@@ -26,8 +26,8 @@ void __AXAuxInit(void)
     lbl_8066FA3C = 1;
     lbl_8066FA40 = 2;
 
-    a = lbl_8064F340;
-    b = lbl_806509C0;
+    a = __AXBufferAuxA;
+    b = __AXBufferAuxB;
     for (i = 0; i < 0x1E0; i++) {
         *a++ = 0;
         *b++ = 0;

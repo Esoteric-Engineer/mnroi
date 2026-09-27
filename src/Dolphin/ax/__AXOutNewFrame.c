@@ -6,7 +6,7 @@ extern void fn_80408D44(unsigned long);
 extern void fn_80408134(void);
 extern unsigned long __AXGetCommandListAddress(void);
 extern void __AXServiceCallbackStack(void);
-extern void fn_80406FE0(void);
+extern void __AXProcessAux(void);
 extern void fn_8040726C(void*, void*);
 extern unsigned long __AXGetNumVoices(void);
 extern void* __AXGetCurrentProfile(void);
@@ -51,7 +51,7 @@ void __AXOutNewFrame(unsigned long lessDspCycles)
     }
     __AXServiceCallbackStack();
     b->profile.auxProcessingStart = OSGetTime();
-    fn_80406FE0();
+    __AXProcessAux();
     b->profile.auxProcessingEnd = OSGetTime();
     b->profile.userCallbackStart = OSGetTime();
     if (lbl_8066FA78 != 0) {
