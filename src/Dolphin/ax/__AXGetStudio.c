@@ -1,6 +1,6 @@
-extern unsigned char lbl_806570C0[];
+extern unsigned char __AXStudio[];
 
 void* __AXGetStudio(void)
 {
-    return lbl_806570C0;
+    return __AXStudio;
 }

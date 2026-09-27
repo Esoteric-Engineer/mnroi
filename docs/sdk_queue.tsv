@@ -525,12 +525,12 @@ addr	size	name	library	confidence	notes	status
 0x80407D30	0x3A0	__AXOutInit	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutInit size 0x3a0. Matched in Dolphin/ax/__AXOutInit.c (AXOut.c: claims .bss 0x80652640-0x80653040, defines __AXOutBuffer[480] and __AXOutSBuffer[160] as globals; the other AXOut units extern __AXOutBuffer as the base of the still-unclaimed blob)	matched
 0x804080D0	0x58	__AXOutQuit	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutQuit size 0x58	matched
 0x80408128	0xC	__AXGetStudio	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetStudio size 0xc	matched
-0x80408134	0x3F8	__AXPrintStudio	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXPrintStudio size 0x3f8	stalled
+0x80408134	0x3F8	__AXPrintStudio	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXPrintStudio size 0x3f8. Inlines SDK AXSPB.c static __AXDepopFade; unit defines __AXStudio (.bss 0x806570C0)	matched
 0x8040852C	0x2C	__AXSPBInit	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSPBInit size 0x2c	matched
 0x80408558	0x4	__AXSPBQuit	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSPBQuit size 0x4	matched
 0x8040855C	0x94	__AXDepopVoice	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXDepopVoice size 0x94	matched
 0x804085F0	0x8	__AXGetNumVoices	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetNumVoices size 0x8	matched
-0x804085F8	0x74C	__AXServiceVPB	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXServiceVPB size 0x74c. 99.31% NonMatching, hand-transliterated from disasm (no reference source); see docs/nonmatching.md for the remaining register-swap blocker	stalled
+0x804085F8	0x74C	__AXServiceVPB	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXServiceVPB size 0x74c. Hand-transliterated from disasm (no reference source)	matched
 0x80408D44	0x278	__AXSyncPBs	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSyncPBs size 0x278	matched
 0x80408FBC	0xC	__AXGetPBs	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetPBs size 0xc	matched
 0x80408FC8	0x40	__AXSetPBDefault	ax	guess	CFTKK 0x44	open

@@ -6,7 +6,7 @@ typedef struct AXVPB {
     unsigned long extraCount; // 40
 } AXVPB;
 
-extern unsigned char lbl_80657100[];
+extern unsigned char __AXPB[];
 extern unsigned long lbl_8066FAC8;
 
 #define U16(base, off) (*(unsigned short*)((unsigned char*)(base) + (off)))
@@ -18,10 +18,7 @@ void __AXServiceVPB(AXVPB* p)
     unsigned char* pb;
     unsigned char* mirror = (unsigned char*)p + 312;
     unsigned long flags;
-    unsigned long n;
-    unsigned char* base = lbl_80657100;
-    unsigned long* dst;
-    unsigned long* src;
+    unsigned char* base = __AXPB;
 
     lbl_8066FAC8++;
     pb = base + p->index * 244;
@@ -91,11 +88,11 @@ void __AXServiceVPB(AXVPB* p)
         d[50] = s[50];
         d[51] = s[51];
 
-        n = p->extraCount;
-        if (n != 0) {
-            src = (unsigned long*)&((unsigned char (*)[256])(base + 0x4D00))[p->index];
-            dst = (unsigned long*)((unsigned char*)p + 52);
-            for (; n != 0; n--) {
+        if (p->extraCount != 0) {
+            unsigned long count;
+            unsigned long* src = (unsigned long*)((unsigned char (*)[256])(base + 0x4D00))[p->index];
+            unsigned long* dst = (unsigned long*)((unsigned char*)p + 52);
+            for (count = p->extraCount; count != 0; count--) {
                 *dst++ = *src++;
             }
         }
@@ -174,11 +171,11 @@ void __AXServiceVPB(AXVPB* p)
         U16(pb, 74) = U16(mirror, 74);
         U16(pb, 76) = U16(mirror, 76);
 
-        n = p->extraCount;
-        if (n != 0) {
-            dst = (unsigned long*)((unsigned char (*)[256])(base + 0x4D00))[p->index];
-            src = (unsigned long*)((unsigned char*)p + 52);
-            for (; n != 0; n--) {
+        if (p->extraCount != 0) {
+            unsigned long count;
+            unsigned long* src = (unsigned long*)((unsigned char*)p + 52);
+            unsigned long* dst = (unsigned long*)((unsigned char (*)[256])(base + 0x4D00))[p->index];
+            for (count = p->extraCount; count != 0; count--) {
                 *dst++ = *src++;
             }
         }

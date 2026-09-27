@@ -1,6 +1,36 @@
 extern void DCFlushRange(void*, unsigned long);
 
-extern unsigned char lbl_806570C0[];
+typedef struct AXSTUDIO {
+    unsigned short dpopLHi;
+    unsigned short dpopLLo;
+    short dpopLDelta;
+    unsigned short dpopRHi;
+    unsigned short dpopRLo;
+    short dpopRDelta;
+    unsigned short dpopSHi;
+    unsigned short dpopSLo;
+    short dpopSDelta;
+    unsigned short dpopALHi;
+    unsigned short dpopALLo;
+    short dpopALDelta;
+    unsigned short dpopARHi;
+    unsigned short dpopARLo;
+    short dpopARDelta;
+    unsigned short dpopASHi;
+    unsigned short dpopASLo;
+    short dpopASDelta;
+    unsigned short dpopBLHi;
+    unsigned short dpopBLLo;
+    short dpopBLDelta;
+    unsigned short dpopBRHi;
+    unsigned short dpopBRLo;
+    short dpopBRDelta;
+    unsigned short dpopBSHi;
+    unsigned short dpopBSLo;
+    short dpopBSDelta;
+} AXSTUDIO;
+
+AXSTUDIO __AXStudio __attribute__((aligned(32)));
 
 extern long lbl_8066FA98;
 extern long lbl_8066FA9C;
@@ -12,45 +42,40 @@ extern long lbl_8066FAB0;
 extern long lbl_8066FAB4;
 extern long lbl_8066FAB8;
 
-#define UPDATE_STUDIO_LEVEL(accum, offset)                                   \
-    level = (accum) / 160;                                                  \
-                                                                              \
-    if (level == 0)                                                         \
-    {                                                                       \
-        (accum) = 0;                                                        \
-        *(long*)(studio + (offset)) = 0;                                    \
-        *(short*)(studio + (offset) + 4) = 0;                               \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        if (level > 20)                                                     \
-        {                                                                   \
-            level = 20;                                                     \
-        }                                                                   \
-        else if (level < -20)                                              \
-        {                                                                   \
-            level = -20;                                                    \
-        }                                                                   \
-                                                                              \
-        *(long*)(studio + (offset)) = (accum);                              \
-        (accum) = (accum) - level * 160;                                    \
-        *(short*)(studio + (offset) + 4) = (short)-level;                   \
+static inline void __AXDepopFade(long* hostSum, long* dspVolume, short* dspDelta)
+{
+    int frames;
+    long delta;
+
+    if ((frames = *hostSum / 160) != 0) {
+        delta = frames;
+        if (delta > 20) {
+            delta = 20;
+        }
+        if (delta < -20) {
+            delta = -20;
+        }
+        *dspVolume = *hostSum;
+        *hostSum -= delta * 160;
+        *dspDelta = -delta;
+    } else {
+        *hostSum = 0;
+        *dspVolume = 0;
+        *dspDelta = 0;
     }
+}
 
 void __AXPrintStudio(void)
 {
-    long level;
-    unsigned char* studio = lbl_806570C0;
+    __AXDepopFade(&lbl_8066FA98, (long*)&__AXStudio.dpopLHi, &__AXStudio.dpopLDelta);
+    __AXDepopFade(&lbl_8066FA9C, (long*)&__AXStudio.dpopRHi, &__AXStudio.dpopRDelta);
+    __AXDepopFade(&lbl_8066FAA0, (long*)&__AXStudio.dpopSHi, &__AXStudio.dpopSDelta);
+    __AXDepopFade(&lbl_8066FAA4, (long*)&__AXStudio.dpopALHi, &__AXStudio.dpopALDelta);
+    __AXDepopFade(&lbl_8066FAA8, (long*)&__AXStudio.dpopARHi, &__AXStudio.dpopARDelta);
+    __AXDepopFade(&lbl_8066FAAC, (long*)&__AXStudio.dpopASHi, &__AXStudio.dpopASDelta);
+    __AXDepopFade(&lbl_8066FAB0, (long*)&__AXStudio.dpopBLHi, &__AXStudio.dpopBLDelta);
+    __AXDepopFade(&lbl_8066FAB4, (long*)&__AXStudio.dpopBRHi, &__AXStudio.dpopBRDelta);
+    __AXDepopFade(&lbl_8066FAB8, (long*)&__AXStudio.dpopBSHi, &__AXStudio.dpopBSDelta);
 
-    UPDATE_STUDIO_LEVEL(lbl_8066FA98, 0);
-    UPDATE_STUDIO_LEVEL(lbl_8066FA9C, 6);
-    UPDATE_STUDIO_LEVEL(lbl_8066FAA0, 12);
-    UPDATE_STUDIO_LEVEL(lbl_8066FAA4, 18);
-    UPDATE_STUDIO_LEVEL(lbl_8066FAA8, 24);
-    UPDATE_STUDIO_LEVEL(lbl_8066FAAC, 30);
-    UPDATE_STUDIO_LEVEL(lbl_8066FAB0, 36);
-    UPDATE_STUDIO_LEVEL(lbl_8066FAB4, 42);
-    UPDATE_STUDIO_LEVEL(lbl_8066FAB8, 48);
-
-    DCFlushRange(studio, 0x36);
+    DCFlushRange(&__AXStudio, sizeof(AXSTUDIO));
 }

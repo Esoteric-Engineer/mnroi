@@ -1,6 +1,6 @@
-extern unsigned char lbl_80657100[];
+extern unsigned char __AXPB[];
 
 void* __AXGetPBs(void)
 {
-    return lbl_80657100;
+    return __AXPB;
 }

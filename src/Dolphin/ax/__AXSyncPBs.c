@@ -31,9 +31,9 @@ typedef struct {
     unsigned char pad4E[0xF4 - 0x4E];
 } AXPB;
 
-AXPB lbl_80657100[64];
-unsigned char lbl_8065AE00[0x1000];
-unsigned char lbl_8065BE00[0x4000];
+AXPB __AXPB[64] __attribute__((aligned(32)));
+unsigned char __AXITD[0x1000] __attribute__((aligned(32)));
+unsigned char __AXUpdates[0x4000] __attribute__((aligned(32)));
 static unsigned long tblA[5] = { 0xDF8, 0xF78, 0x14B8, 0x19F8, 0x19F8 };
 static unsigned long tblB[16] = {
     0x0, 0x2F8, 0x2F8, 0x5BE, 0x2F8, 0x5F0, 0x5F0, 0x8B6,
@@ -60,7 +60,7 @@ extern void __AXServiceVPB(AXVPB*);
 void __AXSyncPBs(unsigned long baseCycles)
 {
     AXPB* pb;
-    AXPB* pbs = lbl_80657100;
+    AXPB* pbs = __AXPB;
     unsigned long cycles;
     long pri;
     AXVPB* p;
@@ -68,7 +68,7 @@ void __AXSyncPBs(unsigned long baseCycles)
 
     lbl_8066FAC8 = 0;
     DCInvalidateRange(pbs, 0x3D00);
-    DCInvalidateRange(lbl_8065AE00, 0x1000);
+    DCInvalidateRange(__AXITD, 0x1000);
     cycles = __AXGetCommandListCycles() + 0x10000 + baseCycles - 0x55F0;
     for (pri = 31; pri != 0; pri--) {
         for (p = __AXGetStackHead(pri); p != 0; p = p->next) {
@@ -123,6 +123,6 @@ void __AXSyncPBs(unsigned long baseCycles)
         pbs[p->index].state = 0;
     }
     DCFlushRange(pbs, 0x3D00);
-    DCFlushRange(lbl_8065AE00, 0x1000);
-    DCFlushRange(lbl_8065BE00, 0x4000);
+    DCFlushRange(__AXITD, 0x1000);
+    DCFlushRange(__AXUpdates, 0x4000);
 }
