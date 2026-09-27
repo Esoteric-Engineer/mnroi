@@ -164,6 +164,8 @@ Smaller findings:
 
 Scope: everything in `Runtime.PPCEABI.H` that comes from Newlib or libgcc (string, stdio glue, scanf/printf, libm floats, `atoi`, `__pure_virtual`), plus the small runtime wrappers around them. These were compiled by GCC, not MWCC, and MWCC C never reaches them. **Go straight to `nofralloc` asm; don't spend iterations on C.** Queue names for this range come from size and order only, so verify them.
 
+Also scope: the whole `vm` library (`VM`/`VMBASE`, ARAM virtual memory, 0x804009C4-0x80401EB0) is GCC output too, unlike the rest of the Dolphin SDK. Every non-leaf function matched there so far needed `nofralloc` asm; only frameless one-line leaf getters/setters (no `bl`, no stack frame, e.g. `VMBASEIsPageLocked`, `VMBASEGetVirtualAddrFromPageInMRAM`) happened to compile identically as plain C, since a trivial leaf body is compiler-agnostic. A `vm` function with a stack frame or a `bl` is presumed GCC: check the **Tells** below (`VMBASEIsPageValid`/`Referenced`/`Dirty`, `0x80401488`-`0x80401500`, each `stwu`/`mflr`/`stw`/`bl`/`rlwinm`/epilogue) before writing C.
+
 **Tells** (any one is enough):
 
 | Tell | What MWCC does instead |

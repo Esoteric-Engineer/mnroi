@@ -2024,6 +2024,15 @@ Dolphin/vm/__VMAllocVirtualToARAMLUT.c:
 Dolphin/vm/__VMAllocARAMToVirtualLUT.c:
 	.text       start:0x8040126C end:0x8040130C
 
+Dolphin/vm/VMBASEIsPageValid.c:
+	.text       start:0x80401488 end:0x804014B0
+
+Dolphin/vm/VMBASEIsPageReferenced.c:
+	.text       start:0x804014B0 end:0x804014D8
+
+Dolphin/vm/VMBASEIsPageDirty.c:
+	.text       start:0x804014D8 end:0x80401500
+
 Dolphin/vm/__VMBASEClearPageFromTLB.c:
 	.text       start:0x80401550 end:0x80401560
 

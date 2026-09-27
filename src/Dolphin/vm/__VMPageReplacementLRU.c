@@ -4,9 +4,9 @@ extern unsigned long lbl_8066CEA0;
 extern unsigned long __VMGetNumPagesInMRAM(void);
 extern unsigned long VMBASEGetVirtualAddrFromPageInMRAM(unsigned long page);
 extern unsigned long VMBASEIsPageLocked(unsigned long page);
-extern unsigned long fn_80401488(unsigned long addr);
-extern unsigned long fn_804014B0(unsigned long addr);
-extern unsigned long fn_804014D8(unsigned long addr);
+extern unsigned long VMBASEIsPageValid(unsigned long addr);
+extern unsigned long VMBASEIsPageReferenced(unsigned long addr);
+extern unsigned long VMBASEIsPageDirty(unsigned long addr);
 extern void fn_80401500(unsigned long addr, unsigned long set);
 void _savegpr_24(void);
 void _restgpr_24(void);
@@ -36,14 +36,14 @@ L_80400D64:
     bl      VMBASEGetVirtualAddrFromPageInMRAM
     mr.     r24, r3
     beq     L_80400EB0
-    bl      fn_80401488
+    bl      VMBASEIsPageValid
     cmpwi   r3, 0
     beq     L_80400EB0
     mr      r3, r24
-    bl      fn_804014B0
+    bl      VMBASEIsPageReferenced
     mr      r30, r3
     mr      r3, r24
-    bl      fn_804014D8
+    bl      VMBASEIsPageDirty
     cmpwi   r30, 0
     mr      r31, r3
     bne     L_80400DC0
