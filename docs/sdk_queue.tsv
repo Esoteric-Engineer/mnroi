@@ -375,7 +375,7 @@ addr	size	name	library	confidence	notes	status
 0x80400200	0x280	__ieee754_logf	libc	exact	Newlib ef_log.c body (float, no errno wrapper): hx<=0 -> -two25/zero or (x-x)/zero, k+=-25 for subnormals, 0x004afb20 / 0x0035c288 split, R = z*z*(Lg1..Lg4) polynomial. CFTKK __ieee754_logf is 0x280, equal size. Caller is game code (0x802A11DC). Matched as nofralloc asm generated from dtk .s (bare lbl_ float/double externs, like __ieee754_asinf); unit Runtime.PPCEABI.H/__ieee754_logf.c	matched
 0x80400480	0xC4	ceilf	libc	guess	Newlib sf_ceil.c: exponent j0 = ((i0>>23)&0xff)-0x7f, j0<0 -> 0x80000000 / 0x3f800000 / x under huge+x>0, mask 0x007fffff>>j0, j0==0x80 -> x+x. CFTKK ceilf is 0xD8 (ours 0xC4: version drift, like sqrtf/atan2f). Caller is game code (0x802A0F00)	open
 0x80400544	0x1C	tolower2	libc	exact	CFTKK size 0x1C (GCC Newlib); ctype _U test +0x20; called by DVD 0x80183194. Byte-identical second copy of tolower 0x80177368 (unit tolower2.c)	matched
-0x80400560	0xB8	fclose	libc	guess	CHECK_INIT/__sinit, __SWR -> fflush; Newlib	open
+0x80400560	0xB8	fclose	libc	guess	CHECK_INIT/__sinit, __SWR -> fflush; Newlib	matched
 0x80400618	0x94	fprintf	libc	guess	varargs -> vfprintf(fp, fmt, ap)	matched
 0x804006AC	0xAC	printf	libc	exact	CFTKK size 0xAC, followed by vprintf as in CFTKK	matched
 0x80400758	0xDC	snprintf	libc	guess	string FILE (flags 0x208), size arg -> vfprintf	open
