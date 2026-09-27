@@ -2410,6 +2410,9 @@ Dolphin/card/TimeoutHandler.c:
 Dolphin/card/UnlockedCallback.c:
 	.text       start:0x8040AA10 end:0x8040AB20
 
+Dolphin/card/__CARDStart.c:
+	.text       start:0x8040AB20 end:0x8040ACD4
+
 Dolphin/card/__CARDReadSegment.c:
 	.text       start:0x8040ACD4 end:0x8040AE08
 

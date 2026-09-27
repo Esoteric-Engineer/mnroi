@@ -25,7 +25,7 @@ typedef struct CARDControl {
 
 extern CARDControl __CARDBlock[2];
 
-extern s32 fn_8040AB20(s32 chan, CARDCallback callback, CARDCallback exiCallback);
+extern s32 __CARDStart(s32 chan, CARDCallback callback, CARDCallback exiCallback);
 extern void __CARDTxHandler(s32 chan, s32 result);
 extern int EXIImmEx(s32 chan, void* buf, s32 len, s32 type);
 extern int EXIDma(s32 chan, void* buf, s32 len, s32 type, CARDCallback callback);
@@ -47,7 +47,7 @@ s32 __CARDReadSegment(s32 chan, CARDCallback callback)
     card->mode = 0;
     card->retry = 0;
 
-    result = fn_8040AB20(chan, callback, 0);
+    result = __CARDStart(chan, callback, 0);
     if (result == -1) {
         result = 0;
     } else if (result >= 0) {

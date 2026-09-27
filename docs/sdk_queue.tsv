@@ -570,7 +570,7 @@ addr	size	name	library	confidence	notes	status
 0x8040A740	0xA4	TimeoutHandler	card	exact	CFTKK size run of 3; equal size in CFTKK TimeoutHandler size 0xa4 and ac-decomp TimeoutHandler size 0xa4	matched
 0x8040A7E4	0x22C	Retry	card	exact	ac 0x22C (CFTKK 0x2A0); equal size in ac-decomp Retry size 0x22c	open
 0x8040AA10	0x110	UnlockedCallback	card	exact	ac-decomp size run of 16; equal size in CFTKK UnlockedCallback size 0x110 and ac-decomp UnlockedCallback size 0x110	matched
-0x8040AB20	0x1B4	__CARDStart	card	exact	ac 0x1B4; equal size in ac-decomp __CARDStart size 0x1b4	open
+0x8040AB20	0x1B4	__CARDStart	card	exact	ac 0x1B4; equal size in ac-decomp __CARDStart size 0x1b4	matched
 0x8040ACD4	0x134	__CARDReadSegment	card	exact	ac-decomp size run of 16; equal size in CFTKK __CARDReadSegment size 0x134 and ac-decomp __CARDReadSegment size 0x134	matched
 0x8040AE08	0x11C	__CARDWritePage	card	exact	ac 0x11C; equal size in ac-decomp __CARDWritePage size 0x11c	matched
 0x8040AF24	0xE0	__CARDEraseSector	card	exact	ac 0xE0; equal size in ac-decomp __CARDEraseSector size 0xe0	matched
