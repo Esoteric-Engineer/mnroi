@@ -1,5 +1,5 @@
-void fn_8016B104(void);
-void fn_8016B130(void);
+void SNSelect(void);
+void SNWiggleSelect(void);
 int SNRead8(void);
 void SNWrite8(int);
 
@@ -12,17 +12,17 @@ asm void fn_8016B374(int arg)
     stw     r0, 0x1c(r1)
     stmw    r28, 8(r1)
     mr      r31, r3
-    bl      fn_8016B104
+    bl      SNSelect
 L_8016B38C:
     bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016B38C
 L_8016B398:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016B398
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     li      r3, 3
     bl      SNWrite8
     srwi    r3, r31, 8

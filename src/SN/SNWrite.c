@@ -1,7 +1,7 @@
 void DCFlushRange(void);
-void fn_8016B104(void);
-void fn_8016B11C(void);
-void fn_8016B130(void);
+void SNSelect(void);
+void SNDeselect(void);
+void SNWiggleSelect(void);
 int SNRead8(void);
 void SNWrite8(void);
 void SNWrite32(void);
@@ -21,17 +21,17 @@ asm int SNWrite(void)
     mr      r31, r4
     mr      r30, r3
     bl      DCFlushRange
-    bl      fn_8016B104
+    bl      SNSelect
 L_8016AF3C:
     bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016AF3C
 L_8016AF48:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016AF48
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     li      r3, 3
     bl      SNWrite8
     srwi    r3, r31, 8
@@ -45,17 +45,17 @@ L_8016AF48:
     beq     L_8016B074
     b       L_8016AFE4
 L_8016AF8C:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
 L_8016AF90:
     bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016AF90
 L_8016AF9C:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016AF9C
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     lis     r29, 0xcc00
     stw     r30, 0x682c(r29)
     li      r5, 0x200
@@ -70,17 +70,17 @@ L_8016AF9C:
     andi.   r28, r31, 0x1ff
     beq     L_8016B074
 L_8016AFE4:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
 L_8016AFE8:
     bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016AFE8
 L_8016AFF4:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016AFF4
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     andi.   r29, r31, 0x1e0
     beq     L_8016B030
     lis     r28, 0xcc00
@@ -117,7 +117,7 @@ L_8016B074:
     mtctr   r3
 L_8016B07C:
     bdnz    L_8016B07C
-    bl      fn_8016B11C
+    bl      SNDeselect
     li      r3, 0
     lwz     r31, 8(r1)
     lwz     r30, 0xc(r1)

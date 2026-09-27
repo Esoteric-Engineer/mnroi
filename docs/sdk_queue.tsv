@@ -67,15 +67,15 @@ addr	size	name	library	confidence	notes	status
 0x8016AB28	0x8		sn	known	8-byte hook thunk `b fn_8016AAA4; blr`, called from OS/game code; the last six are patched by fn_8016A9E0. SN ProDG debug stub, no public source: keep the fn_ name and transcribe as nofralloc asm (like SN/fn_80169134.c). Boundaries set by reachability 2026-09-24	matched
 0x8016AB30	0x154	SNInitComm	sn	exact	CFTKK-Decomp SNInitComm (0x154); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
 0x8016AC84	0x48	SNInitInterrupts	sn	exact	CFTKK-Decomp SNInitInterrupts (0x48); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription; matched as nofralloc asm (SN/SNInitInterrupts.c): masks EXI2 (0x18000) and PI_DEBUG (0x40), installs SNHandler on interrupt 0x19, unmasks PI_DEBUG	matched
-0x8016ACCC	0x88	SNQueryData	sn	exact	CFTKK-Decomp SNQueryData (0x88); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription. Matched as nofralloc asm (callees fn_8016B104 SNSelect, fn_8016B130 SNWiggleSelect, fn_8016B11C SNDeselect are still fn_ names)	matched
+0x8016ACCC	0x88	SNQueryData	sn	exact	CFTKK-Decomp SNQueryData (0x88); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription. Matched as nofralloc asm (callees SNSelect, SNWiggleSelect, SNDeselect now named, see below)	matched
 0x8016AD54	0x1BC	SNRead	sn	exact	CFTKK-Decomp SNRead (0x1BC); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription; matched as nofralloc asm (SN/SNRead.c)	matched
 0x8016AF10	0x198	SNWrite	sn	exact	CFTKK-Decomp SNWrite (0x198); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
 0x8016B0A8	0x4	SNOpen	sn	exact	CFTKK-Decomp SNOpen (0x4); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
 0x8016B0AC	0x4	SNClose	sn	exact	CFTKK-Decomp SNClose (0x4); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
 0x8016B0B0	0x54	SNHandler	sn	exact	CFTKK-Decomp SNHandler (0x54); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription; matched as nofralloc asm (SN/SNHandler.c): PI interrupt 0x19 handler, acks EXI2 (writes 0x1000 to 0xCC003000) then calls the callback at lbl_804CFDE2+0x13E (if set) after setting flag byte lbl_804CFDE2+0x146	matched
-0x8016B104	0x18	SNSelect	sn	guess	CFTKK-Decomp SNSelect is 0x10 (ours 0x18), same position in the SN comm layer. Hand-written asm	open
-0x8016B11C	0x14	SNDeselect	sn	guess	CFTKK-Decomp SNDeselect is 0x10 (ours 0x14), same position in the SN comm layer. Hand-written asm	open
-0x8016B130	0x28	SNWiggleSelect	sn	guess	CFTKK-Decomp SNWiggleSelect is 0x24 (ours 0x28), same position in the SN comm layer. Hand-written asm	open
+0x8016B104	0x18	SNSelect	sn	guess	CFTKK-Decomp SNSelect is 0x10 (ours 0x18), same position in the SN comm layer. Hand-written asm operating on EXI2 CSR (0xCC006828): mask to bits 0x5, OR in 0xD0 (assert CS), confirming the name	matched
+0x8016B11C	0x14	SNDeselect	sn	guess	CFTKK-Decomp SNDeselect is 0x10 (ours 0x14), same position in the SN comm layer. Hand-written asm: mask EXI2 CSR to bits 0x5 only (clears CS), confirming the name	matched
+0x8016B130	0x28	SNWiggleSelect	sn	guess	CFTKK-Decomp SNWiggleSelect is 0x24 (ours 0x28), same position in the SN comm layer. Hand-written asm: same mask as SNDeselect, a 6-iteration bdnz delay, then OR in 0xD0 like SNSelect (select with a wiggle delay), confirming the name	matched
 0x8016B158	0x14	SNSync	sn	exact	CFTKK-Decomp SNSync (0x14); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
 0x8016B16C	0x40	SNRead8	sn	exact	CFTKK-Decomp SNRead8 (0x40); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
 0x8016B1AC	0x34	SNWrite8	sn	exact	CFTKK-Decomp SNWrite8 (0x34); same order as CFTKK's SN comm layer (SNInitComm..SNWrite32). Hand-written asm: nofralloc transcription	matched
@@ -515,7 +515,7 @@ addr	size	name	library	confidence	notes	status
 0x8040791C	0x24	__AXClInit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXClInit size 0x24	matched
 0x80407940	0x4	__AXClQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXClQuit size 0x4	matched
 0x80407944	0x14	AXSetMode	ax	exact	CFTKK size run of 33; equal size in CFTKK AXSetMode size 0x14	matched
-0x80407958	0x8	AXGetMode	ax	guess	0x8 getter after AXSetMode	open
+0x80407958	0x8	AXGetMode	ax	guess	Wrong: disasm is `stw r3, lbl_8066FA54@sda21(r0)` / `blr`, a setter not a getter. lbl_8066FA54 is the flag __AXClInit sets to 1 and __AXNextFrame tests (`if (lbl_8066FA54)`). CFTKK has no function here at all (its AXSetMode 0x802EE690 size 0x14 is immediately followed by __AXOutNewFrame 0x802EE6A4, no gap), so this is build-specific, not in CFTKK's 33-function AX run. Single caller: game code fn_80253184 (unclaimed), no other evidence of its real name.	wrong-name
 0x80407960	0x1B8	__AXOutNewFrame	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutNewFrame size 0x1b8 Matched in Dolphin/ax/__AXOutNewFrame.c (AXOut.c static; pooled .bss base lbl_80652640 via AXOutBss-style extern + local pointer; AXPROFILE copy to __AXGetCurrentProfile is a byte loop, no reference source).	matched
 0x80407B18	0xBC	__AXOutAiCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXOutAiCallback size 0xbc	matched
 0x80407BD4	0xC	__AXDSPInitCallback	ax	exact	CFTKK size run of 8; equal size in CFTKK __AXDSPInitCallback size 0xc	matched

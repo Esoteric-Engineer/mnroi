@@ -1,8 +1,8 @@
 extern char lbl_8057BD88[];
 void DCInvalidateRange(void);
-void fn_8016B104(void);
-void fn_8016B11C(void);
-void fn_8016B130(void);
+void SNSelect(void);
+void SNDeselect(void);
+void SNWiggleSelect(void);
 int SNRead8(void);
 int SNRead32(void);
 void SNWrite8(void);
@@ -22,17 +22,17 @@ asm int SNRead(void)
     mr      r31, r4
     mr      r30, r3
     bl      DCInvalidateRange
-    bl      fn_8016B104
+    bl      SNSelect
 L_8016AD80:
     bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016AD80
 L_8016AD8C:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016AD8C
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     li      r3, 2
     bl      SNWrite8
     lis     r3, (lbl_8057BD88+0x138)@h
@@ -46,17 +46,17 @@ L_8016AD8C:
     beq     L_8016AEDC
     b       L_8016AE3C
 L_8016ADD0:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
 L_8016ADD4:
     bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016ADD4
 L_8016ADE0:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016ADE0
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     lis     r5, (lbl_8057BD88+0x138)@h
     ori     r5, r5, (lbl_8057BD88+0x138)@l
     lwz     r5, 4(r5)
@@ -76,17 +76,17 @@ L_8016ADE0:
     and.    r28, r31, r5
     beq     L_8016AEDC
 L_8016AE3C:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
 L_8016AE40:
     bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016AE40
 L_8016AE4C:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016AE4C
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     lis     r5, (lbl_8057BD88+0x138)@h
     ori     r5, r5, (lbl_8057BD88+0x138)@l
     lwz     r5, 0xc(r5)
@@ -127,7 +127,7 @@ L_8016AEDC:
     mtctr   r3
 L_8016AEE4:
     bdnz    L_8016AEE4
-    bl      fn_8016B11C
+    bl      SNDeselect
     li      r3, 0
     lwz     r31, 8(r1)
     lwz     r30, 0xc(r1)

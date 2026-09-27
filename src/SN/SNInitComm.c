@@ -3,9 +3,9 @@ extern char lbl_8057BD88[];
 void OSDisableInterrupts(void);
 void OSRestoreInterrupts(void);
 void __OSMaskInterrupts(void);
-void fn_8016B104(void);
-void fn_8016B11C(void);
-void fn_8016B130(void);
+void SNSelect(void);
+void SNDeselect(void);
+void SNWiggleSelect(void);
 int SNRead8(void);
 void SNWrite8(int arg);
 int SNRead32(void);
@@ -39,17 +39,17 @@ asm void SNInitComm(void)
     lis     r3, 0xcc00
     stw     r0, 0x6828(r3)
 L_retry:
-    bl      fn_8016B104
+    bl      SNSelect
 L_wait0:
     bl      SNRead8
     cmpwi   r3, 0x0
     beq     L_wait0
 L_skip0:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_skip0
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     li      r3, 0x0
     bl      SNWrite8
     li      r3, 0x0
@@ -60,17 +60,17 @@ L_skip0:
     bl      SNWrite8
     li      r3, 0x0
     bl      SNWrite8
-    bl      fn_8016B130
+    bl      SNWiggleSelect
 L_wait1:
     bl      SNRead8
     cmpwi   r3, 0x0
     beq     L_wait1
 L_skip1:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_skip1
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead32
     mr      r5, r3
     bl      SNRead32
@@ -79,7 +79,7 @@ L_skip1:
     mtctr   r3
 L_delay:
     bdnz    L_delay
-    bl      fn_8016B11C
+    bl      SNDeselect
     lis     r4, 0x534e
     ori     r4, r4, 0x444c
     subf    r5, r4, r5

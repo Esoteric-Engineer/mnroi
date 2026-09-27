@@ -216,6 +216,15 @@ SN/SNClose.c:
 SN/SNHandler.c:
 	.text       start:0x8016B0B0 end:0x8016B104
 
+SN/SNSelect.c:
+	.text       start:0x8016B104 end:0x8016B11C
+
+SN/SNDeselect.c:
+	.text       start:0x8016B11C end:0x8016B130
+
+SN/SNWiggleSelect.c:
+	.text       start:0x8016B130 end:0x8016B158
+
 SN/SNSync.c:
 	.text       start:0x8016B158 end:0x8016B16C
 

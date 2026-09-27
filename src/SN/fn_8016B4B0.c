@@ -1,5 +1,5 @@
-void fn_8016B11C(void);
-void fn_8016B130(void);
+void SNDeselect(void);
+void SNWiggleSelect(void);
 int SNRead8(void);
 void SNWrite8(void);
 void SNWrite32(void);
@@ -14,17 +14,17 @@ asm void fn_8016B4B0(void)
     stmw    r28, 8(r1)
     mr      r31, r4
     mr      r30, r3
-    bl      fn_8016B130
+    bl      SNWiggleSelect
 L_8016B4CC:
     bl      SNRead8
     cmpwi   r3, 0
     beq     L_8016B4CC
 L_8016B4D8:
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     bl      SNRead8
     cmpwi   r3, 0xff
     beq     L_8016B4D8
-    bl      fn_8016B130
+    bl      SNWiggleSelect
     andi.   r28, r31, 0x1c
     beq     L_8016B510
     li      r29, 0
@@ -50,7 +50,7 @@ L_8016B530:
     mtctr   r3
 L_8016B538:
     bdnz    L_8016B538
-    bl      fn_8016B11C
+    bl      SNDeselect
     lwz     r0, 0x1c(r1)
     mtlr    r0
     lmw     r28, 8(r1)
