@@ -2464,6 +2464,9 @@ Dolphin/card/CARDCheck.c:
 Dolphin/card/IsCard.c:
 	.text       start:0x8040CA98 end:0x8040CB64
 
+Dolphin/card/CARDProbeEx.c:
+	.text       start:0x8040CB64 end:0x8040CCE0
+
 Dolphin/card/__CARDMountCallback.c:
 	.text       start:0x8040D0F0 end:0x8040D228
 
