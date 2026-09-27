@@ -24,7 +24,7 @@ typedef struct CARDDir {
     u8 pad0[0x40];
 } CARDDir;
 
-extern s32 fn_8040E7D0(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** card);
+extern s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern s32 __CARDIsReadable(CARDControl* card, CARDDir* ent);
@@ -42,7 +42,7 @@ s32 CARDReadAsync(CARDFileInfo* fileInfo, void* buf, s32 length, s32 offset, CAR
 
     if ((offset & 0x1FF) != 0 || (length & 0x1FF) != 0)
         return -128;
-    result = fn_8040E7D0(fileInfo, length, offset, &card);
+    result = __CARDSeek(fileInfo, length, offset, &card);
     if (result < 0)
         return result;
 

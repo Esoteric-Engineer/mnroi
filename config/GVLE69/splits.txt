@@ -2540,6 +2540,9 @@ Dolphin/card/CreateCallbackFat.c:
 Dolphin/card/CARDCreate.c:
 	.text       start:0x8040E788 end:0x8040E7D0
 
+Dolphin/card/__CARDSeek.c:
+	.text       start:0x8040E7D0 end:0x8040E988
+
 Dolphin/card/ReadCallback.c:
 	.text       start:0x8040E988 end:0x8040EAB8
 
