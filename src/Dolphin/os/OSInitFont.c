@@ -37,7 +37,7 @@ extern OSFontHeader* lbl_8066F9AC;
 extern volatile u16 __VIRegs[0x100] : 0xCC002000;
 
 extern u32 ReadFont(void* src, u16 encode, OSFontHeader* dst);
-extern void fn_8040394C(OSFontHeader* font, u8* src, u8* dst);
+extern void ExpandFontSheet(OSFontHeader* font, u8* src, u8* dst);
 
 static inline u16 GetFontEncode(void)
 {
@@ -74,7 +74,7 @@ int OSInitFont(OSFontHeader* fontData)
         }
         src = (u8*)lbl_8066F9A8 + lbl_8066F9A8->sheetImage;
         lbl_8066F9A8->sheetImage = (lbl_8066F9A8->sheetImage + 0x1F) & ~0x1F;
-        fn_8040394C(lbl_8066F9A8, src, (u8*)lbl_8066F9A8 + lbl_8066F9A8->sheetImage);
+        ExpandFontSheet(lbl_8066F9A8, src, (u8*)lbl_8066F9A8 + lbl_8066F9A8->sheetImage);
         break;
     case 1:
         lbl_8066F9AC = fontData;
@@ -84,7 +84,7 @@ int OSInitFont(OSFontHeader* fontData)
         }
         src = (u8*)lbl_8066F9AC + lbl_8066F9AC->sheetImage;
         lbl_8066F9AC->sheetImage = (lbl_8066F9AC->sheetImage + 0x1F) & ~0x1F;
-        fn_8040394C(lbl_8066F9AC, src, (u8*)lbl_8066F9AC + lbl_8066F9AC->sheetImage);
+        ExpandFontSheet(lbl_8066F9AC, src, (u8*)lbl_8066F9AC + lbl_8066F9AC->sheetImage);
         break;
     case 3:
     case 4:
@@ -96,14 +96,14 @@ int OSInitFont(OSFontHeader* fontData)
         }
         src = (u8*)lbl_8066F9A8 + lbl_8066F9A8->sheetImage;
         lbl_8066F9A8->sheetImage = (lbl_8066F9A8->sheetImage + 0x1F) & ~0x1F;
-        fn_8040394C(lbl_8066F9A8, src, (u8*)lbl_8066F9A8 + lbl_8066F9A8->sheetImage);
+        ExpandFontSheet(lbl_8066F9A8, src, (u8*)lbl_8066F9A8 + lbl_8066F9A8->sheetImage);
         lbl_8066F9AC = (OSFontHeader*)((u8*)lbl_8066F9A8 + 0x20120);
         if (ReadFont(data, 1, lbl_8066F9AC) == 0) {
             return 0;
         }
         src = (u8*)lbl_8066F9AC + lbl_8066F9AC->sheetImage;
         lbl_8066F9AC->sheetImage = (lbl_8066F9AC->sheetImage + 0x1F) & ~0x1F;
-        fn_8040394C(lbl_8066F9AC, src, (u8*)lbl_8066F9AC + lbl_8066F9AC->sheetImage);
+        ExpandFontSheet(lbl_8066F9AC, src, (u8*)lbl_8066F9AC + lbl_8066F9AC->sheetImage);
         break;
     case 2:
     default:

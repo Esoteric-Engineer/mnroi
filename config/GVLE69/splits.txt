@@ -2115,6 +2115,9 @@ Dolphin/os/ReadFont.c:
 Dolphin/os/ParseStringS.c:
 	.text       start:0x80403570 end:0x804036AC
 
+Dolphin/os/ExpandFontSheet.c:
+	.text       start:0x8040394C end:0x80403CF8
+
 Dolphin/os/OSInitFont.c:
 	.text       start:0x80403CF8 end:0x80403F04
 

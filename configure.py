@@ -952,6 +952,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSGetFontEncode.c"),
             Object(Matching, "Dolphin/os/ReadFont.c"),
             Object(Matching, "Dolphin/os/ParseStringS.c"),
+            Object(Matching, "Dolphin/os/ExpandFontSheet.c"),
             Object(Matching, "Dolphin/os/OSInitFont.c"),
             Object(Matching, "Dolphin/os/OSGetFontTexture.c"),
             Object(Matching, "Dolphin/os/OSInitMessageQueue.c"),

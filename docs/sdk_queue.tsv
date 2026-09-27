@@ -448,7 +448,7 @@ addr	size	name	library	confidence	notes	status
 0x80403430	0x140	OSLoadFont	os	guess	calls ReadFont; called from Halt	open
 0x80403570	0x13C	ParseStringS	os	exact	OSFont.c ParseStringS(encode, string, &fontData, &fontCode), the SDK's ParseString function pointer target (OSGetFontEncode stores it in lbl_8066F9B4). Switch on encode: 0 ANSI reads lbl_8066F9A8 (FontDataAnsi), 1 SJIS reads lbl_8066F9AC (FontDataSjis) with inlined IsSjisLeadByte/IsSjisTrailByte; calls GetFontCode(encode, code) (0x80402DC0 takes encode first here, unlike ac-decomp). Matched (Dolphin/os/ParseStringS.c)	matched
 0x804036AC	0x2A0	OSGetFontTexel	os	guess	called from ScreenReport; between ParseStringS and ExpandFontSheet	open
-0x8040394C	0x3AC	ExpandFontSheet	os	exact	CFTKK size run of 3; confirmed by OSInitFont call shape ExpandFontSheet(font, src, dst) after sheetImage is rounded up to 0x20	open
+0x8040394C	0x3AC	ExpandFontSheet	os	exact	CFTKK size run of 3; confirmed by OSInitFont call shape ExpandFontSheet(font, src, dst) after sheetImage is rounded up to 0x20	matched
 0x80403CF8	0x20C	OSInitFont	os	exact	CFTKK size run of 3; this build has the older switch on the font encode (cases 0, 1, 3-5), loading ReadFont + ExpandFontSheet per font	matched
 0x80403F04	0x170	OSGetFontTexture	os	exact	CFTKK size run of 3	matched
 0x80404074	0xD4	OSGetFontWidth	os	guess	last OSFont function; VI font-encode check inline	open
