@@ -2585,6 +2585,9 @@ Dolphin/card/CARDDeleteAsync.c:
 Dolphin/card/CARDDelete.c:
 	.text       start:0x8040F2E8 end:0x8040F330
 
+Dolphin/card/UpdateIconOffsets.c:
+	.text       start:0x8040F330 end:0x8040F528
+
 Dolphin/card/CARDGetStatus.c:
 	.text       start:0x8040F528 end:0x8040F63C
 

@@ -44,7 +44,7 @@ extern s32 __CARDGetControlBlock(s32 chan, CARDControl** card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern s32 __CARDIsReadable(CARDControl* card, CARDDir* ent);
-extern void fn_8040F330(CARDDir* ent, CARDStat* stat);
+extern void UpdateIconOffsets(CARDDir* ent, CARDStat* stat);
 
 s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat)
 {
@@ -75,7 +75,7 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat)
         stat->iconFormat = ent->iconFormat;
         stat->iconSpeed = ent->iconSpeed;
         stat->commentAddr = ent->commentAddr;
-        fn_8040F330(ent, stat);
+        UpdateIconOffsets(ent, stat);
     }
     return __CARDPutControlBlock(card, result);
 }

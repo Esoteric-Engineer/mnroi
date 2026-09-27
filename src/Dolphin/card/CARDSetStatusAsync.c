@@ -39,7 +39,7 @@ extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern s32 __CARDIsWritable(CARDControl* card, CARDDir* ent);
 extern s32 __CARDUpdateDir(s32 chan, CARDCallback callback);
-extern void fn_8040F330(CARDDir* ent, CARDStat* stat);
+extern void UpdateIconOffsets(CARDDir* ent, CARDStat* stat);
 extern s64 OSGetTime(void);
 
 s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callback)
@@ -69,7 +69,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
     ent->iconFormat = stat->iconFormat;
     ent->iconSpeed = stat->iconSpeed;
     ent->commentAddr = stat->commentAddr;
-    fn_8040F330(ent, stat);
+    UpdateIconOffsets(ent, stat);
 
     if (ent->iconAddr == 0xFFFFFFFF)
         ent->iconSpeed = (ent->iconSpeed & ~3) | 1;
