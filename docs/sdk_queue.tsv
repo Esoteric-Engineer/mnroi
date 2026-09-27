@@ -531,7 +531,7 @@ addr	size	name	library	confidence	notes	status
 0x8040855C	0x94	__AXDepopVoice	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXDepopVoice size 0x94	matched
 0x804085F0	0x8	__AXGetNumVoices	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetNumVoices size 0x8	matched
 0x804085F8	0x74C	__AXServiceVPB	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXServiceVPB size 0x74c	open
-0x80408D44	0x278	__AXSyncPBs	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSyncPBs size 0x278	open
+0x80408D44	0x278	__AXSyncPBs	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXSyncPBs size 0x278	matched
 0x80408FBC	0xC	__AXGetPBs	ax	exact	CFTKK size run of 9; equal size in CFTKK __AXGetPBs size 0xc	matched
 0x80408FC8	0x40	__AXSetPBDefault	ax	guess	CFTKK 0x44	open
 0x80409008	0x200	__AXVPBInit	ax	guess	CFTKK 0x204; called from AXInitEx, DCFlushRange	open
