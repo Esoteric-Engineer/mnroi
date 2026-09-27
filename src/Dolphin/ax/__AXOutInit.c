@@ -4,7 +4,7 @@ extern void AIInitDMA(void*, unsigned long);
 extern void AIStartDMA(void);
 extern void __AXOutAiCallback(void);
 extern void __AXOutInitDSP(void);
-extern void fn_8040726C(void*, void*);
+extern void __AXNextFrame(void*, void*);
 
 extern volatile unsigned long lbl_8066FA60;
 extern volatile unsigned long lbl_8066FA64;
@@ -35,9 +35,9 @@ void __AXOutInit(unsigned long outputMode)
     __AXOutInitDSP();
     AIRegisterDMACallback(__AXOutAiCallback);
     if (lbl_8066FA90 == 1) {
-        fn_8040726C(__AXOutSBuffer, &__AXOutBuffer[320]);
+        __AXNextFrame(__AXOutSBuffer, &__AXOutBuffer[320]);
     } else {
-        fn_8040726C(__AXOutSBuffer, &__AXOutBuffer[160]);
+        __AXNextFrame(__AXOutSBuffer, &__AXOutBuffer[160]);
     }
     lbl_8066FA68 = 1;
     lbl_8066FA78 = 0;

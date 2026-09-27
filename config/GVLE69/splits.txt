@@ -2289,6 +2289,9 @@ Dolphin/ax/__AXGetCommandListCycles.c:
 Dolphin/ax/__AXGetCommandListAddress.c:
 	.text       start:0x80407230 end:0x8040726C
 
+Dolphin/ax/__AXNextFrame.c:
+	.text       start:0x8040726C end:0x8040791C
+
 Dolphin/ax/__AXClInit.c:
 	.text       start:0x8040791C end:0x80407940
 

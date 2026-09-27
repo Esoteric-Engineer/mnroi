@@ -7,7 +7,7 @@ extern void __AXPrintStudio(void);
 extern unsigned long __AXGetCommandListAddress(void);
 extern void __AXServiceCallbackStack(void);
 extern void __AXProcessAux(void);
-extern void fn_8040726C(void*, void*);
+extern void __AXNextFrame(void*, void*);
 extern unsigned long __AXGetNumVoices(void);
 extern void* __AXGetCurrentProfile(void);
 
@@ -58,7 +58,7 @@ void __AXOutNewFrame(unsigned long lessDspCycles)
         lbl_8066FA78();
     }
     b->profile.userCallbackEnd = OSGetTime();
-    fn_8040726C(b->buf + 0x780, b->buf + lbl_8066FA60 * 0x280);
+    __AXNextFrame(b->buf + 0x780, b->buf + lbl_8066FA60 * 0x280);
     lbl_8066FA60 = lbl_8066FA60 + 1;
     if (lbl_8066FA90 == 1) {
         lbl_8066FA60 = lbl_8066FA60 % 3;
