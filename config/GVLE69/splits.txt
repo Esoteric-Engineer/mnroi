@@ -2163,6 +2163,9 @@ Dolphin/os/OSInitSemaphore.c:
 Dolphin/os/OSWaitSemaphore.c:
 	.text       start:0x804043A4 end:0x80404414
 
+Dolphin/os/OSTryWaitSemaphore.c:
+	.text       start:0x80404414 end:0x80404468
+
 Dolphin/os/OSSignalSemaphore.c:
 	.text       start:0x80404468 end:0x804044C8
 

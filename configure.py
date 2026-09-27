@@ -963,6 +963,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSReceiveMessage.c"),
             Object(Matching, "Dolphin/os/OSInitSemaphore.c"),
             Object(Matching, "Dolphin/os/OSWaitSemaphore.c"),
+            Object(Matching, "Dolphin/os/OSTryWaitSemaphore.c"),
             Object(Matching, "Dolphin/os/OSSignalSemaphore.c"),
             Object(Matching, "Dolphin/os/OSMemory.c"),
             Object(Matching, "Dolphin/os/RealMode.c"),
