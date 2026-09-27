@@ -641,7 +641,7 @@ addr	size	name	library	confidence	notes	status
 0x8040F63C	0x174	CARDSetStatusAsync	card	exact	CFTKK size run of 4; equal size in CFTKK CARDSetStatusAsync size 0x174 and ac-decomp CARDSetStatusAsync size 0x174	matched
 0x8040F7B0	0x48	CARDSetStatus	card	exact	CFTKK size run of 4; equal size in CFTKK CARDSetStatus size 0x48 and ac-decomp CARDSetStatus size 0x48	matched
 0x8040F7F8	0xC4	CARDGetSerialNo	card	guess	0xC4; control block get/put only (CARDNet.c)	matched
-0x8040F8BC	0xE4	CARDSetAttributesAsync	card	guess	0xE4; __CARDGetStatusEx + __CARDSetStatusExAsync	open
+0x8040F8BC	0xE4	CARDSetAttributesAsync	card	guess	0xE4; __CARDGetStatusEx + __CARDSetStatusExAsync (still fn_80410F6C, unclaimed). Not ac-decomp's plain CARDNet.c wrapper: this SDK revision adds GLOBAL(0x20)/COMPANY(0x40) permission-lock validation between the two calls (can't clear a locked bit, can't set both, can't set one while old had the other), using the same lbl_8066CEFA mask as __CARDIsWritable/__CARDIsReadable	matched
 0x8040F9A0	0x48	CARDSetAttributes	card	guess	0x48 sync wrapper of the above	matched
 0x8040F9E8	0x16C	bitrev	card	exact	CFTKK size run of 7; equal size in CFTKK bitrev size 0x16c. Verified: CARDUnlock.c bitrev (32-iteration loop unrolled x4 with bdnz, i>15 / i==31 split, data>>31 hoisted); matches ac-decomp source verbatim, static in SDK but non-static here	matched
 0x8040FB54	0x144	ReadArrayUnlock	card	exact	CFTKK size run of 7; equal size in CFTKK ReadArrayUnlock size 0x144	matched
