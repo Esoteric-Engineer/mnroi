@@ -39,7 +39,7 @@ extern void __CARDDefaultApiCallback(s32 chan, s32 result);
 extern void __CARDExtHandler(s32 chan, void* context);
 extern void __CARDUnlockedHandler(s32 chan);
 extern void __CARDMountCallback(s32 chan, s32 result);
-extern s32 fn_8040CCE0(s32 chan);
+extern s32 DoMount(s32 chan);
 
 s32 CARDMountAsync(s32 chan, void* workArea, CARDCallback detachCallback, CARDCallback attachCallback)
 {
@@ -93,5 +93,5 @@ s32 CARDMountAsync(s32 chan, void* workArea, CARDCallback detachCallback, CARDCa
         return 0;
 
     card->unlockCallback = 0;
-    return fn_8040CCE0(chan);
+    return DoMount(chan);
 }

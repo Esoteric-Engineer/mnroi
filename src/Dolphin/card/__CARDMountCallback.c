@@ -17,7 +17,7 @@ typedef struct CARDControl {
 
 extern CARDControl __CARDBlock[2];
 
-extern s32 fn_8040CCE0(s32 chan);
+extern s32 DoMount(s32 chan);
 extern s32 __CARDVerify(CARDControl* card);
 extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern void __CARDUnlockedHandler(s32 chan);
@@ -33,7 +33,7 @@ void __CARDMountCallback(s32 chan, s32 result)
     switch (result) {
     case 0:
         if (++card->mountStep < 7) {
-            result = fn_8040CCE0(chan);
+            result = DoMount(chan);
             if (0 <= result)
                 return;
         } else
@@ -46,7 +46,7 @@ void __CARDMountCallback(s32 chan, s32 result)
         }
         card->unlockCallback = 0;
 
-        result = fn_8040CCE0(chan);
+        result = DoMount(chan);
         if (result >= 0)
             return;
         break;
