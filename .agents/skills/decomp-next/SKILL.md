@@ -64,7 +64,7 @@ Human-facing references (read the relevant one instead of guessing):
      No public source is known, so work from the disassembly and what `docs/sdk_libraries.md`
      records. Much of it is hand-written asm (`mtsprg`, `psq_st`, SPR saves); transcribe that as
      `nofralloc` asm, like the existing `SN/` units.
-   If the reference clone is missing (`../ac-decomp`; `../newlib-cygwin` for libc, which is not cloned yet), say so rather than
+   If the reference clone is missing (`../ac-decomp`; `../newlib-cygwin` for libc), say so rather than
    skipping this step silently.
    **Verify the name.** Queue names for `exact`/`guess` rows come from size and order only. Confirm
    in the reference that the code shape and callees agree before renaming. If it doesn't, don't force it:
