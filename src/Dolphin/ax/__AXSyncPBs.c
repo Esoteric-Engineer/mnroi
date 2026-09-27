@@ -55,7 +55,7 @@ extern unsigned long __AXGetCommandListCycles(void);
 extern AXVPB* __AXGetStackHead(unsigned long);
 extern void __AXDepopVoice(AXPB*);
 extern void __AXPushCallbackStack(AXVPB*);
-extern void fn_804085F8(AXVPB*);
+extern void __AXServiceVPB(AXVPB*);
 
 void __AXSyncPBs(unsigned long baseCycles)
 {
@@ -85,7 +85,7 @@ void __AXSyncPBs(unsigned long baseCycles)
                 f = p->x144;
                 cycles += tblB[f & 0xF] + tblC[(f >> 4) & 0x1F] + tblC[(f >> 9) & 0x1F] + 0x8C;
                 if (lbl_8066FAC0 > cycles) {
-                    fn_804085F8(p);
+                    __AXServiceVPB(p);
                 } else {
                     if ((pb = &pbs[p->index])->state == 1) {
                         __AXDepopVoice(pb);
@@ -100,7 +100,7 @@ void __AXSyncPBs(unsigned long baseCycles)
                     __AXPushCallbackStack(p);
                 }
             } else {
-                fn_804085F8(p);
+                __AXServiceVPB(p);
             }
             p->sync = 0;
             p->depop = 0;

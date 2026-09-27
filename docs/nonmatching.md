@@ -57,3 +57,37 @@ materialization and likely needs either the exact original source shape (unknown
 source exists for this SDK cluster, see `docs/sdk_libraries.md` "Second SDK cluster") or
 `decomp-permuter`.
 
+## `__AXServiceVPB` (`Dolphin/ax/__AXServiceVPB.c`, `0x804085F8`, size `0x74C`)
+
+99.31% fuzzy. No reference source exists (AX audio mixer isn't in ac-decomp or CFTKK-Decomp; ac-decomp's
+`dolphin/` tree has no `ax/` at all, and CFTKK-Decomp is names/sizes only, no `.c` files). Every line was
+hand-transliterated from the disassembly of `build/GVLE69/obj/auto_01_804085F8_text.o`. The function syncs
+one `AXVPB`'s parameter block (`p`) against its internal per-voice slot (`lbl_80657100 + p->index*244`, a
+244-byte `AXPB`) and an app-visible mirror embedded at `p+312`, gated field-by-field on `p->sync`'s 23
+individual bits, plus two runtime-length `p->extraCount`-word copies to/from a 256-byte-stride array at
+`lbl_80657100 + (p->index<<8) + 0x4D00` (`lbl_8065BE00` in `__AXSyncPBs.c`'s naming). All field offsets,
+widths (u16/s16/u32) and per-bit directions (mostly mirror→internal; bits 0x4, 0x10000 in the combined
+0x1E000 group, and the `sync==0` early-return path swap direction based on the bit) were read directly off
+the disasm and are believed correct — see [`matching_notes.md`](matching_notes.md) for the `base +
+(index<<shift) + const` array-cast fix that got the add/addi order right.
+
+**Still unmatched:** in the two `p->extraCount`-driven block-copy loops (the `sync & 0x80000000` "full
+update" path and the `sync & 0x80` path), the original puts the simple `(u8*)p + 52` pointer in `r3`
+(reusing `p`'s own register in place — `p` is dead after this point in both paths) and the array-indexed
+`lbl_80657100`-relative pointer in `r5`/`r8`. Every C form tried puts the array-indexed pointer in `r3`
+and `(u8*)p + 52` in a fresh register (`r6`/`r9`) instead — same instructions/immediates, just the two
+pointers' registers swapped, in both loops identically. This costs the fuzzy score even though the loop
+bodies that use them (the 8-word-unrolled-with-remainder `bdnz` copy, matching `__AXOutNewFrame`'s proven
+`for(;n!=0;n--){*d++=*s++;}` shape) are otherwise byte-identical.
+
+**Tried, no effect on which pointer gets `r3`:** swapping declaration order of the two pointer locals
+(fixed the unrelated `pb`/`mirror` register swap earlier in this same function, so it's not a dead lever
+in general); swapping assignment/statement order of the two pointers; hoisting both to function scope
+(alongside `pb`/`mirror`/`base`, which is where the successful fixes for those locals live) instead of
+block scope; `register` on one of the two; `unsigned char*` instead of `unsigned long*` for both, with
+manual `+= 4` advances instead of `unsigned long*` post-increment; assigning `(AXVPB*)((u8*)p+52)` back
+into `p` itself instead of a separate local (this changes the shape entirely — adds `addi rX,rY,0` copies
+— so `p` is evidently *not* simply "still live in r3" the way the original's is). `#pragma scheduling off`
+makes the whole function worse (94.2% vs. 99.3%), so it's off. No reference source exists to check the true
+argument order/shape against.
+
