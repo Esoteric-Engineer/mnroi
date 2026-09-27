@@ -1111,6 +1111,7 @@ config.libs = [
             Object(Matching, "Dolphin/ax/AXSetVoiceAdpcm.c"),
             Object(Matching, "Dolphin/ax/AXSetVoiceSrcRatio.c"),
             Object(Matching, "Dolphin/ax/AXSetVoiceAdpcmLoop.c"),
+            Object(Matching, "Dolphin/ax/__AXOutNewFrame.c"),
             Object(Matching, "Dolphin/ax/__AXOutAiCallback.c"),
             Object(Matching, "Dolphin/ax/__AXDSPInitCallback.c"),
             Object(Matching, "Dolphin/ax/__AXDSPResumeCallback.c"),
