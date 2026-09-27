@@ -1,6 +1,6 @@
 extern long lbl_8066CEA4;
 
-extern void fn_80400D30(void);
+extern void __VMPageReplacementLRU(void);
 extern void __VMPageReplacementRandom(void);
 extern void __VMPageReplacementFIFO(void);
 
@@ -15,7 +15,7 @@ asm void __VMGetPageToReplace(void)
     lwz     r0, lbl_8066CEA4
     cmpwi   r0, 0
     bne     L_not_lru
-    bl      fn_80400D30
+    bl      __VMPageReplacementLRU
     b       L_done
 L_not_lru:
     cmpwi   r0, 1
