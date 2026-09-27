@@ -3,7 +3,7 @@ extern void AIInitDMA(void*, unsigned long);
 extern void DSPSendMailToDSP(unsigned long);
 extern unsigned long DSPCheckMailToDSP(void);
 extern void __AXSyncPBs(unsigned long);
-extern void fn_80408134(void);
+extern void __AXPrintStudio(void);
 extern unsigned long __AXGetCommandListAddress(void);
 extern void __AXServiceCallbackStack(void);
 extern void __AXProcessAux(void);
@@ -41,7 +41,7 @@ void __AXOutNewFrame(unsigned long lessDspCycles)
 
     b->profile.axFrameStart = OSGetTime();
     __AXSyncPBs(lessDspCycles);
-    fn_80408134();
+    __AXPrintStudio();
     cl = __AXGetCommandListAddress();
     DSPSendMailToDSP(0xBABE0180);
     while (DSPCheckMailToDSP() != 0) {

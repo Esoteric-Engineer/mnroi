@@ -2326,6 +2326,9 @@ Dolphin/ax/__AXOutQuit.c:
 Dolphin/ax/__AXGetStudio.c:
 	.text       start:0x80408128 end:0x80408134
 
+Dolphin/ax/__AXPrintStudio.c:
+	.text       start:0x80408134 end:0x8040852C
+
 Dolphin/ax/__AXSPBInit.c:
 	.text       start:0x8040852C end:0x80408558
 
