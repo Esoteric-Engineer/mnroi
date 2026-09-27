@@ -1213,6 +1213,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/DoUnmount.c"),
             Object(Matching, "Dolphin/card/CARDUnmount.c"),
             Object(Matching, "Dolphin/card/FormatCallback.c"),
+            Object(Matching, "Dolphin/card/__CARDFormatRegionAsync.c"),
             Object(Matching, "Dolphin/card/CARDFormat.c"),
             Object(Matching, "Dolphin/card/__CARDIsOpened.c"),
             Object(Matching, "Dolphin/card/CARDWrite.c"),

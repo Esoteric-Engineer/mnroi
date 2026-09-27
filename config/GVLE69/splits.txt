@@ -2569,6 +2569,9 @@ Dolphin/card/CARDUnmount.c:
 Dolphin/card/FormatCallback.c:
 	.text       start:0x8040D558 end:0x8040D69C
 
+Dolphin/card/__CARDFormatRegionAsync.c:
+	.text       start:0x8040D69C end:0x8040DCF4
+
 Dolphin/card/CARDFormat.c:
 	.text       start:0x8040DCF4 end:0x8040DD48
 
