@@ -378,6 +378,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/fprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/printf.c"),
             Object(Matching, "Runtime.PPCEABI.H/vprintf.c"),
+            Object(Matching, "Runtime.PPCEABI.H/strncat.c"),
             Object(Matching, "Runtime.PPCEABI.H/isdigit.c"),
             Object(Matching, "Runtime.PPCEABI.H/isspace.c"),
             Object(Matching, "Runtime.PPCEABI.H/runtime.c"),
