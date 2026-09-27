@@ -4,7 +4,7 @@ typedef unsigned long u32;
 
 extern void* lbl_8066F9A8;
 extern void* lbl_8066F9AC;
-extern u32 fn_80402DC0(u16 encode, u16 code);
+extern u32 GetFontCode(u16 encode, u16 code);
 
 static inline int IsSjisLeadByte(u8 c)
 {
@@ -41,6 +41,6 @@ char* ParseStringS(u16 encode, char* string, void** fontData, u32* fontCode)
         break;
     }
     *fontData = font;
-    *fontCode = fn_80402DC0(encode, code);
+    *fontCode = GetFontCode(encode, code);
     return string;
 }
