@@ -2483,6 +2483,9 @@ Dolphin/card/CARDProbeEx.c:
 Dolphin/card/__CARDMountCallback.c:
 	.text       start:0x8040D0F0 end:0x8040D228
 
+Dolphin/card/CARDMountAsync.c:
+	.text       start:0x8040D228 end:0x8040D3C8
+
 Dolphin/card/CARDMount.c:
 	.text       start:0x8040D3C8 end:0x8040D410
 
