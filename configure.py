@@ -1031,6 +1031,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/__VMMappingErrorAlert.c"),
             Object(Matching, "Dolphin/vm/__VMAllocVirtualToARAMLUT.c"),
             Object(Matching, "Dolphin/vm/__VMAllocARAMToVirtualLUT.c"),
+            Object(Matching, "Dolphin/vm/VMBASEInit.c"),
             Object(Matching, "Dolphin/vm/VMBASESetPageTableEntry.c"),
             Object(Matching, "Dolphin/vm/VMBASEClearPageTableEntry.c"),
             Object(Matching, "Dolphin/vm/VMBASEIsPageValid.c"),
