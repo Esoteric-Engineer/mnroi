@@ -201,6 +201,9 @@ SN/SNInitInterrupts.c:
 SN/SNQueryData.c:
 	.text       start:0x8016ACCC end:0x8016AD54
 
+SN/SNRead.c:
+	.text       start:0x8016AD54 end:0x8016AF10
+
 SN/SNWrite.c:
 	.text       start:0x8016AF10 end:0x8016B0A8
 

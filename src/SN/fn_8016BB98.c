@@ -1,7 +1,7 @@
 extern char lbl_8057BD88[];
 extern char lbl_804CFF30[];
 extern int SNQueryData(void);
-extern void fn_8016AD54(void);
+extern void SNRead(void);
 extern void SNWrite(void);
 
 asm void fn_8016BB98(void)
@@ -25,7 +25,7 @@ L_8016BBC0:
     mr      r4, r3
     lis     r30, (lbl_8057BD88+0x170)@ha
     mr      r3, r31
-    bl      fn_8016AD54
+    bl      SNRead
     lwz     r9, 8(r31)
     li      r0, 0
     sth     r0, 2(r31)
