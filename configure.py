@@ -375,6 +375,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_asinf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_logf.c"),
             Object(Matching, "Runtime.PPCEABI.H/tolower2.c"),
+            Object(Matching, "Runtime.PPCEABI.H/fprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/printf.c"),
             Object(Matching, "Runtime.PPCEABI.H/vprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/isdigit.c"),
