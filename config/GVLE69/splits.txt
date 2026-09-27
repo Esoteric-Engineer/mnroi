@@ -2422,6 +2422,9 @@ Dolphin/card/__CARDClearStatus.c:
 Dolphin/card/TimeoutHandler.c:
 	.text       start:0x8040A740 end:0x8040A7E4
 
+Dolphin/card/Retry.c:
+	.text       start:0x8040A7E4 end:0x8040AA10
+
 Dolphin/card/UnlockedCallback.c:
 	.text       start:0x8040AA10 end:0x8040AB20
 

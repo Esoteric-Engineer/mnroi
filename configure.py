@@ -1166,6 +1166,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDReadStatus.c"),
             Object(Matching, "Dolphin/card/__CARDClearStatus.c"),
             Object(Matching, "Dolphin/card/TimeoutHandler.c"),
+            Object(Matching, "Dolphin/card/Retry.c"),
             Object(Matching, "Dolphin/card/UnlockedCallback.c"),
             Object(Matching, "Dolphin/card/__CARDStart.c"),
             Object(Matching, "Dolphin/card/__CARDReadSegment.c"),
