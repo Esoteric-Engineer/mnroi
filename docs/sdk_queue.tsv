@@ -633,7 +633,7 @@ addr	size	name	library	confidence	notes	status
 0x8040EF78	0x48	CARDWrite	card	exact	0x48 sync wrapper of CARDWriteAsync; equal size in ac-decomp CARDWrite size 0x48	matched
 0x8040EFC0	0xA4	DeleteCallback	card	exact	ac-decomp size run of 6; equal size in CFTKK DeleteCallback size 0xa4 and ac-decomp DeleteCallback size 0xa4	matched
 0x8040F064	0x12C	CARDFastDeleteAsync	card	exact	CFTKK 0x12C; wrapped by CARDFastDelete; equal size in CFTKK CARDFastDeleteAsync size 0x12c	matched
-0x8040F190	0x48	CARDFastDelete	card	guess	0x48 sync wrapper of CARDFastDeleteAsync; no same-size reference by name, name from callees	open
+0x8040F190	0x48	CARDFastDelete	card	guess	0x48 sync wrapper of CARDFastDeleteAsync; no same-size reference by name, name from callees	matched
 0x8040F1D8	0x110	CARDDeleteAsync	card	exact	ac 0x110; equal size in ac-decomp CARDDeleteAsync size 0x110	matched
 0x8040F2E8	0x48	CARDDelete	card	exact	0x48 sync wrapper of CARDDeleteAsync; equal size in ac-decomp CARDDelete size 0x48	matched
 0x8040F330	0x1F8	UpdateIconOffsets	card	exact	CFTKK size run of 4; equal size in CFTKK UpdateIconOffsets size 0x1f8 and ac-decomp UpdateIconOffsets size 0x1f8	matched

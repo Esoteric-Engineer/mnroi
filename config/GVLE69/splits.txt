@@ -2672,6 +2672,9 @@ Dolphin/card/DeleteCallback.c:
 Dolphin/card/CARDFastDeleteAsync.c:
 	.text       start:0x8040F064 end:0x8040F190
 
+Dolphin/card/CARDFastDelete.c:
+	.text       start:0x8040F190 end:0x8040F1D8
+
 Dolphin/card/CARDDeleteAsync.c:
 	.text       start:0x8040F1D8 end:0x8040F2E8
 
