@@ -39,7 +39,7 @@ extern s32 IsCard(u32 id);
 extern s32 __CARDClearStatus(s32 chan);
 extern s32 __CARDReadStatus(s32 chan, u8* status);
 extern BOOL EXIProbe(s32 chan);
-extern s32 fn_8040FD5C(s32 chan, u8* id);
+extern s32 __CARDUnlock(s32 chan, u8* id);
 extern OSSramEx* __OSLockSramEx(void);
 extern void __OSUnlockSramEx(int commit);
 extern s32 __CARDEnableInterrupt(s32 chan, BOOL enable);
@@ -96,7 +96,7 @@ s32 DoMount(s32 chan)
         }
 
         if (!(status & 0x40)) {
-            result = fn_8040FD5C(chan, card->id);
+            result = __CARDUnlock(chan, card->id);
             if (result < 0)
                 goto error;
 

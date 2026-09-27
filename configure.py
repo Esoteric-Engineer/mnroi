@@ -1250,6 +1250,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/bitrev.c"),
             Object(Matching, "Dolphin/card/ReadArrayUnlock.c"),
             Object(Matching, "Dolphin/card/DummyLen.c"),
+            Object(Matching, "Dolphin/card/CARDUnlock.c"),
             Object(Matching, "Dolphin/card/InitCallback.c"),
             Object(Matching, "Dolphin/card/DoneCallback.c"),
             Object(Matching, "Dolphin/card/BlockReadCallback.c"),
