@@ -451,7 +451,7 @@ addr	size	name	library	confidence	notes	status
 0x8040394C	0x3AC	ExpandFontSheet	os	exact	CFTKK size run of 3; confirmed by OSInitFont call shape ExpandFontSheet(font, src, dst) after sheetImage is rounded up to 0x20	matched
 0x80403CF8	0x20C	OSInitFont	os	exact	CFTKK size run of 3; this build has the older switch on the font encode (cases 0, 1, 3-5), loading ReadFont + ExpandFontSheet per font	matched
 0x80403F04	0x170	OSGetFontTexture	os	exact	CFTKK size run of 3	matched
-0x80404074	0xD4	OSGetFontWidth	os	guess	last OSFont function; VI font-encode check inline	open
+0x80404074	0xD4	OSGetFontWidth	os	guess	last OSFont function; VI font-encode check inline	matched
 0x80404148	0x60	OSInitMessageQueue	os	exact	CFTKK size run of 3	matched
 0x804041A8	0xC8	OSSendMessage	os	exact	CFTKK size run of 3	matched
 0x80404270	0xDC	OSReceiveMessage	os	exact	CFTKK size run of 3	matched

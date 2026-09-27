@@ -2172,6 +2172,9 @@ Dolphin/os/OSInitFont.c:
 Dolphin/os/OSGetFontTexture.c:
 	.text       start:0x80403F04 end:0x80404074
 
+Dolphin/os/OSGetFontWidth.c:
+	.text       start:0x80404074 end:0x80404148
+
 Dolphin/os/OSInitMessageQueue.c:
 	.text       start:0x80404148 end:0x804041A8
 
