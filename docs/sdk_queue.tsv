@@ -653,7 +653,7 @@ addr	size	name	library	confidence	notes	status
 0x80410D24	0x64	__CARDRead	card	exact	ac 0x64; called by CARDReadAsync/DoMount; equal size in CFTKK __CARDRead size 0x64 and ac-decomp __CARDRead size 0x64	matched
 0x80410D88	0xDC	BlockWriteCallback	card	exact	ac 0xDC; equal size in ac-decomp BlockWriteCallback size 0xdc	matched
 0x80410E64	0x64	__CARDWrite	card	exact	ac 0x64; equal size in ac-decomp __CARDWrite size 0x64	matched
-0x80410EC8	0xA4	__CARDGetStatusEx	card	guess	ac 0xBC; CARDStatEx.c	open
+0x80410EC8	0xA4	__CARDGetStatusEx	card	guess	ac 0xBC; CARDStatEx.c; calls __CARDIsReadable (not __CARDAccess+__CARDIsPublic like ac-decomp) — this SDK version has no separate __CARDIsPublic	matched
 0x80410F6C	0x29C	__CARDSetStatusExAsync	card	guess	ac 0x254; __CARDIsWritable, memcmp	open
 0x80411208	0xCC	GXBeginDisplayList	gx	exact	CFTKK 0xCC; merged into Dolphin/gx/GXEndDisplayList.c (same TU: pooled .bss DisplayListFifo + __savedGXdata; needs (void)DisplayListFifo pin first)	matched
 0x804112D4	0xC4	GXEndDisplayList	gx	exact	CFTKK 0xC4; matched as Dolphin/gx/GXEndDisplayList.c, which defines the pooled .bss (DisplayListFifo 0x24 + __savedGXdata 0x5B0) that GXBeginDisplayList (0x80411208, still asm) also uses; Begin joins this unit when claimed	matched

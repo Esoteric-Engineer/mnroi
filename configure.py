@@ -1275,6 +1275,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDRead.c"),
             Object(Matching, "Dolphin/card/BlockWriteCallback.c"),
             Object(Matching, "Dolphin/card/__CARDWrite.c"),
+            Object(Matching, "Dolphin/card/__CARDGetStatusEx.c"),
         ],
     ),
     DolphinLib(

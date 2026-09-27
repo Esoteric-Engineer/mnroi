@@ -2748,6 +2748,9 @@ Dolphin/card/BlockWriteCallback.c:
 Dolphin/card/__CARDWrite.c:
 	.text       start:0x80410E64 end:0x80410EC8
 
+Dolphin/card/__CARDGetStatusEx.c:
+	.text       start:0x80410EC8 end:0x80410F6C
+
 Dolphin/gx/GXEndDisplayList.c:
 	.text       start:0x80411208 end:0x80411398
 	.bss        start:0x80668B40 end:0x80669114
