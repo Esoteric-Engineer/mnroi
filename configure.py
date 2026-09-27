@@ -943,6 +943,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSInitAlloc.c"),
             Object(Matching, "Dolphin/os/OSCreateHeap.c"),
             Object(Matching, "Dolphin/os/GetFontCode.c"),
+            Object(Matching, "Dolphin/os/Decode.c"),
             Object(Matching, "Dolphin/os/OSGetFontEncode.c"),
             Object(Matching, "Dolphin/os/ParseStringS.c"),
             Object(Matching, "Dolphin/os/OSGetFontTexture.c"),

@@ -2081,6 +2081,9 @@ Dolphin/os/OSCreateHeap.c:
 Dolphin/os/GetFontCode.c:
 	.text       start:0x80402DC0 end:0x80402F34
 
+Dolphin/os/Decode.c:
+	.text       start:0x80402F34 end:0x804030A8
+
 Dolphin/os/OSGetFontEncode.c:
 	.text       start:0x804030A8 end:0x8040310C
 
