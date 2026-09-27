@@ -949,6 +949,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/Decode.c"),
             Object(Matching, "Dolphin/os/OSGetFontEncode.c"),
             Object(Matching, "Dolphin/os/ParseStringS.c"),
+            Object(Matching, "Dolphin/os/OSInitFont.c"),
             Object(Matching, "Dolphin/os/OSGetFontTexture.c"),
             Object(Matching, "Dolphin/os/OSInitMessageQueue.c"),
             Object(Matching, "Dolphin/os/OSSendMessage.c"),
