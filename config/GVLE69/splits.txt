@@ -2726,6 +2726,9 @@ Dolphin/card/CARDSetStatusAsync.c:
 Dolphin/card/CARDSetStatus.c:
 	.text       start:0x8040F7B0 end:0x8040F7F8
 
+Dolphin/card/CARDGetSerialNo.c:
+	.text       start:0x8040F7F8 end:0x8040F8BC
+
 Dolphin/card/CARDSetAttributes.c:
 	.text       start:0x8040F9A0 end:0x8040F9E8
 

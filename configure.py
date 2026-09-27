@@ -1254,6 +1254,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/CARDGetStatus.c"),
             Object(Matching, "Dolphin/card/CARDSetStatusAsync.c"),
             Object(Matching, "Dolphin/card/CARDSetStatus.c"),
+            Object(Matching, "Dolphin/card/CARDGetSerialNo.c"),
             Object(Matching, "Dolphin/card/CARDSetAttributes.c"),
             Object(Matching, "Dolphin/card/__CARDSeek.c"),
             Object(Matching, "Dolphin/card/ReadCallback.c"),
