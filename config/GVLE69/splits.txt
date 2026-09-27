@@ -2203,6 +2203,9 @@ Dolphin/ax/__AXRemoveFromStack.c:
 Dolphin/ax/AXFreeVoice.c:
 	.text       start:0x80406BA0 end:0x80406C20
 
+Dolphin/ax/AXAcquireVoice.c:
+	.text       start:0x80406C20 end:0x80406D94
+
 Dolphin/ax/__AXAuxInit.c:
 	.text       start:0x80406D94 end:0x80406E78
 

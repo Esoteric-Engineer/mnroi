@@ -494,7 +494,7 @@ addr	size	name	library	confidence	notes	status
 0x80406AF0	0x1C	__AXPopCallbackStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXPopCallbackStack size 0x1c	matched
 0x80406B0C	0x94	__AXRemoveFromStack	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXRemoveFromStack size 0x94; calls none; used by __AXServiceCallbackStack and AXFreeVoice	matched
 0x80406BA0	0x80	AXFreeVoice	ax	exact	CFTKK size run of 33; equal size in CFTKK AXFreeVoice size 0x80; inlines __AXPushFreeStack; calls __AXRemoveFromStack and fn_80408FC8 (__AXSetPBDefault-like, size 0x40)	matched
-0x80406C20	0x174	AXAcquireVoice	ax	exact	CFTKK size run of 33; equal size in CFTKK AXAcquireVoice size 0x174	open
+0x80406C20	0x174	AXAcquireVoice	ax	exact	CFTKK size run of 33; equal size in CFTKK AXAcquireVoice size 0x174; matched as nofralloc asm (C reached 99.95%: instructions identical, frame 8 bytes larger)	matched
 0x80406D94	0xE4	__AXAuxInit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAuxInit size 0xe4	matched
 0x80406E78	0x10	__AXAuxQuit	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXAuxQuit size 0x10	matched
 0x80406E88	0x34	__AXGetAuxAInput	ax	exact	CFTKK size run of 33; equal size in CFTKK __AXGetAuxAInput size 0x34	matched
