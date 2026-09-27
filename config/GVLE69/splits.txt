@@ -2186,6 +2186,9 @@ Dolphin/ar/__ARClearInterrupt.c:
 Dolphin/ar/__ARGetInterruptStatus.c:
 	.text       start:0x80404BA0 end:0x80404BB0
 
+Dolphin/ar/__ARChecksize.c:
+	.text       start:0x80404BB0 end:0x804063A4
+
 Dolphin/arq/__ARQServiceQueueLo.c:
 	.text       start:0x804063A4 end:0x804064A4
 

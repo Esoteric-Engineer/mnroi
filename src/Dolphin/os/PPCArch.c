@@ -65,7 +65,7 @@ asm void PPCMtdec(register u32 dec)
     // clang-format on
 }
 
-asm void fn_8017A838(void)
+asm void PPCSync(void)
 {
     // clang-format off
     nofralloc

@@ -9,7 +9,7 @@ extern void OSRegisterVersion(char* version);
 extern void __OSSetInterruptHandler(int interrupt, void (*handler)(int, OSContext*));
 extern u32 __OSUnmaskInterrupts(u32 mask);
 extern void __ARHandler(int exception, OSContext* context);
-extern void fn_80404BB0(void);
+extern void __ARChecksize(void);
 
 extern char* lbl_8066CEC8;
 extern ARCallback lbl_8066F9B8;
@@ -36,7 +36,7 @@ u32 ARInit(u32* stack_index_addr, u32 num_entries)
     lbl_8066F9CC = num_entries;
     lbl_8066F9D0 = stack_index_addr;
     __DSPRegs[13] = (__DSPRegs[13] & 0xFF) | (__DSPRegs[13] & ~0xFF);
-    fn_80404BB0();
+    __ARChecksize();
     lbl_8066F9D4 = 1;
     OSRestoreInterrupts(enabled);
     return lbl_8066F9C8;

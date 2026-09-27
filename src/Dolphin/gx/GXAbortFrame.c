@@ -21,7 +21,7 @@ extern OSTime OSGetTime(void);
 extern void __GXCleanGPFifo(void);
 extern void __GXInitRevisionBits(void);
 extern void __GXSetDirtyState(void);
-extern void fn_8017A838(void);
+extern void PPCSync(void);
 
 #define GX_GET_MEM_REG(offset) (*(volatile u16*)((__memReg) + (offset)))
 
@@ -95,6 +95,6 @@ void GXAbortFrame(void)
         GXWGFifo = 0;
         GXWGFifo = 0;
         GXWGFifo = 0;
-        fn_8017A838();
+        PPCSync();
     }
 }

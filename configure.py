@@ -1071,6 +1071,7 @@ config.libs = [
             Object(Matching, "Dolphin/ar/__ARHandler.c"),
             Object(Matching, "Dolphin/ar/__ARClearInterrupt.c"),
             Object(Matching, "Dolphin/ar/__ARGetInterruptStatus.c"),
+            Object(NonMatching, "Dolphin/ar/__ARChecksize.c"),
         ],
     ),
     DolphinLib(

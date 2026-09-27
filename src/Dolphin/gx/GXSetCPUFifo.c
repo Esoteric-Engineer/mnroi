@@ -16,7 +16,7 @@ typedef struct {
 
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
-extern void fn_8017A838(void);       // __sync
+extern void PPCSync(void);
 extern void __GXFifoLink(u8 link);    // __GXFifoLink
 extern void __GXWriteFifoIntEnable(u8 a, u8 b); // __GXWriteFifoIntEnable
 extern void __GXWriteFifoIntReset(u8 a, u8 b); // __GXWriteFifoIntReset
@@ -63,6 +63,6 @@ void GXSetCPUFifo(GXFifoObj* fifo)
         __piReg[5] = reg;
     }
 
-    fn_8017A838();
+    PPCSync();
     OSRestoreInterrupts(enabled);
 }

@@ -21,7 +21,7 @@ extern OSTime OSGetTime(void);
 extern void* GXSetBreakPtCallback(void* cb);
 extern void* GXSetDrawSyncCallback(void* cb);
 extern void* GXSetDrawDoneCallback(void* cb);
-extern void fn_8017A838(void);
+extern void PPCSync(void);
 extern void __GXAbort(void);
 
 volatile u32 GXWGFifo : 0xCC008000;
@@ -81,7 +81,7 @@ u32 __GXShutdown(int final)
         GXWGFifo = 0;
         GXWGFifo = 0;
         GXWGFifo = 0;
-        fn_8017A838();
+        PPCSync();
         __cpReg[1] = 0;
         __cpReg[2] = 3;
         __GXData->unk5AA = 1;

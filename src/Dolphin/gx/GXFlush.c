@@ -9,7 +9,7 @@ typedef struct {
 extern __GXDataStruct* __GXData;
 
 extern void __GXSetDirtyState(void);
-extern void fn_8017A838(void);
+extern void PPCSync(void);
 
 volatile u32 GXWGFifo : 0xCC008000;
 
@@ -26,5 +26,5 @@ void GXFlush(void)
     GXWGFifo = 0;
     GXWGFifo = 0;
     GXWGFifo = 0;
-    fn_8017A838();
+    PPCSync();
 }

@@ -23,7 +23,7 @@ typedef struct {
 
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int enabled);
-extern void fn_8017A838(void);       // __sync
+extern void PPCSync(void);
 extern void __GXFifoReadDisable(void);
 extern void __GXFifoReadEnable(void);
 extern void __GXFifoLink(u8 link);
@@ -65,7 +65,7 @@ void GXSetGPFifo(GXFifoObj* fifo)
     __cpReg[21] = fifo->hiWatermark >> 16;
     __cpReg[23] = fifo->loWatermark >> 16;
 
-    fn_8017A838();
+    PPCSync();
 
     if (lbl_8066F470 == lbl_8066F474) {
         lbl_8066F47C = 1;
