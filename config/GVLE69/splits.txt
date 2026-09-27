@@ -2552,6 +2552,9 @@ Dolphin/card/__CARDIsOpened.c:
 Dolphin/card/CreateCallbackFat.c:
 	.text       start:0x8040E438 end:0x8040E568
 
+Dolphin/card/CARDCreateAsync.c:
+	.text       start:0x8040E568 end:0x8040E788
+
 Dolphin/card/CARDCreate.c:
 	.text       start:0x8040E788 end:0x8040E7D0
 
