@@ -2715,4 +2715,4 @@ Dolphin/os/fn_80003464.c:
 	.init       start:0x80003464 end:0x80003468
 
 Dolphin/os/__init_hardware.c:
-	.init       start:0x80003468 end:0x8000348C
+	.init       start:0x80003468 end:0x800034A0

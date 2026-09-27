@@ -15,5 +15,11 @@ __declspec(section ".init") asm void __init_hardware(void)
     bl __OSCacheInit
     mtlr r31
     blr
+    /* 20 bytes of zero padding to the end of .init (section alignment) */
+    opword 0
+    opword 0
+    opword 0
+    opword 0
+    opword 0
     // clang-format on
 }
