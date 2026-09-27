@@ -1075,6 +1075,7 @@ config.libs = [
             Object(Matching, "Dolphin/mtx/PSMTXInverse.c"),
             Object(Matching, "Dolphin/mtx/PSMTXTrans.c"),
             Object(Matching, "Dolphin/mtx/PSMTXScale.c"),
+            Object(Matching, "Dolphin/mtx/C_MTXPerspective.c"),
             Object(Matching, "Dolphin/mtx/C_MTXOrtho.c"),
         ],
     ),

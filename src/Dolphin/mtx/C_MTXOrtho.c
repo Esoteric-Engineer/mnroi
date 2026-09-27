@@ -1,7 +1,8 @@
-// Owns its .sdata2 pool; bake-sda drops the relocs, so force_active stops mwld stripping it.
-#pragma force_active on
-
 typedef float f32;
+
+// Owns the .sdata2 pool C_MTXPerspective.c also externs; bake-sda drops the
+// relocs, so force_active stops mwld stripping it.
+#pragma force_active on
 
 void C_MTXOrtho(f32 m[4][4], f32 t, f32 b, f32 l, f32 r, f32 n, f32 f)
 {
