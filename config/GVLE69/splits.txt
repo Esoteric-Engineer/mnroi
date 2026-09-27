@@ -1979,6 +1979,9 @@ Runtime.PPCEABI.H/vprintf.c:
 Runtime.PPCEABI.H/strncat.c:
 	.text       start:0x80400868 end:0x80400914
 
+Runtime.PPCEABI.H/__floatdisf.c:
+	.text       start:0x80400914 end:0x804009C4
+
 Dolphin/vm/VMSetLogStatsCallback.c:
 	.text       start:0x80400AAC end:0x80400AB4
 

@@ -381,7 +381,7 @@ addr	size	name	library	confidence	notes	status
 0x80400758	0xDC	snprintf	libc	guess	string FILE (flags 0x208), size arg -> vfprintf	open
 0x80400834	0x34	vprintf	libc	known	symbol already named; just needs split + match	matched
 0x80400868	0xAC	strncat	libc	guess	word-at-a-time end scan, copies n bytes, NUL-terminates	matched
-0x80400914	0xB0	__floatdisf	libc	guess	libgcc s64 -> float, 0x1FFFFF/0x7FF rounding guard	open
+0x80400914	0xB0	__floatdisf	libc	guess	libgcc s64 -> float, 0x1FFFFF/0x7FF rounding guard	matched
 0x804009C4	0xE8	VMInit	vm	guess	CFTKK 0x9C; calls OSGetArenaHi/PPCHalt/VMBASEInit; precedes VMSetLogStatsCallback	open
 0x80400AAC	0x8	VMSetLogStatsCallback	vm	exact	CFTKK 0x8, first of four 0x8 VM getters after VMInit	matched
 0x80400AB4	0x8	__VMGetNumPagesInMRAM	vm	exact	CFTKK 0x8; called by the page-replacement functions	matched
