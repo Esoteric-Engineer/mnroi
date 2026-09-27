@@ -2468,6 +2468,9 @@ Dolphin/card/EraseCallback_8040B9A4.c:
 Dolphin/card/__CARDUpdateDir.c:
 	.text       start:0x8040BA6C end:0x8040BB30
 
+Dolphin/card/__CARDCheckSum.c:
+	.text       start:0x8040BB30 end:0x8040BCE0
+
 Dolphin/card/__CARDVerify.c:
 	.text       start:0x8040C428 end:0x8040C4B4
 
