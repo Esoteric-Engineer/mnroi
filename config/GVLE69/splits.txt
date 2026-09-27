@@ -1964,6 +1964,9 @@ Runtime.PPCEABI.H/__ieee754_asinf.c:
 Runtime.PPCEABI.H/__ieee754_logf.c:
 	.text       start:0x80400200 end:0x80400480
 
+Runtime.PPCEABI.H/ceilf.c:
+	.text       start:0x80400480 end:0x80400544
+
 Runtime.PPCEABI.H/tolower2.c:
 	.text       start:0x80400544 end:0x80400560
 
