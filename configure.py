@@ -1190,6 +1190,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/__CARDExtHandler.c"),
             Object(Matching, "Dolphin/card/__CARDExiHandler.c"),
             Object(Matching, "Dolphin/card/__CARDTxHandler.c"),
+            Object(Matching, "Dolphin/card/WriteCallback_8040EC44.c"),
             Object(Matching, "Dolphin/card/EraseCallback_8040EDB4.c"),
             Object(Matching, "Dolphin/card/CARDWriteAsync.c"),
             Object(Matching, "Dolphin/card/CARDDelete.c"),

@@ -2509,6 +2509,9 @@ Dolphin/card/CARDReadAsync.c:
 Dolphin/card/CARDRead.c:
 	.text       start:0x8040EBFC end:0x8040EC44
 
+Dolphin/card/WriteCallback_8040EC44.c:
+	.text       start:0x8040EC44 end:0x8040EDB4
+
 Dolphin/card/EraseCallback_8040EDB4.c:
 	.text       start:0x8040EDB4 end:0x8040EE64
 
