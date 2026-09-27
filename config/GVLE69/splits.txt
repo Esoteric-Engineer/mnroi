@@ -2084,6 +2084,9 @@ Dolphin/os/OSGetFontEncode.c:
 Dolphin/os/ParseStringS.c:
 	.text       start:0x80403570 end:0x804036AC
 
+Dolphin/os/OSGetFontTexture.c:
+	.text       start:0x80403F04 end:0x80404074
+
 Dolphin/os/OSInitMessageQueue.c:
 	.text       start:0x80404148 end:0x804041A8
 
