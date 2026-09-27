@@ -1192,6 +1192,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/EraseCallback_8040B9A4.c"),
             Object(Matching, "Dolphin/card/__CARDUpdateDir.c"),
             Object(Matching, "Dolphin/card/__CARDCheckSum.c"),
+            Object(Matching, "Dolphin/card/VerifyDir.c"),
             Object(Matching, "Dolphin/card/__CARDVerify.c"),
             Object(Matching, "Dolphin/card/CARDCheck.c"),
             Object(Matching, "Dolphin/card/IsCard.c"),

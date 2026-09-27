@@ -2502,6 +2502,9 @@ Dolphin/card/__CARDUpdateDir.c:
 Dolphin/card/__CARDCheckSum.c:
 	.text       start:0x8040BB30 end:0x8040BCE0
 
+Dolphin/card/VerifyDir.c:
+	.text       start:0x8040BF64 end:0x8040C1A4
+
 Dolphin/card/__CARDVerify.c:
 	.text       start:0x8040C428 end:0x8040C4B4
 
