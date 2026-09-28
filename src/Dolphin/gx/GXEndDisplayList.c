@@ -25,7 +25,6 @@ typedef struct {
 
 extern __GXDataStruct* const __GXData;
 extern volatile u32* __piReg;
-extern __GXFifoObj* lbl_8066FB18; // OldCPUFifo
 
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int enabled);
@@ -39,6 +38,7 @@ extern void GXResetWriteGatherPipe(void);
 extern void __GXSetDirtyState(void);
 
 __GXFifoObj DisplayListFifo;
+static volatile __GXFifoObj* OldCPUFifo;
 __GXDataStruct __savedGXdata;
 
 void GXBeginDisplayList(void* list, u32 size)
@@ -61,7 +61,7 @@ void GXBeginDisplayList(void* list, u32 size)
     DisplayListFifo.wrPtr = list;
     __GXData->inDispList = 1;
     GXSaveCPUFifo(CPUFifo);
-    lbl_8066FB18 = CPUFifo;
+    OldCPUFifo = CPUFifo;
     GXSetCPUFifo(&DisplayListFifo);
     GXResetWriteGatherPipe();
 }
@@ -75,7 +75,7 @@ u32 GXEndDisplayList(void)
     GXFlush();
     ov = (__piReg[5] >> 26) & 1;
     __GXSaveCPUFifoAux(&DisplayListFifo);
-    GXSetCPUFifo(lbl_8066FB18);
+    GXSetCPUFifo((__GXFifoObj*)OldCPUFifo);
     if (__GXData->dlSaveContext != 0) {
         enabled = OSDisableInterrupts();
         cpenable = __GXData->cpEnable;

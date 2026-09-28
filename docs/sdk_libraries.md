@@ -10,6 +10,14 @@ build (OS incl. OSExec/OSFont, DVD, VI, AI, AR/ARQ/AX/DSP/CARD, GX incl. getters
 and its sizes match ours far more often than ac-decomp's (which is a newer SDK and lacks the older
 functions). Align against it first, then read the ac-decomp source for the body.
 
+Its `config/GQ4E78/splits.txt` ranges are less reliable than its symbol list: a data range there can
+swallow the *next* translation unit's objects, because zero-filled `.bss`/`.sbss` still links
+byte-identically that way. Size a claim from CFTKK's symbol addresses (and the 8-aligned start of the
+next TU's chunk) rather than from its range. Example: its `GXDisplayList.c` `.sbss` is 0xC
+(`0x8047DC18-0x8047DC24`), but only `OldCPUFifo` (0x4) is that TU's; `__GDCurrentDL` at `+0x8` is
+GDBase.c's, with 4 bytes of alignment padding between. Ours is the same layout at `0x8066FB18`, so
+the queue's 0xC row was claimed as 0x4.
+
 | Range | Library | Notes |
 |---|---|---|
 | 0x80168770-0x8016B554, 0x8016B6AC-0x8016C514 | sn: SN Systems ProDG debug stub | **Not Dolphin SDK and not game code, but part of the SDK decomp** (decided 2026-09-24; `SN` library in `configure.py`, units `SN/<name>.c`). The debug monitor from SN's ProDG toolchain (the same toolchain explains the GCC-style game code and Newlib libc). It provides the MetroTRK hooks the OS calls (`EnableMetroTRKInterrupts` 0x801688E8; `fn_8016894C` is called from `__start` and patches exception vectors); strings `snPause() : Stopped.`, `*** FS CMD READ ERROR ***`, `Comms Error` at 0x804CFD58+. Two function tables: 0x804CFD00 (command dispatch; `fn_80168CC4` is the `blr` stub for unsupported slots) and 0x804CFCC8 (DB comm replacements 0x8016AB30-0x8016B0AC, same slots as the `DBInitComm`..`DBOpen` table next to it). Function boundaries for the former label-only runs 0x8016900C-0x80169134 and 0x80169164-0x8016B554 were set on 2026-09-24 by reachability (bl/b targets, table pointers, code after terminators), and every piece is now an `fn_` symbol with a queue row. The comm layer 0x8016AB30-0x8016B24C (`SNInitComm`..`SNWrite32`) matches CFTKK-Decomp's SN symbols by size and order; the rest of this SN build differs from CFTKK's and keeps `fn_` names. Hand-written asm blobs keep jump targets as `entry` labels: `lbl_80169CCC` (in `fn_80169BF8`), `lbl_8016A0EC` (in `fn_8016A094`) and the dispatch targets `lbl_8016A8F4`/`lbl_8016A948`/`lbl_8016A95C` (in `fn_8016A7E0`). A second SN run, 0x8016B6AC-0x8016C514, follows the runtime helpers: file I/O and EXI debug comms, compiled C plus an asm DSI handler. `fn_80169134` (writes the PI reset register 0xCC003024 and spins) and `fn_80169150` are in the dispatch table; they were first matched as `Dolphin/os/` and now live in `SN/`. Game code ends at 0x80168768 (last GCC frame-pointer function); 0x80168768-0x80168770 is zero padding |

@@ -2855,6 +2855,7 @@ Dolphin/card/__CARDSetStatusExAsync.c:
 Dolphin/gx/GXEndDisplayList.c:
 	.text       start:0x80411208 end:0x80411398
 	.bss        start:0x80668B40 end:0x80669114
+	.sbss       start:0x8066FB18 end:0x8066FB1C
 
 Dolphin/gx/GXCallDisplayList.c:
 	.text       start:0x80411398 end:0x80411408
