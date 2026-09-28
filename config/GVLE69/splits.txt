@@ -363,8 +363,14 @@ SN/fn_8016C3DC.c:
 SN/fn_8016C458.c:
 	.text       start:0x8016C458 end:0x8016C514
 
+Runtime.PPCEABI.H/cos.c:
+	.text       start:0x8016CAFC end:0x8016CBDC
+
 Runtime.PPCEABI.H/fn_8016CBDC.c:
 	.text       start:0x8016CBDC end:0x8016CD38
+
+Runtime.PPCEABI.H/sin.c:
+	.text       start:0x8016CD38 end:0x8016CE18
 
 Runtime.PPCEABI.H/__ieee754_acosf.c:
 	.text       start:0x8016CE18 end:0x8016D064
