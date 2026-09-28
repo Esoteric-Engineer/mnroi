@@ -460,6 +460,7 @@ Runtime.PPCEABI.H/floorf.c:
 
 Runtime.PPCEABI.H/scalbn.c:
 	.text       start:0x8016FE3C end:0x8016FF90
+	.sdata      start:0x8066C370 end:0x8066C390
 
 Runtime.PPCEABI.H/copysign.c:
 	.text       start:0x8016FF90 end:0x8016FFE0
