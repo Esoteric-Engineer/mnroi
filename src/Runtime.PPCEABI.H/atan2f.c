@@ -1,15 +1,17 @@
-extern float lbl_8066C0A0;
-extern float lbl_8066C0A4;
-extern float lbl_8066C0A8;
-extern float lbl_8066C0AC;
-extern float lbl_8066C0B0;
-extern float lbl_8066C0B4;
-extern float lbl_8066C0B8;
-extern float lbl_8066C0BC;
-extern float lbl_8066C0C0;
-extern float lbl_8066C0C4;
-extern float lbl_8066C0C8;
-extern float lbl_8066C0CC;
+/* ef_atan2.c's float literal pool (.sdata 0x8066C0A0-0x8066C0D0), read only
+ * by __ieee754_atan2f. */
+float Atan2fPiConst = 3.1415925026e+00f;        /* 0x40490fda */
+float Atan2fNegPiConst = -3.1415925026e+00f;    /* 0xc0490fda */
+float Atan2fNegPiO2Const = -1.5707963705e+00f;  /* 0xbfc90fdb */
+float Atan2fPiO2Const = 1.5707963705e+00f;      /* 0x3fc90fdb */
+float Atan2fPiO4Const = 7.8539818525e-01f;      /* 0x3f490fdb */
+float Atan2fNegPiO4Const = -7.8539818525e-01f;  /* 0xbf490fdb */
+float Atan2f3PiO4Const = 2.3561944962e+00f;     /* 0x4016cbe4 */
+float Atan2fNeg3PiO4Const = -2.3561944962e+00f; /* 0xc016cbe4 */
+struct { float v; } Atan2fZeroConst = {0.0f};   /* 0x00000000 */
+float Atan2fNegZeroConst = -0.0f;               /* 0x80000000 */
+float Atan2fPiO2HiConst = 1.5707964897e+00f;    /* 0x3fc90fdc */
+float Atan2fPiLoConst = 1.5099578832e-07f;      /* 0x34222168 */
 extern float atanf(float x);
 extern float fabsf(float x);
 
@@ -63,9 +65,9 @@ L_ynz:
     bne     L_xnz
 L_xzero:
     cmpwi   r8, 0
-    lfs     f1, lbl_8066C0AC
+    lfs     f1, Atan2fPiO2Const
     bge     L_end
-    lfs     f1, lbl_8066C0A8
+    lfs     f1, Atan2fNegPiO2Const
     b       L_end
 L_xnz:
     lis     r0, 0x7f80
@@ -86,16 +88,16 @@ L_ii23:
     beq     L_ii3
     b       L_xfin
 L_ii0:
-    lfs     f1, lbl_8066C0B0
+    lfs     f1, Atan2fPiO4Const
     b       L_end
 L_ii1:
-    lfs     f1, lbl_8066C0B4
+    lfs     f1, Atan2fNegPiO4Const
     b       L_end
 L_ii2:
-    lfs     f1, lbl_8066C0B8
+    lfs     f1, Atan2f3PiO4Const
     b       L_end
 L_ii3:
-    lfs     f1, lbl_8066C0BC
+    lfs     f1, Atan2fNeg3PiO4Const
     b       L_end
 L_yfin:
     cmpwi   r31, 1
@@ -111,16 +113,16 @@ L_if23:
     beq     L_mpi
     b       L_xfin
 L_if0:
-    lfs     f1, lbl_8066C0C0
+    lfs     f1, Atan2fZeroConst.v
     b       L_end
 L_if1:
-    lfs     f1, lbl_8066C0C4
+    lfs     f1, Atan2fNegZeroConst
     b       L_end
 L_pi:
-    lfs     f1, lbl_8066C0A0
+    lfs     f1, Atan2fPiConst
     b       L_end
 L_mpi:
-    lfs     f1, lbl_8066C0A4
+    lfs     f1, Atan2fNegPiConst
     b       L_end
 L_xfin:
     lis     r0, 0x7f80
@@ -130,14 +132,14 @@ L_xfin:
     srawi   r0, r0, 23
     cmpwi   r0, 0x3c
     ble     L_kle
-    lfs     f13, lbl_8066C0C8
+    lfs     f13, Atan2fPiO2HiConst
     b       L_zdone
 L_kle:
     cmpwi   r7, 0
     bge     L_div
     cmpwi   r0, -0x3c
     bge     L_div
-    lfs     f13, lbl_8066C0C0
+    lfs     f13, Atan2fZeroConst.v
     b       L_zdone
 L_div:
     fdivs   f1, f1, f2
@@ -165,14 +167,14 @@ L_m0:
     fmr     f1, f13
     b       L_end
 L_m2:
-    lfs     f1, lbl_8066C0CC
-    lfs     f0, lbl_8066C0A0
+    lfs     f1, Atan2fPiLoConst
+    lfs     f0, Atan2fPiConst
     fsubs   f1, f13, f1
     fsubs   f1, f0, f1
     b       L_end
 L_m3:
-    lfs     f1, lbl_8066C0CC
-    lfs     f0, lbl_8066C0A0
+    lfs     f1, Atan2fPiLoConst
+    lfs     f0, Atan2fPiConst
     fsubs   f1, f13, f1
     fsubs   f1, f1, f0
 L_end:
