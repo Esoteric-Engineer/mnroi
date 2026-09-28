@@ -1,4 +1,6 @@
-extern double lbl_8049C808[2];
+/* fdlibm e_fmod.c's `static const double Zero[] = {0.0, -0.0};`, returned as Zero[sx>>31] for an exact-zero result. */
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const double FmodZeroConst[2] = {0.0, -0.0};
 
 asm double __ieee754_fmod(double x, double y)
 {
@@ -232,8 +234,8 @@ L_80177850:
     b       L_8017788C
 L_8017786C:
     srwi    r0, r3, 31
-    lis     r9, lbl_8049C808@ha
-    addi    r9, r9, lbl_8049C808@l
+    lis     r9, FmodZeroConst@ha
+    addi    r9, r9, FmodZeroConst@l
     slwi    r0, r0, 3
     lfdx    f1, r9, r0
     b       L_801778A8
