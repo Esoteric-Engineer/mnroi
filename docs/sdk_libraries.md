@@ -97,12 +97,21 @@ note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFata
 
 ## Beyond `.text`
 
-- `.init` (0x80003100-0x800034A0, 928 bytes) is boot/runtime code: `__start` is split and matched; the six helpers
-  are queued (library `init`).
-- Data: inside the address span that library data splits already cover there are unsplit gaps
-  (2026-09-24: `.data` 7136, `.bss` 2600, `.sbss` 300, `.sdata` 216, `.sdata2` 132 bytes). Being between
-  library units, they are probably library data. The second cluster's data (AX, CARD, VM, OSFont, ...) has not
-  been located at all. `sdk_remaining.py` reports both; its data figure is a floor, not a total.
+- `.init` (0x80003100-0x800034A0, 928 bytes) is boot/runtime code: `__start` and its six helpers are split and
+  matched (library `init`).
+- Remaining `.text` (2026-09-27, 12 bytes): 0x801796B4 is a zero word between `fn_80179138` and `fn_801796B8`
+  (padding, not code), and `fn_80407958` (0x8, `stw r3` + `blr` setter after `AXSetMode`) is queued as
+  `wrong-name` because its name is unknown.
+- Data: on 2026-09-24 the unsplit gaps inside the library data span were small (`.data` 7136, `.bss` 2600, `.sbss`
+  300, `.sdata` 216, `.sdata2` 132 bytes) and probably library data. Part of the second cluster's data has now been
+  split: AX `.data` 0x804EEFD0 and `.bss` 0x8064F340-0x80668900, DSP `.data` 0x804F29C0, CARD `.data` 0x804F2C20 and
+  `.bss` 0x80668900, GX display list `.bss` 0x80668B40, MTX `.sdata` 0x8066CEC0, and `.sdata2` for Halt/ReadFont,
+  C_MTXOrtho, AX and TEXGet. VM, AR, ARQ and the second cluster's `.sbss`/`.sdata` have not been located. Now that
+  the span runs into the second cluster, it also covers game data between the clusters. By 2026-09-27 the gap
+  figure had grown to 1016548 bytes, and most of that is two runs that are mainly game data: `.data`
+  0x804D3880+0x1B750 and `.bss` 0x8057DBE0+0xD1760, which starts with EXI `Ecb`. The rest (about 46 KB) is probably
+  library data. `sdk_remaining.py`'s "at least" data total now includes game data, so it overstates the library
+  data. Its "at most" percentage is still an upper bound.
 
 ## Work queue
 
