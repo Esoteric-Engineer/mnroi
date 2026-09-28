@@ -2445,15 +2445,9 @@ Dolphin/ax/__AXServiceVPB.c:
 	.text       start:0x804085F8 end:0x80408D44
 
 Dolphin/ax/__AXSyncPBs.c:
-	.text       start:0x80408D44 end:0x80408FBC
+	.text       start:0x80408D44 end:0x80409208
 	.data       start:0x804EEFD0 end:0x804EF0A4
-	.bss        start:0x80657100 end:0x8065FE00
-
-Dolphin/ax/__AXGetPBs.c:
-	.text       start:0x80408FBC end:0x80408FC8
-
-Dolphin/ax/__AXSetPBDefault.c:
-	.text       start:0x80408FC8 end:0x80409008
+	.bss        start:0x80657100 end:0x80668900 align:32
 
 Dolphin/ax/__AXVPBQuit.c:
 	.text       start:0x80409208 end:0x8040920C
