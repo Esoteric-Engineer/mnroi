@@ -1,5 +1,5 @@
-extern void* SaveStart;
-extern void* SaveEnd;
+void* SaveEnd;
+void* SaveStart;
 
 void OSGetSaveRegion(void** start, void** end)
 {
