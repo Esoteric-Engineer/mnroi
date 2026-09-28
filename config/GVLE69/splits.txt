@@ -1973,6 +1973,9 @@ Dolphin/OdemuExi2/DBGEXIImm.c:
 Runtime.PPCEABI.H/__ieee754_asinf.c:
 	.text       start:0x803FFBE0 end:0x803FFE0C
 
+Runtime.PPCEABI.H/__ieee754_expf.c:
+	.text       start:0x803FFE0C end:0x80400038
+
 Runtime.PPCEABI.H/__ieee754_fmodf.c:
 	.text       start:0x80400038 end:0x80400200
 
