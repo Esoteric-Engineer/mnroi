@@ -1,15 +1,25 @@
-extern unsigned long lbl_8066FAD0;
-extern unsigned long lbl_8066FAD4;
-extern unsigned long lbl_8066FAD8;
-extern unsigned long lbl_8066FADC;
+typedef struct AXPROFILE {
+    long long axFrameStart;
+    long long auxProcessingStart;
+    long long auxProcessingEnd;
+    long long userCallbackStart;
+    long long userCallbackEnd;
+    long long axFrameEnd;
+    unsigned long axNumVoices;
+} AXPROFILE;
 
-void* __AXGetCurrentProfile(void)
+static AXPROFILE* __AXProfile;
+static unsigned long __AXMaxProfiles;
+static unsigned long __AXCurrentProfile;
+static unsigned long __AXProfileInitialized;
+
+AXPROFILE* __AXGetCurrentProfile(void)
 {
-    void* profile;
+    AXPROFILE* profile;
 
-    if (lbl_8066FADC != 0) {
-        profile = (void*)(lbl_8066FAD0 + lbl_8066FAD8++ * 0x38);
-        lbl_8066FAD8 %= lbl_8066FAD4;
+    if (__AXProfileInitialized != 0) {
+        profile = &__AXProfile[__AXCurrentProfile++];
+        __AXCurrentProfile %= __AXMaxProfiles;
         return profile;
     }
     return 0;
