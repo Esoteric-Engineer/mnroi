@@ -1,4 +1,5 @@
-extern double lbl_8066BFA4;
+struct { double v; } CeilHugeConst = {1.0e300};
+struct { double v; } CeilZeroConst = {0.0};
 
 asm double ceil(double x)
 {
@@ -17,8 +18,8 @@ asm double ceil(double x)
     bgt     L_8016CA60
     cmpwi   r10, 0x0
     bge     L_8016CA14
-    lfd     f0, lbl_8066BFA4+0x84
-    lfd     f13, lbl_8066BFA4+0x8C
+    lfd     f0, CeilHugeConst.v
+    lfd     f13, CeilZeroConst.v
     fadd    f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_8016CADC
@@ -40,8 +41,8 @@ L_8016CA14:
     and     r9, r11, r5
     or.     r0, r9, r6
     beq     L_8016CAF4
-    lfd     f0, lbl_8066BFA4+0x84
-    lfd     f13, lbl_8066BFA4+0x8C
+    lfd     f0, CeilHugeConst.v
+    lfd     f13, CeilZeroConst.v
     fadd    f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_8016CADC
@@ -67,8 +68,8 @@ L_8016CA78:
     srw     r5, r0, r9
     and.    r0, r6, r5
     beq     L_8016CAF4
-    lfd     f0, lbl_8066BFA4+0x84
-    lfd     f13, lbl_8066BFA4+0x8C
+    lfd     f0, CeilHugeConst.v
+    lfd     f13, CeilZeroConst.v
     fadd    f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_8016CADC
