@@ -2004,6 +2004,7 @@ Runtime.PPCEABI.H/__ieee754_logf.c:
 
 Runtime.PPCEABI.H/ceilf.c:
 	.text       start:0x80400480 end:0x80400544
+	.sdata      start:0x8066CE90 end:0x8066CE98
 
 Runtime.PPCEABI.H/tolower2.c:
 	.text       start:0x80400544 end:0x80400560

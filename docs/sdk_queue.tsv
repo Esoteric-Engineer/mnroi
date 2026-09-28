@@ -795,7 +795,7 @@ addr	size	name	library	confidence	notes	status
 0x8066CDC0	0x40	Runtime.PPCEABI.H/__ieee754_asinf.c	libc	known	data .sdata: lbl_8066CDC0..lbl_8066CDFC, 16 floats (ef_asin.c), read only by __ieee754_asinf	open
 0x8066CE00	0x48	Runtime.PPCEABI.H/__ieee754_expf.c	libc	known	data .sdata: lbl_8066CE00..lbl_8066CE40 (floats, one double at 0x8066CE18, 4 pad at 0x8066CE14; ef_exp.c), read only by __ieee754_expf	open
 0x8066CE48	0x48	Runtime.PPCEABI.H/__ieee754_logf.c	libc	known	data .sdata: lbl_8066CE48..lbl_8066CE8C (floats, one double at 0x8066CE58; ef_log.c), read only by __ieee754_logf	open
-0x8066CE90	0x8	Runtime.PPCEABI.H/ceilf.c	libc	known	data .sdata: lbl_8066CE90, lbl_8066CE94 (sf_ceil.c), read only by ceilf	open
+0x8066CE90	0x8	Runtime.PPCEABI.H/ceilf.c	libc	known	data .sdata: CeilfHugeConst (1.0e30f), CeilfZeroConst (0.0f; sf_ceil.c's huge and its (float)0.0 literal), read only by ceilf. Both ends 8-aligned, so it splits out of dtk's auto .sdata unit on its own; the zero float needs the struct wrapper to stay out of .sbss	matched
 0x8066CE98	0x8	Dolphin/vm/VMInit.c	vm	guess	data .sdata: lbl_8066CE98, one word 0x4000 + 4 pad, read by VMInit and VMGetARAMBase	open
 0x8066CEA0	0x8	Dolphin/vm/__VMGetPageToReplace.c	vm	guess	data .sdata: lbl_8066CEA0 (=1; __VMPageReplacementLRU/Random/FIFO) and lbl_8066CEA4 (=1; __VMGetPageToReplace). The data order is the reverse of the .text order, so these are one TU's pool and need one owner: the first of those units in link order	open
 0x8066CEA8	0x8	Dolphin/os/OSSetCurrentHeap.c	os	guess	data .sdata: __OSCurrHeap (=-1) + 4 pad, OSAlloc.c; read by OSSetCurrentHeap, OSInitAlloc and one game function	open

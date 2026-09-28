@@ -1,5 +1,5 @@
-extern float lbl_8066CE90;
-extern float lbl_8066CE94;
+float CeilfHugeConst = 1.0e30f;
+struct { float v; } CeilfZeroConst = {0.0f};
 
 asm float ceilf(float x)
 {
@@ -16,8 +16,8 @@ asm float ceilf(float x)
     bgt     L_80400520
     cmpwi   r9, 0x0
     bge     L_804004DC
-    lfs     f0, lbl_8066CE90
-    lfs     f13, lbl_8066CE94
+    lfs     f0, CeilfHugeConst
+    lfs     f13, CeilfZeroConst.v
     fadds   f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_80400530
@@ -35,8 +35,8 @@ L_804004DC:
     sraw    r10, r0, r9
     and.    r0, r11, r10
     beq     L_8040053C
-    lfs     f0, lbl_8066CE90
-    lfs     f13, lbl_8066CE94
+    lfs     f0, CeilfHugeConst
+    lfs     f13, CeilfZeroConst.v
     fadds   f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_80400530
