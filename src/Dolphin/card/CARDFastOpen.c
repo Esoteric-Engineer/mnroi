@@ -30,6 +30,14 @@ extern s32 __CARDPutControlBlock(CARDControl* card, s32 result);
 extern CARDDir* __CARDGetDirBlock(CARDControl* card);
 extern s32 __CARDIsWritable(CARDControl* card, CARDDir* ent);
 
+static inline s32 IsReadable(CARDControl* card, CARDDir* ent)
+{
+    s32 result = __CARDIsWritable(card, ent);
+    if (result == -10 && (ent->permission & 4))
+        return 0;
+    return result;
+}
+
 s32 CARDFastOpen(s32 chan, s32 fileNo, CARDFileInfo* fileInfo)
 {
     CARDControl* card;
@@ -47,11 +55,8 @@ s32 CARDFastOpen(s32 chan, s32 fileNo, CARDFileInfo* fileInfo)
 
     dir = __CARDGetDirBlock(card);
     ent = &dir[fileNo];
-    result = __CARDIsWritable(card, ent);
-    if (result == -10 && (ent->permission & 4))
-        result = 0;
-
-    if (result >= 0) {
+    result = IsReadable(card, ent);
+    if (0 <= result) {
         if (ent->startBlock < 5 || ent->startBlock >= card->cBlock) {
             result = -6;
         } else {

@@ -1278,7 +1278,7 @@ config.libs = [
             Object(Matching, "Dolphin/card/CARDCreateAsync.c"),
             Object(Matching, "Dolphin/card/CARDCreate.c"),
             Object(Matching, "Dolphin/card/CARDClose.c"),
-            Object(NonMatching, "Dolphin/card/CARDFastOpen.c"),
+            Object(Matching, "Dolphin/card/CARDFastOpen.c"),
             Object(Matching, "Dolphin/card/CARDOpen.c"),
             Object(Matching, "Dolphin/card/__CARDCompareFileName.c"),
             Object(Matching, "Dolphin/card/__CARDAccess.c"),
