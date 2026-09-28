@@ -49,7 +49,8 @@ Human-facing references (read the relevant one instead of guessing):
    - **Out of queue:** if no `open` function or data row of tier `known`/`exact`/`guess` is left, stop. Tell the
      user the queue is exhausted (counts by status/library, what remains) and that the next step is
      a planning session (add function boundaries to the label-only regions, scout the `unidentified`
-     rows, map the data runs `DATA_RANGES` in `tools/sdk_scout.py` doesn't cover yet, then decide on game code).
+     rows, review the `stalled` data rows and any `NOT QUEUED` data that
+     `.agents/skills/report-sdk-progress/sdk_remaining.py` prints, then decide on game code).
      Don't start game code or invent targets.
 2. **Research first.** Find the reference by the row's `library`, and read it before writing code:
    - Dolphin SDK libraries (`os`, `exi`, `si`, `db`, `dvd`, `vi`, `pad`, `ai`, `gx`, `odemuexi2`,
