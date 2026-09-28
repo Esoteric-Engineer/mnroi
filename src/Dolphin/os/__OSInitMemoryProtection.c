@@ -17,7 +17,20 @@ extern void RealMode(u32 config);
 extern void Config24MB(void);
 extern void Config48MB(void);
 extern void MEMIntrruptHandler(short interrupt, void* ctx);
-extern char ResetFunctionInfo_804D12A8[0x10];
+extern BOOL OnReset(BOOL final);
+
+typedef struct OSResetFunctionInfo OSResetFunctionInfo;
+struct OSResetFunctionInfo {
+    BOOL (*func)(BOOL final);
+    u32 priority;
+    OSResetFunctionInfo* next;
+    OSResetFunctionInfo* prev;
+};
+
+OSResetFunctionInfo ResetFunctionInfo_804D12A8 = {
+    OnReset,
+    0x7F,
+};
 
 #pragma peephole off
 void __OSInitMemoryProtection(void)
@@ -38,7 +51,7 @@ void __OSInitMemoryProtection(void)
     __OSSetInterruptHandler(2, MEMIntrruptHandler);
     __OSSetInterruptHandler(3, MEMIntrruptHandler);
     __OSSetInterruptHandler(4, MEMIntrruptHandler);
-    OSRegisterResetFunction(ResetFunctionInfo_804D12A8);
+    OSRegisterResetFunction(&ResetFunctionInfo_804D12A8);
 
     if (__OSSimulatedMemSize < __OSPhysicalMemSize && __OSSimulatedMemSize == 0x1800000) {
         DCInvalidateRange((void*)0x81800000, 0x1800000);
