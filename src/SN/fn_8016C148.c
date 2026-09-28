@@ -1,6 +1,9 @@
 extern char lbl_8057BD88[];
 extern char lbl_804CFF30[];
-extern char lbl_8049C1D0[];
+/* This unit's only owned constant, the tail of dtk's lbl_8049C190 blob.
+The pragma keeps the string in .rodata.1 instead of .rodata. */
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const char SNUnknownDvdCmdMsg[] = "Unknown DVD cmd (%08X)\n";
 extern void fn_8016BEE4(void);
 extern void fn_8016BF04(void);
 extern void fn_8016BF28(void);
@@ -161,8 +164,8 @@ L_8016C344:
     bl      fn_8016BF28
     b       L_8016C394
 L_8016C354:
-    lis     r3, lbl_8049C1D0@ha
-    addi    r3, r3, lbl_8049C1D0@l
+    lis     r3, SNUnknownDvdCmdMsg@ha
+    addi    r3, r3, SNUnknownDvdCmdMsg@l
     crclr   6
     bl      OSReport
     opword  1

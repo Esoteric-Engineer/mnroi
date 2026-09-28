@@ -354,6 +354,7 @@ SN/fn_8016C134.c:
 
 SN/fn_8016C148.c:
 	.text       start:0x8016C148 end:0x8016C3BC
+	.rodata.1   start:0x8049C1D0 end:0x8049C1E8
 
 SN/fn_8016C3BC.c:
 	.text       start:0x8016C3BC end:0x8016C3DC
