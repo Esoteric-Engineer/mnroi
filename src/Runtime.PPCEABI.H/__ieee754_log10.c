@@ -1,10 +1,16 @@
-extern double lbl_8049C8A0[1];
-extern double lbl_8049C8A8[1];
-extern double lbl_8049C8B0[1];
-extern double lbl_8049C8B8[1];
-extern double lbl_8049C8C0[1];
-extern double lbl_8049C8C8[1];
-extern double lbl_8049C8D0[1];
+/* fdlibm e_log10.c's literal pool, in MWCC's first-use order. */
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const union {
+    unsigned long w[2];
+    double d;
+} Log10NegInfConst = {{0xFFF00000, 0x00000000}}; /* folded -two54/zero */
+__declspec(section ".rodata.1") const double Log10ZeroConst = 0.0;
+__declspec(section ".rodata.1") const double Log10Two54Const = 1.80143985094819840000e+16;
+__declspec(section ".rodata.1") const double Log10CvtConst = 4503601774854144.0; /* MWCC's (double)k magic, not in e_log10.c */
+__declspec(section ".rodata.1") const double Log10_2LoConst = 3.69423907715893078616e-13;
+__declspec(section ".rodata.1") const double Log10Ivln10Const = 4.34294481903251816668e-01;
+__declspec(section ".rodata.1") const double Log10_2HiConst = 3.01029995663611771306e-01;
+
 extern double __ieee754_log(double x);
 
 asm double __ieee754_log10(double x)
@@ -29,21 +35,21 @@ asm double __ieee754_log10(double x)
     clrlwi  r0, r5, 1
     or.     r9, r0, r11
     bne     L_nz
-    lis     r9, lbl_8049C8A0@ha
-    lfd     f1, lbl_8049C8A0@l(r9)
+    lis     r9, Log10NegInfConst@ha
+    lfd     f1, Log10NegInfConst@l(r9)
     b       L_end
 L_nz:
     cmpwi   r5, 0
     bge     L_sub
     fsub    f0, f1, f1
-    lis     r9, lbl_8049C8A8@ha
-    lfd     f1, lbl_8049C8A8@l(r9)
+    lis     r9, Log10ZeroConst@ha
+    lfd     f1, Log10ZeroConst@l(r9)
     fdiv    f1, f0, f1
     b       L_end
 L_sub:
-    lis     r9, lbl_8049C8B0@ha
+    lis     r9, Log10Two54Const@ha
     li      r8, -0x36
-    lfd     f0, lbl_8049C8B0@l(r9)
+    lfd     f0, Log10Two54Const@l(r9)
     fmul    f1, f1, f0
     fmr     f0, f1
     stfd    f0, 8(r1)
@@ -73,20 +79,20 @@ L_pos:
     stw     r6, 0x10(r1)
     stw     r9, 8(r1)
     stw     r10, 0xc(r1)
-    lis     r8, lbl_8049C8B8@ha
-    lfd     f0, lbl_8049C8B8@l(r8)
+    lis     r8, Log10CvtConst@ha
+    lfd     f0, Log10CvtConst@l(r8)
     lfd     f13, 8(r1)
     lfd     f31, 0x10(r1)
     fmr     f1, f13
     fsub    f31, f31, f0
     bl      __ieee754_log
-    lis     r9, lbl_8049C8C8@ha
-    lis     r11, lbl_8049C8C0@ha
-    lfd     f12, lbl_8049C8C8@l(r9)
-    lis     r10, lbl_8049C8D0@ha
-    lfd     f0, lbl_8049C8C0@l(r11)
+    lis     r9, Log10Ivln10Const@ha
+    lis     r11, Log10_2LoConst@ha
+    lfd     f12, Log10Ivln10Const@l(r9)
+    lis     r10, Log10_2HiConst@ha
+    lfd     f0, Log10_2LoConst@l(r11)
     fmul    f1, f1, f12
-    lfd     f13, lbl_8049C8D0@l(r10)
+    lfd     f13, Log10_2HiConst@l(r10)
     fmadd   f0, f31, f0, f1
     fmadd   f1, f31, f13, f0
     b       L_end
