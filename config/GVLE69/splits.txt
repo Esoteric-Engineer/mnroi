@@ -2208,6 +2208,7 @@ Dolphin/os/OSFatal.c:
 
 Dolphin/os/Halt.c:
 	.text       start:0x804027E0 end:0x80402DC0
+	.sdata      start:0x8066CEB0 end:0x8066CEB8
 	.sdata2     start:0x80670888 end:0x806708C8
 
 Dolphin/os/GetFontCode.c:

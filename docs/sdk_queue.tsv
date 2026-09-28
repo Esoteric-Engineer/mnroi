@@ -799,7 +799,7 @@ addr	size	name	library	confidence	notes	status
 0x8066CE98	0x8	Dolphin/vm/VMInit.c	vm	guess	data .sdata: lbl_8066CE98, one word 0x4000 + 4 pad, read by VMInit and VMGetARAMBase	open
 0x8066CEA0	0x8	Dolphin/vm/__VMGetPageToReplace.c	vm	guess	data .sdata: lbl_8066CEA0 (=1; __VMPageReplacementLRU/Random/FIFO) and lbl_8066CEA4 (=1; __VMGetPageToReplace). The data order is the reverse of the .text order, so these are one TU's pool and need one owner: the first of those units in link order	open
 0x8066CEA8	0x8	Dolphin/os/OSSetCurrentHeap.c	os	guess	data .sdata: __OSCurrHeap (=-1) + 4 pad, OSAlloc.c; read by OSSetCurrentHeap, OSInitAlloc and one game function	open
-0x8066CEB0	0x8	Dolphin/os/Halt.c	os	known	data .sdata: lbl_8066CEB0, OSFatal.c's "%s\n" (4) + 4 pad, read only by Halt, which already holds OSFatal.c's .sdata2	open
+0x8066CEB0	0x8	Dolphin/os/Halt.c	os	known	data .sdata: lbl_8066CEB0, OSFatal.c's "%s\n" (4) + 4 pad, read only by Halt, which already holds OSFatal.c's .sdata2	matched
 0x8066CEB8	0x8	Dolphin/os/OSGetFontEncode.c	os	guess	data .sdata: lbl_8066CEB8 = OSFont.c's FontEncode (u16 0xFFFF + 6 pad, CFTKK name), read by OSGetFontEncode, OSGetFontTexel/Texture/Width, OSInitFont, OSLoadFont	open
 0x8066CEC8	0x8	Dolphin/ar/ARInit.c	ar	known	data .sdata: lbl_8066CEC8 = __ARVersion (pointer to the .data string) + 4 pad, read by ARInit	open
 0x8066CED0	0x8	Dolphin/arq/ARQInit.c	arq	known	data .sdata: lbl_8066CED0 = __ARQVersion + 4 pad, read by ARQInit	open

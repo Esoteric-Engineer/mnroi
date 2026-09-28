@@ -44,7 +44,6 @@ typedef struct OSFontHeader {
 } OSFontHeader;
 
 extern FatalBlock lbl_8064EF50;
-extern char lbl_8066CEB0[4];
 
 extern BOOL OSEnableInterrupts(void);
 extern BOOL OSDisableInterrupts(void);
@@ -139,6 +138,6 @@ void Halt(void)
     } while ((s32)(VIGetRetraceCount() - count) < 1);
 
     OSDisableInterrupts();
-    OSReport(lbl_8066CEB0, fp->msg);
+    OSReport("%s\n", fp->msg);
     PPCHalt();
 }
