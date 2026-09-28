@@ -244,6 +244,7 @@ Also scope: the whole `vm` library (`VM`/`VMBASE`, ARAM virtual memory, 0x804009
 - **`addi` does not accept the bare-symbol sda21 trick:** "Bare symbol name, no base register" only works for instructions with a real `d(rA)` operand such as `lwz` or `lfd`. For address computations, use `la rD, symbol` and give the symbol a sized declaration such as `extern char lbl_8066C408[8];` rather than `[]`; the size is what fixes the relocation type.
 
   Getting it wrong produces the wrong relocation, visible via `tools/objdiff_mismatches.py`, not a byte diff.
+- **A `.sdata2` object you *define* in a unit must be split into definitions of at most 8 bytes each (the default `-sdata2 8`), or mwld fails outright with `Relocation (3) of symbol '<name>' in '<unit>.o' is out of range`:** MWCC puts a larger `const` object in far data, so `la rD, sym` gets `R_PPC_ADDR16` instead of the sda21 form. Define a 16-byte `Zero[2]` as two consecutive scalars (`const double A = 0.0; const double B = -0.0;`) with one `symbols.txt` entry each; asm that indexes the pair by a computed `+8` still reaches the second (`Fmod2ZeroConst`/`Fmod2NegZeroConst`, `0x80670858`, `__ieee754_fmod2.c`).
 
 - **Before hardcoding an address as a raw immediate because the target "isn't split yet", rebuild once and grep `symbols.txt`:** dtk's auto-namer may already have named it. Hardcoded `lis`/`addi` immediates stall around 99% because the original carries real `R_PPC_ADDR16_HA`/`_LO` relocations; `symbol@ha`/`@l` matches.
 - **The auto-namer may only tag part of a merged data blob:**

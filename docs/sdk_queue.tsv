@@ -873,7 +873,7 @@ addr	size	name	library	confidence	notes	status
 0x80670770	0x8	Dolphin/gx/GXTransform.c	gx	known	data .sdata2: 0.0f (GXSetProjectionv's bare literal) + the unreferenced 1.0f (GXProjectWConst); unit claims 0x80670770-0x80670778 with #pragma force_active on. 100% data, main.dol OK	matched
 0x80670780	0x8	Dolphin/gx/GXSetViewport.c	gx	guess	data .sdata2: lbl_80670780, unreferenced: the rest of GXTransform.c's .sdata2. Extends GXSetViewport.c's .sdata2 end to GXInit.c's split.	open
 0x80670828	0x30	Runtime.PPCEABI.H/__ieee754_exp.c	libc	known	data .sdata2: lbl_80670828/38/48 = e_exp.c's halF, ln2HI, ln2LO (double[2] each), read only by __ieee754_exp	open
-0x80670858	0x10	Runtime.PPCEABI.H/__ieee754_fmod2.c	libc	known	data .sdata2: lbl_80670858 = Zero[] (double[2]), read only by __ieee754_fmod2	open
+0x80670858	0x10	Runtime.PPCEABI.H/__ieee754_fmod2.c	libc	known	data .sdata2: Fmod2ZeroConst/Fmod2NegZeroConst = Zero[] (double[2]), read only by __ieee754_fmod2	matched
 0x80670868	0x18	Runtime.PPCEABI.H/__ieee754_expf.c	libc	known	data .sdata2: lbl_80670868/70/78 = ef_exp.c's halF, ln2HI, ln2LO (float[2] each), read only by __ieee754_expf	open
 0x80670880	0x8	Runtime.PPCEABI.H/__ieee754_fmodf.c	libc	known	data .sdata2: lbl_80670880 = Zero[] (float[2]), read only by __ieee754_fmodf	matched
 0x806708D0	0x20	Dolphin/mtx/PSMTXIdentity.c	mtx	guess	data .sdata2: mtx.c's MtxOneConst, MtxZeroConst (PSMTXIdentity, PSMTXTrans, PSMTXScale, PSMTXTranspose) and lbl_806708D8 (0x18, unreferenced constants of dead-stripped mtx.c functions); CFTKK mtx.c .sdata2 is 0x20. See the .sdata2 force_active rule	open

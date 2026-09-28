@@ -1991,6 +1991,7 @@ Runtime.PPCEABI.H/__ieee754_exp.c:
 
 Runtime.PPCEABI.H/__ieee754_fmod2.c:
 	.text       start:0x803FF888 end:0x803FFBE0
+	.sdata2     start:0x80670858 end:0x80670868
 
 Runtime.PPCEABI.H/__ieee754_asinf.c:
 	.text       start:0x803FFBE0 end:0x803FFE0C

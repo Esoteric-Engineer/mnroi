@@ -1,4 +1,7 @@
-extern const char lbl_80670858[4];
+#pragma force_active on
+
+const double Fmod2ZeroConst = 0.0;
+const double Fmod2NegZeroConst = -0.0;
 
 asm double __ieee754_fmod2(double x, double y)
 {
@@ -232,7 +235,7 @@ L_803FFB80:
     b L_803FFBB8
 L_803FFB9C:
     srwi r0, r3, 31
-    la r9, lbl_80670858
+    la r9, Fmod2ZeroConst
     slwi r0, r0, 3
     lfdx f1, r9, r0
     b L_803FFBD4
