@@ -7,7 +7,10 @@ extern void __sinit(void);
 extern void fflush(void);
 extern void fn_8017A6CC(void);
 extern unsigned int lbl_8066C3B0;
-extern char lbl_8049C8DC[];
+
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const char UngetcErrorStr[] =
+    "\nungetc error: *static buffer overflow* - char not added to buffer\n";
 
 asm int ungetc(int c, FileBuf* stream)
 {
@@ -65,9 +68,9 @@ flag4:
     lwz     r0, 52(r31)
     cmpw    r9, r0
     blt     ldc
-    lis     r4, lbl_8049C8DC@ha
+    lis     r4, UngetcErrorStr@ha
     li      r3, 1
-    addi    r4, r4, lbl_8049C8DC@l
+    addi    r4, r4, UngetcErrorStr@l
     li      r5, 68
     bl      fn_8017A6CC
 ret_neg1:
