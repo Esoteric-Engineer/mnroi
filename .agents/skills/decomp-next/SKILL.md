@@ -43,10 +43,13 @@ Human-facing references (read the relevant one instead of guessing):
    `tools/find_candidates.py` (small leaf functions only) is a fallback, not the main chooser.
    `python3 tools/sdk_scout.py info <addr>` shows a function's callees, callers and hardware
    registers, which helps confirm an identity.
-   - **Out of queue:** if no `open` row of tier `known`/`exact`/`guess` is left, stop. Tell the
+   - **Data rows** (`notes` start with `data <section>:`) come after every function row. Group the
+     `open` data rows by `name`. Rank each group by its weakest row (`known` before `guess`), then by
+     total size, smallest first. Work the whole group as one run of "Data rows" below instead of steps 2-6.
+   - **Out of queue:** if no `open` function or data row of tier `known`/`exact`/`guess` is left, stop. Tell the
      user the queue is exhausted (counts by status/library, what remains) and that the next step is
      a planning session (add function boundaries to the label-only regions, scout the `unidentified`
-     rows, locate the second cluster's data, then decide on game code).
+     rows, map the data runs `DATA_RANGES` in `tools/sdk_scout.py` doesn't cover yet, then decide on game code).
      Don't start game code or invent targets.
 2. **Research first.** Find the reference by the row's `library`, and read it before writing code:
    - Dolphin SDK libraries (`os`, `exi`, `si`, `db`, `dvd`, `vi`, `pad`, `ai`, `gx`, `odemuexi2`,
@@ -97,11 +100,41 @@ Human-facing references (read the relevant one instead of guessing):
    it somehow doesn't, use the Preconditions criteria rather than assuming a break. If `main.dol` breaks, run `python3 tools/diff_dol.py` to locate the bytes; consider
    `force_active` only if the diff shows the function was dropped/shifted.
 
+## Data rows
+
+A data row moves an unsplit data range into the unit named in `name`, which then defines that data
+byte-for-byte. A mistake shifts everything after it in `main.dol`, so do one unit per run. Read "Data,
+symbols, and relocations" in `docs/matching_notes.md` first; it has the alignment, padding,
+`force_active` and pool-order rules. The row's note flags the ones it expects, and gives dtk's symbols
+and the SDK/CFTKK names.
+
+1. **Claim** every `open` row with the same `name` together. Add each range to that unit in
+   `splits.txt`, in the section order the header lists (`.text`, `.rodata`, `.rodata.1`, `.data`,
+   `.bss`, `.sdata`, `.sbss`, `.sdata2`). If the range starts where the unit's existing line of that section
+   ends, extend that line instead. For a new data-only unit, add a `splits.txt` entry without `.text`,
+   register it next to its neighbours in `configure.py`, and create the source file.
+2. **Symbols.** Where a reference gives a name (the note's SDK/CFTKK name), rename dtk's `lbl_` symbol
+   in `symbols.txt`. Split or shrink merged blobs where the note says to. Keep `scope:global` on
+   anything another unit still reads.
+3. **Define** the data in the unit's source instead of declaring it `extern`: byte-exact initializers,
+   declaration order as in the original, and the SDK's alignment attributes. Then update the other
+   units' `extern`s to the new names.
+4. **Verify** with `ninja`: `main.dol: OK`, and the unit at 100% data in `build/GVLE69/report.json`
+   (`main/<unit without .c>`: `measures.matched_data_percent`, per-section `sections[]`). If `main.dol`
+   breaks, `python3 tools/diff_dol.py` shows where.
+5. **Queue.** Mark the rows `matched`, or `stalled` with the blocker in the note (for example "needs a
+   TU merge" when the owner can't define the data without its sibling units). An existing unit keeps
+   its `Matching`/`NonMatching` status. A new data-only unit starts `NonMatching` and flips to `Matching`
+   once its data is at 100%.
+6. **Commit message** to suggest, naming the sections claimed: `Split .bss/.sbss data into <unit path>`,
+   or `Split .data into <unit path>` for one section.
+
 ## Rules
 
 - Leave the unit `NonMatching` if it isn't at 100%. Never flip a partial match.
-- Prefer referencing existing (unclaimed) dtk symbols over declaring fresh data or claiming
-  data ranges; override `scope:local` → `scope:global` in `symbols.txt` when needed.
+- On a function row, prefer referencing existing (unclaimed) dtk symbols over declaring fresh data or
+  claiming data ranges; override `scope:local` → `scope:global` in `symbols.txt` when needed. Data is
+  claimed through data rows.
 - Don't `git add -f` anything ignored, and don't commit unless asked.
 - Record what you learn per "Recording notes" below. Notes never go in this skill.
 

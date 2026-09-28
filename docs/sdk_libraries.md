@@ -82,6 +82,45 @@ Confidence: `__ieee754_asinf` and `__ieee754_logf` are `exact` (CFTKK size plus 
 Between 0x80196884 and 0x803FF3B0, and from 0x804114EC on, the code is game or middleware. The earlier
 note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFatal/OSFont.
 
+## Second-cluster data (mapped 2026-09-27)
+
+Each data section holds one contiguous run of second-cluster data, in the same unit order as the code, with game
+data on both sides. Found from relocations in dtk's extracted original objects (`build/GVLE69/obj/`), plus a scan
+of `r13`-relative loads for `.sdata2`, whose relocations are baked away (see `baseline.md`). CFTKK's per-file
+sizes agree with every file-sized piece below. The same runs are in `DATA_RANGES` in `tools/sdk_scout.py`. Every
+unsplit object in them is a data row in `docs/sdk_queue.tsv` (one row per owning unit per section).
+
+| Section | Run | Bytes | Split | Queued | Contents, in order |
+|---|---|---|---|---|---|
+| `.rodata` | none | 0 | 0 | 0 | The second cluster has no `.rodata` |
+| `.rodata.1` | 0x804BF448-0x804BF460 | 24 | 0 | 24 | `__floatdisf`'s three doubles, the only GCC-libc constants here |
+| `.data` | 0x804DCD98-0x804F2DBC | 90148 | 964 | 89184 | VM string, OSAlloc strings, OSFont tables, OSUtf.c tables (0x11240), mtx44.c `mtxUnit`, AR/ARQ/AX version strings, AXVPB cost tables (split) + padding, `__AXCompressorTable`, `axDspSlave`, DSP strings (partly split), CARD version string + `ResetFunctionInfo`, CARDMount tables, `CardData` (split), texPalette strings |
+| `.bss` | 0x8064EF50-0x80669114 | 106948 | 87892 | 19056 | OSFatal `FatalParam`/`FatalContext`, AXAlloc stacks, AXAux buffers (split), AXCL `__AXCommandList`, AXOut buffers (partly split), AXSPB `__AXStudio`, AXVPB pools, `__CARDBlock`, GXDisplayList (all split) |
+| `.sdata` | 0x8066CCC8-0x8066CF04 | 572 | 8 | 564 | libm scalar constants (asin, exp, asinf, expf, logf, ceilf), VM, `__OSCurrHeap`, OSFatal, OSFont `FontEncode`, mtx `Unit01` (split), AR/ARQ/AX/DSP/CARD version pointers, `axDspSlaveLength`, CARD vendor ID, permission mask and `next` |
+| `.sbss` | 0x8066F948-0x8066FB24 | 476 | 0 | 476 | VM (four files), OSAlloc, OSFont, AR, ARQ, AXAlloc, AXAux, AXCL, AXOut, AXSPB, AXVPB, AXProf, dsp.c, dsp_task.c, CARDBios, GXDisplayList |
+| `.sdata2` | 0x80670828-0x80670978 | 336 | 100 | 236 | libm arrays (exp, fmod2, expf, fmodf), OSFatal and OSFont (split), mtx.c, mtx44.c (partly split), vec.c, AXVPB (partly split), texPalette (split) |
+
+- **Owners.** Each object goes to the SDK file whose code reads it. The per-function units of that file then share
+  it: the row goes to the file's first unit, in link order, that reads something in the file's run of that section.
+  Unreferenced data goes to the file its position gives, usually by extending the unit that already holds the
+  file's data. Row notes give the file and the CFTKK names.
+- **Data-only files.** `OSUtf.c` (`.data`), `AXComp.c` (`__AXCompressorTable`), `DSPCode.c` (`axDspSlave`,
+  `axDspSlaveLength`) and `vec.c` (`.sdata2`) have no linked code. Their queue rows name the new unit to create.
+  CFTKK has OSUtf.c and vec.c as data-only too. The AX file names come from Wii-SDK decomps.
+- **Unreferenced data stays linked.** This includes the OSUtf tables, the `OSCheckHeap`/`OSDumpHeap` strings, the
+  `__DSP_add_task` and `TEXGetPalette` strings, and the constants of dead-stripped mtx/vec/AXVPB functions. mwld
+  strips unreferenced data, so a unit that defines them needs `#pragma force_active`.
+- **Next to the run, not in it:**
+  - `.data` 0x804DCD84-0x804DCD98 holds two zero-terminated function tables, both empty: the constructor list
+    `lbl_804DCD84` (8 bytes) and the destructor list `lbl_804DCD8C` (0xC). They sit between game data and VM's
+    string. The first-cluster OS unit `fn_801813D4.c` (`__init_cpp`/`exit` shape) reads them. They are
+    linker-built `.ctors`/`.dtors`, not a file's data, and no unit can claim them in link order. Not queued.
+  - The `.bss` from 0x80669118 is common `.bss` (see `common_bss.md`), not second-cluster data: all three game
+    code runs reference it.
+  - The `.sbss` from 0x8066FB24 is common `.sbss` in the same way. It also holds the first cluster's libc `errno`
+    (`lbl_8066FB30`, read by `_close_r`, `_read_r`, ...), which a first-cluster row has to claim as `common`.
+  - `.sdata2` 0x80670978-0x80670980 is 8 zero bytes at the section end, probably its 32-byte end padding.
+
 ## Not found yet
 
 - All 13 `<< Dolphin SDK - ... >>` version strings in `main.dol` (OS, SI, DVD, VI, PAD, AI, GX, EXI,
@@ -110,7 +149,8 @@ note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFata
   300, `.sdata` 216, `.sdata2` 132 bytes) and probably library data. Part of the second cluster's data has now been
   split: AX `.data` 0x804EEFD0 and `.bss` 0x8064F340-0x80668900, DSP `.data` 0x804F29C0, CARD `.data` 0x804F2C20 and
   `.bss` 0x80668900, GX display list `.bss` 0x80668B40, MTX `.sdata` 0x8066CEC0, and `.sdata2` for Halt/ReadFont,
-  C_MTXOrtho, AX and TEXGet. VM, AR, ARQ and the second cluster's `.sbss`/`.sdata` have not been located. Now that
+  C_MTXOrtho, AX and TEXGet. The rest of the second cluster's data is mapped and queued (see "Second-cluster
+  data"). Now that
   the span runs into the second cluster, it also covers game data between the clusters. By 2026-09-27 the gap
   figure had grown to 1016548 bytes, and most of that is two runs that are mainly game data: `.data`
   0x804D3880+0x1B750 and `.bss` 0x8057DBE0+0xD1760, which starts with EXI `Ecb`. The rest (about 46 KB) is probably
@@ -124,7 +164,9 @@ second cluster (0x803FF3B0-0x804114EC: libm/libc, VM, OS, MTX, AR, ARQ, AX, DSP,
 texPalette), with a library, a proposed
 name and a confidence. Second-cluster names and evidence come from `docs/sdk_scout_findings.md`; an
 `exact` row there needs an equal-size same-name function in CFTKK or ac-decomp (or, for the `*Init`
-functions, the `__XXVersion` pointer load), otherwise it is `guess`. See the `decomp-next` skill for how it is used.
+functions, the `__XXVersion` pointer load), otherwise it is `guess`. It also has data rows for the second cluster's
+unsplit data (see "Second-cluster data"): `name` is the owning unit, and `notes` starts with `data <section>:`.
+See the `decomp-next` skill for how both kinds are used.
 
 Hand-added rows that the `queue` command keeps but would not generate:
 
@@ -137,6 +179,8 @@ Hand-added rows that the `queue` command keeps but would not generate:
 - `known` rows with an `fn_` name: identity settled, but no reference names the function (the `sn` rows, the four
   unnamed `.init` helpers, the second `floor` copy). The loop works them under the `fn_` name.
 - `stalled` rows for every registered `NonMatching` function (details in `docs/nonmatching.md`).
+- Data rows (`notes` start with `data <section>:`). The scan only reads `.text` function symbols, so it never
+  generates, updates or claims them.
 
 ## libc reference (research, 2026-09-21)
 
