@@ -1,4 +1,12 @@
-extern float lbl_8066C174;
+/* Shared with atanf.c: the two functions' sf_atan.c/sf_cos.c literal pools
+ * are contiguous in .sdata (0x8066C160-0x8066C178) and only this unit's
+ * object starts 8-aligned, so it owns the whole block; atanf.c externs. */
+float AtanfHugeConst = 1.0e30f;
+float AtanfOneConst = 1.0f;
+float AtanfTwoConst = 2.0f;
+float AtanfThreeHalvesConst = 1.5f;
+float AtanfNegOneConst = -1.0f;
+struct { float v; } CosfZeroConst = {0.0f};
 extern float __kernel_cosf(float x, float y);
 extern float __kernel_sinf(float x, float y, int iy);
 extern int __ieee754_rem_pio2f(float x, float* y);
@@ -10,7 +18,7 @@ asm float cosf(float x)
     stwu    r1, -0x18(r1)
     mflr    r0
     stw     r0, 0x1c(r1)
-    lfs     f2, lbl_8066C174
+    lfs     f2, CosfZeroConst.v
     fmr     f0, f1
     stfs    f0, 0x10(r1)
     lwz     r9, 0x10(r1)

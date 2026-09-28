@@ -1,4 +1,4 @@
-extern float lbl_8066C178;
+extern struct { float v; } SinfZeroConst;
 extern float __kernel_cosf(float x, float y);
 extern float __kernel_sinf(float x, float y, int iy);
 extern int __ieee754_rem_pio2f(float x, float* y);
@@ -10,7 +10,7 @@ asm float sinf(float x)
     stwu    r1, -0x18(r1)
     mflr    r0
     stw     r0, 0x1c(r1)
-    lfs     f2, lbl_8066C178
+    lfs     f2, SinfZeroConst.v
     fmr     f0, f1
     stfs    f0, 0x10(r1)
     lwz     r9, 0x10(r1)

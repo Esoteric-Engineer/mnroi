@@ -398,6 +398,7 @@ Runtime.PPCEABI.H/atanf.c:
 
 Runtime.PPCEABI.H/cosf.c:
 	.text       start:0x8016DC80 end:0x8016DD5C
+	.sdata      start:0x8066C160 end:0x8066C178
 
 Runtime.PPCEABI.H/fabsf.c:
 	.text       start:0x8016DD5C end:0x8016DD80
@@ -407,6 +408,7 @@ Runtime.PPCEABI.H/sinf.c:
 
 Runtime.PPCEABI.H/tanf.c:
 	.text       start:0x8016DE5C end:0x8016DEDC
+	.sdata      start:0x8066C178 end:0x8066C180
 
 Runtime.PPCEABI.H/scalbnf.c:
 	.text       start:0x8016DEDC end:0x8016DFF8

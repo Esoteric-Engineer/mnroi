@@ -1,8 +1,8 @@
-extern float lbl_8066C160;
-extern float lbl_8066C164;
-extern float lbl_8066C168;
-extern float lbl_8066C16C;
-extern float lbl_8066C170;
+extern float AtanfHugeConst;
+extern float AtanfOneConst;
+extern float AtanfTwoConst;
+extern float AtanfThreeHalvesConst;
+extern float AtanfNegOneConst;
 extern float fabsf(float x);
 
 asm float atanf(float x)
@@ -49,8 +49,8 @@ L_DAE4:
     ori     r0, r0, 0xffff
     cmpw    r31, r0
     bgt     L_DB20
-    lfs     f0, lbl_8066C160
-    lfs     f13, lbl_8066C164
+    lfs     f0, AtanfHugeConst
+    lfs     f13, AtanfOneConst
     fadds   f0, f5, f0
     fcmpu   cr0, f0, f13
     ble     L_DB20
@@ -71,16 +71,16 @@ L_DB28:
     ori     r0, r0, 0xffff
     cmpw    r31, r0
     bgt     L_DB74
-    lfs     f12, lbl_8066C164
+    lfs     f12, AtanfOneConst
     fadds   f13, f5, f5
-    lfs     f0, lbl_8066C168
+    lfs     f0, AtanfTwoConst
     li      r0, 0x0
     fsubs   f13, f13, f12
     fadds   f0, f5, f0
     fdivs   f5, f13, f0
     b       L_DBC4
 L_DB74:
-    lfs     f0, lbl_8066C164
+    lfs     f0, AtanfOneConst
     li      r0, 0x1
     fadds   f13, f5, f0
     fsubs   f0, f5, f0
@@ -91,15 +91,15 @@ L_DB8C:
     ori     r0, r0, 0xffff
     cmpw    r31, r0
     bgt     L_DBB8
-    lfs     f0, lbl_8066C16C
+    lfs     f0, AtanfThreeHalvesConst
     li      r0, 0x2
-    lfs     f13, lbl_8066C164
+    lfs     f13, AtanfOneConst
     fsubs   f12, f5, f0
     fmadds  f0, f5, f0, f13
     fdivs   f5, f12, f0
     b       L_DBC4
 L_DBB8:
-    lfs     f0, lbl_8066C170
+    lfs     f0, AtanfNegOneConst
     li      r0, 0x3
     fdivs   f5, f0, f5
 L_DBC4:

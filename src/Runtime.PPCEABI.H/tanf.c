@@ -1,4 +1,8 @@
-extern float lbl_8066C17C;
+/* Shared with sinf.c: sf_sin.c/sf_tan.c's zero literals are contiguous in
+ * .sdata (0x8066C178-0x8066C180) and only this unit's object starts
+ * 8-aligned, so it owns the whole block; sinf.c externs. */
+struct { float v; } SinfZeroConst = {0.0f};
+struct { float v; } TanfZeroConst = {0.0f};
 extern float __kernel_tanf(float x, float y, int iy);
 extern int __ieee754_rem_pio2f(float x, float* y);
 
@@ -9,7 +13,7 @@ asm float tanf(float x)
     stwu    r1, -0x18(r1)
     mflr    r0
     stw     r0, 0x1c(r1)
-    lfs     f2, lbl_8066C17C
+    lfs     f2, TanfZeroConst.v
     fmr     f0, f1
     stfs    f0, 0x10(r1)
     lwz     r9, 0x10(r1)

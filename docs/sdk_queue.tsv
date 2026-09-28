@@ -754,10 +754,10 @@ addr	size	name	library	confidence	notes	status
 0x8066C058	0x48	Runtime.PPCEABI.H/__ieee754_acosf.c	libc	known	data .sdata: lbl_8066C058..lbl_8066C09C, 18 floats (ef_acos.c), read only by __ieee754_acosf.	open
 0x8066C0A0	0x30	Runtime.PPCEABI.H/atan2f.c	libc	known	data .sdata: lbl_8066C0A0..lbl_8066C0CC, 12 floats (ef_atan2.c), read only by __ieee754_atan2f.	open
 0x8066C0D0	0x90	Runtime.PPCEABI.H/__ieee754_powf.c	libc	known	data .sdata: lbl_8066C0D0..lbl_8066C158 (floats, 4 pad at 0x8066C11C, doubles at 0x8066C120/158; ef_pow.c scalars), read only by __ieee754_powf. Its arrays are the .sdata2 row at 0x8066FC20.	open
-0x8066C160	0x14	Runtime.PPCEABI.H/atanf.c	libc	known	data .sdata: lbl_8066C160..lbl_8066C170, 5 floats (sf_atan.c scalars), read only by atanf. Its arrays are .sdata2 0x8066FC38.	open
-0x8066C174	0x4	Runtime.PPCEABI.H/cosf.c	libc	known	data .sdata: lbl_8066C174, read only by cosf.	open
-0x8066C178	0x4	Runtime.PPCEABI.H/sinf.c	libc	known	data .sdata: lbl_8066C178, read only by sinf.	open
-0x8066C17C	0x4	Runtime.PPCEABI.H/tanf.c	libc	known	data .sdata: lbl_8066C17C, read only by tanf.	open
+0x8066C160	0x14	Runtime.PPCEABI.H/cosf.c	libc	known	data .sdata: AtanfHugeConst..AtanfNegOneConst, 5 floats (sf_atan.c scalars), read only by atanf but owned by cosf.c (only its object starts 8-aligned; atanf.c externs). Its arrays are .sdata2 0x8066FC38.	matched
+0x8066C174	0x4	Runtime.PPCEABI.H/cosf.c	libc	known	data .sdata: CosfZeroConst, read only by cosf. Merged into the same cosf.c claim as the row above.	matched
+0x8066C178	0x4	Runtime.PPCEABI.H/tanf.c	libc	known	data .sdata: SinfZeroConst, read only by sinf but owned by tanf.c (only its object starts 8-aligned; sinf.c externs).	matched
+0x8066C17C	0x4	Runtime.PPCEABI.H/tanf.c	libc	known	data .sdata: TanfZeroConst, read only by tanf. Merged into the same tanf.c claim as the row above.	matched
 0x8066C180	0x10	Runtime.PPCEABI.H/scalbnf.c	libc	known	data .sdata: lbl_8066C180..lbl_8066C18C, 4 floats (sf_scalbn.c), read only by scalbnf.	open
 0x8066C190	0x48	Runtime.PPCEABI.H/__kernel_cos.c	libc	known	data .sdata: lbl_8066C190..lbl_8066C1D0, 9 doubles (k_cos.c), read only by __kernel_cos.	open
 0x8066C1D8	0x38	Runtime.PPCEABI.H/__kernel_sin.c	libc	known	data .sdata: lbl_8066C1D8..lbl_8066C208, 7 doubles (k_sin.c), read only by __kernel_sin.	open
