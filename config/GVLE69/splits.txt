@@ -1979,6 +1979,9 @@ Runtime.PPCEABI.H/fprintf.c:
 Runtime.PPCEABI.H/printf.c:
 	.text       start:0x804006AC end:0x80400758
 
+Runtime.PPCEABI.H/snprintf.c:
+	.text       start:0x80400758 end:0x80400834
+
 Runtime.PPCEABI.H/vprintf.c:
 	.text       start:0x80400834 end:0x80400868
 

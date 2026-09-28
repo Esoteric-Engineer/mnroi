@@ -378,7 +378,7 @@ addr	size	name	library	confidence	notes	status
 0x80400560	0xB8	fclose	libc	guess	CHECK_INIT/__sinit, __SWR -> fflush; Newlib	matched
 0x80400618	0x94	fprintf	libc	guess	varargs -> vfprintf(fp, fmt, ap)	matched
 0x804006AC	0xAC	printf	libc	exact	CFTKK size 0xAC, followed by vprintf as in CFTKK	matched
-0x80400758	0xDC	snprintf	libc	guess	string FILE (flags 0x208), size arg -> vfprintf	open
+0x80400758	0xDC	snprintf	libc	guess	string FILE (flags 0x208), size arg -> vfprintf	matched
 0x80400834	0x34	vprintf	libc	known	symbol already named; just needs split + match	matched
 0x80400868	0xAC	strncat	libc	guess	word-at-a-time end scan, copies n bytes, NUL-terminates	matched
 0x80400914	0xB0	__floatdisf	libc	guess	libgcc s64 -> float, 0x1FFFFF/0x7FF rounding guard	matched
