@@ -437,6 +437,7 @@ Runtime.PPCEABI.H/__kernel_cosf.c:
 
 Runtime.PPCEABI.H/__kernel_sinf.c:
 	.text       start:0x8016E624 end:0x8016E6D0
+	.sdata      start:0x8066C268 end:0x8066C2A8
 
 Runtime.PPCEABI.H/__kernel_tanf.c:
 	.text       start:0x8016E6D0 end:0x8016E8E4

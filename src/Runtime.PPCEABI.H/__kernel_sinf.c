@@ -1,10 +1,21 @@
-extern float lbl_8066C28C;
-extern float lbl_8066C290;
-extern float lbl_8066C294;
-extern float lbl_8066C298;
-extern float lbl_8066C29C;
-extern float lbl_8066C2A0;
-extern float lbl_8066C2A4;
+/* kf_cos.c's constants share this object: its .sdata starts 8-aligned here,
+ * so __kernel_cosf.c externs them instead of defining them itself. */
+float KernelCosfOneConst = 1.0000000000e+00f;
+float KernelCosfC6Const = -1.1359647598e-11f;
+float KernelCosfC5Const = 2.0875723372e-09f;
+float KernelCosfC4Const = -2.7557314297e-07f;
+float KernelCosfC3Const = 2.4801587642e-05f;
+float KernelCosfC2Const = -1.3888889225e-03f;
+float KernelCosfC1Const = 4.1666667908e-02f;
+float KernelCosfHalfConst = 5.0000000000e-01f;
+float KernelCosfQxConst = 2.8125000000e-01f;
+float KernelSinfS6Const = 1.5896910177e-10f;
+float KernelSinfS5Const = -2.5050759689e-08f;
+float KernelSinfS4Const = 2.7557314297e-06f;
+float KernelSinfS3Const = -1.9841270114e-04f;
+float KernelSinfS2Const = 8.3333337680e-03f;
+float KernelSinfS1Const = -1.6666667163e-01f;
+float KernelSinfHalfConst = 5.0000000000e-01f;
 
 asm float __kernel_sinf(float x, float y, int iy)
 {
@@ -27,22 +38,22 @@ asm float __kernel_sinf(float x, float y, int iy)
     cmpwi   r9, 0
     beq     L_end
 L_big:
-    lfs     f13, lbl_8066C290
+    lfs     f13, KernelSinfS5Const
     fmuls   f10, f9, f9
-    lfs     f0, lbl_8066C28C
+    lfs     f0, KernelSinfS6Const
     fmuls   f8, f10, f9
-    lfs     f11, lbl_8066C294
+    lfs     f11, KernelSinfS4Const
     cmpwi   r3, 0
     fmadds  f0, f10, f0, f13
-    lfs     f12, lbl_8066C298
+    lfs     f12, KernelSinfS3Const
     fmadds  f0, f10, f0, f11
-    lfs     f13, lbl_8066C29C
+    lfs     f13, KernelSinfS2Const
     fmadds  f0, f10, f0, f12
     fmadds  f0, f10, f0, f13
     beq     L_iy0
     fmuls   f13, f8, f0
-    lfs     f1, lbl_8066C2A4
-    lfs     f0, lbl_8066C2A0
+    lfs     f1, KernelSinfHalfConst
+    lfs     f0, KernelSinfS1Const
     fmsubs  f1, f2, f1, f13
     fmsubs  f1, f10, f1, f2
     fmuls   f0, f8, f0
@@ -50,7 +61,7 @@ L_big:
     fsubs   f1, f9, f1
     b       L_end
 L_iy0:
-    lfs     f1, lbl_8066C2A0
+    lfs     f1, KernelSinfS1Const
     fmadds  f1, f10, f0, f1
     fmadds  f1, f8, f1, f9
 L_end:
