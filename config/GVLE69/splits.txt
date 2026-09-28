@@ -1249,6 +1249,7 @@ Dolphin/vi/VIInit.c:
 	.text       start:0x80187E38 end:0x8018960C
 	.data       start:0x804D2880 end:0x804D2AE0
 	.bss        start:0x8057D418 end:0x8057D560
+	.sdata      start:0x8066C488 end:0x8066C498
 
 Dolphin/vi/VIFlush.c:
 	.text       start:0x8018960C end:0x8018973C

@@ -90,6 +90,7 @@ typedef struct {
 // VIConfigurePan only match with both pools defined in the same unit. __VIRetraceHandler, the two
 // retrace-callback setters before getTiming, and VIFlush onwards are still separate units.
 char lbl_804D2880[] = "<< Dolphin SDK - VI\trelease build: Apr 17 2003 12:33:22 (0x2301) >>";
+static char* __VIVersion = lbl_804D2880;
 
 static VITiming timing[10] = {
     { 6, 240, 24, 25, 3, 2, 12, 13, 12, 13, 520, 519, 520, 519, 525, 429, 64, 71, 105, 162, 373, 122, 412 },
@@ -112,7 +113,6 @@ u16 lbl_8057D418[59];
 u16 shdwRegs[59];
 SomeVIStruct HorVer;
 
-extern char* lbl_8066C488;
 extern int lbl_8066F378;
 extern u32 lbl_8066F398;
 extern volatile u32 lbl_8066F37C;
@@ -130,11 +130,10 @@ extern VITiming* lbl_8066F3C0;
 extern u32 CurrTvMode;
 extern u32 lbl_8066F3D0;
 extern int lbl_8066F3D4;
-extern char lbl_8066C48C[5];
+static char lbl_8066C48C[] = "vi.c";
 
 #define regs lbl_8057D418
 #define taps taps_804D2A40
-#define __VIVersion lbl_8066C488
 #define IsInitialized lbl_8066F378
 #define encoderType lbl_8066F398
 #define retraceCount lbl_8066F37C
