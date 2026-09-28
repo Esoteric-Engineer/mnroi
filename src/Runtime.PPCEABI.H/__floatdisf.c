@@ -1,6 +1,8 @@
-extern double lbl_804BF448[1];
-extern double lbl_804BF450[1];
-extern double lbl_804BF458[1];
+/* libgcc's s64 -> float conversion. The three doubles are this object's own .rodata.1 constants. */
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const double FloatdisfHiMagicConst = 4503601774854144.0;
+__declspec(section ".rodata.1") const double FloatdisfTwoTo16Const = 65536.0;
+__declspec(section ".rodata.1") const double FloatdisfLoMagicConst = 4503599627370496.0;
 
 asm float __floatdisf(long long u)
 {
@@ -34,17 +36,17 @@ L_round:
     lis     r6, 0x4330
     stw     r0, 0xc(r1)
     mr      r7, r8
-    lis     r11, lbl_804BF448@ha
-    lis     r9, lbl_804BF450@ha
+    lis     r11, FloatdisfHiMagicConst@ha
+    lis     r9, FloatdisfTwoTo16Const@ha
     stw     r6, 8(r1)
-    lfd     f0, lbl_804BF448@l(r11)
+    lfd     f0, FloatdisfHiMagicConst@l(r11)
     lfd     f1, 8(r1)
-    lis     r11, lbl_804BF458@ha
+    lis     r11, FloatdisfLoMagicConst@ha
     stw     r4, 0xc(r1)
-    lfd     f12, lbl_804BF450@l(r9)
+    lfd     f12, FloatdisfTwoTo16Const@l(r9)
     fsub    f1, f1, f0
     stw     r6, 8(r1)
-    lfd     f13, lbl_804BF458@l(r11)
+    lfd     f13, FloatdisfLoMagicConst@l(r11)
     fmul    f1, f1, f12
     lfd     f0, 8(r1)
     fsub    f0, f0, f13
