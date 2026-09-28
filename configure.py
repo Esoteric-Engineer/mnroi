@@ -1022,6 +1022,7 @@ config.libs = [
     DolphinLib(
         "vm",
         [
+            Object(Matching, "Dolphin/vm/VMInit.c"),
             Object(Matching, "Dolphin/vm/VMSetLogStatsCallback.c"),
             Object(Matching, "Dolphin/vm/__VMGetNumPagesInMRAM.c"),
             Object(Matching, "Dolphin/vm/VMGetARAMSize.c"),
