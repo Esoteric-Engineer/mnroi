@@ -641,6 +641,7 @@ Runtime.PPCEABI.H/localeconv.c:
 
 Runtime.PPCEABI.H/floor.c:
 	.text       start:0x801773E4 end:0x80177558
+	.rodata.1   start:0x8049C7F8 end:0x8049C808
 
 Runtime.PPCEABI.H/__ieee754_fmod.c:
 	.text       start:0x80177558 end:0x801778B4

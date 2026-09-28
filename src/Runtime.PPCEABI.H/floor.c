@@ -1,5 +1,8 @@
-extern char lbl_8049C7F8[];
-extern char lbl_8049C800[];
+/* fdlibm s_floor.c's `static const double huge = 1.0e300;` and the 0.0 it is compared
+ * against in `if (huge + x > 0.0)`. */
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const double FloorHugeConst = 1.0e300;
+__declspec(section ".rodata.1") const double FloorZeroConst = 0.0;
 
 asm double floor(double x)
 {
@@ -18,10 +21,10 @@ asm double floor(double x)
     bgt     L_801774B4
     cmpwi   r5, 0x0
     bge     L_80177460
-    lis     r9, lbl_8049C7F8@ha
-    lis     r11, lbl_8049C800@ha
-    lfd     f0, lbl_8049C7F8@l(r9)
-    lfd     f13, lbl_8049C800@l(r11)
+    lis     r9, FloorHugeConst@ha
+    lis     r11, FloorZeroConst@ha
+    lfd     f0, FloorHugeConst@l(r9)
+    lfd     f13, FloorZeroConst@l(r11)
     fadd    f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_80177538
@@ -44,10 +47,10 @@ L_80177460:
     and     r9, r10, r4
     or.     r0, r9, r6
     beq     L_80177550
-    lis     r9, lbl_8049C7F8@ha
-    lis     r11, lbl_8049C800@ha
-    lfd     f0, lbl_8049C7F8@l(r9)
-    lfd     f13, lbl_8049C800@l(r11)
+    lis     r9, FloorHugeConst@ha
+    lis     r11, FloorZeroConst@ha
+    lfd     f0, FloorHugeConst@l(r9)
+    lfd     f13, FloorZeroConst@l(r11)
     fadd    f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_80177538
@@ -73,10 +76,10 @@ L_801774CC:
     srw     r4, r0, r9
     and.    r9, r6, r4
     beq     L_80177550
-    lis     r9, lbl_8049C7F8@ha
-    lis     r11, lbl_8049C800@ha
-    lfd     f0, lbl_8049C7F8@l(r9)
-    lfd     f13, lbl_8049C800@l(r11)
+    lis     r9, FloorHugeConst@ha
+    lis     r11, FloorZeroConst@ha
+    lfd     f0, FloorHugeConst@l(r9)
+    lfd     f13, FloorZeroConst@l(r11)
     fadd    f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_80177538
