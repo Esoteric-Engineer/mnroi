@@ -1,4 +1,6 @@
-extern const char lbl_80670880[4];
+#pragma force_active on
+
+const float FmodfZeroConst[2] = {0.0f, -0.0f};
 
 asm float __ieee754_fmodf(float x, float y)
 {
@@ -125,7 +127,7 @@ L_804001B0:
     b L_804001E8
 L_804001CC:
     srwi r0, r6, 31
-    la r9, lbl_80670880
+    la r9, FmodfZeroConst
     slwi r0, r0, 2
     lfsx f1, r9, r0
     b L_804001F8

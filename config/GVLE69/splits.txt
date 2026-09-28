@@ -2000,6 +2000,7 @@ Runtime.PPCEABI.H/__ieee754_expf.c:
 
 Runtime.PPCEABI.H/__ieee754_fmodf.c:
 	.text       start:0x80400038 end:0x80400200
+	.sdata2     start:0x80670880 end:0x80670888
 
 Runtime.PPCEABI.H/__ieee754_logf.c:
 	.text       start:0x80400200 end:0x80400480
