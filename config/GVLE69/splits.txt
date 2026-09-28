@@ -2186,11 +2186,18 @@ Dolphin/os/OSInitAlloc.c:
 Dolphin/os/OSCreateHeap.c:
 	.text       start:0x804020C4 end:0x80402130
 
+Dolphin/os/ScreenReport.c:
+	.text       start:0x80402130 end:0x8040250C
+
 Dolphin/os/ConfigureVideo.c:
 	.text       start:0x8040250C end:0x80402608
 
 Dolphin/os/OSFatal.c:
 	.text       start:0x80402608 end:0x804027E0
+
+Dolphin/os/Halt.c:
+	.text       start:0x804027E0 end:0x80402DC0
+	.sdata2     start:0x80670888 end:0x806708C8
 
 Dolphin/os/GetFontCode.c:
 	.text       start:0x80402DC0 end:0x80402F34
@@ -2210,6 +2217,9 @@ Dolphin/os/OSLoadFont.c:
 
 Dolphin/os/ParseStringS.c:
 	.text       start:0x80403570 end:0x804036AC
+
+Dolphin/os/OSGetFontTexel.c:
+	.text       start:0x804036AC end:0x8040394C
 
 Dolphin/os/ExpandFontSheet.c:
 	.text       start:0x8040394C end:0x80403CF8

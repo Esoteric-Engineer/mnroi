@@ -43,7 +43,7 @@ exact size/order runs against CFTKK-Decomp and ac-decomp plus callee checks. Ful
 | 0x804009C4-0x80401EB0 | vm | VM + VMBASE (ARAM virtual memory). `VMInit` 0x804009C4; VMBASE 0x8040130C-0x80401EB0 follows CFTKK-Decomp's VMBASE in order, mostly at equal sizes (boundaries set 2026-09-24). `__VMBASEISIServiceExceptionPrep` starts at 0x80401DFC (the ISI handler's rfi target), not 0x80401E00 |
 | 0x80401EB0-0x80401F48 | runtime | `__save_gpr` / `__restore_gpr` |
 | 0x80401F48-0x80402130 | os | OSAlloc: `OSAllocFromHeap`, `OSSetCurrentHeap`, `OSInitAlloc`, `OSCreateHeap` |
-| 0x80402130-0x80402DC0 | os | OSFatal: `ScreenReport`, `ConfigureVideo`, `OSFatal` 0x80402608, `Halt` |
+| 0x80402130-0x80402DC0 | os | OSFatal: `ScreenReport`, `ConfigureVideo`, `OSFatal` 0x80402608, `Halt`. The later SDK revision: doldecomp/dolsdk2004 `src/os/OSFatal.c` matches it (ac-decomp has no OSFatal.c) |
 | 0x80402DC0-0x80404148 | os | OSFont: `GetFontCode` .. `OSGetFontWidth` (`OSGetFontEncode` 0x804030A8) |
 | 0x80404148-0x804044C8 | os | OSMessage (3), OSSemaphore (4) |
 | 0x804044C8-0x804048CC | mtx | `PSMTXIdentity` .. `C_MTXOrtho` (8) |

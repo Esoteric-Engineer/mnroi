@@ -187,6 +187,8 @@ Clone it as a sibling repo (`../ac-decomp`) and grep it directly. Key paths:
 
 > **Check ac-decomp before reconstructing any SDK-range function:** Search for a raw struct offset, the surrounding constants, or the function's apparent purpose.
 
+Where ac-decomp has no file or an older revision (the second cluster's OSFatal/OSFont, which are later-SDK code), [doldecomp/dolsdk2004](https://github.com/doldecomp/dolsdk2004) (`src/<lib>/`) has matching-decomp source of the 2004 SDK; its `OSFatal.c` matched `ScreenReport`/`Halt` where a hand reconstruction stalled on register allocation.
+
 Only use it as a reference, not a blind copy source. Struct layouts, flags, and function bodies can drift between games on the same SDK build, so every ported function still needs the normal compile-and-verify loop.
 
 ---

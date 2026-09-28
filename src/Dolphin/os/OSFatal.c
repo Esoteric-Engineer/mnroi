@@ -54,7 +54,7 @@ extern void OSSetArenaLo(void* lo);
 extern void OSSetArenaHi(void* hi);
 extern void* OSGetArenaHi(void);
 extern void OSSwitchStack(void* pc, void* newsp);
-extern void fn_804027E0(void);
+extern void Halt(void);
 
 volatile u32 __EXIRegs[0x40] : 0xCC006800;
 
@@ -106,5 +106,5 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg)
     b->fg = fg;
     b->bg = bg;
     b->msg = (char*)msg;
-    OSSwitchStack(fn_804027E0, OSGetArenaHi());
+    OSSwitchStack(Halt, OSGetArenaHi());
 }
