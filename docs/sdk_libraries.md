@@ -53,7 +53,7 @@ exact size/order runs against CFTKK-Decomp and ac-decomp plus callee checks. Ful
 | 0x8040962C-0x8040A190 | dsp | `DSPInit` 0x80409678 (version string); 15 functions |
 | 0x8040A190-0x80411208 | card | `CARDInit` 0x8040B004 (version string); 97 functions. CARDRdwr (0x80410C48) and CARDStatEx (0x80410EC8) are linked after CARDUnlock |
 | 0x80411208-0x80411408 | gx | GXDisplayList: `GXBeginDisplayList`, `GXEndDisplayList`, `GXCallDisplayList` |
-| 0x80411408-0x804114EC | texPalette (unconfirmed) | `TEXGet`, `TEXGetGXTexObjFromPalette` by code shape |
+| 0x80411408-0x804114EC | texPalette | `TEXGet`, `TEXGetGXTexObjFromPalette`; confirmed against the Dolphin SDK `texPalette.c`, both matched as one TU |
 
 ### Second-cluster libm (0x803FF3B0-0x80400544)
 
