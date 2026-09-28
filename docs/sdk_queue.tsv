@@ -789,7 +789,7 @@ addr	size	name	library	confidence	notes	status
 0x8066C4D0	0x48	Dolphin/gx/__GXGetTexTileShift.c	gx	guess	data .sdata: GXTexture.c's .sdata: GXTexMode0Ids .. GXTexTlutIds (read by GXLoadTexObjPreLoaded) and GX2HWFiltConv (read by __GXGetTexTileShift). Pooled into __GXGetTexTileShift.c, the first reader, which holds GXTexture.c's .data and .sdata2. The 4 bytes before it are GXAttr.c's end padding.	open
 0x8066C518	0x8	Dolphin/gx/GXInit.c	gx	known	data .sdata: __GXVersion + 4 pad, read by GXInit.	open
 0x8066C520	0x38	Dolphin/exi/EXIInit.c	exi	guess	data .sdata: EXIBios.c's .sdata (CFTKK size 0x38): __EXIVersion (read by EXIInit), then dtk's lbl_8066C524 (0x34) == EXIGetTypeString's short names ("GDEV", "Modem", "Marlin", "AD16", "RS232C", "Mic", "Unknown"), unreferenced: #pragma force_active.	open
-0x8066C558	0x8	Dolphin/OdemuExi2/DBWrite.c	odenotstub	known	data .sdata: lbl_8066C558 (0x80000000, 0), read only by DBWrite. Game .sdata follows.	open
+0x8066C558	0x8	Dolphin/OdemuExi2/DBWrite.c	odenotstub	known	data .sdata: SendCount (DebuggerDriver.c's static u8 SendCount = 0x80) + 7 bytes of MWCC section padding, read only by DBWrite. Game .sdata follows.	matched
 0x8066CCC8	0x80	Runtime.PPCEABI.H/__ieee754_asin.c	libc	known	data .sdata: lbl_8066CCC8..lbl_8066CD40, 16 doubles (fdlibm e_asin.c constants), read only by __ieee754_asin	open
 0x8066CD48	0x78	Runtime.PPCEABI.H/__ieee754_exp.c	libc	known	data .sdata: lbl_8066CD48..lbl_8066CDB8, 15 doubles (fdlibm e_exp.c scalars; its arrays are the .sdata2 row), read only by __ieee754_exp	open
 0x8066CDC0	0x40	Runtime.PPCEABI.H/__ieee754_asinf.c	libc	known	data .sdata: lbl_8066CDC0..lbl_8066CDFC, 16 floats (ef_asin.c), read only by __ieee754_asinf	open

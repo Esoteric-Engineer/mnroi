@@ -9,7 +9,7 @@ extern void OSRestoreInterrupts(BOOL enabled);
 extern BOOL DBGEXIImm(void* data, int size, u32 write);
 extern BOOL DBGWrite(u32 param1, u32* data, int byte_size);
 
-extern u8 lbl_8066C558;
+static u8 SendCount = 0x80;
 
 static inline BOOL DBGEXISelect(u32 v)
 {
@@ -80,9 +80,9 @@ int DBWrite(const void* data, u32 size)
         DBGReadStatus(&busyFlag);
     } while (busyFlag & 2);
 
-    ++lbl_8066C558;
+    ++SendCount;
 
-    value = ((lbl_8066C558 & 1) ? 0x1000 : 0);
+    value = ((SendCount & 1) ? 0x1000 : 0);
     while (!DBGWrite(value | 0x1c000, (u32*)data, (size + 3) & ~3))
         ;
 
@@ -90,7 +90,7 @@ int DBWrite(const void* data, u32 size)
         DBGReadStatus(&busyFlag);
     } while (busyFlag & 2);
 
-    value = (lbl_8066C558 << 0x10) | 0x1f000000 | size;
+    value = (SendCount << 0x10) | 0x1f000000 | size;
     while (!DBGWriteMailbox(value))
         ;
 
