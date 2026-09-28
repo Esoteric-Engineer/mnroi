@@ -99,9 +99,9 @@ note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFata
 
 - `.init` (0x80003100-0x800034A0, 928 bytes) is boot/runtime code: `__start` and its six helpers are split and
   matched (library `init`).
-- Remaining `.text` (2026-09-27, 12 bytes): 0x801796B4 is a zero word between `fn_80179138` and `fn_801796B8`
-  (padding, not code), and `fn_80407958` (0x8, `stw r3` + `blr` setter after `AXSetMode`) is queued as
-  `wrong-name` because its name is unknown.
+- Remaining `.text` (2026-09-27, 4 bytes): 0x801796B4 is a zero word between `fn_80179138` and `fn_801796B8`
+  (padding, not code). 0x80407958 is now split and matched as `AXSetCompressor` (`Dolphin/ax/AXSetCompressor.c`);
+  it is the AX compressor setter, absent from CFTKK because CFTKK dead-stripped it.
 - Data: on 2026-09-24 the unsplit gaps inside the library data span were small (`.data` 7136, `.bss` 2600, `.sbss`
   300, `.sdata` 216, `.sdata2` 132 bytes) and probably library data. Part of the second cluster's data has now been
   split: AX `.data` 0x804EEFD0 and `.bss` 0x8064F340-0x80668900, DSP `.data` 0x804F29C0, CARD `.data` 0x804F2C20 and

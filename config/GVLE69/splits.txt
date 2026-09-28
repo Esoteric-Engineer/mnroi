@@ -2425,6 +2425,9 @@ Dolphin/ax/__AXClQuit.c:
 Dolphin/ax/AXSetMode.c:
 	.text       start:0x80407944 end:0x80407958
 
+Dolphin/ax/AXSetCompressor.c:
+	.text       start:0x80407958 end:0x80407960
+
 Dolphin/ax/__AXOutNewFrame.c:
 	.text       start:0x80407960 end:0x80407B18
 

@@ -14,7 +14,7 @@ extern void DCFlushRange(void*, unsigned long);
 
 extern unsigned short* lbl_8066FA4C;
 extern unsigned long lbl_8066FA50;
-extern unsigned long lbl_8066FA54;
+extern unsigned long __AXCompressor;
 extern unsigned long lbl_8066FA58;
 extern unsigned short lbl_804EF0C0[];
 
@@ -116,7 +116,7 @@ void __AXNextFrame(void* sbuffer, void* buffer)
         }
     }
 
-    if (lbl_8066FA54) {
+    if (__AXCompressor) {
         AXCL_WRITE(0x12);
         AXCL_WRITE(0x8000);
         AXCL_WRITE(0xA);

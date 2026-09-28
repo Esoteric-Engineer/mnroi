@@ -295,7 +295,7 @@ splitting. `OnReset` also exists in the first cluster (PAD/OS).
 | 0x8040791C | 0x24 | `fn_8040791C` | `__AXClInit` | exact | CFTKK size run of 33 |
 | 0x80407940 | 0x4 | `fn_80407940` | `__AXClQuit` | exact | CFTKK size run of 33 |
 | 0x80407944 | 0x14 | `fn_80407944` | `AXSetMode` | exact | CFTKK size run of 33 |
-| 0x80407958 | 0x8 | `fn_80407958` | `AXGetMode` | guess | 0x8 getter after AXSetMode |
+| 0x80407958 | 0x8 | `AXSetCompressor` | `AXSetCompressor` | known | setter, not a getter; confirmed against the SDK's AXCL.c. Dead-stripped in CFTKK |
 | 0x80407960 | 0x1B8 | `fn_80407960` | `__AXOutNewFrame` | exact | CFTKK size run of 8 |
 | 0x80407B18 | 0xBC | `fn_80407B18` | `__AXOutAiCallback` | exact | CFTKK size run of 8 |
 | 0x80407BD4 | 0xC | `fn_80407BD4` | `__AXDSPInitCallback` | exact | CFTKK size run of 8 |
