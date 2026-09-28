@@ -600,6 +600,10 @@ Runtime.PPCEABI.H/strround.c:
 Runtime.PPCEABI.H/strrev.c:
 	.text       start:0x80173630 end:0x8017367C
 
+Dolphin/os/__start.c:
+	.init       start:0x80003100 end:0x80003254
+	.data       start:0x804CFC20 end:0x804CFC70
+
 Runtime.PPCEABI.H/itoa.c:
 	.text       start:0x8017367C end:0x801736F8
 	.data       start:0x804D02A8 end:0x804D02D0
@@ -2904,9 +2908,6 @@ Dolphin/gx/GXCallDisplayList.c:
 Dolphin/texPalette/TEXGet.c:
 	.text       start:0x80411408 end:0x804114EC
 	.sdata2     start:0x80670970 end:0x80670978
-
-Dolphin/os/__start.c:
-	.init       start:0x80003100 end:0x80003254
 
 Dolphin/os/fn_80003254.c:
 	.init       start:0x80003254 end:0x800032C0

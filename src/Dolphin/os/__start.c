@@ -1,3 +1,5 @@
+typedef long s32;
+
 extern char _stack_addr[];
 extern char _SDA2_BASE_[];
 extern char _SDA_BASE_[];
@@ -5,10 +7,8 @@ extern char lbl_8050F760[];
 extern char lbl_8066B4E0[];
 extern char lbl_8066CF20[];
 extern char lbl_8066FB50[];
-extern char lbl_804CFC40[];
-extern char lbl_804CFC64[];
-extern char lbl_804CFC20[];
 extern void memset(void);
+extern void __mod2i(void);
 extern void fn_80003300(void);
 extern void fn_80003334(void);
 extern void __init_hardware(void);
@@ -22,6 +22,16 @@ extern void fn_80181448(void);
 extern void DBInit(void);
 extern void OSInit(void);
 extern void OSReport(const char* msg, ...);
+
+typedef struct SnVersionInfo {
+    s32 version;
+    void (*mod2i)(void);
+    s32 unk8;
+} SnVersionInfo;
+
+char SnWaitingMsg[0x20] = "Waiting for SN Debugger...\n";
+char SnVersionMsg[0x24] = "<< libsn version %d >>\n";
+SnVersionInfo SnLibVersion = {59, &__mod2i, 0};
 
 __declspec(section ".init") asm void __start(void)
 {
@@ -91,14 +101,14 @@ L_800031D8:
     bl fn_801813D4
     cmpwi r29, 0x0
     beq L_80003244
-    lis r3, lbl_804CFC40@h
-    ori r3, r3, lbl_804CFC40@l
-    lis r4, lbl_804CFC64@h
-    ori r4, r4, lbl_804CFC64@l
+    lis r3, SnVersionMsg@h
+    ori r3, r3, SnVersionMsg@l
+    lis r4, SnLibVersion@h
+    ori r4, r4, SnLibVersion@l
     lwz r4, 0x0(r4)
     bl OSReport
-    lis r3, lbl_804CFC20@h
-    ori r3, r3, lbl_804CFC20@l
+    lis r3, SnWaitingMsg@h
+    ori r3, r3, SnWaitingMsg@l
     bl OSReport
     mfmsr r5
     ori r4, r5, 0x8000
