@@ -389,6 +389,7 @@ Runtime.PPCEABI.H/sin.c:
 
 Runtime.PPCEABI.H/__ieee754_acosf.c:
 	.text       start:0x8016CE18 end:0x8016D064
+	.sdata      start:0x8066C058 end:0x8066C0A0
 
 Runtime.PPCEABI.H/atan2f.c:
 	.text       start:0x8016D064 end:0x8016D284
