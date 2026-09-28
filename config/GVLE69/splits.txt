@@ -1173,6 +1173,7 @@ Dolphin/dvd/fstload.c:
 	.data       start:0x804D2810 end:0x804D2880
 	.bss        start:0x8057D2D8 end:0x8057D348
 	.sdata      start:0x8066C470 end:0x8066C480
+	.sbss       start:0x8066F320 end:0x8066F330
 
 Dolphin/dvd/__DVDInitWA.c:
 	.text       start:0x80186CC0 end:0x80186D00

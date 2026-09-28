@@ -8,9 +8,9 @@ typedef struct {
     void* FSTAddress;
 } DVDBB2;
 
-extern unsigned long fstStatus;
-extern DVDBB2* bb2;
-extern void* idTmp;
+void* idTmp;
+DVDBB2* bb2;
+unsigned long fstStatus;
 
 typedef struct {
     char gameName[4];
