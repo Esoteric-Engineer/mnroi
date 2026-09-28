@@ -1,4 +1,5 @@
-extern int lbl_804D0678;
+__declspec(section ".data") int lbl_804D0678 = 1;
+
 extern void InitializeUART(int);
 extern void WriteUARTN(void* a, void* b);
 

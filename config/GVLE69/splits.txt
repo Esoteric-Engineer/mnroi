@@ -767,6 +767,7 @@ Dolphin/os/fn_8017A5CC.c:
 
 Dolphin/os/fn_8017A620.c:
 	.text       start:0x8017A620 end:0x8017A67C
+	.data       start:0x804D0678 end:0x804D0680
 
 Dolphin/os/fn_8017A67C.c:
 	.text       start:0x8017A67C end:0x8017A6CC
