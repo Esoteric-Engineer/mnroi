@@ -1,4 +1,4 @@
-extern int lbl_8057C4F0;
+__declspec(section ".data") int initialized;
 extern void __do_global_ctors(void);
 
 asm void __main(void)
@@ -8,12 +8,12 @@ asm void __main(void)
     stwu    r1, -8(r1)
     mflr    r0
     stw     r0, 12(r1)
-    lis     r9, lbl_8057C4F0@ha
-    lwz     r0, lbl_8057C4F0@l(r9)
+    lis     r9, initialized@ha
+    lwz     r0, initialized@l(r9)
     cmpwi   r0, 0
     bne     epilogue
     li      r0, 1
-    stw     r0, lbl_8057C4F0@l(r9)
+    stw     r0, initialized@l(r9)
     bl      __do_global_ctors
 epilogue:
     lwz     r0, 12(r1)

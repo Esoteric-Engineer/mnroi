@@ -743,6 +743,7 @@ Runtime.PPCEABI.H/__do_global_ctors.c:
 
 Runtime.PPCEABI.H/__main.c:
 	.text       start:0x80179080 end:0x801790B8
+	.bss        start:0x8057C4F0 end:0x8057C500
 
 Runtime.PPCEABI.H/runtime.c:
 	.text       start:0x801790B8 end:0x80179138
