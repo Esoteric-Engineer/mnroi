@@ -76,8 +76,7 @@ Verdict: **all 8 are Newlib/fdlibm libm, i.e. SDK-side libc, not game code and n
 
 Confidence: `__ieee754_asinf` and `__ieee754_logf` are `exact` (CFTKK size plus code shape). The rest are `guess`
 (code shape and constants match Newlib, no CFTKK counterpart). The queue rows are `open`, library `libc`. Nothing was
-split or renamed. The double sqrt at 0x8016C790 and `__ieee754_asin`'s use of it are worth a look when the first-cluster
-libm region gets split. `sdk_scout.py`'s `LIBS` now labels this range `libc`; `queue` now scans the whole second cluster (RANGES starts at 0x803FF3B0), and the rows here were added by hand and survive a refresh.
+split or renamed. The double sqrt at 0x8016C790 that `__ieee754_asin` calls is split and matched as `__ieee754_sqrt` (fdlibm `e_sqrt.c`). `sdk_scout.py`'s `LIBS` now labels this range `libc`; `queue` now scans the whole second cluster (RANGES starts at 0x803FF3B0), and the rows here were added by hand and survive a refresh.
 
 Between 0x80196884 and 0x803FF3B0, and from 0x804114EC on, the code is game or middleware. The earlier
 note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFatal/OSFont.
