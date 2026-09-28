@@ -438,7 +438,7 @@ addr	size	name	library	confidence	notes	status
 0x80402054	0x70	OSInitAlloc	os	exact	ac/CFTKK 0x70; sets __OSCurrHeap (0x8066CEA8) = -1	matched
 0x804020C4	0x6C	OSCreateHeap	os	exact	CFTKK 0x6C	matched
 0x80402130	0x3DC	ScreenReport	os	guess	OSFatal.c; calls OSGetFontTexel	open
-0x8040250C	0xFC	ConfigureVideo	os	guess	OSFatal.c; VIGetTvFormat/VIConfigure/VIConfigurePan	open
+0x8040250C	0xFC	ConfigureVideo	os	known	OSFatal.c; VIGetTvFormat/VIConfigure/VIConfigurePan. Confirmed: builds a GXRenderModeObj on the stack (fbWidth/efbHeight 480/xfbHeight/viXOrigin 40/viWidth 640/viHeight), switches on VIGetTvFormat (NTSC+MPAL share a body testing __VIRegs[54]&1 for progressive, then EURGB60, then PAL with viYOrigin 47), then VIConfigure + VIConfigurePan(0,0,640,480)	matched
 0x80402608	0x1D8	OSFatal	os	exact	stops audio, VIInit, reset callbacks, EXI release, GXAbortFrame, arena 0x81400000, OSSwitchStack to Halt	matched
 0x804027E0	0x5E0	Halt	os	guess	OSFatal.c; target of OSSwitchStack; OSLoadFont, strlen, OSAllocFromArenaLo	open
 0x80402DC0	0x174	GetFontCode	os	exact	OSFont.c GetFontCode(encode, code) (static in the SDK, global here because ParseStringS calls it; takes encode first, unlike ac-decomp). encode 1 = SJIS: 0x20-0xDF via HankakuToCode (lbl_804DD198, unclaimed), 0x889F-0x9872 computed (+0x2BE), 0x8140-0x879D via Zenkaku2Code (lbl_804DD318, unclaimed); trail byte checked with an inlined IsSjisTrailByte. Matched (Dolphin/os/GetFontCode.c)	matched

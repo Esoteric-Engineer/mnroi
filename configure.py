@@ -957,6 +957,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSSetCurrentHeap.c"),
             Object(Matching, "Dolphin/os/OSInitAlloc.c"),
             Object(Matching, "Dolphin/os/OSCreateHeap.c"),
+            Object(Matching, "Dolphin/os/ConfigureVideo.c"),
             Object(Matching, "Dolphin/os/OSFatal.c"),
             Object(Matching, "Dolphin/os/GetFontCode.c"),
             Object(Matching, "Dolphin/os/Decode.c"),

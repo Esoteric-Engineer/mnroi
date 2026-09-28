@@ -2156,6 +2156,9 @@ Dolphin/os/OSInitAlloc.c:
 Dolphin/os/OSCreateHeap.c:
 	.text       start:0x804020C4 end:0x80402130
 
+Dolphin/os/ConfigureVideo.c:
+	.text       start:0x8040250C end:0x80402608
+
 Dolphin/os/OSFatal.c:
 	.text       start:0x80402608 end:0x804027E0
 
