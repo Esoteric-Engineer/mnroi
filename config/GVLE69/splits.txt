@@ -830,6 +830,8 @@ Dolphin/os/fn_8017BB24.c:
 
 Dolphin/os/OSArena.c:
 	.text       start:0x8017BBC4 end:0x8017BC10
+	.sdata      start:0x8066C3C8 end:0x8066C3D0
+	.sbss       start:0x8066F210 end:0x8066F218
 
 Dolphin/os/OSAudioSystem.c:
 	.text       start:0x8017BC10 end:0x8017BEA4

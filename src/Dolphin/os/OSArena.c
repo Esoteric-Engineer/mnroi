@@ -1,5 +1,5 @@
-extern void* __OSArenaHi;
-extern void* __OSArenaLo;
+void* __OSArenaLo = (void*)-1;
+void* __OSArenaHi = 0;
 
 void* OSGetArenaHi(void)
 {
