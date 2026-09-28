@@ -1,10 +1,12 @@
-extern double lbl_8066C1D8;
-extern double lbl_8066C1E0;
-extern double lbl_8066C1E8;
-extern double lbl_8066C1F0;
-extern double lbl_8066C1F8;
-extern double lbl_8066C200;
-extern double lbl_8066C208;
+/* k_sin.c's seven constants, in the original's .sdata order
+ * (S6..S1 then half, not fdlibm's source order). */
+double KernelSinS6Const = 1.58969099521155010221e-10;
+double KernelSinS5Const = -2.50507602534068634195e-08;
+double KernelSinS4Const = 2.75573137070700676789e-06;
+double KernelSinS3Const = -1.98412698298579493134e-04;
+double KernelSinS2Const = 8.33333333332248946124e-03;
+double KernelSinS1Const = -1.66666666666666324348e-01;
+double KernelSinHalfConst = 5.00000000000000000000e-01;
 
 asm double __kernel_sin(double x, double y, int iy)
 {
@@ -28,21 +30,21 @@ asm double __kernel_sin(double x, double y, int iy)
     beq     L_end
 L_big:
     fmul    f9, f8, f8
-    lfd     f0, lbl_8066C1D8
-    lfd     f10, lbl_8066C1E0
+    lfd     f0, KernelSinS6Const
+    lfd     f10, KernelSinS5Const
     cmpwi   r3, 0
-    lfd     f12, lbl_8066C1E8
+    lfd     f12, KernelSinS4Const
     fmul    f7, f9, f8
-    lfd     f11, lbl_8066C1F0
+    lfd     f11, KernelSinS3Const
     fmadd   f0, f9, f0, f10
-    lfd     f13, lbl_8066C1F8
+    lfd     f13, KernelSinS2Const
     fmadd   f0, f9, f0, f12
     fmadd   f0, f9, f0, f11
     fmadd   f0, f9, f0, f13
     beq     L_iy0
     fmul    f0, f7, f0
-    lfd     f1, lbl_8066C208
-    lfd     f13, lbl_8066C200
+    lfd     f1, KernelSinHalfConst
+    lfd     f13, KernelSinS1Const
     fmsub   f1, f2, f1, f0
     fmul    f13, f7, f13
     fmsub   f1, f9, f1, f2
@@ -50,7 +52,7 @@ L_big:
     fsub    f1, f8, f1
     b       L_end
 L_iy0:
-    lfd     f1, lbl_8066C200
+    lfd     f1, KernelSinS1Const
     fmadd   f1, f9, f0, f1
     fmadd   f1, f7, f1, f8
 L_end:
