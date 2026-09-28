@@ -475,6 +475,7 @@ Runtime.PPCEABI.H/sscanf.c:
 
 Runtime.PPCEABI.H/__svfscanf.c:
 	.text       start:0x801701B0 end:0x80170FB4
+	.rodata.1   start:0x8049C1E8 end:0x8049C20C
 
 Runtime.PPCEABI.H/__sccl.c:
 	.text       start:0x80170FB4 end:0x80171088

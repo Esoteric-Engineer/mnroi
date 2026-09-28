@@ -9,7 +9,12 @@ extern void __sccl(void);
 extern void* lbl_8066C3AC;
 extern void* lbl_8066C3B0;
 extern char lbl_8049C6A1[];
-extern char lbl_8049C1E8[];
+/* Newlib vfscanf.c's basefix (CFTKK basefix.3), this unit's only owned constant.
+The pragma keeps it in .rodata.1 instead of .sdata2/.rodata. */
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const short basefix[17] = {
+    10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+};
 
 asm int __svfscanf(void* fp, const char* fmt, void* ap)
 {
@@ -659,8 +664,8 @@ L_80170A3C:
     mr      r19, r27
     addic.  r26, r26, 0x1
     beq     L_80170B90
-    lis     r9, lbl_8049C1E8@ha
-    addi    r25, r9, lbl_8049C1E8@l
+    lis     r9, basefix@ha
+    addi    r25, r9, basefix@l
 L_80170A58:
     lwz     r9, 0x0(r28)
     lbz     r31, 0x0(r9)
