@@ -1,13 +1,17 @@
 typedef unsigned long u32;
 typedef struct OSContext OSContext;
 
-extern void* __DBInterface; // ac-decomp's Dolphin/db/db.c struct DBInterface* pointer; dtk auto-detected this .sbss slot's size (4) but not its scope
-extern unsigned int DBVerbose; // same file, the adjacent .sbss BOOL right after __DBInterface
 extern void __DBExceptionDestination(void); // same file, right after DBInit
-extern char lbl_804D1D28[0x18];
 extern void OSReport(const char* msg, ...);
 extern void OSDumpContext(OSContext* context);
 extern void PPCHalt(void);
+
+// OSReport's argument, under dtk's auto name because the asm below reaches it by that.
+char lbl_804D1D28[] = "DBExceptionDestination\n";
+
+// .sbss comes out in reverse declaration order: __DBInterface must precede DBVerbose.
+unsigned int DBVerbose;
+void* __DBInterface;
 
 // void DBInit(void) -- see ac-decomp's Dolphin/db/db.c:
 //   __DBInterface = OSPhysicalToCached(0x40);
