@@ -1554,6 +1554,7 @@ Dolphin/gx/GXSetTevIndirect.c:
 
 Dolphin/gx/GXSetIndTexMtx.c:
 	.text       start:0x8018EDE8 end:0x8018EF60
+	.sdata2     start:0x806706F8 end:0x80670710
 
 Dolphin/gx/GXSetIndTexCoordScale.c:
 	.text       start:0x8018EF60 end:0x8018F0A4

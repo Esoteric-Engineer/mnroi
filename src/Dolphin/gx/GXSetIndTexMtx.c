@@ -1,3 +1,8 @@
+// The unit owns GXBump.c's .sdata2 literal pool.
+// dtk's bake-sda rewrites every .sdata2 access into a fixed r13 offset and drops the relocation, which leaves the pool unreferenced and lets mwld dead-strip it.
+// force_active keeps it linked.
+#pragma force_active on
+
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
@@ -18,7 +23,6 @@ typedef struct {
 } __GXDataStruct;
 
 extern __GXDataStruct* const __GXData;
-extern const f32 lbl_806706F8;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -51,8 +55,8 @@ void GXSetIndTexMtx(int mtx_id, f32 offset[2][3], s8 scale_exp)
         break;
     }
 
-    mtx[0] = (int)(lbl_806706F8 * offset[0][0]) & 0x7FF;
-    mtx[1] = (int)(lbl_806706F8 * offset[1][0]) & 0x7FF;
+    mtx[0] = (int)(1024.0f * offset[0][0]) & 0x7FF;
+    mtx[1] = (int)(1024.0f * offset[1][0]) & 0x7FF;
     scale_exp += 0x11;
     reg = 0;
     SET_REG_FIELD(reg, 11, 0, mtx[0]);
@@ -62,8 +66,8 @@ void GXSetIndTexMtx(int mtx_id, f32 offset[2][3], s8 scale_exp)
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
 
-    mtx[2] = (int)(lbl_806706F8 * offset[0][1]) & 0x7FF;
-    mtx[3] = (int)(lbl_806706F8 * offset[1][1]) & 0x7FF;
+    mtx[2] = (int)(1024.0f * offset[0][1]) & 0x7FF;
+    mtx[3] = (int)(1024.0f * offset[1][1]) & 0x7FF;
     reg = 0;
     SET_REG_FIELD(reg, 11, 0, mtx[2]);
     SET_REG_FIELD(reg, 11, 11, mtx[3]);
@@ -72,8 +76,8 @@ void GXSetIndTexMtx(int mtx_id, f32 offset[2][3], s8 scale_exp)
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
 
-    mtx[4] = (int)(lbl_806706F8 * offset[0][2]) & 0x7FF;
-    mtx[5] = (int)(lbl_806706F8 * offset[1][2]) & 0x7FF;
+    mtx[4] = (int)(1024.0f * offset[0][2]) & 0x7FF;
+    mtx[5] = (int)(1024.0f * offset[1][2]) & 0x7FF;
     reg = 0;
     SET_REG_FIELD(reg, 11, 0, mtx[4]);
     SET_REG_FIELD(reg, 11, 11, mtx[5]);
@@ -84,3 +88,9 @@ void GXSetIndTexMtx(int mtx_id, f32 offset[2][3], s8 scale_exp)
 
     __GXData->bpSentNot = 0;
 }
+
+// The rest of GXBump.c's pool. Their readers (the other GXBump.c functions) are dead-stripped,
+// so nothing references these; they must be plain non-static named consts to survive to the link.
+const f32 GXIndTexScaleConst = 0.0009765625f;
+const double GXBumpZeroConst = 0.0;
+const double GXBumpU32ToDoubleMagic = 4503599627370496.0;
