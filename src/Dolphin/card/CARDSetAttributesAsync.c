@@ -14,7 +14,7 @@ typedef struct CARDDir {
 
 extern u8 lbl_8066CEFA;
 extern s32 __CARDGetStatusEx(s32 chan, s32 fileNo, CARDDir* dirent);
-extern s32 fn_80410F6C(s32 chan, s32 fileNo, CARDDir* dirent, CARDCallback callback);
+extern s32 __CARDSetStatusExAsync(s32 chan, s32 fileNo, CARDDir* dirent, CARDCallback callback);
 
 s32 CARDSetAttributesAsync(s32 chan, s32 fileNo, u8 attr, CARDCallback callback)
 {
@@ -49,5 +49,5 @@ s32 CARDSetAttributesAsync(s32 chan, s32 fileNo, u8 attr, CARDCallback callback)
     }
 
     dirent.permission = attr;
-    return fn_80410F6C(chan, fileNo, &dirent, callback);
+    return __CARDSetStatusExAsync(chan, fileNo, &dirent, callback);
 }
