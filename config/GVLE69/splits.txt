@@ -2033,6 +2033,7 @@ Runtime.PPCEABI.H/__ieee754_fmodf.c:
 
 Runtime.PPCEABI.H/__ieee754_logf.c:
 	.text       start:0x80400200 end:0x80400480
+	.sdata      start:0x8066CE48 end:0x8066CE90
 
 Runtime.PPCEABI.H/ceilf.c:
 	.text       start:0x80400480 end:0x80400544
