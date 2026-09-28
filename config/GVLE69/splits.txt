@@ -363,6 +363,9 @@ SN/fn_8016C3DC.c:
 SN/fn_8016C458.c:
 	.text       start:0x8016C458 end:0x8016C514
 
+Runtime.PPCEABI.H/ceil.c:
+	.text       start:0x8016C9A4 end:0x8016CAFC
+
 Runtime.PPCEABI.H/cos.c:
 	.text       start:0x8016CAFC end:0x8016CBDC
 
