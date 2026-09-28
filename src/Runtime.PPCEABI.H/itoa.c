@@ -1,4 +1,4 @@
-extern char lbl_804D02A8[];
+static char lower[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 extern void strrev(char* s);
 
 asm char* itoa(int value, char* str, int base)
@@ -14,9 +14,9 @@ asm char* itoa(int value, char* str, int base)
     bne     L_pos
     neg     r3, r3
 L_pos:
-    lis     r9, lbl_804D02A8@ha
+    lis     r9, lower@ha
     cmpwi   cr7, r0, 0
-    addi    r8, r9, lbl_804D02A8@l
+    addi    r8, r9, lower@l
     li      r10, 0
 L_loop:
     divwu   r0, r3, r5
