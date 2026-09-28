@@ -11,7 +11,9 @@ extern u32 __OSUnmaskInterrupts(u32 mask);
 extern void __ARHandler(int exception, OSContext* context);
 extern void __ARChecksize(void);
 
-extern char* lbl_8066CEC8;
+char lbl_804EEEF8[] = "<< Dolphin SDK - AR\trelease build: Apr 17 2003 12:33:55 (0x2301) >>";
+static char* __ARVersion = lbl_804EEEF8;
+
 extern ARCallback lbl_8066F9B8;
 extern u32 lbl_8066F9C8;
 extern u32 lbl_8066F9CC;
@@ -27,7 +29,7 @@ u32 ARInit(u32* stack_index_addr, u32 num_entries)
     if (lbl_8066F9D4 == 1) {
         return 0x4000;
     }
-    OSRegisterVersion(lbl_8066CEC8);
+    OSRegisterVersion(__ARVersion);
     enabled = OSDisableInterrupts();
     lbl_8066F9B8 = 0;
     __OSSetInterruptHandler(6, __ARHandler);

@@ -5,7 +5,9 @@ typedef unsigned long long u64;
 volatile u32 __AIRegs[8] : 0xCC006C00;
 u32 __OSBusClock : 0x800000F8;
 
-extern const char* lbl_8066C4B8;
+char lbl_804D2CA8[] = "<< Dolphin SDK - AI\trelease build: Apr 17 2003 12:33:54 (0x2301) >>";
+static char* __AIVersion = lbl_804D2CA8;
+
 extern int lbl_8066F418;
 extern void (*lbl_8066F408)(u32);
 extern void (*lbl_8066F40C)(void);
@@ -44,7 +46,7 @@ static inline void AISetStreamVolRight(u8 vol)
 void AIInit(u8* stack)
 {
     if (lbl_8066F418 != 1) {
-        OSRegisterVersion(lbl_8066C4B8);
+        OSRegisterVersion(__AIVersion);
         lbl_8066F420 = NS_TO_TICKS(31524);
         lbl_8066F428 = NS_TO_TICKS(42024);
         lbl_8066F430 = NS_TO_TICKS(42000);

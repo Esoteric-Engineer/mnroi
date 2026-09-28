@@ -1401,6 +1401,8 @@ Dolphin/ai/AIGetStreamVolRight.c:
 
 Dolphin/ai/AIInit.c:
 	.text       start:0x8018BA38 end:0x8018BBA4
+	.data       start:0x804D2CA8 end:0x804D2CEC
+	.sdata      start:0x8066C4B8 end:0x8066C4BC
 
 Dolphin/ai/__AISHandler.c:
 	.text       start:0x8018BBA4 end:0x8018BC20
@@ -2336,6 +2338,8 @@ Dolphin/ar/ARStartDMA.c:
 
 Dolphin/ar/ARInit.c:
 	.text       start:0x80404A3C end:0x80404B00
+	.data       start:0x804EEEF8 end:0x804EEF3C
+	.sdata      start:0x8066CEC8 end:0x8066CECC
 
 Dolphin/ar/ARGetBaseAddress.c:
 	.text       start:0x80404B00 end:0x80404B08
@@ -2363,6 +2367,8 @@ Dolphin/arq/__ARQInterruptServiceRoutine.c:
 
 Dolphin/arq/ARQInit.c:
 	.text       start:0x80406574 end:0x804065E4
+	.data       start:0x804EEF40 end:0x804EEF88
+	.sdata      start:0x8066CED0 end:0x8066CED4
 
 Dolphin/arq/ARQPostRequest.c:
 	.text       start:0x804065E4 end:0x80406740
@@ -2375,6 +2381,8 @@ Dolphin/ax/AXInit.c:
 
 Dolphin/ax/AXInitEx.c:
 	.text       start:0x8040684C end:0x80406898
+	.data       start:0x804EEF88 end:0x804EEFCC
+	.sdata      start:0x8066CED8 end:0x8066CEDC
 
 Dolphin/ax/AXQuit.c:
 	.text       start:0x80406898 end:0x804068CC
