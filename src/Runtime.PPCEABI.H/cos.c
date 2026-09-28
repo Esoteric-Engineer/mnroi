@@ -1,4 +1,5 @@
-extern double lbl_8066BFA4;
+/* s_cos.c's zero literal, +0x94 into the shared fdlibm .sdata pool (0x8066BFA4-0x8066C058); both ends 8-aligned, so it stands alone. */
+struct { double v; } CosZeroConst = {0.0};
 
 extern double __kernel_cos(double x, double y);
 extern double __kernel_sin(double x, double y, int iy);
@@ -11,7 +12,7 @@ asm double cos(double x)
     stwu    r1, -0x20(r1)
     mflr    r0
     stw     r0, 0x24(r1)
-    lfd     f2, lbl_8066BFA4+0x94
+    lfd     f2, CosZeroConst.v
     fmr     f0, f1
     stfd    f0, 0x18(r1)
     lwz     r9, 0x18(r1)

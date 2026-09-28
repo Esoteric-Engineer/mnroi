@@ -1,4 +1,4 @@
-extern double lbl_8066BFA4;
+extern double lbl_8066C040;
 
 extern double __kernel_cos(double x, double y);
 extern double __kernel_sin(double x, double y, int iy);
@@ -11,7 +11,7 @@ asm double sin(double x)
     stwu    r1, -0x20(r1)
     mflr    r0
     stw     r0, 0x24(r1)
-    lfd     f2, lbl_8066BFA4+0xAC
+    lfd     f2, lbl_8066C040+0x10
     fmr     f0, f1
     stfd    f0, 0x18(r1)
     lwz     r9, 0x18(r1)

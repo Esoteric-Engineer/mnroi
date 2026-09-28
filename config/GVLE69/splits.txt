@@ -375,6 +375,7 @@ Runtime.PPCEABI.H/ceil.c:
 
 Runtime.PPCEABI.H/cos.c:
 	.text       start:0x8016CAFC end:0x8016CBDC
+	.sdata      start:0x8066C038 end:0x8066C040
 
 Runtime.PPCEABI.H/fn_8016CBDC.c:
 	.text       start:0x8016CBDC end:0x8016CD38

@@ -1,4 +1,4 @@
-extern double lbl_8066BFA4;
+extern double lbl_8066C040;
 
 asm double fn_8016CBDC(double x)
 {
@@ -17,8 +17,8 @@ asm double fn_8016CBDC(double x)
     bgt     L_8016CC9C
     cmpwi   r10, 0x0
     bge     L_8016CC50
-    lfd     f0, lbl_8066BFA4+0x9C
-    lfd     f13, lbl_8066BFA4+0xA4
+    lfd     f0, lbl_8066C040
+    lfd     f13, lbl_8066C040+0x8
     fadd    f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_8016CD18
@@ -41,8 +41,8 @@ L_8016CC50:
     and     r9, r11, r5
     or.     r0, r9, r6
     beq     L_8016CD30
-    lfd     f0, lbl_8066BFA4+0x9C
-    lfd     f13, lbl_8066BFA4+0xA4
+    lfd     f0, lbl_8066C040
+    lfd     f13, lbl_8066C040+0x8
     fadd    f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_8016CD18
@@ -68,8 +68,8 @@ L_8016CCB4:
     srw     r5, r0, r9
     and.    r9, r6, r5
     beq     L_8016CD30
-    lfd     f0, lbl_8066BFA4+0x9C
-    lfd     f13, lbl_8066BFA4+0xA4
+    lfd     f0, lbl_8066C040
+    lfd     f13, lbl_8066C040+0x8
     fadd    f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_8016CD18
