@@ -5,7 +5,8 @@ Measures by address coverage, not by counting function symbols, so code that dtk
 `lbl_` labels (no `type:function` symbol) is counted too. Checks:
   - .text of both library clusters (ranges and per-library labels come from tools/sdk_scout.py);
   - the whole .init section (boot/runtime code: __start and friends);
-  - data sections: unsplit gaps inside the span that library data splits already cover;
+  - data: every library data run in DATA_RANGES (tools/sdk_scout.py, both clusters, all sections), split vs
+    unsplit, with the unsplit bytes attributed per library through the data rows in docs/sdk_queue.tsv;
   - build/<version>/report.json (if present): registered library units that don't fully match.
 
 Usage (from repo root): sdk_remaining.py [--version GVLE69] [--lo 0x.. --hi 0x..] [--list]
@@ -56,10 +57,10 @@ for line in (cfg / "symbols.txt").read_text().splitlines():
 syms.sort()
 
 
-def gaps(section, lo, hi):
-    """Address ranges in [lo, hi) that no split of `section` covers."""
+def uncovered(intervals, lo, hi):
+    """Address ranges in [lo, hi) that none of the (start, end) intervals cover."""
     out, pos = [], lo
-    for a, b, _ in splits.get(section, []):
+    for a, b in sorted(intervals):
         if b <= lo or a >= hi:
             continue
         if a > pos:
@@ -68,6 +69,11 @@ def gaps(section, lo, hi):
     if pos < hi:
         out.append((pos, hi))
     return out
+
+
+def gaps(section, lo, hi):
+    """Address ranges in [lo, hi) that no split of `section` covers."""
+    return uncovered([(a, b) for a, b, _ in splits.get(section, [])], lo, hi)
 
 
 def by_lib(lo, hi):
@@ -148,23 +154,70 @@ if init:
           f"bytes unsplit; functions: {', '.join(n for _, n, *_ in fs)}")
 
 # --- data ------------------------------------------------------------------------------------------
+# Measured against the mapped runs (sdk_scout.DATA_RANGES), not against the span of existing splits, so game
+# data between the clusters is excluded and unsplit library data before the first split is included.
+# unsplit = queued (covered by an open/stalled data row) + padding (no symbol covers it: alignment the linker
+# inserts between objects) + unqueued (library data with no row: the queue is stale or a run is mis-mapped).
+DATA_SECS = (".rodata", ".rodata.1", ".data", ".bss", ".sdata", ".sbss", ".sdata2")
+qrows = []  # (section, start, end, library, status) of every data row in the queue
+queue = Path("docs/sdk_queue.tsv")
+if queue.exists():
+    for line in queue.read_text().splitlines()[1:]:
+        c = line.split("\t")
+        m = re.match(r"data (\.\S+):", c[5]) if len(c) == 7 else None
+        if m:
+            a = int(c[0], 16)
+            qrows.append((m[1], a, a + int(c[1], 16), c[3], c[6]))
+
+
+def covered(intervals, lo, hi):
+    """Bytes of [lo, hi) that the (start, end) intervals cover."""
+    return (hi - lo) - sum(b - a for a, b in uncovered(intervals, lo, hi))
+
+
+def data_symbols(section):
+    return [(a, a + max(s, 1)) for a, _, sec, t, s in syms if sec == section]
+
+
 lib_units = {u for a, b, u in splits.get(".text", []) if any(lo <= a < hi for lo, hi in CLUSTERS)}
 lib_units |= {u for v in splits.values() for *_, u in v if u.startswith(("Dolphin/", "Runtime.PPCEABI.H/", "SN/"))}
-print("\nData: unsplit gaps inside the span library data splits cover (probably library data)")
-data_total = 0
-for sec in sorted(splits):
-    if sec in (".text", ".init"):
-        continue
-    own = [(a, b) for a, b, u in splits[sec] if u in lib_units]
-    if not own:
-        continue
-    g = gaps(sec, own[0][0], max(b for _, b in own))
-    n = sum(b - a for a, b in g)
-    data_total += n
-    print(f"  {sec:8} split {sum(b - a for a, b in own):6} bytes, gaps {n:6} bytes in {len(g)} runs"
-          + (f": {', '.join(f'{a:#x}+{b - a:#x}' for a, b in g)}" if args.list else ""))
-print(f"  total gaps: {data_total} bytes. Data of libraries outside that span (e.g. the second cluster's"
-      " AX/CARD/VM/OS .data/.bss) is not located by this script.")
+print("\nData: library data runs (DATA_RANGES in tools/sdk_scout.py; queued = open/stalled data rows)")
+tot = collections.Counter()
+lib_data = collections.Counter()
+unqueued_gaps = []
+for sec, lo, hi, cl in sorted(sdk_scout.DATA_RANGES, key=lambda r: (r[3], DATA_SECS.index(r[0]), r[1])):
+    split_n = covered([(a, b) for a, b, _ in splits.get(sec, [])], lo, hi)
+    open_rows = [r for r in qrows if r[0] == sec and r[4] in ("open", "stalled") and r[1] < hi and r[2] > lo]
+    sym = data_symbols(sec)
+    queued = pad = unq = 0
+    for a, b in gaps(sec, lo, hi):
+        queued += covered([(x, y) for _, x, y, _, _ in open_rows], a, b)
+        for _, x, y, lib, _ in open_rows:
+            lib_data[lib] += covered([(x, y)], a, b)
+        # the rest of the gap: padding where no symbol covers it, otherwise library data with no row
+        for x, y in uncovered([(x, y) for _, x, y, _, _ in open_rows], a, b):
+            s = covered(sym, x, y)
+            unq += s
+            pad += (y - x) - s
+            if s:
+                unqueued_gaps.append((sec, x, y))
+    tot.update(total=hi - lo, split=split_n, queued=queued, pad=pad, unqueued=unq)
+    print(f"  cluster {cl} {sec:9} {lo:#x}-{hi:#x}: {hi - lo:6} bytes, split {split_n:6}, unsplit {hi - lo - split_n:6}"
+          f" (queued {queued}, padding {pad}" + (f", NOT QUEUED {unq}" if unq else "") + ")")
+    if args.list:
+        for a, b in gaps(sec, lo, hi):
+            rows = [f"{x:#x}+{y - x:#x}" for _, x, y, _, _ in open_rows if x < b and y > a]
+            print(f"      gap {a:#x}-{b:#x} ({b - a} bytes){': rows ' + ', '.join(rows) if rows else ': padding/no row'}")
+unsplit_data = tot["queued"] + tot["unqueued"]
+print(f"  total: {tot['total']} bytes of library data, {tot['split']} split, {tot['total'] - tot['split']} unsplit"
+      f" ({tot['queued']} queued, {tot['unqueued']} not queued, {tot['pad']} padding)")
+print(f"  unsplit (queued) bytes by library: {dict(lib_data.most_common())}")
+for sec, a, b in unqueued_gaps:
+    print(f"  NOT QUEUED: {sec} {a:#x}-{b:#x} ({b - a} bytes): add data rows or fix the run")
+outside = [(sec, a, b, u) for sec in DATA_SECS for a, b, u in splits.get(sec, [])
+           if u in lib_units and not any(s == sec and lo <= a and b <= hi for s, lo, hi, _ in sdk_scout.DATA_RANGES)]
+for sec, a, b, u in outside:
+    print(f"  library split outside every run: {u} {sec} {a:#x}-{b:#x} (fix DATA_RANGES or the split)")
 
 # --- registered units that don't fully match -------------------------------------------------------
 report = Path("build") / args.version / "report.json"
@@ -180,12 +233,13 @@ if report.exists():
             bad.append((u["name"].removeprefix("main/"), code, data))
     cat = next(c["measures"] for c in json.loads(report.read_text())["categories"] if c["id"] == "sdk")
     code_all = int(cat["total_code"]) + sum(b - a for a, b in text_gaps) + init_unsplit
-    data_all = int(cat["total_data"]) + data_total
+    data_all = int(cat["total_data"]) + unsplit_data
     print(f"\nAll library code (registered + unsplit .text + unsplit .init): {cat['matched_code']} of {code_all} "
           f"bytes matched = {100 * int(cat['matched_code']) / code_all:.2f}% (progress says {cat['matched_code_percent']:.2f}%,"
           " registered units only)")
-    print(f"Library data: {cat['matched_data']} of at least {data_all} bytes matched = at most "
-          f"{100 * int(cat['matched_data']) / data_all:.2f}% (second-cluster data not located, so not counted)")
+    print(f"All library data (registered + unsplit, padding excluded): {cat['matched_data']} of {data_all} bytes"
+          f" matched = {100 * int(cat['matched_data']) / data_all:.2f}% (progress says {cat['matched_data_percent']:.2f}%,"
+          " registered units only)")
     print(f"\nRegistered library units not fully matched (report.json): {len(bad)}")
     for n, c, dd in bad:
         what = [f"{k} {x}/{y}" for k, (x, y) in (("code", c), ("data", dd)) if x != y]

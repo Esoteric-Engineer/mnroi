@@ -82,43 +82,80 @@ Confidence: `__ieee754_asinf` and `__ieee754_logf` are `exact` (CFTKK size plus 
 Between 0x80196884 and 0x803FF3B0, and from 0x804114EC on, the code is game or middleware. The earlier
 note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFatal/OSFont.
 
-## Second-cluster data (mapped 2026-09-27)
+## Library data runs (mapped 2026-09-27)
 
-Each data section holds one contiguous run of second-cluster data, in the same unit order as the code, with game
-data on both sides. Found from relocations in dtk's extracted original objects (`build/GVLE69/obj/`), plus a scan
-of `r13`-relative loads for `.sdata2`, whose relocations are baked away (see `baseline.md`). CFTKK's per-file
-sizes agree with every file-sized piece below. The same runs are in `DATA_RANGES` in `tools/sdk_scout.py`. Every
-unsplit object in them is a data row in `docs/sdk_queue.tsv` (one row per owning unit per section).
+Each data section holds one contiguous run of each cluster's data, in the same unit order as the code, with game
+data on both sides, as in `.text`: [game][cluster 1][game][cluster 2][game]. Found from relocations in dtk's
+extracted original objects (`build/GVLE69/obj/`), plus a scan of `r13`-relative loads for `.sdata2`, whose
+relocations are baked away (see `baseline.md`). CFTKK's per-file data sizes (`config/GQ4E78/splits.txt`) agree with
+nearly every file-sized piece, and they place most unreferenced pieces. The runs are `DATA_RANGES` in
+`tools/sdk_scout.py`, and `report-sdk-progress/sdk_remaining.py` measures library data against them. Every unsplit
+object in them is a data row in `docs/sdk_queue.tsv` (one row per owning unit per section). The rest of the unsplit
+bytes is padding: gaps between objects that no symbol covers (alignment the linker inserts), never queued.
 
-| Section | Run | Bytes | Split | Queued | Contents, in order |
-|---|---|---|---|---|---|
-| `.rodata` | none | 0 | 0 | 0 | The second cluster has no `.rodata` |
-| `.rodata.1` | 0x804BF448-0x804BF460 | 24 | 0 | 24 | `__floatdisf`'s three doubles, the only GCC-libc constants here |
-| `.data` | 0x804DCD98-0x804F2DBC | 90148 | 964 | 89184 | VM string, OSAlloc strings, OSFont tables, OSUtf.c tables (0x11240), mtx44.c `mtxUnit`, AR/ARQ/AX version strings, AXVPB cost tables (split) + padding, `__AXCompressorTable`, `axDspSlave`, DSP strings (partly split), CARD version string + `ResetFunctionInfo`, CARDMount tables, `CardData` (split), texPalette strings |
-| `.bss` | 0x8064EF50-0x80669114 | 106948 | 87892 | 19056 | OSFatal `FatalParam`/`FatalContext`, AXAlloc stacks, AXAux buffers (split), AXCL `__AXCommandList`, AXOut buffers (partly split), AXSPB `__AXStudio`, AXVPB pools, `__CARDBlock`, GXDisplayList (all split) |
-| `.sdata` | 0x8066CCC8-0x8066CF04 | 572 | 8 | 564 | libm scalar constants (asin, exp, asinf, expf, logf, ceilf), VM, `__OSCurrHeap`, OSFatal, OSFont `FontEncode`, mtx `Unit01` (split), AR/ARQ/AX/DSP/CARD version pointers, `axDspSlaveLength`, CARD vendor ID, permission mask and `next` |
-| `.sbss` | 0x8066F948-0x8066FB24 | 476 | 0 | 476 | VM (four files), OSAlloc, OSFont, AR, ARQ, AXAlloc, AXAux, AXCL, AXOut, AXSPB, AXVPB, AXProf, dsp.c, dsp_task.c, CARDBios, GXDisplayList |
-| `.sdata2` | 0x80670828-0x80670978 | 336 | 100 | 236 | libm arrays (exp, fmod2, expf, fmodf), OSFatal and OSFont (split), mtx.c, mtx44.c (partly split), vec.c, AXVPB (partly split), texPalette (split) |
+| Section | Cluster | Run | Bytes | Split | Queued | Contents, in order |
+|---|---|---|---|---|---|---|
+| `.rodata` | both | none | 0 | 0 | 0 | The whole section (0x804825A0-0x80482900) is GCC's constructor list (-1, 213 game constructors, 0), read by `__do_global_ctors`: linker-built, not queued |
+| `.rodata.1` | 1 | 0x8049C1C8-0x8049CB40 | 2424 | 0 | 2424 | `__cvt_fp2unsigned`'s 2^31, SN's "Unknown DVD cmd", then libc in link order: vfscanf `basefix`, mbtowc_r locale names, SN malloc-stub messages, asctime_r, gmtime_r, mktime, fftoa, vfprintf, vfiprintf, strtod, `_ctype_`, locale.c `lconv` and names, floor, fmod, log, log10, impure.c's "C", ungetc's message, the fopen message, SN's C++ runtime messages |
+| `.rodata.1` | 2 | 0x804BF448-0x804BF460 | 24 | 0 | 24 | `__floatdisf`'s three doubles, the only GCC-libc constants here |
+| `.data` | 1 | 0x804CFC20-0x804D398C | 15724 | 5672 | 10040 (+12 padding) | SN crt0 (`__start`) strings, the SN stub's pool, the second SN run's state, mbtowc_r tables, itoa digits, strtod `powersOf10`, `impure_data`, `__sfp`'s object, `__terminate_func`, the UART flag; OS.c (split), OSAlarm, OSAudioSystem, OSCache, OSContext, OSError, OSExec, OSInterrupt (split), OSLink, OSMemory, OSReset (split), OSThread, OSTime; SIBios (partly split), SISamplingRate, db, dvdfs, dvd (partly split), dvdqueue, dvderror, dvdFatal, fstload (split), VI (split), PAD and AI version strings, GXAttr/GXLight/GXTexture (split), GXTev, GXPixel, GXInit, GXMisc, GXFrameBuf render modes, GXPerf (split), EXIBios |
+| `.data` | 2 | 0x804DCD98-0x804F2DBC | 90148 | 964 | 89184 | VM string, OSAlloc strings, OSFont tables, OSUtf.c tables (0x11240), mtx44.c `mtxUnit`, AR/ARQ/AX version strings, AXVPB cost tables (split) + padding, `__AXCompressorTable`, `axDspSlave`, DSP strings (partly split), CARD version string + `ResetFunctionInfo`, CARDMount tables, `CardData` (split), texPalette strings |
+| `.bss` | 1 | 0x80573660-0x8057DCA0 | 42560 | 3256 | 39288 (+16 padding) | the two SN runs' buffers, fftoa and printf buffers, `_sn_iobf`/`_sn_stat_g`, `__main`'s flag; OS.c, OSError, OSRtc (split), OSThread `RunQueue`; SIBios (split, plus 0x20); dvd, dvdqueue, fstload, dvdlow, VI, PAD, GXInit (split); EXI `Ecb` |
+| `.bss` | 2 | 0x8064EF50-0x80669114 | 106948 | 87892 | 19056 | OSFatal `FatalParam`/`FatalContext`, AXAlloc stacks, AXAux buffers (split), AXCL `__AXCommandList`, AXOut buffers (partly split), AXSPB `__AXStudio`, AXVPB pools, `__CARDBlock`, GXDisplayList (all split) |
+| `.sdata` | 1 | 0x8066BFA8-0x8066C560 | 1464 | 60 | 1400 (+4 padding) | libm scalar constants, one block per function (acos .. scalbn), printf write state, strtod `maxExponent`, `__mb_cur_max`, `_impure_ptr`, `__sfp`'s pointer; OS.c (split), `__OSArenaLo`, OSError/OSExec (split), `SwitchThreadCallback`; SIBios, dvdfs, dvd, dvdqueue names, fstload (split), dvdlow `FirstRead`, VI, PAD, AI, GXAttr (split), GXTexture IDs, `__GXVersion`, EXIBios, `DBWrite`'s constant |
+| `.sdata` | 2 | 0x8066CCC8-0x8066CF04 | 572 | 8 | 564 | libm scalar constants (asin, exp, asinf, expf, logf, ceilf), VM, `__OSCurrHeap`, OSFatal, OSFont `FontEncode`, mtx `Unit01` (split), AR/ARQ/AX/DSP/CARD version pointers, `axDspSlaveLength`, CARD vendor ID, permission mask and `next` |
+| `.sbss` | 1 | 0x8066F1D0-0x8066F4D8 | 776 | 80 | 692 (+4 padding) | OS.c (split), OSAlarm, OSArena, OSExec, OSInterrupt, OSReboot, OSReset, OSResetSW, OSThread (split); SIBios, SISamplingRate, db, dvdfs, dvd, dvdFatal, fstload, dvdlow (partly split), vi, Pad, ai, GXInit, GXFifo, GXMisc, EXIBios, EXIUart, DebuggerDriver |
+| `.sbss` | 1 | 0x8066FB30-0x8066FB34 | 4 | 0 | 4 | libc `errno`, inside the common `.sbss` |
+| `.sbss` | 2 | 0x8066F948-0x8066FB24 | 476 | 0 | 476 | VM (four files), OSAlloc, OSFont, AR, ARQ, AXAlloc, AXAux, AXCL, AXOut, AXSPB, AXVPB, AXProf, dsp.c, dsp_task.c, CARDBios, GXDisplayList |
+| `.sdata2` | 1 | 0x8066FC20-0x806707C0 | 2976 | 204 | 2772 | libm tables (powf, atanf, rem_pio2, kernel_tanf, rem_pio2f, kernel_rem_pio2, kernel_rem_pio2f), gmtime_r `year_lengths`, the four libgcc `__clz_tab` copies (divdi3, moddi3, udivdi3, umoddi3); GXLight, GXTexture, GXBump, GXPixel, GXTransform, GXInit, GXFrameBuf (partly split) |
+| `.sdata2` | 2 | 0x80670828-0x80670978 | 336 | 100 | 236 | libm arrays (exp, fmod2, expf, fmodf), OSFatal and OSFont (split), mtx.c, mtx44.c (partly split), vec.c, AXVPB (partly split), texPalette (split) |
+
+The splits inside the runs add up to 98236 bytes, all of the library data in `report.json`, so no library data is
+split outside a run.
 
 - **Owners.** Each object goes to the SDK file whose code reads it. The per-function units of that file then share
   it: the row goes to the file's first unit, in link order, that reads something in the file's run of that section.
   Unreferenced data goes to the file its position gives, usually by extending the unit that already holds the
   file's data. Row notes give the file and the CFTKK names.
 - **Data-only files.** `OSUtf.c` (`.data`), `AXComp.c` (`__AXCompressorTable`), `DSPCode.c` (`axDspSlave`,
-  `axDspSlaveLength`) and `vec.c` (`.sdata2`) have no linked code. Their queue rows name the new unit to create.
-  CFTKK has OSUtf.c and vec.c as data-only too. The AX file names come from Wii-SDK decomps.
-- **Unreferenced data stays linked.** This includes the OSUtf tables, the `OSCheckHeap`/`OSDumpHeap` strings, the
-  `__DSP_add_task` and `TEXGetPalette` strings, and the constants of dead-stripped mtx/vec/AXVPB functions. mwld
-  strips unreferenced data, so a unit that defines them needs `#pragma force_active`.
+  `axDspSlaveLength`) and `vec.c` (`.sdata2`) have no linked code, nor do Newlib's `ctype_.c` (`_ctype_`,
+  `.rodata.1`) and `impure.c` (`impure_data` in `.data`, its "C" in `.rodata.1`, `_impure_ptr` in `.sdata`). Their
+  queue rows name the new unit to create. CFTKK has OSUtf.c, vec.c and impure.c as data-only too. The AX file names
+  come from Wii-SDK decomps.
+- **Unreferenced data stays linked.** This includes the OSUtf tables, the `OSCheckHeap`/`OSDumpHeap`,
+  `OSCheckAlarmQueue`, `OSCheckActiveThreads` and `OSLink`/`OSUnlink` strings, `DVDDumpWaitingQueue`'s names, the
+  dvdFatal messages, the SI and EXI device-type names, GXMisc's Z16 messages, the `__DSP_add_task` and
+  `TEXGetPalette` strings, and the constants of dead-stripped mtx/vec/AXVPB/GXLight/GXPixel functions. mwld strips
+  unreferenced data, so a unit that defines them needs `#pragma force_active`.
+- **Cluster-1 identities the data shows:**
+  - `__start`'s own `.data` (SN crt0's "Waiting for SN Debugger" and libsn-version strings) links between the
+    game's data and the SN stub's. Its references to the starts of `.bss`, `.sdata` and `.sbss` are its memset
+    bounds, not data.
+  - The first SN run's `.data` is one pool, read in an order unrelated to `.text`. The second SN run's data follows
+    it in `.data` and `.bss`, after the runtime helpers, which have only one `.rodata.1` double.
+  - 0x8017A5CC-0x8017A800, which `LIBS` labels `os`, is not Dolphin OS: `fn_8017A5CC.c` is GCC's
+    `__default_terminate`/`terminate` (its `.data` word is `__terminate_func`), `fn_8017A620.c` is SN's UART write
+    with a one-time `InitializeUART`, and the units after it look like SN's `write`/`open` stubs. Their data sits
+    between libc's and OS.c's. The C++ runtime messages in `.rodata.1` go with `fn_8017A5CC.c`.
+  - SN's malloc stubs: `free.c` prints the 'malloc' message and `realloc.c` the 'free' one, so those two names look
+    shifted by one.
+  - `DBRead` and `DBQueryData` (`LIBS`: odenotstub) read the same `.sbss` words as OdemuExi2's `DBInitComm`,
+    interleaved, so they are one TU (DebuggerDriver.c), not the no-op odenotstub.c.
+  - The units named `DVDLowSetCoverCallback`/`DVDLowSetResetCoverCallback` (0x80187DB0/0x80187DF4) sit inside vi.c's
+    code and set two vi.c `.sbss` words: probably vi.c's `VISetPreRetraceCallback`/`VISetPostRetraceCallback`.
+  - dvdlow.c's `.sbss` straddles `DVDLowReset.c`'s split, so the part after it can only go to `DVDLowReset.c`.
 - **Next to the run, not in it:**
+  - `.rodata` is the constructor list (see the table).
+  - The game's last `.bss` object is the first 0x1100 bytes of dtk's `lbl_80572560`. SN's `.bss` starts at +0x1100,
+    the first address SN code reads; only game code reads the start.
   - `.data` 0x804DCD84-0x804DCD98 holds two zero-terminated function tables, both empty: the constructor list
     `lbl_804DCD84` (8 bytes) and the destructor list `lbl_804DCD8C` (0xC). They sit between game data and VM's
     string. The first-cluster OS unit `fn_801813D4.c` (`__init_cpp`/`exit` shape) reads them. They are
     linker-built `.ctors`/`.dtors`, not a file's data, and no unit can claim them in link order. Not queued.
   - The `.bss` from 0x80669118 is common `.bss` (see `common_bss.md`), not second-cluster data: all three game
     code runs reference it.
-  - The `.sbss` from 0x8066FB24 is common `.sbss` in the same way. It also holds the first cluster's libc `errno`
-    (`lbl_8066FB30`, read by `_close_r`, `_read_r`, ...), which a first-cluster row has to claim as `common`.
+  - The `.sbss` from 0x8066FB24 is common `.sbss` in the same way. Only libc's `errno` (`lbl_8066FB30`, read by
+    `_close_r`, `_read_r`, ...) in it is library data: its row claims it as `common`.
   - `.sdata2` 0x80670978-0x80670980 is 8 zero bytes at the section end, probably its 32-byte end padding.
 
 ## Not found yet
@@ -145,17 +182,15 @@ unsplit object in them is a data row in `docs/sdk_queue.tsv` (one row per owning
   `fn_801796B8` lone-`blr` unit; that unit's `force_active` entry is gone, since the merged function has a real
   caller. See the zero-word rule in `docs/matching_notes.md`. 0x80407958 is split and matched as `AXSetCompressor`
   (`Dolphin/ax/AXSetCompressor.c`); it is the AX compressor setter, absent from CFTKK because CFTKK dead-stripped it.
-- Data: on 2026-09-24 the unsplit gaps inside the library data span were small (`.data` 7136, `.bss` 2600, `.sbss`
-  300, `.sdata` 216, `.sdata2` 132 bytes) and probably library data. Part of the second cluster's data has now been
-  split: AX `.data` 0x804EEFD0 and `.bss` 0x8064F340-0x80668900, DSP `.data` 0x804F29C0, CARD `.data` 0x804F2C20 and
-  `.bss` 0x80668900, GX display list `.bss` 0x80668B40, MTX `.sdata` 0x8066CEC0, and `.sdata2` for Halt/ReadFont,
-  C_MTXOrtho, AX and TEXGet. The rest of the second cluster's data is mapped and queued (see "Second-cluster
-  data"). Now that
-  the span runs into the second cluster, it also covers game data between the clusters. By 2026-09-27 the gap
-  figure had grown to 1016548 bytes, and most of that is two runs that are mainly game data: `.data`
-  0x804D3880+0x1B750 and `.bss` 0x8057DBE0+0xD1760, which starts with EXI `Ecb`. The rest (about 46 KB) is probably
-  library data. `sdk_remaining.py`'s "at least" data total now includes game data, so it overstates the library
-  data. Its "at most" percentage is still an upper bound.
+- Data (2026-09-27): both clusters' data is mapped, run by run and section by section (see "Library data runs").
+  The runs hold 264432 bytes of library data: 98236 split, 166160 queued as data rows and 36 of padding. The
+  first cluster has 65928 bytes, 9272 of them split. The second has 198504 bytes, 88964 of them split: AX `.data`
+  0x804EEFD0 and `.bss` 0x8064F340-0x80668900, DSP `.data` 0x804F29C0, CARD `.data` 0x804F2C20 and `.bss` 0x80668900,
+  GX display list `.bss` 0x80668B40, MTX `.sdata` 0x8066CEC0, and `.sdata2` for Halt/ReadFont, C_MTXOrtho, AX and
+  TEXGet. The two big unsplit blocks the old span measure reported, `.data` 0x804D3880+0x1B750 and `.bss`
+  0x8057DBE0+0xD1760, are EXIBios.c's data (0x10C and 0xC0) followed by game data. `sdk_remaining.py` now measures
+  library data against the runs, so it no longer counts game data between the clusters and does count library data
+  before the first split.
 
 ## Work queue
 
@@ -164,8 +199,8 @@ second cluster (0x803FF3B0-0x804114EC: libm/libc, VM, OS, MTX, AR, ARQ, AX, DSP,
 texPalette), with a library, a proposed
 name and a confidence. Second-cluster names and evidence come from `docs/sdk_scout_findings.md`; an
 `exact` row there needs an equal-size same-name function in CFTKK or ac-decomp (or, for the `*Init`
-functions, the `__XXVersion` pointer load), otherwise it is `guess`. It also has data rows for the second cluster's
-unsplit data (see "Second-cluster data"): `name` is the owning unit, and `notes` starts with `data <section>:`.
+functions, the `__XXVersion` pointer load), otherwise it is `guess`. It also has data rows for both clusters'
+unsplit data (see "Library data runs"): `name` is the owning unit, and `notes` starts with `data <section>:`.
 See the `decomp-next` skill for how both kinds are used.
 
 Hand-added rows that the `queue` command keeps but would not generate:

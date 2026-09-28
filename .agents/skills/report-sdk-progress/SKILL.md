@@ -26,7 +26,13 @@ compiler runtime and the SN Systems ProDG debug stub (see `docs/sdk_libraries.md
      `symbols.txt` before it can be split;
    - named unsplit functions and named labels (e.g. `__cvt_fp2unsigned`);
    - unsplit `.init` (`__start` and its helpers);
-   - unsplit data gaps inside the address span that library data splits already cover;
+   - library data **by run**: every run in `DATA_RANGES` (`tools/sdk_scout.py`; both clusters, every
+     data section, mapped in "Library data runs" in `docs/sdk_libraries.md`) with its split and
+     unsplit bytes. Unsplit bytes are *queued* (covered by an `open`/`stalled` data row), *padding*
+     (no symbol covers them: alignment gaps the linker inserts, never queued) or *not queued*
+     (library data with no row, printed as `NOT QUEUED`). Queued bytes are also summed per library
+     from the rows. A library unit's data split outside every run is printed too, since it means a
+     run is mis-mapped;
    - the whole-library code and data percentages (the correct denominator for "how far along");
    - every registered library unit that doesn't fully match, code **or** data, from `report.json`.
      Cross-check against the `NonMatching` objects in `configure.py`.
@@ -35,8 +41,11 @@ compiler runtime and the SN Systems ProDG debug stub (see `docs/sdk_libraries.md
    `open`/`matched`/`stalled`/`wrong-name`/`not-sdk`, how many `open` rows are `unidentified`, and how
    many are `libc` or `sn`. Hand-added rows cover label-only regions, `.init` (library `init`) and a
    `stalled` row per registered `NonMatching` function (see "Work queue" in `docs/sdk_libraries.md`).
+   Data rows (`notes` start with `data <section>:`, one per owning unit per section) are counted
+   apart: `grep -P '\tdata \.' docs/sdk_queue.tsv | cut -f4,5,7 | sort | uniq -c`.
    If the queue looks stale (e.g. a function unsplit in step 2 has no row), run
    `python3 tools/sdk_scout.py queue` before trusting it. It keeps hand-added rows and statuses.
+   It never touches data rows; `NOT QUEUED` data in step 2 needs rows added by hand.
 4. **Boundaries.** `docs/sdk_libraries.md` records every library range: the first cluster
    0x80168770-0x80196884 (SN stub, runtime, libc, OS, ... OdemuExi2) and the second cluster
    0x803FF3B0-0x804114EC (libm/libc, VM, OS, MTX, AR, ARQ, AX, DSP, CARD, GX display lists,
@@ -49,8 +58,9 @@ compiler runtime and the SN Systems ProDG debug stub (see `docs/sdk_libraries.md
    - registered units not fully matched (count and list, code vs data);
    - unsplit `.text` bytes per library, the label-only runs, named unsplit symbols, anonymous count;
    - unsplit `.init`;
-   - data gaps, and whether the second cluster's data has been located (the script can't do this);
-   - the queue summary;
+   - library data: split vs unsplit bytes per run and in total, queued bytes per library, padding,
+     and any `NOT QUEUED` bytes or splits outside a run;
+   - the queue summary, with the data rows (`notes` starting `data <section>:`) counted separately;
    - a verdict.
 
 ## Verdict
@@ -65,15 +75,21 @@ runtime, `.init` and the SN debug stub (in scope since 2026-09-24):
 - the queue has no `open` or `stalled` rows, at any confidence and in any library (`sn` included).
   `unidentified` rows are unfinished work too. If you deliberately defer some, say which and why;
 - AR, ARQ, AX, DSP and CARD are registered or deliberately excluded;
-- data: no gaps in the library data span, and the second cluster's data has been located and split.
-  If `docs/sdk_libraries.md` doesn't record that it has, the verdict can't be "done".
+- data: every run in `DATA_RANGES` is split, i.e. its only unsplit bytes are padding, nothing is
+  `NOT QUEUED`, and no library split lies outside a run. The runs must cover both clusters in every
+  data section, as "Library data runs" in `docs/sdk_libraries.md` records.
 
 Only then is the project ready to move on to game code. Otherwise, say what remains.
 
 ## Caveats
 
 - Library ranges are approximate to the function; `LIBS` in `tools/sdk_scout.py` is the source.
-- The data figure is a floor: only gaps *between* already-split library data are counted.
+- The data figures are only as good as the runs in `DATA_RANGES`. They were mapped from relocations and
+  `r13` loads, but a few run edges next to game data rest on position (noted in `docs/sdk_libraries.md`).
+  Linker-built tables are outside every run and never counted: the GCC constructor list (all of
+  `.rodata`) and the empty `.ctors`/`.dtors` lists at `.data` 0x804DCD84.
+- The per-library data split follows the queue rows' `library`, i.e. `LIBS`. Where `LIBS` is wrong
+  (0x8017A5CC-0x8017A800 is GCC's C++ runtime and SN syscall stubs, labelled `os`), so is the split.
 - "Matched" means byte-identical, not decompiled to C. Many units (most of `Runtime.PPCEABI.H`)
   are `nofralloc` asm transcriptions. That doesn't block the verdict, but mention it if asked about
   "decompiled".

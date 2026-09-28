@@ -69,14 +69,21 @@ LIBS = [
     (0x80411408, 0x804114EC, "texpalette", None),
 ]
 # (section, start, end, cluster): each library cluster's contiguous run of every data section, i.e. the data
-# its units own, with the game data on either side excluded. Mapped in docs/sdk_libraries.md ("Second-cluster
-# data"); keep the two in sync. Cluster 1's runs are not mapped yet. The second cluster has no .rodata.
+# its units own, with the game data on either side excluded. Mapped in docs/sdk_libraries.md ("Library data
+# runs"); keep the two in sync. Neither cluster has .rodata: that section is the linker's constructor list.
 DATA_RANGES = [
+    (".rodata.1", 0x8049C1C8, 0x8049CB40, 1),  # __cvt_fp2unsigned's double .. SN's C++ runtime strings
     (".rodata.1", 0x804BF448, 0x804BF460, 2),  # __floatdisf's constants only
+    (".data", 0x804CFC20, 0x804D398C, 1),  # __start's strings, SN .. EXIBios
     (".data", 0x804DCD98, 0x804F2DBC, 2),  # VM string .. texPalette strings
+    (".bss", 0x80573660, 0x8057DCA0, 1),  # SN buffers .. EXI's Ecb
     (".bss", 0x8064EF50, 0x80669114, 2),  # OSFatal context .. GXDisplayList
+    (".sdata", 0x8066BFA8, 0x8066C560, 1),  # libm constants .. DBWrite's
     (".sdata", 0x8066CCC8, 0x8066CF04, 2),  # libm constants .. CARDUnlock's next
+    (".sbss", 0x8066F1D0, 0x8066F4D8, 1),  # OS .. OdemuExi2
     (".sbss", 0x8066F948, 0x8066FB24, 2),  # VM .. GXDisplayList
+    (".sbss", 0x8066FB30, 0x8066FB34, 1),  # libc errno, inside the common .sbss
+    (".sdata2", 0x8066FC20, 0x806707C0, 1),  # libm tables, libgcc __clz_tab copies, GX
     (".sdata2", 0x80670828, 0x80670978, 2),  # libm arrays .. TEXGet
 ]
 HW = {0x0: "CP", 0x1000: "PE", 0x2000: "VI", 0x3000: "PI", 0x4000: "MI", 0x5000: "DSP/AR",
