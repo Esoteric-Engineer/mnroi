@@ -870,7 +870,7 @@ addr	size	name	library	confidence	notes	status
 0x806706E8	0x10	Dolphin/gx/__GXGetTexTileShift.c	gx	guess	data .sdata2: lbl_806706E8, read only by the GXTexture.c unit (0x8018E2B8). Extends __GXGetTexTileShift.c's .sdata2 end, which holds the rest of GXTexture.c's (CFTKK size 0x38 = 0x806706C0-0x806706F8); GXTexture.c could own it instead.	open
 0x806706F8	0x18	Dolphin/gx/GXSetIndTexMtx.c	gx	known	data .sdata2: lbl_806706F8, GXBump.c's constants (CFTKK size 0x18), read only by GXSetIndTexMtx.	open
 0x80670748	0x28	Dolphin/gx/GXSetFog.c	gx	guess	data .sdata2: lbl_80670748, the rest of GXPixel.c's constants, unreferenced. Extends GXSetFog.c's .sdata2 end to 0x80670770 (CFTKK GXPixel.c .sdata2 0x60).	open
-0x80670770	0x8	Dolphin/gx/GXTransform.c	gx	known	data .sdata2: lbl_80670770, read only by the GXTransform.c unit (0x8018FF90). GXTransform.c's .sdata2 is 0x18 in CFTKK = this, GXSetViewport.c's split and the 0x80670780 row.	open
+0x80670770	0x8	Dolphin/gx/GXTransform.c	gx	known	data .sdata2: 0.0f (GXSetProjectionv's bare literal) + the unreferenced 1.0f (GXProjectWConst); unit claims 0x80670770-0x80670778 with #pragma force_active on. 100% data, main.dol OK	matched
 0x80670780	0x8	Dolphin/gx/GXSetViewport.c	gx	guess	data .sdata2: lbl_80670780, unreferenced: the rest of GXTransform.c's .sdata2. Extends GXSetViewport.c's .sdata2 end to GXInit.c's split.	open
 0x80670828	0x30	Runtime.PPCEABI.H/__ieee754_exp.c	libc	known	data .sdata2: lbl_80670828/38/48 = e_exp.c's halF, ln2HI, ln2LO (double[2] each), read only by __ieee754_exp	open
 0x80670858	0x10	Runtime.PPCEABI.H/__ieee754_fmod2.c	libc	known	data .sdata2: lbl_80670858 = Zero[] (double[2]), read only by __ieee754_fmod2	open

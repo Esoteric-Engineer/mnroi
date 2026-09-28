@@ -1,3 +1,6 @@
+// The unit owns its .sdata2 literal pool (0.0, and the trailing 1.0 that the rest of the original GXTransform.c unit uses.
+#pragma force_active on
+
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
@@ -74,11 +77,9 @@ static inline void CopyProjPS(const register f32 src[6], register f32 dst[6])
     }
 }
 
-extern const f32 lbl_80670770;
-
 void GXSetProjectionv(f32* ptr)
 {
-    u32 type = (lbl_80670770 == ptr[0]) ? 0 : 1;
+    u32 type = (0.0f == ptr[0]) ? 0 : 1;
     u32 reg;
 
     __GXData->projType = type;
@@ -91,3 +92,6 @@ void GXSetProjectionv(f32* ptr)
     GXWGFifo.u32 = __GXData->projType;
     __GXData->bpSentNot = 1;
 }
+
+// Unreferenced tail of the translation unit's literal pool (GXProject's `wc = 1.0f`).
+const f32 GXProjectWConst = 1.0f;
