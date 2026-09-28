@@ -38,7 +38,7 @@ exact size/order runs against CFTKK-Decomp and ac-decomp plus callee checks. Ful
 
 | Range | Library | Notes |
 |---|---|---|
-| 0x803FF3B0-0x80400544 | libc (Newlib libm, 2nd cluster) | 8 functions (not 9; sizes sum to 0x1194): `__ieee754_asin` 0x803FF3B0, `__ieee754_exp` 0x803FF60C, `__ieee754_fmod` 0x803FF888, `__ieee754_asinf` 0x803FFBE0, `__ieee754_expf` 0x803FFE0C, `__ieee754_fmodf` 0x80400038, `__ieee754_logf` 0x80400200, `ceilf` 0x80400480. Same fdlibm/Newlib code and MWCC code style as the first-cluster libm; they sit directly in front of the second libc cluster. See "Second-cluster libm" below |
+| 0x803FF3B0-0x80400544 | libc (Newlib libm, 2nd cluster) | 8 functions (not 9; sizes sum to 0x1194): `__ieee754_asin` 0x803FF3B0, `__ieee754_exp` 0x803FF60C, `__ieee754_fmod2` 0x803FF888, `__ieee754_asinf` 0x803FFBE0, `__ieee754_expf` 0x803FFE0C, `__ieee754_fmodf` 0x80400038, `__ieee754_logf` 0x80400200, `ceilf` 0x80400480. Same fdlibm/Newlib code and MWCC code style as the first-cluster libm; they sit directly in front of the second libc cluster. See "Second-cluster libm" below |
 | 0x80400544-0x804009C4 | libc (GCC Newlib, 2nd cluster) | `tolower`, `fclose`, `fprintf`, `printf`, `snprintf`, `vprintf`, `strncat`, `__floatdisf`. GCC-compiled, as in CFTKK |
 | 0x804009C4-0x80401EB0 | vm | VM + VMBASE (ARAM virtual memory). `VMInit` 0x804009C4; VMBASE 0x8040130C-0x80401EB0 follows CFTKK-Decomp's VMBASE in order, mostly at equal sizes (boundaries set 2026-09-24). `__VMBASEISIServiceExceptionPrep` starts at 0x80401DFC (the ISI handler's rfi target), not 0x80401E00 |
 | 0x80401EB0-0x80401F48 | runtime | `__save_gpr` / `__restore_gpr` |
@@ -70,13 +70,14 @@ Verdict: **all 8 are Newlib/fdlibm libm, i.e. SDK-side libc, not game code and n
   `ceilf` is 0xD8 there vs our 0xC4, the usual version drift.
 - The neighbours are not libm: before 0x803FF3B0 is GCC-style game code (frame pointer r31), after 0x80400544 is the
   second libc cluster. So the libm pieces were linked in between, apart from the first-cluster libm (0x8016xxxx).
-- `__ieee754_fmod` 0x803FF888 (0x358) is a **second copy** of the first-cluster `__ieee754_fmod` 0x80177558 (0x35C);
-  the copies differ by 4 bytes, so they were not built identically. Keep both.
+- `__ieee754_fmod2` 0x803FF888 (0x358) is a **second copy** of the first-cluster `__ieee754_fmod` 0x80177558 (0x35C),
+  named with a `2` suffix like `tolower2`. The code is identical except for the `Zero[]` table: `.sdata2`
+  (`lbl_80670858`, one `subi r13`) here, `.data` (`lbl_8049C808`, `lis`/`addi`) in the first copy, hence the 4 bytes.
 - No caller-side or hardware hints of middleware; nothing is game code, so no row is `not-sdk`.
 
 Confidence: `__ieee754_asinf` and `__ieee754_logf` are `exact` (CFTKK size plus code shape). The rest are `guess`
-(code shape and constants match Newlib, no CFTKK counterpart). The queue rows are `open`, library `libc`. Nothing was
-split or renamed. The double sqrt at 0x8016C790 that `__ieee754_asin` calls is split and matched as `__ieee754_sqrt` (fdlibm `e_sqrt.c`). `sdk_scout.py`'s `LIBS` now labels this range `libc`; `queue` now scans the whole second cluster (RANGES starts at 0x803FF3B0), and the rows here were added by hand and survive a refresh.
+(code shape and constants match Newlib, no CFTKK counterpart). All 8 are now split and matched as `nofralloc` asm
+(units `Runtime.PPCEABI.H/<name>.c`), which confirms the names. The double sqrt at 0x8016C790 that `__ieee754_asin` calls is split and matched as `__ieee754_sqrt` (fdlibm `e_sqrt.c`). `sdk_scout.py`'s `LIBS` now labels this range `libc`; `queue` now scans the whole second cluster (RANGES starts at 0x803FF3B0), and the rows here were added by hand and survive a refresh.
 
 Between 0x80196884 and 0x803FF3B0, and from 0x804114EC on, the code is game or middleware. The earlier
 note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFatal/OSFont.

@@ -363,6 +363,9 @@ SN/fn_8016C3DC.c:
 SN/fn_8016C458.c:
 	.text       start:0x8016C458 end:0x8016C514
 
+Runtime.PPCEABI.H/__ieee754_acos.c:
+	.text       start:0x8016C514 end:0x8016C790
+
 Runtime.PPCEABI.H/__ieee754_sqrt.c:
 	.text       start:0x8016C790 end:0x8016C9A4
 
@@ -1969,6 +1972,15 @@ Dolphin/OdemuExi2/DBGReadMailbox.c:
 
 Dolphin/OdemuExi2/DBGEXIImm.c:
 	.text       start:0x801965EC end:0x80196884
+
+Runtime.PPCEABI.H/__ieee754_asin.c:
+	.text       start:0x803FF3B0 end:0x803FF60C
+
+Runtime.PPCEABI.H/__ieee754_exp.c:
+	.text       start:0x803FF60C end:0x803FF888
+
+Runtime.PPCEABI.H/__ieee754_fmod2.c:
+	.text       start:0x803FF888 end:0x803FFBE0
 
 Runtime.PPCEABI.H/__ieee754_asinf.c:
 	.text       start:0x803FFBE0 end:0x803FFE0C

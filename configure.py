@@ -292,6 +292,7 @@ config.libs = [
         "progress_category": "sdk",  # str | List[str]
         "objects": [
             Object(Matching, "Runtime.PPCEABI.H/__va_arg.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__ieee754_acos.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_sqrt.c"),
             Object(Matching, "Runtime.PPCEABI.H/ceil.c"),
             Object(Matching, "Runtime.PPCEABI.H/cos.c"),
@@ -376,6 +377,9 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/strtol.c"),
             Object(Matching, "Runtime.PPCEABI.H/strtod.c"),
             Object(Matching, "Runtime.PPCEABI.H/tolower.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__ieee754_asin.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__ieee754_exp.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__ieee754_fmod2.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_asinf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_expf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_fmodf.c"),
