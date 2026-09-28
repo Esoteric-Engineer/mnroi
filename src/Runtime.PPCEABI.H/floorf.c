@@ -1,5 +1,5 @@
-extern float lbl_8066C368;
-extern float lbl_8066C36C;
+float FloorfHugeConst = 1.0e30f;
+struct { float v; } FloorfZeroConst = {0.0f};
 
 asm float floorf(float x)
 {
@@ -16,8 +16,8 @@ asm float floorf(float x)
     bgt     L_8016FE18
     cmpwi   r9, 0x0
     bge     L_8016FDD4
-    lfs     f0, lbl_8066C368
-    lfs     f13, lbl_8066C36C
+    lfs     f0, FloorfHugeConst
+    lfs     f13, FloorfZeroConst.v
     fadds   f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_8016FE28
@@ -36,8 +36,8 @@ L_8016FDD4:
     sraw    r10, r0, r9
     and.    r0, r11, r10
     beq     L_8016FE34
-    lfs     f0, lbl_8066C368
-    lfs     f13, lbl_8066C36C
+    lfs     f0, FloorfHugeConst
+    lfs     f13, FloorfZeroConst.v
     fadds   f0, f1, f0
     fcmpu   cr0, f0, f13
     ble     L_8016FE28

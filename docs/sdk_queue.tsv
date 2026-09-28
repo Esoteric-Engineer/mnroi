@@ -768,7 +768,7 @@ addr	size	name	library	confidence	notes	status
 0x8066C2C8	0x38	Runtime.PPCEABI.H/__ieee754_rem_pio2f.c	libc	known	data .sdata: lbl_8066C2C8..lbl_8066C2F8 (floats, one double at 0x8066C2E8; ef_rem_pio2.c scalars), read only by __ieee754_rem_pio2f. Its tables are .sdata2 0x8066FE44.	open
 0x8066C300	0x40	Runtime.PPCEABI.H/__kernel_rem_pio2.c	libc	known	data .sdata: lbl_8066C300..lbl_8066C338, 8 doubles (k_rem_pio2.c), read only by __kernel_rem_pio2.	open
 0x8066C340	0x28	Runtime.PPCEABI.H/__kernel_rem_pio2f.c	libc	known	data .sdata: lbl_8066C340..lbl_8066C360 (doubles at 0x8066C340/360, floats between; kf_rem_pio2.c), read only by __kernel_rem_pio2f.	open
-0x8066C368	0x8	Runtime.PPCEABI.H/floorf.c	libc	known	data .sdata: lbl_8066C368/36C, read only by floorf.	open
+0x8066C368	0x8	Runtime.PPCEABI.H/floorf.c	libc	known	data .sdata: FloorfHugeConst (1.0e30f), FloorfZeroConst (0.0f; sf_floor.c's huge and its (float)0.0 literal), read only by floorf. Both ends 8-aligned, so it splits out of dtk's auto .sdata unit on its own; the zero float needs the struct wrapper to stay out of .sbss	matched
 0x8066C370	0x28	Runtime.PPCEABI.H/scalbn.c	libc	known	data .sdata: lbl_8066C370..lbl_8066C388 (5 doubles, s_scalbn.c), read only by scalbn.	open
 0x8066C398	0x8	Runtime.PPCEABI.H/_vfwrite.c	libc	known	data .sdata: lbl_8066C398, lbl_8066C39C (= &lbl_8057C024), the float printf's write state (CFTKK cumulative_written/max_size/pch_pointer), read only by _vfwrite.	open
 0x8066C3A0	0x8	Runtime.PPCEABI.H/_vfiwrite.c	libc	known	data .sdata: lbl_8066C3A0, lbl_8066C3A4 (= &lbl_8057C0A4), the integer printf's write state, read only by _vfiwrite.	open
