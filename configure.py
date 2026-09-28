@@ -376,6 +376,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/strtod.c"),
             Object(Matching, "Runtime.PPCEABI.H/tolower.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_asinf.c"),
+            Object(Matching, "Runtime.PPCEABI.H/__ieee754_fmodf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__ieee754_logf.c"),
             Object(Matching, "Runtime.PPCEABI.H/ceilf.c"),
             Object(Matching, "Runtime.PPCEABI.H/tolower2.c"),
