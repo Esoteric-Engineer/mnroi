@@ -1,3 +1,27 @@
+#pragma force_active on
+
+const float AtanfAtanHi0 = 4.6364760399e-01; /* atan(0.5)hi 0x3eed6338 */
+const float AtanfAtanHi1 = 7.8539812565e-01; /* atan(1.0)hi 0x3f490fda */
+const float AtanfAtanHi2 = 9.8279368877e-01; /* atan(1.5)hi 0x3f7b985e */
+const float AtanfAtanHi3 = 1.5707962513e+00; /* atan(inf)hi 0x3fc90fda */
+
+const float AtanfAtanLo0 = 5.0121582440e-09; /* atan(0.5)lo 0x31ac3769 */
+const float AtanfAtanLo1 = 3.7748947079e-08; /* atan(1.0)lo 0x33222168 */
+const float AtanfAtanLo2 = 3.4473217170e-08; /* atan(1.5)lo 0x33140fb4 */
+const float AtanfAtanLo3 = 7.5497894159e-08; /* atan(inf)lo 0x33a22168 */
+
+const float AtanfAT0 = 3.3333334327e-01;  /* 0x3eaaaaab */
+const float AtanfAT1 = -2.0000000298e-01; /* 0xbe4ccccd */
+const float AtanfAT2 = 1.4285714924e-01;  /* 0x3e124925 */
+const float AtanfAT3 = -1.1111110449e-01; /* 0xbde38e38 */
+const float AtanfAT4 = 9.0908870101e-02;  /* 0x3dba2e6e */
+const float AtanfAT5 = -7.6918758452e-02; /* 0xbd9d8795 */
+const float AtanfAT6 = 6.6610731184e-02;  /* 0x3d886b35 */
+const float AtanfAT7 = -5.8335702866e-02; /* 0xbd6ef16b */
+const float AtanfAT8 = 4.9768779427e-02;  /* 0x3d4bda59 */
+const float AtanfAT9 = -3.6531571299e-02; /* 0xbd15a221 */
+const float AtanfAT10 = 1.6285819933e-02; /* 0x3c8569d7 */
+
 extern float AtanfHugeConst;
 extern float AtanfOneConst;
 extern float AtanfTwoConst;

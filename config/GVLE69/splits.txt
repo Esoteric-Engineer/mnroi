@@ -403,6 +403,7 @@ Runtime.PPCEABI.H/__ieee754_sqrtf.c:
 
 Runtime.PPCEABI.H/atanf.c:
 	.text       start:0x8016DA70 end:0x8016DC80
+	.sdata2     start:0x8066FC38 end:0x8066FC84
 
 Runtime.PPCEABI.H/cosf.c:
 	.text       start:0x8016DC80 end:0x8016DD5C
