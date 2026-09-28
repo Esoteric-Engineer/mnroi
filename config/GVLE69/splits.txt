@@ -2099,6 +2099,9 @@ Dolphin/vm/__VMBASEInitLockedPageTable.c:
 Dolphin/vm/__VMBASEInitReversePageTable.c:
 	.text       start:0x80401628 end:0x80401658
 
+Dolphin/vm/__VMBASEInvalidatePageTable.c:
+	.text       start:0x80401658 end:0x80401794
+
 Dolphin/vm/__VMBASEInvalidateLockedPageTable.c:
 	.text       start:0x80401794 end:0x8040186C
 
@@ -2680,6 +2683,9 @@ Dolphin/card/__CARDIsReadable.c:
 
 Dolphin/card/__CARDGetFileNo.c:
 	.text       start:0x8040E06C end:0x8040E1BC
+
+Dolphin/card/CARDFastOpen.c:
+	.text       start:0x8040E1BC end:0x8040E2C0
 
 Dolphin/card/CARDOpen.c:
 	.text       start:0x8040E2C0 end:0x8040E3DC
