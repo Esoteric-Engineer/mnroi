@@ -13,7 +13,7 @@ extern void VMBASEInit(void* swapPageCallback);
 extern void __VMAllocVirtualToARAMLUT(void);
 extern void __VMAllocARAMToVirtualLUT(void);
 extern void __VMAllocMRAMSwapSpace(void);
-extern void fn_80400AFC(void);
+extern void __VMSwapPageIn(void);
 void _savegpr_27(void);
 void _restgpr_27(void);
 
@@ -73,8 +73,8 @@ L_80400A68:
     ble     L_80400A74
     bl      PPCHalt
 L_80400A74:
-    lis     r3, fn_80400AFC@ha
-    addi    r3, r3, fn_80400AFC@l
+    lis     r3, __VMSwapPageIn@ha
+    addi    r3, r3, __VMSwapPageIn@l
     bl      VMBASEInit
     bl      __VMAllocVirtualToARAMLUT
     bl      __VMAllocARAMToVirtualLUT

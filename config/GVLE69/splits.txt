@@ -2021,6 +2021,9 @@ Dolphin/vm/VMGetARAMBase.c:
 Dolphin/vm/__VMAllocMRAMSwapSpace.c:
 	.text       start:0x80400ACC end:0x80400AFC
 
+Dolphin/vm/__VMSwapPageIn.c:
+	.text       start:0x80400AFC end:0x80400CEC
+
 Dolphin/vm/__VMGetPageToReplace.c:
 	.text       start:0x80400CEC end:0x80400D30
 

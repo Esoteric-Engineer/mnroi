@@ -1032,6 +1032,7 @@ config.libs = [
             Object(Matching, "Dolphin/vm/VMGetARAMSize.c"),
             Object(Matching, "Dolphin/vm/VMGetARAMBase.c"),
             Object(Matching, "Dolphin/vm/__VMAllocMRAMSwapSpace.c"),
+            Object(Matching, "Dolphin/vm/__VMSwapPageIn.c"),
             Object(Matching, "Dolphin/vm/__VMSetARAMPageAsDirty.c"),
             Object(Matching, "Dolphin/vm/__VMIsARAMPageDirty.c"),
             Object(Matching, "Dolphin/vm/__VMGetPageToReplace.c"),

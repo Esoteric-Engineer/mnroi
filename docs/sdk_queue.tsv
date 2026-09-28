@@ -388,7 +388,7 @@ addr	size	name	library	confidence	notes	status
 0x80400ABC	0x8	VMGetARAMSize	vm	exact	CFTKK 0x8; called by VMAlloc	matched
 0x80400AC4	0x8	VMGetARAMBase	vm	exact	CFTKK 0x8; called by VMAlloc	matched
 0x80400ACC	0x30	__VMAllocMRAMSwapSpace	vm	exact	CFTKK size run of 5	matched
-0x80400AFC	0x1F0	__VMSwapPageIn	vm	guess	CFTKK 0x1FC; calls __VMGetPageToReplace, VMBASE helpers; confirmed as the swap-page callback VMInit hands to VMBASEInit	open
+0x80400AFC	0x1F0	__VMSwapPageIn	vm	guess	CFTKK 0x1FC (ours 0x1F0); identity confirmed: VMBASE's swap-page callback installed by VMInit. Times the swap with OSGetTime/__div2i, picks a victim via __VMGetPageToReplace, writes it back with ARStartDMA when VMBASEIsPageDirty, pulls the faulting page in when __VMIsARAMPageDirty (else __VMMappingErrorAlert if no mapping), re-maps with VMBASESetPageTableEntry and calls the log-stats callback lbl_8066F958 with the elapsed microseconds. GCC output like the rest of vm, so matched as nofralloc asm generated from dtk's .s	matched
 0x80400CEC	0x44	__VMGetPageToReplace	vm	exact	CFTKK size run of 12	matched
 0x80400D30	0x1D0	__VMPageReplacementLRU	vm	exact	CFTKK size run of 12. Matched as nofralloc asm (GCC output, _savegpr_24 frame): ranks pages by PTE referenced/changed bits, R bit cleared as it goes	matched
 0x80400F00	0x94	__VMPageReplacementRandom	vm	exact	CFTKK size run of 12; nofralloc asm (GCC output), OSGetTick % __VMGetNumPagesInMRAM when lbl_8066CEA0 is 0, else the FIFO cursor lbl_8066F968; skips VMBASEIsPageLocked pages	matched
