@@ -1,5 +1,5 @@
 extern void fn_8017A608(void);
-extern void lbl_801796B4(int);
+extern void fn_801796B4(int);
 extern void* lbl_804D0670;
 
 asm void fn_8017A5CC(void)
@@ -40,6 +40,6 @@ asm void fn_8017A608(void)
     stw     r0, 12(r1)
     li      r3, 1
     crclr   6
-    bl      lbl_801796B4
+    bl      fn_801796B4
     // clang-format on
 }

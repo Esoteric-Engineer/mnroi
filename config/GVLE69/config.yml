@@ -15,7 +15,6 @@ force_active:
 - __ashldi3
 - __ashrdi3
 - __lshrdi3
-- fn_801796B8
 - __moddi3
 - __div2u
 - __mod2u

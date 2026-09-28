@@ -741,8 +741,8 @@ Runtime.PPCEABI.H/runtime.c:
 Runtime.PPCEABI.H/fn_80179138.c:
 	.text       start:0x80179138 end:0x801796B4
 
-Runtime.PPCEABI.H/fn_801796B8.c:
-	.text       start:0x801796B8 end:0x801796BC
+Runtime.PPCEABI.H/fn_801796B4.c:
+	.text       start:0x801796B4 end:0x801796BC
 
 Runtime.PPCEABI.H/lshrdi3.c:
 	.text       start:0x801796BC end:0x801796FC

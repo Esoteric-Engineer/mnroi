@@ -99,9 +99,13 @@ note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFata
 
 - `.init` (0x80003100-0x800034A0, 928 bytes) is boot/runtime code: `__start` and its six helpers are split and
   matched (library `init`).
-- Remaining `.text` (2026-09-27, 4 bytes): 0x801796B4 is a zero word between `fn_80179138` and `fn_801796B8`
-  (padding, not code). 0x80407958 is now split and matched as `AXSetCompressor` (`Dolphin/ax/AXSetCompressor.c`);
-  it is the AX compressor setter, absent from CFTKK because CFTKK dead-stripped it.
+- Remaining `.text` (2026-09-27): none, in either cluster. The last 4 bytes, the zero word at 0x801796B4, were
+  code and not padding: `fn_8017A608` (`li r3, 1` / `crclr 6` / `bl`, no epilogue) calls it, so it is a `noreturn`
+  stub whose illegal zero word halts the CPU, with the following `blr` as its epilogue. It is now one 8-byte
+  function, `Runtime.PPCEABI.H/fn_801796B4.c` (.text 0x801796B4-0x801796BC), which absorbed the former
+  `fn_801796B8` lone-`blr` unit; that unit's `force_active` entry is gone, since the merged function has a real
+  caller. See the zero-word rule in `docs/matching_notes.md`. 0x80407958 is split and matched as `AXSetCompressor`
+  (`Dolphin/ax/AXSetCompressor.c`); it is the AX compressor setter, absent from CFTKK because CFTKK dead-stripped it.
 - Data: on 2026-09-24 the unsplit gaps inside the library data span were small (`.data` 7136, `.bss` 2600, `.sbss`
   300, `.sdata` 216, `.sdata2` 132 bytes) and probably library data. Part of the second cluster's data has now been
   split: AX `.data` 0x804EEFD0 and `.bss` 0x8064F340-0x80668900, DSP `.data` 0x804F29C0, CARD `.data` 0x804F2C20 and
