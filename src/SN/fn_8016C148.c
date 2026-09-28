@@ -1,6 +1,6 @@
 extern char lbl_8057BD88[];
 extern char lbl_804CFF30[];
-extern char lbl_8049C190[];
+extern char lbl_8049C1D0[];
 extern void fn_8016BEE4(void);
 extern void fn_8016BF04(void);
 extern void fn_8016BF28(void);
@@ -161,8 +161,8 @@ L_8016C344:
     bl      fn_8016BF28
     b       L_8016C394
 L_8016C354:
-    lis     r3, (lbl_8049C190+0x40)@ha
-    addi    r3, r3, (lbl_8049C190+0x40)@l
+    lis     r3, lbl_8049C1D0@ha
+    addi    r3, r3, lbl_8049C1D0@l
     crclr   6
     bl      OSReport
     opword  1

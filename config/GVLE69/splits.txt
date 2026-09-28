@@ -263,6 +263,7 @@ SN/fn_8016B4B0.c:
 
 Dolphin/os/__cvt_fp2unsigned.c:
 	.text       start:0x8016B554 end:0x8016B59C
+	.rodata.1   start:0x8049C1C8 end:0x8049C1D0
 
 Dolphin/os/__shr2u.c:
 	.text       start:0x8016B59C end:0x8016B5A0
