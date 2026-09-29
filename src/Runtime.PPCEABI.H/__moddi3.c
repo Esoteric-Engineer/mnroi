@@ -1,3 +1,38 @@
+#pragma force_active on
+
+const unsigned long long ModdiClzTab0 = 0x0001020203030303ULL;
+const unsigned long long ModdiClzTab1 = 0x0404040404040404ULL;
+const unsigned long long ModdiClzTab2 = 0x0505050505050505ULL;
+const unsigned long long ModdiClzTab3 = 0x0505050505050505ULL;
+const unsigned long long ModdiClzTab4 = 0x0606060606060606ULL;
+const unsigned long long ModdiClzTab5 = 0x0606060606060606ULL;
+const unsigned long long ModdiClzTab6 = 0x0606060606060606ULL;
+const unsigned long long ModdiClzTab7 = 0x0606060606060606ULL;
+const unsigned long long ModdiClzTab8 = 0x0707070707070707ULL;
+const unsigned long long ModdiClzTab9 = 0x0707070707070707ULL;
+const unsigned long long ModdiClzTab10 = 0x0707070707070707ULL;
+const unsigned long long ModdiClzTab11 = 0x0707070707070707ULL;
+const unsigned long long ModdiClzTab12 = 0x0707070707070707ULL;
+const unsigned long long ModdiClzTab13 = 0x0707070707070707ULL;
+const unsigned long long ModdiClzTab14 = 0x0707070707070707ULL;
+const unsigned long long ModdiClzTab15 = 0x0707070707070707ULL;
+const unsigned long long ModdiClzTab16 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab17 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab18 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab19 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab20 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab21 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab22 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab23 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab24 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab25 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab26 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab27 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab28 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab29 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab30 = 0x0808080808080808ULL;
+const unsigned long long ModdiClzTab31 = 0x0808080808080808ULL;
+
 asm long long __moddi3(long long a, long long b)
 {
     // clang-format off

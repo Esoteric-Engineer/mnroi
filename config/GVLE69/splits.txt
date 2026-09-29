@@ -803,6 +803,7 @@ Runtime.PPCEABI.H/lshrdi3.c:
 
 Runtime.PPCEABI.H/__moddi3.c:
 	.text       start:0x801796FC end:0x80179C30
+	.sdata2     start:0x80670370 end:0x80670470
 
 Runtime.PPCEABI.H/__pure_virtual.c:
 	.text       start:0x80179C30 end:0x80179C50
