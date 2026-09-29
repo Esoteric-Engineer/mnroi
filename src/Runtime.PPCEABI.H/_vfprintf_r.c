@@ -1,15 +1,5 @@
-extern char lbl_8049C600[];
-extern char lbl_8049C608[];
 extern int __mb_cur_max;
 extern int lbl_8066C3B0;
-extern char lbl_8049C580[];
-extern char lbl_8049C590[];
-extern char lbl_8049C5A0[];
-extern char lbl_8049C5B4[];
-extern char lbl_8049C5BC[];
-extern char lbl_8049C5D0[];
-extern char lbl_8049C5F0[];
-extern char lbl_8049C5F8[];
 extern void __group_digits(void);
 extern void _vfwrite(void);
 extern void _mbtowc_r(void);
@@ -21,6 +11,22 @@ extern void __umoddi3(void);
 extern void fftoa(void);
 extern void __ieee754_log10(void);
 extern void localeconv(void);
+
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const char VfpBlanksConst[16] = {
+    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+};
+__declspec(section ".rodata.1") const char VfpZeroesConst[16] = {
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+};
+__declspec(section ".rodata.1") const char VfpLowerXdigsStr[] = "0123456789abcdef";
+__declspec(section ".rodata.1") const char VfpNullStr[] = "(null)";
+__declspec(section ".rodata.1") const char VfpUpperXdigsStr[] = "0123456789ABCDEF";
+__declspec(section ".rodata.1") const char VfpBadBaseStr[] = "bug in vfprintf: bad base";
+__declspec(section ".rodata.1") const double VfpZeroConst = 0.0;
+__declspec(section ".rodata.1") const double VfpOneConst = 1.0;
+__declspec(section ".rodata.1") const double VfpNegFourConst = -4.0;
+__declspec(section ".rodata.1") const double VfpHiMagicConst = 4503601774854144.0;
 
 // _vfprintf_r(reent, fp, fmt, ap): Newlib printf body with float support (GCC output).
 asm int _vfprintf_r(void* reent, void* fp, const char* fmt, void* ap)
@@ -531,8 +537,8 @@ L_80174414:
     cmpwi r26, 0x47
     bne L_801744AC
 L_80174428:
-    lis r9, lbl_8049C5F0@ha
-    lfd f0, lbl_8049C5F0@l(r9)
+    lis r9, VfpZeroConst@ha
+    lfd f0, VfpZeroConst@l(r9)
     fcmpu cr0, f31, f0
     beq L_8017444C
     fmr f1, f31
@@ -542,19 +548,19 @@ L_80174444:
     bl __ieee754_log10
     b L_80174454
 L_8017444C:
-    lis r9, lbl_8049C5F8@ha
-    lfd f1, lbl_8049C5F8@l(r9)
+    lis r9, VfpOneConst@ha
+    lfd f1, VfpOneConst@l(r9)
 L_80174454:
-    lis r9, lbl_8049C600@ha
-    lfd f0, lbl_8049C600@l(r9)
+    lis r9, VfpNegFourConst@ha
+    lfd f0, VfpNegFourConst@l(r9)
     fcmpu cr0, f1, f0
     blt L_80174490
     xoris r0, r25, 0x8000
     stw r0, 0x19c(r1)
     lis r9, 0x4330
-    lis r11, lbl_8049C608@ha
+    lis r11, VfpHiMagicConst@ha
     stw r9, 0x198(r1)
-    lfd f13, lbl_8049C608@l(r11)
+    lfd f13, VfpHiMagicConst@l(r11)
     lfd f0, 0x198(r1)
     fsub f0, f0, f13
     fcmpu cr0, f1, f0
@@ -832,8 +838,8 @@ L_801747FC:
     stw r0, 0x4(r29)
 L_80174804:
     lwz r31, 0x0(r10)
-    lis r9, lbl_8049C5A0@ha
-    addi r9, r9, lbl_8049C5A0@l
+    lis r9, VfpLowerXdigsStr@ha
+    addi r9, r9, VfpLowerXdigsStr@l
     li r0, 0x2
     stw r9, 0x180(r1)
     ori r24, r24, 0x2
@@ -867,8 +873,8 @@ L_80174874:
     lwz r27, 0x0(r3)
     cmpwi r27, 0x0
     bne L_80174888
-    lis r9, lbl_8049C5B4@ha
-    addi r27, r9, lbl_8049C5B4@l
+    lis r9, VfpNullStr@ha
+    addi r27, r9, VfpNullStr@l
 L_80174888:
     cmpwi r25, 0x0
     blt L_801748C0
@@ -1001,12 +1007,12 @@ L_80174A2C:
     li r0, 0x1
     b L_80174BBC
 L_80174A34:
-    lis r9, lbl_8049C5BC@ha
-    addi r9, r9, lbl_8049C5BC@l
+    lis r9, VfpUpperXdigsStr@ha
+    addi r9, r9, VfpUpperXdigsStr@l
     b L_80174A48
 L_80174A40:
-    lis r9, lbl_8049C5A0@ha
-    addi r9, r9, lbl_8049C5A0@l
+    lis r9, VfpLowerXdigsStr@ha
+    addi r9, r9, VfpLowerXdigsStr@l
 L_80174A48:
     stw r9, 0x180(r1)
     andi. r11, r24, 0x20
@@ -1204,8 +1210,8 @@ L_80174CB0:
     bne L_80174CB0
     b L_80174CFC
 L_80174CE4:
-    lis r9, lbl_8049C5D0@ha
-    addi r27, r9, lbl_8049C5D0@l
+    lis r9, VfpBadBaseStr@ha
+    addi r27, r9, VfpBadBaseStr@l
     mr r3, r27
     bl strlen
     stw r3, 0x178(r1)
@@ -1257,10 +1263,10 @@ L_80174D80:
     subf. r30, r23, r17
     ble L_80174EF4
     cmpwi r30, 0x10
-    lis r25, lbl_8049C580@ha
+    lis r25, VfpBlanksConst@ha
     ble L_80174E5C
-    lis r19, lbl_8049C580@ha
-    addi r31, r25, lbl_8049C580@l
+    lis r19, VfpBlanksConst@ha
+    addi r31, r25, VfpBlanksConst@l
     li r20, 0x0
     li r21, 0x1
 L_80174DAC:
@@ -1270,7 +1276,7 @@ L_80174DAC:
     lwz r5, 0x8(r28)
     cmpwi r5, 0x10
     ble L_80174E04
-    lwz r11, lbl_8049C580@l(r19)
+    lwz r11, VfpBlanksConst@l(r19)
     lwz r10, 0x4(r31)
     lwz r8, 0x8(r31)
     lwz r0, 0xc(r31)
@@ -1288,7 +1294,7 @@ L_80174DAC:
     b L_80174E50
 L_80174E04:
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     crclr 6
     bl memcpy
     lwz r0, 0x0(r28)
@@ -1304,7 +1310,7 @@ L_80174E2C:
     sth r21, 0xe(r28)
 L_80174E3C:
     lha r3, 0xe(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     li r5, 0x10
     li r6, 0x0
     bl _vfwrite
@@ -1320,7 +1326,7 @@ L_80174E5C:
     cmpw r5, r30
     ble L_80174EA4
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     mr r5, r30
     crclr 6
     bl memcpy
@@ -1333,7 +1339,7 @@ L_80174E5C:
     b L_80174EF4
 L_80174EA4:
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     crclr 6
     bl memcpy
     lwz r0, 0x0(r28)
@@ -1350,7 +1356,7 @@ L_80174ECC:
     sth r0, 0xe(r28)
 L_80174EE0:
     lha r3, 0xe(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     mr r5, r30
     li r6, 0x0
     bl _vfwrite
@@ -1447,10 +1453,10 @@ L_80175024:
     subf. r30, r23, r17
     ble L_8017519C
     cmpwi r30, 0x10
-    lis r25, lbl_8049C590@ha
+    lis r25, VfpZeroesConst@ha
     ble L_80175104
-    lis r19, lbl_8049C590@ha
-    addi r26, r25, lbl_8049C590@l
+    lis r19, VfpZeroesConst@ha
+    addi r26, r25, VfpZeroesConst@l
     li r20, 0x0
     li r21, 0x1
 L_80175054:
@@ -1460,7 +1466,7 @@ L_80175054:
     lwz r5, 0x8(r28)
     cmpwi r5, 0x10
     ble L_801750AC
-    lwz r11, lbl_8049C590@l(r19)
+    lwz r11, VfpZeroesConst@l(r19)
     lwz r10, 0x4(r26)
     lwz r8, 0x8(r26)
     lwz r0, 0xc(r26)
@@ -1478,7 +1484,7 @@ L_80175054:
     b L_801750F8
 L_801750AC:
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     crclr 6
     bl memcpy
     lwz r0, 0x0(r28)
@@ -1494,7 +1500,7 @@ L_801750D4:
     sth r21, 0xe(r28)
 L_801750E4:
     lha r3, 0xe(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     li r5, 0x10
     li r6, 0x0
     bl _vfwrite
@@ -1510,7 +1516,7 @@ L_80175104:
     cmpw r5, r30
     ble L_8017514C
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     mr r5, r30
     crclr 6
     bl memcpy
@@ -1523,7 +1529,7 @@ L_80175104:
     b L_8017519C
 L_8017514C:
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     crclr 6
     bl memcpy
     lwz r0, 0x0(r28)
@@ -1540,7 +1546,7 @@ L_80175174:
     sth r0, 0xe(r28)
 L_80175188:
     lha r3, 0xe(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     mr r5, r30
     li r6, 0x0
     bl _vfwrite
@@ -1549,10 +1555,10 @@ L_8017519C:
     subf. r30, r0, r15
     ble L_8017530C
     cmpwi r30, 0x10
-    lis r25, lbl_8049C590@ha
+    lis r25, VfpZeroesConst@ha
     ble L_80175274
-    lis r19, lbl_8049C590@ha
-    addi r26, r25, lbl_8049C590@l
+    lis r19, VfpZeroesConst@ha
+    addi r26, r25, VfpZeroesConst@l
     li r20, 0x0
     li r21, 0x1
 L_801751C4:
@@ -1562,7 +1568,7 @@ L_801751C4:
     lwz r5, 0x8(r28)
     cmpwi r5, 0x10
     ble L_8017521C
-    lwz r11, lbl_8049C590@l(r19)
+    lwz r11, VfpZeroesConst@l(r19)
     lwz r10, 0x4(r26)
     lwz r8, 0x8(r26)
     lwz r0, 0xc(r26)
@@ -1580,7 +1586,7 @@ L_801751C4:
     b L_80175268
 L_8017521C:
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     crclr 6
     bl memcpy
     lwz r0, 0x0(r28)
@@ -1596,7 +1602,7 @@ L_80175244:
     sth r21, 0xe(r28)
 L_80175254:
     lha r3, 0xe(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     li r5, 0x10
     li r6, 0x0
     bl _vfwrite
@@ -1612,7 +1618,7 @@ L_80175274:
     cmpw r5, r30
     ble L_801752BC
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     mr r5, r30
     crclr 6
     bl memcpy
@@ -1625,7 +1631,7 @@ L_80175274:
     b L_8017530C
 L_801752BC:
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     crclr 6
     bl memcpy
     lwz r0, 0x0(r28)
@@ -1642,7 +1648,7 @@ L_801752E4:
     sth r0, 0xe(r28)
 L_801752F8:
     lha r3, 0xe(r28)
-    addi r4, r25, lbl_8049C590@l
+    addi r4, r25, VfpZeroesConst@l
     mr r5, r30
     li r6, 0x0
     bl _vfwrite
@@ -1696,10 +1702,10 @@ L_801753AC:
     subf. r30, r23, r17
     ble L_80175520
     cmpwi r30, 0x10
-    lis r25, lbl_8049C580@ha
+    lis r25, VfpBlanksConst@ha
     ble L_80175488
-    lis r21, lbl_8049C580@ha
-    addi r27, r25, lbl_8049C580@l
+    lis r21, VfpBlanksConst@ha
+    addi r27, r25, VfpBlanksConst@l
     li r24, 0x0
     li r26, 0x1
 L_801753D8:
@@ -1709,7 +1715,7 @@ L_801753D8:
     lwz r5, 0x8(r28)
     cmpwi r5, 0x10
     ble L_80175430
-    lwz r11, lbl_8049C580@l(r21)
+    lwz r11, VfpBlanksConst@l(r21)
     lwz r10, 0x4(r27)
     lwz r8, 0x8(r27)
     lwz r0, 0xc(r27)
@@ -1727,7 +1733,7 @@ L_801753D8:
     b L_8017547C
 L_80175430:
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     crclr 6
     bl memcpy
     lwz r0, 0x0(r28)
@@ -1743,7 +1749,7 @@ L_80175458:
     sth r26, 0xe(r28)
 L_80175468:
     lha r3, 0xe(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     li r5, 0x10
     li r6, 0x0
     bl _vfwrite
@@ -1759,7 +1765,7 @@ L_80175488:
     cmpw r5, r30
     ble L_801754D0
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     mr r5, r30
     crclr 6
     bl memcpy
@@ -1772,7 +1778,7 @@ L_80175488:
     b L_80175520
 L_801754D0:
     lwz r3, 0x0(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     crclr 6
     bl memcpy
     lwz r0, 0x0(r28)
@@ -1789,7 +1795,7 @@ L_801754F8:
     sth r0, 0xe(r28)
 L_8017550C:
     lha r3, 0xe(r28)
-    addi r4, r25, lbl_8049C580@l
+    addi r4, r25, VfpBlanksConst@l
     mr r5, r30
     li r6, 0x0
     bl _vfwrite

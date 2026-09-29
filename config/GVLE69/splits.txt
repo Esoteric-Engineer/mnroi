@@ -633,6 +633,7 @@ Runtime.PPCEABI.H/vfprintf.c:
 
 Runtime.PPCEABI.H/_vfprintf_r.c:
 	.text       start:0x80173D8C end:0x8017557C
+	.rodata.1   start:0x8049C580 end:0x8049C610
 
 Runtime.PPCEABI.H/__group_digits.c:
 	.text       start:0x8017557C end:0x80175704
