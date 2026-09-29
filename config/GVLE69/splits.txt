@@ -810,9 +810,11 @@ Runtime.PPCEABI.H/__pure_virtual.c:
 
 Runtime.PPCEABI.H/__udivdi3.c:
 	.text       start:0x80179C50 end:0x8017A134
+	.sdata2     start:0x80670470 end:0x80670570
 
 Runtime.PPCEABI.H/__umoddi3.c:
 	.text       start:0x8017A134 end:0x8017A5CC
+	.sdata2     start:0x80670570 end:0x80670678
 
 Dolphin/os/fn_8017A5CC.c:
 	.text       start:0x8017A5CC end:0x8017A620

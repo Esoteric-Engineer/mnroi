@@ -1,3 +1,38 @@
+#pragma force_active on
+
+const unsigned long long UdivdiClzTab0 = 0x0001020203030303ULL;
+const unsigned long long UdivdiClzTab1 = 0x0404040404040404ULL;
+const unsigned long long UdivdiClzTab2 = 0x0505050505050505ULL;
+const unsigned long long UdivdiClzTab3 = 0x0505050505050505ULL;
+const unsigned long long UdivdiClzTab4 = 0x0606060606060606ULL;
+const unsigned long long UdivdiClzTab5 = 0x0606060606060606ULL;
+const unsigned long long UdivdiClzTab6 = 0x0606060606060606ULL;
+const unsigned long long UdivdiClzTab7 = 0x0606060606060606ULL;
+const unsigned long long UdivdiClzTab8 = 0x0707070707070707ULL;
+const unsigned long long UdivdiClzTab9 = 0x0707070707070707ULL;
+const unsigned long long UdivdiClzTab10 = 0x0707070707070707ULL;
+const unsigned long long UdivdiClzTab11 = 0x0707070707070707ULL;
+const unsigned long long UdivdiClzTab12 = 0x0707070707070707ULL;
+const unsigned long long UdivdiClzTab13 = 0x0707070707070707ULL;
+const unsigned long long UdivdiClzTab14 = 0x0707070707070707ULL;
+const unsigned long long UdivdiClzTab15 = 0x0707070707070707ULL;
+const unsigned long long UdivdiClzTab16 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab17 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab18 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab19 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab20 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab21 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab22 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab23 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab24 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab25 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab26 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab27 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab28 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab29 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab30 = 0x0808080808080808ULL;
+const unsigned long long UdivdiClzTab31 = 0x0808080808080808ULL;
+
 asm unsigned long long __udivdi3(unsigned long long a, unsigned long long b)
 {
     // clang-format off

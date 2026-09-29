@@ -865,8 +865,8 @@ addr	size	name	library	confidence	notes	status
 0x80670268	0x8	Runtime.PPCEABI.H/gmtime_r.c	libc	known	data .sdata2: lbl_80670268 = year_lengths {365, 366}, read only by gmtime_r.	matched
 0x80670270	0x100	Runtime.PPCEABI.H/fn_80179138.c	libc	known	data .sdata2: lbl_80670270 = __clz_tab (0x100), this libgcc2 object's copy (each has one; CFTKK libgcc2.c_N .sdata2 0x100), read only by fn_80179138 (__divdi3).	matched
 0x80670370	0x100	Runtime.PPCEABI.H/__moddi3.c	libc	known	data .sdata2: lbl_80670370 = __clz_tab, read only by __moddi3.	matched
-0x80670470	0x100	Runtime.PPCEABI.H/__udivdi3.c	libc	known	data .sdata2: lbl_80670470 = __clz_tab, read only by __udivdi3.	open
-0x80670570	0x108	Runtime.PPCEABI.H/__umoddi3.c	libc	known	data .sdata2: lbl_80670570 = __clz_tab + 8 bytes (0, 0xFFFFFF00), read only by __umoddi3 (CFTKK libgcc2.c_14 .sdata2 0x10C). GX's .sdata2 follows.	open
+0x80670470	0x100	Runtime.PPCEABI.H/__udivdi3.c	libc	known	data .sdata2: lbl_80670470 = __clz_tab, read only by __udivdi3.	matched
+0x80670570	0x108	Runtime.PPCEABI.H/__umoddi3.c	libc	known	data .sdata2: lbl_80670570 = __clz_tab + 8 bytes (0, 0xFFFFFF00), read only by __umoddi3 (CFTKK libgcc2.c_14 .sdata2 0x10C). GX's .sdata2 follows.	matched
 0x806706A4	0x1C	Dolphin/gx/GXInitLightSpot.c	gx	guess	data .sdata2: lbl_806706A4, GXLight.c's other constants, unreferenced (their functions are dead-stripped). Extends GXInitLightSpot.c's .sdata2 end to 0x806706C0 (CFTKK GXLight.c .sdata2 0x48).	open
 0x806706E8	0x10	Dolphin/gx/__GXGetTexTileShift.c	gx	guess	data .sdata2: lbl_806706E8, read only by the GXTexture.c unit (0x8018E2B8). Extends __GXGetTexTileShift.c's .sdata2 end, which holds the rest of GXTexture.c's (CFTKK size 0x38 = 0x806706C0-0x806706F8); GXTexture.c could own it instead.	open
 0x806706F8	0x18	Dolphin/gx/GXSetIndTexMtx.c	gx	known	data .sdata2: lbl_806706F8, GXBump.c's constants (CFTKK size 0x18), read only by GXSetIndTexMtx.	matched
