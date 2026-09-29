@@ -6,7 +6,7 @@ extern void atof(void);
 extern void strtol(void);
 extern void strtoul(void);
 extern void __sccl(void);
-extern void* lbl_8066C3AC;
+extern void* __mb_cur_max;
 extern void* lbl_8066C3B0;
 extern char lbl_8049C6A1[];
 /* Newlib vfscanf.c's basefix (CFTKK basefix.3), this unit's only owned constant.
@@ -43,7 +43,7 @@ asm int __svfscanf(void* fp, const char* fmt, void* ap)
 L_80170200:
     lwz     r3, lbl_8066C3B0
     mr      r5, r22
-    lwz     r6, lbl_8066C3AC
+    lwz     r6, __mb_cur_max
     mr      r4, r14
     lwz     r7, 0x270(r1)
     bl      _mbtowc_r

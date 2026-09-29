@@ -1,4 +1,4 @@
-extern int lbl_8066C3AC;
+extern int __mb_cur_max;
 extern int lbl_8066C3B0;
 extern char lbl_8049C610[];
 extern char lbl_8049C620[];
@@ -44,7 +44,7 @@ L_80175824:
     lwz r3, lbl_8066C3B0
     mr r5, r22
     lwz r4, 0x44(r1)
-    lwz r6, lbl_8066C3AC
+    lwz r6, __mb_cur_max
     lwz r7, 0x48(r1)
     bl _mbtowc_r
     mr. r30, r3

@@ -660,6 +660,8 @@ Runtime.PPCEABI.H/__errno.c:
 
 Runtime.PPCEABI.H/_localeconv_r.c:
 	.text       start:0x801773B4 end:0x801773C0
+	.rodata.1   start:0x8049C7A4 end:0x8049C7F8
+	.sdata      start:0x8066C3A8 end:0x8066C3B0
 
 Runtime.PPCEABI.H/localeconv.c:
 	.text       start:0x801773C0 end:0x801773E4
