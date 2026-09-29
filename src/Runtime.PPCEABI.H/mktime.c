@@ -1,6 +1,10 @@
-extern char lbl_8049C4E0[];
-extern char lbl_8049C510[];
 extern void div(void);
+
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const int DaysInMonth[12] =
+    {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+__declspec(section ".rodata.1") const int DaysBeforeMonth[12] =
+    {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
 asm long validate_structure(void* tim_p)
 {
@@ -118,9 +122,9 @@ L_80173194:
     lwz     r0, 0xc(r31)
     cmpwi   r0, 0x0
     bgt     L_8017325C
-    lis     r9, lbl_8049C4E0@ha
+    lis     r9, DaysInMonth@ha
     li      r6, 0xb
-    addi    r7, r9, lbl_8049C4E0@l
+    addi    r7, r9, DaysInMonth@l
 L_801731AC:
     lwz     r9, 0x10(r31)
     subi    r9, r9, 0x1
@@ -172,9 +176,9 @@ L_8017324C:
     ble     L_801731AC
     b       L_80173338
 L_8017325C:
-    lis     r9, lbl_8049C4E0@ha
+    lis     r9, DaysInMonth@ha
     li      r6, 0x0
-    addi    r7, r9, lbl_8049C4E0@l
+    addi    r7, r9, DaysInMonth@l
     b       L_80173310
 L_8017326C:
     lwz     r0, 0x10(r31)
@@ -256,9 +260,9 @@ asm long mktime(void* tim_p)
     crclr   4*cr1+eq
     bl      validate_structure
     lwz     r10, 0x4(r31)
-    lis     r11, lbl_8049C510@ha
+    lis     r11, DaysBeforeMonth@ha
     lwz     r8, 0x8(r31)
-    addi    r11, r11, lbl_8049C510@l
+    addi    r11, r11, DaysBeforeMonth@l
     lwz     r5, 0x10(r31)
     mulli   r10, r10, 0x3c
     lwz     r9, 0x0(r31)
