@@ -869,6 +869,7 @@ Dolphin/os/OSArena.c:
 
 Dolphin/os/OSAudioSystem.c:
 	.text       start:0x8017BC10 end:0x8017BEA4
+	.data       start:0x804D0A70 end:0x804D0AF0
 
 Dolphin/os/OSCache.c:
 	.text       start:0x8017BEA4 end:0x8017C088
