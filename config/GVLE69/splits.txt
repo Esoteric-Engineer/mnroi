@@ -636,6 +636,7 @@ Runtime.PPCEABI.H/_vfiwrite.c:
 
 Runtime.PPCEABI.H/_vfiprintf_r.c:
 	.text       start:0x801757D8 end:0x80176E54
+	.rodata.1   start:0x8049C610 end:0x8049C680
 
 Runtime.PPCEABI.H/_strtol_r.c:
 	.text       start:0x80176E54 end:0x80177004
