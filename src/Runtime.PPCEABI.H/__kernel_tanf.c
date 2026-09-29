@@ -8,18 +8,15 @@ const float KernelTanfT4 = 8.8632395491e-03f;  /* 0x3c11371f */
 const float KernelTanfT5 = 3.5920790397e-03f;  /* 0x3b6b6916 */
 const float KernelTanfT6 = 1.4562094584e-03f;  /* 0x3abede48 */
 const float KernelTanfT7 = 5.8804126456e-04f;  /* 0x3a1a26c8 */
-const float KernelTanfT8 = 2.4646313977e-04f;  /* 0x398137b9 */
-const float KernelTanfT9 = 7.8179444245e-05f;  /* 0x38a3f445 */
-const float KernelTanfT10 = 7.1407252108e-05f; /* 0x3895c07a */
-const float KernelTanfT11 = -1.8558637748e-05f; /* 0xb79bae5f */
-const float KernelTanfT12 = 2.5907305826e-05f; /* 0x37d95384 */
 
-float KernelTanfOneConst = 1.0000000000e+00f;   /* 0x3f800000 one */
+/* KernelTanfT8..T12 are defined by __ieee754_rem_pio2f.c, which widens its .sdata2 claim back to this 8-aligned boundary. */
+
+float KernelTanfOneConst = 1.0000000000e+00f;     /* 0x3f800000 one */
 float KernelTanfNegOneConst = -1.0000000000e+00f; /* 0xbf800000 -one */
-float KernelTanfPio4Const = 7.8539812565e-01f;  /* 0x3f490fda pio4 */
-float KernelTanfPio4loConst = 3.7748947079e-08f; /* 0x33222168 pio4lo */
+float KernelTanfPio4Const = 7.8539812565e-01f;    /* 0x3f490fda pio4 */
+float KernelTanfPio4loConst = 3.7748947079e-08f;  /* 0x33222168 pio4lo */
 struct { float v; } KernelTanfZeroConst = {0.0f}; /* 0x00000000 zero */
-double KernelTanfCvtConst = 4503601774854144.0; /* MWCC's (float)iy magic */
+double KernelTanfCvtConst = 4503601774854144.0;   /* MWCC's (float)iy magic */
 
 extern float fabsf(float x);
 

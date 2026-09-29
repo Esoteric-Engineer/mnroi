@@ -452,10 +452,12 @@ Runtime.PPCEABI.H/__kernel_sinf.c:
 Runtime.PPCEABI.H/__kernel_tanf.c:
 	.text       start:0x8016E6D0 end:0x8016E8E4
 	.sdata      start:0x8066C2A8 end:0x8066C2C8
-	.sdata2     start:0x8066FE10 end:0x8066FE44
+	.sdata2     start:0x8066FE10 end:0x8066FE30
 
 Runtime.PPCEABI.H/__ieee754_rem_pio2f.c:
 	.text       start:0x8016E8E4 end:0x8016EC34
+	.sdata      start:0x8066C2C8 end:0x8066C300
+	.sdata2     start:0x8066FE30 end:0x806701E0
 
 Runtime.PPCEABI.H/copysignf.c:
 	.text       start:0x8016EC34 end:0x8016EC68
