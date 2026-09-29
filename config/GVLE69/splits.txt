@@ -619,6 +619,7 @@ Runtime.PPCEABI.H/itoa.c:
 
 Runtime.PPCEABI.H/fftoa.c:
 	.text       start:0x801736F8 end:0x80173BE0
+	.rodata.1   start:0x8049C540 end:0x8049C580
 
 Runtime.PPCEABI.H/_vfwrite.c:
 	.text       start:0x80173BE0 end:0x80173CB4

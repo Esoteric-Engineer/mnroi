@@ -1,12 +1,14 @@
-extern char lbl_8049C540[];
-extern char lbl_8049C548[];
-extern char lbl_8049C54C[];
-extern char lbl_8049C550[];
-extern char lbl_8049C558[];
-extern char lbl_8049C560[];
-extern char lbl_8049C568[];
-extern char lbl_8049C570[];
-extern char lbl_8049C578[];
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const char FftoaNegInfStr[8] = "-Inf";
+__declspec(section ".rodata.1") const char FftoaInfStr[4] = "Inf";
+__declspec(section ".rodata.1") const char FftoaNanStr[4] = "NaN";
+__declspec(section ".rodata.1") const double FftoaZeroConst = 0.0;
+__declspec(section ".rodata.1") const double FftoaOneConst = 1.0;
+__declspec(section ".rodata.1") const double FftoaTenConst = 10.0;
+__declspec(section ".rodata.1") const double FftoaCvtConst = 4503601774854144.0; /* MWCC's (double)k magic */
+__declspec(section ".rodata.1") const double FftoaEpsConst = 5.551115123125783e-17;
+__declspec(section ".rodata.1") const double FftoaHalfConst = 0.5;
+
 extern char lbl_8057BF80[];
 extern double floor(double);
 extern double __ieee754_fmod(double, double);
@@ -48,31 +50,31 @@ asm char* fftoa(double x, int prec, int fmt, int flag, char* sign)
     bne L_801737A8
     cmpwi r10, 0x0
     beq L_80173798
-    lis r9, lbl_8049C540@ha
+    lis r9, FftoaNegInfStr@ha
     lis r8, lbl_8057BF80@ha
-    lwz r0, lbl_8049C540@l(r9)
-    addi r11, r9, lbl_8049C540@l
+    lwz r0, FftoaNegInfStr@l(r9)
+    addi r11, r9, FftoaNegInfStr@l
     lbz r10, 0x4(r11)
     addi r9, r8, lbl_8057BF80@l
     stw r0, lbl_8057BF80@l(r8)
     stb r10, 0x4(r9)
     b L_80173BA8
 L_80173798:
-    lis r9, lbl_8049C548@ha
+    lis r9, FftoaInfStr@ha
     lis r11, 0x8058
-    lwz r0, lbl_8049C548@l(r9)
+    lwz r0, FftoaInfStr@l(r9)
     b L_801737B4
 L_801737A8:
-    lis r9, lbl_8049C54C@ha
+    lis r9, FftoaNanStr@ha
     lis r11, lbl_8057BF80@ha
-    lwz r0, lbl_8049C54C@l(r9)
+    lwz r0, FftoaNanStr@l(r9)
 L_801737B4:
     stw r0, lbl_8057BF80@l(r11)
     b L_80173BA8
 L_801737BC:
-    lis r9, lbl_8049C550@ha
+    lis r9, FftoaZeroConst@ha
     mr r27, r26
-    lfd f0, lbl_8049C550@l(r9)
+    lfd f0, FftoaZeroConst@l(r9)
     li r29, 0x0
     fcmpu cr0, f30, f0
     bge L_8017380C
@@ -96,29 +98,29 @@ L_8017380C:
     lis r9, lbl_8057BF80@ha
     addi r28, r9, lbl_8057BF80@l
 L_80173814:
-    lis r9, lbl_8049C558@ha
+    lis r9, FftoaOneConst@ha
     cmpwi cr2, r5, 0x0
-    lfd f31, lbl_8049C558@l(r9)
-    lis r31, lbl_8049C560@ha
+    lfd f31, FftoaOneConst@l(r9)
+    lis r31, FftoaTenConst@ha
     cmpwi cr4, r25, 0x66
     fcmpu cr0, f30, f31
     cmpwi cr3, r26, 0x0
     cror 3, 2, 1
     bns L_801738E8
     fmr f1, f30
-    lis r30, lbl_8049C560@ha
+    lis r30, FftoaTenConst@ha
     bl floor
     fmr f27, f31
-    lis r9, lbl_8049C568@ha
-    lfd f28, lbl_8049C560@l(r31)
+    lis r9, FftoaCvtConst@ha
+    lfd f28, FftoaTenConst@l(r31)
     fmr f31, f1
-    lfd f29, lbl_8049C568@l(r9)
+    lfd f29, FftoaCvtConst@l(r9)
     fsub f30, f30, f31
     lis r31, 0x4330
 L_80173860:
     cmpwi r29, 0xa2
     bgt L_801738B8
-    lfd f2, lbl_8049C560@l(r30)
+    lfd f2, FftoaTenConst@l(r30)
     fmr f1, f31
     bl __ieee754_fmod
     fctiwz f0, f1
@@ -156,14 +158,14 @@ L_801738E8:
     mr. r30, r29
     bne L_80173978
     beq cr4, L_8017396C
-    lis r9, lbl_8049C550@ha
-    lfd f0, lbl_8049C550@l(r9)
+    lis r9, FftoaZeroConst@ha
+    lfd f0, FftoaZeroConst@l(r9)
     fcmpu cr0, f30, f0
     beq L_80173944
-    lis r9, lbl_8049C560@ha
-    lis r11, lbl_8049C558@ha
-    lfd f0, lbl_8049C560@l(r9)
-    lfd f13, lbl_8049C558@l(r11)
+    lis r9, FftoaTenConst@ha
+    lis r11, FftoaOneConst@ha
+    lfd f0, FftoaTenConst@l(r9)
+    lfd f13, FftoaOneConst@l(r11)
     fmul f30, f30, f0
     fcmpu cr0, f30, f13
     bge L_80173940
@@ -179,14 +181,14 @@ L_80173928:
 L_80173940:
     subi r30, r30, 0x1
 L_80173944:
-    lis r9, lbl_8049C558@ha
-    lfd f0, lbl_8049C558@l(r9)
+    lis r9, FftoaOneConst@ha
+    lfd f0, FftoaOneConst@l(r9)
     fcmpu cr0, f30, f0
     cror 3, 2, 1
     bns L_80173978
-    lis r9, lbl_8049C560@ha
+    lis r9, FftoaTenConst@ha
     addi r27, r26, 0x1
-    lfd f0, lbl_8049C560@l(r9)
+    lfd f0, FftoaTenConst@l(r9)
     fdiv f30, f30, f0
     b L_80173978
 L_8017396C:
@@ -210,15 +212,15 @@ L_8017399C:
 L_801739A4:
     addi r31, r27, 0x1
 L_801739A8:
-    lis r9, lbl_8049C560@ha
-    lis r10, lbl_8049C570@ha
-    lfd f12, lbl_8049C560@l(r9)
-    lis r11, lbl_8049C568@ha
-    lis r9, lbl_8049C558@ha
-    lfd f10, lbl_8049C568@l(r11)
-    lfd f11, lbl_8049C558@l(r9)
+    lis r9, FftoaTenConst@ha
+    lis r10, FftoaEpsConst@ha
+    lfd f12, FftoaTenConst@l(r9)
+    lis r11, FftoaCvtConst@ha
+    lis r9, FftoaOneConst@ha
+    lfd f10, FftoaCvtConst@l(r11)
+    lfd f11, FftoaOneConst@l(r9)
     addi r27, r31, 0x1
-    lfd f13, lbl_8049C570@l(r10)
+    lfd f13, FftoaEpsConst@l(r10)
     lis r8, 0x4330
 L_801739D0:
     fmul f30, f30, f12
@@ -247,8 +249,8 @@ L_801739D0:
     addi r29, r29, 0x1
     b L_801739D0
 L_80173A34:
-    lis r9, lbl_8049C578@ha
-    lfd f0, lbl_8049C578@l(r9)
+    lis r9, FftoaHalfConst@ha
+    lfd f0, FftoaHalfConst@l(r9)
     fcmpu cr0, f30, f0
     cror 3, 2, 1
     bns L_80173A4C
