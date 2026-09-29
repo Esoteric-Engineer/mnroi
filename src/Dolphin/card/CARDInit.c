@@ -16,12 +16,29 @@ typedef struct CARDControl {
     DVDDiskID* diskID;
 } CARDControl;
 
+typedef struct OSResetFunctionInfo OSResetFunctionInfo;
+struct OSResetFunctionInfo {
+    BOOL (*func)(BOOL final);
+    unsigned long priority;
+    OSResetFunctionInfo* next;
+    OSResetFunctionInfo* prev;
+};
+
 CARDControl __CARDBlock[2];
 DVDDiskID __CARDDiskNone;
 
-extern char lbl_804F2BC8[0x10];
-extern char* lbl_8066CEF0;
-extern unsigned short lbl_8066FB10;
+char lbl_804F2B80[] = "<< Dolphin SDK - CARD\trelease build: Apr 17 2003 12:34:19 (0x2301) >>";
+static char* __CARDVersion = lbl_804F2B80;
+
+extern BOOL OnReset_8040B478(BOOL final);
+
+OSResetFunctionInfo ResetFunctionInfo_804F2BC8 = {
+    OnReset_8040B478,
+    0x7F,
+};
+
+static unsigned short __CARDEncode;
+static unsigned short __CARDFastMode;
 
 extern unsigned short OSGetFontEncode(void);
 extern void OSRegisterVersion(char* version);
@@ -38,8 +55,8 @@ void CARDInit(void)
     int chan;
 
     if (!__CARDBlock[0].diskID || !__CARDBlock[1].diskID) {
-        lbl_8066FB10 = OSGetFontEncode();
-        OSRegisterVersion(lbl_8066CEF0);
+        __CARDEncode = OSGetFontEncode();
+        OSRegisterVersion(__CARDVersion);
         DSPInit();
         OSInitAlarm();
 
@@ -52,13 +69,13 @@ void CARDInit(void)
         }
         __CARDSetDiskID((DVDDiskID*)0x80000000);
 
-        OSRegisterResetFunction(lbl_804F2BC8);
+        OSRegisterResetFunction(&ResetFunctionInfo_804F2BC8);
     }
 }
 
 unsigned short __CARDGetFontEncode(void)
 {
-    return lbl_8066FB10;
+    return __CARDEncode;
 }
 
 void __CARDSetDiskID(DVDDiskID* diskID)

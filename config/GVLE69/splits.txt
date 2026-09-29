@@ -2679,7 +2679,10 @@ Dolphin/card/__CARDEraseSector.c:
 
 Dolphin/card/CARDInit.c:
 	.text       start:0x8040B004 end:0x8040B0F0
+	.data       start:0x804F2B80 end:0x804F2BD8
 	.bss        start:0x80668900 end:0x80668B40
+	.sdata      start:0x8066CEF0 end:0x8066CEF4
+	.sbss       start:0x8066FB10 end:0x8066FB14
 
 Dolphin/card/__CARDGetControlBlock.c:
 	.text       start:0x8040B0F0 end:0x8040B1A8
