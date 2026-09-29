@@ -2036,6 +2036,7 @@ Dolphin/OdemuExi2/DBGEXIImm.c:
 
 Runtime.PPCEABI.H/__ieee754_asin.c:
 	.text       start:0x803FF3B0 end:0x803FF60C
+	.sdata      start:0x8066CCC8 end:0x8066CD48
 
 Runtime.PPCEABI.H/__ieee754_exp.c:
 	.text       start:0x803FF60C end:0x803FF888
