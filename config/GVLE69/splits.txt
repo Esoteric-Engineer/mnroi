@@ -622,6 +622,8 @@ Runtime.PPCEABI.H/fftoa.c:
 
 Runtime.PPCEABI.H/_vfwrite.c:
 	.text       start:0x80173BE0 end:0x80173CB4
+	.bss        start:0x8057BF80 end:0x8057C0A4
+	.sdata      start:0x8066C398 end:0x8066C3A0
 
 Runtime.PPCEABI.H/vfprintf.c:
 	.text       start:0x80173CB4 end:0x80173D8C
