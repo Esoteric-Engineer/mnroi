@@ -13,8 +13,36 @@ extern long long __OSGetSystemTime(void);
 extern void OSSetAlarm(void);
 extern unsigned int VIGetTvFormat(void); // dtk auto-detected identity for fn_8018992C
 extern void OSReport(const char* msg, ...); // dtk auto-detected identity for fn_8017CB7C
-extern unsigned int SamplingRate; // unclaimed .sbss object, dtk auto-detected the real name
-extern unsigned char XYNTSC[0x98]; // XYNTSC[12] table; XYPAL[12] (+0x30) and the "unknown TV format" error string (+0x60) are plain-offset siblings in the same unclaimed .data blob
+unsigned int SamplingRate;
+
+typedef struct XY
+{
+    unsigned short line;
+    unsigned char count;
+} XY;
+
+// XYNTSC[12] and XYPAL[12] (+0x30), followed by the "unknown TV format" error string (+0x60).
+// SISetSamplingRate addresses all three by offset from this single base, so they must stay one object with this exact layout.
+typedef struct SISamplingRateTables
+{
+    XY ntsc[12];
+    XY pal[12];
+    char unknownFormatMsg[0x38];
+} SISamplingRateTables;
+
+SISamplingRateTables XYNTSC = {
+    {
+        {0x00F6, 0x02}, {0x000F, 0x12}, {0x001E, 0x09}, {0x002C, 0x06},
+        {0x0034, 0x05}, {0x0041, 0x04}, {0x0057, 0x03}, {0x0057, 0x03},
+        {0x0057, 0x03}, {0x0083, 0x02}, {0x0083, 0x02}, {0x0083, 0x02},
+    },
+    {
+        {0x0128, 0x02}, {0x000F, 0x15}, {0x001D, 0x0B}, {0x002D, 0x07},
+        {0x0034, 0x06}, {0x003F, 0x05}, {0x004E, 0x04}, {0x0068, 0x03},
+        {0x0068, 0x03}, {0x0068, 0x03}, {0x0068, 0x03}, {0x009C, 0x02},
+    },
+    "SISetSamplingRate: unknown TV format. Use default.",
+};
 
 typedef struct SIControl
 {
