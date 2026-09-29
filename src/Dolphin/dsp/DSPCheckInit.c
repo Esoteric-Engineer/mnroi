@@ -1,5 +1,5 @@
 typedef int BOOL;
 
-extern BOOL lbl_8066FAE0;
+extern BOOL __DSP_init_flag;
 
-BOOL DSPCheckInit(void) { return lbl_8066FAE0; }
+BOOL DSPCheckInit(void) { return __DSP_init_flag; }

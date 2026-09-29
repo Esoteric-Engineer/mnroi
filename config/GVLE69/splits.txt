@@ -2588,6 +2588,8 @@ Dolphin/dsp/DSPSendMailToDSP.c:
 Dolphin/dsp/DSPInit.c:
 	.text       start:0x80409678 end:0x8040973C
 	.data       start:0x804F29C0 end:0x804F2A40
+	.sdata      start:0x8066CEE8 end:0x8066CEEC
+	.sbss       start:0x8066FAE0 end:0x8066FAE4
 
 Dolphin/dsp/DSPCheckInit.c:
 	.text       start:0x8040973C end:0x80409744

@@ -11,14 +11,15 @@ extern void __OSSetInterruptHandler(short interrupt, void* handler);
 extern unsigned long __OSUnmaskInterrupts(unsigned long mask);
 extern void __DSPHandler(void);
 
-extern BOOL lbl_8066FAE0;      /* __DSP_init_flag */
 extern void* lbl_8066FAFC;     /* __DSP_tmp_task */
 extern void* lbl_8066FB00;     /* __DSP_last_task */
 extern void* __DSP_first_task;
 extern void* lbl_8066FB08;     /* __DSP_curr_task */
-extern const char* lbl_8066CEE8; /* __DSPVersion */
 
 char lbl_804F29C0[] = "<< Dolphin SDK - DSP\trelease build: Apr 17 2003 12:34:16 (0x2301) >>";
+static char* __DSPVersion = lbl_804F29C0;
+
+BOOL __DSP_init_flag;
 
 void DSPInit(void)
 {
@@ -27,10 +28,10 @@ void DSPInit(void)
 
     __DSP_debug_printf("DSPInit(): Build Date: %s %s\n", "Apr 17 2003", "12:34:16");
 
-    if (lbl_8066FAE0 == 1)
+    if (__DSP_init_flag == 1)
         return;
 
-    OSRegisterVersion(lbl_8066CEE8);
+    OSRegisterVersion(__DSPVersion);
 
     old = OSDisableInterrupts();
     __OSSetInterruptHandler(7, __DSPHandler);
@@ -44,7 +45,7 @@ void DSPInit(void)
     __DSPRegs[5] = tmp = tmp & ~0xAC;
 
     __DSP_first_task = lbl_8066FB00 = lbl_8066FB08 = lbl_8066FAFC = 0;
-    lbl_8066FAE0 = 1;
+    __DSP_init_flag = 1;
 
     OSRestoreInterrupts(old);
 }
