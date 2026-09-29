@@ -1769,7 +1769,9 @@ Dolphin/gx/__GXInitRevisionBits.c:
 
 Dolphin/gx/GXInit.c:
 	.text       start:0x801908D8 end:0x80191810
+	.data       start:0x804D3340 end:0x804D3580
 	.bss        start:0x8057D5B0 end:0x8057DBE0
+	.sdata      start:0x8066C518 end:0x8066C520
 	.sdata2     start:0x80670788 end:0x806707B0
 
 Dolphin/gx/GXCPInterruptHandler.c:
