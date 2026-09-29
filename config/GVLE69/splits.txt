@@ -586,6 +586,7 @@ Runtime.PPCEABI.H/fn_80172CC4.c:
 
 Runtime.PPCEABI.H/asctime_r.c:
 	.text       start:0x80172CEC end:0x80172D78
+	.rodata.1   start:0x8049C420 end:0x8049C480
 
 Runtime.PPCEABI.H/fn_80172D78.c:
 	.text       start:0x80172D78 end:0x80172DA0
