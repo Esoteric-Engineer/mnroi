@@ -13,16 +13,31 @@ extern void SIRefreshSamplingRate(void);
 extern void OSRegisterResetFunction(void* info);
 extern void PADSetSpec(u32 spec);
 extern BOOL PADReset(u32 mask);
+extern BOOL OnReset_8018B438(BOOL final);
 
 extern const char* lbl_8066C498;
 extern int lbl_8066F3D8;
 extern u32 lbl_8066F3E4;
 extern u32 lbl_8066F288;
 extern u32 __PADSpec;
-extern u8 lbl_804D2C98[];
 extern u32 Type_8057D560[4];
 
 u16 __OSWirelessPadFixMode : 0x800030E0;
+
+char lbl_804D2C50[] = "<< Dolphin SDK - PAD\trelease build: Aug  6 2003 04:30:02 (0x2301) >>";
+
+typedef struct OSResetFunctionInfo OSResetFunctionInfo;
+struct OSResetFunctionInfo {
+    BOOL (*func)(BOOL final);
+    u32 priority;
+    OSResetFunctionInfo* next;
+    OSResetFunctionInfo* prev;
+};
+
+OSResetFunctionInfo lbl_804D2C98 = {
+    OnReset_8018B438,
+    0x7F,
+};
 
 BOOL PADInit(void)
 {
@@ -53,7 +68,7 @@ BOOL PADInit(void)
     }
 
     SIRefreshSamplingRate();
-    OSRegisterResetFunction(lbl_804D2C98);
+    OSRegisterResetFunction(&lbl_804D2C98);
 
     return PADReset(0xF0000000);
 }
