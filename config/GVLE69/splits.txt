@@ -793,6 +793,7 @@ Runtime.PPCEABI.H/runtime.c:
 
 Runtime.PPCEABI.H/fn_80179138.c:
 	.text       start:0x80179138 end:0x801796B4
+	.sdata2     start:0x80670270 end:0x80670370
 
 Runtime.PPCEABI.H/fn_801796B4.c:
 	.text       start:0x801796B4 end:0x801796BC
