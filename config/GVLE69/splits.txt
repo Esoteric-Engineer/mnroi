@@ -2039,6 +2039,8 @@ Runtime.PPCEABI.H/__ieee754_asinf.c:
 
 Runtime.PPCEABI.H/__ieee754_expf.c:
 	.text       start:0x803FFE0C end:0x80400038
+	.sdata      start:0x8066CE00 end:0x8066CE48
+	.sdata2     start:0x80670868 end:0x80670880
 
 Runtime.PPCEABI.H/__ieee754_fmodf.c:
 	.text       start:0x80400038 end:0x80400200
