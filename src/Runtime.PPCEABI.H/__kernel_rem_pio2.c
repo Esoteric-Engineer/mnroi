@@ -1,15 +1,30 @@
+#pragma force_active on
+
 extern double fn_8016CBDC(double x);
-extern double lbl_8066C300;
-extern double lbl_8066C308;
-extern double lbl_8066C310;
-extern double lbl_8066C318;
-extern double lbl_8066C320;
-extern double lbl_8066C328;
-extern double lbl_8066C330;
-extern double lbl_8066C338;
-extern const char lbl_806701E0[4];
-extern const char lbl_806701F0[4];
 extern double scalbn(double x, int n);
+
+double KernelRemPio2CvtConst = 4503601774854144.0;
+struct { double v; } KernelRemPio2ZeroConst = { 0.0 };
+double KernelRemPio2Twon24Const = 5.9604644775390625e-08;
+double KernelRemPio2Two24Const = 16777216.0;
+double KernelRemPio2EighthConst = 0.125;
+double KernelRemPio2EightConst = 8.0;
+double KernelRemPio2HalfConst = 0.5;
+double KernelRemPio2OneConst = 1.0;
+
+const int KernelRemPio2InitJk0 = 2;
+const int KernelRemPio2InitJk1 = 3;
+const int KernelRemPio2InitJk2 = 4;
+const int KernelRemPio2InitJk3 = 6;
+
+const double KernelRemPio2PIo2Const0 = 1.57079625129699707031e+00;
+const double KernelRemPio2PIo2Const1 = 7.54978941586159635335e-08;
+const double KernelRemPio2PIo2Const2 = 5.39030252995776476554e-15;
+const double KernelRemPio2PIo2Const3 = 3.28200341580791294123e-22;
+const double KernelRemPio2PIo2Const4 = 1.27065575308067607349e-29;
+const double KernelRemPio2PIo2Const5 = 1.22933308981111328932e-36;
+const double KernelRemPio2PIo2Const6 = 2.73370053816464559624e-44;
+const double KernelRemPio2PIo2Const7 = 2.16741683877804819444e-51;
 
 asm int __kernel_rem_pio2(double* x, double* y, int e0, int nx, int prec, const int* ipio2)
 {
@@ -29,7 +44,7 @@ asm int __kernel_rem_pio2(double* x, double* y, int e0, int nx, int prec, const 
     mulhw   r0, r10, r0
     slwi    r11, r20, 2
     srawi   r10, r10, 31
-    la      r9, lbl_806701E0
+    la      r9, KernelRemPio2InitJk0
     mr      r21, r3
     lwzx    r27, r9, r11
     mr      r26, r4
@@ -51,8 +66,8 @@ L_8016ECC8:
     subf    r28, r0, r5
     blt     L_8016ED58
     slwi    r0, r6, 2
-    lfd     f12, lbl_8066C300
-    lfd     f13, lbl_8066C308
+    lfd     f12, KernelRemPio2CvtConst
+    lfd     f13, KernelRemPio2ZeroConst
     add     r10, r0, r19
     addi    r8, r9, 0x1
     lis     r7, 0x4330
@@ -84,7 +99,7 @@ L_8016ED58:
     cmpwi   cr4, r28, 0x0
     cmpw    r8, r27
     bgt     L_8016EDC8
-    lfd     f12, lbl_8066C308
+    lfd     f12, KernelRemPio2ZeroConst
     mr      r10, r25
 L_8016ED70:
     fmr     f1, f12
@@ -120,10 +135,10 @@ L_8016EDCC:
     cmpwi   r31, 0x0
     ble     L_8016EE60
     subi    r0, r9, 0x8
-    lfd     f9, lbl_8066C310
+    lfd     f9, KernelRemPio2Twon24Const
     add     r7, r0, r25
-    lfd     f10, lbl_8066C300
-    lfd     f11, lbl_8066C318
+    lfd     f10, KernelRemPio2CvtConst
+    lfd     f11, KernelRemPio2Two24Const
     lis     r0, 0x4330
     mr      r8, r30
 L_8016EDFC:
@@ -156,15 +171,15 @@ L_8016EE60:
     fmr     f1, f31
     mr      r3, r28
     bl      scalbn
-    lfd     f0, lbl_8066C320
+    lfd     f0, KernelRemPio2EighthConst
     fmr     f31, f1
     fmul    f1, f31, f0
     bl      fn_8016CBDC
-    lfd     f0, lbl_8066C328
+    lfd     f0, KernelRemPio2EightConst
     mr      r9, r11
     lis     r10, 0x4330
     fmul    f1, f1, f0
-    lfd     f12, lbl_8066C300
+    lfd     f12, KernelRemPio2CvtConst
     li      r8, 0x0
     fsub    f31, f31, f1
     fctiwz  f13, f31
@@ -197,7 +212,7 @@ L_8016EEF0:
     srawi   r8, r9, 23
     b       L_8016EF1C
 L_8016EF08:
-    lfd     f0, lbl_8066C330
+    lfd     f0, KernelRemPio2HalfConst
     fcmpu   cr0, f31, f0
     cror    3, 2, 1
     bns     L_8016EF1C
@@ -258,7 +273,7 @@ L_8016EFCC:
     stwx    r0, r30, r9
 L_8016EFD0:
     bne     cr7, L_8016EFF0
-    lfd     f1, lbl_8066C338
+    lfd     f1, KernelRemPio2OneConst
     cmpwi   r7, 0x0
     fsub    f31, f1, f31
     beq     L_8016EFF0
@@ -266,7 +281,7 @@ L_8016EFD0:
     bl      scalbn
     fsub    f31, f31, f1
 L_8016EFF0:
-    lfd     f0, lbl_8066C308
+    lfd     f0, KernelRemPio2ZeroConst
     fmr     f13, f0
     fcmpu   cr0, f31, f0
     bne     L_8016F130
@@ -312,8 +327,8 @@ L_8016F080:
     cmpw    r8, r0
     bgt     L_8016F128
     addi    r3, r1, 0x58
-    lfd     f11, lbl_8066C300
-    lfd     f12, lbl_8066C308
+    lfd     f11, KernelRemPio2CvtConst
+    lfd     f12, KernelRemPio2ZeroConst
     mr      r24, r3
     lis     r31, 0x4330
     mr      r7, r25
@@ -375,18 +390,18 @@ L_8016F16C:
     fmr     f1, f31
     neg     r3, r28
     bl      scalbn
-    lfd     f9, lbl_8066C318
+    lfd     f9, KernelRemPio2Two24Const
     fmr     f31, f1
     fcmpu   cr0, f31, f9
     cror    3, 2, 1
     bns     L_8016F204
-    lfd     f0, lbl_8066C310
+    lfd     f0, KernelRemPio2Twon24Const
     mr      r8, r9
     mr      r10, r9
     fmul    f0, f31, f0
     mr      r11, r9
     lis     r0, 0x4330
-    lfd     f10, lbl_8066C300
+    lfd     f10, KernelRemPio2CvtConst
     fctiwz  f13, f0
     slwi    r6, r31, 2
     stfd    f13, 0x238(r1)
@@ -417,16 +432,16 @@ L_8016F204:
     lwz     r9, 0x23c(r1)
     stwx    r9, r30, r0
 L_8016F218:
-    lfd     f1, lbl_8066C338
+    lfd     f1, KernelRemPio2OneConst
     mr      r3, r28
     bl      scalbn
     mr. r8, r31
     blt     L_8016F280
     slwi    r0, r8, 2
     slwi    r9, r8, 3
-    lfd     f12, lbl_8066C300
+    lfd     f12, KernelRemPio2CvtConst
     add     r10, r0, r30
-    lfd     f13, lbl_8066C310
+    lfd     f13, KernelRemPio2Twon24Const
     add     r11, r9, r25
     lis     r7, 0x4330
     mr      r8, r25
@@ -450,7 +465,7 @@ L_8016F280:
     mr      r3, r25
 L_8016F28C:
     li      r6, 0x0
-    lfd     f1, lbl_8066C308
+    lfd     f1, KernelRemPio2ZeroConst
     cmpw    r6, r27
     subi    r4, r8, 0x1
     subf    r11, r8, r31
@@ -460,7 +475,7 @@ L_8016F28C:
     cmpw    r6, r11
     bgt     L_8016F2E8
     slwi    r0, r8, 3
-    la      r10, lbl_806701F0
+    la      r10, KernelRemPio2PIo2Const0
     add     r9, r0, r3
 L_8016F2C0:
     lfd     f13, 0x0(r10)
@@ -490,7 +505,7 @@ L_8016F310:
     beq     L_8016F3E0
     b       L_8016F4CC
 L_8016F31C:
-    lfd     f1, lbl_8066C308
+    lfd     f1, KernelRemPio2ZeroConst
     mr. r8, r31
     blt     L_8016F348
     addi    r9, r1, 0xf8
@@ -510,7 +525,7 @@ L_8016F348:
     stfd    f0, 0x0(r26)
     b       L_8016F4CC
 L_8016F360:
-    lfd     f1, lbl_8066C308
+    lfd     f1, KernelRemPio2ZeroConst
     mr. r8, r31
     blt     L_8016F38C
     addi    r9, r1, 0xf8
@@ -585,7 +600,7 @@ L_8016F434:
     bgt     L_8016F434
 L_8016F460:
     mr      r8, r31
-    lfd     f1, lbl_8066C308
+    lfd     f1, KernelRemPio2ZeroConst
     cmpwi   r8, 0x1
     lfd     f13, 0xf8(r1)
     ble     L_8016F498
