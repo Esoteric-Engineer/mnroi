@@ -1108,6 +1108,7 @@ Dolphin/os/OSClearStack.c:
 
 Dolphin/os/OSTime.c:
 	.text       start:0x80180F58 end:0x801813D4
+	.data       start:0x804D1B18 end:0x804D1B78
 
 Dolphin/os/fn_801813D4.c:
 	.text       start:0x801813D4 end:0x8018149C

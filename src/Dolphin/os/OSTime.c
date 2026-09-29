@@ -64,8 +64,8 @@ typedef struct OSCalendarTime
     int usec;
 } OSCalendarTime;
 
-extern int lbl_804D1B18[12]; // YearDays
-extern int lbl_804D1B48[12]; // LeapYearDays
+int YearDays[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+int LeapYearDays[12] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 
 // Written as asm: leaf/no-stack, with magic-number divisions (/7, /365, /4, /100, /400) and two inlined static helpers (IsLeapYear, GetLeapDays) that need the compiler's exact choices.
 asm void GetDates(int days, OSCalendarTime* td)
@@ -163,12 +163,12 @@ L80181144:
 L80181178:
     cmpwi   r7, 0
     beq     L8018118C
-    lis     r3, lbl_804D1B48@ha
-    addi    r6, r3, lbl_804D1B48@l
+    lis     r3, LeapYearDays@ha
+    addi    r6, r3, LeapYearDays@l
     b       L80181194
 L8018118C:
-    lis     r3, lbl_804D1B18@ha
-    addi    r6, r3, lbl_804D1B18@l
+    lis     r3, YearDays@ha
+    addi    r6, r3, YearDays@l
 L80181194:
     li      r7, 12
     li      r3, 48
