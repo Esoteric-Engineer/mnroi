@@ -595,6 +595,8 @@ Runtime.PPCEABI.H/fn_80172D78.c:
 
 Runtime.PPCEABI.H/gmtime_r.c:
 	.text       start:0x80172DA0 end:0x80172FF8
+	.rodata.1   start:0x8049C480 end:0x8049C4E0
+	.sdata2     start:0x80670268 end:0x80670270
 
 Runtime.PPCEABI.H/mktime.c:
 	.text       start:0x80172FF8 end:0x801735D4

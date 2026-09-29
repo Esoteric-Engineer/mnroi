@@ -1,4 +1,11 @@
-extern char lbl_8049C480[];
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const int mon_lengths[2][12] = {
+    {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+    {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+};
+
+#pragma force_active on
+const int year_lengths[2] = {365, 366};
 
 asm void* gmtime_r(const long* tim_p, void* res)
 {
@@ -147,9 +154,9 @@ L_80172F88:
     li      r11, 0x0
     stw     r0, 0x14(r4)
     stw     r11, 0x10(r4)
-    lis     r9, lbl_8049C480@ha
+    lis     r9, mon_lengths@ha
     stw     r3, 0x1c(r4)
-    addi    r9, r9, lbl_8049C480@l
+    addi    r9, r9, mon_lengths@l
     add     r8, r10, r9
     lwzx    r0, r10, r9
     cmpw    r3, r0
