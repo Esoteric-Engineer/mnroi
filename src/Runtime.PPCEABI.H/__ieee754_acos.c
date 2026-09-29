@@ -1,4 +1,20 @@
-extern double lbl_8066BFA4;
+struct { double v; } AcosZeroConst = {0.0};
+double AcosPiConst = 3.14159265358979311600e+00;
+double AcosPio2HiConst = 1.57079632679489655800e+00;
+double AcosPS5Const = 3.47933107596021167570e-05;
+double AcosPS4Const = 7.91534994289814532176e-04;
+double AcosPS3Const = -4.00555345006794114027e-02;
+double AcosPS2Const = 2.01212532134862925881e-01;
+double AcosPS1Const = -3.25565818622400915405e-01;
+double AcosPS0Const = 1.66666666666666657415e-01;
+double AcosQS4Const = 7.70381505559019352791e-02;
+double AcosQS3Const = -6.88283971605453293030e-01;
+double AcosQS2Const = 2.02094576023350569471e+00;
+double AcosQS1Const = -2.40339491173441421878e+00;
+double AcosOneConst = 1.00000000000000000000e+00;
+double AcosPio2LoConst = 6.12323399573676603587e-17;
+double AcosHalfConst = 0.5;
+
 extern double __ieee754_sqrt(double x);
 
 asm double __ieee754_acos(double x)
@@ -30,9 +46,9 @@ asm double __ieee754_acos(double x)
     or. r11, r10, r0
     bne L_8016C588
     cmpwi r8, 0x0
-    lfd f1, lbl_8066BFA4+0x4
+    lfd f1, AcosZeroConst
     bgt L_8016C774
-    lfd f1, lbl_8066BFA4+0xC
+    lfd f1, AcosPiConst
     b L_8016C774
 L_8016C588:
     fsub f1, f6, f6
@@ -46,28 +62,28 @@ L_8016C594:
     lis r0, 0x3c60
     cmpw r11, r0
     bgt L_8016C5B8
-    lfd f1, lbl_8066BFA4+0x14
+    lfd f1, AcosPio2HiConst
     b L_8016C774
 L_8016C5B8:
     fmul f30, f6, f6
-    lfd f13, lbl_8066BFA4+0x24
-    lfd f0, lbl_8066BFA4+0x1C
-    lfd f12, lbl_8066BFA4+0x2C
+    lfd f13, AcosPS4Const
+    lfd f0, AcosPS5Const
+    lfd f12, AcosPS3Const
     fmadd f0, f30, f0, f13
-    lfd f11, lbl_8066BFA4+0x34
-    lfd f10, lbl_8066BFA4+0x54
+    lfd f11, AcosPS2Const
+    lfd f10, AcosQS3Const
     fmadd f0, f30, f0, f12
-    lfd f13, lbl_8066BFA4+0x4C
-    lfd f12, lbl_8066BFA4+0x3C
+    lfd f13, AcosQS4Const
+    lfd f12, AcosPS1Const
     fmadd f0, f30, f0, f11
-    lfd f9, lbl_8066BFA4+0x5C
-    lfd f11, lbl_8066BFA4+0x64
+    lfd f9, AcosQS2Const
+    lfd f11, AcosQS1Const
     fmadd f13, f30, f13, f10
-    lfd f8, lbl_8066BFA4+0x44
-    lfd f10, lbl_8066BFA4+0x6C
+    lfd f8, AcosPS0Const
+    lfd f10, AcosOneConst
     fmadd f0, f30, f0, f12
-    lfd f1, lbl_8066BFA4+0x74
-    lfd f12, lbl_8066BFA4+0x14
+    lfd f1, AcosPio2LoConst
+    lfd f12, AcosPio2HiConst
     fmadd f13, f30, f13, f9
     fmadd f0, f30, f0, f8
     fmadd f13, f30, f13, f11
@@ -82,36 +98,36 @@ L_8016C5B8:
 L_8016C630:
     cmpwi r8, 0x0
     blt L_8016C6EC
-    lfd f31, lbl_8066BFA4+0x6C
-    lfd f13, lbl_8066BFA4+0x7C
+    lfd f31, AcosOneConst
+    lfd f13, AcosHalfConst
     fsub f0, f31, f6
     fmul f30, f0, f13
     fmr f1, f30
     bl __ieee754_sqrt
     fmr f7, f1
-    lfd f0, lbl_8066BFA4+0x24
+    lfd f0, AcosPS4Const
     fmr f13, f7
-    lfd f12, lbl_8066BFA4+0x1C
+    lfd f12, AcosPS5Const
     stfd f13, 0x8(r1)
-    lfd f11, lbl_8066BFA4+0x2C
+    lfd f11, AcosPS3Const
     fmadd f12, f30, f12, f0
     lwz r9, 0x8(r1)
     lwz r10, 0xc(r1)
     li r10, 0x0
-    lfd f0, lbl_8066BFA4+0x4C
+    lfd f0, AcosQS4Const
     stw r9, 0x8(r1)
     stw r10, 0xc(r1)
     fmadd f12, f30, f12, f11
-    lfd f9, lbl_8066BFA4+0x34
+    lfd f9, AcosPS2Const
     lfd f13, 0x8(r1)
-    lfd f10, lbl_8066BFA4+0x5C
+    lfd f10, AcosQS2Const
     fmadd f12, f30, f12, f9
-    lfd f8, lbl_8066BFA4+0x3C
+    lfd f8, AcosPS1Const
     fmr f1, f13
-    lfd f11, lbl_8066BFA4+0x64
-    lfd f13, lbl_8066BFA4+0x54
+    lfd f11, AcosQS1Const
+    lfd f13, AcosQS3Const
     fmadd f12, f30, f12, f8
-    lfd f9, lbl_8066BFA4+0x44
+    lfd f9, AcosPS0Const
     fmadd f0, f30, f0, f13
     fmadd f0, f30, f0, f10
     fmadd f0, f30, f0, f11
@@ -128,24 +144,24 @@ L_8016C630:
     fadd f1, f1, f1
     b L_8016C774
 L_8016C6EC:
-    lfd f7, lbl_8066BFA4+0x6C
-    lfd f11, lbl_8066BFA4+0x7C
+    lfd f7, AcosOneConst
+    lfd f11, AcosHalfConst
     fadd f0, f6, f7
-    lfd f12, lbl_8066BFA4+0x24
+    lfd f12, AcosPS4Const
     fmul f30, f0, f11
-    lfd f13, lbl_8066BFA4+0x1C
-    lfd f11, lbl_8066BFA4+0x2C
+    lfd f13, AcosPS5Const
+    lfd f11, AcosPS3Const
     fmadd f13, f30, f13, f12
-    lfd f10, lbl_8066BFA4+0x34
-    lfd f0, lbl_8066BFA4+0x4C
+    lfd f10, AcosPS2Const
+    lfd f0, AcosQS4Const
     fmadd f13, f30, f13, f11
-    lfd f9, lbl_8066BFA4+0x54
-    lfd f11, lbl_8066BFA4+0x5C
+    lfd f9, AcosQS3Const
+    lfd f11, AcosQS2Const
     fmadd f13, f30, f13, f10
-    lfd f8, lbl_8066BFA4+0x3C
-    lfd f10, lbl_8066BFA4+0x44
+    lfd f8, AcosPS1Const
+    lfd f10, AcosPS0Const
     fmadd f0, f30, f0, f9
-    lfd f12, lbl_8066BFA4+0x64
+    lfd f12, AcosQS1Const
     fmadd f0, f30, f0, f11
     fmadd f13, f30, f13, f8
     fmadd f0, f30, f0, f12
@@ -155,8 +171,8 @@ L_8016C6EC:
     fmr f1, f30
     bl __ieee754_sqrt
     fdiv f11, f31, f29
-    lfd f0, lbl_8066BFA4+0x74
-    lfd f13, lbl_8066BFA4+0xC
+    lfd f0, AcosPio2LoConst
+    lfd f13, AcosPiConst
     fmr f7, f1
     fmsub f0, f11, f7, f0
     fadd f1, f7, f0

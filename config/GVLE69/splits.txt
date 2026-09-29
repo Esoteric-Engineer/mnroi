@@ -367,6 +367,7 @@ SN/fn_8016C458.c:
 
 Runtime.PPCEABI.H/__ieee754_acos.c:
 	.text       start:0x8016C514 end:0x8016C790
+	.sdata      start:0x8066BFA8 end:0x8066C028
 
 Runtime.PPCEABI.H/__ieee754_sqrt.c:
 	.text       start:0x8016C790 end:0x8016C9A4
