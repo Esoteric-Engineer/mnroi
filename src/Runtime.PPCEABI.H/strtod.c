@@ -1,8 +1,13 @@
-extern double lbl_8049C680;
-extern double lbl_8049C688;
-extern double lbl_8049C690;
-extern double lbl_8049C698;
-extern double lbl_804D02D0[];
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const double StrtodZeroConst = 0.0;
+__declspec(section ".rodata.1") const double StrtodHiMagicConst = 4503601774854144.0;
+__declspec(section ".rodata.1") const double StrtodBillionConst = 1000000000.0;
+__declspec(section ".rodata.1") const double StrtodOneConst = 1.0;
+
+double powersOf10[9] = {
+    1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256,
+};
+
 extern int lbl_8066C3A8;
 extern int isspace(int c);
 extern int isdigit(int c);
@@ -88,9 +93,9 @@ L_8017712C:
 L_80177130:
     cmpwi   r29, 0x0
     bne     L_80177148
-    lis     r9, lbl_8049C680@ha
+    lis     r9, StrtodZeroConst@ha
     mr      r30, r26
-    lfd     f31, lbl_8049C680@l(r9)
+    lfd     f31, StrtodZeroConst@l(r9)
     b       L_80177330
 L_80177148:
     li      r11, 0x0
@@ -137,17 +142,17 @@ L_801771CC:
     xoris   r7, r7, 0x8000
     stw     r0, 0xc(r1)
     mr      r10, r11
-    lis     r9, lbl_8049C688@ha
+    lis     r9, StrtodHiMagicConst@ha
     mr      r30, r23
     stw     r8, 0x8(r1)
-    lfd     f11, lbl_8049C688@l(r9)
+    lfd     f11, StrtodHiMagicConst@l(r9)
     lfd     f13, 0x8(r1)
-    lis     r9, lbl_8049C690@ha
+    lis     r9, StrtodBillionConst@ha
     stw     r7, 0xc(r1)
     lbz     r0, 0x0(r30)
     fsub    f13, f13, f11
     stw     r8, 0x8(r1)
-    lfd     f12, lbl_8049C690@l(r9)
+    lfd     f12, StrtodBillionConst@l(r9)
     extsb   r0, r0
     lfd     f0, 0x8(r1)
     cmpwi   r0, 0x45
@@ -215,10 +220,10 @@ L_801772CC:
     li      r0, 0x22
     stw     r0, 0x0(r3)
 L_801772E8:
-    lis     r9, lbl_8049C698@ha
-    lis     r11, lbl_804D02D0@ha
-    lfd     f13, lbl_8049C698@l(r9)
-    addi    r11, r11, lbl_804D02D0@l
+    lis     r9, StrtodOneConst@ha
+    lis     r11, powersOf10@ha
+    lfd     f13, StrtodOneConst@l(r9)
+    addi    r11, r11, powersOf10@l
     cmpwi   cr7, r25, 0x0
     cmpwi   r27, 0x0
     beq     L_80177320
