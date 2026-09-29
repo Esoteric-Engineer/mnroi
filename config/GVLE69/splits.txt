@@ -512,8 +512,14 @@ Runtime.PPCEABI.H/atoi.c:
 Runtime.PPCEABI.H/bsearch.c:
 	.text       start:0x8017123C end:0x801712D4
 
+Dolphin/os/__start.c:
+	.init       start:0x80003100 end:0x80003254
+	.data       start:0x804CFC20 end:0x804CFC70
+
 Runtime.PPCEABI.H/_mbtowc_r.c:
 	.text       start:0x801712D4 end:0x80171600
+	.rodata.1   start:0x8049C20C end:0x8049C224
+	.data       start:0x804CFF48 end:0x804D02A8
 
 Runtime.PPCEABI.H/qsort.c:
 	.text       start:0x80171600 end:0x80171F8C
@@ -614,10 +620,6 @@ Runtime.PPCEABI.H/strround.c:
 
 Runtime.PPCEABI.H/strrev.c:
 	.text       start:0x80173630 end:0x8017367C
-
-Dolphin/os/__start.c:
-	.init       start:0x80003100 end:0x80003254
-	.data       start:0x804CFC20 end:0x804CFC70
 
 Runtime.PPCEABI.H/itoa.c:
 	.text       start:0x8017367C end:0x801736F8

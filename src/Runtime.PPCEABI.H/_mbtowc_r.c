@@ -1,10 +1,41 @@
 extern int strlen(const char* s);
 extern int strcmp(const char* a, const char* b);
-extern char lbl_8049C20C[];
-extern char lbl_8049C214[];
-extern char lbl_8049C21C[];
-extern char lbl_804D00F8[];
-extern char lbl_804CFF48[];
+
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const char SjisLocaleName[] = "C-SJIS";
+__declspec(section ".rodata.1") const char EucjpLocaleName[] = "C-EUCJP";
+__declspec(section ".rodata.1") const char JisLocaleName[] = "C-JIS";
+
+// JIS_STATE/JIS_ACTION are int-sized enums, 12 states x 9 JIS_CHAR_TYPE columns; rows 10-11 are unused padding.
+static long JIS_state_table[12][9] = {
+    {1, 10, 10, 10, 10, 10, 10, 10, 10},
+    {10, 2, 10, 10, 10, 10, 10, 10, 10},
+    {10, 10, 10, 3, 3, 10, 10, 10, 10},
+    {6, 4, 4, 4, 4, 4, 11, 4, 11},
+    {11, 5, 5, 5, 5, 5, 11, 5, 11},
+    {8, 10, 10, 10, 10, 10, 11, 10, 10},
+    {11, 11, 7, 11, 11, 11, 11, 11, 11},
+    {11, 11, 11, 11, 0, 0, 11, 11, 11},
+    {11, 11, 9, 11, 11, 11, 11, 11, 11},
+    {11, 11, 11, 11, 10, 10, 11, 11, 11},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+};
+
+static long JIS_action_table[12][9] = {
+    {5, 0, 0, 0, 0, 0, 6, 0, 0},
+    {0, 5, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 4, 4, 0, 0, 0, 0},
+    {5, 5, 5, 5, 5, 5, 7, 5, 7},
+    {7, 5, 5, 5, 5, 5, 7, 5, 7},
+    {5, 2, 2, 2, 2, 2, 7, 2, 2},
+    {7, 7, 5, 7, 7, 7, 7, 7, 7},
+    {7, 7, 7, 7, 5, 5, 7, 7, 7},
+    {7, 7, 5, 7, 7, 7, 7, 7, 7},
+    {7, 7, 7, 7, 1, 1, 7, 7, 7},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+};
 
 // _mbtowc_r(reent, pwc, s, n, state):
 // Newlib multibyte-to-wchar. Dispatches on the locale name (C-SJIS / C-EUCJP / C-JIS) and falls back to a plain byte copy.
@@ -39,8 +70,8 @@ L_8017131C:
     cmplwi r3, 0x1
     ble L_801715BC
     lwz r3, 0x34(r30)
-    lis r4, lbl_8049C20C@ha
-    addi r4, r4, lbl_8049C20C@l
+    lis r4, SjisLocaleName@ha
+    addi r4, r4, SjisLocaleName@l
     bl strcmp
     cmpwi r3, 0x0
     bne L_8017139C
@@ -67,8 +98,8 @@ L_80171370:
     b L_801715B4
 L_8017139C:
     lwz r3, 0x34(r30)
-    lis r4, lbl_8049C214@ha
-    addi r4, r4, lbl_8049C214@l
+    lis r4, EucjpLocaleName@ha
+    addi r4, r4, EucjpLocaleName@l
     bl strcmp
     cmpwi r3, 0x0
     bne L_801713FC
@@ -93,8 +124,8 @@ L_801713E8:
     b L_801715E4
 L_801713FC:
     lwz r3, 0x34(r30)
-    lis r4, lbl_8049C21C@ha
-    addi r4, r4, lbl_8049C21C@l
+    lis r4, JisLocaleName@ha
+    addi r4, r4, JisLocaleName@l
     bl strcmp
     cmpwi r3, 0x0
     bne L_801715BC
@@ -113,10 +144,10 @@ L_80171438:
     mr r8, r31
     cmplw r3, r27
     bge L_801715B4
-    lis r9, lbl_804D00F8@ha
-    lis r11, lbl_804CFF48@ha
-    addi r5, r9, lbl_804D00F8@l
-    addi r11, r11, lbl_804CFF48@l
+    lis r9, JIS_action_table@ha
+    lis r11, JIS_state_table@ha
+    addi r5, r9, JIS_action_table@l
+    addi r11, r11, JIS_state_table@l
     li r7, 0x0
     li r4, 0x1
 L_80171460:
