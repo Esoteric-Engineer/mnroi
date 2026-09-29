@@ -1,8 +1,23 @@
 extern void fn_8017A608(void);
 extern void fn_801796B4(int);
-extern void* lbl_804D0670;
 
-asm void fn_8017A5CC(void)
+#pragma section R ".rodata.1"
+#pragma force_active on
+__declspec(section ".rodata.1") const char BadAllocStr[] = "bad_alloc";
+__declspec(section ".rodata.1") const char LibWarningNewStr[] =
+    "\n*** Library warning ***\nYou must define an operator new\nsee Pro-DG documentation\n";
+__declspec(section ".rodata.1") const char LibWarningNewArrayStr[] =
+    "\n*** Library warning ***\nYou must define an operator new[]\nsee Pro-DG documentation\n";
+__declspec(section ".rodata.1") const char LibWarningDeleteStr[] =
+    "\n*** Library warning ***\nYou must define an operator delete\nsee Pro-DG documentation\n";
+__declspec(section ".rodata.1") const char LibWarningDeleteArrayStr[] =
+    "\n*** Library warning ***\nYou must define an operator delete[]\nsee Pro-DG documentation\n";
+__declspec(section ".rodata.1") const char LibErrorHeapStr[] =
+    "\n*** Library error ***\nException handling requires access to heap memory\n"
+    "Hook _register_malloc to your malloc rountine - see ProDG manual.\n";
+#pragma force_active reset
+
+asm void __default_terminate(void)
 {
     // clang-format off
     nofralloc
@@ -13,6 +28,8 @@ asm void fn_8017A5CC(void)
     // clang-format on
 }
 
+__declspec(section ".data") void (*__terminate_func)(void) = __default_terminate;
+
 asm void terminate(void)
 {
     // clang-format off
@@ -20,8 +37,8 @@ asm void terminate(void)
     stwu    r1, -8(r1)
     mflr    r0
     stw     r0, 12(r1)
-    lis     r9, lbl_804D0670@ha
-    lwz     r0, lbl_804D0670@l(r9)
+    lis     r9, __terminate_func@ha
+    lwz     r0, __terminate_func@l(r9)
     mtlr    r0
     blrl
     lwz     r0, 12(r1)

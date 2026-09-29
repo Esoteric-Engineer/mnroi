@@ -1,7 +1,7 @@
-extern void (*lbl_8066F318)(void);
+static void (*FatalFunc)(void) = 0;
 
 void __DVDPrintFatalMessage(void) {
-    if (lbl_8066F318 != 0) {
-        lbl_8066F318();
+    if (FatalFunc != 0) {
+        FatalFunc();
     }
 }

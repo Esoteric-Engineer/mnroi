@@ -812,6 +812,8 @@ Runtime.PPCEABI.H/__umoddi3.c:
 
 Dolphin/os/fn_8017A5CC.c:
 	.text       start:0x8017A5CC end:0x8017A620
+	.rodata.1   start:0x8049C94C end:0x8049CB40
+	.data       start:0x804D0670 end:0x804D0674
 
 Dolphin/os/fn_8017A620.c:
 	.text       start:0x8017A620 end:0x8017A67C
@@ -1218,6 +1220,7 @@ Dolphin/dvd/DVDCompareDiskID.c:
 
 Dolphin/dvd/__DVDPrintFatalMessage.c:
 	.text       start:0x80186A50 end:0x80186A80
+	.sbss       start:0x8066F318 end:0x8066F31C
 
 Dolphin/dvd/fstload.c:
 	.text       start:0x80186A80 end:0x80186CC0
