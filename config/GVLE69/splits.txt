@@ -623,7 +623,7 @@ Runtime.PPCEABI.H/fftoa.c:
 
 Runtime.PPCEABI.H/_vfwrite.c:
 	.text       start:0x80173BE0 end:0x80173CB4
-	.bss        start:0x8057BF80 end:0x8057C0A4
+	.bss        start:0x8057BF80 end:0x8057C0A0
 	.sdata      start:0x8066C398 end:0x8066C3A0
 
 Runtime.PPCEABI.H/vfprintf.c:
@@ -637,6 +637,8 @@ Runtime.PPCEABI.H/__group_digits.c:
 
 Runtime.PPCEABI.H/_vfiwrite.c:
 	.text       start:0x80175704 end:0x801757D8
+	.bss        start:0x8057C0A0 end:0x8057C124
+	.sdata      start:0x8066C3A0 end:0x8066C3A8
 
 Runtime.PPCEABI.H/_vfiprintf_r.c:
 	.text       start:0x801757D8 end:0x80176E54

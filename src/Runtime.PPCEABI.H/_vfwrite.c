@@ -1,4 +1,4 @@
-char lbl_8057BF80[0x124];
+char lbl_8057BF80[0x120];
 
 struct { int v; } lbl_8066C398 = {0};
 char* lbl_8066C39C = lbl_8057BF80 + 0xA4;

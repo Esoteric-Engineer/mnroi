@@ -1,6 +1,8 @@
-extern int lbl_8066C3A0;
-extern char* lbl_8066C3A4;
-extern char lbl_8057C0A4[0x80];
+char lbl_8057C0A0[0x84];
+
+struct { int v; } lbl_8066C3A0 = {0};
+char* lbl_8066C3A4 = lbl_8057C0A0 + 4;
+
 extern int fn_8017A6CC(void);
 
 asm int _vfiwrite(void* reent, const char* buf, unsigned long n, int flush)
@@ -16,11 +18,11 @@ asm int _vfiwrite(void* reent, const char* buf, unsigned long n, int flush)
     mr      r31, r5
     cmpwi   r6, 0x1
     bne     notflush
-    lis     r30, lbl_8057C0A4@ha
+    lis     r30, (lbl_8057C0A0+4)@ha
     lwz     r5, lbl_8066C3A0
-    addi    r4, r30, lbl_8057C0A4@l
+    addi    r4, r30, (lbl_8057C0A0+4)@l
     bl      fn_8017A6CC
-    addi    r30, r30, lbl_8057C0A4@l
+    addi    r30, r30, (lbl_8057C0A0+4)@l
     li      r0, 0
     stw     r0, lbl_8066C3A0
     stw     r30, lbl_8066C3A4
@@ -32,9 +34,9 @@ notflush:
     li      r30, 0
     cmplw   r30, r31
     bge     finish
-    lis     r28, lbl_8057C0A4@ha
+    lis     r28, (lbl_8057C0A0+4)@ha
     li      r25, 0
-    addi    r26, r28, lbl_8057C0A4@l
+    addi    r26, r28, (lbl_8057C0A0+4)@l
 loop:
     lbzx    r0, r27, r30
     lwz     r9, lbl_8066C3A4
@@ -48,7 +50,7 @@ loop:
     cmpwi   r5, 0x7f
     ble     next
     mr      r3, r29
-    addi    r4, r28, lbl_8057C0A4@l
+    addi    r4, r28, (lbl_8057C0A0+4)@l
     bl      fn_8017A6CC
     cmpwi   r3, 0
     stw     r26, lbl_8066C3A4
