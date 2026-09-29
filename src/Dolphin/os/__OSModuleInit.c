@@ -12,3 +12,8 @@ void __OSModuleInit(void)
     __OSModuleInfoList.head = 0;
     __OSStringTable = 0;
 }
+
+#pragma force_active on
+char lbl_804D1258[] = "OSLink: unknown relocation type %3d\n";
+char lbl_804D1280[] = "OSUnlink: unknown relocation type %3d\n";
+#pragma force_active reset

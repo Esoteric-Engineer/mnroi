@@ -980,13 +980,14 @@ Dolphin/os/OSInterruptMask.c:
 
 Dolphin/os/__OSDispatchInterrupt.c:
 	.text       start:0x8017E060 end:0x8017E3A4
-	.data       start:0x804D1228 end:0x804D1254
+	.data       start:0x804D1228 end:0x804D1258
 
 Dolphin/os/ExternalInterruptHandler.c:
 	.text       start:0x8017E3A4 end:0x8017E3F4
 
 Dolphin/os/__OSModuleInit.c:
 	.text       start:0x8017E3F4 end:0x8017E40C
+	.data       start:0x804D1258 end:0x804D12A8
 
 Dolphin/os/OSMemory.c:
 	.text       start:0x8017E40C end:0x8017E5B4
