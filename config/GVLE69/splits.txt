@@ -2131,6 +2131,7 @@ Dolphin/vm/__VMDoesMappingExist.c:
 
 Dolphin/vm/__VMMappingErrorAlert.c:
 	.text       start:0x80401160 end:0x80401198
+	.data       start:0x804DCD98 end:0x804DCE00
 
 Dolphin/vm/__VMSetARAMPageAsDirty.c:
 	.text       start:0x80401198 end:0x804011B0
