@@ -2927,6 +2927,7 @@ Dolphin/card/ReadArrayUnlock.c:
 
 Dolphin/card/DummyLen.c:
 	.text       start:0x8040FC98 end:0x8040FD5C
+	.sdata      start:0x8066CF00 end:0x8066CF04
 
 Dolphin/card/CARDUnlock.c:
 	.text       start:0x8040FD5C end:0x804108B4

@@ -4,18 +4,18 @@ typedef unsigned long u32;
 extern u32 OSGetTick(void);
 
 // Seed shared with the other inlined srand/rand users in CARDUnlock.
-extern volatile u32 lbl_8066CF00;
+volatile u32 next = 1;
 
 static inline void srand(u32 seed)
 {
-    lbl_8066CF00 = seed;
+    next = seed;
 }
 
 static inline s32 rand(void)
 {
     u32 r;
-    lbl_8066CF00 = lbl_8066CF00 * 1103515245 + 12345;
-    r = lbl_8066CF00;
+    next = next * 1103515245 + 12345;
+    r = next;
     return (r >> 16) & 0x7FFF;
 }
 

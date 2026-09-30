@@ -56,7 +56,7 @@ extern void InitCallback(void* task);
 extern void DoneCallback(void* task);
 extern u32 bitrev(u32 data);
 
-extern volatile u32 lbl_8066CF00;
+extern volatile u32 next;
 
 u8 CardData[352] __attribute__((aligned(32))) = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -113,14 +113,14 @@ static u32 exnor(u32 data, u32 lshift)
 
 static inline void srand(u32 seed)
 {
-    lbl_8066CF00 = seed;
+    next = seed;
 }
 
 static inline s32 rand(void)
 {
     u32 r;
-    lbl_8066CF00 = lbl_8066CF00 * 1103515245 + 12345;
-    r = lbl_8066CF00;
+    next = next * 1103515245 + 12345;
+    r = next;
     return (r >> 16) & 0x7FFF;
 }
 
