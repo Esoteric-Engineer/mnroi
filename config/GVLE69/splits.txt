@@ -962,6 +962,7 @@ Dolphin/os/ReadDiscBlocking.c:
 
 Dolphin/os/__OSSetAlarmState.c:
 	.text       start:0x8017D458 end:0x8017D464
+	.sbss       start:0x8066F218 end:0x8066F220
 
 Dolphin/os/fn_8017D464.c:
 	.text       start:0x8017D464 end:0x8017D4A4
@@ -2288,6 +2289,7 @@ Dolphin/os/OSAllocFromHeap.c:
 
 Dolphin/os/OSSetCurrentHeap.c:
 	.text       start:0x80402044 end:0x80402054
+	.sdata      start:0x8066CEA8 end:0x8066CEAC
 
 Dolphin/os/OSInitAlloc.c:
 	.text       start:0x80402054 end:0x804020C4
@@ -2462,6 +2464,7 @@ Dolphin/ax/__AXServiceCallbackStack.c:
 
 Dolphin/ax/__AXAllocInit.c:
 	.text       start:0x80406958 end:0x80406A0C
+	.sbss       start:0x8066FA08 end:0x8066FA0C
 
 Dolphin/ax/__AXAllocQuit.c:
 	.text       start:0x80406A0C end:0x80406AC0

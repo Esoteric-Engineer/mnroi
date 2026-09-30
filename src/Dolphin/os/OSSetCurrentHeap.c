@@ -1,4 +1,4 @@
-extern int __OSCurrHeap;
+int __OSCurrHeap = -1;
 
 int OSSetCurrentHeap(int heap)
 {

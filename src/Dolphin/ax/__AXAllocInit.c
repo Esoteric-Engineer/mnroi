@@ -1,6 +1,6 @@
 extern void* lbl_8064F228[];
 extern void* lbl_8064F2A8[];
-extern unsigned long lbl_8066FA08;
+unsigned long lbl_8066FA08;
 
 void __AXAllocInit(void)
 {
