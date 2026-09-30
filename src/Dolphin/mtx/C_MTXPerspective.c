@@ -8,6 +8,10 @@ extern const float MtxOrthoNegOneConst;
 extern const float MtxPerspHalfConst;
 extern const float MtxPerspDeg2RadConst;
 
+#pragma force_active on
+static f32 mtxUnit[4] = {0.0f, 1.0f, 0.5f, 3.0f};
+#pragma force_active reset
+
 void C_MTXPerspective(f32 m[4][4], f32 fovY, f32 aspect, f32 n, f32 f)
 {
     f32 angle;
