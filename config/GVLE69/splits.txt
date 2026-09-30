@@ -1026,6 +1026,7 @@ Dolphin/os/OSGetSaveRegion.c:
 
 Dolphin/os/OSRegisterResetFunction.c:
 	.text       start:0x8017E768 end:0x8017E7EC
+	.sbss       start:0x8066F240 end:0x8066F24C
 
 Dolphin/os/CallResetFunctions.c:
 	.text       start:0x8017E7EC end:0x8017E894

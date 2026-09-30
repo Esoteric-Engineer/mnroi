@@ -16,7 +16,8 @@ struct OSResetFunctionQueue {
     OSResetFunctionInfo* tail;
 };
 
-extern struct OSResetFunctionQueue ResetFunctionQueue;
+u32 bootThisDol;
+struct OSResetFunctionQueue ResetFunctionQueue;
 
 void OSRegisterResetFunction(OSResetFunctionInfo* info)
 {
