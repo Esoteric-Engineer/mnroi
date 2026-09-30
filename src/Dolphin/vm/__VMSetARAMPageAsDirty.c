@@ -1,6 +1,6 @@
-extern unsigned long* lbl_8066F974;
+extern unsigned long* g_baseVMtoARAM;
 
 void __VMSetARAMPageAsDirty(unsigned long addr)
 {
-    lbl_8066F974[(addr >> 12) & 0x1FFF] |= 0x80000000;
+    g_baseVMtoARAM[(addr >> 12) & 0x1FFF] |= 0x80000000;
 }

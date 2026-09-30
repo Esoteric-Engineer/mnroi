@@ -1,7 +1,7 @@
-extern unsigned long* lbl_8066F970;
-extern unsigned long* lbl_8066F974;
-extern unsigned long lbl_8066F978;
-extern unsigned long lbl_8066F97C;
+unsigned long* g_baseARAMtoVM = 0;
+unsigned long* g_baseVMtoARAM = 0;
+static unsigned long g_totalAllocatedVM;
+static unsigned long g_nextARAMPageToCheck;
 
 extern unsigned long VMGetARAMBase(void);
 extern unsigned long VMGetARAMSize(void);
@@ -23,15 +23,15 @@ asm int VMAlloc(unsigned long addr, unsigned long size)
     bl      VMGetARAMBase
     srwi    r31, r3, 12
     bl      VMGetARAMSize
-    lwz     r0, lbl_8066F97C
+    lwz     r0, g_nextARAMPageToCheck
     srwi    r3, r3, 12
     add     r30, r31, r3
     cmplw   r0, r31
     bge     L_skip
-    stw     r31, lbl_8066F97C
+    stw     r31, g_nextARAMPageToCheck
 L_skip:
     bl      VMGetARAMSize
-    lwz     r0, lbl_8066F978
+    lwz     r0, g_totalAllocatedVM
     add     r0, r0, r28
     cmplw   r0, r3
     ble     L_ok
@@ -46,16 +46,16 @@ L_ok:
     ble     L_done
 L_outer:
     add     r6, r29, r5
-    lwz     r4, lbl_8066F970
+    lwz     r4, g_baseARAMtoVM
 L_inner:
-    lwz     r3, lbl_8066F97C
+    lwz     r3, g_nextARAMPageToCheck
     addi    r0, r3, 1
     cmplw   r0, r30
-    stw     r0, lbl_8066F97C
+    stw     r0, g_nextARAMPageToCheck
     blt     L_nowrap
-    stw     r31, lbl_8066F97C
+    stw     r31, g_nextARAMPageToCheck
 L_nowrap:
-    lwz     r0, lbl_8066F97C
+    lwz     r0, g_nextARAMPageToCheck
     slwi    r3, r0, 2
     lwzx    r0, r4, r3
     cmplwi  r0, 0
@@ -63,13 +63,13 @@ L_nowrap:
     stwx    r6, r4, r3
     rlwinm  r0, r6, 22, 17, 29
     addi    r5, r5, 0x1000
-    lwz     r4, lbl_8066F97C
-    lwz     r3, lbl_8066F974
+    lwz     r4, g_nextARAMPageToCheck
+    lwz     r3, g_baseVMtoARAM
     slwi    r4, r4, 12
     stwx    r4, r3, r0
-    lwz     r3, lbl_8066F978
+    lwz     r3, g_totalAllocatedVM
     addi    r0, r3, 0x1000
-    stw     r0, lbl_8066F978
+    stw     r0, g_totalAllocatedVM
     bdnz    L_outer
 L_done:
     li      r3, 1

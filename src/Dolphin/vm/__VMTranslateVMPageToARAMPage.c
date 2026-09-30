@@ -1,4 +1,4 @@
-extern unsigned long* lbl_8066F974;
+extern unsigned long* g_baseVMtoARAM;
 extern void __VMMappingErrorAlert(void);
 
 // Returns the ARAM page for a mapped VM page, else reports the unmapped address and returns 0. GCC output, so asm.
@@ -10,7 +10,7 @@ asm unsigned long __VMTranslateVMPageToARAMPage(unsigned long addr)
     mflr    r0
     stw     r0, 0x14(r1)
     rlwinm  r0, r3, 22, 17, 29
-    lwz     r4, lbl_8066F974
+    lwz     r4, g_baseVMtoARAM
     lwzx    r0, r4, r0
     clrlwi. r0, r0, 1
     beq     L_alert

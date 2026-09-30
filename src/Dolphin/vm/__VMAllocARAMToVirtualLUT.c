@@ -1,4 +1,4 @@
-extern unsigned long* lbl_8066F970;
+extern unsigned long* g_baseARAMtoVM;
 
 extern void* OSGetArenaLo(void);
 extern void OSSetArenaLo(void*);
@@ -12,7 +12,7 @@ asm void __VMAllocARAMToVirtualLUT(void)
     mflr    r0
     stw     r0, 0x14(r1)
     bl      OSGetArenaLo
-    stw     r3, lbl_8066F970
+    stw     r3, g_baseARAMtoVM
     addi    r3, r3, 0x4000
     bl      OSSetArenaLo
     li      r0, 0x200
@@ -20,28 +20,28 @@ asm void __VMAllocARAMToVirtualLUT(void)
     li      r4, 0
     mtctr   r0
 L_loop:
-    lwz     r3, lbl_8066F970
+    lwz     r3, g_baseARAMtoVM
     stwx    r4, r3, r5
     addi    r5, r5, 4
-    lwz     r3, lbl_8066F970
+    lwz     r3, g_baseARAMtoVM
     stwx    r4, r3, r5
     addi    r5, r5, 4
-    lwz     r3, lbl_8066F970
+    lwz     r3, g_baseARAMtoVM
     stwx    r4, r3, r5
     addi    r5, r5, 4
-    lwz     r3, lbl_8066F970
+    lwz     r3, g_baseARAMtoVM
     stwx    r4, r3, r5
     addi    r5, r5, 4
-    lwz     r3, lbl_8066F970
+    lwz     r3, g_baseARAMtoVM
     stwx    r4, r3, r5
     addi    r5, r5, 4
-    lwz     r3, lbl_8066F970
+    lwz     r3, g_baseARAMtoVM
     stwx    r4, r3, r5
     addi    r5, r5, 4
-    lwz     r3, lbl_8066F970
+    lwz     r3, g_baseARAMtoVM
     stwx    r4, r3, r5
     addi    r5, r5, 4
-    lwz     r3, lbl_8066F970
+    lwz     r3, g_baseARAMtoVM
     stwx    r4, r3, r5
     addi    r5, r5, 4
     bdnz    L_loop
