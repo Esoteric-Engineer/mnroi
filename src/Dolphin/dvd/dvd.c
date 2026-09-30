@@ -27,14 +27,21 @@ typedef struct OSBootInfo
     u32 fstLength;
 } OSBootInfo;
 
+void fn_80183DC8(void);
+
+// dvd.c's .sdata pool, in address order.
+char* __DVDVersion = "<< Dolphin SDK - DVD\trelease build: Sep 16 2003 09:50:54 (0x2301) >>";
+int autoInvalidation = 1;
+void (*lbl_8066C418)(DVDCommandBlock* block, void* callback) = (void (*)(DVDCommandBlock*, void*))fn_80183DC8;
+char lbl_8066C41C[6] = "dvd.c";
+u32 lbl_8066C424[1] = { 0xFFFFFFFF };
+
 extern int DVDInitialized;
 extern int FirstTimeInBootrom;
 extern OSBootInfo* bootInfo;
 extern void* IDShouldBe;
 extern u32 __DVDThreadQueue[2];
-extern char* __DVDVersion;
 extern void* LastState;
-extern char lbl_8066C41C[6];
 extern volatile u32 NumInternalRetry;
 extern u32 lbl_8066F2F0;
 extern DVDCommandBlock* executing;
@@ -81,13 +88,10 @@ extern void DVDLowAudioBufferConfig(u32 enable, u32 size, void* callback);
 void cbForStateCheckID3(u32 intType);
 extern void stateBusy(DVDCommandBlock* block);
 void cbForStateBusy(u32 intType);
-extern u32 lbl_804D21F8[3];
-extern u32 lbl_8066C424[1];
 extern void DVDLowReadDiskID(void* buf, void* callback);
 extern void DVDLowRequestAudioStatus(u32 cmd, void* callback);
 extern void DVDLowAudioStream(u32 cmd, u32 length, u32 offset, void* callback);
 extern void DVDLowInquiry(void* buf, void* callback);
-extern void (*lbl_8066C418)(DVDCommandBlock* block, void* callback);
 extern int lbl_8066F2D4;
 void cbForStateCheckID2a(u32 intType);
 void stateCheckID2a(DVDCommandBlock* block);
@@ -762,6 +766,8 @@ void stateBusy(DVDCommandBlock* block)
         return;
     }
 }
+
+extern u32 lbl_804D21F8[3];
 
 static inline int IsDmaCommand(u32 command)
 {
