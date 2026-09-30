@@ -1,10 +1,10 @@
 typedef unsigned long u32;
 typedef long s32;
 
-extern u32 lbl_8066F4B0;
-extern u32 lbl_8066F4B4;
-extern u32 lbl_8066F4B8;
-extern u32 lbl_8066F4BC;
+u32 lbl_8066F4BC;
+u32 lbl_8066F4B8;
+u32 lbl_8066F4B4;
+u32 lbl_8066F4B0;
 
 extern s32 EXIGetID(s32 chan, u32 dev, s32* id);
 extern int ProbeBarnacle(s32 chan, u32 dev, s32* revision);

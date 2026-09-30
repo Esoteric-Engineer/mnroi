@@ -2023,6 +2023,7 @@ Dolphin/exi/ProbeBarnacle.c:
 
 Dolphin/exi/__OSEnableBarnacle.c:
 	.text       start:0x801959BC end:0x80195B78
+	.sbss       start:0x8066F4B0 end:0x8066F4C0
 
 Dolphin/exi/InitializeUART.c:
 	.text       start:0x80195B78 end:0x80195BE8
