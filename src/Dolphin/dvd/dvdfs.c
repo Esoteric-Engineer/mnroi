@@ -42,33 +42,57 @@ typedef struct DVDFileInfo
 #define filePosition(i) (FstStart[i].parentOrPosition)
 #define fileLength(i) (FstStart[i].nextEntryOrLength)
 
-extern OSBootInfo* BootInfo_8066F2A0;
-extern FSTEntry* FstStart;
-extern char* FstStringStart;
-extern u32 MaxEntryNum;
-extern u32 currentDirectory;
-extern u32 __DVDLongFileNameFlag;
-extern char lbl_8066C408[8]; // this TU's __FILE__ string; unnamed, compiler-synthesized
-extern char lbl_804D1D40[]; // the OSPanic() format string below, same reasoning
+char __DVDThreadQueue[8];
+u32 __DVDLongFileNameFlag;
+u32 currentDirectory;
+u32 MaxEntryNum;
+char* FstStringStart;
+FSTEntry* FstStart;
+OSBootInfo* BootInfo_8066F2A0;
+
+// this TU's __FILE__ string; unnamed, compiler-synthesized
+static char lbl_8066C408[8] = "dvdfs.c";
+
 extern void OSPanic(const char* file, int line, const char* msg, ...);
 extern int tolower2(int c);
 extern s32 DVDGetCurrentDir(char* path, u32 maxlen);
-extern char lbl_804D1ECC[];
-extern char lbl_804D1E40[0x34]; // "DVDReadAsync(): specified area is out of the file  "
 extern void cbForReadAsync(s32 result, DVDCommandBlock* block);
 extern s32 DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, s32 length, s32 offset, void* callback, s32 prio);
-extern char lbl_804D1E74[0x58]; // "DVDRead(): specified area is out of the file  "
 extern void cbForReadSync(void);
 extern void OSWakeupThread(void* queue);
-extern char __DVDThreadQueue[8];
-extern void OSSleepThread(void* queue); 
+extern void OSSleepThread(void* queue);
 extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern void cbForSeekSync(void);
 extern s32 DVDSeekAbsAsyncPrio(DVDCommandBlock* block, u32 offset, void* callback, s32 prio);
 extern s32 DVDCancel(DVDCommandBlock* block);
 extern void OSReport(const char* msg, ...);
-extern char lbl_804D1E08[0x38]; // "Warning: DVDOpen(): file '%s' was not found under %s.\n"
+
+// the OSPanic() format string used by DVDConvertPathToEntrynum below
+static char lbl_804D1D40[0xC8] = "DVDConvertEntrynumToPath(possibly DVDOpen or DVDChangeDir or DVDOpenDir): "
+    "specified directory or file (%s) doesn't match standard 8.3 format. This is a "
+    "temporary restriction and will be removed soon\n";
+
+// DVDOpen's warning message
+static char lbl_804D1E08[0x38] = "Warning: DVDOpen(): file '%s' was not found under %s.\n";
+
+// DVDReadAsyncPrio's message
+static char lbl_804D1E40[0x34] = "DVDReadAsync(): specified area is out of the file  ";
+
+// DVDReadPrio's message.
+// The trailing DVDSeek message is unreferenced (same shared-pool reason)
+static char lbl_804D1E74[0x58] = "DVDRead(): specified area is out of the file  " "\0\0" "DVDSeek(): offset is out of the file  ";
+
+// DVDOpenDir's warning message.
+// The rest of this pool is unreferenced (dead-stripped DVDPrepareStreamAsync/DVDPrepareStream messages that survive because the pool is shared)
+static char lbl_804D1ECC[0x264] =
+    "Warning: DVDOpenDir(): file '%s' was not found under %s.\n" "\0\0\0"
+    "DVDPrepareStreamAsync(): Specified start address (filestart(0x%x) + offset(0x%x)) is not 32KB aligned" "\0\0\0"
+    "DVDPrepareStreamAsync(): Specified length (0x%x) is not a multiple of 32768(32*1024)" "\0\0\0\0"
+    "DVDPrepareStreamAsync(): The area specified (offset(0x%x), length(0x%x)) is out of the file" "\0"
+    "DVDPrepareStream(): Specified start address (filestart(0x%x) + offset(0x%x)) is not 32KB aligned" "\0\0\0\0"
+    "DVDPrepareStream(): Specified length (0x%x) is not a multiple of 32768(32*1024)" "\0"
+    "DVDPrepareStream(): The area specified (offset(0x%x), length(0x%x)) is out of the file";
 
 void __DVDFSInit(void)
 {
