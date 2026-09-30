@@ -71,3 +71,7 @@ void GXSetViewport(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz)
     __GXSetViewport();
     __GXData->bpSentNot = 1;
 }
+
+// Unreferenced here: the rest of GXTransform.c's .sdata2 pool, kept alive by force_active above.
+const f32 GXTransformMaxIntConst = 16777215.0f;
+const f32 GXTransformZeroConst = 0.0f;

@@ -1,5 +1,5 @@
-extern unsigned long lbl_8066F968;
-extern unsigned long lbl_8066CEA0;
+unsigned long VMLRUCursor;
+extern unsigned long VMLRUFirstPass;
 
 extern unsigned long __VMGetNumPagesInMRAM(void);
 extern unsigned long VMBASEGetVirtualAddrFromPageInMRAM(unsigned long page);
@@ -23,16 +23,16 @@ asm unsigned long __VMPageReplacementLRU(void)
     stw     r0, 0x34(r1)
     addi    r11, r1, 0x30
     bl      _savegpr_24
-    lwz     r0, lbl_8066CEA0
+    lwz     r0, VMLRUFirstPass
     li      r28, 0
-    lwz     r29, lbl_8066F968
+    lwz     r29, VMLRUCursor
     li      r27, -1
     cmpwi   r0, 0
     li      r26, -1
     li      r25, -1
     bne     L_80400EB8
 L_80400D64:
-    lwz     r3, lbl_8066F968
+    lwz     r3, VMLRUCursor
     bl      VMBASEGetVirtualAddrFromPageInMRAM
     mr.     r24, r3
     beq     L_80400EB0
@@ -49,11 +49,11 @@ L_80400D64:
     bne     L_80400DC0
     cmpwi   r31, 0
     bne     L_80400DC0
-    lwz     r3, lbl_8066F968
+    lwz     r3, VMLRUCursor
     bl      VMBASEIsPageLocked
     cmpwi   r3, 0
     bne     L_80400DC0
-    lwz     r28, lbl_8066F968
+    lwz     r28, VMLRUCursor
     b       L_80400EBC
 L_80400DC0:
     cmpwi   r30, 0
@@ -62,11 +62,11 @@ L_80400DC0:
     beq     L_80400DF0
     cmpwi   r27, 0
     bge     L_80400E3C
-    lwz     r3, lbl_8066F968
+    lwz     r3, VMLRUCursor
     bl      VMBASEIsPageLocked
     cmpwi   r3, 0
     bne     L_80400E3C
-    lwz     r27, lbl_8066F968
+    lwz     r27, VMLRUCursor
     b       L_80400E3C
 L_80400DF0:
     cmpwi   r30, 0
@@ -75,20 +75,20 @@ L_80400DF0:
     bne     L_80400E20
     cmpwi   r26, 0
     bge     L_80400E3C
-    lwz     r3, lbl_8066F968
+    lwz     r3, VMLRUCursor
     bl      VMBASEIsPageLocked
     cmpwi   r3, 0
     bne     L_80400E3C
-    lwz     r26, lbl_8066F968
+    lwz     r26, VMLRUCursor
     b       L_80400E3C
 L_80400E20:
     cmpwi   r25, 0
     bge     L_80400E3C
-    lwz     r3, lbl_8066F968
+    lwz     r3, VMLRUCursor
     bl      VMBASEIsPageLocked
     cmpwi   r3, 0
     bne     L_80400E3C
-    lwz     r25, lbl_8066F968
+    lwz     r25, VMLRUCursor
 L_80400E3C:
     cmpwi   r30, 0
     beq     L_80400E50
@@ -96,7 +96,7 @@ L_80400E3C:
     li      r4, 0
     bl      VMBASESetPageReferenced
 L_80400E50:
-    lwz     r3, lbl_8066F968
+    lwz     r3, VMLRUCursor
     cmplw   r29, r3
     bne     L_80400E8C
     cmpwi   r27, 0
@@ -115,30 +115,30 @@ L_80400E7C:
     b       L_80400EBC
 L_80400E8C:
     addi    r0, r3, 1
-    stw     r0, lbl_8066F968
+    stw     r0, VMLRUCursor
     bl      __VMGetNumPagesInMRAM
-    lwz     r0, lbl_8066F968
+    lwz     r0, VMLRUCursor
     cmplw   r0, r3
     blt     L_80400D64
     li      r0, 0
-    stw     r0, lbl_8066F968
+    stw     r0, VMLRUCursor
     b       L_80400D64
 L_80400EB0:
-    lwz     r28, lbl_8066F968
+    lwz     r28, VMLRUCursor
     b       L_80400EBC
 L_80400EB8:
     mr      r28, r29
 L_80400EBC:
-    lwz     r3, lbl_8066F968
+    lwz     r3, VMLRUCursor
     addi    r0, r3, 1
-    stw     r0, lbl_8066F968
+    stw     r0, VMLRUCursor
     bl      __VMGetNumPagesInMRAM
-    lwz     r0, lbl_8066F968
+    lwz     r0, VMLRUCursor
     cmplw   r0, r3
     blt     L_80400EE4
     li      r0, 0
-    stw     r0, lbl_8066CEA0
-    stw     r0, lbl_8066F968
+    stw     r0, VMLRUFirstPass
+    stw     r0, VMLRUCursor
 L_80400EE4:
     mr      r3, r28
     addi    r11, r1, 0x30

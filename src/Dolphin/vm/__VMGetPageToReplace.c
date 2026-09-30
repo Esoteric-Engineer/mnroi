@@ -1,4 +1,5 @@
-extern long lbl_8066CEA4;
+unsigned long VMLRUFirstPass = 1;
+long VMPageReplacementMode = 1;
 
 extern void __VMPageReplacementLRU(void);
 extern void __VMPageReplacementRandom(void);
@@ -12,7 +13,7 @@ asm void __VMGetPageToReplace(void)
     stwu    r1, -0x10(r1)
     mflr    r0
     stw     r0, 0x14(r1)
-    lwz     r0, lbl_8066CEA4
+    lwz     r0, VMPageReplacementMode
     cmpwi   r0, 0
     bne     L_not_lru
     bl      __VMPageReplacementLRU

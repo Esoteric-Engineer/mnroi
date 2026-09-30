@@ -125,3 +125,16 @@ void GXSetFog(u32 type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color
     GXWGFifo.u32 = fogclr;
     __GXData->bpSentNot = 0;
 }
+
+// Unreferenced here: the rest of GXPixel.c's .sdata2 pool.
+// Kept alive by force_active above.
+const f32 GXPixelPoolConst0 = 0.0f;
+const f32 GXPixelPoolConst1 = 0.0f;
+const f32 GXPixelPoolConst2 = 1.7320499420166016f;
+const f32 GXPixelPoolConst3 = 0.0f;
+const f32 GXPixelPoolConst4 = 2.125f;
+const f32 GXPixelPoolConst5 = 0.0f;
+const f32 GXPixelPoolConst6 = 256.0f;
+const f32 GXPixelPoolConst7 = 0.0f;
+const f32 GXPixelPoolConst8 = 176.0f;
+const f32 GXPixelPoolConst9 = 0.0f;

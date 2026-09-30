@@ -1,5 +1,5 @@
-extern unsigned long lbl_8066F968;
-extern unsigned long lbl_8066CEA0;
+extern unsigned long VMLRUCursor;
+extern unsigned long VMLRUFirstPass;
 
 extern unsigned long __VMGetNumPagesInMRAM(void);
 extern unsigned long VMBASEIsPageLocked(unsigned long page);
@@ -16,16 +16,16 @@ asm unsigned long __VMPageReplacementFIFO(void)
     li      r31, 0
     stw     r30, 8(r1)
 L_loop:
-    lwz     r3, lbl_8066F968
+    lwz     r3, VMLRUCursor
     addi    r0, r3, 1
     mr      r30, r3
-    stw     r0, lbl_8066F968
+    stw     r0, VMLRUCursor
     bl      __VMGetNumPagesInMRAM
-    lwz     r0, lbl_8066F968
+    lwz     r0, VMLRUCursor
     cmplw   r0, r3
     blt     L_nowrap
-    stw     r31, lbl_8066CEA0
-    stw     r31, lbl_8066F968
+    stw     r31, VMLRUFirstPass
+    stw     r31, VMLRUCursor
 L_nowrap:
     mr      r3, r30
     bl      VMBASEIsPageLocked

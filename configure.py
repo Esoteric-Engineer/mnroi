@@ -1097,6 +1097,7 @@ config.libs = [
             Object(Matching, "Dolphin/mtx/PSMTXScale.c"),
             Object(Matching, "Dolphin/mtx/C_MTXPerspective.c"),
             Object(Matching, "Dolphin/mtx/C_MTXOrtho.c"),
+            Object(Matching, "Dolphin/mtx/vec.c"),
         ],
     ),
     DolphinLib(

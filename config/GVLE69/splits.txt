@@ -1543,7 +1543,7 @@ Dolphin/gx/GXInitLightAttnK.c:
 Dolphin/gx/GXInitLightSpot.c:
 	.text       start:0x8018D70C end:0x8018D89C
 	.data       start:0x804D2F68 end:0x804D2F84
-	.sdata2     start:0x80670678 end:0x806706A4
+	.sdata2     start:0x80670678 end:0x806706C0
 
 Dolphin/gx/GXInitLightPos.c:
 	.text       start:0x8018D89C end:0x8018D8AC
@@ -1572,7 +1572,8 @@ Dolphin/gx/GXSetChanCtrl.c:
 Dolphin/gx/__GXGetTexTileShift.c:
 	.text       start:0x8018DC0C end:0x8018E28C
 	.data       start:0x804D2F88 end:0x804D32A0
-	.sdata2     start:0x806706C0 end:0x806706E8
+	.sdata      start:0x8066C4D0 end:0x8066C518
+	.sdata2     start:0x806706C0 end:0x806706F8
 
 Dolphin/gx/GXAttr.c:
 	.text       start:0x8018E28C end:0x8018E29C
@@ -1695,7 +1696,7 @@ Dolphin/gx/GXSetNumTevStages.c:
 
 Dolphin/gx/GXSetFog.c:
 	.text       start:0x8018F958 end:0x8018FB6C
-	.sdata2     start:0x80670710 end:0x80670748
+	.sdata2     start:0x80670710 end:0x80670770
 
 Dolphin/gx/GXSetFogRangeAdj.c:
 	.text       start:0x8018FB6C end:0x8018FC90
@@ -1749,7 +1750,7 @@ Dolphin/gx/GXLoadTexMtxImm.c:
 
 Dolphin/gx/GXSetViewport.c:
 	.text       start:0x80190248 end:0x80190320
-	.sdata2     start:0x80670778 end:0x80670780
+	.sdata2     start:0x80670778 end:0x80670788
 
 Dolphin/gx/GXSetScissor.c:
 	.text       start:0x80190320 end:0x80190398
@@ -2149,9 +2150,11 @@ Dolphin/vm/__VMSwapPageIn.c:
 
 Dolphin/vm/__VMGetPageToReplace.c:
 	.text       start:0x80400CEC end:0x80400D30
+	.sdata      start:0x8066CEA0 end:0x8066CEA8
 
 Dolphin/vm/__VMPageReplacementLRU.c:
 	.text       start:0x80400D30 end:0x80400F00
+	.sbss       start:0x8066F968 end:0x8066F96C
 
 Dolphin/vm/__VMPageReplacementRandom.c:
 	.text       start:0x80400F00 end:0x80400F94
@@ -2386,7 +2389,10 @@ Dolphin/mtx/C_MTXPerspective.c:
 
 Dolphin/mtx/C_MTXOrtho.c:
 	.text       start:0x80404834 end:0x804048CC
-	.sdata2     start:0x806708F0 end:0x80670900
+	.sdata2     start:0x806708F0 end:0x80670910
+
+Dolphin/mtx/vec.c:
+	.sdata2     start:0x80670910 end:0x80670938
 
 Dolphin/ar/ARRegisterDMACallback.c:
 	.text       start:0x804048CC end:0x80404910
@@ -2611,7 +2617,7 @@ Dolphin/ax/AXSetVoiceAdpcm.c:
 
 Dolphin/ax/AXSetVoiceSrcRatio.c:
 	.text       start:0x804094E0 end:0x80409578
-	.sdata2     start:0x80670938 end:0x8067093C
+	.sdata2     start:0x80670938 end:0x80670970
 
 Dolphin/ax/AXSetVoiceAdpcmLoop.c:
 	.text       start:0x80409578 end:0x804095E4

@@ -26,3 +26,19 @@ void AXSetVoiceSrcRatio(AXVPB* p, float ratio)
     p->sync |= 0x80000;
     OSRestoreInterrupts(old);
 }
+
+// Unreferenced here: the rest of AXVPB.c's .sdata2 pool.
+// Kept alive by force_active above.
+const float AXVPBTwoPiConst = 6.2831854820251465f;
+const float AXVPBPoolConst1 = 32000.0f;
+const float AXVPBPoolConst2 = 2.0f;
+const float AXVPBPoolConst3 = 1.0f;
+const float AXVPBPoolConst4 = 0.0f;
+const float AXVPBPoolConst5 = 1.75f;
+const float AXVPBPoolConst6 = 0.0f;
+const float AXVPBPoolConst7 = 2.125f;
+const float AXVPBPoolConst8 = 0.0f;
+const float AXVPBPoolConst9 = 32768.0f;
+const float AXVPBPoolConst10 = 0.0f;
+const float AXVPBPoolConst11 = 176.0f;
+const float AXVPBPoolConst12 = 0.0f;

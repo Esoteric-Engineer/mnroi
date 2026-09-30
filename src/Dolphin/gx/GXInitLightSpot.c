@@ -2,6 +2,7 @@
 #pragma fp_contract off
 
 typedef float f32;
+typedef unsigned long u32;
 
 typedef enum {
     GX_SP_OFF,
@@ -80,3 +81,13 @@ void GXInitLightSpot(GXLightObjInt* lt_obj, f32 cutoff, GXSpotFn spot_func)
     lt_obj->a[1] = a1;
     lt_obj->a[2] = a2;
 }
+
+// Unreferenced here: the rest of GXLight.c's .sdata2 pool.
+// Kept alive by force_active above.
+const f32 GXLightSpotPoolConst0 = 0.5f;
+const f32 GXLightSpotPoolConst1 = 1.75f;
+const f32 GXLightSpotPoolConst2 = 0.0f;
+const f32 GXLightSpotPoolConst3 = 2.125f;
+const f32 GXLightSpotPoolConst4 = 0.0f;
+const union { u32 u; f32 f; } GXLightSpotPoolConst5 = {0xDD5E0B6BU};
+const f32 GXLightSpotPoolConst6 = 0.0f;

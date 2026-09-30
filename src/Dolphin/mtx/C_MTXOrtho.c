@@ -28,3 +28,10 @@ void C_MTXOrtho(f32 m[4][4], f32 t, f32 b, f32 l, f32 r, f32 n, f32 f)
     m[3][2] = 0;
     m[3][3] = 1;
 }
+
+// C_MTXPerspective.c externs these; the rest are unreferenced here.
+// Kept alive by force_active above.
+const f32 MtxPerspHalfConst = 0.5f;
+const f32 MtxPerspDeg2RadConst = 0.01745329238474369f;
+const f32 MtxOrthoThreeConst = 3.0f;
+const f32 MtxOrthoPoolZeroConst = 0.0f;
