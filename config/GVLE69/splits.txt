@@ -1174,8 +1174,9 @@ Dolphin/si/CompleteTransfer.c:
 
 Dolphin/si/SIInterruptHandler.c:
 	.text       start:0x80181A60 end:0x80181DA4
-	.data       start:0x804D1B78 end:0x804D1BE0
-	.bss        start:0x8057D010 end:0x8057D200
+	.data       start:0x804D1B78 end:0x804D1C90
+	.bss        start:0x8057D010 end:0x8057D220
+	.sbss       start:0x8066F280 end:0x8066F28C
 
 Dolphin/si/SIEnablePollingInterrupt.c:
 	.text       start:0x80181DA4 end:0x80181E3C

@@ -45,10 +45,12 @@ typedef struct SIPacket {
 
 typedef struct SIAlarm { u8 pad[0x28]; } SIAlarm;
 
-extern u32 lbl_8066F280; // static cmdTypeAndStatus
+// Declared in reverse of address order.
+u32 lbl_8066F288; // likely __PADFixBits
+u32 SIGetType_cmdTypeAndStatus;  // SIGetType's function-local static
+u32 lbl_8066F280; // SIInterruptHandler's own function-local static (cmdTypeAndStatus)
 
-// SIBios.c's translation unit: version string, then Si and Type in .data; the .bss objects below.
-// All global because the unclaimed asm in SIBios.c and the other SI units reference them.
+// SIBios.c's translation unit. Global because SIBios.c's unclaimed asm references them.
 char lbl_804D1B78[] = "<< Dolphin SDK - SI\trelease build: Apr 17 2003 12:33:19 (0x2301) >>";
 SIControl Si = { -1, 0, 0, 0, 0 };
 u32 Type[4] = { 0x08, 0x08, 0x08, 0x08 };
@@ -61,6 +63,26 @@ IntHandler RDSTHandler[4];
 s32 InputBufferValid[4];
 u32 InputBuffer[4][2];
 volatile u32 InputBufferVcount[4];
+
+// SIGetTypeString's name table; dead-stripped (SIGetTypeString itself is unreferenced).
+#pragma force_active on
+char lbl_804D1BE0[] = "No response";
+char lbl_804D1BEC[] = "N64 controller";
+char lbl_804D1BFC[] = "N64 microphone";
+char lbl_804D1C0C[] = "N64 keyboard";
+char lbl_804D1C1C[] = "N64 mouse";
+char lbl_804D1C28[] = "GameBoy Advance";
+char lbl_804D1C38[] = "Standard controller";
+char lbl_804D1C4C[] = "Wireless receiver";
+char lbl_804D1C60[] = "WaveBird controller";
+char lbl_804D1C74[] = "Keyboard";
+char lbl_804D1C80[] = "Steering";
+#pragma force_active reset
+
+// Rest of SIBios.c's .bss; unreferenced anywhere in the project.
+#pragma force_active on
+u8 lbl_8057D200[0x20];
+#pragma force_active reset
 
 static inline void SITransferNext(s32 chan) {
     int i;
