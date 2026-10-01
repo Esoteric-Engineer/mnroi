@@ -10,12 +10,16 @@ typedef struct {
 } __GXDataStruct;
 
 extern __GXDataStruct* const __GXData;
-extern volatile u16* __cpReg;
-extern u16* __memReg;
 
-extern u32 lbl_8066F458;
-extern OSTime lbl_8066F460;
-extern u32 lbl_8066F468;
+u32 resetFuncRegistered;
+u32 lbl_8066F468;
+OSTime lbl_8066F460;
+u32 lbl_8066F458;
+
+u16* __memReg;
+u16* __peReg;
+volatile u16* __cpReg;
+u32* __piReg;
 
 extern OSTime OSGetTime(void);
 extern void* GXSetBreakPtCallback(void* cb);

@@ -1781,6 +1781,7 @@ Dolphin/gx/__GXDefaultTlutRegionCallback.c:
 
 Dolphin/gx/__GXShutdown.c:
 	.text       start:0x801905A4 end:0x80190734
+	.sbss       start:0x8066F448 end:0x8066F470
 
 Dolphin/gx/__GXInitRevisionBits.c:
 	.text       start:0x80190734 end:0x801908D8
