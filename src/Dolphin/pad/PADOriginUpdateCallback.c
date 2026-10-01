@@ -6,10 +6,10 @@ extern void SIDisablePolling(u32 poll);
 extern void OSSetWirelessID(int chan, unsigned short id);
 extern void UpdateOrigin(int chan);
 
-extern u32 lbl_8066F3DC;
-extern u32 lbl_8066F3E8;
-extern u32 lbl_8066F3EC;
-extern u32 lbl_8066F3F0;
+extern u32 EnabledBits;
+extern u32 WaitingBits;
+extern u32 CheckingBits;
+extern u32 PendingBits;
 extern u32 lbl_8066F3F4;
 
 static inline void PADDisable(int chan)
@@ -20,10 +20,10 @@ static inline void PADDisable(int chan)
     enabled = OSDisableInterrupts();
     chanBit = 0x80000000 >> chan;
     SIDisablePolling(chanBit);
-    lbl_8066F3DC &= ~chanBit;
-    lbl_8066F3E8 &= ~chanBit;
-    lbl_8066F3EC &= ~chanBit;
-    lbl_8066F3F0 &= ~chanBit;
+    EnabledBits &= ~chanBit;
+    WaitingBits &= ~chanBit;
+    CheckingBits &= ~chanBit;
+    PendingBits &= ~chanBit;
     lbl_8066F3F4 &= ~chanBit;
     OSSetWirelessID(chan, 0);
     OSRestoreInterrupts(enabled);
@@ -31,7 +31,7 @@ static inline void PADDisable(int chan)
 
 void PADOriginUpdateCallback(int chan, u32 error, void* context)
 {
-    if (!(lbl_8066F3DC & (0x80000000 >> chan))) {
+    if (!(EnabledBits & (0x80000000 >> chan))) {
         return;
     }
     if (!(error & 0xF)) {

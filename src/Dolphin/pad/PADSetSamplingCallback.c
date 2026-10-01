@@ -5,14 +5,14 @@ extern void SamplingHandler(short interrupt, void* context);
 extern BOOL SIRegisterPollingHandler(void* handler);
 extern BOOL SIUnregisterPollingHandler(void* handler);
 
-extern PADSamplingCallback lbl_8066F3FC;
+extern PADSamplingCallback SamplingCallback;
 
 PADSamplingCallback PADSetSamplingCallback(PADSamplingCallback callback)
 {
     PADSamplingCallback prev;
 
-    prev = lbl_8066F3FC;
-    lbl_8066F3FC = callback;
+    prev = SamplingCallback;
+    SamplingCallback = callback;
 
     if (callback) {
         SIRegisterPollingHandler(&SamplingHandler);

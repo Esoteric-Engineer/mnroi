@@ -38,11 +38,11 @@ extern void PADOriginUpdateCallback(void);
 extern long ResettingChan;
 extern void (*MakeStatus)(int chan, PADStatus* status, u32* data);
 extern u32 CmdReadOrigin;
-extern u32 lbl_8066F3DC;
-extern u32 lbl_8066F3E0;
-extern u32 lbl_8066F3E8;
-extern u32 lbl_8066F3EC;
-extern u32 lbl_8066F3F0;
+extern u32 EnabledBits;
+extern u32 ResettingBits;
+extern u32 WaitingBits;
+extern u32 CheckingBits;
+extern u32 PendingBits;
 extern u32 lbl_8066F3F4;
 extern unsigned char Origin[];
 
@@ -54,10 +54,10 @@ static inline void PADDisable(int chan)
     enabled = OSDisableInterrupts();
     chanBit = 0x80000000 >> chan;
     SIDisablePolling(chanBit);
-    lbl_8066F3DC &= ~chanBit;
-    lbl_8066F3E8 &= ~chanBit;
-    lbl_8066F3EC &= ~chanBit;
-    lbl_8066F3F0 &= ~chanBit;
+    EnabledBits &= ~chanBit;
+    WaitingBits &= ~chanBit;
+    CheckingBits &= ~chanBit;
+    PendingBits &= ~chanBit;
     lbl_8066F3F4 &= ~chanBit;
     OSSetWirelessID(chan, 0);
     OSRestoreInterrupts(enabled);
@@ -80,14 +80,14 @@ u32 PADRead(PADStatus* status)
         chanBit = 0x80000000 >> chan;
         chanShift = (3 - chan) * 8;
 
-        if (lbl_8066F3F0 & chanBit) {
+        if (PendingBits & chanBit) {
             PADReset(0);
             status->err = -2;
             memset(status, 0, 10);
-        } else if ((lbl_8066F3E0 & chanBit) || (ResettingChan == chan)) {
+        } else if ((ResettingBits & chanBit) || (ResettingChan == chan)) {
             status->err = -2;
             memset(status, 0, 10);
-        } else if (!(lbl_8066F3DC & chanBit)) {
+        } else if (!(EnabledBits & chanBit)) {
             status->err = -1;
             memset(status, 0, 10);
         } else if (SIIsChanBusy(chan)) {
@@ -98,11 +98,11 @@ u32 PADRead(PADStatus* status)
             if (sr & 8) {
                 SIGetResponse(chan, data);
 
-                if (lbl_8066F3E8 & chanBit) {
+                if (WaitingBits & chanBit) {
                     status->err = 0;
                     memset(status, 0, 10);
-                    if (!(lbl_8066F3EC & chanBit)) {
-                        lbl_8066F3EC |= chanBit;
+                    if (!(CheckingBits & chanBit)) {
+                        CheckingBits |= chanBit;
                         SIGetTypeAsync(chan, PADReceiveCheckCallback);
                     }
                 } else {

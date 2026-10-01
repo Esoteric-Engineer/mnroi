@@ -16,8 +16,8 @@ extern BOOL PADReset(u32 mask);
 extern BOOL OnReset_8018B438(BOOL final);
 
 extern const char* __PADVersion;
-extern int lbl_8066F3D8;
-extern u32 lbl_8066F3E4;
+extern int Initialized;
+extern u32 RecalibrateBits;
 extern u32 lbl_8066F288;
 extern u32 __PADSpec;
 extern u32 Type_8057D560[4];
@@ -45,7 +45,7 @@ BOOL PADInit(void)
     s32 chan;
     OSTime time;
 
-    if (lbl_8066F3D8) {
+    if (Initialized) {
         return 1;
     }
     OSRegisterVersion(__PADVersion);
@@ -54,13 +54,13 @@ BOOL PADInit(void)
         PADSetSpec(__PADSpec);
     }
 
-    lbl_8066F3D8 = 1;
+    Initialized = 1;
     if (lbl_8066F288 != 0) {
         time = OSGetTime();
         __OSWirelessPadFixMode
             = (u16)((((time) & 0xffff) + ((time >> 16) & 0xffff) + ((time >> 32) & 0xffff) + ((time >> 48) & 0xffff))
                     & 0x3fffu);
-        lbl_8066F3E4 = 0xF0000000;
+        RecalibrateBits = 0xF0000000;
     }
 
     for (chan = 0; chan < 4; chan++) {

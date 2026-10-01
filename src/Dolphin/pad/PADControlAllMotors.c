@@ -8,7 +8,7 @@ extern u32 SIGetType(int chan);
 extern void SISetCommand(int chan, u32 command);
 extern void SITransferCommands(void);
 
-extern u32 lbl_8066F3DC;
+extern u32 EnabledBits;
 extern u32 AnalogMode;
 extern u32 Spec;
 
@@ -27,7 +27,7 @@ void PADControlAllMotors(const u32* commandArray)
 
     for (chan = 0; chan < 4; chan++, commandArray++) {
         chanBit = 0x80000000 >> chan;
-        if ((lbl_8066F3DC & chanBit) && !(SIGetType(chan) & 0x20000000)) {
+        if ((EnabledBits & chanBit) && !(SIGetType(chan) & 0x20000000)) {
             command = *commandArray;
             if (Spec < 2 && command == 2) {
                 command = 0;

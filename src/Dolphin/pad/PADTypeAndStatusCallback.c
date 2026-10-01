@@ -17,10 +17,10 @@ extern void PADProbeCallback(void);
 extern long ResettingChan;
 extern u32 AnalogMode;
 extern u32 Spec;
-extern u32 lbl_8066F3DC;
-extern u32 lbl_8066F3E0;
-extern u32 lbl_8066F3E4;
-extern u32 lbl_8066F3F0;
+extern u32 EnabledBits;
+extern u32 ResettingBits;
+extern u32 RecalibrateBits;
+extern u32 PendingBits;
 extern u8 CmdReadOrigin[2];
 extern u8 CmdCalibrate[2];
 
@@ -35,21 +35,21 @@ static inline void PADEnable(int chan)
     u32 data[2];
 
     chanBit = 0x80000000 >> chan;
-    lbl_8066F3DC |= chanBit;
+    EnabledBits |= chanBit;
     SIGetResponse(chan, data);
     cmd = AnalogMode | 0x400000;
     SISetCommand(chan, cmd);
-    SIEnablePolling(lbl_8066F3DC);
+    SIEnablePolling(EnabledBits);
 }
 
 static inline void DoReset(void)
 {
     u32 chanBit;
 
-    ResettingChan = __cntlzw(lbl_8066F3E0);
+    ResettingChan = __cntlzw(ResettingBits);
     if (ResettingChan != 32) {
         chanBit = 0x80000000 >> ResettingChan;
-        lbl_8066F3E0 &= ~chanBit;
+        ResettingBits &= ~chanBit;
         memset(Origin[ResettingChan], 0, 12);
         SIGetTypeAsync(ResettingChan, PADTypeAndStatusCallback);
     }
@@ -70,8 +70,8 @@ void PADTypeAndStatusCallback(int chan, u32 type)
     chanBit = 0x80000000 >> (c = ResettingChan);
     error = type & 0xFF;
 
-    recalibrate = lbl_8066F3E4 & chanBit;
-    lbl_8066F3E4 &= ~chanBit;
+    recalibrate = RecalibrateBits & chanBit;
+    RecalibrateBits &= ~chanBit;
 
     if (error & 0xF) {
         DoReset();
@@ -107,7 +107,7 @@ void PADTypeAndStatusCallback(int chan, u32 type)
     }
 
     if (!rc) {
-        lbl_8066F3F0 |= chanBit;
+        PendingBits |= chanBit;
         DoReset();
     }
 }

@@ -13,12 +13,12 @@ extern void PADTypeAndStatusCallback(void);
 u8 __gUnknown800030E3 : 0x800030E3;
 
 extern long ResettingChan;
-extern u32 lbl_8066F3DC;
-extern u32 lbl_8066F3E0;
-extern u32 lbl_8066F3E4;
-extern u32 lbl_8066F3E8;
-extern u32 lbl_8066F3EC;
-extern u32 lbl_8066F3F0;
+extern u32 EnabledBits;
+extern u32 ResettingBits;
+extern u32 RecalibrateBits;
+extern u32 WaitingBits;
+extern u32 CheckingBits;
+extern u32 PendingBits;
 extern u32 lbl_8066F3F4;
 extern unsigned char Origin[];
 
@@ -26,10 +26,10 @@ static inline void DoReset(void)
 {
     u32 chanBit;
 
-    ResettingChan = __cntlzw(lbl_8066F3E0);
+    ResettingChan = __cntlzw(ResettingBits);
     if (ResettingChan != 32) {
         chanBit = 0x80000000 >> ResettingChan;
-        lbl_8066F3E0 &= ~chanBit;
+        ResettingBits &= ~chanBit;
         memset(Origin + ResettingChan * 12, 0, 12);
         SIGetTypeAsync(ResettingChan, PADTypeAndStatusCallback);
     }
@@ -41,15 +41,15 @@ BOOL PADRecalibrate(u32 mask)
     u32 disableBits;
 
     enabled = OSDisableInterrupts();
-    mask |= lbl_8066F3F0;
-    lbl_8066F3F0 = 0;
-    mask &= ~(lbl_8066F3E8 | lbl_8066F3EC);
-    lbl_8066F3E0 |= mask;
-    disableBits = lbl_8066F3E0 & lbl_8066F3DC;
-    lbl_8066F3DC &= ~mask;
+    mask |= PendingBits;
+    PendingBits = 0;
+    mask &= ~(WaitingBits | CheckingBits);
+    ResettingBits |= mask;
+    disableBits = ResettingBits & EnabledBits;
+    EnabledBits &= ~mask;
     lbl_8066F3F4 &= ~mask;
     if (!(__gUnknown800030E3 & 0x40)) {
-        lbl_8066F3E4 |= mask;
+        RecalibrateBits |= mask;
     }
     SIDisablePolling(disableBits);
     if (ResettingChan == 0x20) {

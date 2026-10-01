@@ -10,10 +10,10 @@ extern BOOL SITransfer(int chan, void* output, u32 outputBytes, void* input, u32
                        long long delay);
 extern void PADOriginUpdateCallback(void);
 
-extern u32 lbl_8066F3DC;
-extern u32 lbl_8066F3E8;
-extern u32 lbl_8066F3EC;
-extern u32 lbl_8066F3F0;
+extern u32 EnabledBits;
+extern u32 WaitingBits;
+extern u32 CheckingBits;
+extern u32 PendingBits;
 extern u32 lbl_8066F3F4;
 extern u8 CmdReadOrigin[2];
 extern u8 Origin[4][12];
@@ -26,10 +26,10 @@ static inline void PADDisable(int chan)
     enabled = OSDisableInterrupts();
     chanBit = 0x80000000 >> chan;
     SIDisablePolling(chanBit);
-    lbl_8066F3DC &= ~chanBit;
-    lbl_8066F3E8 &= ~chanBit;
-    lbl_8066F3EC &= ~chanBit;
-    lbl_8066F3F0 &= ~chanBit;
+    EnabledBits &= ~chanBit;
+    WaitingBits &= ~chanBit;
+    CheckingBits &= ~chanBit;
+    PendingBits &= ~chanBit;
     lbl_8066F3F4 &= ~chanBit;
     OSSetWirelessID(chan, 0);
     OSRestoreInterrupts(enabled);
@@ -41,12 +41,12 @@ void PADReceiveCheckCallback(int chan, u32 type)
     u32 chanBit;
 
     chanBit = 0x80000000 >> chan;
-    if ((lbl_8066F3DC & chanBit) != 0) {
+    if ((EnabledBits & chanBit) != 0) {
         error = type & 0xFF;
         type &= ~0xFF;
 
-        lbl_8066F3E8 &= ~chanBit;
-        lbl_8066F3EC &= ~chanBit;
+        WaitingBits &= ~chanBit;
+        CheckingBits &= ~chanBit;
 
         if (!(error & 0xF) && (type & 0x80000000) != 0 && (type & 0x00100000) != 0 && (type & 0x40000000) != 0 &&
             !(type & 0x04000000) && !(type & 0x00080000) && !(type & 0x00040000)) {

@@ -7,7 +7,7 @@ typedef struct OSContext {
     u8 pad[0x2C8];
 } OSContext;
 
-extern PADSamplingCallback lbl_8066F3FC;
+extern PADSamplingCallback SamplingCallback;
 
 void OSClearContext(OSContext* context);
 void OSSetCurrentContext(OSContext* context);
@@ -16,10 +16,10 @@ void SamplingHandler(s16 interrupt, OSContext* context)
 {
     OSContext exceptionContext;
 
-    if (lbl_8066F3FC) {
+    if (SamplingCallback) {
         OSClearContext(&exceptionContext);
         OSSetCurrentContext(&exceptionContext);
-        (*lbl_8066F3FC)();
+        (*SamplingCallback)();
         OSClearContext(&exceptionContext);
         OSSetCurrentContext(context);
     }
