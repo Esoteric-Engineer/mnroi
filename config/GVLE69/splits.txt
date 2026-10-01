@@ -2493,6 +2493,7 @@ Dolphin/ax/AXQuit.c:
 
 Dolphin/ax/__AXGetStackHead.c:
 	.text       start:0x804068CC end:0x804068E4
+	.bss        start:0x8064F228 end:0x8064F328
 
 Dolphin/ax/__AXServiceCallbackStack.c:
 	.text       start:0x804068E4 end:0x80406958

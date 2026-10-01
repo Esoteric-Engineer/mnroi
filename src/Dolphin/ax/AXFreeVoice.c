@@ -12,7 +12,7 @@ extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int);
 extern void __AXRemoveFromStack(AXVPB* p);
 extern void __AXSetPBDefault(AXVPB* p);
-extern AXVPB* lbl_8064F228[];
+extern AXVPB* __AXStackHead[];
 
 void AXFreeVoice(AXVPB* p)
 {
@@ -23,8 +23,8 @@ void AXFreeVoice(AXVPB* p)
         p->depop = 1;
     }
     __AXSetPBDefault(p);
-    p->next = lbl_8064F228[0];
-    lbl_8064F228[0] = p;
+    p->next = __AXStackHead[0];
+    __AXStackHead[0] = p;
     p->priority = 0;
     OSRestoreInterrupts(old);
 }

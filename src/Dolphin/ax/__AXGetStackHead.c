@@ -1,8 +1,9 @@
 typedef struct AXVPB AXVPB;
 
-extern AXVPB* lbl_8064F228[];
+AXVPB* __AXStackHead[32];
+AXVPB* __AXStackTail[32];
 
 AXVPB* __AXGetStackHead(unsigned long stack)
 {
-    return lbl_8064F228[stack];
+    return __AXStackHead[stack];
 }

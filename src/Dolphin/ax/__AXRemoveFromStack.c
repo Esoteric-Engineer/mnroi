@@ -5,14 +5,14 @@ typedef struct AXVPB {
     unsigned long priority;
 } AXVPB;
 
-extern AXVPB* lbl_8064F228[];
-extern AXVPB* lbl_8064F2A8[];
+extern AXVPB* __AXStackHead[];
+extern AXVPB* __AXStackTail[];
 
 void __AXRemoveFromStack(AXVPB* p)
 {
     unsigned long pri = p->priority;
-    AXVPB** head = &lbl_8064F228[pri];
-    AXVPB** tail = &lbl_8064F2A8[pri];
+    AXVPB** head = &__AXStackHead[pri];
+    AXVPB** tail = &__AXStackTail[pri];
 
     if (*head == *tail) {
         *tail = 0;

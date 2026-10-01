@@ -1,21 +1,21 @@
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int);
 extern void __AXSetPBDefault(void);
-extern void* lbl_8064F228[];
+extern void* __AXStackHead[];
 
 asm void* AXAcquireVoice(void)
 {
     // clang-format off
     nofralloc
     mflr    r0
-    lis     r6, lbl_8064F228@ha
+    lis     r6, __AXStackHead@ha
     stw     r0, 0x4(r1)
     stwu    r1, -0x38(r1)
     stmw    r26, 0x20(r1)
     addi    r28, r3, 0x0
     addi    r29, r4, 0x0
     addi    r30, r5, 0x0
-    addi    r27, r6, lbl_8064F228@l
+    addi    r27, r6, __AXStackHead@l
     bl      OSDisableInterrupts
     lwz     r4, 0x0(r27)
     addi    r31, r3, 0x0

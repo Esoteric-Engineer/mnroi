@@ -4,11 +4,11 @@ typedef struct AXVPB {
     unsigned long priority;
 } AXVPB;
 
-extern AXVPB* lbl_8064F228[];
+extern AXVPB* __AXStackHead[];
 
 void __AXPushFreeStack(AXVPB* p)
 {
-    p->next = lbl_8064F228[0];
-    lbl_8064F228[0] = p;
+    p->next = __AXStackHead[0];
+    __AXStackHead[0] = p;
     p->priority = 0;
 }
