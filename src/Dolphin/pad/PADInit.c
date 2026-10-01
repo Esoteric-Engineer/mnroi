@@ -15,7 +15,7 @@ extern void PADSetSpec(u32 spec);
 extern BOOL PADReset(u32 mask);
 extern BOOL OnReset_8018B438(BOOL final);
 
-extern const char* lbl_8066C498;
+extern const char* __PADVersion;
 extern int lbl_8066F3D8;
 extern u32 lbl_8066F3E4;
 extern u32 lbl_8066F288;
@@ -48,7 +48,7 @@ BOOL PADInit(void)
     if (lbl_8066F3D8) {
         return 1;
     }
-    OSRegisterVersion(lbl_8066C498);
+    OSRegisterVersion(__PADVersion);
 
     if (__PADSpec) {
         PADSetSpec(__PADSpec);

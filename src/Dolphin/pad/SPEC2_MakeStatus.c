@@ -20,7 +20,7 @@ typedef struct PADStatus {
 #define PAD_ALL 0x3FFF
 #define PAD_USE_ORIGIN 0x0080
 
-extern u32 lbl_8066C4A4;
+extern u32 AnalogMode;
 extern u32 Type_8057D560[4];
 extern PADStatus Origin[4];
 extern u32 lbl_8066F3F4;
@@ -55,7 +55,7 @@ void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2])
     status->stickX = (s8)(data[0] >> 8);
     status->stickY = (s8)(data[0]);
 
-    switch (lbl_8066C4A4 & 0x00000700) {
+    switch (AnalogMode & 0x00000700) {
     case 0x00000000:
     case 0x00000500:
     case 0x00000600:

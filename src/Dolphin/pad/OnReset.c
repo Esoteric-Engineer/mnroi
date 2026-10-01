@@ -8,12 +8,12 @@ extern BOOL PADRecalibrate(u32 mask);
 
 extern PADSamplingCallback lbl_8066F3FC;
 extern u32 lbl_8066F3E0;
-extern long lbl_8066C49C;
+extern long ResettingChan;
 extern BOOL lbl_8066F400;
 
 static inline BOOL PADSync(void)
 {
-    return lbl_8066F3E0 == 0 && lbl_8066C49C == 32 && !SIBusy();
+    return lbl_8066F3E0 == 0 && ResettingChan == 32 && !SIBusy();
 }
 
 BOOL OnReset_8018B438(BOOL final)

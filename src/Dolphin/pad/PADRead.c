@@ -35,9 +35,9 @@ extern u32 PADReset(u32 mask);
 extern void PADReceiveCheckCallback(void);
 extern void PADOriginUpdateCallback(void);
 
-extern long lbl_8066C49C;
-extern void (*lbl_8066C4AC)(int chan, PADStatus* status, u32* data);
-extern u32 lbl_8066C4B0;
+extern long ResettingChan;
+extern void (*MakeStatus)(int chan, PADStatus* status, u32* data);
+extern u32 CmdReadOrigin;
 extern u32 lbl_8066F3DC;
 extern u32 lbl_8066F3E0;
 extern u32 lbl_8066F3E8;
@@ -84,7 +84,7 @@ u32 PADRead(PADStatus* status)
             PADReset(0);
             status->err = -2;
             memset(status, 0, 10);
-        } else if ((lbl_8066F3E0 & chanBit) || (lbl_8066C49C == chan)) {
+        } else if ((lbl_8066F3E0 & chanBit) || (ResettingChan == chan)) {
             status->err = -2;
             memset(status, 0, 10);
         } else if (!(lbl_8066F3DC & chanBit)) {
@@ -122,12 +122,12 @@ u32 PADRead(PADStatus* status)
                     status->err = -3;
                     memset(status, 0, 10);
                 } else {
-                    lbl_8066C4AC(chan, status, data);
+                    MakeStatus(chan, status, data);
 
                     if (status->button & 0x2000) {
                         status->err = -3;
                         memset(status, 0, 10);
-                        SITransfer(chan, &lbl_8066C4B0, 1, Origin + chan * 12, 10, PADOriginUpdateCallback, 0);
+                        SITransfer(chan, &CmdReadOrigin, 1, Origin + chan * 12, 10, PADOriginUpdateCallback, 0);
                     } else {
                         status->err = 0;
                         status->button &= ~0x80;

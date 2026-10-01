@@ -1357,6 +1357,7 @@ Dolphin/vi/__VIGetCurrentPosition.c:
 
 Dolphin/pad/UpdateOrigin.c:
 	.text       start:0x80189C10 end:0x80189DB4
+	.sdata      start:0x8066C498 end:0x8066C4B8
 
 Dolphin/pad/PADOriginCallback.c:
 	.text       start:0x80189DB4 end:0x80189E78

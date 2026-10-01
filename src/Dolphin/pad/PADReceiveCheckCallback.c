@@ -15,7 +15,7 @@ extern u32 lbl_8066F3E8;
 extern u32 lbl_8066F3EC;
 extern u32 lbl_8066F3F0;
 extern u32 lbl_8066F3F4;
-extern u8 lbl_8066C4B0[2];
+extern u8 CmdReadOrigin[2];
 extern u8 Origin[4][12];
 
 static inline void PADDisable(int chan)
@@ -50,7 +50,7 @@ void PADReceiveCheckCallback(int chan, u32 type)
 
         if (!(error & 0xF) && (type & 0x80000000) != 0 && (type & 0x00100000) != 0 && (type & 0x40000000) != 0 &&
             !(type & 0x04000000) && !(type & 0x00080000) && !(type & 0x00040000)) {
-            SITransfer(chan, lbl_8066C4B0, 1, Origin[chan], 10, PADOriginUpdateCallback, 0);
+            SITransfer(chan, CmdReadOrigin, 1, Origin[chan], 10, PADOriginUpdateCallback, 0);
         } else {
             PADDisable(chan);
         }

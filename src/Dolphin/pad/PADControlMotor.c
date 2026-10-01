@@ -9,8 +9,8 @@ extern void SISetCommand(int chan, u32 command);
 extern void SITransferCommands(void);
 
 extern u32 lbl_8066F3DC;
-extern u32 lbl_8066C4A4;
-extern u32 lbl_8066C4A8;
+extern u32 AnalogMode;
+extern u32 Spec;
 
 volatile u8 __gUnknown800030E3 : 0x800030E3;
 
@@ -22,13 +22,13 @@ void PADControlMotor(int chan, u32 command)
     enabled = OSDisableInterrupts();
     chanBit = 0x80000000 >> chan;
     if ((lbl_8066F3DC & chanBit) && !(SIGetType(chan) & 0x20000000)) {
-        if (lbl_8066C4A8 < 2 && command == 2) {
+        if (Spec < 2 && command == 2) {
             command = 0;
         }
         if (__gUnknown800030E3 & 0x20) {
             command = 0;
         }
-        SISetCommand(chan, 0x400000 | lbl_8066C4A4 | (command & 3));
+        SISetCommand(chan, 0x400000 | AnalogMode | (command & 3));
         SITransferCommands();
     }
     OSRestoreInterrupts(enabled);
