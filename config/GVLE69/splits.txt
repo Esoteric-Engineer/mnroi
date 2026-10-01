@@ -2025,6 +2025,9 @@ Dolphin/exi/EXTIntrruptHandler.c:
 
 Dolphin/exi/EXIInit.c:
 	.text       start:0x8019509C end:0x80195270
+	.data       start:0x804D3880 end:0x804D398C
+	.sdata      start:0x8066C520 end:0x8066C558
+	.sbss       start:0x8066F4A8 end:0x8066F4AC
 
 Dolphin/exi/EXILock.c:
 	.text       start:0x80195270 end:0x80195364

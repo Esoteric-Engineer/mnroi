@@ -24,9 +24,39 @@ extern EXIControl Ecb[3];
 volatile u32 __EXIRegs[0x40] : 0xCC006800;
 volatile u32 __gUnknown800030C0[2] : 0x800030C0;
 
-extern u32 IDSerialPort1;
+u32 IDSerialPort1;
 extern int __OSInIPL;
-extern char* __EXIVersion;
+
+char lbl_804D3880[] = "<< Dolphin SDK - EXI\trelease build: Apr 17 2003 12:33:17 (0x2301) >>";
+
+// EXIGetTypeString's name table; dead-stripped (EXIGetTypeString itself is unreferenced).
+#pragma force_active on
+char lbl_804D38C8[] = "Memory Card 59";
+char lbl_804D38D8[] = "Memory Card 123";
+char lbl_804D38E8[] = "Memory Card 251";
+char lbl_804D38F8[] = "Memory Card 507";
+char lbl_804D3908[] = "Memory Card 1019";
+char lbl_804D391C[] = "Memory Card 2043";
+char lbl_804D3930[] = "USB Adapter";
+char lbl_804D393C[] = "Net Card";
+char lbl_804D3948[] = "Artist Ether";
+char lbl_804D3958[] = "Broadband Adapter";
+char lbl_804D396C[] = "Stream Hanger";
+char lbl_804D397C[] = "IS-DOL-VIEWER";
+#pragma force_active reset
+
+static char* __EXIVersion = lbl_804D3880;
+
+// EXIGetTypeString's short name table; dead-stripped (EXIGetTypeString itself is unreferenced).
+#pragma force_active on
+char EXIGetTypeStringGDEV[8] = "GDEV";
+char EXIGetTypeStringModem[8] = "Modem";
+char EXIGetTypeStringMarlin[8] = "Marlin";
+char EXIGetTypeStringAD16[8] = "AD16";
+char EXIGetTypeStringRS232C[8] = "RS232C";
+char EXIGetTypeStringMic[4] = "Mic";
+char EXIGetTypeStringUnknown[8] = "Unknown";
+#pragma force_active reset
 
 extern u32 __OSMaskInterrupts(u32 mask);
 extern void __OSSetInterruptHandler(short interrupt, void (*handler)(short, OSContext*));
