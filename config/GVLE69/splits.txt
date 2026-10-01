@@ -1298,7 +1298,7 @@ Dolphin/dvd/DVDLowAudioBufferConfig.c:
 
 Dolphin/dvd/DVDLowReset.c:
 	.text       start:0x801879D4 end:0x80187A90
-	.sbss       start:0x8066F340 end:0x8066F34C
+	.sbss       start:0x8066F340 end:0x8066F378
 
 Dolphin/dvd/DVDLowBreak.c:
 	.text       start:0x80187A90 end:0x80187AA4

@@ -1,4 +1,6 @@
+typedef int BOOL;
 typedef unsigned long u32;
+typedef long s32;
 typedef long long s64;
 typedef s64 OSTime;
 
@@ -12,7 +14,15 @@ u32 __OSBusClock : 0x800000F8;
 #define OS_TIMER_CLOCK (OS_BUS_CLOCK / 4)
 #define OSMicrosecondsToTicks(usec) (((usec) * (OS_TIMER_CLOCK / 125000)) / 8)
 
-// Reverse declaration order in .sbss: this order puts LastResetEnd first.
+// Reverse declaration order in .sbss: this puts LastResetEnd first and lays the rest of dvdlow.c's .sbss out ascending from there.
+s32 NextCommandNumber;
+volatile BOOL LastCommandWasRead;
+OSTime LastReadIssued;
+volatile OSTime LastReadFinished;
+u32 WorkAroundSeekLocation;
+volatile u32 WorkAroundType;
+volatile BOOL lbl_8066F350;
+volatile BOOL WaitingCoverClose;
 volatile u32 ResetOccurred;
 volatile OSTime LastResetEnd;
 
