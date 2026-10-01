@@ -1,16 +1,16 @@
 typedef void (*GXBreakPtCallback)(void);
 
-extern GXBreakPtCallback lbl_8066F484;
+extern GXBreakPtCallback BreakPointCB;
 
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int level);
 
 GXBreakPtCallback GXSetBreakPtCallback(GXBreakPtCallback cb)
 {
-    GXBreakPtCallback oldcb = lbl_8066F484;
+    GXBreakPtCallback oldcb = BreakPointCB;
     int enabled = OSDisableInterrupts();
 
-    lbl_8066F484 = cb;
+    BreakPointCB = cb;
     OSRestoreInterrupts(enabled);
     return oldcb;
 }

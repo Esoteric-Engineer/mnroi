@@ -18,7 +18,7 @@ extern int OSRestoreInterrupts(int enabled);
 
 extern volatile u32* __piReg;
 extern volatile u16* __cpReg;
-extern u8 lbl_8066F47C; // CPGPLinked
+extern u8 CPGPLinked;
 
 void __GXSaveCPUFifoAux(__GXFifoObj* realFifo)
 {
@@ -27,7 +27,7 @@ void __GXSaveCPUFifoAux(__GXFifoObj* realFifo)
     realFifo->base = (u8*)(__piReg[3] + 0x80000000);
     realFifo->top = (u8*)(__piReg[4] + 0x80000000);
     realFifo->wrPtr = (u8*)((__piReg[5] & 0xFBFFFFFF) + 0x80000000);
-    if (lbl_8066F47C) {
+    if (CPGPLinked) {
         u32 reg2 = __cpReg[29];
         u32 reg1 = __cpReg[28];
         realFifo->rdPtr = (u8*)(((reg2 << 16) | reg1) + 0x80000000);

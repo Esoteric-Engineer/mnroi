@@ -5,17 +5,17 @@ extern u32 __OSUnmaskInterrupts(u32 mask);
 extern u32 fn_8017FD74(void);
 extern void GXCPInterruptHandler(void);
 
-extern u32 lbl_8066F470; // CPUFifo
-extern u32 lbl_8066F474; // GPFifo
-extern u32 lbl_8066F478; // __GXCurrentThread
-extern u32 lbl_8066F480; // GXOverflowSuspendInProgress
+extern u32 CPUFifo;
+extern u32 GPFifo;
+extern u32 __GXCurrentThread;
+extern u32 GXOverflowSuspendInProgress;
 
 void __GXFifoInit(void)
 {
     __OSSetInterruptHandler(0x11, GXCPInterruptHandler);
     __OSUnmaskInterrupts(0x4000);
-    lbl_8066F478 = fn_8017FD74();
-    lbl_8066F480 = 0;
-    lbl_8066F470 = 0;
-    lbl_8066F474 = 0;
+    __GXCurrentThread = fn_8017FD74();
+    GXOverflowSuspendInProgress = 0;
+    CPUFifo = 0;
+    GPFifo = 0;
 }

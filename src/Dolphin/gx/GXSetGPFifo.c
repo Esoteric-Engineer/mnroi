@@ -32,9 +32,9 @@ extern void __GXWriteFifoIntReset(u8 a, u8 b);
 
 extern __GXDataStruct* const __GXData;
 extern volatile u16* __cpReg;
-extern GXFifoObj* lbl_8066F470; // CPUFifo
-extern GXFifoObj* lbl_8066F474; // GPFifo
-extern u8 lbl_8066F47C;         // CPGPLinked
+extern GXFifoObj* CPUFifo;
+extern GXFifoObj* GPFifo;
+extern u8 CPGPLinked;
 
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
@@ -48,7 +48,7 @@ void GXSetGPFifo(GXFifoObj* fifo)
 
     __GXFifoReadDisable();
     __GXWriteFifoIntEnable(0, 0);
-    lbl_8066F474 = fifo;
+    GPFifo = fifo;
 
     __cpReg[16] = (u32)fifo->base;
     __cpReg[18] = (u32)fifo->top;
@@ -67,12 +67,12 @@ void GXSetGPFifo(GXFifoObj* fifo)
 
     PPCSync();
 
-    if (lbl_8066F470 == lbl_8066F474) {
-        lbl_8066F47C = 1;
+    if (CPUFifo == GPFifo) {
+        CPGPLinked = 1;
         __GXWriteFifoIntEnable(1, 0);
         __GXFifoLink(1);
     } else {
-        lbl_8066F47C = 0;
+        CPGPLinked = 0;
         __GXWriteFifoIntEnable(0, 0);
         __GXFifoLink(0);
     }

@@ -22,10 +22,14 @@ typedef struct {
 
 extern __GXDataStruct* const __GXData;
 extern volatile u16* __cpReg;
-extern u32 lbl_8066F478;                 // __GXCurrentThread
-extern u32 lbl_8066F480;                 // GXOverflowSuspendInProgress
-extern GXBreakPtCallback lbl_8066F484;   // BreakPointCB
-extern u32 lbl_8066F488;                 // __GXOverflowCount
+
+u32 __GXOverflowCount;
+GXBreakPtCallback BreakPointCB;
+u32 GXOverflowSuspendInProgress;
+u8 CPGPLinked;
+u32 __GXCurrentThread;
+u32 GPFifo;
+u32 CPUFifo;
 
 extern void OSResumeThread(u32 thread);
 extern void OSSuspendThread(u32 thread);
@@ -36,17 +40,17 @@ extern void __GXWriteFifoIntReset(u8 a, u8 b);
 
 static inline void GXOverflowHandler(short interrupt, OSContext* context)
 {
-    lbl_8066F488++;
+    __GXOverflowCount++;
     __GXWriteFifoIntEnable(0, 1);
     __GXWriteFifoIntReset(1, 0);
-    lbl_8066F480 = 1;
-    OSSuspendThread(lbl_8066F478);
+    GXOverflowSuspendInProgress = 1;
+    OSSuspendThread(__GXCurrentThread);
 }
 
 static inline void GXUnderflowHandler(short interrupt, OSContext* context)
 {
-    OSResumeThread(lbl_8066F478);
-    lbl_8066F480 = 0;
+    OSResumeThread(__GXCurrentThread);
+    GXOverflowSuspendInProgress = 0;
     __GXWriteFifoIntReset(1, 1);
     __GXWriteFifoIntEnable(1, 0);
 }
@@ -57,10 +61,10 @@ static inline void GXBreakPointHandler(short interrupt, OSContext* context)
 
     SET_REG_FIELD(__GXData->cpEnable, 1, 5, 0);
     __cpReg[1] = __GXData->cpEnable;
-    if (lbl_8066F484 != 0) {
+    if (BreakPointCB != 0) {
         OSClearContext(&exceptionContext);
         OSSetCurrentContext(&exceptionContext);
-        lbl_8066F484();
+        BreakPointCB();
         OSClearContext(&exceptionContext);
         OSSetCurrentContext(context);
     }

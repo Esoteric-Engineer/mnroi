@@ -1793,6 +1793,7 @@ Dolphin/gx/GXInit.c:
 
 Dolphin/gx/GXCPInterruptHandler.c:
 	.text       start:0x80191810 end:0x80191944
+	.sbss       start:0x8066F470 end:0x8066F48C
 
 Dolphin/gx/GXInitFifoBase.c:
 	.text       start:0x80191944 end:0x801919B0
