@@ -1,7 +1,7 @@
 extern void sprintf(void);
 
 #pragma section R ".rodata.1"
-__declspec(section ".rodata.1") const char AsctimeNames[] = "SunMonTueWedThuFriSatJanFebMarAprMayJunJulAugSepOctNovDec";
+__declspec(section ".rodata.1") const char AsctimeNames[57] = "SunMonTueWedThuFriSatJanFebMarAprMayJunJulAugSepOctNovDec";
 __declspec(section ".rodata.1") const char AsctimeFormat[] = "%.3s %.3s %.2d %.2d:%.2d:%.2d %d\n";
 
 asm char* asctime_r(void* tim_p, char* result)
