@@ -16,7 +16,7 @@ typedef struct CARDControl {
 } CARDControl;
 
 extern CARDControl __CARDBlock[2];
-extern s32 lbl_804F2BD8[8];
+extern s32 SectorSizeTable[8];
 extern u8 __gUnknown800030E3 : 0x800030E3;
 
 extern BOOL OSDisableInterrupts(void);
@@ -70,7 +70,7 @@ s32 CARDProbeEx(s32 chan, s32* memSize, s32* sectorSize)
             *memSize = (s32)(id & 0xFC);
         }
         if (sectorSize) {
-            *sectorSize = lbl_804F2BD8[(id & 0x3800) >> 11];
+            *sectorSize = SectorSizeTable[(id & 0x3800) >> 11];
         }
         result = 0;
     } else {

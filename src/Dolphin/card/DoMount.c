@@ -30,9 +30,9 @@ typedef struct OSSramEx {
 } OSSramEx;
 
 extern CARDControl __CARDBlock[2];
-extern s32 lbl_804F2BD8[8];
-extern s32 lbl_804F2BF8[8];
-extern u16 lbl_8066CEF8;
+extern s32 SectorSizeTable[8];
+extern s32 LatencyTable[8];
+extern u16 __CARDVendorID;
 
 extern BOOL EXIGetID(s32 chan, u32 dev, u32* id);
 extern s32 IsCard(u32 id);
@@ -80,9 +80,9 @@ s32 DoMount(s32 chan)
 
         card->cid = id;
         card->size = (u16)(id & 0xFC);
-        card->sectorSize = lbl_804F2BD8[(id & 0x3800) >> 11];
+        card->sectorSize = SectorSizeTable[(id & 0x3800) >> 11];
         card->cBlock = (u16)((card->size * 1024 * 1024 / 8) / card->sectorSize);
-        card->latency = lbl_804F2BF8[(id & 0x700) >> 8];
+        card->latency = LatencyTable[(id & 0x700) >> 8];
 
         result = __CARDClearStatus(chan);
         if (result < 0)
@@ -132,7 +132,7 @@ s32 DoMount(s32 chan)
             vendorID = *(u16*)sram->flashID[chan];
             __OSUnlockSramEx(0);
 
-            if (lbl_8066CEF8 == 0xFFFF || (vendorID != lbl_8066CEF8)) {
+            if (__CARDVendorID == 0xFFFF || (vendorID != __CARDVendorID)) {
                 result = -2;
                 goto error;
             }

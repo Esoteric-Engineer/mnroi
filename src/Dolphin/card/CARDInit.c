@@ -29,6 +29,7 @@ DVDDiskID __CARDDiskNone;
 
 char lbl_804F2B80[] = "<< Dolphin SDK - CARD\trelease build: Apr 17 2003 12:34:19 (0x2301) >>";
 static char* __CARDVersion = lbl_804F2B80;
+unsigned long CARDVersionPad = 4;
 
 extern BOOL OnReset_8040B478(BOOL final);
 

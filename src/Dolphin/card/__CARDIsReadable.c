@@ -21,7 +21,7 @@ typedef struct CARDDir {
 } CARDDir;
 
 extern DVDDiskID __CARDDiskNone;
-extern u8 lbl_8066CEFA;
+extern u8 __CARDPermMask;
 extern int memcmp(const void* a, const void* b, unsigned long n);
 extern s32 __CARDAccess(CARDControl* card, CARDDir* ent);
 
@@ -34,7 +34,7 @@ s32 __CARDIsReadable(CARDControl* card, CARDDir* ent)
     result = __CARDAccess(card, ent);
 
     if (result == -10) {
-        perm = ent->permission & lbl_8066CEFA;
+        perm = ent->permission & __CARDPermMask;
         if ((perm & 0x20)
             && memcmp(ent->gameName, __CARDDiskNone.gameName, sizeof(ent->gameName)) == 0
             && memcmp(ent->company, __CARDDiskNone.company, sizeof(ent->company)) == 0) {

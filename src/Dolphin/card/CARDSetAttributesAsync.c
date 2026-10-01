@@ -12,7 +12,7 @@ typedef struct CARDDir {
     u8 pad1[0x40 - 0x35];
 } CARDDir;
 
-extern u8 lbl_8066CEFA;
+extern u8 __CARDPermMask;
 extern s32 __CARDGetStatusEx(s32 chan, s32 fileNo, CARDDir* dirent);
 extern s32 __CARDSetStatusExAsync(s32 chan, s32 fileNo, CARDDir* dirent, CARDCallback callback);
 
@@ -25,7 +25,7 @@ s32 CARDSetAttributesAsync(s32 chan, s32 fileNo, u8 attr, CARDCallback callback)
     u32 permGlobal;
     u32 attrGlobal;
 
-    if (attr & ~lbl_8066CEFA) {
+    if (attr & ~__CARDPermMask) {
         return -10;
     }
 
