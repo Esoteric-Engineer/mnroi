@@ -6,9 +6,12 @@ extern BOOL OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(BOOL enabled);
 extern BOOL DBGRead(u32 param1, u32* data, int byte_size);
 
-extern u32 lbl_8066F4C8;
-extern int lbl_8066F4CC;
-extern u8 lbl_8066F4D4;
+u8 lbl_8066F4D4;
+u8* lbl_8066F4D0;
+int lbl_8066F4CC;
+u32 lbl_8066F4C8;
+void (*lbl_8066F4C4)(short interrupt, void* context);
+void (*lbl_8066F4C0)(void);
 
 int DBRead(void* param1, u32 param2)
 {

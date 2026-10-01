@@ -2048,6 +2048,7 @@ Dolphin/OdemuExi2/DBWrite.c:
 
 Dolphin/OdemuExi2/DBRead.c:
 	.text       start:0x8019606C end:0x801960F8
+	.sbss       start:0x8066F4C0 end:0x8066F4D8
 
 Dolphin/OdemuExi2/DBQueryData.c:
 	.text       start:0x801960F8 end:0x80196194
