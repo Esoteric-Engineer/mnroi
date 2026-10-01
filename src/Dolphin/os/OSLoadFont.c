@@ -29,23 +29,23 @@ typedef struct OSFontHeader {
     u8 c3;
 } OSFontHeader;
 
-extern u16 lbl_8066CEB8;
-extern char* (*lbl_8066F9B4)(u16 encode, char* string, OSFontHeader** fontData, s32* fontCode);
+extern u16 FontEncode;
+extern char* (*ParseString)(u16 encode, char* string, OSFontHeader** fontData, s32* fontCode);
 extern char* ParseStringS(u16 encode, char* string, OSFontHeader** fontData, s32* fontCode);
-extern OSFontHeader* lbl_8066F9A8;
-extern OSFontHeader* lbl_8066F9AC;
+extern OSFontHeader* FontDataAnsi;
+extern OSFontHeader* FontDataSjis;
 extern volatile u16 __VIRegs[0x100] : 0xCC002000;
 
 extern u32 ReadFont(void* src, u16 encode, OSFontHeader* dst);
 
 static inline u16 GetFontEncode(void)
 {
-    if (lbl_8066CEB8 != 0xFFFF) {
-        return lbl_8066CEB8;
+    if (FontEncode != 0xFFFF) {
+        return FontEncode;
     }
     switch (*(int*)0x800000CC) {
     case 0:
-        lbl_8066CEB8 = (__VIRegs[55] & 2) ? 1 : 0;
+        FontEncode = (__VIRegs[55] & 2) ? 1 : 0;
         break;
     case 1:
     case 2:
@@ -53,10 +53,10 @@ static inline u16 GetFontEncode(void)
     case 4:
     case 5:
     default:
-        lbl_8066CEB8 = 0;
+        FontEncode = 0;
     }
-    lbl_8066F9B4 = ParseStringS;
-    return lbl_8066CEB8;
+    ParseString = ParseStringS;
+    return FontEncode;
 }
 
 u32 OSLoadFont(OSFontHeader* fontData, void* tempBuffer)
@@ -67,21 +67,21 @@ u32 OSLoadFont(OSFontHeader* fontData, void* tempBuffer)
     fontEncode = GetFontEncode();
     switch (fontEncode) {
     case 0:
-        lbl_8066F9A8 = fontData;
-        size = ReadFont(tempBuffer, 0, lbl_8066F9A8);
+        FontDataAnsi = fontData;
+        size = ReadFont(tempBuffer, 0, FontDataAnsi);
         break;
     case 1:
-        lbl_8066F9AC = fontData;
-        size = ReadFont(tempBuffer, 1, lbl_8066F9AC);
+        FontDataSjis = fontData;
+        size = ReadFont(tempBuffer, 1, FontDataSjis);
         break;
     case 3:
     case 4:
     case 5:
-        lbl_8066F9A8 = fontData;
-        size = ReadFont(tempBuffer, 0, lbl_8066F9A8);
+        FontDataAnsi = fontData;
+        size = ReadFont(tempBuffer, 0, FontDataAnsi);
         if (size != 0) {
-            lbl_8066F9AC = (OSFontHeader*)((u8*)lbl_8066F9A8 + size);
-            size += ReadFont(tempBuffer, 1, lbl_8066F9AC);
+            FontDataSjis = (OSFontHeader*)((u8*)FontDataAnsi + size);
+            size += ReadFont(tempBuffer, 1, FontDataSjis);
         }
         break;
     case 2:

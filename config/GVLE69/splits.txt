@@ -2327,6 +2327,8 @@ Dolphin/os/Decode.c:
 
 Dolphin/os/OSGetFontEncode.c:
 	.text       start:0x804030A8 end:0x8040310C
+	.sdata      start:0x8066CEB8 end:0x8066CEC0
+	.sbss       start:0x8066F9A8 end:0x8066F9B8
 
 Dolphin/os/ReadFont.c:
 	.text       start:0x8040310C end:0x80403430

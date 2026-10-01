@@ -29,19 +29,19 @@ typedef struct OSFontHeader {
     u8 c3;
 } OSFontHeader;
 
-extern u16 lbl_8066CEB8;
-extern char* (*lbl_8066F9B4)(u16 encode, char* string, OSFontHeader** fontData, s32* fontCode);
+extern u16 FontEncode;
+extern char* (*ParseString)(u16 encode, char* string, OSFontHeader** fontData, s32* fontCode);
 extern char* ParseStringS(u16 encode, char* string, OSFontHeader** fontData, s32* fontCode);
 extern volatile u16 __VIRegs[0x100] : 0xCC002000;
 
 static inline u16 GetFontEncode(void)
 {
-    if (lbl_8066CEB8 != 0xFFFF) {
-        return lbl_8066CEB8;
+    if (FontEncode != 0xFFFF) {
+        return FontEncode;
     }
     switch (*(int*)0x800000CC) {
     case 0:
-        lbl_8066CEB8 = (__VIRegs[55] & 2) ? 1 : 0;
+        FontEncode = (__VIRegs[55] & 2) ? 1 : 0;
         break;
     case 1:
     case 2:
@@ -49,10 +49,10 @@ static inline u16 GetFontEncode(void)
     case 4:
     case 5:
     default:
-        lbl_8066CEB8 = 0;
+        FontEncode = 0;
     }
-    lbl_8066F9B4 = ParseStringS;
-    return lbl_8066CEB8;
+    ParseString = ParseStringS;
+    return FontEncode;
 }
 
 char* OSGetFontWidth(char* string, s32* width)
@@ -60,7 +60,7 @@ char* OSGetFontWidth(char* string, s32* width)
     OSFontHeader* fontData;
     s32 fontCode;
 
-    string = lbl_8066F9B4(GetFontEncode(), string, &fontData, &fontCode);
+    string = ParseString(GetFontEncode(), string, &fontData, &fontCode);
     if (width) {
         *width = ((u8*)fontData + fontData->widthTable)[fontCode];
     }

@@ -2,8 +2,8 @@ typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
 
-extern void* lbl_8066F9A8;
-extern void* lbl_8066F9AC;
+extern void* FontDataAnsi;
+extern void* FontDataSjis;
 extern u32 GetFontCode(u16 encode, u16 code);
 
 static inline int IsSjisLeadByte(u8 c)
@@ -23,14 +23,14 @@ char* ParseStringS(u16 encode, char* string, void** fontData, u32* fontCode)
 
     switch (encode) {
     case 0:
-        font = lbl_8066F9A8;
+        font = FontDataAnsi;
         code = (u8)*string;
         if (code != 0) {
             string++;
         }
         break;
     case 1:
-        font = lbl_8066F9AC;
+        font = FontDataSjis;
         code = (u8)*string;
         if (code != 0) {
             string++;
