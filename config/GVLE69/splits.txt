@@ -1126,6 +1126,7 @@ Dolphin/os/fn_8017FD80.c:
 
 Dolphin/os/OSThread.c:
 	.text       start:0x8017FDB4 end:0x801800E8
+	.data       start:0x804D1308 end:0x804D1B18
 	.sbss       start:0x8066F270 end:0x8066F27C
 
 Dolphin/os/SelectThread.c:
