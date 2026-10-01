@@ -1,4 +1,4 @@
-extern char lbl_804CFF30[];
+char lbl_804CFF30[0x18] = {0};
 extern char lbl_8057BD88[];
 
 asm void fn_8016B740(void)
