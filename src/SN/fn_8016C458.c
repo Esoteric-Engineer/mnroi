@@ -1,5 +1,5 @@
 extern char lbl_804CFF30[];
-extern char lbl_8057BD88[];
+extern char lbl_8057BEE0[];
 extern void fn_8016BEE4(void);
 extern void fn_8016BF04(void);
 
@@ -31,30 +31,30 @@ L_8016C498:
     beq     L_8016C4D4
     b       L_8016C4E8
 L_8016C4AC:
-    lis     r9, (lbl_8057BD88+0x1E9)@ha
-    stb     r10, (lbl_8057BD88+0x1E9)@l(r9)
+    lis     r9, (lbl_8057BEE0+0x91)@ha
+    stb     r10, (lbl_8057BEE0+0x91)@l(r9)
     b       L_8016C4E8
 L_8016C4B8:
-    lis     r9, (lbl_8057BD88+0x1E9)@ha
-    stb     r3, (lbl_8057BD88+0x1E9)@l(r9)
+    lis     r9, (lbl_8057BEE0+0x91)@ha
+    stb     r3, (lbl_8057BEE0+0x91)@l(r9)
     b       L_8016C4E8
 L_8016C4C4:
-    lis     r9, (lbl_8057BD88+0x1E8)@ha
-    stb     r10, (lbl_8057BD88+0x1E8)@l(r9)
+    lis     r9, (lbl_8057BEE0+0x90)@ha
+    stb     r10, (lbl_8057BEE0+0x90)@l(r9)
     bl      fn_8016BEE4
     b       L_8016C4E4
 L_8016C4D4:
-    lis     r9, (lbl_8057BD88+0x1E8)@ha
+    lis     r9, (lbl_8057BEE0+0x90)@ha
     li      r0, 1
-    stb     r0, (lbl_8057BD88+0x1E8)@l(r9)
+    stb     r0, (lbl_8057BEE0+0x90)@l(r9)
     bl      fn_8016BF04
 L_8016C4E4:
     lis     r10, 0x8000
 L_8016C4E8:
-    lis     r9, (lbl_8057BD88+0x1E8)@ha
-    lis     r11, (lbl_8057BD88+0x1E9)@ha
-    lbz     r3, (lbl_8057BD88+0x1E8)@l(r9)
-    lbz     r0, (lbl_8057BD88+0x1E9)@l(r11)
+    lis     r9, (lbl_8057BEE0+0x90)@ha
+    lis     r11, (lbl_8057BEE0+0x91)@ha
+    lbz     r3, (lbl_8057BEE0+0x90)@l(r9)
+    lbz     r0, (lbl_8057BEE0+0x91)@l(r11)
     slwi    r3, r3, 8
     or      r3, r10, r3
     or      r3, r3, r0

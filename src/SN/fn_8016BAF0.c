@@ -1,4 +1,4 @@
-extern char lbl_8057BD88[];
+extern char lbl_8057BEE0[];
 extern char lbl_804CFF30[];
 extern int SNQueryData(void);
 extern void SNRead(void);
@@ -12,8 +12,8 @@ asm void fn_8016BAF0(void)
     mflr    r0
     stmw    r30, 8(r1)
     stw     r0, 0x14(r1)
-    lis     r9, (lbl_8057BD88+0x178)@ha
-    addi    r31, r9, (lbl_8057BD88+0x178)@l
+    lis     r9, (lbl_8057BEE0+0x20)@ha
+    addi    r31, r9, (lbl_8057BEE0+0x20)@l
 L_8016BB08:
     bl      SNQueryData
     mr.     r3, r3
@@ -24,9 +24,9 @@ L_8016BB08:
     bl      SNRead
     lwz     r11, 8(r31)
     li      r0, 0
-    lis     r9, (lbl_8057BD88+0x170)@ha
+    lis     r9, (lbl_8057BEE0+0x18)@ha
     sth     r0, 2(r31)
-    stw     r11, (lbl_8057BD88+0x170)@l(r9)
+    stw     r11, (lbl_8057BEE0+0x18)@l(r9)
     mr      r3, r31
     li      r4, 8
     bl      SNWrite
@@ -36,9 +36,9 @@ L_8016BB08:
     stw     r30, lbl_804CFF30@l(r11)
     cmpwi   r0, 0
     beq     L_8016BB74
-    lis     r9, (lbl_8057BD88+0x170)@ha
+    lis     r9, (lbl_8057BEE0+0x18)@ha
     mtlr    r0
-    lwz     r3, (lbl_8057BD88+0x170)@l(r9)
+    lwz     r3, (lbl_8057BEE0+0x18)@l(r9)
     blrl
     lis     r9, (lbl_804CFF30+0x4)@ha
     stw     r30, (lbl_804CFF30+0x4)@l(r9)

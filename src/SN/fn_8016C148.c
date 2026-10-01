@@ -1,4 +1,4 @@
-extern char lbl_8057BD88[];
+extern char lbl_8057BEE0[];
 extern char lbl_804CFF30[];
 /* This unit's only owned constant, the tail of dtk's lbl_8049C190 blob.
 The pragma keeps the string in .rodata.1 instead of .rodata. */
@@ -51,11 +51,11 @@ L_8016C1A8:
     addi    r10, r10, 0x4
     bdnz    L_8016C1A8
     lwz     r10, 0x10(r1)
-    lis     r8, (lbl_8057BD88+0x1E4)@ha
+    lis     r8, (lbl_8057BEE0+0x8C)@ha
     lwz     r0, 0x14(r1)
     li      r9, 0x0
     mr      r4, r10
-    lwz     r11, (lbl_8057BD88+0x1E4)@l(r8)
+    lwz     r11, (lbl_8057BEE0+0x8C)@l(r8)
     srwi    r10, r10, 16
     slwi    r0, r0, 2
     ori     r9, r9, 0xe000
@@ -105,24 +105,24 @@ L_8016C278:
     lwz     r0, 0x20(r1)
     cmpwi   r0, 0x0
     bne     L_8016C294
-    lis     r3, (lbl_8057BD88+0x1B8)@ha
-    addi    r3, r3, (lbl_8057BD88+0x1B8)@l
+    lis     r3, (lbl_8057BEE0+0x60)@ha
+    addi    r3, r3, (lbl_8057BEE0+0x60)@l
     bl      fn_8016BF28
     b       L_8016C2F0
 L_8016C294:
     mr      r3, r28
     bl      fn_8016C074
-    lis     r9, (lbl_8057BD88+0x1D8)@ha
+    lis     r9, (lbl_8057BEE0+0x80)@ha
     cmpwi   r3, 0x0
-    stw     r3, (lbl_8057BD88+0x1D8)@l(r9)
+    stw     r3, (lbl_8057BEE0+0x80)@l(r9)
     bne     L_8016C300
     lwz     r5, 0x20(r1)
     lis     r9, (lbl_804CFF30+0x10)@ha
-    lis     r11, (lbl_8057BD88+0x1E0)@ha
+    lis     r11, (lbl_8057BEE0+0x88)@ha
     lwz     r3, (lbl_804CFF30+0x10)@l(r9)
     lwz     r4, 0x1c(r1)
     lis     r6, fn_8016BFF4@ha
-    stw     r5, (lbl_8057BD88+0x1E0)@l(r11)
+    stw     r5, (lbl_8057BEE0+0x88)@l(r11)
     addi    r6, r6, fn_8016BFF4@l
     mr      r7, r28
     li      r8, 0x1
@@ -130,37 +130,37 @@ L_8016C294:
     cmpwi   r3, -0x1
     bne     L_8016C2F0
     lis     r0, 0x3
-    lis     r9, (lbl_8057BD88+0x1D8)@ha
+    lis     r9, (lbl_8057BEE0+0x80)@ha
     ori     r0, r0, 0x1100
-    stw     r0, (lbl_8057BD88+0x1D8)@l(r9)
+    stw     r0, (lbl_8057BEE0+0x80)@l(r9)
 L_8016C2F0:
-    lis     r9, (lbl_8057BD88+0x1D8)@ha
-    lwz     r0, (lbl_8057BD88+0x1D8)@l(r9)
+    lis     r9, (lbl_8057BEE0+0x80)@ha
+    lwz     r0, (lbl_8057BEE0+0x80)@l(r9)
     cmpwi   r0, 0x0
     beq     L_8016C394
 L_8016C300:
     bl      fn_8016BFB0
     b       L_8016C394
 L_8016C308:
-    lis     r11, (lbl_8057BD88+0x1D8)@ha
+    lis     r11, (lbl_8057BEE0+0x80)@ha
     lis     r9, 0xcc00
-    lwz     r0, (lbl_8057BD88+0x1D8)@l(r11)
+    lwz     r0, (lbl_8057BEE0+0x80)@l(r11)
     ori     r9, r9, 0x6020
-    lis     r3, (lbl_8057BD88+0x1B8)@ha
+    lis     r3, (lbl_8057BEE0+0x60)@ha
     stw     r0, 0x0(r9)
-    addi    r3, r3, (lbl_8057BD88+0x1B8)@l
+    addi    r3, r3, (lbl_8057BEE0+0x60)@l
     clrrwi  r0, r0, 24
-    stw     r0, (lbl_8057BD88+0x1D8)@l(r11)
+    stw     r0, (lbl_8057BEE0+0x80)@l(r11)
     bl      fn_8016BF28
     b       L_8016C394
 L_8016C334:
-    lis     r9, (lbl_8057BD88+0x198)@ha
-    lwz     r0, (lbl_8057BD88+0x198)@l(r9)
+    lis     r9, (lbl_8057BEE0+0x40)@ha
+    lwz     r0, (lbl_8057BEE0+0x40)@l(r9)
     cmpwi   r0, 0x0
     bne     L_8016C380
 L_8016C344:
-    lis     r3, (lbl_8057BD88+0x1B8)@ha
-    addi    r3, r3, (lbl_8057BD88+0x1B8)@l
+    lis     r3, (lbl_8057BEE0+0x60)@ha
+    addi    r3, r3, (lbl_8057BEE0+0x60)@l
     bl      fn_8016BF28
     b       L_8016C394
 L_8016C354:
@@ -170,9 +170,9 @@ L_8016C354:
     bl      OSReport
     opword  1
     lis     r0, 0x5
-    lis     r9, (lbl_8057BD88+0x1D8)@ha
+    lis     r9, (lbl_8057BEE0+0x80)@ha
     ori     r0, r0, 0x2000
-    stw     r0, (lbl_8057BD88+0x1D8)@l(r9)
+    stw     r0, (lbl_8057BEE0+0x80)@l(r9)
     bl      fn_8016BFB0
     b       L_8016C394
 L_8016C380:

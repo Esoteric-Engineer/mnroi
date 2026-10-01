@@ -1,5 +1,5 @@
 extern char lbl_804CFF30[];
-extern char lbl_8057BD88[];
+extern char lbl_8057BEE0[];
 void fn_8016B96C(void);
 void fn_8016BB98(void);
 
@@ -25,8 +25,8 @@ L_8016BC94:
 L_8016BCA8:
     bl      fn_8016B96C
 L_8016BCAC:
-    lis     r9, (lbl_8057BD88+0x170)@ha
-    lwz     r3, (lbl_8057BD88+0x170)@l(r9)
+    lis     r9, (lbl_8057BEE0+0x18)@ha
+    lwz     r3, (lbl_8057BEE0+0x18)@l(r9)
 L_8016BCB4:
     lwz     r0, 0xc(r1)
     mtlr    r0

@@ -1,4 +1,4 @@
-extern char lbl_8057BD88[];
+extern char lbl_8057BEE0[];
 extern char lbl_804CFF30[];
 extern void fn_8016BC70(void);
 extern void fn_8016B6B4(void);
@@ -22,24 +22,24 @@ asm void fn_8016B828(void)
     andi.   r0, r31, 0x1f
     bne     L_fail
     bl      fn_8016BC70
-    lis     r9, (lbl_8057BD88+0x16C)@ha
+    lis     r9, (lbl_8057BEE0+0x14)@ha
     lis     r11, (lbl_804CFF30+0x4)@ha
-    stw     r29, (lbl_8057BD88+0x16C)@l(r9)
+    stw     r29, (lbl_8057BEE0+0x14)@l(r9)
     mr      r3, r26
     stw     r27, (lbl_804CFF30+0x4)@l(r11)
     mr      r6, r28
     mr      r4, r30
     mr      r5, r31
     bl      fn_8016B6B4
-    lis     r9, (lbl_8057BD88+0x168)@ha
-    lis     r11, (lbl_8057BD88+0x158)@ha
-    stw     r31, (lbl_8057BD88+0x168)@l(r9)
-    lis     r10, (lbl_8057BD88+0x15C)@ha
+    lis     r9, (lbl_8057BEE0+0x10)@ha
+    lis     r11, lbl_8057BEE0@ha
+    stw     r31, (lbl_8057BEE0+0x10)@l(r9)
+    lis     r10, (lbl_8057BEE0+0x4)@ha
     lis     r9, lbl_804CFF30@ha
     li      r0, 1
-    stw     r26, (lbl_8057BD88+0x158)@l(r11)
+    stw     r26, lbl_8057BEE0@l(r11)
     li      r3, 0
-    stw     r30, (lbl_8057BD88+0x15C)@l(r10)
+    stw     r30, (lbl_8057BEE0+0x4)@l(r10)
     stw     r0, lbl_804CFF30@l(r9)
     b       L_end
 L_fail:

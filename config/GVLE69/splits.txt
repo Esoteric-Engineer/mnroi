@@ -294,6 +294,7 @@ SN/fn_8016B6AC.c:
 
 SN/fn_8016B6B4.c:
 	.text       start:0x8016B6B4 end:0x8016B740
+	.bss        start:0x8057BEE0 end:0x8057BF80
 
 Dolphin/os/__start.c:
 	.init       start:0x80003100 end:0x80003254
