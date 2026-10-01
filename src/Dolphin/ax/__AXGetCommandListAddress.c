@@ -1,11 +1,12 @@
 extern unsigned long __AXCommandListPosition;
 extern void* __AXClWrite;
-extern unsigned char lbl_80652040[];
+
+unsigned char __AXCommandList[0x600];
 
 void* __AXGetCommandListAddress(void)
 {
-    void* addr = lbl_80652040 + __AXCommandListPosition++ * 0x300;
+    void* addr = __AXCommandList + __AXCommandListPosition++ * 0x300;
     __AXCommandListPosition &= 1;
-    __AXClWrite = lbl_80652040 + __AXCommandListPosition * 0x300;
+    __AXClWrite = __AXCommandList + __AXCommandListPosition * 0x300;
     return addr;
 }
