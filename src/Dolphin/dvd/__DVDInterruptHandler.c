@@ -22,10 +22,11 @@ typedef struct {
 
 extern volatile u32 __DIRegs[0x20] : 0xCC006000;
 
-extern s32 FirstRead;
-extern volatile BOOL StopAtNextInt;
-extern DVDLowCallback Callback;
-extern DVDLowCallback lbl_8066F33C;
+s32 FirstRead = 1;
+DVDLowCallback lbl_8066F33C;
+DVDLowCallback Callback;
+volatile u32 LastLength;
+volatile BOOL StopAtNextInt;
 extern volatile OSTime LastResetEnd;
 extern volatile u32 ResetOccurred;
 extern volatile BOOL WaitingCoverClose;

@@ -1254,6 +1254,8 @@ Dolphin/dvd/__DVDInitWA.c:
 
 Dolphin/dvd/__DVDInterruptHandler.c:
 	.text       start:0x80186D00 end:0x80186FE0
+	.sdata      start:0x8066C480 end:0x8066C484
+	.sbss       start:0x8066F330 end:0x8066F340
 
 Dolphin/dvd/AlarmHandler_80186FE0.c:
 	.text       start:0x80186FE0 end:0x80187064
