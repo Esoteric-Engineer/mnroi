@@ -871,6 +871,8 @@ Dolphin/os/OS.c:
 
 Dolphin/os/OSInitAlarm.c:
 	.text       start:0x8017B3EC end:0x8017B444
+	.data       start:0x804D0878 end:0x804D0A70
+	.sbss       start:0x8066F208 end:0x8066F210
 
 Dolphin/os/fn_8017B444.c:
 	.text       start:0x8017B444 end:0x8017B454
