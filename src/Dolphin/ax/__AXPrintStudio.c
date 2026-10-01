@@ -32,15 +32,15 @@ typedef struct AXSTUDIO {
 
 AXSTUDIO __AXStudio __attribute__((aligned(32)));
 
-extern long lbl_8066FA98;
-extern long lbl_8066FA9C;
-extern long lbl_8066FAA0;
-extern long lbl_8066FAA4;
-extern long lbl_8066FAA8;
-extern long lbl_8066FAAC;
-extern long lbl_8066FAB0;
-extern long lbl_8066FAB4;
-extern long lbl_8066FAB8;
+long __AXSpbABS;
+long __AXSpbABR;
+long __AXSpbABL;
+long __AXSpbAAS;
+long __AXSpbAAR;
+long __AXSpbAAL;
+long __AXSpbAS;
+long __AXSpbAR;
+long __AXSpbAL;
 
 static inline void __AXDepopFade(long* hostSum, long* dspVolume, short* dspDelta)
 {
@@ -67,15 +67,15 @@ static inline void __AXDepopFade(long* hostSum, long* dspVolume, short* dspDelta
 
 void __AXPrintStudio(void)
 {
-    __AXDepopFade(&lbl_8066FA98, (long*)&__AXStudio.dpopLHi, &__AXStudio.dpopLDelta);
-    __AXDepopFade(&lbl_8066FA9C, (long*)&__AXStudio.dpopRHi, &__AXStudio.dpopRDelta);
-    __AXDepopFade(&lbl_8066FAA0, (long*)&__AXStudio.dpopSHi, &__AXStudio.dpopSDelta);
-    __AXDepopFade(&lbl_8066FAA4, (long*)&__AXStudio.dpopALHi, &__AXStudio.dpopALDelta);
-    __AXDepopFade(&lbl_8066FAA8, (long*)&__AXStudio.dpopARHi, &__AXStudio.dpopARDelta);
-    __AXDepopFade(&lbl_8066FAAC, (long*)&__AXStudio.dpopASHi, &__AXStudio.dpopASDelta);
-    __AXDepopFade(&lbl_8066FAB0, (long*)&__AXStudio.dpopBLHi, &__AXStudio.dpopBLDelta);
-    __AXDepopFade(&lbl_8066FAB4, (long*)&__AXStudio.dpopBRHi, &__AXStudio.dpopBRDelta);
-    __AXDepopFade(&lbl_8066FAB8, (long*)&__AXStudio.dpopBSHi, &__AXStudio.dpopBSDelta);
+    __AXDepopFade(&__AXSpbAL, (long*)&__AXStudio.dpopLHi, &__AXStudio.dpopLDelta);
+    __AXDepopFade(&__AXSpbAR, (long*)&__AXStudio.dpopRHi, &__AXStudio.dpopRDelta);
+    __AXDepopFade(&__AXSpbAS, (long*)&__AXStudio.dpopSHi, &__AXStudio.dpopSDelta);
+    __AXDepopFade(&__AXSpbAAL, (long*)&__AXStudio.dpopALHi, &__AXStudio.dpopALDelta);
+    __AXDepopFade(&__AXSpbAAR, (long*)&__AXStudio.dpopARHi, &__AXStudio.dpopARDelta);
+    __AXDepopFade(&__AXSpbAAS, (long*)&__AXStudio.dpopASHi, &__AXStudio.dpopASDelta);
+    __AXDepopFade(&__AXSpbABL, (long*)&__AXStudio.dpopBLHi, &__AXStudio.dpopBLDelta);
+    __AXDepopFade(&__AXSpbABR, (long*)&__AXStudio.dpopBRHi, &__AXStudio.dpopBRDelta);
+    __AXDepopFade(&__AXSpbABS, (long*)&__AXStudio.dpopBSHi, &__AXStudio.dpopBSDelta);
 
     DCFlushRange(&__AXStudio, sizeof(AXSTUDIO));
 }

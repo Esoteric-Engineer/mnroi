@@ -1,22 +1,22 @@
-extern unsigned long lbl_8066FAB8;
-extern unsigned long lbl_8066FAB4;
-extern unsigned long lbl_8066FAB0;
-extern unsigned long lbl_8066FAAC;
-extern unsigned long lbl_8066FAA8;
-extern unsigned long lbl_8066FAA4;
-extern unsigned long lbl_8066FAA0;
-extern unsigned long lbl_8066FA9C;
-extern unsigned long lbl_8066FA98;
+extern unsigned long __AXSpbABS;
+extern unsigned long __AXSpbABR;
+extern unsigned long __AXSpbABL;
+extern unsigned long __AXSpbAAS;
+extern unsigned long __AXSpbAAR;
+extern unsigned long __AXSpbAAL;
+extern unsigned long __AXSpbAS;
+extern unsigned long __AXSpbAR;
+extern unsigned long __AXSpbAL;
 
 void __AXSPBInit(void)
 {
-    lbl_8066FAB8 = 0;
-    lbl_8066FAB4 = 0;
-    lbl_8066FAB0 = 0;
-    lbl_8066FAAC = 0;
-    lbl_8066FAA8 = 0;
-    lbl_8066FAA4 = 0;
-    lbl_8066FAA0 = 0;
-    lbl_8066FA9C = 0;
-    lbl_8066FA98 = 0;
+    __AXSpbABS = 0;
+    __AXSpbABR = 0;
+    __AXSpbABL = 0;
+    __AXSpbAAS = 0;
+    __AXSpbAAR = 0;
+    __AXSpbAAL = 0;
+    __AXSpbAS = 0;
+    __AXSpbAR = 0;
+    __AXSpbAL = 0;
 }
