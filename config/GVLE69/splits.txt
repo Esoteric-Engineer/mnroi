@@ -2513,6 +2513,7 @@ Dolphin/ax/AXAcquireVoice.c:
 
 Dolphin/ax/__AXAuxInit.c:
 	.text       start:0x80406D94 end:0x80406E78
+	.sbss       start:0x8066FA10 end:0x8066FA44
 
 Dolphin/ax/__AXAuxQuit.c:
 	.text       start:0x80406E78 end:0x80406E88

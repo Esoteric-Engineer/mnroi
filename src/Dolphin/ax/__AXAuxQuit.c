@@ -1,8 +1,8 @@
-extern void* lbl_8066FA10;
-extern void* lbl_8066FA14;
+extern void* __AXCallbackAuxA;
+extern void* __AXCallbackAuxB;
 
 void __AXAuxQuit(void)
 {
-    lbl_8066FA10 = 0;
-    lbl_8066FA14 = 0;
+    __AXCallbackAuxA = 0;
+    __AXCallbackAuxB = 0;
 }

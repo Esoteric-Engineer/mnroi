@@ -1,7 +1,7 @@
 extern unsigned char __AXBufferAuxB[];
-extern unsigned long lbl_8066FA30;
+extern unsigned long __AXAuxDspWritePosition;
 
 void __AXGetAuxAInputDpl2(unsigned long* out)
 {
-    *out = (unsigned long)(__AXBufferAuxB + lbl_8066FA30 * 0x780 + 0x500);
+    *out = (unsigned long)(__AXBufferAuxB + __AXAuxDspWritePosition * 0x780 + 0x500);
 }

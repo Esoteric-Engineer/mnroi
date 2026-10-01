@@ -1,11 +1,11 @@
 extern unsigned char __AXBufferAuxB[];
-extern unsigned long lbl_8066FA14;
-extern unsigned long lbl_8066FA30;
+extern unsigned long __AXCallbackAuxB;
+extern unsigned long __AXAuxDspWritePosition;
 
 void __AXGetAuxBInput(unsigned long* out)
 {
-    if (lbl_8066FA14 != 0) {
-        *out = (unsigned long)(__AXBufferAuxB + lbl_8066FA30 * 0x780);
+    if (__AXCallbackAuxB != 0) {
+        *out = (unsigned long)(__AXBufferAuxB + __AXAuxDspWritePosition * 0x780);
     } else {
         *out = 0;
     }
