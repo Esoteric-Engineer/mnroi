@@ -2598,6 +2598,7 @@ Dolphin/ax/__AXDepopVoice.c:
 
 Dolphin/ax/__AXGetNumVoices.c:
 	.text       start:0x804085F0 end:0x804085F8
+	.sbss       start:0x8066FAC0 end:0x8066FACC
 
 Dolphin/ax/__AXServiceVPB.c:
 	.text       start:0x804085F8 end:0x80408D44

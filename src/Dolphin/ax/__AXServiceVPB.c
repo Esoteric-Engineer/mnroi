@@ -7,7 +7,7 @@ typedef struct AXVPB {
 } AXVPB;
 
 extern unsigned char __AXPB[];
-extern unsigned long lbl_8066FAC8;
+extern unsigned long __AXNumVoices;
 
 #define U16(base, off) (*(unsigned short*)((unsigned char*)(base) + (off)))
 #define S16(base, off) (*(short*)((unsigned char*)(base) + (off)))
@@ -20,7 +20,7 @@ void __AXServiceVPB(AXVPB* p)
     unsigned long flags;
     unsigned char* base = __AXPB;
 
-    lbl_8066FAC8++;
+    __AXNumVoices++;
     pb = base + p->index * 244;
     flags = p->sync;
 

@@ -1,6 +1,8 @@
-extern unsigned long lbl_8066FAC8;
+unsigned long __AXNumVoices;
+unsigned long __AXRecDspCycles;
+unsigned long __AXMaxDspCycles;
 
 unsigned long __AXGetNumVoices(void)
 {
-    return lbl_8066FAC8;
+    return __AXNumVoices;
 }

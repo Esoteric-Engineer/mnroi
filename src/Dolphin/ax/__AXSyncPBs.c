@@ -76,9 +76,9 @@ static unsigned long tblC[32] = {
     0x0, 0x2F8, 0x2F8, 0x5BE, 0x0, 0x4F1, 0x4F1, 0x9A6,
     0x4F1, 0x7E9, 0x7E9, 0xAAF, 0x4F1, 0x9E2, 0x9E2, 0xE97,
 };
-extern unsigned long lbl_8066FAC0;
-extern unsigned long lbl_8066FAC4;
-extern unsigned long lbl_8066FAC8;
+extern unsigned long __AXMaxDspCycles;
+extern unsigned long __AXRecDspCycles;
+extern unsigned long __AXNumVoices;
 
 unsigned long __OSBusClock : 0x800000F8;
 
@@ -100,7 +100,7 @@ void __AXSyncPBs(unsigned long baseCycles)
     AXVPB* p;
     unsigned long f;
 
-    lbl_8066FAC8 = 0;
+    __AXNumVoices = 0;
     DCInvalidateRange(pbs, 0x3D00);
     DCInvalidateRange(__AXITD, 0x1000);
     cycles = __AXGetCommandListCycles() + 0x10000 + baseCycles - 0x55F0;
@@ -118,7 +118,7 @@ void __AXSyncPBs(unsigned long baseCycles)
                 }
                 f = p->pb.mixerCtrl;
                 cycles += tblB[f & 0xF] + tblC[(f >> 4) & 0x1F] + tblC[(f >> 9) & 0x1F] + 0x8C;
-                if (lbl_8066FAC0 > cycles) {
+                if (__AXMaxDspCycles > cycles) {
                     __AXServiceVPB(p);
                 } else {
                     if ((pb = &pbs[p->index])->state == 1) {
@@ -143,7 +143,7 @@ void __AXSyncPBs(unsigned long baseCycles)
             p->updateWrite = p->updateData;
         }
     }
-    lbl_8066FAC4 = cycles;
+    __AXRecDspCycles = cycles;
     for (p = __AXGetStackHead(0); p != 0; p = p->next) {
         if (p->depop != 0) {
             __AXDepopVoice(&pbs[p->index]);
@@ -191,8 +191,8 @@ void __AXVPBInit(void)
     AXVPB* pvpb;
     unsigned long* p;
 
-    lbl_8066FAC0 = __OSBusClock / 400;
-    lbl_8066FAC4 = 0;
+    __AXMaxDspCycles = __OSBusClock / 400;
+    __AXRecDspCycles = 0;
 
     p = (unsigned long*)__AXPB;
     for (i = sizeof(__AXPB) / 4; i != 0; i--) {
