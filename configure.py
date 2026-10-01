@@ -1150,6 +1150,7 @@ config.libs = [
             Object(Matching, "Dolphin/ax/__AXGetCommandListCycles.c"),
             Object(Matching, "Dolphin/ax/__AXGetCommandListAddress.c"),
             Object(Matching, "Dolphin/ax/__AXNextFrame.c"),
+            Object(Matching, "Dolphin/ax/AXComp.c"),
             Object(Matching, "Dolphin/ax/__AXClInit.c"),
             Object(Matching, "Dolphin/ax/__AXClQuit.c"),
             Object(Matching, "Dolphin/ax/__AXSPBInit.c"),

@@ -16,7 +16,7 @@ extern unsigned short* __AXClWrite;
 extern unsigned long __AXCommandListCycles;
 extern unsigned long __AXCompressor;
 extern unsigned long __AXClMode;
-extern unsigned short lbl_804EF0C0[];
+extern unsigned short __AXCompressorTable[];
 
 #define AXCL_WRITE(v)                                                       \
     *__AXClWrite = (unsigned short)(v);                                    \
@@ -120,8 +120,8 @@ void __AXNextFrame(void* sbuffer, void* buffer)
         AXCL_WRITE(0x12);
         AXCL_WRITE(0x8000);
         AXCL_WRITE(0xA);
-        AXCL_WRITE((unsigned long)lbl_804EF0C0 >> 0x10);
-        AXCL_WRITE((unsigned long)lbl_804EF0C0);
+        AXCL_WRITE((unsigned long)__AXCompressorTable >> 0x10);
+        AXCL_WRITE((unsigned long)__AXCompressorTable);
         __AXCommandListCycles += 0xBB8;
     }
 
