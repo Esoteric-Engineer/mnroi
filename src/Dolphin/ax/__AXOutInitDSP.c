@@ -32,9 +32,9 @@ typedef struct AXOutBss {
 extern AXOutBss __AXOutBuffer;
 extern char lbl_804F0B00[];
 extern unsigned short lbl_8066CEE0;
-extern unsigned long lbl_8066FA80;
-extern volatile long lbl_8066FA7C;
-extern unsigned long lbl_8066FA88[2];
+extern unsigned long __AXDSPDoneFlag;
+extern volatile long __AXDSPInitFlag;
+extern unsigned long __AXOutThreadQueue[2];
 
 void __AXOutInitDSP(void)
 {
@@ -52,13 +52,13 @@ void __AXOutInitDSP(void)
     b->task.done_cb = (void (*)(void*))__AXDSPDoneCallback;
     b->task.req_cb = 0;
     b->task.priority = 0;
-    lbl_8066FA7C = 0;
-    lbl_8066FA80 = 0;
-    OSInitThreadQueue(lbl_8066FA88);
+    __AXDSPInitFlag = 0;
+    __AXDSPDoneFlag = 0;
+    OSInitThreadQueue(__AXOutThreadQueue);
     if (DSPCheckInit() == 0) {
         DSPInit();
     }
     DSPAddTask(&b->task);
-    while (lbl_8066FA7C == 0) {
+    while (__AXDSPInitFlag == 0) {
     }
 }

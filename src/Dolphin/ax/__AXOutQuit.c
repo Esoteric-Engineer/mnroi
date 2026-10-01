@@ -5,15 +5,15 @@ extern void DSPCancelTask(void*);
 extern void AIStopDMA(void);
 
 extern char lbl_80657040[0x80];
-extern unsigned long lbl_8066FA78;
-extern unsigned long lbl_8066FA88[2];
+extern unsigned long __AXUserFrameCallback;
+extern unsigned long __AXOutThreadQueue[2];
 
 void __AXOutQuit(void)
 {
     int old = OSDisableInterrupts();
-    lbl_8066FA78 = 0;
+    __AXUserFrameCallback = 0;
     DSPCancelTask(lbl_80657040);
-    OSSleepThread(lbl_8066FA88);
+    OSSleepThread(__AXOutThreadQueue);
     AIStopDMA();
     OSRestoreInterrupts(old);
 }

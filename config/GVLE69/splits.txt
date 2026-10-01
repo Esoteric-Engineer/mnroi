@@ -2579,6 +2579,7 @@ Dolphin/ax/AXSetCompressor.c:
 
 Dolphin/ax/__AXOutNewFrame.c:
 	.text       start:0x80407960 end:0x80407B18
+	.sbss       start:0x8066FA60 end:0x8066FA98
 
 Dolphin/ax/__AXOutAiCallback.c:
 	.text       start:0x80407B18 end:0x80407BD4

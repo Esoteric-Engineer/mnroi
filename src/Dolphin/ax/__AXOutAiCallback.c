@@ -5,26 +5,26 @@ extern void DSPAssertTask(void*);
 
 extern char __AXOutBuffer[];
 extern char lbl_80657040[0x80];
-extern unsigned long lbl_8066FA64;
-extern unsigned long lbl_8066FA68;
-extern volatile long long lbl_8066FA70;
-extern unsigned long lbl_8066FA90;
+extern unsigned long __AXAiDmaFrame;
+extern unsigned long __AXOutDspReady;
+extern volatile long long __AXOsTime;
+extern unsigned long __AXOutputBufferMode;
 
 void __AXOutAiCallback(void)
 {
-    if (lbl_8066FA68 == 0) {
-        lbl_8066FA70 = OSGetTime();
+    if (__AXOutDspReady == 0) {
+        __AXOsTime = OSGetTime();
     }
-    if (lbl_8066FA68 == 1) {
-        lbl_8066FA68 = 0;
+    if (__AXOutDspReady == 1) {
+        __AXOutDspReady = 0;
         __AXOutNewFrame(0);
     } else {
-        lbl_8066FA68 = 2;
+        __AXOutDspReady = 2;
         DSPAssertTask(lbl_80657040);
     }
-    if (lbl_8066FA90 == 1) {
-        AIInitDMA(__AXOutBuffer + lbl_8066FA64 * 0x280, 0x280);
-        lbl_8066FA64 = lbl_8066FA64 + 1;
-        lbl_8066FA64 = lbl_8066FA64 % 3;
+    if (__AXOutputBufferMode == 1) {
+        AIInitDMA(__AXOutBuffer + __AXAiDmaFrame * 0x280, 0x280);
+        __AXAiDmaFrame = __AXAiDmaFrame + 1;
+        __AXAiDmaFrame = __AXAiDmaFrame % 3;
     }
 }

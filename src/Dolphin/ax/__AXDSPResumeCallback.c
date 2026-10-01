@@ -1,14 +1,14 @@
-extern unsigned long lbl_8066FA68;
-extern volatile long long lbl_8066FA70;
+extern unsigned long __AXOutDspReady;
+extern volatile long long __AXOsTime;
 extern long long OSGetTime(void);
 extern void __AXOutNewFrame(unsigned long);
 
 void __AXDSPResumeCallback(void)
 {
-    if (lbl_8066FA68 == 2) {
-        lbl_8066FA68 = 0;
-        __AXOutNewFrame((unsigned long)(OSGetTime() - lbl_8066FA70) / 4);
+    if (__AXOutDspReady == 2) {
+        __AXOutDspReady = 0;
+        __AXOutNewFrame((unsigned long)(OSGetTime() - __AXOsTime) / 4);
     } else {
-        lbl_8066FA68 = 1;
+        __AXOutDspReady = 1;
     }
 }

@@ -28,9 +28,17 @@ typedef struct AXOutBss {
 } AXOutBss;
 
 extern AXOutBss __AXOutBuffer;
-extern unsigned long lbl_8066FA60;
-extern void (*lbl_8066FA78)(void);
-extern unsigned long lbl_8066FA90;
+
+unsigned long __AXOutputBufferMode;
+unsigned long __AXOutThreadQueue[2];
+unsigned long __AXDebugSteppingMode;
+unsigned long __AXDSPDoneFlag;
+unsigned long __AXDSPInitFlag;
+void (*__AXUserFrameCallback)(void);
+long long __AXOsTime;
+unsigned long __AXOutDspReady;
+unsigned long __AXAiDmaFrame;
+unsigned long __AXOutFrame;
 
 void __AXOutNewFrame(unsigned long lessDspCycles)
 {
@@ -54,17 +62,17 @@ void __AXOutNewFrame(unsigned long lessDspCycles)
     __AXProcessAux();
     b->profile.auxProcessingEnd = OSGetTime();
     b->profile.userCallbackStart = OSGetTime();
-    if (lbl_8066FA78 != 0) {
-        lbl_8066FA78();
+    if (__AXUserFrameCallback != 0) {
+        __AXUserFrameCallback();
     }
     b->profile.userCallbackEnd = OSGetTime();
-    __AXNextFrame(b->buf + 0x780, b->buf + lbl_8066FA60 * 0x280);
-    lbl_8066FA60 = lbl_8066FA60 + 1;
-    if (lbl_8066FA90 == 1) {
-        lbl_8066FA60 = lbl_8066FA60 % 3;
+    __AXNextFrame(b->buf + 0x780, b->buf + __AXOutFrame * 0x280);
+    __AXOutFrame = __AXOutFrame + 1;
+    if (__AXOutputBufferMode == 1) {
+        __AXOutFrame = __AXOutFrame % 3;
     } else {
-        lbl_8066FA60 = lbl_8066FA60 & 1;
-        AIInitDMA(b->buf + lbl_8066FA60 * 0x280, 0x280);
+        __AXOutFrame = __AXOutFrame & 1;
+        AIInitDMA(b->buf + __AXOutFrame * 0x280, 0x280);
     }
     b->profile.axFrameEnd = OSGetTime();
     b->profile.axNumVoices = __AXGetNumVoices();

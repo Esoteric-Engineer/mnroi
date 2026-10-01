@@ -1,6 +1,6 @@
-extern unsigned long lbl_8066FA7C;
+extern unsigned long __AXDSPInitFlag;
 
 void __AXDSPInitCallback(void)
 {
-    lbl_8066FA7C = 1;
+    __AXDSPInitFlag = 1;
 }
