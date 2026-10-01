@@ -708,6 +708,11 @@ Runtime.PPCEABI.H/__ieee754_log10.c:
 	.text       start:0x80177BB0 end:0x80177CF8
 	.rodata.1   start:0x8049C8A0 end:0x8049C8D8
 
+Runtime.PPCEABI.H/impure.c:
+	.rodata.1   start:0x8049C8D8 end:0x8049C8DC
+	.data       start:0x804D0318 end:0x804D061C
+	.sdata      start:0x8066C3B0 end:0x8066C3B8
+
 Runtime.PPCEABI.H/memcpyalpha.c:
 	.text       start:0x80177CF8 end:0x80177D24
 
