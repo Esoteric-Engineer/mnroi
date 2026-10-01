@@ -7,7 +7,7 @@ extern volatile u16* __peReg;
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
                           (32 - (shift) - (size)), (31 - (shift)))
 
-extern char lbl_8066F49C[8];
+extern char FinishQueue[8];
 
 extern void __OSSetInterruptHandler(int interrupt, void* handler);
 extern void __OSUnmaskInterrupts(u32 mask);
@@ -21,7 +21,7 @@ void __GXPEInit(void)
 
     __OSSetInterruptHandler(0x12, GXTokenInterruptHandler);
     __OSSetInterruptHandler(0x13, GXFinishInterruptHandler);
-    OSInitThreadQueue(lbl_8066F49C);
+    OSInitThreadQueue(FinishQueue);
     __OSUnmaskInterrupts(0x2000);
     __OSUnmaskInterrupts(0x1000);
     reg = __peReg[5];

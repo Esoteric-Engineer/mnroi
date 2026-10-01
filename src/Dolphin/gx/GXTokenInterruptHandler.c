@@ -11,7 +11,7 @@ extern volatile u16* __peReg;
 #define SET_REG_FIELD(reg, size, shift, val)               \
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
                           (32 - (shift) - (size)), (31 - (shift)))
-extern GXDrawSyncCallback lbl_8066F490;
+extern GXDrawSyncCallback TokenCB;
 
 extern void OSClearContext(OSContext* ctx);
 extern void OSSetCurrentContext(OSContext* ctx);
@@ -23,10 +23,10 @@ void GXTokenInterruptHandler(int interrupt, OSContext* context)
     u32 reg;
 
     token = __peReg[7];
-    if (lbl_8066F490 != 0) {
+    if (TokenCB != 0) {
         OSClearContext(&exceptionContext);
         OSSetCurrentContext(&exceptionContext);
-        lbl_8066F490(token);
+        TokenCB(token);
         OSClearContext(&exceptionContext);
         OSSetCurrentContext(context);
     }

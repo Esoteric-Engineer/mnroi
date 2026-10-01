@@ -1,8 +1,8 @@
 typedef unsigned char u8;
 typedef unsigned long u32;
 
-extern u8 lbl_8066F498;
-extern u8 lbl_8066F49C[8];
+typedef void (*GXDrawSyncCallback)(unsigned short token);
+typedef void (*GXDrawDoneCallback)(void);
 
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int level);
@@ -16,6 +16,11 @@ typedef union {
 
 #define GXWGFifo (*(GXFifoObj*)0xCC008000)
 
+u8 FinishQueue[8];
+u8 DrawDone;
+GXDrawDoneCallback DrawDoneCB;
+GXDrawSyncCallback TokenCB;
+
 void GXDrawDone(void)
 {
     int enabled;
@@ -26,12 +31,12 @@ void GXDrawDone(void)
     GXWGFifo.u8 = 0x61;
     GXWGFifo.u32 = reg;
     GXFlush();
-    lbl_8066F498 = 0;
+    DrawDone = 0;
     OSRestoreInterrupts(enabled);
 
     enabled = OSDisableInterrupts();
-    while (!lbl_8066F498) {
-        OSSleepThread(lbl_8066F49C);
+    while (!DrawDone) {
+        OSSleepThread(FinishQueue);
     }
     OSRestoreInterrupts(enabled);
 }

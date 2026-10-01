@@ -13,9 +13,9 @@ extern volatile u16* __peReg;
     (reg) = (u32)__rlwimi((int)(reg), (int)(val), (shift), \
                           (32 - (shift) - (size)), (31 - (shift)))
 
-extern GXDrawDoneCallback lbl_8066F494;
-extern u8 lbl_8066F498;
-extern char lbl_8066F49C[8];
+extern GXDrawDoneCallback DrawDoneCB;
+extern u8 DrawDone;
+extern char FinishQueue[8];
 
 extern void OSClearContext(OSContext* ctx);
 extern void OSSetCurrentContext(OSContext* ctx);
@@ -29,13 +29,13 @@ void GXFinishInterruptHandler(int interrupt, OSContext* context)
     reg = __peReg[5];
     SET_REG_FIELD(reg, 1, 3, 1);
     __peReg[5] = reg;
-    lbl_8066F498 = 1;
-    if (lbl_8066F494 != 0) {
+    DrawDone = 1;
+    if (DrawDoneCB != 0) {
         OSClearContext(&exceptionContext);
         OSSetCurrentContext(&exceptionContext);
-        lbl_8066F494();
+        DrawDoneCB();
         OSClearContext(&exceptionContext);
         OSSetCurrentContext(context);
     }
-    OSWakeupThread(lbl_8066F49C);
+    OSWakeupThread(FinishQueue);
 }

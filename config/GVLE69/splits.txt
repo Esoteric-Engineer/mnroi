@@ -1856,6 +1856,7 @@ Dolphin/gx/GXAbortFrame.c:
 
 Dolphin/gx/GXDrawDone.c:
 	.text       start:0x801924C4 end:0x80192544
+	.sbss       start:0x8066F490 end:0x8066F4A4
 
 Dolphin/gx/GXFlushTextureStateDup.c:
 	.text       start:0x80192544 end:0x80192568
