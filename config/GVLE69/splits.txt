@@ -1051,6 +1051,7 @@ Dolphin/os/OSGetResetCode.c:
 
 Dolphin/os/__OSResetSWInterruptHandler.c:
 	.text       start:0x8017EBEC end:0x8017ECE0
+	.sbss       start:0x8066F250 end:0x8066F270
 
 Dolphin/os/OSGetResetButtonState.c:
 	.text       start:0x8017ECE0 end:0x8017EF78

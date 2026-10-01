@@ -1,13 +1,15 @@
 typedef unsigned long u32;
 typedef long long s64;
 typedef s64 OSTime;
+typedef void (*OSResetCallback)(void);
 
 extern volatile u32 __PIRegs[0x20] : 0xCC003000;
 
-extern void (*lbl_8066F250)(void);
-extern int lbl_8066F254;
-extern int lbl_8066F258;
-extern OSTime lbl_8066F268;
+static OSResetCallback ResetCallback;
+OSTime HoldDown;
+OSTime HoldUp;
+int ResetSwLastState;
+int Down;
 
 OSTime __OSGetSystemTime(void);
 void __OSMaskInterrupts(u32 mask);
@@ -18,17 +20,17 @@ u32 __OSBusClock : 0x800000F8;
 
 void __OSResetSWInterruptHandler(short exception, void* context)
 {
-    void (*callback)(void);
+    OSResetCallback callback;
 
-    lbl_8066F268 = __OSGetSystemTime();
-    while ((__OSGetSystemTime() - lbl_8066F268) < OSMicrosecondsToTicks(100) && !(__PIRegs[0] & 0x00010000))
+    HoldDown = __OSGetSystemTime();
+    while ((__OSGetSystemTime() - HoldDown) < OSMicrosecondsToTicks(100) && !(__PIRegs[0] & 0x00010000))
         ;
     if (!(__PIRegs[0] & 0x00010000)) {
-        lbl_8066F258 = lbl_8066F254 = 1;
+        ResetSwLastState = Down = 1;
         __OSMaskInterrupts(0x200);
-        if (lbl_8066F250) {
-            callback = lbl_8066F250;
-            lbl_8066F250 = 0;
+        if (ResetCallback) {
+            callback = ResetCallback;
+            ResetCallback = 0;
             callback();
         }
     }

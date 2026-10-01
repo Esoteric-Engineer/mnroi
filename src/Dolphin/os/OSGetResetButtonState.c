@@ -7,10 +7,10 @@ typedef s64 OSTime;
 extern volatile u32 __PIRegs[0x20] : 0xCC003000;
 
 extern OSTime __OSStartTime;
-extern int lbl_8066F254;
-extern int lbl_8066F258;
-extern OSTime lbl_8066F260;
-extern OSTime lbl_8066F268;
+extern int Down;
+extern int ResetSwLastState;
+extern OSTime HoldUp;
+extern OSTime HoldDown;
 
 extern u8 GameChoice : 0x800030E3;
 
@@ -32,29 +32,29 @@ BOOL OSGetResetButtonState(void)
     u32 reg = __PIRegs[0];
 
     if (!(reg & 0x00010000)) {
-        if (!lbl_8066F254) {
-            lbl_8066F254 = 1;
-            state = lbl_8066F260 ? 1 : 0;
-            lbl_8066F268 = now;
+        if (!Down) {
+            Down = 1;
+            state = HoldUp ? 1 : 0;
+            HoldDown = now;
         } else {
-            state = lbl_8066F260 || (OSMicrosecondsToTicks(100) < now - lbl_8066F268) ? 1 : 0;
+            state = HoldUp || (OSMicrosecondsToTicks(100) < now - HoldDown) ? 1 : 0;
         }
-    } else if (lbl_8066F254) {
-        lbl_8066F254 = 0;
-        state = lbl_8066F258;
+    } else if (Down) {
+        Down = 0;
+        state = ResetSwLastState;
         if (state) {
-            lbl_8066F260 = now;
+            HoldUp = now;
         } else {
-            lbl_8066F260 = 0;
+            HoldUp = 0;
         }
-    } else if (lbl_8066F260 && (now - lbl_8066F260 < OSMillisecondsToTicks(40))) {
+    } else if (HoldUp && (now - HoldUp < OSMillisecondsToTicks(40))) {
         state = 1;
     } else {
         state = 0;
-        lbl_8066F260 = 0;
+        HoldUp = 0;
     }
 
-    lbl_8066F258 = state;
+    ResetSwLastState = state;
 
     if (GameChoice & 0x1F) {
         OSTime fire = (GameChoice & 0x1F) * 60;
