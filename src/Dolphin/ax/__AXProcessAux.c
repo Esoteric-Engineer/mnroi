@@ -16,7 +16,7 @@ extern unsigned long lbl_8066FA34;
 extern unsigned long lbl_8066FA38;
 extern unsigned long lbl_8066FA3C;
 extern unsigned long lbl_8066FA40;
-extern unsigned long lbl_8066FA58;
+extern unsigned long __AXClMode;
 
 void __AXProcessAux(void)
 {
@@ -26,7 +26,7 @@ void __AXProcessAux(void)
     lbl_8066FA2C = __AXBufferAuxB[lbl_8066FA34];
 
     if (lbl_8066FA10 != 0) {
-        if (lbl_8066FA58 == 2) {
+        if (__AXClMode == 2) {
             void* buf[4];
             unsigned char* p = __AXBufferAuxA[lbl_8066FA40];
             buf[0] = p;
@@ -50,7 +50,7 @@ void __AXProcessAux(void)
         }
     }
 
-    if (lbl_8066FA14 != 0 && lbl_8066FA58 != 2) {
+    if (lbl_8066FA14 != 0 && __AXClMode != 2) {
         void* buf[3];
         unsigned char* p = __AXBufferAuxB[lbl_8066FA40];
         buf[0] = p;

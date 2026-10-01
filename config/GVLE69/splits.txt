@@ -2542,6 +2542,7 @@ Dolphin/ax/AXRegisterAuxACallback.c:
 
 Dolphin/ax/__AXGetCommandListCycles.c:
 	.text       start:0x80407228 end:0x80407230
+	.sbss       start:0x8066FA48 end:0x8066FA5C
 
 Dolphin/ax/__AXGetCommandListAddress.c:
 	.text       start:0x80407230 end:0x8040726C

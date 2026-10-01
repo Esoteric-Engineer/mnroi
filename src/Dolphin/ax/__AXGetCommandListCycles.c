@@ -1,6 +1,10 @@
-extern unsigned long lbl_8066FA50;
+unsigned long __AXClMode;
+unsigned long __AXCompressor;
+unsigned long __AXCommandListCycles;
+void* __AXClWrite;
+unsigned long __AXCommandListPosition;
 
 unsigned long __AXGetCommandListCycles(void)
 {
-    return lbl_8066FA50;
+    return __AXCommandListCycles;
 }
