@@ -11,40 +11,40 @@ typedef struct ARQRequest {
     void (*callback)(u32);
 } ARQRequest;
 
-extern ARQRequest* lbl_8066F9D8;
-extern ARQRequest* lbl_8066F9F0;
-extern ARQRequest* lbl_8066F9F4;
-extern void (*lbl_8066F9F8)(u32);
-extern void (*lbl_8066F9FC)(u32);
+extern ARQRequest* __ARQRequestQueueHi;
+extern ARQRequest* __ARQRequestPendingHi;
+extern ARQRequest* __ARQRequestPendingLo;
+extern void (*__ARQCallbackHi)(u32);
+extern void (*__ARQCallbackLo)(u32);
 
 extern void ARStartDMA(u32 type, u32 mainmem, u32 aram, u32 length);
 extern void __ARQServiceQueueLo(void);
 
 inline void __ARQPopTaskQueueHi(void) {
-    if (lbl_8066F9D8) {
-        if (lbl_8066F9D8->type == 0) {
-            ARStartDMA(lbl_8066F9D8->type, lbl_8066F9D8->source, lbl_8066F9D8->dest, lbl_8066F9D8->length);
+    if (__ARQRequestQueueHi) {
+        if (__ARQRequestQueueHi->type == 0) {
+            ARStartDMA(__ARQRequestQueueHi->type, __ARQRequestQueueHi->source, __ARQRequestQueueHi->dest, __ARQRequestQueueHi->length);
         } else {
-            ARStartDMA(lbl_8066F9D8->type, lbl_8066F9D8->dest, lbl_8066F9D8->source, lbl_8066F9D8->length);
+            ARStartDMA(__ARQRequestQueueHi->type, __ARQRequestQueueHi->dest, __ARQRequestQueueHi->source, __ARQRequestQueueHi->length);
         }
-        lbl_8066F9F8 = lbl_8066F9D8->callback;
-        lbl_8066F9F0 = lbl_8066F9D8;
-        lbl_8066F9D8 = lbl_8066F9D8->next;
+        __ARQCallbackHi = __ARQRequestQueueHi->callback;
+        __ARQRequestPendingHi = __ARQRequestQueueHi;
+        __ARQRequestQueueHi = __ARQRequestQueueHi->next;
     }
 }
 
 void __ARQInterruptServiceRoutine(void) {
-    if (lbl_8066F9F8) {
-        lbl_8066F9F8((u32)lbl_8066F9F0);
-        lbl_8066F9F0 = 0;
-        lbl_8066F9F8 = 0;
-    } else if (lbl_8066F9FC) {
-        lbl_8066F9FC((u32)lbl_8066F9F4);
-        lbl_8066F9F4 = 0;
-        lbl_8066F9FC = 0;
+    if (__ARQCallbackHi) {
+        __ARQCallbackHi((u32)__ARQRequestPendingHi);
+        __ARQRequestPendingHi = 0;
+        __ARQCallbackHi = 0;
+    } else if (__ARQCallbackLo) {
+        __ARQCallbackLo((u32)__ARQRequestPendingLo);
+        __ARQRequestPendingLo = 0;
+        __ARQCallbackLo = 0;
     }
     __ARQPopTaskQueueHi();
-    if (lbl_8066F9F0 == 0) {
+    if (__ARQRequestPendingHi == 0) {
         __ARQServiceQueueLo();
     }
 }

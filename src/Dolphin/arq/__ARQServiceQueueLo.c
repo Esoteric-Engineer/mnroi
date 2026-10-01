@@ -11,33 +11,42 @@ typedef struct ARQRequest {
     void (*callback)(u32);
 } ARQRequest;
 
-extern ARQRequest* lbl_8066F9E0;
-extern ARQRequest* lbl_8066F9F4;
-extern void (*lbl_8066F9FC)(u32);
-extern u32 lbl_8066FA00;
+// Reverse declaration order in .sbss: this puts __ARQRequestQueueHi first and lays the rest of arq.c's .sbss out ascending from there.
+int __ARQ_init_flag;
+u32 __ARQChunkSize;
+void (*__ARQCallbackLo)(u32);
+void (*__ARQCallbackHi)(u32);
+ARQRequest* __ARQRequestPendingLo;
+ARQRequest* __ARQRequestPendingHi;
+ARQRequest* lbl_8066F9EC;
+ARQRequest* lbl_8066F9E8;
+ARQRequest* __ARQRequestTailLo;
+ARQRequest* __ARQRequestQueueLo;
+ARQRequest* __ARQRequestTailHi;
+ARQRequest* __ARQRequestQueueHi;
 
 extern void ARStartDMA(u32 type, u32 mainmem, u32 aram, u32 length);
 
 void __ARQServiceQueueLo(void) {
-    if (lbl_8066F9F4 == 0 && lbl_8066F9E0) {
-        lbl_8066F9F4 = lbl_8066F9E0;
-        lbl_8066F9E0 = lbl_8066F9E0->next;
+    if (__ARQRequestPendingLo == 0 && __ARQRequestQueueLo) {
+        __ARQRequestPendingLo = __ARQRequestQueueLo;
+        __ARQRequestQueueLo = __ARQRequestQueueLo->next;
     }
-    if (lbl_8066F9F4) {
-        if (lbl_8066F9F4->length <= lbl_8066FA00) {
-            if (lbl_8066F9F4->type == 0) {
-                ARStartDMA(lbl_8066F9F4->type, lbl_8066F9F4->source, lbl_8066F9F4->dest, lbl_8066F9F4->length);
+    if (__ARQRequestPendingLo) {
+        if (__ARQRequestPendingLo->length <= __ARQChunkSize) {
+            if (__ARQRequestPendingLo->type == 0) {
+                ARStartDMA(__ARQRequestPendingLo->type, __ARQRequestPendingLo->source, __ARQRequestPendingLo->dest, __ARQRequestPendingLo->length);
             } else {
-                ARStartDMA(lbl_8066F9F4->type, lbl_8066F9F4->dest, lbl_8066F9F4->source, lbl_8066F9F4->length);
+                ARStartDMA(__ARQRequestPendingLo->type, __ARQRequestPendingLo->dest, __ARQRequestPendingLo->source, __ARQRequestPendingLo->length);
             }
-            lbl_8066F9FC = lbl_8066F9F4->callback;
-        } else if (lbl_8066F9F4->type == 0) {
-            ARStartDMA(lbl_8066F9F4->type, lbl_8066F9F4->source, lbl_8066F9F4->dest, lbl_8066FA00);
+            __ARQCallbackLo = __ARQRequestPendingLo->callback;
+        } else if (__ARQRequestPendingLo->type == 0) {
+            ARStartDMA(__ARQRequestPendingLo->type, __ARQRequestPendingLo->source, __ARQRequestPendingLo->dest, __ARQChunkSize);
         } else {
-            ARStartDMA(lbl_8066F9F4->type, lbl_8066F9F4->dest, lbl_8066F9F4->source, lbl_8066FA00);
+            ARStartDMA(__ARQRequestPendingLo->type, __ARQRequestPendingLo->dest, __ARQRequestPendingLo->source, __ARQChunkSize);
         }
-        lbl_8066F9F4->length -= lbl_8066FA00;
-        lbl_8066F9F4->source += lbl_8066FA00;
-        lbl_8066F9F4->dest += lbl_8066FA00;
+        __ARQRequestPendingLo->length -= __ARQChunkSize;
+        __ARQRequestPendingLo->source += __ARQChunkSize;
+        __ARQRequestPendingLo->dest += __ARQChunkSize;
     }
 }

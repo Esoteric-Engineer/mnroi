@@ -2449,6 +2449,7 @@ Dolphin/ar/__ARChecksize.c:
 
 Dolphin/arq/__ARQServiceQueueLo.c:
 	.text       start:0x804063A4 end:0x804064A4
+	.sbss       start:0x8066F9D8 end:0x8066FA08
 
 Dolphin/arq/__ARQCallbackHack.c:
 	.text       start:0x804064A4 end:0x804064A8
