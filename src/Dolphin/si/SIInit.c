@@ -22,7 +22,17 @@ typedef struct SIPacket {
 
 extern SIPacket Packet[4];
 extern SIControl Si;
-extern const char* __SIVersion;
+extern char lbl_804D1B78[];
+
+const char* __SIVersion = lbl_804D1B78;
+
+// SIGetTypeString's "Busy"/"Unknown" literals.
+// Nothing reads this, but the original kept the pool alive anyway.
+#pragma force_active on
+char SIGetTypeStringBusy[8] = "Busy";
+char SIGetTypeStringUnknown[8] = "Unknown";
+u32 SIGetTypeStringPad[2] = { 0, 0 };
+#pragma force_active reset
 
 extern void OSRegisterVersion(const char* version);
 extern void SISetSamplingRate(u32 msec);
