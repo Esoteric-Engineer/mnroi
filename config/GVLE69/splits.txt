@@ -668,6 +668,9 @@ Runtime.PPCEABI.H/strtod.c:
 	.rodata.1   start:0x8049C680 end:0x8049C6A0
 	.data       start:0x804D02D0 end:0x804D0318
 
+Runtime.PPCEABI.H/ctype_.c:
+	.rodata.1   start:0x8049C6A0 end:0x8049C7A4
+
 Runtime.PPCEABI.H/tolower.c:
 	.text       start:0x80177368 end:0x80177384
 

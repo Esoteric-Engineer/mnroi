@@ -1,4 +1,4 @@
-extern unsigned char lbl_8049C6A1[];
+extern unsigned char _ctype_[];
 extern void tolower(void);
 
 asm char* strlwr(char* s)
@@ -14,8 +14,8 @@ asm char* strlwr(char* s)
     mr      r31, r30
     cmpwi   r0, 0
     beq     done
-    lis     r9, lbl_8049C6A1@ha
-    addi    r29, r9, lbl_8049C6A1@l
+    lis     r9, (_ctype_+1)@ha
+    addi    r29, r9, (_ctype_+1)@l
 loop:
     lbz     r0, 0(r31)
     extsb   r3, r0

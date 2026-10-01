@@ -8,7 +8,7 @@ extern void strtoul(void);
 extern void __sccl(void);
 extern void* __mb_cur_max;
 extern void* lbl_8066C3B0;
-extern char lbl_8049C6A1[];
+extern char _ctype_[];
 /* Newlib vfscanf.c's basefix (CFTKK basefix.3), this unit's only owned constant.
 The pragma keeps it in .rodata.1 instead of .sdata2/.rodata. */
 #pragma section R ".rodata.1"
@@ -26,10 +26,10 @@ asm int __svfscanf(void* fp, const char* fmt, void* ap)
     stw     r0, 0x2c4(r1)
     li      r18, 0x0
     addi    r0, r1, 0x26c
-    lis     r9, lbl_8049C6A1@ha
+    lis     r9, (_ctype_+1)@ha
     stw     r18, 0x26c(r1)
     stw     r0, 0x270(r1)
-    addi    r15, r9, lbl_8049C6A1@l
+    addi    r15, r9, (_ctype_+1)@l
     mr      r28, r3
     mr      r29, r5
     mr      r22, r4
@@ -38,7 +38,7 @@ asm int __svfscanf(void* fp, const char* fmt, void* ap)
     li      r24, 0x0
     addi    r14, r1, 0x268
     li      r21, 0x8
-    lis     r16, lbl_8049C6A1@ha
+    lis     r16, (_ctype_+1)@ha
     lis     r17, strtoul@ha
 L_80170200:
     lwz     r3, lbl_8066C3B0
@@ -57,7 +57,7 @@ L_80170200:
     lbzx    r0, r15, r0
     andi.   r9, r0, 0x8
     beq     L_80170294
-    addi    r30, r16, lbl_8049C6A1@l
+    addi    r30, r16, (_ctype_+1)@l
     b       L_80170260
 L_80170248:
     lwz     r9, 0x4(r28)
@@ -355,7 +355,7 @@ L_80170604:
     lbzx    r9, r15, r0
     andi.   r0, r9, 0x8
     beq     L_8017066C
-    addi    r27, r16, lbl_8049C6A1@l
+    addi    r27, r16, (_ctype_+1)@l
 L_80170624:
     lwz     r9, 0x4(r28)
     addi    r24, r24, 0x1
@@ -571,7 +571,7 @@ L_801708FC:
     andi.   r0, r30, 0x8
     beq     L_80170960
     li      r30, 0x0
-    addi    r27, r16, lbl_8049C6A1@l
+    addi    r27, r16, (_ctype_+1)@l
 L_8017090C:
     lwz     r11, 0x0(r28)
     lbz     r0, 0x0(r11)
@@ -621,7 +621,7 @@ L_801709A4:
 L_801709AC:
     lwz     r27, 0x0(r9)
     addi    r25, r20, 0x1
-    addi    r31, r16, lbl_8049C6A1@l
+    addi    r31, r16, (_ctype_+1)@l
     mr      r30, r27
 L_801709BC:
     lwz     r10, 0x0(r28)

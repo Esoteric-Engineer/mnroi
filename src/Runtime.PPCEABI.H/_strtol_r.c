@@ -1,4 +1,4 @@
-extern unsigned char lbl_8049C6A1[];
+extern unsigned char _ctype_[];
 
 asm long _strtol_r(void* reent, const char* nptr, char** endptr, int base)
 {
@@ -6,9 +6,9 @@ asm long _strtol_r(void* reent, const char* nptr, char** endptr, int base)
     nofralloc
     stwu    r1, -0x10(r1)
     stw     r31, 0xc(r1)
-    lis     r9, lbl_8049C6A1@ha
+    lis     r9, (_ctype_+1)@ha
     mr      r31, r3
-    addi    r8, r9, lbl_8049C6A1@l
+    addi    r8, r9, (_ctype_+1)@l
     mr      r10, r4
     li      r7, 0
 skipws:
@@ -93,8 +93,8 @@ advance:
     addi    r10, r10, 1
     extsb   r11, r0
 cond:
-    lis     r9, lbl_8049C6A1@ha
-    addi    r9, r9, lbl_8049C6A1@l
+    lis     r9, (_ctype_+1)@ha
+    addi    r9, r9, (_ctype_+1)@l
     lbzx    r0, r11, r9
     andi.   r9, r0, 4
     beq     notdigit
