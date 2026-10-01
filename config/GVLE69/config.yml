@@ -34,6 +34,10 @@ force_active:
 - __va_arg
 - CmdTypeAndStatus
 - CARDVersionPad
+- lbl_8066F2FC
+- lbl_8066F300
+- lbl_8066F30C
+- lbl_8066F310
 ldscript_template: config/GVLE69/ldscript.lcf
 # Change this to match the linker version. See config.example.yml for a list.
 # NOTE: 11 is a guess (CW 2.7+). Revisit once the real compiler version is known.

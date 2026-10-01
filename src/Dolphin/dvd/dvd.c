@@ -36,21 +36,10 @@ void (*lbl_8066C418)(DVDCommandBlock* block, void* callback) = (void (*)(DVDComm
 char lbl_8066C41C[6] = "dvd.c";
 u32 lbl_8066C424[1] = { 0xFFFFFFFF };
 
-extern int DVDInitialized;
-extern int FirstTimeInBootrom;
-extern OSBootInfo* bootInfo;
-extern void* IDShouldBe;
 extern u32 __DVDThreadQueue[2];
-extern void* LastState;
-extern volatile u32 NumInternalRetry;
-extern u32 lbl_8066F2F0;
-extern DVDCommandBlock* executing;
 void stateTimeout(void);
 void stateGettingError(void);
 extern void stateReady(void);
-extern u32 CancelLastError;
-extern int PauseFlag;
-extern int PausingFlag;
 extern DVDCommandBlock* __DVDPopWaitingQueue(void);
 extern int __DVDCheckWaitingQueue(void);
 extern void __DVDPrintFatalMessage(void);
@@ -58,23 +47,45 @@ extern void __DVDStoreErrorCode(u32 error);
 extern void DVDReset(void);
 extern void DVDLowRequestError(void* callback);
 void cbForStateGettingError(u32 intType);
-extern volatile u32 ResumeFromHere;
 extern void DVDLowStopMotor(void* callback);
 extern void DVDLowReset(void);
 extern void DVDLowSeek(u32 offset, void* callback);
 void stateGoToRetry(void);
 void cbForStateGoToRetry(u32 intType);
-extern volatile u32 CurrCommand;
-extern int ResetRequired;
 void cbForUnrecoveredErrorRetry(u32 intType);
 extern void cbForStateMotorStopped(u32 intType);
 extern int DVDLowWaitCoverClose(void* callback);
 void stateMotorStopped(void);
 void stateCoverClosed(void);
 extern void cbForUnrecoveredError(u32 intType);
-extern int FatalErrorFlag;
-extern volatile u32 lbl_8066F2E0;
-extern void (*lbl_8066F2E4)(s32 result, DVDCommandBlock* block);
+
+// dvd.c's .sbss pool, in the reverse of address order (based on how mwld lays them out)
+void* LastState;
+#pragma force_active on
+u32 lbl_8066F310;
+u32 lbl_8066F30C;
+#pragma force_active reset
+int DVDInitialized;
+int FirstTimeInBootrom;
+#pragma force_active on
+u32 lbl_8066F300;
+u32 lbl_8066F2FC;
+#pragma force_active reset
+int ResetRequired;
+volatile u32 NumInternalRetry;
+u32 lbl_8066F2F0;
+u32 CancelLastError;
+volatile u32 ResumeFromHere;
+void (*lbl_8066F2E4)(s32 result, DVDCommandBlock* block);
+volatile u32 lbl_8066F2E0;
+volatile u32 CurrCommand;
+int FatalErrorFlag;
+int lbl_8066F2D4;
+int PausingFlag;
+int PauseFlag;
+OSBootInfo* bootInfo;
+void* IDShouldBe;
+DVDCommandBlock* executing;
 
 extern void OSPanic(const char* file, int line, const char* msg, ...);
 extern void DVDLowRead(void* addr, u32 length, u32 offset, void* callback);
@@ -92,7 +103,6 @@ extern void DVDLowReadDiskID(void* buf, void* callback);
 extern void DVDLowRequestAudioStatus(u32 cmd, void* callback);
 extern void DVDLowAudioStream(u32 cmd, u32 length, u32 offset, void* callback);
 extern void DVDLowInquiry(void* buf, void* callback);
-extern int lbl_8066F2D4;
 void cbForStateCheckID2a(u32 intType);
 void stateCheckID2a(DVDCommandBlock* block);
 void cbForStateCheckID2(u32 intType);
