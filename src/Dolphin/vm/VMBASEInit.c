@@ -1,4 +1,8 @@
-extern unsigned long lbl_8066F990;
+unsigned long lbl_8066F990[2];
+unsigned long lbl_8066F98C;
+unsigned long lbl_8066F988;
+unsigned long lbl_8066F984;
+unsigned long lbl_8066F980;
 
 extern void __VMBASESetSwapPageCallback(void* callback);
 extern unsigned long OSGetArenaLo(void);
