@@ -7,6 +7,13 @@ extern void* __sseek;
 extern void* __sclose;
 extern int _fseek_r(void* reent, void* fp, int offset, int whence);
 
+// Only referenced by the dead-stripped "too many open streams" fopen() guard.
+#pragma section R ".rodata.1"
+#pragma force_active on
+__declspec(section ".rodata.1") const char TooManyOpenStreamsStr[] =
+    "\nfopen error:  **too many open streams**\n";
+#pragma force_active reset
+
 // _fopen_r(reent, file, mode): open a FILE, install the stdio callbacks, seek to end for append.
 asm void* _fopen_r(void* reent, const char* file, const char* mode)
 {

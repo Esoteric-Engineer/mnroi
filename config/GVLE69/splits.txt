@@ -739,6 +739,7 @@ Runtime.PPCEABI.H/__sfp.c:
 
 Runtime.PPCEABI.H/_fopen_r.c:
 	.text       start:0x80178568 end:0x80178654
+	.rodata.1   start:0x8049C920 end:0x8049C94C
 
 Runtime.PPCEABI.H/fopen.c:
 	.text       start:0x80178654 end:0x80178684
