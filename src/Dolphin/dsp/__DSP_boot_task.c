@@ -67,3 +67,8 @@ void __DSP_boot_task(DSPTaskInfo* task)
     __DSP_debug_printf("__DSP_boot_task()  : DRAM MMEM ADDR: 0x%08X\n", task->dram_length);
     __DSP_debug_printf("__DSP_boot_task()  : Start Vector  : 0x%08X\n", task->dsp_init_vector);
 }
+
+// dsp_task.c's __DSP_add_task() string; that function is dead-stripped, so nothing references this.
+#pragma force_active on
+char lbl_804F2B50[] = "__DSP_add_task() : Added task    : 0x%08X\n";
+#pragma force_active reset
