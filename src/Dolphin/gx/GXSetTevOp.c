@@ -19,7 +19,15 @@ extern __GXDataStruct* const __GXData;
 // - alpha/stage0 at +40
 // - alpha/other at +60
 // The byte offsets are what the original applies to the base pointer; a 2D array or a struct of arrays makes MWCC share `base + mode * 4` between the two pointers instead.
-extern u32 lbl_804D32A0[];
+u32 TevOpTables[20] = {
+    0xc008f8af, 0xc008a89f, 0xc008ac8f, 0xc008fff8, 0xc008fffa,
+    0xc008f80f, 0xc008089f, 0xc0080c8f, 0xc008fff8, 0xc008fff0,
+    0xc108f2f0, 0xc108ffd0, 0xc108f2f0, 0xc108ffc0, 0xc108ffd0,
+    0xc108f070, 0xc108ff80, 0xc108f070, 0xc108ffc0, 0xc108ff80,
+};
+
+// Read by GXSetTevOrder (TU boundary crossed: GXSetTevOrder.c externs this).
+int c2r[9] = { 0, 1, 0, 1, 0, 1, 7, 5, 6 };
 
 typedef union {
     volatile u8 u8;
@@ -34,7 +42,7 @@ void GXSetTevOp(int id, int mode)
     u32* color;
     u32* alpha;
     u32 reg;
-    u8* base = (u8*)lbl_804D32A0;
+    u8* base = (u8*)TevOpTables;
 
     if (id == 0) {
         color = (u32*)base + mode;
