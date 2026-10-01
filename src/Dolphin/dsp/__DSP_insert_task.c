@@ -8,15 +8,15 @@ typedef struct DSPTaskInfo {
 } DSPTaskInfo;
 
 extern DSPTaskInfo* __DSP_first_task;
-extern DSPTaskInfo* lbl_8066FB00; /* __DSP_last_task */
-extern DSPTaskInfo* lbl_8066FB08; /* __DSP_curr_task */
+extern DSPTaskInfo* __DSP_last_task;
+extern DSPTaskInfo* __DSP_curr_task;
 
 void __DSP_insert_task(DSPTaskInfo* task)
 {
     DSPTaskInfo* temp;
 
     if (__DSP_first_task == 0) {
-        __DSP_first_task = lbl_8066FB00 = lbl_8066FB08 = task;
+        __DSP_first_task = __DSP_last_task = __DSP_curr_task = task;
         task->next = task->prev = 0;
     } else {
         temp = __DSP_first_task;
@@ -35,10 +35,10 @@ void __DSP_insert_task(DSPTaskInfo* task)
             temp = temp->next;
         }
         if (temp == 0) {
-            lbl_8066FB00->next = task;
+            __DSP_last_task->next = task;
             task->next = 0;
-            task->prev = lbl_8066FB00;
-            lbl_8066FB00 = task;
+            task->prev = __DSP_last_task;
+            __DSP_last_task = task;
         }
     }
 }

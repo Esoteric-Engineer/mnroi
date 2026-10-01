@@ -12,9 +12,9 @@ volatile u16 __DSPRegs[0x200] : 0xCC005000;
 extern BOOL OSDisableInterrupts(void);
 extern BOOL OSRestoreInterrupts(BOOL enabled);
 
-extern DSPTaskInfo* lbl_8066FB08; /* __DSP_curr_task */
-extern BOOL lbl_8066FAF4;         /* __DSP_rude_task_pending */
-extern DSPTaskInfo* lbl_8066FAF8; /* __DSP_rude_task */
+extern DSPTaskInfo* __DSP_curr_task;
+extern BOOL __DSP_rude_task_pending;
+extern DSPTaskInfo* __DSP_rude_task;
 
 static inline void DSPAssertInt(void)
 {
@@ -32,17 +32,17 @@ DSPTaskInfo* DSPAssertTask(DSPTaskInfo* task)
 {
     BOOL old = OSDisableInterrupts();
 
-    if (lbl_8066FB08 == task) {
-        lbl_8066FAF8 = task;
-        lbl_8066FAF4 = 1;
+    if (__DSP_curr_task == task) {
+        __DSP_rude_task = task;
+        __DSP_rude_task_pending = 1;
         OSRestoreInterrupts(old);
         return task;
     }
 
-    if (task->priority < lbl_8066FB08->priority) {
-        lbl_8066FAF8 = task;
-        lbl_8066FAF4 = 1;
-        if (lbl_8066FB08->state == 1) {
+    if (task->priority < __DSP_curr_task->priority) {
+        __DSP_rude_task = task;
+        __DSP_rude_task_pending = 1;
+        if (__DSP_curr_task->state == 1) {
             DSPAssertInt();
         }
         OSRestoreInterrupts(old);

@@ -2688,6 +2688,7 @@ Dolphin/dsp/__DSP_debug_printf.c:
 
 Dolphin/dsp/__DSPHandler.c:
 	.text       start:0x8040990C end:0x80409D30
+	.sbss       start:0x8066FAE8 end:0x8066FB0C
 
 Dolphin/dsp/__DSP_exec_task.c:
 	.text       start:0x80409D30 end:0x80409ED0
