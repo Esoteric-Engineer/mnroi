@@ -2142,6 +2142,8 @@ Runtime.PPCEABI.H/__floatdisf.c:
 
 Dolphin/vm/VMInit.c:
 	.text       start:0x804009C4 end:0x80400AAC
+	.sdata      start:0x8066CE98 end:0x8066CE9C
+	.sbss       start:0x8066F948 end:0x8066F960
 
 Dolphin/vm/VMSetLogStatsCallback.c:
 	.text       start:0x80400AAC end:0x80400AB4

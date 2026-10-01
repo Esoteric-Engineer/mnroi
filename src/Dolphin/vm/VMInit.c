@@ -1,8 +1,11 @@
-extern unsigned long lbl_8066CE98;
-extern unsigned long lbl_8066F948;
-extern unsigned long lbl_8066F950;
-extern unsigned long lbl_8066F954;
-extern unsigned long lbl_8066F95C;
+unsigned long lbl_8066CE98 = 0x4000;
+
+unsigned long lbl_8066F95C;
+void* lbl_8066F958;
+unsigned long lbl_8066F954;
+unsigned long lbl_8066F950;
+unsigned long lbl_8066F94C;
+unsigned long lbl_8066F948;
 
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int enabled);
