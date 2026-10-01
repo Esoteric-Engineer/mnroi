@@ -64,6 +64,7 @@ extern void OSInitThreadQueue(OSThreadQueue* queue);
 extern void OSClearContext(OSContext* context);
 extern void OSSetCurrentContext(OSContext* context);
 extern void OSClearStack(u32 val);
+extern void DefaultSwitchThreadCallback(OSThread* from, OSThread* to);
 
 extern char _stack_addr[];
 extern char _stack_end[];
@@ -71,8 +72,9 @@ extern char _stack_end[];
 extern volatile long RunQueueHint;
 extern volatile u32 RunQueueBits;
 extern long Reschedule;
-extern OSSwitchThreadCallback SwitchThreadCallback;
-extern RunQueueBlock RunQueue;
+
+OSSwitchThreadCallback SwitchThreadCallback = DefaultSwitchThreadCallback;
+RunQueueBlock RunQueue;
 
 OSThread* __gUnkThread1 : 0x800000D8;
 OSThread* __gCurrentThread : 0x800000E4;
