@@ -8,15 +8,13 @@ typedef struct GXColor {
     u8 r, g, b, a;
 } GXColor;
 
-typedef struct FatalBlock {
+struct FatalParam {
     GXColor fg;
     GXColor bg;
     char* msg;
     u32 pad;
     long long context[0x2C8 / 8];
-} FatalBlock;
-
-extern FatalBlock lbl_8064EF50;
+} FatalParam;
 
 u32 __OSBusClock : 0x800000F8;
 typedef struct OSBootInfo {
@@ -60,7 +58,7 @@ volatile u32 __EXIRegs[0x40] : 0xCC006800;
 
 void OSFatal(GXColor fg, GXColor bg, const char* msg)
 {
-    FatalBlock* b = &lbl_8064EF50;
+    struct FatalParam* b = &FatalParam;
     OSBootInfo* bootInfo = (OSBootInfo*)0x80000000;
     s32 retraceCount;
     s64 start;

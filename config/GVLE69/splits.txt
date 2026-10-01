@@ -2344,6 +2344,7 @@ Dolphin/os/ConfigureVideo.c:
 
 Dolphin/os/OSFatal.c:
 	.text       start:0x80402608 end:0x804027E0
+	.bss        start:0x8064EF50 end:0x8064F228
 
 Dolphin/os/Halt.c:
 	.text       start:0x804027E0 end:0x80402DC0

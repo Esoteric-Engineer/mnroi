@@ -9,13 +9,12 @@ typedef struct GXColor {
     u8 r, g, b, a;
 } GXColor;
 
-typedef struct FatalBlock {
+extern struct FatalParam {
     GXColor fg;
     GXColor bg;
     char* msg;
     u32 pad;
-    long long context[0x2C8 / 8];
-} FatalBlock;
+} FatalParam;
 
 typedef struct OSFontHeader {
     u16 fontType;
@@ -42,8 +41,6 @@ typedef struct OSFontHeader {
     u8 c2;
     u8 c3;
 } OSFontHeader;
-
-extern FatalBlock lbl_8064EF50;
 
 extern BOOL OSEnableInterrupts(void);
 extern BOOL OSDisableInterrupts(void);
@@ -108,9 +105,9 @@ void Halt(void)
     OSFontHeader* fontData;
     void* xfb;
     u32 len;
-    FatalBlock* fp;
+    struct FatalParam* fp;
 
-    fp = &lbl_8064EF50;
+    fp = &FatalParam;
     OSEnableInterrupts();
     len = strlen(fp->msg) + 1;
     fp->msg = memmove(OSAllocFromArenaLo(len, 32), fp->msg, len);
