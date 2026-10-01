@@ -1238,7 +1238,9 @@ Dolphin/dvd/fn_80186590.c:
 
 Dolphin/dvd/dvdqueue.c:
 	.text       start:0x801865C8 end:0x801867C0
+	.data       start:0x804D22B0 end:0x804D2418
 	.bss        start:0x8057D2B8 end:0x8057D2D8
+	.sdata      start:0x8066C430 end:0x8066C468
 
 Dolphin/dvd/dvderror.c:
 	.text       start:0x801867C0 end:0x80186958
