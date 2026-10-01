@@ -11,19 +11,29 @@ typedef void (*VIPositionCallback)(s16, s16);
 
 extern volatile u16 __VIRegs[0x100] : 0xCC002000;
 
-extern volatile u32 lbl_8066F37C;
-extern volatile u32 lbl_8066F380;
-extern u8 lbl_8066F384[8];
-extern VIRetraceCallback CoverCallback;
-extern VIRetraceCallback ResetCoverCallback;
-extern VIPositionCallback lbl_8066F394;
-extern volatile u32 lbl_8066F3B0;
-extern volatile u64 lbl_8066F3B8;
-extern u32 lbl_8066F3C0;
-extern u32 CurrTvMode;
-extern u32 lbl_8066F3C8;
-extern u32 lbl_8066F3CC;
 extern u8 lbl_8057D418[];
+
+// Reverse declaration order in .sbss.
+int lbl_8066F3D4;
+u32 lbl_8066F3D0;
+u32 lbl_8066F3CC;
+u32 lbl_8066F3C8;
+u32 CurrTvMode;
+u32 lbl_8066F3C0;
+volatile u64 lbl_8066F3B8;
+volatile u32 lbl_8066F3B0;
+volatile u64 lbl_8066F3A8;
+volatile u32 lbl_8066F3A0;
+s16 lbl_8066F39E;
+s16 lbl_8066F39C;
+u32 lbl_8066F398;
+VIPositionCallback lbl_8066F394;
+VIRetraceCallback ResetCoverCallback;
+VIRetraceCallback CoverCallback;
+u8 lbl_8066F384[8];
+volatile u32 lbl_8066F380;
+volatile u32 lbl_8066F37C;
+u32 lbl_8066F378;
 
 void OSClearContext(OSContext* context);
 void OSSetCurrentContext(OSContext* context);
