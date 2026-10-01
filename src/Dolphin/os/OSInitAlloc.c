@@ -8,8 +8,8 @@ struct HeapDesc {
 
 extern struct HeapDesc* HeapArray;
 extern int NumHeaps;
-extern void* lbl_8066F9A0;
-extern void* lbl_8066F9A4;
+extern void* ArenaStart;
+extern void* ArenaEnd;
 extern int __OSCurrHeap;
 
 void* OSInitAlloc(void* arenaStart, void* arenaEnd, int maxHeaps)
@@ -30,7 +30,7 @@ void* OSInitAlloc(void* arenaStart, void* arenaEnd, int maxHeaps)
     __OSCurrHeap = -1;
     arenaStart = (void*)((u32)((char*)HeapArray + arraySize));
     arenaStart = (void*)(((u32)arenaStart + 0x1F) & 0xFFFFFFE0);
-    lbl_8066F9A0 = arenaStart;
-    lbl_8066F9A4 = (void*)((u32)arenaEnd & 0xFFFFFFE0);
+    ArenaStart = arenaStart;
+    ArenaEnd = (void*)((u32)arenaEnd & 0xFFFFFFE0);
     return arenaStart;
 }
