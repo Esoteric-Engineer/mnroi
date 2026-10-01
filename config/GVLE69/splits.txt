@@ -2384,6 +2384,7 @@ Dolphin/os/OSSignalSemaphore.c:
 
 Dolphin/mtx/PSMTXIdentity.c:
 	.text       start:0x804044C8 end:0x804044F4
+	.sdata2     start:0x806708D8 end:0x806708F0
 
 Dolphin/mtx/PSMTXConcat.c:
 	.text       start:0x804044F4 end:0x804045C0

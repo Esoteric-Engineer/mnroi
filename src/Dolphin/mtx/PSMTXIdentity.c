@@ -1,6 +1,10 @@
 extern float MtxZeroConst;
 extern float MtxOneConst;
 
+// Owns .sdata2 from 0x806708D8: unreferenced constants of mtx.c functions this game dead-strips.
+// MtxOneConst/MtxZeroConst above stay dtk-auto-named, unclaimed, since this unit's own code already supplies them.
+#pragma force_active on
+
 void PSMTXIdentity(register float* m)
 {
     register float c_zero = MtxZeroConst;
@@ -19,3 +23,11 @@ void PSMTXIdentity(register float* m)
         psq_st c_10, 40(m), 0, 0
     }
 }
+
+// Unreferenced constants from mtx.c functions this game dead-strips.
+const float MtxPoolHalfConst = 0.5f;
+const float MtxPoolThreeConst = 3.0f;
+const float MtxPoolTwoConst = 2.0f;
+const float MtxPoolNegTwoConst = -2.0f;
+const float MtxPoolNegOneConst = -1.0f;
+const float MtxPoolDeg2RadConst = 0.01745329238474369f;
