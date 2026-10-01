@@ -42,6 +42,9 @@ extern void GXInitTexObjLOD(GXTexObj* obj, u32 min_filt, u32 mag_filt, f32 min_l
 /* The unit owns the .sdata2 int-to-float literal; keep it from being dead-stripped. */
 #pragma force_active on
 
+char TexPaletteFileNameStr[0x10] = "texPalette.c";
+char TexPaletteVersionErrorStr[0x2C] = "invalid version number for texture palette";
+
 TEXDescriptor* TEXGet(TEXPalette* pal, u32 id)
 {
     return &pal->descriptorArray[id];
