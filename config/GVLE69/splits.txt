@@ -983,6 +983,7 @@ Dolphin/os/OSInterrupt.c:
 
 Dolphin/os/__OSSetInterruptHandler.c:
 	.text       start:0x8017DBD4 end:0x8017DBF0
+	.sbss       start:0x8066F220 end:0x8066F238
 
 Dolphin/os/__OSGetInterruptHandler.c:
 	.text       start:0x8017DBF0 end:0x8017DC04
