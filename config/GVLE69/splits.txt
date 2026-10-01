@@ -533,6 +533,7 @@ Runtime.PPCEABI.H/fn_80171F8C.c:
 
 Runtime.PPCEABI.H/free.c:
 	.text       start:0x80171FB0 end:0x80171FEC
+	.rodata.1   start:0x8049C224 end:0x8049C420
 
 Runtime.PPCEABI.H/realloc.c:
 	.text       start:0x80171FEC end:0x80172028

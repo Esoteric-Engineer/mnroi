@@ -1,5 +1,20 @@
-extern char lbl_8049C224[];
 extern void OSPanic(void);
+
+// SN malloc stubs' "malloc"/"free"/"realloc"/"calloc" messages, pooled here in address order.
+// The stub names are shifted by one: free() reads the "malloc" message below, realloc.c reads the "free" one.
+// "realloc"/"calloc" are dead-stripped but kept alive by sharing this pool.
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const char lbl_8049C224[126] =
+    "\n*** Library error ***\nAn external call has been made to 'malloc'\n"
+    "Calling function address: 0x%X\nPlease See the ProDG manual\n";
+
+__declspec(section ".rodata.1") const char lbl_8049C2A4[0x17C] =
+    "\n*** Library error ***\nAn external call has been made to 'free'\n"
+    "Calling function address: 0x%X\nPlease See the ProDG manual\n" "\0"
+    "\n*** Library error ***\nAn external call has been made to 'realloc'\n"
+    "Calling function address: 0x%X\nPlease See the ProDG manual\n" "\0\0"
+    "\n*** Library error ***\nAn external call has been made to 'calloc'\n"
+    "Calling function address: 0x%X\nPlease See the ProDG manual\n";
 
 asm void free(void)
 {
