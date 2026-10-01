@@ -8,15 +8,15 @@ u32 __OSBusClock : 0x800000F8;
 char lbl_804D2CA8[] = "<< Dolphin SDK - AI\trelease build: Apr 17 2003 12:33:54 (0x2301) >>";
 static char* __AIVersion = lbl_804D2CA8;
 
-extern int lbl_8066F418;
-extern void (*lbl_8066F408)(u32);
-extern void (*lbl_8066F40C)(void);
-extern u8* lbl_8066F410;
-extern u64 lbl_8066F420;
-extern u64 lbl_8066F428;
-extern u64 lbl_8066F430;
-extern u64 lbl_8066F438;
-extern u64 lbl_8066F440;
+extern int __AI_init_flag;
+extern void (*__AIS_Callback)(u32);
+extern void (*__AID_Callback)(void);
+extern u8* __CallbackStack;
+extern u64 bound_32KHz;
+extern u64 bound_48KHz;
+extern u64 min_wait;
+extern u64 max_wait;
+extern u64 buffer;
 
 extern void OSRegisterVersion(const char* version);
 extern void __OSSetInterruptHandler(u32 interrupt, void* handler);
@@ -45,26 +45,26 @@ static inline void AISetStreamVolRight(u8 vol)
 
 void AIInit(u8* stack)
 {
-    if (lbl_8066F418 != 1) {
+    if (__AI_init_flag != 1) {
         OSRegisterVersion(__AIVersion);
-        lbl_8066F420 = NS_TO_TICKS(31524);
-        lbl_8066F428 = NS_TO_TICKS(42024);
-        lbl_8066F430 = NS_TO_TICKS(42000);
-        lbl_8066F438 = NS_TO_TICKS(63000);
-        lbl_8066F440 = NS_TO_TICKS(3000);
+        bound_32KHz = NS_TO_TICKS(31524);
+        bound_48KHz = NS_TO_TICKS(42024);
+        min_wait = NS_TO_TICKS(42000);
+        max_wait = NS_TO_TICKS(63000);
+        buffer = NS_TO_TICKS(3000);
         AISetStreamVolRight(0);
         AISetStreamVolLeft(0);
         __AIRegs[3] = 0;
         __AIRegs[0] = (__AIRegs[0] & 0xFFFFFFDF) | 0x20;
         __AI_set_stream_sample_rate(1);
         AISetDSPSampleRate(0);
-        lbl_8066F408 = 0;
-        lbl_8066F40C = 0;
-        lbl_8066F410 = stack;
+        __AIS_Callback = 0;
+        __AID_Callback = 0;
+        __CallbackStack = stack;
         __OSSetInterruptHandler(5, __AIDHandler);
         __OSUnmaskInterrupts(0x04000000);
         __OSSetInterruptHandler(8, __AISHandler);
         __OSUnmaskInterrupts(0x800000);
-        lbl_8066F418 = 1;
+        __AI_init_flag = 1;
     }
 }

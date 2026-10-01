@@ -3,11 +3,11 @@ typedef long long s64;
 
 volatile u32 __AIRegs[8] : 0xCC006C00;
 
-extern s64 lbl_8066F420;
-extern s64 lbl_8066F428;
-extern s64 lbl_8066F430;
-extern s64 lbl_8066F438;
-extern s64 lbl_8066F440;
+extern s64 bound_32KHz;
+extern s64 bound_48KHz;
+extern s64 min_wait;
+extern s64 max_wait;
+extern s64 buffer;
 
 extern s64 OSGetTime(void);
 
@@ -45,13 +45,13 @@ void __AI_SRC_INIT(void)
         diff = rising_48khz - rising_32khz;
         __AIRegs[0] = __AIRegs[0] & ~2;
         __AIRegs[0] = __AIRegs[0] & ~1;
-        if (diff < lbl_8066F420 - lbl_8066F440) {
-            temp = lbl_8066F430;
+        if (diff < bound_32KHz - buffer) {
+            temp = min_wait;
             done = 1;
             Init_Cnt++;
-        } else if (diff >= lbl_8066F420 + lbl_8066F440
-                   && diff < lbl_8066F428 - lbl_8066F440) {
-            temp = lbl_8066F438;
+        } else if (diff >= bound_32KHz + buffer
+                   && diff < bound_48KHz - buffer) {
+            temp = max_wait;
             done = 1;
             Init_Cnt++;
         } else {

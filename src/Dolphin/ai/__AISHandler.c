@@ -3,7 +3,7 @@ typedef unsigned long u32;
 
 volatile u32 __AIRegs[8] : 0xCC006C00;
 
-extern void (*lbl_8066F408)(u32);
+extern void (*__AIS_Callback)(u32);
 
 extern void OSClearContext(void* context);
 extern void OSSetCurrentContext(void* context);
@@ -15,8 +15,8 @@ void __AISHandler(u32 interrupt, void* context)
     __AIRegs[0] |= 8;
     OSClearContext(exceptionContext);
     OSSetCurrentContext(exceptionContext);
-    if (lbl_8066F408) {
-        lbl_8066F408(__AIRegs[2]);
+    if (__AIS_Callback) {
+        __AIS_Callback(__AIRegs[2]);
     }
     OSClearContext(exceptionContext);
     OSSetCurrentContext(context);

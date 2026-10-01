@@ -4,9 +4,9 @@ typedef unsigned long u32;
 
 volatile u16 __DSPRegs[0x20] : 0xCC005000;
 
-extern void (*lbl_8066F40C)(void);
-extern void* lbl_8066F410;
-extern int lbl_8066F41C;
+extern void (*__AID_Callback)(void);
+extern void* __CallbackStack;
+extern int __AIDBusy;
 
 extern void OSClearContext(void* context);
 extern void OSSetCurrentContext(void* context);
@@ -22,15 +22,15 @@ void __AIDHandler(u32 interrupt, void* context)
     __DSPRegs[5] = tmp;
     OSClearContext(exceptionContext);
     OSSetCurrentContext(exceptionContext);
-    if (lbl_8066F40C) {
-        if (lbl_8066F41C == 0) {
-            lbl_8066F41C = 1;
-            if (lbl_8066F410) {
-                __AICallbackStackSwitch(lbl_8066F40C);
+    if (__AID_Callback) {
+        if (__AIDBusy == 0) {
+            __AIDBusy = 1;
+            if (__CallbackStack) {
+                __AICallbackStackSwitch(__AID_Callback);
             } else {
-                lbl_8066F40C();
+                __AID_Callback();
             }
-            lbl_8066F41C = 0;
+            __AIDBusy = 0;
         }
     }
     OSClearContext(exceptionContext);

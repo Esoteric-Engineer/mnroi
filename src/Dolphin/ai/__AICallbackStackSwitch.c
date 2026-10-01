@@ -1,5 +1,5 @@
-extern void* lbl_8066F410;
-extern void* lbl_8066F414;
+extern void* __CallbackStack;
+extern void* __OldStack;
 
 asm void __AICallbackStackSwitch(register void* cb)
 {
@@ -10,17 +10,17 @@ asm void __AICallbackStackSwitch(register void* cb)
     stwu    r1, -0x18(r1)
     stw     r31, 0x14(r1)
     mr      r31, r3
-    lis     r5, lbl_8066F414@ha
-    addi    r5, r5, lbl_8066F414@l
+    lis     r5, __OldStack@ha
+    addi    r5, r5, __OldStack@l
     stw     r1, 0(r5)
-    lis     r5, lbl_8066F410@ha
-    addi    r5, r5, lbl_8066F410@l
+    lis     r5, __CallbackStack@ha
+    addi    r5, r5, __CallbackStack@l
     lwz     r1, 0(r5)
     subi    r1, r1, 8
     mtlr    r31
     blrl
-    lis     r5, lbl_8066F414@ha
-    addi    r5, r5, lbl_8066F414@l
+    lis     r5, __OldStack@ha
+    addi    r5, r5, __OldStack@l
     lwz     r1, 0(r5)
     lwz     r0, 0x1c(r1)
     lwz     r31, 0x14(r1)

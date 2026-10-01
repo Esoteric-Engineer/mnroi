@@ -1422,6 +1422,7 @@ Dolphin/pad/__PADDisableRecalibration.c:
 
 Dolphin/ai/AIRegisterDMACallback.c:
 	.text       start:0x8018B624 end:0x8018B668
+	.sbss       start:0x8066F408 end:0x8066F448
 
 Dolphin/ai/AIInitDMA.c:
 	.text       start:0x8018B668 end:0x8018B6F0
