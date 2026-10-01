@@ -1,7 +1,11 @@
-extern char lbl_8057C124[];
-extern char lbl_8057C4E4[];
 extern void snstd(void);
 extern void fn_80178684(void);
+
+// lbl_8057C0A0 (dtk's name): _vfiwrite.c's 0x84-byte buffer, absorbed here for an 8-aligned start.
+// - At +0x84: _sn_iobf, 10 extra FILE slots.
+// - At +0x444: _sn_stat_g, the struct _glue head ({_next, _niobs, _iobs}) chaining them from struct _reent's inline glue (impure.c's __sglue).
+// Both reached by offset since asm-only use makes MWCC place them in its own order.
+unsigned char lbl_8057C0A0[0x450];
 
 // __sinit(reent): stdio init. Sets up stdin/stdout/stderr and the first glue.
 asm void __sinit(void* reent)
@@ -34,16 +38,16 @@ asm void __sinit(void* reent)
     li      r5, 2
     mr      r6, r30
     bl      snstd
-    lis     r8, lbl_8057C4E4@ha
+    lis     r8, (lbl_8057C0A0+0x444)@ha
     li      r10, 3
-    addi    r11, r8, lbl_8057C4E4@l
+    addi    r11, r8, (lbl_8057C0A0+0x444)@l
     stw     r10, 0x1dc(r30)
     stw     r29, 0x1e0(r30)
-    lis     r9, lbl_8057C124@ha
+    lis     r9, (lbl_8057C0A0+0x84)@ha
     stw     r11, 0x1d8(r30)
     li      r0, 0
-    stw     r0, lbl_8057C4E4@l(r8)
-    addi    r9, r9, lbl_8057C124@l
+    stw     r0, (lbl_8057C0A0+0x444)@l(r8)
+    addi    r9, r9, (lbl_8057C0A0+0x84)@l
     li      r10, 10
     stw     r9, 8(r11)
     stw     r10, 4(r11)

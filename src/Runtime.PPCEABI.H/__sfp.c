@@ -1,5 +1,4 @@
-extern char lbl_8057C124[];
-extern char lbl_8057C4E4[];
+extern char lbl_8057C0A0[];
 extern int lbl_8066C3B4;
 extern void __sinit(void);
 
@@ -21,11 +20,11 @@ have_init:
     lwz     r8, 0x1d8(r31)
     cmpwi   r8, 0
     bne     have_glue
-    lis     r10, lbl_8057C4E4@ha
-    lis     r11, lbl_8057C124@ha
-    addi    r9, r10, lbl_8057C4E4@l
-    stw     r8, lbl_8057C4E4@l(r10)
-    addi    r11, r11, lbl_8057C124@l
+    lis     r10, (lbl_8057C0A0+0x444)@ha
+    lis     r11, (lbl_8057C0A0+0x84)@ha
+    addi    r9, r10, (lbl_8057C0A0+0x444)@l
+    stw     r8, (lbl_8057C0A0+0x444)@l(r10)
+    addi    r11, r11, (lbl_8057C0A0+0x84)@l
     li      r0, 10
     stw     r0, 4(r9)
     stw     r11, 8(r9)

@@ -1,4 +1,4 @@
-char lbl_8057C0A0[0x84];
+extern char lbl_8057C0A0[];
 
 struct { int v; } lbl_8066C3A0 = {0};
 char* lbl_8066C3A4 = lbl_8057C0A0 + 4;
