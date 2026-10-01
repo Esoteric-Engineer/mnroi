@@ -62,11 +62,10 @@ typedef struct {
     u8 dummy[0x20];
 } GXTexObj;
 
-// Raw .data blocks in this translation unit's area, not yet given real names.
-extern u8 lbl_804D35E8[];
-extern u8 lbl_804D3648[];
-extern u8 lbl_804D369C[];
-extern u8 lbl_804D36F0[];
+extern GXRenderModeObj GXNtsc480IntDf;
+extern GXRenderModeObj GXMpal480IntDf;
+extern GXRenderModeObj GXPal528IntDf;
+extern GXRenderModeObj GXEurgb60Hz480IntDf;
 
 extern int VIGetTvFormat(void);
 extern void GXSetCopyClear(GXColor clear_clr, u32 clear_z);
@@ -433,19 +432,19 @@ void __GXInitGX(void)
 
     switch (VIGetTvFormat()) {
     case 0:
-        rmode = (GXRenderModeObj*)lbl_804D35E8;
+        rmode = &GXNtsc480IntDf;
         break;
     case 1:
-        rmode = (GXRenderModeObj*)lbl_804D369C;
+        rmode = &GXPal528IntDf;
         break;
     case 5:
-        rmode = (GXRenderModeObj*)lbl_804D36F0;
+        rmode = &GXEurgb60Hz480IntDf;
         break;
     case 2:
-        rmode = (GXRenderModeObj*)lbl_804D3648;
+        rmode = &GXMpal480IntDf;
         break;
     default:
-        rmode = (GXRenderModeObj*)lbl_804D35E8;
+        rmode = &GXNtsc480IntDf;
         break;
     }
     GXSetCopyClear(clear, 0xFFFFFF);
