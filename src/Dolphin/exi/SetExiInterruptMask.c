@@ -19,7 +19,7 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
-extern EXIControl Ecb[3];
+EXIControl Ecb[3] __attribute__((aligned(32)));
 
 extern void* __OSGetInterruptHandler(short interrupt);
 extern u32 __OSMaskInterrupts(u32 mask);
