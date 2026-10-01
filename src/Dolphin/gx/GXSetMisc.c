@@ -2,6 +2,13 @@ typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
 
+// GXMisc.c's own __FILE__ string and the ASSERTMSG strings for GXCompressZ16/GXDecompressZ16, both of which are unused by the game.
+#pragma force_active on
+char lbl_804D3580[] = "GXMisc.c";
+char lbl_804D358C[] = "GXCompressZ16: Invalid Z format\n";
+char lbl_804D35B0[] = "GXDecompressZ16: Invalid Z format\n";
+#pragma force_active reset
+
 // Real Dolphin SDK global GX state (gx). Only the fields this function touches are declared. The rest is padding to keep their offsets correct.
 typedef struct {
     u16 vNumNot;
