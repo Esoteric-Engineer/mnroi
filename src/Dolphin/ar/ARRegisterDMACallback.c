@@ -3,16 +3,16 @@ typedef void (*ARCallback)(void);
 extern int OSDisableInterrupts(void);
 extern void OSRestoreInterrupts(int level);
 
-extern ARCallback lbl_8066F9B8;
+extern ARCallback __AR_Callback;
 
 ARCallback ARRegisterDMACallback(ARCallback callback)
 {
     ARCallback old_callback;
     int old;
 
-    old_callback = lbl_8066F9B8;
+    old_callback = __AR_Callback;
     old = OSDisableInterrupts();
-    lbl_8066F9B8 = callback;
+    __AR_Callback = callback;
     OSRestoreInterrupts(old);
     return old_callback;
 }

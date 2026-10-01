@@ -14,11 +14,11 @@ extern void __ARChecksize(void);
 char lbl_804EEEF8[] = "<< Dolphin SDK - AR\trelease build: Apr 17 2003 12:33:55 (0x2301) >>";
 static char* __ARVersion = lbl_804EEEF8;
 
-extern ARCallback lbl_8066F9B8;
-extern u32 lbl_8066F9C8;
-extern u32 lbl_8066F9CC;
-extern u32* lbl_8066F9D0;
-extern int lbl_8066F9D4;
+extern ARCallback __AR_Callback;
+extern u32 __AR_StackPointer;
+extern u32 __AR_FreeBlocks;
+extern u32* __AR_BlockLength;
+extern int __AR_init_flag;
 
 volatile u16 __DSPRegs[0x200] : 0xCC005000;
 
@@ -26,20 +26,20 @@ u32 ARInit(u32* stack_index_addr, u32 num_entries)
 {
     int enabled;
 
-    if (lbl_8066F9D4 == 1) {
+    if (__AR_init_flag == 1) {
         return 0x4000;
     }
     OSRegisterVersion(__ARVersion);
     enabled = OSDisableInterrupts();
-    lbl_8066F9B8 = 0;
+    __AR_Callback = 0;
     __OSSetInterruptHandler(6, __ARHandler);
     __OSUnmaskInterrupts(0x02000000);
-    lbl_8066F9C8 = 0x4000;
-    lbl_8066F9CC = num_entries;
-    lbl_8066F9D0 = stack_index_addr;
+    __AR_StackPointer = 0x4000;
+    __AR_FreeBlocks = num_entries;
+    __AR_BlockLength = stack_index_addr;
     __DSPRegs[13] = (__DSPRegs[13] & 0xFF) | (__DSPRegs[13] & ~0xFF);
     __ARChecksize();
-    lbl_8066F9D4 = 1;
+    __AR_init_flag = 1;
     OSRestoreInterrupts(enabled);
-    return lbl_8066F9C8;
+    return __AR_StackPointer;
 }

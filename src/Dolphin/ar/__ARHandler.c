@@ -7,7 +7,7 @@ typedef struct OSContext OSContext;
 extern void OSClearContext(OSContext* context);
 extern void OSSetCurrentContext(OSContext* context);
 
-extern ARCallback lbl_8066F9B8;
+extern ARCallback __AR_Callback;
 
 volatile u16 __DSPRegs[0x200] : 0xCC005000;
 
@@ -21,8 +21,8 @@ void __ARHandler(int exception, OSContext* context)
     __DSPRegs[5] = tmp;
     OSClearContext((OSContext*)exceptionContext);
     OSSetCurrentContext((OSContext*)exceptionContext);
-    if (lbl_8066F9B8) {
-        lbl_8066F9B8();
+    if (__AR_Callback) {
+        __AR_Callback();
     }
     OSClearContext((OSContext*)exceptionContext);
     OSSetCurrentContext(context);

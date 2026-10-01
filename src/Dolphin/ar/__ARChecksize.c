@@ -20,9 +20,9 @@ extern void DCFlushRange(void* addr, u32 nBytes);
 extern void DCInvalidateRange(void* addr, u32 nBytes);
 extern void PPCSync(void);
 
-extern u32 lbl_8066F9BC; // __AR_Size
-extern u32 lbl_8066F9C0; // __AR_InternalSize
-extern u32 lbl_8066F9C4; // __AR_ExpansionSize
+extern u32 __AR_Size;
+extern u32 __AR_InternalSize;
+extern u32 __AR_ExpansionSize;
 
 volatile u16 __DSPRegs[0x200] : 0xCC005000;
 
@@ -116,7 +116,7 @@ void __ARChecksize(void)
     }
 
     ARAM_mode = 3;
-    ARAM_size = lbl_8066F9C0 = 0x1000000;
+    ARAM_size = __AR_InternalSize = 0x1000000;
     __DSPRegs[DSP_ARAM_SIZE]
         = (u16)((__DSPRegs[DSP_ARAM_SIZE] & ~(0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020))
                 | 0x00000020 | 0x00000003);
@@ -139,7 +139,7 @@ void __ARChecksize(void)
     DCFlushRange((void*)test_data, 0x20);
     DCFlushRange((void*)dummy_data, 0x20);
 
-    lbl_8066F9C4 = 0;
+    __AR_ExpansionSize = 0;
 
     DCInvalidateRange((void*)save1, 0x20);
     __ARReadDMA((u32)save1, ARAM_size + 0x0000000, 0x20);
@@ -184,7 +184,7 @@ void __ARChecksize(void)
 
             ARAM_mode |= 0 << 1;
             ARAM_size += 0x0200000;
-            lbl_8066F9C4 = 0x0200000;
+            __AR_ExpansionSize = 0x0200000;
         } else {
             __ARWriteDMA((u32)dummy_data, ARAM_size + 0x1000000, 0x20);
             __ARWriteDMA((u32)test_data, ARAM_size + 0x0000000, 0x20);
@@ -201,7 +201,7 @@ void __ARChecksize(void)
 
                 ARAM_mode |= 4 << 1;
                 ARAM_size += 0x0400000;
-                lbl_8066F9C4 = 0x0400000;
+                __AR_ExpansionSize = 0x0400000;
             } else {
                 __ARWriteDMA((u32)dummy_data, ARAM_size + 0x0000200, 0x20);
                 __ARWriteDMA((u32)test_data, ARAM_size + 0x0000000, 0x20);
@@ -219,7 +219,7 @@ void __ARChecksize(void)
 
                     ARAM_mode |= 8 << 1;
                     ARAM_size += 0x0800000;
-                    lbl_8066F9C4 = 0x0800000;
+                    __AR_ExpansionSize = 0x0800000;
                 } else {
                     __ARWriteDMA((u32)dummy_data, ARAM_size + 0x0400000, 0x20);
                     __ARWriteDMA((u32)test_data, ARAM_size + 0x0000000, 0x20);
@@ -238,7 +238,7 @@ void __ARChecksize(void)
 
                         ARAM_mode |= 12 << 1;
                         ARAM_size += 0x1000000;
-                        lbl_8066F9C4 = 0x1000000;
+                        __AR_ExpansionSize = 0x1000000;
                     } else {
                         __ARWriteDMA((u32)save1, ARAM_size + 0x0000000, 0x20);
                         __ARWriteDMA((u32)save2, ARAM_size + 0x0200000, 0x20);
@@ -248,7 +248,7 @@ void __ARChecksize(void)
 
                         ARAM_mode |= 16 << 1;
                         ARAM_size += 0x2000000;
-                        lbl_8066F9C4 = 0x2000000;
+                        __AR_ExpansionSize = 0x2000000;
                     }
                 }
             }
@@ -258,5 +258,5 @@ void __ARChecksize(void)
 
     *(u32*)OSPhysicalToUncached(0x00D0) = ARAM_size;
 
-    lbl_8066F9BC = ARAM_size;
+    __AR_Size = ARAM_size;
 }
