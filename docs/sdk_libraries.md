@@ -110,7 +110,7 @@ bytes is padding: gaps between objects that no symbol covers (alignment the link
 | `.data` | 2 | 0x804DCD98-0x804F2DBC | 90148 | 964 | 89184 | VM string, OSAlloc strings, OSFont tables, OSUtf.c tables (0x11240), mtx44.c `mtxUnit`, AR/ARQ/AX version strings, AXVPB cost tables (split) + padding, `__AXCompressorTable`, `axDspSlave`, DSP strings (partly split), CARD version string + `ResetFunctionInfo`, CARDMount tables, `CardData` (split), texPalette strings |
 | `.bss` | 1 | 0x80573660-0x8057DCA0 | 42560 | 3256 | 39288 (+16 padding) | the two SN runs' buffers, fftoa and printf buffers, `_sn_iobf`/`_sn_stat_g`, `__main`'s flag; OS.c, OSError, OSRtc (split), OSThread `RunQueue`; SIBios (split, plus 0x20); dvd, dvdqueue, fstload, dvdlow, VI, PAD, GXInit (split); EXI `Ecb` |
 | `.bss` | 2 | 0x8064EF50-0x80669114 | 106948 | 87892 | 19056 | OSFatal `FatalParam`/`FatalContext`, AXAlloc stacks, AXAux buffers (split), AXCL `__AXCommandList`, AXOut buffers (partly split), AXSPB `__AXStudio`, AXVPB pools, `__CARDBlock`, GXDisplayList (all split) |
-| `.sdata` | 1 | 0x8066BFA8-0x8066C560 | 1464 | 60 | 1400 (+4 padding) | libm scalar constants, one block per function (acos .. scalbn), printf write state, strtod `maxExponent`, `__mb_cur_max`, `_impure_ptr`, `__sfp`'s pointer; OS.c (split), `__OSArenaLo`, OSError/OSExec (split), `SwitchThreadCallback`; SIBios, dvdfs, dvd, dvdqueue names, fstload (split), dvdlow `FirstRead`, VI, PAD, AI, GXAttr (split), GXTexture IDs, `__GXVersion`, EXIBios, `DBWrite`'s constant |
+| `.sdata` | 1 | 0x8066BFA8-0x8066C560 | 1464 | 60 | 1400 (+4 padding) | libm scalar constants, one block per function (acos .. scalbn), the ProDG `_register_malloc`/`_register_free` hooks (split), printf write state, strtod `maxExponent`, `__mb_cur_max`, `_impure_ptr`, `__sfp`'s pointer; OS.c (split), `__OSArenaLo`, OSError/OSExec (split), `SwitchThreadCallback`; SIBios, dvdfs, dvd, dvdqueue names, fstload (split), dvdlow `FirstRead`, VI, PAD, AI, GXAttr (split), GXTexture IDs, `__GXVersion`, EXIBios, `DBWrite`'s constant |
 | `.sdata` | 2 | 0x8066CCC8-0x8066CF04 | 572 | 8 | 564 | libm scalar constants (asin, exp, asinf, expf, logf, ceilf), VM, `__OSCurrHeap`, OSFatal, OSFont `FontEncode`, mtx `Unit01` (split), AR/ARQ/AX/DSP/CARD version pointers, `axDspSlaveLength`, CARD vendor ID, permission mask and `next` |
 | `.sbss` | 1 | 0x8066F1D0-0x8066F4D8 | 776 | 80 | 692 (+4 padding) | OS.c (split), OSAlarm, OSArena, OSExec, OSInterrupt, OSReboot, OSReset, OSResetSW, OSThread (split); SIBios, SISamplingRate, db, dvdfs, dvd, dvdFatal, fstload, dvdlow (partly split), vi, Pad, ai, GXInit, GXFifo, GXMisc, EXIBios, EXIUart, DebuggerDriver |
 | `.sbss` | 1 | 0x8066FB30-0x8066FB34 | 4 | 0 | 4 | libc `errno`, inside the common `.sbss` |
@@ -146,7 +146,12 @@ split outside a run.
     with a one-time `InitializeUART`, and the units after it look like SN's `write`/`open` stubs. Their data sits
     between libc's and OS.c's. The C++ runtime messages in `.rodata.1` go with `fn_8017A5CC.c`.
   - SN's malloc stubs: `free.c` prints the 'malloc' message and `realloc.c` the 'free' one, so those two names look
-    shifted by one.
+    shifted by one. That TU's `.sdata` is the 8 zero bytes at `0x8066C390`, the
+    `_register_malloc`/`_register_free` allocator hooks that CFTKK names at `0x8047CBE0`: there they sit in `.sdata`
+    directly before strtod's `maxExponent` and the vfprintf statics, in the same malloc/free/realloc -> strtod ->
+    `_vfwrite` order their `.text` has, and ours sit the same way between scalbn.c's constants and `_vfwrite.c`'s
+    state. Unreferenced here, since the registration entry point is dead-stripped; claimed by `free.c`, which
+    already holds the TU's `.rodata.1` pool.
   - `DBRead` and `DBQueryData` (`LIBS`: odenotstub) read the same `.sbss` words as OdemuExi2's `DBInitComm`,
     interleaved, so they are one TU (DebuggerDriver.c), not the no-op odenotstub.c.
   - The units named `DVDLowSetCoverCallback`/`DVDLowSetResetCoverCallback` (0x80187DB0/0x80187DF4) sit inside vi.c's

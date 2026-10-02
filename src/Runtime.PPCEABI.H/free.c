@@ -1,5 +1,13 @@
 extern void OSPanic(void);
 
+// The ProDG allocator-hook pointers, this TU's whole .sdata.
+// Nothing in the dol reads or writes
+// them, so they need force_active.
+#pragma force_active on
+struct { void* v; } _register_malloc = {0};
+struct { void* v; } _register_free = {0};
+#pragma force_active reset
+
 // SN malloc stubs' "malloc"/"free"/"realloc"/"calloc" messages, pooled here in address order.
 // The stub names are shifted by one: free() reads the "malloc" message below, realloc.c reads the "free" one.
 // "realloc"/"calloc" are dead-stripped but kept alive by sharing this pool.
