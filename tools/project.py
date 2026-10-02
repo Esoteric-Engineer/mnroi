@@ -749,10 +749,11 @@ def generate_build_ninja(
     ):
         implicit.append(fold_rodata)
 
-    # Bake r13-relative .sdata2/.sbss2 accesses (dtk `sda2_via_r13`)
+    # r13-relative .sdata2/.sbss2 accesses (dtk `sda2_via_r13`): each compiled object's are converted into r13-based @l relocations.
+    # resolve-sda turns them into r13 displacements from the linked layout
     sda_bake_path = build_path / "sda_bake.json"
     if sda_bake_path.is_file():
-        sda_bake_cmd = f' && {dtk} elf bake-sda {sda_bake_path} "$unit" $out $out'
+        sda_bake_cmd = f" && {dtk} elf bake-sda {sda_bake_path} $out $out"
         mwcc_cmd += sda_bake_cmd
         mwcc_sjis_cmd += sda_bake_cmd
         mwcc_extab_cmd += sda_bake_cmd
@@ -766,6 +767,8 @@ def generate_build_ninja(
             prodg_implicit,
         ):
             implicit.extend([dtk, sda_bake_path])
+        mwld_cmd += f" && {dtk} elf resolve-sda $out $out"
+        mwld_implicit.append(dtk)
 
     n.comment("Link ELF file")
     n.rule(
@@ -1096,7 +1099,6 @@ def generate_build_ninja(
                 "cflags": cflags_str,
                 "basedir": os.path.dirname(obj.src_obj_path),
                 "basefile": obj.src_obj_path.with_suffix(""),
-                "unit": obj.name,
             }
 
             if prodg:

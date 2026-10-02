@@ -1,5 +1,5 @@
 // The unit owns its .sdata2 literal pool (see splits.txt).
-// dtk's bake-sda rewrites every .sdata2 access into a fixed r13 offset and drops the relocation, which leaves the pool unreferenced and lets mwld dead-strip it. force_active keeps it linked.
+// Nothing references GXPixelPoolConst0..9 (their readers are dead-stripped), so mwld would strip them. force_active keeps them linked.
 #pragma force_active on
 
 typedef unsigned char u8;

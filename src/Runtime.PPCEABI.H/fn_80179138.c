@@ -1,5 +1,5 @@
 // The unit owns its .sdata2 literal pool.
-// dtk's bake-sda rewrites the asm access into a fixed r13 offset and drops the relocation, which leaves the pool unreferenced and lets mwld dead-strip it. force_active keeps it linked.
+// The asm only names DivdiClzTab0 and indexes the rest from it, so mwld would dead-strip the others. force_active keeps them linked.
 #pragma force_active on
 
 const unsigned long long DivdiClzTab0 = 0x0001020203030303ULL;
@@ -97,7 +97,7 @@ Lb4:
     li      r10, 16
 Lcc:
     srw     r11, r11, r10
-    addi    r9, r13, -12912
+    la    r9, DivdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r7, r0, 32
@@ -176,7 +176,7 @@ L1d4:
     li      r10, 16
 L1ec:
     srw     r11, r8, r10
-    addi    r9, r13, -12912
+    la    r9, DivdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r7, r0, 32
@@ -305,7 +305,7 @@ L3ac:
     li      r7, 16
 L3c4:
     srw     r11, r5, r7
-    addi    r9, r13, -12912
+    la    r9, DivdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r7
     subfic  r7, r0, 32

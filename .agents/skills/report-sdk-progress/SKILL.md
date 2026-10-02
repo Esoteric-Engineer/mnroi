@@ -42,8 +42,8 @@ compiler runtime and the SN Systems ProDG debug stub (see `docs/sdk_libraries.md
      gaps. Queued bytes are also summed per library from the rows. A library unit's data split outside
      every run is printed too, since it means a run is mis-mapped;
    - *boundary*: every address outside the library units that library code reaches, through a
-     relocation in dtk's extracted original objects or an `r13` access in the original code (whose
-     relocations `sda2_via_r13` bakes away). Only `EXPECTED_OUTSIDE` in the script may appear: `main`,
+     relocation in dtk's extracted original objects or an `r13` access in the original code (a
+     backstop for any access dtk didn't relocate). Only `EXPECTED_OUTSIDE` in the script may appear: `main`,
      the constructor/destructor lists and the section bounds `__start` zeroes. Anything else is a
      library object no unit owns yet, or a wrong range in `tools/sdk_scout.py`;
    - the whole-library code and data percentages (the correct denominator for "how far along");

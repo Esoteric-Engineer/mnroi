@@ -67,7 +67,7 @@ L_8017A180:
     li      r5, 0x10
 L_8017A198:
     srw     r11, r11, r5
-    addi    r9, r13, -12144
+    la    r9, UmoddiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r5
     subfic  r5, r0, 0x20
@@ -103,7 +103,7 @@ L_8017A200:
     li      r10, 0x10
 L_8017A218:
     srw     r11, r12, r10
-    addi    r9, r13, -12144
+    la    r9, UmoddiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r5, r0, 0x20
@@ -223,7 +223,7 @@ L_8017A3B8:
     li      r10, 0x10
 L_8017A3D0:
     srw     r11, r31, r10
-    addi    r9, r13, -12144
+    la    r9, UmoddiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r5, r0, 0x20

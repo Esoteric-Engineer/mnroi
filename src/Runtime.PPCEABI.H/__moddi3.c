@@ -95,7 +95,7 @@ Lb4:
     li      r10, 16
 Lcc:
     srw     r11, r11, r10
-    addi    r9, r13, -12656
+    la    r9, ModdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r3, r0, 32
@@ -131,7 +131,7 @@ L134:
     li      r10, 16
 L14c:
     srw     r11, r12, r10
-    addi    r9, r13, -12656
+    la    r9, ModdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r3, r0, 32
@@ -251,7 +251,7 @@ L2ec:
     li      r10, 16
 L304:
     srw     r11, r31, r10
-    addi    r9, r13, -12656
+    la    r9, ModdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r3, r0, 32

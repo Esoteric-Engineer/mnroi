@@ -95,7 +95,7 @@ note that 0x8040250C-0x80404074 was "probably game code" was wrong: it is OSFata
 Each data section holds one contiguous run of each cluster's data, in the same unit order as the code, with game
 data on both sides, as in `.text`: [game][cluster 1][game][cluster 2][game]. Found from relocations in dtk's
 extracted original objects (`build/GVLE69/obj/`), plus a scan of `r13`-relative loads for `.sdata2`, whose
-relocations are baked away (see `baseline.md`). CFTKK's per-file data sizes (`config/GQ4E78/splits.txt`) agree with
+relocations dtk's split didn't keep then (see `baseline.md`). CFTKK's per-file data sizes (`config/GQ4E78/splits.txt`) agree with
 nearly every file-sized piece, and they place most unreferenced pieces. The runs are `DATA_RANGES` in
 `tools/sdk_scout.py`, and `report-sdk-progress/sdk_remaining.py` measures library data against them. An unsplit
 byte in them that a dtk `auto_` unit emits is library data no unit owns yet, and has a data row in

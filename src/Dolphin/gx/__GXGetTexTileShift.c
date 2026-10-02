@@ -2,8 +2,8 @@
 // Their switch jump tables are packed back to back in .data (0x804D2F88 through 0x804D32A0) with no alignment padding, and MWCC always gives .data 8-byte alignment.
 //
 // The unit owns its .sdata2 literal pool (see splits.txt).
-// dtk's bake-sda rewrites every .sdata2 access into a fixed r13 offset and drops the relocation. This leaves the pool unreferenced and lets mwld dead-strip it.
-// force_active keeps it linked, and also keeps __GXGetTexTileShift, whose only callers inline it.
+// Nothing references GXTexturePoolConst1..3 (their readers are dead-stripped), so mwld would strip them.
+// force_active keeps them linked, and also keeps __GXGetTexTileShift, whose only callers inline it.
 #pragma force_active on
 
 typedef unsigned char u8;

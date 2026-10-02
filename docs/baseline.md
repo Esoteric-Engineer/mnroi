@@ -30,12 +30,15 @@ dtk names the read-only small-data segment `.sdata2`, so mwld emits it as `r2`-r
 
 The usual linker fixes don't work: mwld emits only one `r13` small-data pair, and merging the segments changes the DOL layout.
 
-The fork's `sda2_via_r13` option (enabled in `config.yml`) bakes those accesses as fixed `r13` offsets, so `mwld` never range-checks them:
+The fork's `sda2_via_r13` option (enabled in `config.yml`) carries those accesses through the link as `r13`-based `@l` relocations (`R_PPC_ADDR16_LO`), which `mwld` resolves without a range check, and resolves them into `r13` displacements after the link:
 
-- **Split objects:** `bake_conflicting_sda_relocations` drops `EMB_SDA21` relocations whose `mwld`-derived register differs from the original one, preserving dtk's instruction bytes. It also writes `build/GVLE69/sda_bake.json`.
-- **Compiled objects:** `tools/project.py` runs `dtk elf bake-sda` on each one before linking, using that file. Without it, C referencing a `.sdata2` symbol (e.g. `__GXData`) fails with `Range Error for small data relocation`.
+- **Split objects:** `bake_conflicting_sda_relocations` turns each `EMB_SDA21` relocation from an `r13` instruction to `.sdata2`/`.sbss2` into an `ADDR16_LO` on the same target, keeping the `r13`. It also writes `build/GVLE69/sda_bake.json`, the `.sdata2`/`.sbss2` symbol names.
+- **Compiled objects:** `tools/project.py` runs `dtk elf bake-sda` on each one before linking, which does the same to every `EMB_SDA21` relocation whose target is in `.sdata2`/`.sbss2`, or is undefined and named in that file. Without it, C referencing a `.sdata2` symbol (e.g. `__GXData`) fails with `Range Error for small data relocation`.
+- **Linked ELF:** the link step then runs `dtk elf resolve-sda` on `main.elf`. Each `ADDR16_LO` on an `r13`-based load, store or `addi` that targets `.sdata2`/`.sbss2` gets the displacement `symbol + addend - _SDA_BASE_` from the final layout and becomes an `EMB_SDA21` relocation again. Nothing else uses that combination, since `r13` is reserved.
 
-`_SDA2_BASE_` is pinned in [`../config/GVLE69/ldscript.lcf`](../config/GVLE69/ldscript.lcf) so crt0 matches. Because the fix is in the tool rather than the finished DOL, the *objects* stay correct and `objdiff` remains trustworthy.
+Because every access is resolved from the final layout, `.sdata2` constants keep working when sections change size (an earlier version baked fixed displacements before the link, which only held for the original layout). `_SDA2_BASE_` is pinned in [`../config/GVLE69/ldscript.lcf`](../config/GVLE69/ldscript.lcf) so crt0 matches; nothing addresses data through `r2`. Because the fix is in the tool rather than the finished DOL, the *objects* stay correct and `objdiff` remains trustworthy.
+
+A compiled object can only reach an `.sdata2` object through a symbol some object defines: an `extern` of a name that only exists in `symbols.txt` (e.g. another unit's anonymous literal) fails to link as `undefined`. Give the owning unit a real definition of it (see `C_MTXOrtho.c`), or address it from a defined symbol in the same object (`GXTexObjMinLodScaleConst-32` in `GXTexture.c`).
 
 ## `config.yml` Reference
 

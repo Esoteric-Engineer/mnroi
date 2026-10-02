@@ -85,7 +85,7 @@ L_80172EA4:
     cmpwi   r3, 0x0
     blt     L_80172F20
     lis     r8, 0x51eb
-    subi    r7, r13, 0x3278
+    la    r7, year_lengths
     ori     r8, r8, 0x851f
     b       L_80172EC8
 L_80172EC0:
@@ -119,7 +119,7 @@ L_80172F0C:
     b       L_80172F88
 L_80172F20:
     lis     r8, 0x51eb
-    subi    r7, r13, 0x3278
+    la    r7, year_lengths
     ori     r8, r8, 0x851f
 L_80172F2C:
     subi    r11, r11, 0x1

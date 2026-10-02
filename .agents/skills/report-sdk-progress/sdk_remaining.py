@@ -10,7 +10,7 @@ Measures by address coverage, not by counting function symbols, so code that dtk
     unsplit. An unsplit byte a dtk auto_ unit emits is library data no unit owns (queued if a data row in
     docs/sdk_queue.tsv covers it); one no auto_ unit emits is alignment padding the linker inserts;
   - boundary: no library code reaches into an auto_ unit, through a relocation in dtk's extracted objects
-    or an r13 access (sda2_via_r13 bakes those relocations away), outside EXPECTED_OUTSIDE;
+    or an r13 access in the original code (a backstop for accesses dtk didn't relocate), outside EXPECTED_OUTSIDE;
   - build/<version>/report.json: registered library units that don't fully match.
 
 Usage (from repo root): sdk_remaining.py [--version GVLE69] [--lo 0x.. --hi 0x..] [--list]
@@ -281,7 +281,7 @@ for sec, a, b, u in outside:
 # --- boundary ------------------------------------------------------------------------------------
 # Library code may only reach outside the library units for EXPECTED_OUTSIDE. Anything else is a library object
 # no unit owns yet, or a range in tools/sdk_scout.py that is wrong. Relocations come from the original objects
-# dtk extracts; r13 accesses are scanned in the original code, because sda2_via_r13 bakes their relocations away.
+# dtk extracts; r13 accesses are also scanned in the original code, as a backstop for any dtk didn't relocate.
 lib_spans = sorted((a, b, u) for v in splits.values() for a, b, u in v if u in lib_units)
 lib_starts = [a for a, _, _ in lib_spans]
 

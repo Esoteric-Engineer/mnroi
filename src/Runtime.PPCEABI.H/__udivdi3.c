@@ -64,7 +64,7 @@ L_80179C98:
     li      r5, 0x10
 L_80179CB0:
     srw     r11, r11, r5
-    addi    r9, r13, -12400
+    la    r9, UdivdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r5
     subfic  r5, r0, 0x20
@@ -143,7 +143,7 @@ L_80179DB8:
     li      r10, 0x10
 L_80179DD0:
     srw     r11, r8, r10
-    addi    r9, r13, -12400
+    la    r9, UdivdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r5, r0, 0x20
@@ -272,7 +272,7 @@ L_80179F90:
     li      r7, 0x10
 L_80179FA8:
     srw     r11, r3, r7
-    addi    r9, r13, -12400
+    la    r9, UdivdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r7
     subfic  r5, r0, 0x20

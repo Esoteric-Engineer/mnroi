@@ -159,10 +159,10 @@ L_DBC4:
     b       L_DC6C
 L_DC3C:
     slwi    r0, r0, 2
-    subi    r9, r13, 0x3898
+    la    r9, AtanfAtanLo0
     lfsx    f12, r9, r0
     fadds   f0, f1, f0
-    subi    r9, r13, 0x38a8
+    la    r9, AtanfAtanHi0
     cmpwi   r30, 0x0
     fmsubs  f0, f5, f0, f12
     lfsx    f13, r9, r0

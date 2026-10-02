@@ -27,7 +27,7 @@ The `prodg` rule in `tools/project.py`:
 - **`SN_NGC_PATH`:** `ngccc` refuses to start unless this points at the folder holding its `sn.ini`. The rule sets it.
 - **Language:** `ngccc` picks C or C++ from the extension (`.c`, `.cpp`), so no `-lang` flag is added.
 - **Dependencies:** `-MD`, not `-MMD`: GCC 2.95's `-MMD` leaves out every `<...>` include.
-- **Small data:** `dtk elf bake-sda` runs afterwards, as for MWCC objects. `.sdata`/`.sbss` references stay `R_PPC_EMB_SDA21` relocations, which mwld resolves through `r13` like SN's linker did.
+- **Small data:** `dtk elf bake-sda` runs afterwards, as for MWCC objects (see [`baseline.md`](baseline.md#small-data-r13-problem)). `.sdata`/`.sbss` references stay `R_PPC_EMB_SDA21` relocations, which mwld resolves through `r13` like SN's linker did.
 - **MWCC-only options:** `shift_jis` is ignored, and `extab_padding` is an error.
 - **decomp.me:** ProDG units get scratches with the `prodg_35` .. `prodg_393` compilers.
 
