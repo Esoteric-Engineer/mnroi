@@ -1,18 +1,21 @@
-extern float MtxZeroConst;
-extern float MtxOneConst;
-
-// Owns .sdata2 from 0x806708D8: unreferenced constants of mtx.c functions this game dead-strips.
-// MtxOneConst/MtxZeroConst above stay dtk-auto-named, unclaimed, since this unit's own code already supplies them.
+// Owns mtx.c's .sdata2 pool from 0x806708D0.
+// MtxOneConst/MtxZeroConst are read here and, via extern, by PSMTXTrans/PSMTXTranspose/PSMTXScale.
+// Load them only from the asm block: a C-level read of a const defined in this unit gets constant-folded into a second, anonymous copy of the pool.
 #pragma force_active on
+
+const float MtxOneConst = 1.0f;
+const float MtxZeroConst = 0.0f;
 
 void PSMTXIdentity(register float* m)
 {
-    register float c_zero = MtxZeroConst;
-    register float c_one = MtxOneConst;
+    register float c_zero;
+    register float c_one;
     register float c_01;
     register float c_10;
 
     asm {
+        lfs c_zero, MtxZeroConst
+        lfs c_one, MtxOneConst
         psq_st c_zero, 8(m), 0, 0
         ps_merge01 c_01, c_zero, c_one
         psq_st c_zero, 24(m), 0, 0

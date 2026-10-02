@@ -1080,7 +1080,7 @@ Dolphin/os/WriteSram.c:
 
 Dolphin/os/__OSInitSram.c:
 	.text       start:0x8017F0F0 end:0x8017F668
-	.bss        start:0x8057C5C0 end:0x8057C614
+	.bss        start:0x8057C5C0 end:0x8057C614 align:32
 
 Dolphin/os/__OSSyncSram.c:
 	.text       start:0x8017F668 end:0x8017F678
@@ -2431,7 +2431,7 @@ Dolphin/os/OSSignalSemaphore.c:
 
 Dolphin/mtx/PSMTXIdentity.c:
 	.text       start:0x804044C8 end:0x804044F4
-	.sdata2     start:0x806708D8 end:0x806708F0
+	.sdata2     start:0x806708D0 end:0x806708F0
 
 Dolphin/mtx/PSMTXConcat.c:
 	.text       start:0x804044F4 end:0x804045C0
@@ -2593,7 +2593,7 @@ Dolphin/ax/__AXGetAuxBOutputDPL2.c:
 
 Dolphin/ax/__AXProcessAux.c:
 	.text       start:0x80406FE0 end:0x8040721C
-	.bss        start:0x8064F340 end:0x80652040
+	.bss        start:0x8064F340 end:0x80652040 align:32
 
 Dolphin/ax/AXRegisterAuxACallback.c:
 	.text       start:0x8040721C end:0x80407228
@@ -2677,7 +2677,7 @@ Dolphin/ax/__AXSyncPBs.c:
 	.bss        start:0x80657100 end:0x80668900 align:32
 
 Dolphin/ax/AXComp.c:
-	.data       start:0x804EF0C0 end:0x804F0B00
+	.data       start:0x804EF0C0 end:0x804F0B00 align:32
 
 Dolphin/ax/DSPCode.c:
 	.data       start:0x804F0B00 end:0x804F29C0
@@ -3026,7 +3026,7 @@ Dolphin/card/DummyLen.c:
 
 Dolphin/card/CARDUnlock.c:
 	.text       start:0x8040FD5C end:0x804108B4
-	.data       start:0x804F2C20 end:0x804F2D80
+	.data       start:0x804F2C20 end:0x804F2D80 align:32
 
 Dolphin/card/InitCallback.c:
 	.text       start:0x804108B4 end:0x80410924

@@ -1,8 +1,8 @@
 extern void DCInvalidateRange(void*, unsigned long);
 extern void DCFlushRangeNoSync(void*, unsigned long);
 
-unsigned char __AXBufferAuxA[3][0x780];
-unsigned char __AXBufferAuxB[3][0x780];
+unsigned char __AXBufferAuxA[3][0x780] __attribute__((aligned(32)));
+unsigned char __AXBufferAuxB[3][0x780] __attribute__((aligned(32)));
 extern void (*__AXCallbackAuxA)(void*, void*);
 extern void (*__AXCallbackAuxB)(void*, void*);
 extern void* __AXContextAuxA;
