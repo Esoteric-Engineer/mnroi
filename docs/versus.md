@@ -114,16 +114,19 @@ These are plain getters and setters around small-data globals. The setup handler
 
 ## 5. Target Order
 
-Work these in order and skip whatever is already matched (check `configure.py`). Name each unit after its real source file, and grow it as one contiguous `.text` range from the file's first function, so that the unit becomes the whole file once it is finished. The handler files start with small getters, which are good for settling a unit's flags before the larger handlers.
+Work these in order and skip whatever is already matched (check `configure.py`). The character code comes first because adding characters is the first mod the community wants ([`characters.md`](characters.md)). Name each unit after its real source file when it is known (section 2), and grow it as one contiguous `.text` range from the file's first function, so that the unit becomes the whole file once it is finished. Where the file is unknown, use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-1. **`control.cpp`** (unit `Game/handlers/control.cpp`, starting at 0x801040F4). The first twelve functions are small getters (`gPALMode` through `gPlatform`). After them come the versus handlers in address order: `Control_ChangeScreen`, `Control_EnableControllerCheck`, `Control_SetMatchInfo`, `Control_SetSelectInfo`, `Control_StartLoad`, `Control_StartProgressBar`, `Control_StartGame` and `Control_EndOfMatch`. Then finish the file (`Control_BindController` is further down), ending with its static initializer.
-2. **`venuetable.cpp`** (unit `Game/handlers/venuetable.cpp`): all six handlers.
-3. **`characterselect.cpp`** (unit `Game/handlers/characterselect.cpp`): `clashCharSelect_GetCharList`, `clashCharSelect_GetPrevCharList`, `fn_80103FC4`, and the static initializer. The file's start is unknown (section 2). Either settle it first, or start the unit at 0x801037B0 and extend it downward later.
-4. **The last-selection module** (0x801317D8-0x80131E90). These are tiny accessors, so they are quick to match and give names to everything in section 4.2.
-5. **`G`'s methods called by the above:** `fn_80431788`-`fn_80431844`, `fn_80443CCC`, `fn_804428E0`, then the most-called ones in section 4.1.
-6. **Readers of the match fields:** `fn_80028BAC`, `fn_8002BD34`, `fn_80131434`, `fn_8011A94C`, `fn_8011AB34`, and then whatever they lead to. This is where the game moves from menus into the match itself.
+1. **`characterselect.cpp`** (unit `Game/handlers/characterselect.cpp`): `clashCharSelect_GetCharList` (the hard-coded 18-character loop), `clashCharSelect_GetPrevCharList`, `fn_80103FC4`, and the static initializer. The file's start is unknown (section 2). Either settle it first, or start the unit at 0x801037B0 and extend it downward later. Its helpers `fn_80102E60`-`fn_80103480` build the APT arrays.
+2. **Character roster** ([`characters.md`](characters.md) section 2): `fn_80431CCC`, the per-field accessors `fn_8044B1D4`-`fn_8044B48C`, and the roster data `lbl_804CA51C`, `lbl_804CAB0C` and `lbl_804CB0FC`. The accessors sit among the APT registration constructors at 0x8044AF58-0x8044EE3C, so work out the file boundaries there before claiming anything.
+3. **Character type** ([`characters.md`](characters.md) sections 1 and 5): `fn_80020E60` (a long but simple `-O0` `strcmp` chain), then its callers `fn_8001C258`, `fn_80023010` (auras) and `fn_8002623C`, and `fn_80114420` (SFX).
+4. **Selection to spawn** ([`characters.md`](characters.md) section 3): the slot methods `fn_80443B70`, `fn_80443BC8`, `fn_80443BF4`, `fn_80443CCC` and `fn_804428E0`, then `fn_80131060`, `fn_800887AC`, `fn_801311C0`, and `fn_800B5BC4` with its helpers. This is where the entity name should lead to the model, motion set and NVB loads.
+5. **`control.cpp`** (unit `Game/handlers/control.cpp`, starting at 0x801040F4). The first twelve functions are small getters (`gPALMode` through `gPlatform`). After them come the versus handlers in address order: `Control_ChangeScreen`, `Control_EnableControllerCheck`, `Control_SetMatchInfo`, `Control_SetSelectInfo`, `Control_StartLoad`, `Control_StartProgressBar`, `Control_StartGame` and `Control_EndOfMatch`. Then finish the file (`Control_BindController` is further down), ending with its static initializer.
+6. **`venuetable.cpp`** (unit `Game/handlers/venuetable.cpp`): all six handlers.
+7. **The last-selection module** (0x801317D8-0x80131E90). These are tiny accessors, so they are quick to match and give names to everything in section 4.2.
+8. **`G`'s other methods called by the above:** `fn_80431788`-`fn_80431844`, then the most-called ones in section 4.1.
+9. **Readers of the match fields:** `fn_80028BAC`, `fn_8002BD34`, `fn_80131434`, `fn_8011A94C`, `fn_8011AB34`, and then whatever they lead to. This is where the game moves from menus into the match itself.
 
-Out of scope for versus: `memcard.cpp`, `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
+Out of scope for versus: `memcard.cpp` (except for checking whether saves depend on the roster size, see [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
 
 ## 6. Open Questions
 
@@ -131,3 +134,4 @@ Out of scope for versus: `memcard.cpp`, `feonline.cpp`, `mission.cpp`, and third
 - What is the `Slot` layout (0xB0 bytes)? Flag `4` at `+0x34` and `99` at `+0x3C` are set for slot 1 in match type 1.
 - What is `SetMatchInfo`'s unused third argument?
 - What is in the unidentified files at 0x801070FC and 0x8010C528?
+- Character questions are in [`characters.md`](characters.md) (sections 3 and 5).
