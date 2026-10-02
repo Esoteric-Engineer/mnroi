@@ -30,8 +30,8 @@ typedef struct AXOutBss {
 } AXOutBss;
 
 extern AXOutBss __AXOutBuffer;
-extern char lbl_804F0B00[];
-extern unsigned short lbl_8066CEE0;
+extern unsigned short axDspSlave[];
+extern unsigned short axDspSlaveLength;
 extern unsigned long __AXDSPDoneFlag;
 extern volatile long __AXDSPInitFlag;
 extern unsigned long __AXOutThreadQueue[2];
@@ -39,8 +39,8 @@ extern unsigned long __AXOutThreadQueue[2];
 void __AXOutInitDSP(void)
 {
     AXOutBss* b = &__AXOutBuffer;
-    b->task.iram_mmem_addr = (unsigned short*)lbl_804F0B00;
-    b->task.iram_length = lbl_8066CEE0;
+    b->task.iram_mmem_addr = axDspSlave;
+    b->task.iram_length = axDspSlaveLength;
     b->task.iram_addr = 0;
     b->task.dram_mmem_addr = (unsigned short*)(b->buf + 0xA00);
     b->task.dram_length = 0x2000;
