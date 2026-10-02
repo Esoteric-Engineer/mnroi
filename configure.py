@@ -434,6 +434,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/fn_80178E48.c"),
             Object(Matching, "Runtime.PPCEABI.H/_read_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/_write_r.c"),
+            Object(Matching, "Runtime.PPCEABI.H/reent.c"),
             Object(Matching, "Runtime.PPCEABI.H/fn_80178F54.c"),
             Object(Matching, "Runtime.PPCEABI.H/__do_global_ctors.c"),
             Object(Matching, "Runtime.PPCEABI.H/__main.c"),

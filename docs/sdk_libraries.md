@@ -167,8 +167,9 @@ split outside a run.
     linker-built `.ctors`/`.dtors`, not a file's data, and no unit can claim them in link order. Not queued.
   - The `.bss` from 0x80669118 is common `.bss` (see `common_bss.md`), not second-cluster data: all three game
     code runs reference it.
-  - The `.sbss` from 0x8066FB24 is common `.sbss` in the same way. Only libc's `errno` (`lbl_8066FB30`, read by
-    `_close_r`, `_read_r`, ...) in it is library data: its row claims it as `common`.
+  - The `.sbss` from 0x8066FB24 is common `.sbss` in the same way. Only libc's `errno` (0x8066FB30, read by
+    `_close_r`, `_read_r`, ...) in it is library data: the data-only unit `Runtime.PPCEABI.H/reent.c` claims it
+    as an ordinary `.sbss` split, linked right after `GDBase.c` (see `matching_notes.md`, "Doesn't work").
   - `.sdata2` 0x80670978-0x80670980 is 8 zero bytes at the section end, probably its 32-byte end padding.
 
 ## Not found yet

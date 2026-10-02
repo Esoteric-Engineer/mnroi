@@ -1,4 +1,4 @@
-extern int lbl_8066FB30;
+extern int errno;
 extern int fn_8017A6EC(short request);
 
 asm int _close_r(void* device, short flag)
@@ -11,12 +11,12 @@ asm int _close_r(void* device, short flag)
     stw     r0, 20(r1)
     li      r0, 0
     mr      r31, r3
-    stw     r0, lbl_8066FB30
+    stw     r0, errno
     mr      r3, r4
     bl      fn_8017A6EC
     cmpwi   r3, -1
     bne     epilogue
-    lwz     r0, lbl_8066FB30
+    lwz     r0, errno
     cmpwi   r0, 0
     beq     epilogue
     stw     r0, 0(r31)

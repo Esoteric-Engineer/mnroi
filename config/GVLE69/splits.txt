@@ -3060,6 +3060,9 @@ Dolphin/gx/GXEndDisplayList.c:
 Dolphin/gx/GDBase.c:
 	.sbss       start:0x8066FB20 end:0x8066FB24
 
+Runtime.PPCEABI.H/reent.c:
+	.sbss       start:0x8066FB30 end:0x8066FB34
+
 Dolphin/gx/GXCallDisplayList.c:
 	.text       start:0x80411398 end:0x80411408
 

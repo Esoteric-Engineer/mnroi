@@ -1,4 +1,4 @@
-extern int lbl_8066FB30;
+extern int errno;
 extern int fn_8017A73C(short request, int arg1, int arg2);
 
 asm int _read_r(void* device, short flag, int arg1, int arg2)
@@ -12,13 +12,13 @@ asm int _read_r(void* device, short flag, int arg1, int arg2)
     mr      r31, r3
     li      r0, 0
     mr      r3, r4
-    stw     r0, lbl_8066FB30
+    stw     r0, errno
     mr      r4, r5
     mr      r5, r6
     bl      fn_8017A73C
     cmpwi   r3, -1
     bne     epilogue
-    lwz     r0, lbl_8066FB30
+    lwz     r0, errno
     cmpwi   r0, 0
     beq     epilogue
     stw     r0, 0(r31)
