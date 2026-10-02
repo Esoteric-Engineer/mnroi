@@ -164,6 +164,7 @@ Most of the 17,161 functions are still `fn_XXXXXXXX`. Naming is a large part of 
 
 - **Work outward from a matched unit.** Pick the unclaimed function right before or after one you've matched, which keeps each unit's range contiguous. A `_GLOBAL_.I.<name>` function marks the end of a source file ([`prodg.md`](prodg.md#c)).
 - **Expect `-O0` first.** Most game functions have `-O0`'s shape: arguments spilled through `r31` and `this` kept in `r30`. About half the functions in 0x80196884-0x803FF3B0 have no frame pointer, so those files need other flags.
+- **Versus mode first.** [`versus.md`](versus.md) maps the versus code and gives a target order; `decomp-versus` follows it.
 - **Name as you go.** C++ symbols use GCC 2.95 mangling (`__5ColorUcUcUcUc`). Rename the `fn_` symbol in `symbols.txt` once you know what a function is.
 
 ---
