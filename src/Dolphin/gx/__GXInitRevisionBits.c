@@ -1,3 +1,4 @@
+extern void* const __GXData;
 
 asm void __GXInitRevisionBits(void)
 {
@@ -16,7 +17,7 @@ L_80190740:
 L_80190758:
     b       L_8019075C
 L_8019075C:
-    lwz     r9,  -11608(r13)
+    lwz     r9,  __GXData
     addi    r8, r10, 28
     addi    r6, r10, 60
     lwzx    r0, r9, r8

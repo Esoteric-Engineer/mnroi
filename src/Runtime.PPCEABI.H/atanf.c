@@ -54,13 +54,13 @@ asm float atanf(float x)
 L_DAB8:
     cmpwi   r30, 0x0
     ble     L_DAD0
-    lfs     f0, -0x389c(r13)
-    lfs     f1, -0x388c(r13)
+    lfs     f0, AtanfAtanHi3
+    lfs     f1, AtanfAtanLo3
     fadds   f1, f0, f1
     b       L_DC6C
 L_DAD0:
-    lfs     f1, -0x389c(r13)
-    lfs     f0, -0x388c(r13)
+    lfs     f1, AtanfAtanHi3
+    lfs     f0, AtanfAtanLo3
     fneg    f1, f1
     fsubs   f1, f1, f0
     b       L_DC6C
@@ -128,25 +128,25 @@ L_DBB8:
     fdivs   f5, f0, f5
 L_DBC4:
     fmuls   f6, f5, f5
-    lfs     f10, -0x3868(r13)
-    lfs     f13, -0x3860(r13)
+    lfs     f10, AtanfAT8
+    lfs     f13, AtanfAT10
     fmuls   f12, f6, f6
-    lfs     f9, -0x3870(r13)
+    lfs     f9, AtanfAT6
     cmpwi   r0, 0x0
     fmadds  f13, f12, f13, f10
-    lfs     f11, -0x386c(r13)
+    lfs     f11, AtanfAT7
     fmadds  f13, f12, f13, f9
-    lfs     f10, -0x3878(r13)
-    lfs     f0, -0x3864(r13)
-    lfs     f9, -0x3874(r13)
+    lfs     f10, AtanfAT4
+    lfs     f0, AtanfAT9
+    lfs     f9, AtanfAT5
     fmadds  f13, f12, f13, f10
     fmadds  f0, f12, f0, f11
-    lfs     f8, -0x3880(r13)
-    lfs     f7, -0x387c(r13)
+    lfs     f8, AtanfAT2
+    lfs     f7, AtanfAT3
     fmadds  f0, f12, f0, f9
-    lfs     f10, -0x3888(r13)
+    lfs     f10, AtanfAT0
     fmadds  f13, f12, f13, f8
-    lfs     f11, -0x3884(r13)
+    lfs     f11, AtanfAT1
     fmadds  f0, f12, f0, f7
     fmadds  f13, f12, f13, f10
     fmadds  f0, f12, f0, f11

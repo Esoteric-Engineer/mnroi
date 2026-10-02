@@ -45,6 +45,6 @@ The fork's `sda2_via_r13` option (enabled in `config.yml`) bakes those accesses 
     Add to this list only when a new match actually breaks `main.dol` (doesn't happen often).
     It also keeps `__DTOR_LIST__`, `_ctors` and `_dtors` alive for the constructor lists (see [`prodg.md`](prodg.md#constructor-and-destructor-lists)).
 - **`block_relocations` / `add_relocations` at `.init:0x80003160`:** crt0 loads the absolute address `0x8066FB50` through a `lis`/`ori` pair that dtk split across two symbols, binding the low half to the wrong target. That address falls in the padding gap between `.sbss` and `.sdata2`, so dtk left it sectionless.
-    Retargeted to the `ABS` symbol `lbl_8066FB50`, which `ldscript.lcf` defines.
+    Retargeted to the `ABS` symbol `lbl_8066FB50`, which `ldscript.lcf` defines as `ADDR(.sbss) + SIZEOF(.sbss)`, so the clear follows `.sbss` if it changes size.
 - **`fill_gaps`:** Left at its default `true`. Required, or the DOL is short by ~29 KB and every subsequent offset shifts.
 - **`mw_comment_version: 11`:** A guess (CW 2.7+). Revisit if the real compiler version is ever pinned down.

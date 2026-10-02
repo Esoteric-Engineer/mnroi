@@ -60,7 +60,7 @@ __declspec(section ".init") asm void __start(void)
     lis r3, lbl_8066CF20@h
     ori r3, r3, lbl_8066CF20@l
     li r4, 0x0
-    lis r5, 0x8066
+    lis r5, lbl_8066FB50@h
     ori r5, r5, lbl_8066FB50@l
     subf r5, r3, r5
     bl memset

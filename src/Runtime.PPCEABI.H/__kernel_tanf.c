@@ -10,6 +10,11 @@ const float KernelTanfT6 = 1.4562094584e-03f;  /* 0x3abede48 */
 const float KernelTanfT7 = 5.8804126456e-04f;  /* 0x3a1a26c8 */
 
 /* KernelTanfT8..T12 are defined by __ieee754_rem_pio2f.c, which widens its .sdata2 claim back to this 8-aligned boundary. */
+extern const float KernelTanfT8;
+extern const float KernelTanfT9;
+extern const float KernelTanfT10;
+extern const float KernelTanfT11;
+extern const float KernelTanfT12;
 
 float KernelTanfOneConst = 1.0000000000e+00f;     /* 0x3f800000 one */
 float KernelTanfNegOneConst = -1.0000000000e+00f; /* 0xbf800000 -one */
@@ -76,31 +81,31 @@ L_pos:
     fadds   f6, f7, f1
 L_poly:
     fmuls   f7, f6, f6
-    lfs     f12, -0x36ac(r13)
-    lfs     f13, -0x36a4(r13)
+    lfs     f12, KernelTanfT9
+    lfs     f13, KernelTanfT11
     fmuls   f1, f7, f7
-    lfs     f11, -0x36a8(r13)
+    lfs     f11, KernelTanfT10
     fmuls   f5, f7, f6
-    lfs     f0, -0x36a0(r13)
+    lfs     f0, KernelTanfT12
     fmadds  f13, f1, f13, f12
-    lfs     f10, -0x36b4(r13)
+    lfs     f10, KernelTanfT7
     lis     r0, 0x3f2c
     fmadds  f0, f1, f0, f11
-    lfs     f12, -0x36b0(r13)
-    lfs     f11, -0x36b8(r13)
+    lfs     f12, KernelTanfT8
+    lfs     f11, KernelTanfT6
     fmadds  f13, f1, f13, f10
     fmadds  f0, f1, f0, f12
-    lfs     f9, -0x36bc(r13)
+    lfs     f9, KernelTanfT5
     fmadds  f0, f1, f0, f11
-    lfs     f10, -0x36c4(r13)
-    lfs     f8, -0x36c0(r13)
+    lfs     f10, KernelTanfT3
+    lfs     f8, KernelTanfT4
     fmadds  f13, f1, f13, f9
-    lfs     f12, -0x36cc(r13)
+    lfs     f12, KernelTanfT1
     fmadds  f13, f1, f13, f10
-    lfs     f11, -0x36c8(r13)
+    lfs     f11, KernelTanfT2
     fmadds  f0, f1, f0, f8
     fmadds  f9, f1, f13, f12
-    lfs     f10, -0x36d0(r13)
+    lfs     f10, KernelTanfT0
     fmadds  f0, f1, f0, f11
     ori     r0, r0, 0xa13f
     fmadds  f0, f7, f0, f9

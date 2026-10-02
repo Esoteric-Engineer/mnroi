@@ -3,6 +3,9 @@ typedef unsigned short u16;
 typedef unsigned long u32;
 typedef float f32;
 
+/* __GXGetTexTileShift.c's .sdata2: MWCC's pooled (double)u32 magic sits 32 bytes before this, at the GXGetTexObjMinLOD reaches it through this symbol. */
+extern const f32 GXTexObjMinLodScaleConst;
+
 typedef unsigned char GXBool;
 typedef int GXTexFmt;
 typedef int GXTexWrapMode;
@@ -65,9 +68,9 @@ asm f32 GXGetTexObjMinLOD(register const GXTexObj* obj)
     stwu    r1, -24(r1)
     lis     r0, 0x4330
     lwz     r3, 4(obj)
-    lfd     f2, -11800(r13)
+    lfd     f2, GXTexObjMinLodScaleConst-32
     extrwi  r3, r3, 8, 16
-    lfs     f0, -11768(r13)
+    lfs     f0, GXTexObjMinLodScaleConst
     stw     r3, 20(r1)
     stw     r0, 16(r1)
     lfd     f1, 16(r1)

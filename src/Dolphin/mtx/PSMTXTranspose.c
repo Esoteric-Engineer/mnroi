@@ -1,7 +1,9 @@
+extern const float MtxZeroConst;
+
 asm void PSMTXTranspose(const register float* src, register float* xPose)
 {
     nofralloc
-    lfs     f0, -11276(r13)
+    lfs     f0, MtxZeroConst
     psq_l   f1, 0(src), 0, 0
     stfs    f0, 44(xPose)
     psq_l   f2, 16(src), 0, 0

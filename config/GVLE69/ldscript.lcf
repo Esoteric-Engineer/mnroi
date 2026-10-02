@@ -23,12 +23,12 @@ SECTIONS
     __ArenaLo = 0x806809C0;
     __ArenaHi = $ARENAHI;
 
-    /* crt0 (__start) hardcodes the .sbss clear-end as the absolute address
-       0x8066FB50, which falls in the padding gap between .sbss and .sdata2 and
-       so maps to no section (the deeper root of the issue-1 crash). dtk emits
-       it as an undefined absolute reference; define it here so the linker can
-       resolve the __start relocations. */
-    lbl_8066FB50 = 0x8066FB50;
+    /* crt0 (__start) clears .sbss up to lbl_8066FB50 (0x8066FB50 in the
+       original), the end of .sbss, which falls in the padding gap before
+       .sdata2 and so maps to no section (the deeper root of the issue-1 crash).
+       dtk emits it as an undefined absolute reference; define it here from the
+       section so the clear still covers all of .sbss when .sbss changes size. */
+    lbl_8066FB50 = ADDR(.sbss) + SIZEOF(.sbss);
 
     /* Pin the vestigial _SDA2_BASE_ so crt0's r2 setup matches the original.
        See docs/baseline.md (Small-data). */

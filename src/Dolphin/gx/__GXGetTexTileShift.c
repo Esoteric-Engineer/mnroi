@@ -275,7 +275,7 @@ void GXInitTexObjLOD(GXTexObj* obj, int min_filt, int mag_filt, f32 min_lod, f32
     SET_REG_FIELD(t->mode1, 8, 8, lmax);
 }
 
-// GXGetTexObjMinLOD (GXTexture.c) reads this by a hardcoded r13 offset, not by symbol, so no extern is needed here.
+// GXGetTexObjMinLOD (GXTexture.c) reads this, and the pooled (double)u32 magic 32 bytes before it, through this symbol.
 // The rest are unreferenced, kept alive by force_active above.
 const f32 GXTexObjMinLodScaleConst = 0.0625f;
 const f32 GXTexturePoolConst1 = 0.03125f;

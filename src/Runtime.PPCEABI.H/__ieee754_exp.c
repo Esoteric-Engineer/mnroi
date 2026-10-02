@@ -98,8 +98,8 @@ L_803FF6F4:
     lis r10, 0x4330
     lfd f10, ExpCvtConst
     fmadd f0, f8, f0, f13
-    lfd f11, -0x2c98(r13)
-    lfd f13, -0x2ca8(r13)
+    lfd f11, ExpLn2LoConst0
+    lfd f13, ExpLn2HiConst0
     fctiwz f12, f0
     stfd f12, 0x10(r1)
     lwz r8, 0x14(r1)

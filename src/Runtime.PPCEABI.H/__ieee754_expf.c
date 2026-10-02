@@ -88,8 +88,8 @@ L_803FFED8:
     lis r10, 0x4330
     lfd f11, ExpfCvtConst
     fmadds f0, f8, f0, f13
-    lfs f10, -0x2c68(r13)
-    lfs f13, -0x2c70(r13)
+    lfs f10, ExpfLn2LoConst
+    lfs f13, ExpfLn2HiConst
     fctiwz f12, f0
     stfd f12, 0x10(r1)
     lwz r11, 0x14(r1)

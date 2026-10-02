@@ -95,7 +95,7 @@ skip_cfa_ranges:
 # 0x8066FB50 (the .sbss clear-end). That address lands in the padding gap
 # between .sbss and .sdata2, so dtk left it sectionless (the deeper root of the
 # add_direct/issue-1 crash). We retarget the LO16 to the absolute symbol
-# lbl_8066FB50 (defined in symbols.txt); the HI16 already targets it.
+# lbl_8066FB50 (ldscript.lcf defines it as the end of .sbss); the HI16 already targets it.
 block_relocations:
 - source: .init:0x80003160
 add_relocations:
