@@ -32,6 +32,8 @@ KNOWN_PERMANENT_GAPS = {
         "unreferenced 8-alignment pad before VMAlloc.c's data, see Dolphin/vm/__VMPageReplacementLRU.c's row",
     (".sdata2", 0x806708D0, 0x806708D8):
         "MtxOneConst/MtxZeroConst: defining them in-unit duplicates PSMTXIdentity's own literal pool, see matching_notes.md",
+    (".sbss", 0x8066FB14, 0x8066FB18):
+        "unreferenced pad between CARDInit.c's two u16s and GXDisplayList.c's 8-aligned .sbss, see Dolphin/card/CARDInit.c's row",
 }
 
 ap = argparse.ArgumentParser()

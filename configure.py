@@ -1318,6 +1318,7 @@ config.libs = [
         [
             Object(Matching, "Dolphin/gx/GXEndDisplayList.c"),
             Object(Matching, "Dolphin/gx/GXCallDisplayList.c"),
+            Object(Matching, "Dolphin/gx/GDBase.c"),
         ],
     ),
     DolphinLib(

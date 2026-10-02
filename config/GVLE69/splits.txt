@@ -2458,6 +2458,7 @@ Dolphin/mtx/vec.c:
 
 Dolphin/ar/ARRegisterDMACallback.c:
 	.text       start:0x804048CC end:0x80404910
+	.sbss       start:0x8066F9B8 end:0x8066F9D8
 
 Dolphin/ar/ARGetDMAStatus.c:
 	.text       start:0x80404910 end:0x8040494C
@@ -3051,6 +3052,9 @@ Dolphin/gx/GXEndDisplayList.c:
 	.text       start:0x80411208 end:0x80411398
 	.bss        start:0x80668B40 end:0x80669114
 	.sbss       start:0x8066FB18 end:0x8066FB1C
+
+Dolphin/gx/GDBase.c:
+	.sbss       start:0x8066FB20 end:0x8066FB24
 
 Dolphin/gx/GXCallDisplayList.c:
 	.text       start:0x80411398 end:0x80411408
