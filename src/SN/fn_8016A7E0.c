@@ -1,4 +1,6 @@
-extern char lbl_804CFDE2[];
+extern char lbl_804CFD6C[];
+extern char lbl_804CFE1C[];
+extern char lbl_804CFE6C[];
 void OSReport(const char* msg, ...);
 void fn_80169304(void);
 void fn_801694B8(void);
@@ -16,14 +18,14 @@ asm void fn_8016A7E0(void)
     cmpwi   r3, 7
     bge     L_8016A978
     slwi    r7, r3, 2
-    lis     r6, (lbl_804CFDE2 + 0x1E)@h
-    ori     r6, r6, (lbl_804CFDE2 + 0x1E)@l
+    lis     r6, (lbl_804CFD6C + 0x94)@h
+    ori     r6, r6, (lbl_804CFD6C + 0x94)@l
     lwz     r3, 0x18(r31)
     lwz     r4, 0x20(r31)
     lwz     r5, 0x28(r31)
     lwzx    r6, r7, r6
-    lis     r7, (lbl_804CFDE2 + 0x9E)@h
-    ori     r7, r7, (lbl_804CFDE2 + 0x9E)@l
+    lis     r7, (lbl_804CFE6C + 0x14)@h
+    ori     r7, r7, (lbl_804CFE6C + 0x14)@l
     stb     r6, 8(r7)
     li      r8, 0x10
     li      r6, 2
@@ -37,8 +39,8 @@ asm void fn_8016A7E0(void)
     mtlr    r0
     blrl
     li      r4, 0
-    lis     r3, (lbl_804CFDE2 + 0xB6)@h
-    ori     r3, r3, (lbl_804CFDE2 + 0xB6)@l
+    lis     r3, (lbl_804CFE6C + 0x2C)@h
+    ori     r3, r3, (lbl_804CFE6C + 0x2C)@l
     stw     r4, 0(r3)
 L_8016A84C:
     li      r3, 0
@@ -63,8 +65,8 @@ L_8016A87C:
     blrl
     cmpwi   r3, 0
     beq     L_8016A8C0
-    lis     r3, (lbl_804CFDE2 + 0xBA)@h
-    ori     r3, r3, (lbl_804CFDE2 + 0xBA)@l
+    lis     r3, (lbl_804CFE6C + 0x30)@h
+    ori     r3, r3, (lbl_804CFE6C + 0x30)@l
 L_8016A8A4:
     lwz     r4, 0x6d0(r31)
     cmpwi   r4, 0
@@ -78,13 +80,13 @@ L_8016A8C0:
     lbz     r3, 0x700(r31)
     cmplwi  r3, 0x14
     blt     L_8016A8D8
-    lis     r3, (lbl_804CFDE2 + 0xD6)@h
-    ori     r3, r3, (lbl_804CFDE2 + 0xD6)@l
+    lis     r3, (lbl_804CFE6C + 0x4C)@h
+    ori     r3, r3, (lbl_804CFE6C + 0x4C)@l
     b       L_8016A8A4
 L_8016A8D8:
     slwi    r3, r3, 2
-    lis     r4, (lbl_804CFDE2 + 0x3A)@h
-    ori     r4, r4, (lbl_804CFDE2 + 0x3A)@l
+    lis     r4, lbl_804CFE1C@h
+    ori     r4, r4, lbl_804CFE1C@l
     lwzx    r5, r3, r4
     mtlr    r5
     blrl
@@ -103,8 +105,8 @@ L_8016A914:
     lwz     r3, 0x370(r31)
     addi    r3, r3, 4
     stw     r3, 0x370(r31)
-    lis     r3, (lbl_804CFDE2 + 0xB6)@h
-    ori     r3, r3, (lbl_804CFDE2 + 0xB6)@l
+    lis     r3, (lbl_804CFE6C + 0x2C)@h
+    ori     r3, r3, (lbl_804CFE6C + 0x2C)@l
     lwz     r3, 0(r3)
     cmpwi   r3, 0
     beq     fn_80169304
@@ -114,14 +116,14 @@ L_8016A914:
     b       fn_80169304
 entry lbl_8016A948
     li      r4, 1
-    lis     r3, (lbl_804CFDE2 + 0xB6)@h
-    ori     r3, r3, (lbl_804CFDE2 + 0xB6)@l
+    lis     r3, (lbl_804CFE6C + 0x2C)@h
+    ori     r3, r3, (lbl_804CFE6C + 0x2C)@l
     stw     r4, 0(r3)
     b       L_8016A84C
 entry lbl_8016A95C
     li      r4, 1
-    lis     r3, (lbl_804CFDE2 + 0xB6)@h
-    ori     r3, r3, (lbl_804CFDE2 + 0xB6)@l
+    lis     r3, (lbl_804CFE6C + 0x2C)@h
+    ori     r3, r3, (lbl_804CFE6C + 0x2C)@l
     stw     r4, 0(r3)
     lis     r3, 0xffff
     ori     r3, r3, 0xffff

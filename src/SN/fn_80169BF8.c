@@ -1,6 +1,6 @@
 extern char lbl_80572560[];
 extern char lbl_80573680[];
-extern char lbl_804CFD85[];
+extern char lbl_804CFD6C[];
 extern char lbl_804CFC70[];
 extern char lbl_804CFD50[];
 extern char _SDA2_BASE_[];
@@ -134,8 +134,8 @@ L_80169D6C:
     stw     r5, 0x580(r31)
     addi    r4, r4, 0x4
     stw     r4, 0x370(r31)
-    lis     r3, (lbl_804CFD85+0x20)@h
-    ori     r3, r3, (lbl_804CFD85+0x20)@l
+    lis     r3, (lbl_804CFD6C+0x39)@h
+    ori     r3, r3, (lbl_804CFD6C+0x39)@l
     lwz     r4, 0x6d0(r31)
     cmpwi   r4, 0x0
     bne     L_80169DC8

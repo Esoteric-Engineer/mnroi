@@ -15,8 +15,14 @@ SN/fn_80168770.c:
 SN/fn_801687E8.c:
 	.text       start:0x801687E8 end:0x801687F8
 
+Dolphin/os/__start.c:
+	.init       start:0x80003100 end:0x80003254
+	.data       start:0x804CFC20 end:0x804CFC70
+
 SN/fn_801687F8.c:
 	.text       start:0x801687F8 end:0x801688E8
+	.data       start:0x804CFC70 end:0x804CFF30
+	.bss        start:0x80573660 end:0x8057BEE0
 
 SN/EnableMetroTRKInterrupts.c:
 	.text       start:0x801688E8 end:0x8016894C
@@ -295,10 +301,6 @@ SN/fn_8016B6AC.c:
 SN/fn_8016B6B4.c:
 	.text       start:0x8016B6B4 end:0x8016B740
 	.bss        start:0x8057BEE0 end:0x8057BF80
-
-Dolphin/os/__start.c:
-	.init       start:0x80003100 end:0x80003254
-	.data       start:0x804CFC20 end:0x804CFC70
 
 SN/fn_8016B740.c:
 	.text       start:0x8016B740 end:0x8016B79C

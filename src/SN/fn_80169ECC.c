@@ -1,4 +1,4 @@
-extern char lbl_804CFD85[];
+extern char lbl_804CFD6C[];
 extern char lbl_80573680[];
 void fn_80169AF4(void);
 void fn_801698E0(void);
@@ -86,8 +86,8 @@ L_80169FBC:
     beq L_80169FF4
     cmplw r4, r5
     blt L_80169FBC
-    lis r3, (lbl_804CFD85+0x37)@h
-    ori r3, r3, (lbl_804CFD85+0x37)@l
+    lis r3, (lbl_804CFD6C+0x50)@h
+    ori r3, r3, (lbl_804CFD6C+0x50)@l
     lwz r4, 0x6d0(r31)
     cmpwi r4, 0x0
     bne L_80169FEC

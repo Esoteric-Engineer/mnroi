@@ -1,4 +1,4 @@
-extern char lbl_804CFDE2[];
+extern char lbl_804CFE6C[];
 extern char lbl_8057BD88[];
 void OSDisableInterrupts(void);
 void OSRestoreInterrupts(void);
@@ -22,15 +22,15 @@ asm void SNInitComm(void)
     addi    r31, r4, 0x0
     addi    r30, r3, 0x0
     bl      OSDisableInterrupts
-    lis     r0, (lbl_804CFDE2 + 0x146)@h
-    ori     r0, r0, (lbl_804CFDE2 + 0x146)@l
-    lis     r4, (lbl_804CFDE2 + 0x142)@h
-    ori     r4, r4, (lbl_804CFDE2 + 0x142)@l
+    lis     r0, (lbl_804CFE6C + 0xBC)@h
+    ori     r0, r0, (lbl_804CFE6C + 0xBC)@l
+    lis     r4, (lbl_804CFE6C + 0xB8)@h
+    ori     r4, r4, (lbl_804CFE6C + 0xB8)@l
     stw     r0, 0x0(r4)
     stw     r4, 0x0(r30)
     addi    r30, r3, 0x0
-    lis     r3, (lbl_804CFDE2 + 0x13E)@h
-    ori     r3, r3, (lbl_804CFDE2 + 0x13E)@l
+    lis     r3, (lbl_804CFE6C + 0xB4)@h
+    ori     r3, r3, (lbl_804CFE6C + 0xB4)@l
     stw     r31, 0x0(r3)
     lis     r3, 0x1
     ori     r3, r3, 0x8000

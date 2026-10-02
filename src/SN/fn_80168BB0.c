@@ -2,7 +2,6 @@ extern void OSReport(const char* msg, ...);
 extern void fn_801694B8(void);
 extern void fn_80169304(void);
 extern char lbl_804CFD6C[];
-extern char lbl_804CFD85[];
 extern char lbl_804CFC8C[];
 extern char lbl_804CFD00[];
 
@@ -50,8 +49,8 @@ L_recv:
     lbz     r3, 0x700(r31)
     cmplwi  r3, 0x14
     blt     L_dispatch
-    lis     r3, lbl_804CFD85@h
-    ori     r3, r3, lbl_804CFD85@l
+    lis     r3, (lbl_804CFD6C+0x19)@h
+    ori     r3, r3, (lbl_804CFD6C+0x19)@l
     lwz     r4, 0x6d0(r31)
     cmpwi   r4, 0
     bne     L_err2

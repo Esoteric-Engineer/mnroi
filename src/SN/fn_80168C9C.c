@@ -1,13 +1,13 @@
 extern void OSReport(const char* msg, ...);
 extern void fn_801694B8(void);
-extern char lbl_804CFDE2[];
+extern char lbl_804CFD6C[];
 
 asm void fn_80168C9C(void)
 {
     // clang-format off
     nofralloc
-    lis     r3, lbl_804CFDE2@h
-    ori     r3, r3, lbl_804CFDE2@l
+    lis     r3, (lbl_804CFD6C+0x76)@h
+    ori     r3, r3, (lbl_804CFD6C+0x76)@l
     lwz     r4, 0x6D0(r31)
     cmpwi   r4, 0
     bne     L_call
