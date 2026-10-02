@@ -160,7 +160,9 @@ When a function references a string or table you intend to reproduce, read the o
 
 ## 4. Choosing what to work on
 
-**Start with SDK code (`0x80168770`+; the first 0x2DE4 bytes are SN Systems' debug stub, see [`sdk_libraries.md`](sdk_libraries.md)), not game code.** Game code (`0x800034A0`–`0x80168768`) is C++ compiled with `-O4 -inline auto`, which inlined away essentially every small function (see [`baseline.md`](baseline.md)). SDK code is plain C with normal small functions, and its structure is publicly documented across other GameCube decomps.
+**Start with SDK code (`0x80168770`+; the first 0x2DE4 bytes are SN Systems' debug stub, see [`sdk_libraries.md`](sdk_libraries.md)), not game code.** SDK code is plain C with normal small functions, and its structure is publicly documented across other GameCube decomps.
+
+Game code (`0x800034A0`–`0x80168768`, plus the runs listed in [`sdk_libraries.md`](sdk_libraries.md)) is C++ built with SN ProDG (GCC 2.95), not MWCC. Register game units in the `Game` library in `configure.py`, which compiles with ProDG; [`prodg.md`](prodg.md) has the flags found so far, the C++ conventions and how static constructors link. `Game/fn_800092CC.cpp` is the first matched example.
 
 Most of the 17,161 functions are still `fn_XXXXXXXX`. Naming is a large part of the work ahead.
 
@@ -177,7 +179,7 @@ Beyond the trivial-leaf tier, the most productive strategy is to pick the next u
 
 ### Reference decomp for SDK/runtime code (same compiler)
 
-`configure.py` pins `GC/1.2.5n` for the Dolphin SDK libraries and `GC/1.3.2` for `Runtime.PPCEABI.H`/game code. Conveniently, [ACreTeam/ac-decomp](https://github.com/ACreTeam/ac-decomp) (Animal Crossing, GameCube) uses this exact pairing, and has a complete SDK tree.
+`configure.py` pins `GC/1.2.5n` for the Dolphin SDK libraries and `GC/1.3.2` for the MWCC asm units in `Runtime.PPCEABI.H`. Conveniently, [ACreTeam/ac-decomp](https://github.com/ACreTeam/ac-decomp) (Animal Crossing, GameCube) uses this exact pairing, and has a complete SDK tree.
 
 Clone it as a sibling repo (`../ac-decomp`) and grep it directly. Key paths:
 

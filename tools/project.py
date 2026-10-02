@@ -301,6 +301,11 @@ CHAIN = "cmd /c " if is_windows() else ""
 EXE = ".exe" if is_windows() else ""
 
 
+# `mw_version` names a folder under the compilers directory. A `ProDG/` folder holds SN Systems' ngccc (GCC 2.95) instead of mwcceppc.
+def is_prodg(compiler_version: str) -> bool:
+    return compiler_version.startswith("ProDG/")
+
+
 def file_is_asm(path: Path) -> bool:
     return path.suffix.lower() == ".s"
 
@@ -689,6 +694,16 @@ def generate_build_ninja(
     mwcc_sjis_extab_cmd = f'{CHAIN}{mwcc_sjis_cmd} && {dtk} extab clean --padding "$extab_padding" $out $out'
     mwcc_sjis_extab_implicit: List[Optional[Path]] = [*mwcc_sjis_implicit, dtk]
 
+    # SN ProDG (ngccc). ngccc refuses to start unless SN_NGC_PATH points at the folder holding its sn.ini.
+    # GCC's -MMD leaves out <...> includes, so use -MD.
+    ngccc = compiler_path / "ngccc.exe"
+    if is_windows():
+        prodg_env = f"set SN_NGC_PATH={compiler_path}&& "
+    else:
+        prodg_env = f"SN_NGC_PATH={compiler_path} "
+    prodg_cmd = f"{CHAIN}{prodg_env}{wrapper_cmd}{ngccc} $cflags -MD -c $in -o $out"
+    prodg_implicit: List[Optional[Path]] = [compilers_implicit or ngccc, wrapper_implicit]
+
     # MWLD
     mwld = compiler_path / "mwldeppc.exe"
     mwld_cmd = f"{wrapper_cmd}{mwld} $ldflags -o $out @$out.rsp"
@@ -719,19 +734,36 @@ def generate_build_ninja(
         mwcc_extab_implicit.append(transform_dep)
         mwcc_sjis_extab_implicit.append(transform_dep)
 
+    # Fold the 4-byte-aligned .rodata.1 of MWCC units into .rodata (see tools/fold_rodata.py)
+    fold_rodata = config.tools_dir / "fold_rodata.py"
+    fold_rodata_cmd = f" && $python {fold_rodata} $out"
+    mwcc_cmd = f"{CHAIN}{mwcc_cmd}{fold_rodata_cmd}"
+    mwcc_sjis_cmd = f"{CHAIN}{mwcc_sjis_cmd}{fold_rodata_cmd}"
+    mwcc_extab_cmd += fold_rodata_cmd
+    mwcc_sjis_extab_cmd += fold_rodata_cmd
+    for implicit in (
+        mwcc_implicit,
+        mwcc_sjis_implicit,
+        mwcc_extab_implicit,
+        mwcc_sjis_extab_implicit,
+    ):
+        implicit.append(fold_rodata)
+
     # Bake r13-relative .sdata2/.sbss2 accesses (dtk `sda2_via_r13`)
     sda_bake_path = build_path / "sda_bake.json"
     if sda_bake_path.is_file():
         sda_bake_cmd = f' && {dtk} elf bake-sda {sda_bake_path} "$unit" $out $out'
-        mwcc_cmd = f"{CHAIN}{mwcc_cmd}{sda_bake_cmd}"
-        mwcc_sjis_cmd = f"{CHAIN}{mwcc_sjis_cmd}{sda_bake_cmd}"
+        mwcc_cmd += sda_bake_cmd
+        mwcc_sjis_cmd += sda_bake_cmd
         mwcc_extab_cmd += sda_bake_cmd
         mwcc_sjis_extab_cmd += sda_bake_cmd
+        prodg_cmd += sda_bake_cmd
         for implicit in (
             mwcc_implicit,
             mwcc_sjis_implicit,
             mwcc_extab_implicit,
             mwcc_sjis_extab_implicit,
+            prodg_implicit,
         ):
             implicit.extend([dtk, sda_bake_path])
 
@@ -791,6 +823,17 @@ def generate_build_ninja(
         depfile="$basefile.d",
         deps="gcc",
     )
+    n.newline()
+
+    n.comment("SN ProDG build")
+    n.rule(
+        name="prodg",
+        command=prodg_cmd,
+        description="PRODG $out",
+        depfile="$basefile.d",
+        deps="gcc",
+    )
+    n.newline()
 
     n.comment("Assemble asm")
     n.rule(
@@ -1022,11 +1065,15 @@ def generate_build_ninja(
 
             cflags = obj.options["cflags"]
             extra_cflags = obj.options["extra_cflags"]
+            prodg = is_prodg(obj.options["mw_version"])
 
             # Add appropriate language flag if it doesn't exist already
             # Added directly to the source so it flows to other generation tasks
-            if not any(flag.startswith("-lang") for flag in cflags) and not any(
-                flag.startswith("-lang") for flag in extra_cflags
+            # (ngccc picks the language from the file extension)
+            if (
+                not prodg
+                and not any(flag.startswith("-lang") for flag in cflags)
+                and not any(flag.startswith("-lang") for flag in extra_cflags)
             ):
                 # Ensure extra_cflags is a unique instance,
                 # and insert into there to avoid modifying shared sets of flags
@@ -1052,7 +1099,13 @@ def generate_build_ninja(
                 "unit": obj.name,
             }
 
-            if obj.options["shift_jis"] and obj.options["extab_padding"] is not None:
+            if prodg:
+                # shift_jis (sjiswrap) only applies to MWCC, so it is ignored here
+                if obj.options["extab_padding"] is not None:
+                    sys.exit(f"{obj.name}: extab_padding is MWCC-only")
+                build_rule = "prodg"
+                build_implcit = prodg_implicit
+            elif obj.options["shift_jis"] and obj.options["extab_padding"] is not None:
                 build_rule = "mwcc_sjis_extab"
                 build_implcit = mwcc_sjis_extab_implicit
                 variables["extab_padding"] = "".join(
@@ -1215,7 +1268,8 @@ def generate_build_ninja(
 
         # Check if all compiler versions exist
         for mw_version in used_compiler_versions:
-            mw_path = compilers / mw_version / "mwcceppc.exe"
+            cc_name = "ngccc.exe" if is_prodg(mw_version) else "mwcceppc.exe"
+            mw_path = compilers / mw_version / cc_name
             if config.compilers_path and not os.path.exists(mw_path):
                 sys.exit(f"Compiler {mw_path} does not exist")
 
@@ -1647,6 +1701,11 @@ def generate_objdiff_config(
         "Wii/1.5": "mwcc_43_188",
         "Wii/1.6": "mwcc_43_202",
         "Wii/1.7": "mwcc_43_213",
+        "ProDG/3.5": "prodg_35",
+        "ProDG/3.5b140": "prodg_35_b140",
+        "ProDG/3.7": "prodg_37",
+        "ProDG/3.8.1": "prodg_381",
+        "ProDG/3.9.3": "prodg_393",
     }
 
     def add_unit(

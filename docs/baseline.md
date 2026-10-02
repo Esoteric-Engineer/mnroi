@@ -10,16 +10,17 @@ See also:
 
 - **Single DOL:** No `.rel` modules, so no per-module config.
 - **No debug symbols, no map file:** The disc ships a `GameGC.elf`, but it is stripped (no `.symtab`, no `.debug*`) and does not hash-match `main.dol`. Every symbol name and struct layout is reconstructed by hand (via dtk analyzer and Ghidra).
-- **Game code is C++ at `-O4 -inline auto`:** Small functions were inlined away almost entirely; across all 17,161 functions only 2 leaf functions under 10 instructions exist in the game-code range.
+  Its `.text` and its constructor lists are byte-identical to `main.dol`'s, though, so its section headers show the original link's layout: `.init`, `.text`, `.ctors`, `.dtors`, `.rodata`, `.data`, `.bss`, `.sdata`, `.sbss`, `.sdata2`. `splits.txt` uses those names.
+- **Two compilers:** The Dolphin SDK is Nintendo's prebuilt MWCC output. Everything else (the game's C++, Newlib/libgcc, the VM library and SN's debug stub) was built with SN Systems ProDG, a GCC 2.95 build, and linked by SN's linker. The project compiles SDK units with MWCC and the rest with ProDG, and links everything with mwld. See [`prodg.md`](prodg.md).
 
 ## Toolkit Fork Reasoning
 
-Stock decomp-toolkit can't produce a matching build. Three fixes are required, all in [`Esoteric-Engineer/mnroi-decomp-toolkit`](https://github.com/Esoteric-Engineer/mnroi-decomp-toolkit):
+Stock decomp-toolkit can't produce a matching build. These fixes are required, all in [`Esoteric-Engineer/mnroi-decomp-toolkit`](https://github.com/Esoteric-Engineer/mnroi-decomp-toolkit):
 
 1. **OOM on split:** A relocation target outside all sections drove an allocation large enough to abort. Root cause was a crt0 address left sectionless.
-2. **Duplicate `.rodata` sections:** This DOL is laid out as `.rodata → .data → .rodata`, with `.data` between two read-only regions.
-  Original dtk named both regions `.rodata`, which CodeWarrior rejected. The fork suffixes duplicate names as `.rodata.1`. Consequently, a `WARN Unknown section .rodata.1` during splitting is expected.
+2. **Duplicate section names:** dtk named two read-only regions `.rodata`, which CodeWarrior rejected, so the fork suffixes duplicate names (`.rodata.1`). With fix 4 this DOL no longer has duplicates.
 3. **Small-data base-register conflict:** See below.
+4. **ProDG constructor lists:** SN's tools store `.ctors` and `.dtors` in one DOL section, each list starting with `-1`, which stock dtk doesn't recognise. The fork splits that section into `.ctors` and `.dtors` when it reads the DOL, keeps the `-1` entries first in link order, and merges the two back into one section in `elf2dol`. See [`prodg.md`](prodg.md#constructor-and-destructor-lists).
 
 ## Small-data (`r13`) Problem
 
@@ -42,6 +43,7 @@ The fork's `sda2_via_r13` option (enabled in `config.yml`) bakes those accesses 
     Located by scanning `.text` for `rfi`/`sc`/`mfmsr`/`mtmsr`/`tlbie`/`mtsr`. Bounds are approximate, refine as needed.
 - **`force_active`:** Keeps functions that mwld's `-code_merging` would otherwise fold away as duplicates, which shifts every address after them.
     Add to this list only when a new match actually breaks `main.dol` (doesn't happen often).
+    It also keeps `__DTOR_LIST__`, `_ctors` and `_dtors` alive for the constructor lists (see [`prodg.md`](prodg.md#constructor-and-destructor-lists)).
 - **`block_relocations` / `add_relocations` at `.init:0x80003160`:** crt0 loads the absolute address `0x8066FB50` through a `lis`/`ori` pair that dtk split across two symbols, binding the low half to the wrong target. That address falls in the padding gap between `.sbss` and `.sdata2`, so dtk left it sectionless.
     Retargeted to the `ABS` symbol `lbl_8066FB50`, which `ldscript.lcf` defines.
 - **`fill_gaps`:** Left at its default `true`. Required, or the DOL is short by ~29 KB and every subsequent offset shifts.

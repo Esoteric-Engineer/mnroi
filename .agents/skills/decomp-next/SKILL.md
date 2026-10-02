@@ -110,8 +110,8 @@ symbols, and relocations" in `docs/matching_notes.md` first; it has the alignmen
 and the SDK/CFTKK names.
 
 1. **Claim** every `open` row with the same `name` together. Add each range to that unit in
-   `splits.txt`, in the section order the header lists (`.text`, `.rodata`, `.rodata.1`, `.data`,
-   `.bss`, `.sdata`, `.sbss`, `.sdata2`). If the range starts where the unit's existing line of that section
+   `splits.txt`, in the section order the header lists (`.text`, `.rodata`, `.data`, `.bss`,
+   `.sdata`, `.sbss`, `.sdata2`). If the range starts where the unit's existing line of that section
    ends, extend that line instead. For a new data-only unit, add a `splits.txt` entry without `.text`,
    register it next to its neighbours in `configure.py`, and create the source file.
 2. **Symbols.** Where a reference gives a name (the note's SDK/CFTKK name), rename dtk's `lbl_` symbol

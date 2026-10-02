@@ -240,12 +240,30 @@ cflags_runtime = [
     "-inline auto",
 ]
 
-# REL flags
-cflags_rel = [
-    *cflags_base,
-    "-sdata 0",
-    "-sdata2 0",
+# SN ProDG (GCC 2.95) flags.
+# SN's toolchain built everything in the DOL except the Dolphin SDK: the game, Newlib/libgcc, the VM library and the SN debug stub.
+cflags_prodg_base = [
+    "-I include/gcc",
+    f"-DBUILD_VERSION={version_num}",
+    f"-DVERSION_{config.version}",
 ]
+if args.debug:
+    cflags_prodg_base.append("-g")
+
+# SN's prebuilt Newlib/libgcc
+cflags_prodg_lib = [
+    *cflags_prodg_base,
+    "-O2",
+]
+
+# Game code. -O0 so far: arguments spilled through r31, `this` kept in r30, and a doubled branch to the epilogue.
+cflags_prodg_game = [
+    *cflags_prodg_base,
+    "-O0",
+]
+
+# Provisional: the code compiled so far comes out the same on every ProDG release.
+PRODG_VERSION = "ProDG/3.9.3"
 
 config.linker_version = "GC/1.3.2"
 
@@ -261,15 +279,9 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     }
 
 
-# Helper function for REL script objects
-def Rel(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
-    return {
-        "lib": lib_name,
-        "mw_version": "GC/1.3.2",
-        "cflags": cflags_rel,
-        "progress_category": "game",
-        "objects": objects,
-    }
+# Helper function for objects SN ProDG built with its library flags, inside a library whose other objects are still MWCC asm
+def ProDGLibObject(completed: bool, name: str) -> Object:
+    return Object(completed, name, mw_version=PRODG_VERSION, cflags=cflags_prodg_lib)
 
 
 Matching = True                   # Object matches and should be linked
@@ -285,6 +297,15 @@ def MatchingFor(*versions):
 config.warn_missing_config = True
 config.warn_missing_source = False
 config.libs = [
+    {
+        "lib": "Game",
+        "mw_version": PRODG_VERSION,
+        "cflags": cflags_prodg_game,
+        "progress_category": "game",
+        "objects": [
+            Object(Matching, "Game/fn_800092CC.cpp"),
+        ],
+    },
     {
         "lib": "Runtime.PPCEABI.H",
         "mw_version": config.linker_version,
@@ -320,7 +341,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/__kernel_rem_pio2f.c"),
             Object(Matching, "Runtime.PPCEABI.H/floorf.c"),
             Object(Matching, "Runtime.PPCEABI.H/scalbn.c"),
-            Object(Matching, "Runtime.PPCEABI.H/copysign.c"),
+            ProDGLibObject(Matching, "Runtime.PPCEABI.H/copysign.c"),
             Object(Matching, "Runtime.PPCEABI.H/copysignf.c"),
             Object(Matching, "Runtime.PPCEABI.H/sprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/eofread.c"),
@@ -330,7 +351,7 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/vsprintf.c"),
             Object(Matching, "Runtime.PPCEABI.H/__register_atexit.c"),
             Object(Matching, "Runtime.PPCEABI.H/atof.c"),
-            Object(Matching, "Runtime.PPCEABI.H/atoi.c"),
+            ProDGLibObject(Matching, "Runtime.PPCEABI.H/atoi.c"),
             Object(Matching, "Runtime.PPCEABI.H/bsearch.c"),
             Object(Matching, "Runtime.PPCEABI.H/_mbtowc_r.c"),
             Object(Matching, "Runtime.PPCEABI.H/qsort.c"),
@@ -344,11 +365,11 @@ config.libs = [
             Object(Matching, "Runtime.PPCEABI.H/memmove.c"),
             Object(Matching, "Runtime.PPCEABI.H/memset.c"),
             Object(Matching, "Runtime.PPCEABI.H/stricmp.c"),
-            Object(Matching, "Runtime.PPCEABI.H/strcat.c"),
-            Object(Matching, "Runtime.PPCEABI.H/strchr.c"),
-            Object(Matching, "Runtime.PPCEABI.H/strcmp.c"),
+            ProDGLibObject(Matching, "Runtime.PPCEABI.H/strcat.c"),
+            ProDGLibObject(Matching, "Runtime.PPCEABI.H/strchr.c"),
+            ProDGLibObject(Matching, "Runtime.PPCEABI.H/strcmp.c"),
             Object(Matching, "Runtime.PPCEABI.H/strcpy.c"),
-            Object(Matching, "Runtime.PPCEABI.H/strlen.c"),
+            ProDGLibObject(Matching, "Runtime.PPCEABI.H/strlen.c"),
             Object(Matching, "Runtime.PPCEABI.H/strlwr.c"),
             Object(Matching, "Runtime.PPCEABI.H/strnicmp.c"),
             Object(Matching, "Runtime.PPCEABI.H/strncmp.c"),

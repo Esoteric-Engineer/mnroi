@@ -1,26 +1,47 @@
-asm double copysign(double x, double y)
+/* Newlib 1.11 libm/common/s_copysign.c (fdlibm), built by SN ProDG. */
+/*
+ * ====================================================
+ * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+ *
+ * Developed at SunPro, a Sun Microsystems, Inc. business.
+ * Permission to use, copy, modify, and distribute this
+ * software is freely granted, provided that this notice
+ * is preserved.
+ * ====================================================
+ */
+
+typedef unsigned long __uint32_t;
+
+typedef union {
+    double value;
+    struct {
+        __uint32_t msw;
+        __uint32_t lsw;
+    } parts;
+} ieee_double_shape_type;
+
+#define GET_HIGH_WORD(i, d)            \
+    do {                               \
+        ieee_double_shape_type gh_u;   \
+        gh_u.value = (d);              \
+        (i) = gh_u.parts.msw;          \
+    } while (0)
+
+#define SET_HIGH_WORD(d, v)            \
+    do {                               \
+        ieee_double_shape_type sh_u;   \
+        sh_u.value = (d);              \
+        sh_u.parts.msw = (v);          \
+        (d) = sh_u.value;              \
+    } while (0)
+
+// Returns x with the sign bit of y.
+double copysign(double x, double y)
 {
-    // clang-format off
-    nofralloc
-    stwu    r1, -16(r1)
-    fmr     f0, f1
-    stfd    f0, 8(r1)
-    lwz     r7, 8(r1)
-    lwz     r8, 12(r1)
-    stfd    f2, 8(r1)
-    lwz     r9, 8(r1)
-    lwz     r10, 12(r1)
-    stfd    f1, 8(r1)
-    lwz     r11, 8(r1)
-    lwz     r12, 12(r1)
-    clrlwi  r7, r7, 1
-    clrrwi  r9, r9, 31
-    or      r11, r7, r9
-    stw     r11, 8(r1)
-    stw     r12, 12(r1)
-    lfd     f0, 8(r1)
-    fmr     f1, f0
-    addi    r1, r1, 16
-    blr
-    // clang-format on
+    __uint32_t hx, hy;
+
+    GET_HIGH_WORD(hx, x);
+    GET_HIGH_WORD(hy, y);
+    SET_HIGH_WORD(x, (hx & 0x7fffffff) | (hy & 0x80000000));
+    return x;
 }

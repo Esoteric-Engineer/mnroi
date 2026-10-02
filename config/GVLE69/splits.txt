@@ -1,13 +1,19 @@
 Sections:
 	.init       type:code align:4
 	.text       type:code align:4
-	.rodata     type:rodata align:4
-	.rodata.1   type:rodata align:4
+	.ctors      type:rodata align:4
+	.dtors      type:rodata align:32
+	.rodata     type:rodata align:32
 	.data       type:data align:4
 	.bss        type:bss align:4
 	.sdata      type:data align:4
 	.sbss       type:bss align:4
 	.sdata2     type:rodata align:32
+
+Game/fn_800092CC.cpp:
+	.text       start:0x800092CC end:0x800098CC
+	.ctors      start:0x804825A4 end:0x804825A8
+	.sbss       start:0x8066CF80 end:0x8066D044
 
 SN/fn_80168770.c:
 	.text       start:0x80168770 end:0x801687E8
@@ -269,7 +275,7 @@ SN/fn_8016B4B0.c:
 
 Dolphin/os/__cvt_fp2unsigned.c:
 	.text       start:0x8016B554 end:0x8016B59C
-	.rodata.1   start:0x8049C1C8 end:0x8049C1D0
+	.rodata     start:0x8049C1C8 end:0x8049C1D0
 
 Dolphin/os/__shr2u.c:
 	.text       start:0x8016B59C end:0x8016B5A0
@@ -362,7 +368,7 @@ SN/fn_8016C134.c:
 
 SN/fn_8016C148.c:
 	.text       start:0x8016C148 end:0x8016C3BC
-	.rodata.1   start:0x8049C1D0 end:0x8049C1E8
+	.rodata     start:0x8049C1D0 end:0x8049C1E8
 
 SN/fn_8016C3BC.c:
 	.text       start:0x8016C3BC end:0x8016C3DC
@@ -502,7 +508,7 @@ Runtime.PPCEABI.H/sscanf.c:
 
 Runtime.PPCEABI.H/__svfscanf.c:
 	.text       start:0x801701B0 end:0x80170FB4
-	.rodata.1   start:0x8049C1E8 end:0x8049C20C
+	.rodata     start:0x8049C1E8 end:0x8049C20C
 
 Runtime.PPCEABI.H/__sccl.c:
 	.text       start:0x80170FB4 end:0x80171088
@@ -524,7 +530,7 @@ Runtime.PPCEABI.H/bsearch.c:
 
 Runtime.PPCEABI.H/_mbtowc_r.c:
 	.text       start:0x801712D4 end:0x80171600
-	.rodata.1   start:0x8049C20C end:0x8049C224
+	.rodata     start:0x8049C20C end:0x8049C224
 	.data       start:0x804CFF48 end:0x804D02A8
 
 Runtime.PPCEABI.H/qsort.c:
@@ -535,7 +541,7 @@ Runtime.PPCEABI.H/fn_80171F8C.c:
 
 Runtime.PPCEABI.H/free.c:
 	.text       start:0x80171FB0 end:0x80171FEC
-	.rodata.1   start:0x8049C224 end:0x8049C420
+	.rodata     start:0x8049C224 end:0x8049C420
 	.sdata      start:0x8066C390 end:0x8066C398
 
 Runtime.PPCEABI.H/realloc.c:
@@ -609,19 +615,19 @@ Runtime.PPCEABI.H/fn_80172CC4.c:
 
 Runtime.PPCEABI.H/asctime_r.c:
 	.text       start:0x80172CEC end:0x80172D78
-	.rodata.1   start:0x8049C420 end:0x8049C480
+	.rodata     start:0x8049C420 end:0x8049C480
 
 Runtime.PPCEABI.H/fn_80172D78.c:
 	.text       start:0x80172D78 end:0x80172DA0
 
 Runtime.PPCEABI.H/gmtime_r.c:
 	.text       start:0x80172DA0 end:0x80172FF8
-	.rodata.1   start:0x8049C480 end:0x8049C4E0
+	.rodata     start:0x8049C480 end:0x8049C4E0
 	.sdata2     start:0x80670268 end:0x80670270
 
 Runtime.PPCEABI.H/mktime.c:
 	.text       start:0x80172FF8 end:0x801735D4
-	.rodata.1   start:0x8049C4E0 end:0x8049C540
+	.rodata     start:0x8049C4E0 end:0x8049C540
 
 Runtime.PPCEABI.H/strround.c:
 	.text       start:0x801735D4 end:0x80173630
@@ -635,7 +641,7 @@ Runtime.PPCEABI.H/itoa.c:
 
 Runtime.PPCEABI.H/fftoa.c:
 	.text       start:0x801736F8 end:0x80173BE0
-	.rodata.1   start:0x8049C540 end:0x8049C580
+	.rodata     start:0x8049C540 end:0x8049C580
 
 Runtime.PPCEABI.H/_vfwrite.c:
 	.text       start:0x80173BE0 end:0x80173CB4
@@ -647,7 +653,7 @@ Runtime.PPCEABI.H/vfprintf.c:
 
 Runtime.PPCEABI.H/_vfprintf_r.c:
 	.text       start:0x80173D8C end:0x8017557C
-	.rodata.1   start:0x8049C580 end:0x8049C610
+	.rodata     start:0x8049C580 end:0x8049C610
 
 Runtime.PPCEABI.H/__group_digits.c:
 	.text       start:0x8017557C end:0x80175704
@@ -658,7 +664,7 @@ Runtime.PPCEABI.H/_vfiwrite.c:
 
 Runtime.PPCEABI.H/_vfiprintf_r.c:
 	.text       start:0x801757D8 end:0x80176E54
-	.rodata.1   start:0x8049C610 end:0x8049C680
+	.rodata     start:0x8049C610 end:0x8049C680
 
 Runtime.PPCEABI.H/_strtol_r.c:
 	.text       start:0x80176E54 end:0x80177004
@@ -668,11 +674,11 @@ Runtime.PPCEABI.H/strtol.c:
 
 Runtime.PPCEABI.H/strtod.c:
 	.text       start:0x8017703C end:0x80177368
-	.rodata.1   start:0x8049C680 end:0x8049C6A0
+	.rodata     start:0x8049C680 end:0x8049C6A0
 	.data       start:0x804D02D0 end:0x804D0318
 
 Runtime.PPCEABI.H/ctype_.c:
-	.rodata.1   start:0x8049C6A0 end:0x8049C7A4
+	.rodata     start:0x8049C6A0 end:0x8049C7A4
 
 Runtime.PPCEABI.H/tolower.c:
 	.text       start:0x80177368 end:0x80177384
@@ -688,7 +694,7 @@ Runtime.PPCEABI.H/__errno.c:
 
 Runtime.PPCEABI.H/_localeconv_r.c:
 	.text       start:0x801773B4 end:0x801773C0
-	.rodata.1   start:0x8049C7A4 end:0x8049C7F8
+	.rodata     start:0x8049C7A4 end:0x8049C7F8
 	.sdata      start:0x8066C3A8 end:0x8066C3B0
 
 Runtime.PPCEABI.H/localeconv.c:
@@ -696,22 +702,22 @@ Runtime.PPCEABI.H/localeconv.c:
 
 Runtime.PPCEABI.H/floor.c:
 	.text       start:0x801773E4 end:0x80177558
-	.rodata.1   start:0x8049C7F8 end:0x8049C808
+	.rodata     start:0x8049C7F8 end:0x8049C808
 
 Runtime.PPCEABI.H/__ieee754_fmod.c:
 	.text       start:0x80177558 end:0x801778B4
-	.rodata.1   start:0x8049C808 end:0x8049C818
+	.rodata     start:0x8049C808 end:0x8049C818
 
 Runtime.PPCEABI.H/__ieee754_log.c:
 	.text       start:0x801778B4 end:0x80177BB0
-	.rodata.1   start:0x8049C818 end:0x8049C8A0
+	.rodata     start:0x8049C818 end:0x8049C8A0
 
 Runtime.PPCEABI.H/__ieee754_log10.c:
 	.text       start:0x80177BB0 end:0x80177CF8
-	.rodata.1   start:0x8049C8A0 end:0x8049C8D8
+	.rodata     start:0x8049C8A0 end:0x8049C8D8
 
 Runtime.PPCEABI.H/impure.c:
-	.rodata.1   start:0x8049C8D8 end:0x8049C8DC
+	.rodata     start:0x8049C8D8 end:0x8049C8DC
 	.data       start:0x804D0318 end:0x804D066C
 	.sdata      start:0x8066C3B0 end:0x8066C3B8
 
@@ -729,7 +735,7 @@ Runtime.PPCEABI.H/__srefill.c:
 
 Runtime.PPCEABI.H/ungetc.c:
 	.text       start:0x80177F98 end:0x8017811C
-	.rodata.1   start:0x8049C8DC end:0x8049C920
+	.rodata     start:0x8049C8DC end:0x8049C920
 
 Runtime.PPCEABI.H/div.c:
 	.text       start:0x8017811C end:0x80178164
@@ -752,7 +758,7 @@ Runtime.PPCEABI.H/__sfp.c:
 
 Runtime.PPCEABI.H/_fopen_r.c:
 	.text       start:0x80178568 end:0x80178654
-	.rodata.1   start:0x8049C920 end:0x8049C94C
+	.rodata     start:0x8049C920 end:0x8049C94C
 
 Runtime.PPCEABI.H/fopen.c:
 	.text       start:0x80178654 end:0x80178684
@@ -839,7 +845,7 @@ Runtime.PPCEABI.H/__umoddi3.c:
 
 Dolphin/os/fn_8017A5CC.c:
 	.text       start:0x8017A5CC end:0x8017A620
-	.rodata.1   start:0x8049C94C end:0x8049CB40
+	.rodata     start:0x8049C94C end:0x8049CB40
 	.data       start:0x804D0670 end:0x804D0674
 
 Dolphin/os/fn_8017A620.c:
@@ -2176,7 +2182,7 @@ Runtime.PPCEABI.H/strncat.c:
 
 Runtime.PPCEABI.H/__floatdisf.c:
 	.text       start:0x80400914 end:0x804009C4
-	.rodata.1   start:0x804BF448 end:0x804BF460
+	.rodata     start:0x804BF448 end:0x804BF460
 
 Dolphin/vm/VMInit.c:
 	.text       start:0x804009C4 end:0x80400AAC

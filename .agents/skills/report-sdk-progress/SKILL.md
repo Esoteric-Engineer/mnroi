@@ -106,8 +106,8 @@ Only then is the project ready to move on to game code. Otherwise, say what rema
 - The data figures are only as good as the runs in `DATA_RANGES`. They were mapped from relocations and
   `r13` loads, and the boundary check confirms no library code reaches past them, but *unreferenced*
   library data at a run edge next to game data still rests on position (noted in `docs/sdk_libraries.md`).
-  Linker-built tables are outside every run and never counted: the GCC constructor list (all of
-  `.rodata`) and the empty `.ctors`/`.dtors` lists at `.data` 0x804DCD84.
+  Linker-built tables are outside every run and never counted: GCC's constructor and destructor
+  lists (`.ctors`/`.dtors`) and the empty MWCC `.ctors`/`.dtors` lists at `.data` 0x804DCD84.
 - The boundary check compares against the library units, not against dtk's `auto_` units, so it keeps
   working once game code is split into game units; `EXPECTED_OUTSIDE` is keyed by address, so `main`
   stays expected wherever it ends up.

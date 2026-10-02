@@ -68,12 +68,10 @@ LIBS = [
     (0x80411208, 0x80411408, "gx", None),
     (0x80411408, 0x804114EC, "texpalette", None),
 ]
-# (section, start, end, cluster): each library cluster's contiguous run of every data section, i.e. the data
-# its units own, with the game data on either side excluded. Mapped in docs/sdk_libraries.md ("Library data
-# runs"); keep the two in sync. Neither cluster has .rodata: that section is the linker's constructor list.
+# (section, start, end, cluster): each library cluster's contiguous run of every data section, i.e. the data its units own, with the game data on either side excluded. Mapped in docs/sdk_libraries.md ("Library data runs"); keep the two in sync.
 DATA_RANGES = [
-    (".rodata.1", 0x8049C1C8, 0x8049CB40, 1),  # __cvt_fp2unsigned's double .. SN's C++ runtime strings
-    (".rodata.1", 0x804BF448, 0x804BF460, 2),  # __floatdisf's constants only
+    (".rodata", 0x8049C1C8, 0x8049CB40, 1),  # __cvt_fp2unsigned's double .. SN's C++ runtime strings
+    (".rodata", 0x804BF448, 0x804BF460, 2),  # __floatdisf's constants only
     (".data", 0x804CFC20, 0x804D398C, 1),  # __start's strings, SN .. EXIBios
     (".data", 0x804DCD98, 0x804F2DBC, 2),  # VM string .. texPalette strings
     (".bss", 0x80573660, 0x8057DCA0, 1),  # SN buffers .. EXI's Ecb

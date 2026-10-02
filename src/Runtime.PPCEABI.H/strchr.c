@@ -1,52 +1,34 @@
-asm char* strchr(const char* s, int c)
+// Newlib 1.11 string/strchr.c, built by SN ProDG.
+#include <stddef.h>
+
+#define UNALIGNED(X) ((long)X & (sizeof(long) - 1))
+#define LBLOCKSIZE (sizeof(long))
+#define DETECTNULL(X) (((X) - 0x01010101) & ~(X) & 0x80808080)
+// Nonzero if X contains the byte that fills MASK.
+#define DETECTCHAR(X, MASK) (DETECTNULL(X ^ MASK))
+
+char* strchr(const char* s1, int i)
 {
-    // clang-format off
-    nofralloc
-    mr      r9, r3
-    clrlwi  r4, r4, 24
-    andi.   r0, r3, 0x3
-    bne     tail
-    li      r8, 4
-    li      r0, 0
-    mtctr   r8
-mask:
-    slwi    r0, r0, 8
-    or      r0, r0, r4
-    bdnz    mask
-    mr      r3, r9
-    lis     r10, 0x8080
-    lwz     r11, 0(r3)
-    ori     r10, r10, 0x8080
-    b       check
-wloop:
-    lwzu    r11, 4(r3)
-check:
-    subis   r9, r11, 0x101
-    subi    r9, r9, 0x101
-    andc    r9, r9, r11
-    and.    r8, r9, r10
-    bne     tail
-    xor     r11, r11, r0
-    subis   r9, r11, 0x101
-    subi    r9, r9, 0x101
-    andc    r11, r9, r11
-    and.    r9, r11, r10
-    beq     wloop
-tail:
-    lbz     r0, 0(r3)
-    b       test
-bloop:
-    lbzu    r0, 1(r3)
-test:
-    cmpwi   r0, 0
-    beq     end
-    cmpw    r0, r4
-    bne     bloop
-end:
-    lbz     r0, 0(r3)
-    cmpw    r0, r4
-    beqlr
-    li      r3, 0
-    blr
-    // clang-format on
+    const unsigned char* s = (const unsigned char*)s1;
+    unsigned char c = (unsigned char)i;
+    unsigned long mask, j;
+    unsigned long* aligned_addr;
+
+    if (!UNALIGNED(s)) {
+        mask = 0;
+        for (j = 0; j < LBLOCKSIZE; j++)
+            mask = (mask << 8) | c;
+
+        // Stop at the first word holding a null or c; the bytewise search finds which.
+        aligned_addr = (unsigned long*)s;
+        while (!DETECTNULL(*aligned_addr) && !DETECTCHAR(*aligned_addr, mask))
+            aligned_addr++;
+        s = (unsigned char*)aligned_addr;
+    }
+
+    while (*s && *s != c)
+        s++;
+    if (*s == c)
+        return (char*)s;
+    return NULL;
 }

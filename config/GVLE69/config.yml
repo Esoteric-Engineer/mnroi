@@ -42,6 +42,11 @@ force_active:
 - lbl_80573660
 - __GDCurrentDL
 - nextPageToCheck
+# ProDG constructor/destructor lists (see docs/prodg.md).
+# mwld drops the unreferenced -1 that starts .dtors, and refuses to link .ctors/.dtors unless _ctors/_dtors are live.
+- __DTOR_LIST__
+- _ctors
+- _dtors
 ldscript_template: config/GVLE69/ldscript.lcf
 # Change this to match the linker version. See config.example.yml for a list.
 # NOTE: 11 is a guess (CW 2.7+). Revisit once the real compiler version is known.

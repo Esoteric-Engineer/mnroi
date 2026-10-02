@@ -34,7 +34,7 @@ import sdk_scout  # noqa: E402  (RANGES and LIBS are the single source of truth)
 # library object still emitted by a dtk auto_ unit, or a range in tools/sdk_scout.py that is wrong.
 EXPECTED_OUTSIDE = {
     0x8002A124: "main (game code), called by __start",
-    0x804825A0: "GCC's constructor list (all of .rodata), walked by __do_global_ctors",
+    0x804825A0: "GCC's constructor list (.ctors), walked by __do_global_ctors",
     0x804DCD84: "the empty .ctors list, walked by fn_801813F4",
     0x804DCD8C: "the empty .dtors list, walked by fn_80181448",
     0x8050F760: ".bss start, zeroed by __start",
@@ -201,7 +201,7 @@ print(f"\n.init {init[0]:#x}-{init[1]:#x} (boot/runtime): {sum(b - a for a, b in
 # or alignment the next split doesn't declare). Unclaimed bytes are queued (an open/stalled data row covers
 # them) or NOT QUEUED (the queue is stale or a run is mis-mapped). Whether a symbol covers a byte says nothing
 # either way: dtk keeps stale labels on padding and has none for unreferenced data.
-DATA_SECS = (".rodata", ".rodata.1", ".data", ".bss", ".sdata", ".sbss", ".sdata2")
+DATA_SECS = (".rodata", ".data", ".bss", ".sdata", ".sbss", ".sdata2")
 qrows = []  # (section, start, end, library, status) of every data row in the queue
 queue = Path("docs/sdk_queue.tsv")
 if queue.exists():

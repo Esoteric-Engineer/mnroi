@@ -1,48 +1,26 @@
-extern void strcpy(void);
+// Newlib 1.11 string/strcat.c, built by SN ProDG.
+#include <stddef.h>
 
-asm char* strcat(char* dst, const char* src)
+extern char* strcpy(char* dst, const char* src);
+
+#define ALIGNED(X) (((long)X & (sizeof(long) - 1)) == 0)
+#define DETECTNULL(X) (((X) - 0x01010101) & ~(X) & 0x80808080)
+
+char* strcat(char* s1, const char* s2)
 {
-    // clang-format off
-    nofralloc
-    stwu    r1, -0x10(r1)
-    mflr    r0
-    stw     r31, 0xc(r1)
-    stw     r0, 0x14(r1)
-    mr      r31, r3
-    andi.   r0, r31, 0x3
-    bne     tail
-    lwz     r9, 0(r31)
-    lis     r0, 0x8080
-    ori     r0, r0, 0x8080
-    subis   r11, r9, 0x101
-    subi    r11, r11, 0x101
-    andc    r9, r11, r9
-    and.    r11, r9, r0
-    bne     tail
-    lis     r0, 0x8080
-    ori     r0, r0, 0x8080
-wloop:
-    lwzu    r11, 4(r3)
-    subis   r9, r11, 0x101
-    subi    r9, r9, 0x101
-    andc    r11, r9, r11
-    and.    r9, r11, r0
-    beq     wloop
-tail:
-    lbz     r0, 0(r3)
-    cmpwi   r0, 0
-    beq     call
-bloop:
-    lbzu    r0, 1(r3)
-    cmpwi   r0, 0
-    bne     bloop
-call:
-    bl      strcpy
-    mr      r3, r31
-    lwz     r0, 0x14(r1)
-    mtlr    r0
-    lwz     r31, 0xc(r1)
-    addi    r1, r1, 0x10
-    blr
-    // clang-format on
+    char* s = s1;
+
+    // Skip over the data in s1 a word at a time, then bytewise.
+    if (ALIGNED(s1)) {
+        unsigned long* aligned_s1 = (unsigned long*)s1;
+        while (!DETECTNULL(*aligned_s1))
+            aligned_s1++;
+        s1 = (char*)aligned_s1;
+    }
+
+    while (*s1)
+        s1++;
+
+    strcpy(s1, s2);
+    return s;
 }

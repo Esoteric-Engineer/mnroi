@@ -108,9 +108,9 @@ from the 2026-09-27 mapping.
 
 | Section | Cluster | Run | Bytes | Split | Queued | Contents, in order |
 |---|---|---|---|---|---|---|
-| `.rodata` | both | none | 0 | 0 | 0 | The whole section (0x804825A0-0x80482900) is GCC's constructor list (-1, 213 game constructors, 0), read by `__do_global_ctors`: linker-built, not queued |
-| `.rodata.1` | 1 | 0x8049C1C8-0x8049CB40 | 2424 | 2424 | 0 | `__cvt_fp2unsigned`'s 2^31, SN's "Unknown DVD cmd", then libc in link order: vfscanf `basefix`, mbtowc_r locale names, SN malloc-stub messages, asctime_r, gmtime_r, mktime, fftoa, vfprintf, vfiprintf, strtod, `_ctype_`, locale.c `lconv` and names, floor, fmod, log, log10, impure.c's "C", ungetc's message, the fopen message, SN's C++ runtime messages |
-| `.rodata.1` | 2 | 0x804BF448-0x804BF460 | 24 | 24 | 0 | `__floatdisf`'s three doubles, the only GCC-libc constants here |
+| `.ctors`/`.dtors` | both | none | 0 | 0 | 0 | GCC's constructor list (0x804825A0: -1, 171 game constructors, 0), read by `__do_global_ctors`, and destructor list (0x80482860: -1, 37 destructors, 0), read by nothing. One DOL section; `GameGC.elf`'s section headers name the two halves. Each entry goes with the unit holding its function (see `prodg.md`): not queued |
+| `.rodata` | 1 | 0x8049C1C8-0x8049CB40 | 2424 | 2424 | 0 | `__cvt_fp2unsigned`'s 2^31, SN's "Unknown DVD cmd", then libc in link order: vfscanf `basefix`, mbtowc_r locale names, SN malloc-stub messages, asctime_r, gmtime_r, mktime, fftoa, vfprintf, vfiprintf, strtod, `_ctype_`, locale.c `lconv` and names, floor, fmod, log, log10, impure.c's "C", ungetc's message, the fopen message, SN's C++ runtime messages |
+| `.rodata` | 2 | 0x804BF448-0x804BF460 | 24 | 24 | 0 | `__floatdisf`'s three doubles, the only GCC-libc constants here |
 | `.data` | 1 | 0x804CFC20-0x804D398C | 15724 | 15688 | 0 (+36 padding) | SN crt0 (`__start`) strings, the SN stub's pool, the second SN run's state, mbtowc_r tables, itoa digits, strtod `powersOf10`, `impure_data`, `__sfp`'s object, `__terminate_func`, the UART flag; OS.c (split), OSAlarm, OSAudioSystem, OSCache, OSContext, OSError, OSExec, OSInterrupt (split), OSLink, OSMemory, OSReset (split), OSThread, OSTime; SIBios (partly split), SISamplingRate, db, dvdfs, dvd (partly split), dvdqueue, dvderror, dvdFatal, fstload (split), VI (split), PAD and AI version strings, GXAttr/GXLight/GXTexture (split), GXTev, GXPixel, GXInit, GXMisc, GXFrameBuf render modes, GXPerf (split), EXIBios |
 | `.data` | 2 | 0x804DCD98-0x804F2DBC | 90148 | 90104 | 0 (+44 padding) | VM string, OSAlloc strings, OSFont tables, OSUtf.c tables (0x11240), mtx44.c `mtxUnit`, AR/ARQ/AX version strings, AXVPB cost tables (split) + padding, `__AXCompressorTable`, `axDspSlave`, DSP strings (partly split), CARD version string + `ResetFunctionInfo`, CARDMount tables, `CardData` (split), texPalette strings |
 | `.bss` | 1 | 0x80573660-0x8057DCA0 | 42560 | 42544 | 0 (+16 padding) | the two SN runs' buffers, fftoa and printf buffers, `_sn_iobf`/`_sn_stat_g`, `__main`'s flag; OS.c, OSError, OSRtc (split), OSThread `RunQueue`; SIBios (split, plus 0x20); dvd, dvdqueue, fstload, dvdlow, VI, PAD, GXInit (split); EXI `Ecb` |
@@ -133,7 +133,7 @@ is left inside any run.
   file's data. Row notes give the file and the CFTKK names.
 - **Data-only files.** `OSUtf.c` (`.data`), `AXComp.c` (`__AXCompressorTable`), `DSPCode.c` (`axDspSlave`,
   `axDspSlaveLength`) and `vec.c` (`.sdata2`) have no linked code, nor do Newlib's `ctype_.c` (`_ctype_`,
-  `.rodata.1`) and `impure.c` (`impure_data` in `.data`, its "C" in `.rodata.1`, `_impure_ptr` in `.sdata`). Their
+  `.rodata`) and `impure.c` (`impure_data` in `.data`, its "C" in `.rodata`, `_impure_ptr` in `.sdata`). Their
   queue rows name the new unit to create. CFTKK has OSUtf.c, vec.c and impure.c as data-only too. The AX file names
   come from Wii-SDK decomps.
 - **Unreferenced data stays linked.** This includes the OSUtf tables, the `OSCheckHeap`/`OSDumpHeap`,
@@ -146,25 +146,25 @@ is left inside any run.
     game's data and the SN stub's. Its references to the starts of `.bss`, `.sdata` and `.sbss` are its memset
     bounds, not data.
   - The first SN run's `.data` is one pool, read in an order unrelated to `.text`. The second SN run's data follows
-    it in `.data` and `.bss`, after the runtime helpers, which have only one `.rodata.1` double.
+    it in `.data` and `.bss`, after the runtime helpers, which have only one `.rodata` double.
   - 0x8017A5CC-0x8017A800, which `LIBS` labels `os`, is not Dolphin OS: `fn_8017A5CC.c` is GCC's
     `__default_terminate`/`terminate` (its `.data` word is `__terminate_func`), `fn_8017A620.c` is SN's UART write
     with a one-time `InitializeUART`, and the units after it look like SN's `write`/`open` stubs. Their data sits
-    between libc's and OS.c's. The C++ runtime messages in `.rodata.1` go with `fn_8017A5CC.c`.
+    between libc's and OS.c's. The C++ runtime messages in `.rodata` go with `fn_8017A5CC.c`.
   - SN's malloc stubs: `free.c` prints the 'malloc' message and `realloc.c` the 'free' one, so those two names look
     shifted by one. That TU's `.sdata` is the 8 zero bytes at `0x8066C390`, the
     `_register_malloc`/`_register_free` allocator hooks that CFTKK names at `0x8047CBE0`: there they sit in `.sdata`
     directly before strtod's `maxExponent` and the vfprintf statics, in the same malloc/free/realloc -> strtod ->
     `_vfwrite` order their `.text` has, and ours sit the same way between scalbn.c's constants and `_vfwrite.c`'s
     state. Unreferenced here, since the registration entry point is dead-stripped; claimed by `free.c`, which
-    already holds the TU's `.rodata.1` pool.
+    already holds the TU's `.rodata` pool.
   - `DBRead` and `DBQueryData` (`LIBS`: odenotstub) read the same `.sbss` words as OdemuExi2's `DBInitComm`,
     interleaved, so they are one TU (DebuggerDriver.c), not the no-op odenotstub.c.
   - The units named `DVDLowSetCoverCallback`/`DVDLowSetResetCoverCallback` (0x80187DB0/0x80187DF4) sit inside vi.c's
     code and set two vi.c `.sbss` words: probably vi.c's `VISetPreRetraceCallback`/`VISetPostRetraceCallback`.
   - dvdlow.c's `.sbss` straddles `DVDLowReset.c`'s split, so the part after it can only go to `DVDLowReset.c`.
 - **Next to the run, not in it:**
-  - `.rodata` is the constructor list (see the table).
+  - `.ctors`/`.dtors` are GCC's constructor and destructor lists (see the table).
   - The game's last `.bss` object is the first 0x1100 bytes of dtk's `lbl_80572560`. SN's `.bss` starts at +0x1100,
     the first address SN code reads; only game code reads the start.
   - `.data` 0x804DCD84-0x804DCD98 holds two zero-terminated function tables, both empty: the constructor list

@@ -1,4 +1,5 @@
-extern int lbl_804825A0;
+// GCC's constructor list: -1, the constructors, then 0 (see docs/prodg.md)
+extern int __CTOR_LIST__;
 
 asm void __do_global_ctors(void)
 {
@@ -8,9 +9,9 @@ asm void __do_global_ctors(void)
     mflr    r0
     stmw    r30, 8(r1)
     stw     r0, 20(r1)
-    lis     r9, lbl_804825A0@ha
-    lwz     r11, lbl_804825A0@l(r9)
-    addi    r10, r9, lbl_804825A0@l
+    lis     r9, __CTOR_LIST__@ha
+    lwz     r11, __CTOR_LIST__@l(r9)
+    addi    r10, r9, __CTOR_LIST__@l
     cmpwi   r11, -1
     bne     have_count
     lwz     r0, 4(r10)
@@ -26,9 +27,9 @@ count_loop:
 have_count:
     mr.     r0, r11
     beq     epilogue
-    lis     r9, lbl_804825A0@ha
+    lis     r9, __CTOR_LIST__@ha
     slwi    r0, r0, 2
-    addi    r9, r9, lbl_804825A0@l
+    addi    r9, r9, __CTOR_LIST__@l
     mr      r30, r9
     add     r31, r0, r9
 call_loop:
