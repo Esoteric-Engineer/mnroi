@@ -11,16 +11,19 @@ SECTIONS
         .stack ALIGN(0x100):{}
     } > text
 
-    /* Pin the original's stack and arena bounds. __OSThreadInit loads
-       _stack_end = 0x806709A0, 0x20 past the end of .sdata2 (presumably an
-       .sbss2 that never reaches the DOL), and OSInit loads
-       __ArenaLo = 0x806809C0, 0x20 above the stack top rather than above a
-       0x2000-byte debugger stack. */
-    _stack_end = 0x806709A0;
+    /* The original's stack and arena bounds, derived from the layout so they
+       follow .sdata2 when the sections change size. __OSThreadInit loads
+       _stack_end (0x806709A0 in the original), 0x20 past the end of .sdata2
+       (presumably an .sbss2 that never reaches the DOL), and OSInit loads
+       __ArenaLo (0x806809C0), 0x20 above the stack top rather than above a
+       0x2000-byte debugger stack. A fixed _stack_end lets .sdata2 grow into
+       the stack: __OSThreadInit writes its 0xDEADBABE guard there and
+       OSClearStack zeroes the rest. */
+    _stack_end = ADDR(.sdata2) + SIZEOF(.sdata2) + 0x20;
     _stack_addr = (_stack_end + $STACKSIZE + 0x7) & ~0x7;
     _db_stack_addr = (_stack_addr + 0x2000);
     _db_stack_end = _stack_addr;
-    __ArenaLo = 0x806809C0;
+    __ArenaLo = _stack_addr + 0x20;
     __ArenaHi = $ARENAHI;
 
     /* crt0 (__start) clears .sbss up to lbl_8066FB50 (0x8066FB50 in the
