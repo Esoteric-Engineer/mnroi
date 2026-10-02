@@ -815,6 +815,7 @@ config.libs = [
         [
             Object(Matching, "Dolphin/dvd/dvdfs.c"),
             Object(Matching, "Dolphin/dvd/dvd.c"),
+            Object(Matching, "Dolphin/dvd/DVDChangeDiskAsync.c"),
             Object(Matching, "Dolphin/dvd/DVDGetDriveStatus.c"),
             Object(Matching, "Dolphin/dvd/DVDSetAutoInvalidation.c"),
             Object(Matching, "Dolphin/dvd/DVDResume.c"),

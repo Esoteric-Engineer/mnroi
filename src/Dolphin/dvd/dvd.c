@@ -777,6 +777,7 @@ void stateBusy(DVDCommandBlock* block)
     }
 }
 
+// Defined in DVDChangeDiskAsync.c, not here.
 extern u32 lbl_804D21F8[3];
 
 static inline int IsDmaCommand(u32 command)
