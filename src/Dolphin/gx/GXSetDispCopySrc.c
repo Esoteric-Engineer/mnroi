@@ -52,6 +52,11 @@ typedef struct _GXRenderModeObj {
     u8 vfilter[7];
 } GXRenderModeObj;
 
+// Unreferenced zeros at the head of GXFrameBuf.c's .data, after the pad that 8-aligns it behind GXMisc.c's strings.
+#pragma force_active on
+u8 lbl_804D35D8[0x10] = {0};
+#pragma force_active reset
+
 GXRenderModeObj GXNtsc480IntDf = {
     0, 640, 480, 480, 40, 0, 640, 480, VI_XFBMODE_DF, 0, 0,
     { {6,6},{6,6},{6,6},{6,6},{6,6},{6,6},{6,6},{6,6},{6,6},{6,6},{6,6},{6,6} },

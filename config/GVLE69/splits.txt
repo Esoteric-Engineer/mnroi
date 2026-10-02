@@ -1228,7 +1228,7 @@ Dolphin/dvd/dvd.c:
 	.text       start:0x80183DC8 end:0x80185F1C
 	.data       start:0x804D2130 end:0x804D21F8
 	.bss        start:0x8057D220 end:0x8057D2B8
-	.sdata      start:0x8066C410 end:0x8066C428
+	.sdata      start:0x8066C410 end:0x8066C430
 	.sbss       start:0x8066F2C0 end:0x8066F318
 
 Dolphin/dvd/DVDChangeDiskAsync.c:
@@ -1275,7 +1275,7 @@ Dolphin/dvd/fstload.c:
 	.text       start:0x80186A80 end:0x80186CC0
 	.data       start:0x804D2810 end:0x804D2880
 	.bss        start:0x8057D2D8 end:0x8057D348
-	.sdata      start:0x8066C470 end:0x8066C480
+	.sdata      start:0x8066C470 end:0x8066C480 align:16
 	.sbss       start:0x8066F320 end:0x8066F330
 
 Dolphin/dvd/__DVDInitWA.c:
@@ -1819,7 +1819,7 @@ Dolphin/gx/__GXInitRevisionBits.c:
 
 Dolphin/gx/GXInit.c:
 	.text       start:0x801908D8 end:0x80191810
-	.data       start:0x804D3340 end:0x804D3580
+	.data       start:0x804D3340 end:0x804D3580 align:16
 	.bss        start:0x8057D5B0 end:0x8057DBE0
 	.sdata      start:0x8066C518 end:0x8066C520
 	.sdata2     start:0x80670788 end:0x806707B0
@@ -1881,7 +1881,7 @@ Dolphin/gx/GXGetGPFifo.c:
 
 Dolphin/gx/GXSetMisc.c:
 	.text       start:0x8019206C end:0x80192100
-	.data       start:0x804D3580 end:0x804D35D4
+	.data       start:0x804D3580 end:0x804D35D8
 
 Dolphin/gx/GXFlush.c:
 	.text       start:0x80192100 end:0x8019215C
@@ -1943,7 +1943,7 @@ Dolphin/gx/GXPEInit.c:
 
 Dolphin/gx/GXSetDispCopySrc.c:
 	.text       start:0x80192890 end:0x8019290C
-	.data       start:0x804D35E8 end:0x804D3738
+	.data       start:0x804D35D8 end:0x804D3738
 
 Dolphin/gx/GXSetTexCopySrc.c:
 	.text       start:0x8019290C end:0x80192988
@@ -2181,7 +2181,7 @@ Runtime.PPCEABI.H/__floatdisf.c:
 Dolphin/vm/VMInit.c:
 	.text       start:0x804009C4 end:0x80400AAC
 	.sdata      start:0x8066CE98 end:0x8066CE9C
-	.sbss       start:0x8066F948 end:0x8066F960
+	.sbss       start:0x8066F948 end:0x8066F964
 
 Dolphin/vm/VMSetLogStatsCallback.c:
 	.text       start:0x80400AAC end:0x80400AB4

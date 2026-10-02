@@ -1,5 +1,7 @@
 unsigned long lbl_8066CE98 = 0x4000;
 
+// Unreferenced here (CFTKK's nextPageToCheck$357); declared first because .sbss is laid out in reverse.
+unsigned long nextPageToCheck;
 unsigned long lbl_8066F95C;
 void* lbl_8066F958;
 unsigned long lbl_8066F954;

@@ -35,6 +35,10 @@ int autoInvalidation = 1;
 void (*lbl_8066C418)(DVDCommandBlock* block, void* callback) = (void (*)(DVDCommandBlock*, void*))fn_80183DC8;
 char lbl_8066C41C[6] = "dvd.c";
 u32 lbl_8066C424[1] = { 0xFFFFFFFF };
+// An empty string from dead-stripped code (CFTKK's @790).
+#pragma force_active on
+char lbl_8066C428[1] = "";
+#pragma force_active reset
 
 extern u32 __DVDThreadQueue[2];
 void stateTimeout(void);

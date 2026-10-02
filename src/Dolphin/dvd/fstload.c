@@ -37,6 +37,11 @@ extern long DVDGetDriveStatus(void);
 static unsigned char bb2Buf[63];
 static unsigned char block[0x30];
 
+// fstload.c's .sdata literals, named so the first can carry the section's 16-byte alignment.
+char lbl_8066C470[2] __attribute__((aligned(16))) = "\n";
+char lbl_8066C474[4] = "OFF";
+char lbl_8066C478[3] = "ON";
+
 extern void DVDReadAbsAsyncForBS(DVDCommandBlock* block, void* addr, long length, long offset,
                                  void (*callback)(long, DVDCommandBlock*));
 extern int DVDReset(void);
@@ -92,13 +97,13 @@ void __fstLoad(void)
     bootInfo->FSTMaxLength = bb2->FSTMaxLength;
     id = &bootInfo->diskID;
     memcpy(id, idTmp, 0x20);
-    OSReport("\n");
+    OSReport(lbl_8066C470);
     OSReport("  Game Name ... %c%c%c%c\n", id->gameName[0], id->gameName[1], id->gameName[2],
              id->gameName[3]);
     OSReport("  Company ..... %c%c\n", id->company[0], id->company[1]);
     OSReport("  Disk # ...... %d\n", id->diskNumber);
     OSReport("  Game ver .... %d\n", id->gameVersion);
-    OSReport("  Streaming ... %s\n", !(id->streaming) ? "OFF" : "ON");
-    OSReport("\n");
+    OSReport("  Streaming ... %s\n", !(id->streaming) ? lbl_8066C474 : lbl_8066C478);
+    OSReport(lbl_8066C470);
     OSSetArenaHi(bb2->FSTAddress);
 }

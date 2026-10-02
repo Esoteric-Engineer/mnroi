@@ -194,7 +194,8 @@ __GXDataStruct* const __GXData = (__GXDataStruct*)lbl_8057D630;
 #define gx __GXData
 
 // GXInit's version string, a 4x4 texture image, one shared GXVtxAttrFmtList used to init all 8 vertex format slots identically.
-u8 lbl_804D3340[0x16C] = {
+// GXInit.c's .data is at least 16-aligned: the 8 zero bytes before it, after GXPixel.c's p2f, are padding.
+u8 lbl_804D3340[0x16C] __attribute__((aligned(16))) = {
     // "<< Dolphin SDK - GX\trelease build: Nov 10 2004 06:27:12 (0x2301) >>"
     0x3C, 0x3C, 0x20, 0x44, 0x6F, 0x6C, 0x70, 0x68, 0x69, 0x6E, 0x20, 0x53, 0x44, 0x4B, 0x20, 0x2D,
     0x20, 0x47, 0x58, 0x09, 0x72, 0x65, 0x6C, 0x65, 0x61, 0x73, 0x65, 0x20, 0x62, 0x75, 0x69, 0x6C,
