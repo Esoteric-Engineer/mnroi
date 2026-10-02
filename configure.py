@@ -469,7 +469,7 @@ config.libs = [
         ],
     },
     {
-        # SN Systems ProDG debug stub (0x80168770-0x8016B554), see docs/sdk_libraries.md
+        # SN Systems ProDG debug stub (0x80168770-0x8016B554 and 0x8016B6AC-0x8016C514)
         "lib": "SN",
         "mw_version": "GC/1.2.5n",
         "cflags": cflags_base,

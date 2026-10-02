@@ -102,7 +102,7 @@ unsigned char lbl_804CFD58[0x14] = {
 /* lbl_804CFD6C: merged with the former lbl_804CFD85 (+0x19) and lbl_804CFDE2
    (+0x76) blobs; MWCC inserts 4-byte alignment padding between separate
    top-level globals whose size isn't a multiple of 4, which the original's
-   layout doesn't have, so the three must be one object (matching_notes.md). */
+   layout doesn't have, so the three must be one object. */
 unsigned char lbl_804CFD6C[0xb0] = {
     /* +0x00 (was lbl_804CFD6C) */
     0x2a, 0x2a, 0x2a, 0x20, 0x43, 0x4d, 0x44, 0x20, 0x52, 0x45, 0x41, 0x44,

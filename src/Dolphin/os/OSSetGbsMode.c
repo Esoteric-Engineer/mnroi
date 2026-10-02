@@ -18,7 +18,7 @@ extern void UnlockSram(BOOL commit, unsigned long offset);
 // - locks SRAM
 // - updates OSSramEx.gbsMode (+0x14 + 0x28 = SRAM byte 0x3C)
 // - commits only if it changed
-// Written as asm: plain C stalls at 75.8% (see docs/matching_notes.md).
+// Written as asm: plain C stalls at 75.8%.
 // The original has an 8-byte larger frame and hoists the (u16)mode copy above the prologue.
 asm void OSSetGbsMode(unsigned short mode)
 {

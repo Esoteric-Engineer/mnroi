@@ -13,6 +13,21 @@ See also:
   Its `.text` and its constructor lists are byte-identical to `main.dol`'s, though, so its section headers show the original link's layout: `.init`, `.text`, `.ctors`, `.dtors`, `.rodata`, `.data`, `.bss`, `.sdata`, `.sbss`, `.sdata2`. `splits.txt` uses those names.
 - **Two compilers:** The Dolphin SDK is Nintendo's prebuilt MWCC output. Everything else (the game's C++, Newlib/libgcc, the VM library and SN's debug stub) was built with SN Systems ProDG, a GCC 2.95 build, and linked by SN's linker. The project compiles SDK units with MWCC and the rest with ProDG, and links everything with mwld. See [`prodg.md`](prodg.md).
 
+## Memory Map
+
+Library code sits in two clusters inside `.text`, with game code on either side. All library code and data is split and matched, so every remaining `auto_` unit is game code or game data.
+
+| `.text` range | Contents |
+|---|---|
+| `.init` 0x80003100-0x800034A0 | SN's crt0 (`__start`) and its helpers |
+| 0x800034A0-0x80168768 | Game |
+| 0x80168770-0x80196884 | Library: SN debug stub, compiler runtime, Newlib libc/libm, OS, SI, DB, DVD, VI, PAD, AI, GX, EXI, odenotstub, OdemuExi2 |
+| 0x80196884-0x803FF3B0 | Game. About half of these functions have no frame pointer, so some files were built with other flags (see [`prodg.md`](prodg.md#flags)) |
+| 0x803FF3B0-0x804114EC | Library: Newlib libm/libc, VM, `__save_gpr`/`__restore_gpr`, OS, MTX, AR, ARQ, AX, DSP, CARD, GX display lists, texPalette |
+| 0x804114EC-0x804825A0 | Game |
+
+In `configure.py`, the Dolphin SDK is the `DolphinLib` entries, Newlib/libgcc and the compiler runtime are `Runtime.PPCEABI.H`, the debug stub is `SN`, and game code is `Game`. Most of `Runtime.PPCEABI.H`, `SN` and the VM library is `nofralloc` asm transcribed from the GCC output, not C.
+
 ## Toolkit Fork Reasoning
 
 Stock decomp-toolkit can't produce a matching build. These fixes are required, all in [`Esoteric-Engineer/mnroi-decomp-toolkit`](https://github.com/Esoteric-Engineer/mnroi-decomp-toolkit):
@@ -26,7 +41,7 @@ Stock decomp-toolkit can't produce a matching build. These fixes are required, a
 
 This game addresses all small data through `r13` (`_SDA_BASE_ = 0x806734E0`): 13,359 accesses in `.text`, and none through `r2`. The entire 21 KB small-data span fits within one ~32 KB `r13` window. `_SDA2_BASE_` is loaded by crt0 but addresses nothing.
 
-dtk names the read-only small-data segment `.sdata2`, so mwld emits it as `r2`-relative: mwld chooses the base register from the section name, not the address range. This changed 474 variables that the original accesses through `r13`, producing 1,554 differing bytes.
+dtk names the read-only small-data segment `.sdata2`, so mwld emits it as `r2`-relative: mwld chooses the base register from the section name, not the address range. That breaks every access the original makes to it through `r13`.
 
 The usual linker fixes don't work: mwld emits only one `r13` small-data pair, and merging the segments changes the DOL layout.
 
@@ -36,7 +51,7 @@ The fork's `sda2_via_r13` option (enabled in `config.yml`) carries those accesse
 - **Compiled objects:** `tools/project.py` runs `dtk elf bake-sda` on each one before linking, which does the same to every `EMB_SDA21` relocation whose target is in `.sdata2`/`.sbss2`, or is undefined and named in that file. Without it, C referencing a `.sdata2` symbol (e.g. `__GXData`) fails with `Range Error for small data relocation`.
 - **Linked ELF:** the link step then runs `dtk elf resolve-sda` on `main.elf`. Each `ADDR16_LO` on an `r13`-based load, store or `addi` that targets `.sdata2`/`.sbss2` gets the displacement `symbol + addend - _SDA_BASE_` from the final layout and becomes an `EMB_SDA21` relocation again. Nothing else uses that combination, since `r13` is reserved.
 
-Because every access is resolved from the final layout, `.sdata2` constants keep working when sections change size (an earlier version baked fixed displacements before the link, which only held for the original layout). `_SDA2_BASE_` is pinned in [`../config/GVLE69/ldscript.lcf`](../config/GVLE69/ldscript.lcf) so crt0 matches; nothing addresses data through `r2`. Because the fix is in the tool rather than the finished DOL, the *objects* stay correct and `objdiff` remains trustworthy.
+Because every access is resolved from the final layout, `.sdata2` constants keep working when sections change size. `_SDA2_BASE_` is pinned in [`../config/GVLE69/ldscript.lcf`](../config/GVLE69/ldscript.lcf) so crt0 matches (mwld's warning that the linker script redefines it is expected); nothing addresses data through `r2`. Because the fix is in the tool rather than the finished DOL, the *objects* stay correct and `objdiff` remains trustworthy.
 
 A compiled object can only reach an `.sdata2` object through a symbol some object defines: an `extern` of a name that only exists in `symbols.txt` (e.g. another unit's anonymous literal) fails to link as `undefined`. Give the owning unit a real definition of it (see `C_MTXOrtho.c`), or address it from a defined symbol in the same object (`GXTexObjMinLodScaleConst-32` in `GXTexture.c`).
 

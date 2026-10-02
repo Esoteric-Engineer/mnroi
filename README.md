@@ -121,7 +121,7 @@ Building
   ninja
   ```
 
-  A successful build ends with `build/GVLE69/main.dol: OK`. A `WARN Unknown section .rodata.1` during the split step is expected.
+  A successful build ends with `build/GVLE69/main.dol: OK`. The `WARN` lines from the split step and mwld's `_SDA2_BASE_` warning are expected.
 
 Diffing
 =======

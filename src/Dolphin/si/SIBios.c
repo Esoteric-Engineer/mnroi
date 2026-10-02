@@ -215,7 +215,7 @@ L801822A8:
     // clang-format on
 }
 
-#pragma peephole on // see docs/matching_notes.md: asm disables peephole for the rest of the TU
+#pragma peephole on // an asm function disables peephole for the rest of the TU
 
 unsigned int SIGetStatus(int chan)
 {

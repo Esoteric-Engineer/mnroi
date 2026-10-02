@@ -84,7 +84,7 @@ How the build reproduces it:
 
 ## MWCC units and `.rodata`
 
-Most of the read-only data the SDK clusters own belongs to GCC-built runtime code that this project wrote as MWCC units. MWCC gives its own `.rodata` a fixed 8-byte alignment, which would pad every claim that starts 4-mod-8. So MWCC units keep declaring `.rodata.1` (see [`matching_notes.md`](matching_notes.md)), and `tools/fold_rodata.py` renames it to `.rodata` after each MWCC compile. The data then links in order with the ProDG objects' `.rodata`, at its contents' alignment.
+Most of the read-only data the SDK clusters own belongs to GCC-built runtime code that this project wrote as MWCC units. MWCC gives its own `.rodata` a fixed 8-byte alignment, which would pad every claim that starts 4-mod-8. So MWCC units keep their read-only data in `.rodata.1` (`#pragma section R ".rodata.1"` plus `__declspec(section ".rodata.1")` on each object), and `tools/fold_rodata.py` renames it to `.rodata` after each MWCC compile. The data then links in order with the ProDG objects' `.rodata`, at its contents' alignment.
 
 ## Open questions
 

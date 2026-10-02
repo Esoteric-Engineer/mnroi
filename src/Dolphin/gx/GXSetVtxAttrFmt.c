@@ -1,6 +1,6 @@
 // GXSetVtxAttrFmt and GXSetVtxAttrFmtv share a translation unit.
 // Their two switch jump tables are adjacent in .data (0x804D2E28 and 0x804D2E6C) with no alignment padding between them, and MWCC always gives .data 8-byte alignment.
-// Splitting them into separate units would land the second table 4 bytes late. See docs/matching_notes.md.
+// Splitting them into separate units would land the second table 4 bytes late.
 typedef unsigned char u8;
 typedef unsigned long u32;
 
