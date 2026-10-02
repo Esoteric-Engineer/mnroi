@@ -34,6 +34,9 @@ KNOWN_PERMANENT_GAPS = {
         "MtxOneConst/MtxZeroConst: defining them in-unit duplicates PSMTXIdentity's own literal pool, see matching_notes.md",
     (".sbss", 0x8066FB14, 0x8066FB18):
         "unreferenced pad between CARDInit.c's two u16s and GXDisplayList.c's 8-aligned .sbss, see Dolphin/card/CARDInit.c's row",
+    (".data", 0x804EF0A4, 0x804EF0C0):
+        "mwld 32-alignment pad between AXVPB.c's .data (tblA+tblB+tblC = 0xD4 exactly) and AXComp.c's"
+        " 32-aligned __AXCompressorTable, owned by neither TU, see Dolphin/ax/__AXSyncPBs.c's row",
 }
 
 ap = argparse.ArgumentParser()
