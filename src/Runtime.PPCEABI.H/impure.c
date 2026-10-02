@@ -54,9 +54,9 @@ static struct _reent impure_data = {
     {{0}},
 };
 
-struct _reent* lbl_8066C3B0 = &impure_data;
+// __sfp's preset-buffer table: 10 {char* base; int size;} pairs, one per _sn_iobf slot.
+// Here, not in __sfp.c, because 0x804D061C is 4-mod-8 and impure_data's start is the nearest 8-aligned one. Real size 0x50; the 4 bytes to __terminate_func are mwld's pad.
+char lbl_804D061C[0x50] = {0};
 
-// __sfp's own fallback-buffer table (unclaimed) follows impure_data in .data;
-// claimed here only because this unit's .sdata start must stay 8-aligned.
-extern char lbl_804D061C[];
+struct _reent* lbl_8066C3B0 = &impure_data;
 char* lbl_8066C3B4 = lbl_804D061C;
