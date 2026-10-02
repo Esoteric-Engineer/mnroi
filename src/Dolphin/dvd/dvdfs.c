@@ -18,8 +18,17 @@ typedef struct DVDCommandBlock
 {
     unsigned char pad0[0xC];
     s32 state;
-    unsigned char pad1[0x30 - 0x10];
+    unsigned char pad1[0x10];
+    u32 transferredSize;
+    unsigned char pad2[0xC];
 } DVDCommandBlock;
+
+typedef struct DVDDir
+{
+    u32 entryNum;
+    u32 location;
+    u32 next;
+} DVDDir;
 
 typedef struct DVDFileInfo
 {
@@ -33,24 +42,62 @@ typedef struct DVDFileInfo
 #define filePosition(i) (FstStart[i].parentOrPosition)
 #define fileLength(i) (FstStart[i].nextEntryOrLength)
 
-extern OSBootInfo* BootInfo;
-extern FSTEntry* FstStart;
-extern char* FstStringStart;
-extern u32 MaxEntryNum;
-extern u32 currentDirectory;
-extern u32 __DVDLongFileNameFlag;
-extern char lbl_8066C408[8]; // this TU's __FILE__ string; unnamed, compiler-synthesized
-extern char lbl_804D1D40[]; // the OSPanic() format string below, same reasoning
-extern void fn_8017CBFC(void); // likely OSPanic, unconfirmed
-extern int fn_80400544(int c); // likely tolower, unconfirmed
-extern s32 fn_8018389C(char* path, u32 maxlen); // likely DVDGetCurrentDir, unconfirmed
+char __DVDThreadQueue[8];
+u32 __DVDLongFileNameFlag;
+u32 currentDirectory;
+u32 MaxEntryNum;
+char* FstStringStart;
+FSTEntry* FstStart;
+OSBootInfo* BootInfo_8066F2A0;
+
+// this TU's __FILE__ string; unnamed, compiler-synthesized
+static char lbl_8066C408[8] = "dvdfs.c";
+
+extern void OSPanic(const char* file, int line, const char* msg, ...);
+extern int tolower2(int c);
+extern s32 DVDGetCurrentDir(char* path, u32 maxlen);
+extern void cbForReadAsync(s32 result, DVDCommandBlock* block);
+extern s32 DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, s32 length, s32 offset, void* callback, s32 prio);
+extern void cbForReadSync(void);
+extern void OSWakeupThread(void* queue);
+extern void OSSleepThread(void* queue);
+extern int OSDisableInterrupts(void);
+extern int OSRestoreInterrupts(int level);
+extern void cbForSeekSync(void);
+extern s32 DVDSeekAbsAsyncPrio(DVDCommandBlock* block, u32 offset, void* callback, s32 prio);
+extern s32 DVDCancel(DVDCommandBlock* block);
 extern void OSReport(const char* msg, ...);
-extern char lbl_804D1E08[0x38]; // "Warning: DVDOpen(): file '%s' was not found under %s.\n"
+
+// the OSPanic() format string used by DVDConvertPathToEntrynum below
+static char lbl_804D1D40[0xC8] = "DVDConvertEntrynumToPath(possibly DVDOpen or DVDChangeDir or DVDOpenDir): "
+    "specified directory or file (%s) doesn't match standard 8.3 format. This is a "
+    "temporary restriction and will be removed soon\n";
+
+// DVDOpen's warning message
+static char lbl_804D1E08[0x38] = "Warning: DVDOpen(): file '%s' was not found under %s.\n";
+
+// DVDReadAsyncPrio's message
+static char lbl_804D1E40[0x34] = "DVDReadAsync(): specified area is out of the file  ";
+
+// DVDReadPrio's message.
+// The trailing DVDSeek message is unreferenced (same shared-pool reason)
+static char lbl_804D1E74[0x58] = "DVDRead(): specified area is out of the file  " "\0\0" "DVDSeek(): offset is out of the file  ";
+
+// DVDOpenDir's warning message.
+// The rest of this pool is unreferenced (dead-stripped DVDPrepareStreamAsync/DVDPrepareStream messages that survive because the pool is shared)
+static char lbl_804D1ECC[0x264] =
+    "Warning: DVDOpenDir(): file '%s' was not found under %s.\n" "\0\0\0"
+    "DVDPrepareStreamAsync(): Specified start address (filestart(0x%x) + offset(0x%x)) is not 32KB aligned" "\0\0\0"
+    "DVDPrepareStreamAsync(): Specified length (0x%x) is not a multiple of 32768(32*1024)" "\0\0\0\0"
+    "DVDPrepareStreamAsync(): The area specified (offset(0x%x), length(0x%x)) is out of the file" "\0"
+    "DVDPrepareStream(): Specified start address (filestart(0x%x) + offset(0x%x)) is not 32KB aligned" "\0\0\0\0"
+    "DVDPrepareStream(): Specified length (0x%x) is not a multiple of 32768(32*1024)" "\0"
+    "DVDPrepareStream(): The area specified (offset(0x%x), length(0x%x)) is out of the file";
 
 void __DVDFSInit(void)
 {
-    BootInfo = (OSBootInfo*)0x80000000;
-    FstStart = BootInfo->FSTLocation;
+    BootInfo_8066F2A0 = (OSBootInfo*)0x80000000;
+    FstStart = BootInfo_8066F2A0->FSTLocation;
     if (FstStart) {
         MaxEntryNum = FstStart->nextEntryOrLength;
         FstStringStart = (char*)FstStart + (MaxEntryNum * 0xC);
@@ -171,7 +218,7 @@ L801832EC:
     addi    r6, r25, 0
     la      r3, lbl_8066C408
     li      r4, 387
-    bl      fn_8017CBFC
+    bl      OSPanic
     b       L80183334
 L80183310:
     mr      r28, r23
@@ -222,12 +269,12 @@ L8018339C:
     lbz     r0, 0(r20)
     addi    r20, r20, 1
     extsb   r3, r0
-    bl      fn_80400544
+    bl      tolower2
     lbz     r0, 0(r21)
     addi    r22, r3, 0
     addi    r21, r21, 1
     extsb   r3, r0
-    bl      fn_80400544
+    bl      tolower2
     cmpw    r3, r22
     beq     L801833D0
     li      r0, 0
@@ -318,7 +365,7 @@ s32 DVDOpen(char* fileName, DVDFileInfo* fileInfo)
     entry = DVDConvertPathToEntrynum(fileName);
 
     if (entry < 0) {
-        fn_8018389C(currentDir, 128);
+        DVDGetCurrentDir(currentDir, 128);
         OSReport(lbl_804D1E08, fileName, currentDir);
         return 0;
     }
@@ -332,5 +379,243 @@ s32 DVDOpen(char* fileName, DVDFileInfo* fileInfo)
     fileInfo->callback = 0;
     fileInfo->cb.state = 0;
 
+    return 1;
+}
+
+s32 DVDClose(DVDFileInfo* fileInfo)
+{
+    DVDCancel(&fileInfo->cb);
+    return 1;
+}
+
+static u32 myStrncpy(char* dest, char* src, u32 maxlen)
+{
+    u32 i = maxlen;
+
+    while ((i > 0) && (*src != 0)) {
+        *dest++ = *src++;
+        i--;
+    }
+
+    return (maxlen - i);
+}
+
+u32 entryToPath(u32 entry, char* path, u32 maxlen)
+{
+    char* name;
+    u32 loc;
+
+    if (entry == 0) {
+        return 0;
+    }
+
+    name = FstStringStart + (FstStart[entry].isDirAndStringOff & 0xFFFFFF);
+
+    loc = entryToPath(FstStart[entry].parentOrPosition, path, maxlen);
+
+    if (loc == maxlen) {
+        return loc;
+    }
+
+    *(path + loc++) = '/';
+
+    loc += myStrncpy(path + loc, name, maxlen - loc);
+
+    return loc;
+}
+
+s32 DVDConvertEntrynumToPath(s32 entrynum, char* path, u32 maxlen)
+{
+    u32 loc;
+
+    loc = entryToPath((u32)entrynum, path, maxlen);
+
+    if (loc == maxlen) {
+        path[maxlen - 1] = '\0';
+        return 0;
+    }
+
+    if (entryIsDir(entrynum)) {
+        if (loc == maxlen - 1) {
+            path[loc] = '\0';
+            return 0;
+        }
+
+        path[loc++] = '/';
+    }
+
+    path[loc] = '\0';
+    return 1;
+}
+
+s32 DVDGetCurrentDir(char* path, u32 maxlen)
+{
+    return DVDConvertEntrynumToPath((s32)currentDirectory, path, maxlen);
+}
+
+s32 DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, void* callback, s32 prio)
+{
+    if (!((0 <= offset) && (offset <= fileInfo->length))) {
+        OSPanic(lbl_8066C408, 0x2EE, lbl_804D1E40);
+    }
+
+    if (!((0 <= offset + length) && (offset + length < fileInfo->length + 32))) {
+        OSPanic(lbl_8066C408, 0x2F4, lbl_804D1E40);
+    }
+
+    fileInfo->callback = callback;
+    DVDReadAbsAsyncPrio(&fileInfo->cb, addr, length, fileInfo->startAddr + offset, cbForReadAsync, prio);
+
+    return 1;
+}
+
+void cbForReadAsync(s32 result, DVDCommandBlock* block)
+{
+    DVDFileInfo* fileInfo = (DVDFileInfo*)block;
+
+    if (fileInfo->callback) {
+        ((void (*)(s32, DVDFileInfo*))fileInfo->callback)(result, fileInfo);
+    }
+}
+
+s32 DVDReadPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, s32 prio)
+{
+    s32 result;
+    DVDCommandBlock* block;
+    s32 state;
+    int enabled;
+    s32 retVal;
+
+    if (!((0 <= offset) && (offset <= fileInfo->length))) {
+        OSPanic(lbl_8066C408, 0x334, lbl_804D1E74);
+    }
+
+    if (!((0 <= offset + length) && (offset + length < fileInfo->length + 32))) {
+        OSPanic(lbl_8066C408, 0x33A, lbl_804D1E74);
+    }
+
+    block = &fileInfo->cb;
+    result = DVDReadAbsAsyncPrio(block, addr, length, fileInfo->startAddr + offset, cbForReadSync, prio);
+    if (result == 0) {
+        return -1;
+    }
+
+    enabled = OSDisableInterrupts();
+
+    while (1) {
+        state = ((volatile DVDCommandBlock*)block)->state;
+        if (state == 0) {
+            retVal = (s32)block->transferredSize;
+            break;
+        } else if (state == -1) {
+            retVal = -1;
+            break;
+        } else if (state == 10) {
+            retVal = -3;
+            break;
+        }
+        OSSleepThread(__DVDThreadQueue);
+    }
+
+    OSRestoreInterrupts(enabled);
+    return retVal;
+}
+
+void cbForReadSync(void)
+{
+    OSWakeupThread(__DVDThreadQueue);
+}
+
+s32 DVDSeekPrio(DVDFileInfo* fileInfo, s32 offset, s32 prio)
+{
+    s32 result;
+    DVDCommandBlock* block;
+    s32 state;
+    int enabled;
+    s32 retVal;
+
+    block = &fileInfo->cb;
+    result = DVDSeekAbsAsyncPrio(block, fileInfo->startAddr + offset, cbForSeekSync, prio);
+    if (result == 0) {
+        return -1;
+    }
+
+    enabled = OSDisableInterrupts();
+
+    while (1) {
+        state = ((volatile DVDCommandBlock*)block)->state;
+        if (state == 0) {
+            retVal = 0;
+            break;
+        } else if (state == -1) {
+            retVal = -1;
+            break;
+        } else if (state == 10) {
+            retVal = -3;
+            break;
+        }
+        OSSleepThread(__DVDThreadQueue);
+    }
+
+    OSRestoreInterrupts(enabled);
+    return retVal;
+}
+
+void cbForSeekSync(void)
+{
+    OSWakeupThread(__DVDThreadQueue);
+}
+
+s32 DVDOpenDir(char* dirName, DVDDir* dir)
+{
+    s32 entry;
+    char currentDir[128];
+
+    entry = DVDConvertPathToEntrynum(dirName);
+
+    if (entry < 0) {
+        DVDGetCurrentDir(currentDir, 128);
+        OSReport(lbl_804D1ECC, dirName, currentDir);
+        return 0;
+    }
+
+    if (!entryIsDir(entry)) {
+        return 0;
+    }
+
+    dir->entryNum = entry;
+    dir->location = entry + 1;
+    dir->next = fileLength(entry);
+
+    return 1;
+}
+
+typedef struct DVDDirEntry
+{
+    u32 entryNum;
+    u32 isDir;
+    char* name;
+} DVDDirEntry;
+
+#define stringOff(i) (FstStart[i].isDirAndStringOff & ~0xff000000)
+#define nextDir(i) (FstStart[i].nextEntryOrLength)
+
+s32 DVDReadDir(DVDDir* dir, DVDDirEntry* dirent)
+{
+    u32 loc;
+
+    loc = dir->location;
+    if ((loc <= dir->entryNum) || (dir->next <= loc)) {
+        return 0;
+    }
+    dirent->entryNum = loc;
+    dirent->isDir = entryIsDir(loc);
+    dirent->name = FstStringStart + stringOff(loc);
+    dir->location = entryIsDir(loc) ? nextDir(loc) : loc + 1;
+    return 1;
+}
+
+s32 DVDCloseDir(DVDDir* dir)
+{
     return 1;
 }

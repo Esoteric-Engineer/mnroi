@@ -207,3 +207,32 @@ void __OSPromoteThread(OSThread* thread, long priority)
         }
     }
 }
+
+// OSCheckActiveThreads's ASSERTREPORT condition strings; the function is dead-stripped (unreferenced), so only its string literals survive in the original.
+#pragma force_active on
+char lbl_804D1308[95] = "OSCheckActiveThreads: Failed RunQueue[prio].head != NULL && RunQueue[prio].tail != NULL in %d\n";
+char lbl_804D1368[11] = "OSThread.c";
+char lbl_804D1374[95] = "OSCheckActiveThreads: Failed RunQueue[prio].head == NULL && RunQueue[prio].tail == NULL in %d\n";
+char lbl_804D13D4[70] = "OSCheckActiveThreads: Failed CheckThreadQueue(&RunQueue[prio]) in %d\n";
+char lbl_804D141C[126] = "OSCheckActiveThreads: Failed __OSActiveThreadQueue.head == NULL || __OSActiveThreadQueue.head->linkActive.prev == NULL in %d\n";
+char lbl_804D149C[126] = "OSCheckActiveThreads: Failed __OSActiveThreadQueue.tail == NULL || __OSActiveThreadQueue.tail->linkActive.next == NULL in %d\n";
+char lbl_804D151C[122] = "OSCheckActiveThreads: Failed thread->linkActive.next == NULL || thread == thread->linkActive.next->linkActive.prev in %d\n";
+char lbl_804D1598[122] = "OSCheckActiveThreads: Failed thread->linkActive.prev == NULL || thread == thread->linkActive.prev->linkActive.next in %d\n";
+char lbl_804D1614[81] = "OSCheckActiveThreads: Failed *(thread->stackEnd) == OS_THREAD_STACK_MAGIC in %d\n";
+char lbl_804D1668[113] = "OSCheckActiveThreads: Failed OS_PRIORITY_MIN <= thread->priority && thread->priority <= OS_PRIORITY_MAX+1 in %d\n";
+char lbl_804D16DC[57] = "OSCheckActiveThreads: Failed 0 <= thread->suspend in %d\n";
+char lbl_804D1718[73] = "OSCheckActiveThreads: Failed CheckThreadQueue(&thread->queueJoin) in %d\n";
+char lbl_804D1764[81] = "OSCheckActiveThreads: Failed thread->queue == &RunQueue[thread->priority] in %d\n";
+char lbl_804D17B8[82] = "OSCheckActiveThreads: Failed IsMember(&RunQueue[thread->priority], thread) in %d\n";
+char lbl_804D180C[89] = "OSCheckActiveThreads: Failed thread->priority == __OSGetEffectivePriority(thread) in %d\n";
+char lbl_804D1868[66] = "OSCheckActiveThreads: Failed !IsSuspended(thread->suspend) in %d\n";
+char lbl_804D18AC[58] = "OSCheckActiveThreads: Failed thread->queue == NULL in %d\n";
+char lbl_804D18E8[58] = "OSCheckActiveThreads: Failed thread->queue != NULL in %d\n";
+char lbl_804D1924[68] = "OSCheckActiveThreads: Failed CheckThreadQueue(thread->queue) in %d\n";
+char lbl_804D1968[68] = "OSCheckActiveThreads: Failed IsMember(thread->queue, thread) in %d\n";
+char lbl_804D19AC[59] = "OSCheckActiveThreads: Failed thread->priority == 32 in %d\n";
+char lbl_804D19E8[63] = "OSCheckActiveThreads: Failed !__OSCheckDeadLock(thread) in %d\n";
+char lbl_804D1A28[103] = "OSCheckActiveThreads: Failed thread->queueMutex.head == NULL && thread->queueMutex.tail == NULL in %d\n";
+char lbl_804D1A90[69] = "OSCheckActiveThreads: Failed. unkown thread state (%d) of thread %p\n";
+char lbl_804D1AD8[61] = "OSCheckActiveThreads: Failed __OSCheckMutexes(thread) in %d\n";
+#pragma force_active reset

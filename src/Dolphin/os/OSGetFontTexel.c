@@ -1,0 +1,111 @@
+typedef unsigned char u8;
+typedef unsigned short u16;
+typedef unsigned long u32;
+typedef long s32;
+
+typedef struct OSFontHeader {
+    u16 fontType;
+    u16 firstChar;
+    u16 lastChar;
+    u16 invalChar;
+    u16 ascent;
+    u16 descent;
+    u16 width;
+    u16 leading;
+    u16 cellWidth;
+    u16 cellHeight;
+    u32 sheetSize;
+    u16 sheetFormat;
+    u16 sheetColumn;
+    u16 sheetRow;
+    u16 sheetWidth;
+    u16 sheetHeight;
+    u16 widthTable;
+    u32 sheetImage;
+    u32 sheetFullSize;
+    u8 c0;
+    u8 c1;
+    u8 c2;
+    u8 c3;
+} OSFontHeader;
+
+extern u16 FontEncode;
+extern char* (*ParseString)(u16 encode, char* string, OSFontHeader** fontData, s32* fontCode);
+extern char* ParseStringS(u16 encode, char* string, OSFontHeader** fontData, s32* fontCode);
+extern volatile u16 __VIRegs[0x100] : 0xCC002000;
+
+static inline u16 GetFontEncode(void)
+{
+    if (FontEncode != 0xFFFF) {
+        return FontEncode;
+    }
+    switch (*(int*)0x800000CC) {
+    case 0:
+        FontEncode = (__VIRegs[55] & 2) ? 1 : 0;
+        break;
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    default:
+        FontEncode = 0;
+    }
+    ParseString = ParseStringS;
+    return FontEncode;
+}
+
+char* OSGetFontTexel(char* string, void* image, s32 pos, s32 stride, s32* width)
+{
+    OSFontHeader* font;
+    u8* src;
+    u8* dst;
+    s32 fontCode;
+    int sheet;
+    int numChars;
+    int row;
+    int column;
+    int x;
+    int y;
+    int offsetSrc;
+    int offsetDst;
+    u8* colorIndex;
+    u8* imageSrc;
+
+    string = ParseString(GetFontEncode(), string, &font, &fontCode);
+    colorIndex = &font->c0;
+
+    sheet = fontCode / (font->sheetColumn * font->sheetRow);
+    numChars = fontCode - (sheet * (font->sheetColumn * font->sheetRow));
+    row = numChars / font->sheetColumn;
+    column = numChars - (row * font->sheetColumn);
+    row *= font->cellHeight;
+    column *= font->cellWidth;
+    imageSrc = (u8*)font + font->sheetImage;
+    imageSrc += sheet * font->sheetSize / 2;
+
+    for (y = 0; y < font->cellHeight; y++) {
+        for (x = 0; x < font->cellWidth; x++) {
+            src = imageSrc + (((font->sheetWidth / 8) * 32) / 2) * ((row + y) / 8);
+            src += ((column + x) / 8) * 16;
+            src += ((row + y) % 8) * 2;
+            src += ((column + x) % 8) / 4;
+
+            offsetSrc = (column + x) % 4;
+
+            dst = (u8*)image + ((y / 8) * (((stride * 4) / 8) * 32));
+            dst += (((pos + x) / 8) * 32);
+            dst += ((y % 8) * 4);
+            dst += ((pos + x) % 8) / 2;
+
+            offsetDst = (pos + x) % 2;
+
+            *dst |= colorIndex[(*src >> (6 - offsetSrc * 2)) & 3] & (offsetDst ? 0x0f : 0xf0);
+        }
+    }
+
+    if (width) {
+        *width = ((u8*)font + font->widthTable)[fontCode];
+    }
+    return string;
+}

@@ -33,3 +33,33 @@ compile_commands.json
 # Miscellaneous
 /*.txt
 *.exe
+
+# Vendor-Specific Agentic Folders (intentionally tracking vendor-neutral .agents/)
+.claude/
+.cursor/
+.windsurf/
+.codeium/
+.continue/
+.cline/
+.roo/
+.kiro/
+.gemini/
+.codex/
+.qwen/
+.augment/
+.trae/
+.amazonq/
+.junie/
+.goose/
+.opencode/
+.copilot/
+.aider*
+.github/copilot-instructions.md
+
+# Vendor-Specific Agentic Files
+.cursorrules
+.clinerules
+.windsurfrules
+.roomodes
+CLAUDE.md
+GEMINI.md

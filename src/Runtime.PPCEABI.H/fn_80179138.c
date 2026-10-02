@@ -1,3 +1,40 @@
+// The unit owns its .sdata2 literal pool.
+// The asm only names DivdiClzTab0 and indexes the rest from it, so mwld would dead-strip the others. force_active keeps them linked.
+#pragma force_active on
+
+const unsigned long long DivdiClzTab0 = 0x0001020203030303ULL;
+const unsigned long long DivdiClzTab1 = 0x0404040404040404ULL;
+const unsigned long long DivdiClzTab2 = 0x0505050505050505ULL;
+const unsigned long long DivdiClzTab3 = 0x0505050505050505ULL;
+const unsigned long long DivdiClzTab4 = 0x0606060606060606ULL;
+const unsigned long long DivdiClzTab5 = 0x0606060606060606ULL;
+const unsigned long long DivdiClzTab6 = 0x0606060606060606ULL;
+const unsigned long long DivdiClzTab7 = 0x0606060606060606ULL;
+const unsigned long long DivdiClzTab8 = 0x0707070707070707ULL;
+const unsigned long long DivdiClzTab9 = 0x0707070707070707ULL;
+const unsigned long long DivdiClzTab10 = 0x0707070707070707ULL;
+const unsigned long long DivdiClzTab11 = 0x0707070707070707ULL;
+const unsigned long long DivdiClzTab12 = 0x0707070707070707ULL;
+const unsigned long long DivdiClzTab13 = 0x0707070707070707ULL;
+const unsigned long long DivdiClzTab14 = 0x0707070707070707ULL;
+const unsigned long long DivdiClzTab15 = 0x0707070707070707ULL;
+const unsigned long long DivdiClzTab16 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab17 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab18 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab19 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab20 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab21 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab22 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab23 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab24 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab25 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab26 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab27 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab28 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab29 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab30 = 0x0808080808080808ULL;
+const unsigned long long DivdiClzTab31 = 0x0808080808080808ULL;
+
 asm long long fn_80179138(long long a, long long b)
 {
     // clang-format off
@@ -60,7 +97,7 @@ Lb4:
     li      r10, 16
 Lcc:
     srw     r11, r11, r10
-    addi    r9, r13, -12912
+    la    r9, DivdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r7, r0, 32
@@ -139,7 +176,7 @@ L1d4:
     li      r10, 16
 L1ec:
     srw     r11, r8, r10
-    addi    r9, r13, -12912
+    la    r9, DivdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r10
     subfic  r7, r0, 32
@@ -268,7 +305,7 @@ L3ac:
     li      r7, 16
 L3c4:
     srw     r11, r5, r7
-    addi    r9, r13, -12912
+    la    r9, DivdiClzTab0
     lbzx    r0, r9, r11
     add     r0, r0, r7
     subfic  r7, r0, 32

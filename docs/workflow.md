@@ -5,6 +5,7 @@ Commands, per-function loop, how to choose what to work on.
 See also:
 - First-time setup: [`README.md`](../README.md#building).
 - Compiler/linker gotchas: [`matching_notes.md`](matching_notes.md).
+- Functions stuck as `NonMatching`: [`nonmatching.md`](nonmatching.md).
 
 `configure.py`'s object list is the source of truth for what is currently matched.
 
@@ -29,7 +30,6 @@ The workflow is designed so this is hard to break; see the `NonMatching` safety 
 | `rm -rf build/GVLE69 && ninja` | Full rebuild from scratch (a few seconds; keeps downloaded tools) |
 | `python3 configure.py --dtk build/tools/dtk-dev` | Re-configure by hand (after editing `configure.py`) |
 | `python3 tools/diff_dol.py` | Byte-diff the built DOL against the original, broken down by segment |
-| `python3 tools/find_candidates.py` | List small leaf functions that are good first targets |
 | `python3 tools/objdiff_mismatches.py <unit> <function>` | Print only the instructions that still differ |
 
 The `--dtk` argument is recorded in `build.ninja`, so plain `ninja` re-runs `configure.py` with it automatically. If you ever run a bare `python3 configure.py`, it falls back to downloading stock dtk and the build stops matching. Re-run it with `--dtk build/tools/dtk-dev`.
@@ -45,23 +45,24 @@ Use `tools/diff_dol.py` when `main.dol: OK` stops being OK. It maps each differi
 See section 4 for how to choose *which* function. Look it up in `config/GVLE69/symbols.txt`:
 
 ```
-GXInitTlutRegion = .text:0x8018E764; // type:function size:0x38 scope:global
+fn_8000923C = .text:0x8000923C; // type:function size:0x44
 ```
 
 Following the format of `end` = `start + size`:<br />
-`0x8018E764 + 0x38` = `0x8018E79C`.
+`0x8000923C + 0x44` = `0x80009280`.
 
 ### Step 2: Claim the address range in `splits.txt`
 
 Add a unit to `config/GVLE69/splits.txt` (blank line between units, tab-indented body):
 
 ```
-Dolphin/gx/GXInit.c:
-	.text       start:0x8018E764 end:0x8018E79C
+Game/fn_8000923C.cpp:
+	.text       start:0x8000923C end:0x80009280
 ```
 
 The unit's ranges must cover whole functions. dtk preserves hand-added units when it regenerates the file.<br />
-Multiple functions from one source file go in as multiple lines, or one wider range if they're contiguous.
+Multiple functions from one source file go in as multiple lines, or one wider range if they're contiguous.<br />
+Game source file names aren't known, so name a game unit after its first function (`Game/fn_8000923C.cpp`) and rename it once the real name turns up.
 
 > **Also rename the placeholder symbol in `symbols.txt`, in the same edit:** If the function is still named `fn_801834FC` and you're extending a file already flagged `Matching`, the link breaks immediately with `undefined: 'fn_801834FC', referenced from '…'`. This means some other still-unclaimed caller is referencing the old name.
 
@@ -69,15 +70,13 @@ Reference: [`splits.md`](splits.md)
 
 ### Step 3: Register the object in `configure.py`
 
-Add to a library in `config.libs`:
+Add it to the `Game` library's `objects` in `config.libs`, which compiles with ProDG:
 
 ```python
-DolphinLib(
-    "gx",
-    [
-        Object(NonMatching, "Dolphin/gx/GXInit.c"),
-    ],
-),
+        "objects": [
+            Object(Matching, "Game/fn_800092CC.cpp"),
+            Object(NonMatching, "Game/fn_8000923C.cpp"),
+        ],
 ```
 
 > **The `Object` name must be character-for-character identical to the `splits.txt` unit name:** If they differ, the build silently ignores your source. `configure.py` prints `Missing configuration for <name>` when a unit has no matching object.
@@ -89,21 +88,21 @@ DolphinLib(
 | `NonMatching` | Yes (so objdiff can compare) | The **original extracted** object |
 | `Matching` | Yes | **Your** compiled object |
 
-Always start `NonMatching`. The DOL stays byte-perfect no matter how wrong your C is. Only flip to `Matching` once you're at 100%.<br />
+Always start `NonMatching`. The DOL stays byte-perfect no matter how wrong your source is. Only flip to `Matching` once you're at 100%.<br />
 Once a file is flagged `Matching`, adding a new function to it breaks `main.dol` until that function matches too.
 
-### Step 4: Write the C and iterate
+### Step 4: Write the source and iterate
 
-Create the source file at `src/<unit name>` (e.g. `src/Dolphin/gx/GXInit.c`), then run `ninja` and read the progress line for your category:
-
-```
-SDK Code: 65.36% fuzzy, 0.00% matched, 0.00% linked (0 / 1 files)
-```
-
-Compare the two disassemblies, adjust (see [`matching_notes.md`](matching_notes.md)), and repeat until:
+Create the source file at `src/<unit name>` (e.g. `src/Game/fn_8000923C.cpp`), then run `ninja` and read the progress line for your category:
 
 ```
-SDK Code: 100.00% fuzzy, 100.00% matched
+Game Code: 65.36% fuzzy, 0.00% matched, 0.00% linked (0 / 1 files)
+```
+
+Compare the two disassemblies, adjust (see [`matching_notes.md`](matching_notes.md), and [`nonmatching.md`](nonmatching.md) if it is a known stall), and repeat until:
+
+```
+Game Code: 100.00% fuzzy, 100.00% matched
 ```
 
 ### Step 5: Flip to `Matching` and verify
@@ -112,7 +111,7 @@ Change `NonMatching` to `Matching` in `configure.py`, run `ninja`, and confirm b
 
 ```
 build/GVLE69/main.dol: OK          <- the DOL still matches
-SDK Code: 100.00% ... 100.00% linked
+Game Code: 100.00% ... 100.00% linked
 ```
 
 **On `force_active`:** a newly-matched function with no visible caller may get dropped by `mwld`'s `-code_merging`, shifting everything after it. The fix is adding its name to `force_active` in `config/GVLE69/config.yml`. Most matches need no entry, so only add one if `main.dol: OK` breaks.
@@ -126,15 +125,15 @@ SDK Code: 100.00% ... 100.00% linked
 ### objdiff GUI (primary)
 
 Download from [encounter/objdiff](https://github.com/encounter/objdiff), set *Project directory* to this repo. It reads `objdiff.json` and rebuilds automatically on file changes.<br />
-Unit names are prefixed with `main/`, e.g. `main/Dolphin/gx/GXInit`. Auto-generated units (everything not yet decompiled) are hidden by default.
+Unit names are prefixed with `main/`, e.g. `main/Game/fn_800092CC`. Auto-generated units (everything not yet decompiled) are hidden by default.
 
 ### objdump (fast)
 
 binutils isn't downloaded by a normal build; fetch it once with `ninja build/binutils`.
 
 ```bash
-build/binutils/powerpc-eabi-objdump -d --no-show-raw-insn build/GVLE69/src/Dolphin/gx/GXInit.o
-build/binutils/powerpc-eabi-objdump -d --no-show-raw-insn build/GVLE69/obj/Dolphin/gx/GXInit.o
+build/binutils/powerpc-eabi-objdump -d --no-show-raw-insn build/GVLE69/src/Game/fn_800092CC.o
+build/binutils/powerpc-eabi-objdump -d --no-show-raw-insn build/GVLE69/obj/Game/fn_800092CC.o
 ```
 
 ### `tools/objdiff_mismatches.py` (exact per-instruction diff)
@@ -142,8 +141,10 @@ build/binutils/powerpc-eabi-objdump -d --no-show-raw-insn build/GVLE69/obj/Dolph
 For an unlinked object, raw objdump output is noisy. This tool wraps the bundled `build/tools/objdiff-cli` and prints only the instructions that differ.
 
 ```bash
-python3 tools/objdiff_mismatches.py Dolphin/dvd/dvdfs DVDConvertPathToEntrynum
+python3 tools/objdiff_mismatches.py Game/fn_800092CC __static_initialization_and_destruction_0
 ```
+
+It is stricter than the progress numbers. `report.json` runs objdiff with the default `functionRelocDiffs=none`, which flags a relocation only when the other side has none, so a reloc to the wrong symbol or addend still counts as 100% there. After renaming, splitting or resizing a symbol that matched units reference, check those units with this tool, or run `build/tools/objdiff-cli report generate --config functionRelocDiffs=all -o <file>` and look for anything below 100%.
 
 ### Decoding a data constant before you use it
 
@@ -157,34 +158,13 @@ When a function references a string or table you intend to reproduce, read the o
 
 ## 4. Choosing what to work on
 
-**Start with SDK code (`0x80169000`+), not game code.** Game code (`0x800034A0`–`0x80169000`) is C++ compiled with `-O4 -inline auto`, which inlined away essentially every small function (see [`baseline.md`](baseline.md)). SDK code is plain C with normal small functions, and its structure is publicly documented across other GameCube decomps.
+The SDK, libc, compiler runtime and SN debug stub are fully matched, so what remains is game code. Its `.text` ranges are in [`baseline.md`](baseline.md#memory-map). It is C++ built with SN ProDG (GCC 2.95), and its units go in the `Game` library in `configure.py`. [`prodg.md`](prodg.md) has the flags found so far, the C++ conventions and how static constructors link. `Game/fn_800092CC.cpp` is the first matched example.
 
 Most of the 17,161 functions are still `fn_XXXXXXXX`. Naming is a large part of the work ahead.
 
-### Finding candidates
-
-```bash
-python3 tools/find_candidates.py              # SDK range, 3–16 instructions
-python3 tools/find_candidates.py --help       # other ranges/sizes
-```
-
-Good first-function traits: **leaf** (no `bl`), **no stack frame** (no `stwu`/`mflr`), small, and ideally operating only on its arguments (no `lis` global loads).
-
-Beyond the trivial-leaf tier, the most productive strategy is to pick the next unclaimed function immediately after one you just matched, then identify it by source order in a reference decomp. That keeps each unit's claimed range contiguous.
-
-### Reference decomp for SDK/runtime code (same compiler)
-
-`configure.py` pins `GC/1.2.5n` for the Dolphin SDK libraries and `GC/1.3.2` for `Runtime.PPCEABI.H`/game code. Conveniently, [ACreTeam/ac-decomp](https://github.com/ACreTeam/ac-decomp) (Animal Crossing, GameCube) uses this exact pairing, and has a complete SDK tree.
-
-Clone it as a sibling repo (`../ac-decomp`) and grep it directly. Key paths:
-
-- `src/static/dolphin/<lib>/`: SDK source
-- `include/dolphin/*.h`: headers, struct layouts, register addresses
-- `src/static/Runtime.PPCEABI.H/`, `src/static/MSL_C.PPCEABI.bare.H/`: compiler runtime and C-library internals
-
-> **Check ac-decomp before reconstructing any SDK-range function:** Search for a raw struct offset, the surrounding constants, or the function's apparent purpose.
-
-Only use it as a reference, not a blind copy source. Struct layouts, flags, and function bodies can drift between games on the same SDK build, so every ported function still needs the normal compile-and-verify loop.
+- **Work outward from a matched unit.** Pick the unclaimed function right before or after one you've matched, which keeps each unit's range contiguous. A `_GLOBAL_.I.<name>` function marks the end of a source file ([`prodg.md`](prodg.md#c)).
+- **Expect `-O0` first.** Most game functions have `-O0`'s shape: arguments spilled through `r31` and `this` kept in `r30`. About half the functions in 0x80196884-0x803FF3B0 have no frame pointer, so those files need other flags.
+- **Name as you go.** C++ symbols use GCC 2.95 mangling (`__5ColorUcUcUcUc`). Rename the `fn_` symbol in `symbols.txt` once you know what a function is.
 
 ---
 

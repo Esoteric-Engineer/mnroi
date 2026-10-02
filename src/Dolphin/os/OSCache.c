@@ -155,7 +155,7 @@ loop:
 extern u32 PPCMfl2cr(void);
 extern void PPCMtl2cr(register u32 l2cr);
 extern void DBPrintf(char* msg);
-extern char lbl_804D0AF0[];
+extern char L2InvalidateStr[];
 
 asm void L2GlobalInvalidate(void)
 {
@@ -186,8 +186,8 @@ wait1:
     bl     PPCMtl2cr
     b      l3
 l3:
-    lis    r3, lbl_804D0AF0@ha
-    addi   r31, r3, lbl_804D0AF0@l
+    lis    r3, L2InvalidateStr@ha
+    addi   r31, r3, L2InvalidateStr@l
     b      l4
 l4:
     b      wait2_test

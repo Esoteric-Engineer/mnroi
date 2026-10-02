@@ -1,4 +1,4 @@
-asm void fn_8017B444(register void* p)
+asm void OSCreateAlarm(register void* p)
 {
     // clang-format off
     nofralloc

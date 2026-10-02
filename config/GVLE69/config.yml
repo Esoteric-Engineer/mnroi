@@ -15,13 +15,47 @@ force_active:
 - __ashldi3
 - __ashrdi3
 - __lshrdi3
-- fn_801796FC
+- __moddi3
+- __div2u
+- __mod2u
+- __OSClearAlarm
+- GXReadGPMetric
+- __VMBASEISIServiceExceptionPrep
+- __OSLoadFPUContext
+- __kernel_sin
+- __kernel_cos
+- __ieee754_rem_pio2
+- fn_8016A1A4
+- fn_80168B9C
+- fn_8016C134
+- fn_8016A060
+- fn_8016B448
+- fn_8016B3D8
+- __va_arg
+- CmdTypeAndStatus
+- CARDVersionPad
+- lbl_8066F2FC
+- lbl_8066F300
+- lbl_8066F30C
+- lbl_8066F310
+- lbl_8057D200
+- lbl_80573660
+- __GDCurrentDL
+- nextPageToCheck
+# ProDG constructor/destructor lists (see docs/prodg.md).
+# mwld drops the unreferenced -1 that starts .dtors, and refuses to link .ctors/.dtors unless _ctors/_dtors are live.
+- __DTOR_LIST__
+- _ctors
+- _dtors
 ldscript_template: config/GVLE69/ldscript.lcf
 # Change this to match the linker version. See config.example.yml for a list.
 # NOTE: 11 is a guess (CW 2.7+). Revisit once the real compiler version is known.
 mw_comment_version: 11
 
 # Marvel Nemesis is a single-DOL game (no .rel modules), so no `modules:` block.
+
+# Bake .sdata2/.sbss2 accesses as r13 offsets. See docs/baseline.md (Small-data).
+sda2_via_r13: true
 
 # fill_gaps left at its default (true): required so un-analyzed gap bytes are
 # emitted, otherwise the output DOL is incomplete and cannot hash-match. The
@@ -47,7 +81,7 @@ skip_cfa_ranges:
 - start: .text:0x8017DB60
   end: .text:0x8017DBE0
 - start: .text:0x8017E500
-  end: .text:0x8017E5E0
+  end: .text:0x8017E5CC
 - start: .text:0x801830C0
   end: .text:0x80183100
 - start: .text:0x80401540   # MMU/cache/TLB (mtsr/tlbie)
@@ -61,7 +95,7 @@ skip_cfa_ranges:
 # 0x8066FB50 (the .sbss clear-end). That address lands in the padding gap
 # between .sbss and .sdata2, so dtk left it sectionless (the deeper root of the
 # add_direct/issue-1 crash). We retarget the LO16 to the absolute symbol
-# lbl_8066FB50 (defined in symbols.txt); the HI16 already targets it.
+# lbl_8066FB50 (ldscript.lcf defines it as the end of .sbss); the HI16 already targets it.
 block_relocations:
 - source: .init:0x80003160
 add_relocations:

@@ -10,11 +10,39 @@ extern int OSDisableInterrupts(void);
 extern int OSRestoreInterrupts(int level);
 extern unsigned int Type[4];
 extern long long __OSGetSystemTime(void);
-extern void fn_8017B6A4(void); // likely OSSetAlarm; unconfirmed, not yet decompiled
+extern void OSSetAlarm(void);
 extern unsigned int VIGetTvFormat(void); // dtk auto-detected identity for fn_8018992C
 extern void OSReport(const char* msg, ...); // dtk auto-detected identity for fn_8017CB7C
-extern unsigned int SamplingRate; // unclaimed .sbss object, dtk auto-detected the real name
-extern unsigned char XYNTSC[0x98]; // XYNTSC[12] table; XYPAL[12] (+0x30) and the "unknown TV format" error string (+0x60) are plain-offset siblings in the same unclaimed .data blob
+unsigned int SamplingRate;
+
+typedef struct XY
+{
+    unsigned short line;
+    unsigned char count;
+} XY;
+
+// XYNTSC[12] and XYPAL[12] (+0x30), followed by the "unknown TV format" error string (+0x60).
+// SISetSamplingRate addresses all three by offset from this single base, so they must stay one object with this exact layout.
+typedef struct SISamplingRateTables
+{
+    XY ntsc[12];
+    XY pal[12];
+    char unknownFormatMsg[0x38];
+} SISamplingRateTables;
+
+SISamplingRateTables XYNTSC = {
+    {
+        {0x00F6, 0x02}, {0x000F, 0x12}, {0x001E, 0x09}, {0x002C, 0x06},
+        {0x0034, 0x05}, {0x0041, 0x04}, {0x0057, 0x03}, {0x0057, 0x03},
+        {0x0057, 0x03}, {0x0083, 0x02}, {0x0083, 0x02}, {0x0083, 0x02},
+    },
+    {
+        {0x0128, 0x02}, {0x000F, 0x15}, {0x001D, 0x0B}, {0x002D, 0x07},
+        {0x0034, 0x06}, {0x003F, 0x05}, {0x004E, 0x04}, {0x0068, 0x03},
+        {0x0068, 0x03}, {0x0068, 0x03}, {0x0068, 0x03}, {0x009C, 0x02},
+    },
+    "SISetSamplingRate: unknown TV format. Use default.",
+};
 
 typedef struct SIControl
 {
@@ -187,7 +215,7 @@ L801822A8:
     // clang-format on
 }
 
-#pragma peephole on // see docs/matching_notes.md: asm disables peephole for the rest of the TU
+#pragma peephole on // an asm function disables peephole for the rest of the TU
 
 unsigned int SIGetStatus(int chan)
 {
@@ -282,7 +310,7 @@ unsigned int SIDisablePolling(unsigned int poll)
     return poll;
 }
 
-extern unsigned char lbl_8057D010[]; // shared static blob; InputBufferValid/InputBuffer live at offsets +432/+448 within it
+extern unsigned char Packet[]; // shared static blob; InputBufferValid/InputBuffer live at offsets +432/+448 within it
 
 // Inlines SIGetStatus's own body (interrupt guard included).
 // InputBufferValid/InputBuffer areaddressed via one shared base register with large literal displacements.
@@ -292,11 +320,11 @@ asm int SIGetResponseRaw(int chan)
     // clang-format off
     nofralloc
     mflr    r0
-    lis     r4, lbl_8057D010@ha
+    lis     r4, Packet@ha
     stw     r0, 4(r1)
     stwu    r1, -40(r1)
     stw     r31, 36(r1)
-    addi    r31, r4, lbl_8057D010@l
+    addi    r31, r4, Packet@l
     stw     r30, 32(r1)
     addi    r30, r3, 0
     stw     r29, 28(r1)
@@ -356,13 +384,13 @@ asm int SIGetResponse(int chan, void* data)
     // clang-format off
     nofralloc
     mflr    r0
-    lis     r5, lbl_8057D010@ha
+    lis     r5, Packet@ha
     stw     r0, 4(r1)
     stwu    r1, -40(r1)
     stmw    r27, 20(r1)
     addi    r29, r3, 0
     addi    r30, r4, 0
-    addi    r28, r5, lbl_8057D010@l
+    addi    r28, r5, Packet@l
     bl      OSDisableInterrupts
     addi    r31, r3, 0
     addi    r3, r29, 0
@@ -409,7 +437,7 @@ L80182648:
     // clang-format on
 }
 
-extern unsigned char lbl_8057D090[]; // Alarm[4] (OSAlarm, sizeof 0x28), exactly fills this blob
+extern unsigned char Alarm[]; // Alarm[4] (OSAlarm, sizeof 0x28), exactly fills this blob
 
 // chan = alarm - Alarm (pointer difference / sizeof(OSAlarm), via magic-constant division), then dispatches Packet[chan] to __SITransfer if still pending.
 // `context` is unused, matching the original. Same shared-base-register shape as SIGetResponseRaw, transliterated directly.
@@ -418,9 +446,9 @@ asm void AlarmHandler(void* alarm, void* context)
     // clang-format off
     nofralloc
     mflr    r0
-    lis     r4, lbl_8057D090@ha
+    lis     r4, Alarm@ha
     stw     r0, 4(r1)
-    addi    r0, r4, lbl_8057D090@l
+    addi    r0, r4, Alarm@l
     lis     r4, 26214
     subf    r0, r0, r3
     stwu    r1, -32(r1)
@@ -430,9 +458,9 @@ asm void AlarmHandler(void* alarm, void* context)
     srawi   r0, r0, 4
     srwi    r3, r0, 31
     add     r0, r0, r3
-    lis     r3, lbl_8057D010@ha
+    lis     r3, Packet@ha
     slwi    r4, r0, 5
-    addi    r0, r3, lbl_8057D010@l
+    addi    r0, r3, Packet@l
     add     r31, r0, r4
     lwz     r3, 0(r31)
     cmpwi   r3, -1
@@ -457,7 +485,7 @@ L801826E0:
 }
 
 // Public entry point: rejects if a transfer is already pending for this channel or Si is mid-transfer.
-// If `delay` puts the fire time in the future, schedules an OSAlarm (via the still-undecompiled fn_8017B6A4, presumed OSSetAlarm) instead of transferring immediately; either way records the request in Packet[chan] for AlarmHandler to pick up later.
+// If `delay` puts the fire time in the future, schedules an OSAlarm (via OSSetAlarm) instead of transferring immediately; either way records the request in Packet[chan] for AlarmHandler to pick up later.
 asm int SITransfer(long chan, void* output, unsigned int outputBytes, void* input,
                     unsigned int inputBytes, void* callback, long long delay)
 {
@@ -468,8 +496,8 @@ asm int SITransfer(long chan, void* output, unsigned int outputBytes, void* inpu
     stwu    r1, -96(r1)
     stmw    r19, 44(r1)
     addi    r24, r3, 0
-    lis     r3, lbl_8057D010@ha
-    addi    r23, r3, lbl_8057D010@l
+    lis     r3, Packet@ha
+    addi    r23, r3, Packet@l
     slwi    r0, r24, 5
     addi    r25, r4, 0
     addi    r26, r5, 0
@@ -527,7 +555,7 @@ L801827A4:
     addi    r6, r30, 0
     addi    r5, r31, 0
     addi    r3, r3, 128
-    bl      fn_8017B6A4
+    bl      OSSetAlarm
     b       L80182820
 L801827EC:
     addi    r3, r24, 0
@@ -564,8 +592,8 @@ L8018284C:
     // clang-format on
 }
 
-extern void fn_8017F9B0(long chan, unsigned int id); // likely OSSetWirelessID, unconfirmed
-extern unsigned int fn_8017F92C(long chan);           // likely OSGetWirelessID, unconfirmed
+extern void OSSetWirelessID(long chan, unsigned int id);
+extern unsigned int OSGetWirelessID(long chan);
 extern unsigned int lbl_8066F288;                     // likely __PADFixBits, file-scope
 
 // `context` is unused, same as AlarmHandler.
@@ -583,9 +611,9 @@ asm void GetTypeCallback(int chan, unsigned int error, void* context)
     addi    r0, r3, Type@l
     slwi    r29, r27, 2
     add     r30, r0, r29
-    lis     r3, lbl_8057D010@ha
+    lis     r3, Packet@ha
     addi    r26, r4, 0
-    addi    r31, r3, lbl_8057D010@l
+    addi    r31, r3, Packet@l
     lwz     r0, 0(r30)
     rlwinm  r0, r0, 0, 25, 23
     stw     r0, 0(r30)
@@ -617,7 +645,7 @@ asm void GetTypeCallback(int chan, unsigned int error, void* context)
 L80182900:
     addi    r3, r27, 0
     li      r4, 0
-    bl      fn_8017F9B0
+    bl      OSSetWirelessID
     slwi    r0, r27, 4
     lwz     r30, 0(r30)
     add     r31, r31, r0
@@ -641,7 +669,7 @@ L80182944:
     b       L80182AE4
 L80182958:
     mr      r3, r27
-    bl      fn_8017F92C
+    bl      OSGetWirelessID
     cmpwi   r26, 0
     rlwinm  r26, r3, 8, 8, 23
     beq     L801829BC
@@ -679,7 +707,7 @@ L801829BC:
     oris    r26, r3, 16
     addi    r3, r27, 0
     rlwinm  r4, r26, 24, 16, 31
-    bl      fn_8017F9B0
+    bl      OSSetWirelessID
 L801829F4:
     oris    r0, r26, 19968
     add     r4, r31, r29
@@ -705,7 +733,7 @@ L80182A30:
     oris    r28, r28, 16
     addi    r3, r27, 0
     rlwinm  r4, r28, 24, 16, 31
-    bl      fn_8017F9B0
+    bl      OSSetWirelessID
     oris    r0, r28, 19968
     add     r4, r31, r29
     stwu    r0, 496(r4)
@@ -724,7 +752,7 @@ L80182A30:
 L80182A90:
     addi    r3, r27, 0
     li      r4, 0
-    bl      fn_8017F9B0
+    bl      OSSetWirelessID
 L80182A9C:
     slwi    r0, r27, 4
     lwz     r30, 0(r30)
@@ -888,7 +916,7 @@ L80182CA8:
     // clang-format on
 }
 
-extern unsigned char lbl_8057D170[]; // TypeCallback[4][4], own dtk-detected .bss symbol
+extern unsigned char TypeCallback[]; // TypeCallback[4][4], own dtk-detected .bss symbol
 
 // Calls SIGetType(chan) first; if the result is still busy (Type[chan] & SI_ERROR_BUSY), registers `callback` in the first free (or matching) slot of TypeCallback[chan][0..3], otherwise invokes `callback(chan, type)` immediately via mtlr/blrl.
 // Written as asm: the 4-iteration registration loop is fully unrolled into four straight-line copies, including one unreachable trailing `b` at L80182DB4 (dead code from the unrolled tail).
@@ -917,9 +945,9 @@ asm unsigned int SIGetTypeAsync(int chan, void* callback)
     addi    r29, r3, 0
     rlwinm. r0, r0, 0, 24, 24
     beq     L80182DB8
-    lis     r3, lbl_8057D170@ha
+    lis     r3, TypeCallback@ha
     slwi    r4, r28, 4
-    addi    r0, r3, lbl_8057D170@l
+    addi    r0, r3, TypeCallback@l
     add     r4, r0, r4
     lwz     r0, 0(r4)
     li      r5, 0

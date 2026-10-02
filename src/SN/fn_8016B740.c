@@ -1,0 +1,33 @@
+char lbl_804CFF30[0x18] = {0};
+extern char lbl_8057BEE0[];
+
+asm void fn_8016B740(void)
+{
+    // clang-format off
+    nofralloc
+    lis     r5, (lbl_8057BEE0+0x10)@ha
+    lis     r0, 1
+    lwz     r9, (lbl_8057BEE0+0x10)@l(r5)
+    ori     r0, r0, 0xfc00
+    lis     r6, 1
+    cmplw   r9, r0
+    ori     r6, r6, 0xfc00
+    bgt     L_8016B768
+    lis     r9, (lbl_8057BEE0+0x10)@ha
+    lwz     r6, (lbl_8057BEE0+0x10)@l(r9)
+L_8016B768:
+    lwz     r0, (lbl_8057BEE0+0x10)@l(r5)
+    lis     r8, lbl_804CFF30@ha
+    li      r10, 2
+    lis     r7, (lbl_8057BEE0+0x8)@ha
+    subf    r0, r6, r0
+    srwi    r11, r6, 10
+    stw     r0, (lbl_8057BEE0+0x10)@l(r5)
+    lis     r9, (lbl_8057BEE0+0xC)@ha
+    stw     r10, lbl_804CFF30@l(r8)
+    clrlwi  r0, r6, 22
+    stw     r11, (lbl_8057BEE0+0x8)@l(r7)
+    stw     r0, (lbl_8057BEE0+0xC)@l(r9)
+    blr
+    // clang-format on
+}

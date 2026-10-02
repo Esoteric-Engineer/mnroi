@@ -3,11 +3,14 @@ typedef struct {
     int cnt;
 } FileBuf;
 
-extern void fn_80178374(void);
-extern void fn_80178224(void);
+extern void __sinit(void);
+extern void fflush(void);
 extern void fn_8017A6CC(void);
 extern unsigned int lbl_8066C3B0;
-extern char lbl_8049C8DC[];
+
+#pragma section R ".rodata.1"
+__declspec(section ".rodata.1") const char UngetcErrorStr[] =
+    "\nungetc error: *static buffer overflow* - char not added to buffer\n";
 
 asm int ungetc(int c, FileBuf* stream)
 {
@@ -32,7 +35,7 @@ have_92:
     cmpwi   r0, 0
     bne     have_56
     crclr   4*cr1+eq
-    bl      fn_80178374
+    bl      __sinit
 have_56:
     lhz     r9, 12(r31)
     rlwinm  r0, r9, 0, 27, 25
@@ -44,7 +47,7 @@ have_56:
     andi.   r11, r9, 8
     beq     flag_common
     mr      r3, r31
-    bl      fn_80178224
+    bl      fflush
     mr.     r3, r3
     bne     ret_neg1
     lhz     r0, 12(r31)
@@ -65,9 +68,9 @@ flag4:
     lwz     r0, 52(r31)
     cmpw    r9, r0
     blt     ldc
-    lis     r4, lbl_8049C8DC@ha
+    lis     r4, UngetcErrorStr@ha
     li      r3, 1
-    addi    r4, r4, lbl_8049C8DC@l
+    addi    r4, r4, UngetcErrorStr@l
     li      r5, 68
     bl      fn_8017A6CC
 ret_neg1:

@@ -1,49 +1,741 @@
 Sections:
 	.init       type:code align:4
 	.text       type:code align:4
-	.rodata     type:rodata align:4
-	.rodata.1   type:rodata align:4
+	.ctors      type:rodata align:4
+	.dtors      type:rodata align:32
+	.rodata     type:rodata align:32
 	.data       type:data align:4
 	.bss        type:bss align:4
 	.sdata      type:data align:4
 	.sbss       type:bss align:4
 	.sdata2     type:rodata align:32
 
-Dolphin/os/fn_80169134.c:
+Game/fn_800092CC.cpp:
+	.text       start:0x800092CC end:0x800098CC
+	.ctors      start:0x804825A4 end:0x804825A8
+	.sbss       start:0x8066CF80 end:0x8066D044
+
+SN/fn_80168770.c:
+	.text       start:0x80168770 end:0x801687E8
+
+SN/fn_801687E8.c:
+	.text       start:0x801687E8 end:0x801687F8
+
+Dolphin/os/__start.c:
+	.init       start:0x80003100 end:0x80003254
+	.data       start:0x804CFC20 end:0x804CFC70
+
+SN/fn_801687F8.c:
+	.text       start:0x801687F8 end:0x801688E8
+	.data       start:0x804CFC70 end:0x804CFF30
+	.bss        start:0x80573660 end:0x8057BEE0
+
+SN/EnableMetroTRKInterrupts.c:
+	.text       start:0x801688E8 end:0x8016894C
+
+SN/fn_8016894C.c:
+	.text       start:0x8016894C end:0x80168B9C
+
+SN/fn_80168B9C.c:
+	.text       start:0x80168B9C end:0x80168BB0
+
+SN/fn_80168BB0.c:
+	.text       start:0x80168BB0 end:0x80168C9C
+
+SN/fn_80168C9C.c:
+	.text       start:0x80168C9C end:0x80168CC4
+
+SN/fn_80168CC4.c:
+	.text       start:0x80168CC4 end:0x80168CC8
+
+SN/fn_80168CC8.c:
+	.text       start:0x80168CC8 end:0x80168D08
+
+SN/fn_80168D08.c:
+	.text       start:0x80168D08 end:0x80168D48
+
+SN/fn_80168D48.c:
+	.text       start:0x80168D48 end:0x80168D98
+
+SN/fn_80168D98.c:
+	.text       start:0x80168D98 end:0x80168E34
+
+SN/fn_80168E34.c:
+	.text       start:0x80168E34 end:0x80168F24
+
+SN/fn_80168F24.c:
+	.text       start:0x80168F24 end:0x80168F6C
+
+SN/fn_80168F6C.c:
+	.text       start:0x80168F6C end:0x8016900C
+
+SN/fn_8016900C.c:
+	.text       start:0x8016900C end:0x80169134
+
+SN/fn_80169134.c:
 	.text       start:0x80169134 end:0x80169150
 
-Dolphin/os/fn_80169150.c:
+SN/fn_80169150.c:
 	.text       start:0x80169150 end:0x80169164
+
+SN/fn_80169164.c:
+	.text       start:0x80169164 end:0x8016918C
+
+SN/fn_8016918C.c:
+	.text       start:0x8016918C end:0x801691A4
+
+SN/fn_801691A4.c:
+	.text       start:0x801691A4 end:0x801691B8
+
+SN/fn_801691B8.c:
+	.text       start:0x801691B8 end:0x8016927C
+
+SN/fn_8016927C.c:
+	.text       start:0x8016927C end:0x801692D4
+
+SN/fn_801692D4.c:
+	.text       start:0x801692D4 end:0x80169304
+
+SN/fn_80169304.c:
+	.text       start:0x80169304 end:0x801693DC
+
+SN/fn_801693DC.c:
+	.text       start:0x801693DC end:0x8016948C
+
+SN/fn_8016948C.c:
+	.text       start:0x8016948C end:0x801694B8
+
+SN/fn_801694B8.c:
+	.text       start:0x801694B8 end:0x801694DC
+
+SN/fn_801694DC.c:
+	.text       start:0x801694DC end:0x8016951C
+
+SN/fn_8016951C.c:
+	.text       start:0x8016951C end:0x80169560
+
+SN/fn_80169560.c:
+	.text       start:0x80169560 end:0x80169720
+
+SN/fn_80169720.c:
+	.text       start:0x80169720 end:0x801698E0
+
+SN/fn_801698E0.c:
+	.text       start:0x801698E0 end:0x80169AF4
+
+SN/fn_80169AF4.c:
+	.text       start:0x80169AF4 end:0x80169B48
+
+SN/fn_80169B48.c:
+	.text       start:0x80169B48 end:0x80169BF8
+
+SN/fn_80169BF8.c:
+	.text       start:0x80169BF8 end:0x80169ECC
+
+SN/fn_80169ECC.c:
+	.text       start:0x80169ECC end:0x8016A060
+
+SN/fn_8016A060.c:
+	.text       start:0x8016A060 end:0x8016A078
+
+SN/fn_8016A078.c:
+	.text       start:0x8016A078 end:0x8016A094
+
+SN/fn_8016A094.c:
+	.text       start:0x8016A094 end:0x8016A1A4
+
+SN/fn_8016A1A4.c:
+	.text       start:0x8016A1A4 end:0x8016A1B4
+
+SN/fn_8016A1B4.c:
+	.text       start:0x8016A1B4 end:0x8016A2DC
+
+SN/fn_8016A2DC.c:
+	.text       start:0x8016A2DC end:0x8016A408
+
+SN/fn_8016A408.c:
+	.text       start:0x8016A408 end:0x8016A440
+
+SN/fn_8016A440.c:
+	.text       start:0x8016A440 end:0x8016A7E0
+
+SN/fn_8016A7E0.c:
+	.text       start:0x8016A7E0 end:0x8016A9E0
+
+SN/fn_8016A9E0.c:
+	.text       start:0x8016A9E0 end:0x8016AAA4
+
+SN/fn_8016AAA4.c:
+	.text       start:0x8016AAA4 end:0x8016AAD0
+
+SN/fn_8016AAD0.c:
+	.text       start:0x8016AAD0 end:0x8016AAD8
+
+SN/fn_8016AAD8.c:
+	.text       start:0x8016AAD8 end:0x8016AAE0
+
+SN/fn_8016AAE0.c:
+	.text       start:0x8016AAE0 end:0x8016AAE8
+
+SN/fn_8016AAE8.c:
+	.text       start:0x8016AAE8 end:0x8016AAF0
+
+SN/fn_8016AAF0.c:
+	.text       start:0x8016AAF0 end:0x8016AAF8
+
+SN/fn_8016AAF8.c:
+	.text       start:0x8016AAF8 end:0x8016AB00
+
+SN/fn_8016AB00.c:
+	.text       start:0x8016AB00 end:0x8016AB08
+
+SN/fn_8016AB08.c:
+	.text       start:0x8016AB08 end:0x8016AB10
+
+SN/fn_8016AB10.c:
+	.text       start:0x8016AB10 end:0x8016AB18
+
+SN/fn_8016AB18.c:
+	.text       start:0x8016AB18 end:0x8016AB20
+
+SN/fn_8016AB20.c:
+	.text       start:0x8016AB20 end:0x8016AB28
+
+SN/fn_8016AB28.c:
+	.text       start:0x8016AB28 end:0x8016AB30
+
+SN/SNInitComm.c:
+	.text       start:0x8016AB30 end:0x8016AC84
+
+SN/SNInitInterrupts.c:
+	.text       start:0x8016AC84 end:0x8016ACCC
+
+SN/SNQueryData.c:
+	.text       start:0x8016ACCC end:0x8016AD54
+
+SN/SNRead.c:
+	.text       start:0x8016AD54 end:0x8016AF10
+
+SN/SNWrite.c:
+	.text       start:0x8016AF10 end:0x8016B0A8
+
+SN/SNOpen.c:
+	.text       start:0x8016B0A8 end:0x8016B0AC
+
+SN/SNClose.c:
+	.text       start:0x8016B0AC end:0x8016B0B0
+
+SN/SNHandler.c:
+	.text       start:0x8016B0B0 end:0x8016B104
+
+SN/SNSelect.c:
+	.text       start:0x8016B104 end:0x8016B11C
+
+SN/SNDeselect.c:
+	.text       start:0x8016B11C end:0x8016B130
+
+SN/SNWiggleSelect.c:
+	.text       start:0x8016B130 end:0x8016B158
+
+SN/SNSync.c:
+	.text       start:0x8016B158 end:0x8016B16C
+
+SN/SNRead8.c:
+	.text       start:0x8016B16C end:0x8016B1AC
+
+SN/SNWrite8.c:
+	.text       start:0x8016B1AC end:0x8016B1E0
+
+SN/SNRead32.c:
+	.text       start:0x8016B1E0 end:0x8016B21C
+
+SN/SNWrite32.c:
+	.text       start:0x8016B21C end:0x8016B24C
+
+SN/fn_8016B24C.c:
+	.text       start:0x8016B24C end:0x8016B29C
+
+SN/fn_8016B29C.c:
+	.text       start:0x8016B29C end:0x8016B30C
+
+SN/fn_8016B30C.c:
+	.text       start:0x8016B30C end:0x8016B374
+
+SN/fn_8016B374.c:
+	.text       start:0x8016B374 end:0x8016B3D8
+
+SN/fn_8016B3D8.c:
+	.text       start:0x8016B3D8 end:0x8016B448
+
+SN/fn_8016B448.c:
+	.text       start:0x8016B448 end:0x8016B4B0
+
+SN/fn_8016B4B0.c:
+	.text       start:0x8016B4B0 end:0x8016B554
+
+Dolphin/os/__cvt_fp2unsigned.c:
+	.text       start:0x8016B554 end:0x8016B59C
+	.rodata     start:0x8049C1C8 end:0x8049C1D0
+
+Dolphin/os/__shr2u.c:
+	.text       start:0x8016B59C end:0x8016B5A0
+
+Dolphin/os/__div2i.c:
+	.text       start:0x8016B5A0 end:0x8016B5A4
+
+Dolphin/os/__shl2i.c:
+	.text       start:0x8016B5A4 end:0x8016B5A8
+
+Dolphin/os/__mod2i.c:
+	.text       start:0x8016B5A8 end:0x8016B5AC
+
+Dolphin/os/__shr2i.c:
+	.text       start:0x8016B5AC end:0x8016B5B0
+
+Dolphin/os/__div2u.c:
+	.text       start:0x8016B5B0 end:0x8016B5B4
+
+Dolphin/os/__mod2u.c:
+	.text       start:0x8016B5B4 end:0x8016B5B8
+
+Runtime.PPCEABI.H/__va_arg.c:
+	.text       start:0x8016B5B8 end:0x8016B6AC
+
+SN/fn_8016B6AC.c:
+	.text       start:0x8016B6AC end:0x8016B6B4
+
+SN/fn_8016B6B4.c:
+	.text       start:0x8016B6B4 end:0x8016B740
+	.bss        start:0x8057BEE0 end:0x8057BF80
+
+SN/fn_8016B740.c:
+	.text       start:0x8016B740 end:0x8016B79C
+	.data       start:0x804CFF30 end:0x804CFF48
+
+SN/fn_8016B79C.c:
+	.text       start:0x8016B79C end:0x8016B828
+
+SN/fn_8016B828.c:
+	.text       start:0x8016B828 end:0x8016B8CC
+
+SN/fn_8016B8CC.c:
+	.text       start:0x8016B8CC end:0x8016B96C
+
+SN/fn_8016B96C.c:
+	.text       start:0x8016B96C end:0x8016BAF0
+
+SN/fn_8016BAF0.c:
+	.text       start:0x8016BAF0 end:0x8016BB98
+
+SN/fn_8016BB98.c:
+	.text       start:0x8016BB98 end:0x8016BC70
+
+SN/fn_8016BC70.c:
+	.text       start:0x8016BC70 end:0x8016BCC4
+
+SN/fn_8016BCC4.c:
+	.text       start:0x8016BCC4 end:0x8016BD38
+
+SN/fn_8016BD38.c:
+	.text       start:0x8016BD38 end:0x8016BE74
+
+SN/fn_8016BE74.c:
+	.text       start:0x8016BE74 end:0x8016BEE4
+
+SN/fn_8016BEE4.c:
+	.text       start:0x8016BEE4 end:0x8016BF04
+
+SN/fn_8016BF04.c:
+	.text       start:0x8016BF04 end:0x8016BF28
+
+SN/fn_8016BF28.c:
+	.text       start:0x8016BF28 end:0x8016BFB0
+
+SN/fn_8016BFB0.c:
+	.text       start:0x8016BFB0 end:0x8016BFF4
+
+SN/fn_8016BFF4.c:
+	.text       start:0x8016BFF4 end:0x8016C074
+
+SN/fn_8016C074.c:
+	.text       start:0x8016C074 end:0x8016C094
+
+SN/fn_8016C094.c:
+	.text       start:0x8016C094 end:0x8016C134
+
+SN/fn_8016C134.c:
+	.text       start:0x8016C134 end:0x8016C148
+
+SN/fn_8016C148.c:
+	.text       start:0x8016C148 end:0x8016C3BC
+	.rodata     start:0x8049C1D0 end:0x8049C1E8
+
+SN/fn_8016C3BC.c:
+	.text       start:0x8016C3BC end:0x8016C3DC
+
+SN/fn_8016C3DC.c:
+	.text       start:0x8016C3DC end:0x8016C458
+
+SN/fn_8016C458.c:
+	.text       start:0x8016C458 end:0x8016C514
+
+Runtime.PPCEABI.H/__ieee754_acos.c:
+	.text       start:0x8016C514 end:0x8016C790
+	.sdata      start:0x8066BFA8 end:0x8066C028
+
+Runtime.PPCEABI.H/__ieee754_sqrt.c:
+	.text       start:0x8016C790 end:0x8016C9A4
+
+Runtime.PPCEABI.H/ceil.c:
+	.text       start:0x8016C9A4 end:0x8016CAFC
+	.sdata      start:0x8066C028 end:0x8066C038
+
+Runtime.PPCEABI.H/cos.c:
+	.text       start:0x8016CAFC end:0x8016CBDC
+	.sdata      start:0x8066C038 end:0x8066C040
+
+Runtime.PPCEABI.H/fn_8016CBDC.c:
+	.text       start:0x8016CBDC end:0x8016CD38
+	.sdata      start:0x8066C040 end:0x8066C050
+
+Runtime.PPCEABI.H/sin.c:
+	.text       start:0x8016CD38 end:0x8016CE18
+	.sdata      start:0x8066C050 end:0x8066C058
+
+Runtime.PPCEABI.H/__ieee754_acosf.c:
+	.text       start:0x8016CE18 end:0x8016D064
+	.sdata      start:0x8066C058 end:0x8066C0A0
+
+Runtime.PPCEABI.H/atan2f.c:
+	.text       start:0x8016D064 end:0x8016D284
+	.sdata      start:0x8066C0A0 end:0x8066C0D0
+
+Runtime.PPCEABI.H/__ieee754_powf.c:
+	.text       start:0x8016D284 end:0x8016D978
+	.sdata      start:0x8066C0D0 end:0x8066C160
+	.sdata2     start:0x8066FC20 end:0x8066FC38
+
+Runtime.PPCEABI.H/__ieee754_sqrtf.c:
+	.text       start:0x8016D978 end:0x8016DA70
+
+Runtime.PPCEABI.H/atanf.c:
+	.text       start:0x8016DA70 end:0x8016DC80
+	.sdata2     start:0x8066FC38 end:0x8066FC84
+
+Runtime.PPCEABI.H/cosf.c:
+	.text       start:0x8016DC80 end:0x8016DD5C
+	.sdata      start:0x8066C160 end:0x8066C178
 
 Runtime.PPCEABI.H/fabsf.c:
 	.text       start:0x8016DD5C end:0x8016DD80
 
+Runtime.PPCEABI.H/sinf.c:
+	.text       start:0x8016DD80 end:0x8016DE5C
+
+Runtime.PPCEABI.H/tanf.c:
+	.text       start:0x8016DE5C end:0x8016DEDC
+	.sdata      start:0x8066C178 end:0x8066C180
+
+Runtime.PPCEABI.H/scalbnf.c:
+	.text       start:0x8016DEDC end:0x8016DFF8
+	.sdata      start:0x8066C180 end:0x8066C190
+
+Runtime.PPCEABI.H/__kernel_cos.c:
+	.text       start:0x8016DFF8 end:0x8016E0EC
+	.sdata      start:0x8066C190 end:0x8066C1D8
+
+Runtime.PPCEABI.H/__kernel_sin.c:
+	.text       start:0x8016E0EC end:0x8016E198
+	.sdata      start:0x8066C1D8 end:0x8066C210
+
+Runtime.PPCEABI.H/__ieee754_rem_pio2.c:
+	.text       start:0x8016E198 end:0x8016E4FC
+	.sdata      start:0x8066C210 end:0x8066C268
+	.sdata2     start:0x8066FC88 end:0x8066FE10
+
 Runtime.PPCEABI.H/fabs.c:
 	.text       start:0x8016E4FC end:0x8016E538
+
+Runtime.PPCEABI.H/__kernel_cosf.c:
+	.text       start:0x8016E538 end:0x8016E624
+
+Runtime.PPCEABI.H/__kernel_sinf.c:
+	.text       start:0x8016E624 end:0x8016E6D0
+	.sdata      start:0x8066C268 end:0x8066C2A8
+
+Runtime.PPCEABI.H/__kernel_tanf.c:
+	.text       start:0x8016E6D0 end:0x8016E8E4
+	.sdata      start:0x8066C2A8 end:0x8066C2C8
+	.sdata2     start:0x8066FE10 end:0x8066FE30
+
+Runtime.PPCEABI.H/__ieee754_rem_pio2f.c:
+	.text       start:0x8016E8E4 end:0x8016EC34
+	.sdata      start:0x8066C2C8 end:0x8066C300
+	.sdata2     start:0x8066FE30 end:0x806701E0
 
 Runtime.PPCEABI.H/copysignf.c:
 	.text       start:0x8016EC34 end:0x8016EC68
 
-Runtime.PPCEABI.H/fn_801700B8.c:
+Runtime.PPCEABI.H/__kernel_rem_pio2.c:
+	.text       start:0x8016EC68 end:0x8016F4F0
+	.sdata      start:0x8066C300 end:0x8066C340
+	.sdata2     start:0x806701E0 end:0x80670230
+
+Runtime.PPCEABI.H/__kernel_rem_pio2f.c:
+	.text       start:0x8016F4F0 end:0x8016FD74
+	.sdata      start:0x8066C340 end:0x8066C364
+	.sdata2     start:0x80670230 end:0x80670268
+
+Runtime.PPCEABI.H/floorf.c:
+	.text       start:0x8016FD74 end:0x8016FE3C
+	.sdata      start:0x8066C368 end:0x8066C370
+
+Runtime.PPCEABI.H/scalbn.c:
+	.text       start:0x8016FE3C end:0x8016FF90
+	.sdata      start:0x8066C370 end:0x8066C390
+
+Runtime.PPCEABI.H/copysign.c:
+	.text       start:0x8016FF90 end:0x8016FFE0
+
+Runtime.PPCEABI.H/sprintf.c:
+	.text       start:0x8016FFE0 end:0x801700B8
+
+Runtime.PPCEABI.H/eofread.c:
 	.text       start:0x801700B8 end:0x801700C0
+
+Runtime.PPCEABI.H/sscanf.c:
+	.text       start:0x801700C0 end:0x801701B0
+
+Runtime.PPCEABI.H/__svfscanf.c:
+	.text       start:0x801701B0 end:0x80170FB4
+	.rodata     start:0x8049C1E8 end:0x8049C20C
+
+Runtime.PPCEABI.H/__sccl.c:
+	.text       start:0x80170FB4 end:0x80171088
+
+Runtime.PPCEABI.H/vsprintf.c:
+	.text       start:0x80171088 end:0x80171158
+
+Runtime.PPCEABI.H/__register_atexit.c:
+	.text       start:0x80171158 end:0x801711F0
+
+Runtime.PPCEABI.H/atof.c:
+	.text       start:0x801711F0 end:0x80171214
+
+Runtime.PPCEABI.H/atoi.c:
+	.text       start:0x80171214 end:0x8017123C
+
+Runtime.PPCEABI.H/bsearch.c:
+	.text       start:0x8017123C end:0x801712D4
+
+Runtime.PPCEABI.H/_mbtowc_r.c:
+	.text       start:0x801712D4 end:0x80171600
+	.rodata     start:0x8049C20C end:0x8049C224
+	.data       start:0x804CFF48 end:0x804D02A8
+
+Runtime.PPCEABI.H/qsort.c:
+	.text       start:0x80171600 end:0x80171F8C
 
 Runtime.PPCEABI.H/fn_80171F8C.c:
 	.text       start:0x80171F8C end:0x80171FB0
 
-Runtime.PPCEABI.H/fn_80177CF8.c:
+Runtime.PPCEABI.H/free.c:
+	.text       start:0x80171FB0 end:0x80171FEC
+	.rodata     start:0x8049C224 end:0x8049C420
+	.sdata      start:0x8066C390 end:0x8066C398
+
+Runtime.PPCEABI.H/realloc.c:
+	.text       start:0x80171FEC end:0x80172028
+
+Runtime.PPCEABI.H/_strtoul_r.c:
+	.text       start:0x80172028 end:0x801721C0
+
+Runtime.PPCEABI.H/strtoul.c:
+	.text       start:0x801721C0 end:0x801721F8
+
+Runtime.PPCEABI.H/memcmp.c:
+	.text       start:0x801721F8 end:0x80172288
+
+Runtime.PPCEABI.H/memcpy.c:
+	.text       start:0x80172288 end:0x8017232C
+
+Runtime.PPCEABI.H/memmove.c:
+	.text       start:0x8017232C end:0x80172418
+
+Runtime.PPCEABI.H/memset.c:
+	.text       start:0x80172418 end:0x801724AC
+
+Runtime.PPCEABI.H/stricmp.c:
+	.text       start:0x801724AC end:0x80172528
+
+Runtime.PPCEABI.H/strcat.c:
+	.text       start:0x80172528 end:0x801725B8
+
+Runtime.PPCEABI.H/strchr.c:
+	.text       start:0x801725B8 end:0x80172654
+
+Runtime.PPCEABI.H/strcmp.c:
+	.text       start:0x80172654 end:0x801726FC
+
+Runtime.PPCEABI.H/strcpy.c:
+	.text       start:0x801726FC end:0x80172780
+
+Runtime.PPCEABI.H/strlen.c:
+	.text       start:0x80172780 end:0x801727EC
+
+Runtime.PPCEABI.H/strlwr.c:
+	.text       start:0x801727EC end:0x80172858
+
+Runtime.PPCEABI.H/strnicmp.c:
+	.text       start:0x80172858 end:0x80172904
+
+Runtime.PPCEABI.H/strncmp.c:
+	.text       start:0x80172904 end:0x801729E4
+
+Runtime.PPCEABI.H/strncpy.c:
+	.text       start:0x801729E4 end:0x80172AB0
+
+Runtime.PPCEABI.H/strrchr.c:
+	.text       start:0x80172AB0 end:0x80172AFC
+
+Runtime.PPCEABI.H/strspn.c:
+	.text       start:0x80172AFC end:0x80172B6C
+
+Runtime.PPCEABI.H/strstr.c:
+	.text       start:0x80172B6C end:0x80172BD4
+
+Runtime.PPCEABI.H/strtok.c:
+	.text       start:0x80172BD4 end:0x80172BFC
+
+Runtime.PPCEABI.H/strtok_r.c:
+	.text       start:0x80172BFC end:0x80172CC4
+
+Runtime.PPCEABI.H/fn_80172CC4.c:
+	.text       start:0x80172CC4 end:0x80172CEC
+
+Runtime.PPCEABI.H/asctime_r.c:
+	.text       start:0x80172CEC end:0x80172D78
+	.rodata     start:0x8049C420 end:0x8049C480
+
+Runtime.PPCEABI.H/fn_80172D78.c:
+	.text       start:0x80172D78 end:0x80172DA0
+
+Runtime.PPCEABI.H/gmtime_r.c:
+	.text       start:0x80172DA0 end:0x80172FF8
+	.rodata     start:0x8049C480 end:0x8049C4E0
+	.sdata2     start:0x80670268 end:0x80670270
+
+Runtime.PPCEABI.H/mktime.c:
+	.text       start:0x80172FF8 end:0x801735D4
+	.rodata     start:0x8049C4E0 end:0x8049C540
+
+Runtime.PPCEABI.H/strround.c:
+	.text       start:0x801735D4 end:0x80173630
+
+Runtime.PPCEABI.H/strrev.c:
+	.text       start:0x80173630 end:0x8017367C
+
+Runtime.PPCEABI.H/itoa.c:
+	.text       start:0x8017367C end:0x801736F8
+	.data       start:0x804D02A8 end:0x804D02D0
+
+Runtime.PPCEABI.H/fftoa.c:
+	.text       start:0x801736F8 end:0x80173BE0
+	.rodata     start:0x8049C540 end:0x8049C580
+
+Runtime.PPCEABI.H/_vfwrite.c:
+	.text       start:0x80173BE0 end:0x80173CB4
+	.bss        start:0x8057BF80 end:0x8057C0A0
+	.sdata      start:0x8066C398 end:0x8066C3A0
+
+Runtime.PPCEABI.H/vfprintf.c:
+	.text       start:0x80173CB4 end:0x80173D8C
+
+Runtime.PPCEABI.H/_vfprintf_r.c:
+	.text       start:0x80173D8C end:0x8017557C
+	.rodata     start:0x8049C580 end:0x8049C610
+
+Runtime.PPCEABI.H/__group_digits.c:
+	.text       start:0x8017557C end:0x80175704
+
+Runtime.PPCEABI.H/_vfiwrite.c:
+	.text       start:0x80175704 end:0x801757D8
+	.sdata      start:0x8066C3A0 end:0x8066C3A8
+
+Runtime.PPCEABI.H/_vfiprintf_r.c:
+	.text       start:0x801757D8 end:0x80176E54
+	.rodata     start:0x8049C610 end:0x8049C680
+
+Runtime.PPCEABI.H/_strtol_r.c:
+	.text       start:0x80176E54 end:0x80177004
+
+Runtime.PPCEABI.H/strtol.c:
+	.text       start:0x80177004 end:0x8017703C
+
+Runtime.PPCEABI.H/strtod.c:
+	.text       start:0x8017703C end:0x80177368
+	.rodata     start:0x8049C680 end:0x8049C6A0
+	.data       start:0x804D02D0 end:0x804D0318
+
+Runtime.PPCEABI.H/ctype_.c:
+	.rodata     start:0x8049C6A0 end:0x8049C7A4
+
+Runtime.PPCEABI.H/tolower.c:
+	.text       start:0x80177368 end:0x80177384
+
+Runtime.PPCEABI.H/isdigit.c:
+	.text       start:0x80177384 end:0x80177398
+
+Runtime.PPCEABI.H/isspace.c:
+	.text       start:0x80177398 end:0x801773AC
+
+Runtime.PPCEABI.H/__errno.c:
+	.text       start:0x801773AC end:0x801773B4
+
+Runtime.PPCEABI.H/_localeconv_r.c:
+	.text       start:0x801773B4 end:0x801773C0
+	.rodata     start:0x8049C7A4 end:0x8049C7F8
+	.sdata      start:0x8066C3A8 end:0x8066C3B0
+
+Runtime.PPCEABI.H/localeconv.c:
+	.text       start:0x801773C0 end:0x801773E4
+
+Runtime.PPCEABI.H/floor.c:
+	.text       start:0x801773E4 end:0x80177558
+	.rodata     start:0x8049C7F8 end:0x8049C808
+
+Runtime.PPCEABI.H/__ieee754_fmod.c:
+	.text       start:0x80177558 end:0x801778B4
+	.rodata     start:0x8049C808 end:0x8049C818
+
+Runtime.PPCEABI.H/__ieee754_log.c:
+	.text       start:0x801778B4 end:0x80177BB0
+	.rodata     start:0x8049C818 end:0x8049C8A0
+
+Runtime.PPCEABI.H/__ieee754_log10.c:
+	.text       start:0x80177BB0 end:0x80177CF8
+	.rodata     start:0x8049C8A0 end:0x8049C8D8
+
+Runtime.PPCEABI.H/impure.c:
+	.rodata     start:0x8049C8D8 end:0x8049C8DC
+	.data       start:0x804D0318 end:0x804D066C
+	.sdata      start:0x8066C3B0 end:0x8066C3B8
+
+Runtime.PPCEABI.H/memcpyalpha.c:
 	.text       start:0x80177CF8 end:0x80177D24
 
-Runtime.PPCEABI.H/fn_80177D24.c:
+Runtime.PPCEABI.H/fread.c:
 	.text       start:0x80177D24 end:0x80177E04
 
-Runtime.PPCEABI.H/fn_80177E04.c:
+Runtime.PPCEABI.H/lflush.c:
 	.text       start:0x80177E04 end:0x80177E24
 
-Runtime.PPCEABI.H/fn_80177E24.c:
+Runtime.PPCEABI.H/__srefill.c:
 	.text       start:0x80177E24 end:0x80177F98
 
 Runtime.PPCEABI.H/ungetc.c:
 	.text       start:0x80177F98 end:0x8017811C
+	.rodata     start:0x8049C8DC end:0x8049C920
 
 Runtime.PPCEABI.H/div.c:
 	.text       start:0x8017811C end:0x80178164
@@ -51,80 +743,390 @@ Runtime.PPCEABI.H/div.c:
 Runtime.PPCEABI.H/memchr.c:
 	.text       start:0x80178164 end:0x80178224
 
-Runtime.PPCEABI.H/fn_80178224.c:
+Runtime.PPCEABI.H/fflush.c:
 	.text       start:0x80178224 end:0x80178318
 
-Runtime.PPCEABI.H/fn_80178318.c:
+Runtime.PPCEABI.H/snstd.c:
 	.text       start:0x80178318 end:0x80178374
 
-Runtime.PPCEABI.H/fn_80178D20.c:
+Runtime.PPCEABI.H/__sinit.c:
+	.text       start:0x80178374 end:0x80178424
+	.bss        start:0x8057C0A0 end:0x8057C4F0
+
+Runtime.PPCEABI.H/__sfp.c:
+	.text       start:0x80178424 end:0x80178568
+
+Runtime.PPCEABI.H/_fopen_r.c:
+	.text       start:0x80178568 end:0x80178654
+	.rodata     start:0x8049C920 end:0x8049C94C
+
+Runtime.PPCEABI.H/fopen.c:
+	.text       start:0x80178654 end:0x80178684
+
+Runtime.PPCEABI.H/fn_80178684.c:
+	.text       start:0x80178684 end:0x801786AC
+
+Runtime.PPCEABI.H/_fseek_r.c:
+	.text       start:0x801786AC end:0x80178A90
+
+Runtime.PPCEABI.H/_fwalk.c:
+	.text       start:0x80178A90 end:0x80178B10
+
+Runtime.PPCEABI.H/__smakebuf.c:
+	.text       start:0x80178B10 end:0x80178BE8
+
+Runtime.PPCEABI.H/__sread.c:
+	.text       start:0x80178BE8 end:0x80178C4C
+
+Runtime.PPCEABI.H/__swrite.c:
+	.text       start:0x80178C4C end:0x80178CBC
+
+Runtime.PPCEABI.H/__sseek.c:
+	.text       start:0x80178CBC end:0x80178D20
+
+Runtime.PPCEABI.H/__sclose.c:
 	.text       start:0x80178D20 end:0x80178D48
 
-Runtime.PPCEABI.H/fn_80178D48.c:
+Runtime.PPCEABI.H/_close_r.c:
 	.text       start:0x80178D48 end:0x80178D98
 
-Runtime.PPCEABI.H/fn_80178D98.c:
+Runtime.PPCEABI.H/_fstat_r.c:
 	.text       start:0x80178D98 end:0x80178DF0
 
-Runtime.PPCEABI.H/fn_80178DF0.c:
+Runtime.PPCEABI.H/_lseek_r.c:
 	.text       start:0x80178DF0 end:0x80178E48
 
 Runtime.PPCEABI.H/fn_80178E48.c:
 	.text       start:0x80178E48 end:0x80178EA4
 
-Runtime.PPCEABI.H/fn_80178EA4.c:
+Runtime.PPCEABI.H/_read_r.c:
 	.text       start:0x80178EA4 end:0x80178EFC
 
-Runtime.PPCEABI.H/fn_80178EFC.c:
+Runtime.PPCEABI.H/_write_r.c:
 	.text       start:0x80178EFC end:0x80178F54
 
 Runtime.PPCEABI.H/fn_80178F54.c:
 	.text       start:0x80178F54 end:0x80178FF0
 
-Runtime.PPCEABI.H/fn_80178FF0.c:
+Runtime.PPCEABI.H/__do_global_ctors.c:
 	.text       start:0x80178FF0 end:0x80179080
 
-Runtime.PPCEABI.H/fn_80179080.c:
+Runtime.PPCEABI.H/__main.c:
 	.text       start:0x80179080 end:0x801790B8
+	.bss        start:0x8057C4F0 end:0x8057C500
 
 Runtime.PPCEABI.H/runtime.c:
 	.text       start:0x801790B8 end:0x80179138
 
 Runtime.PPCEABI.H/fn_80179138.c:
 	.text       start:0x80179138 end:0x801796B4
+	.sdata2     start:0x80670270 end:0x80670370
+
+Runtime.PPCEABI.H/fn_801796B4.c:
+	.text       start:0x801796B4 end:0x801796BC
 
 Runtime.PPCEABI.H/lshrdi3.c:
 	.text       start:0x801796BC end:0x801796FC
 
-Runtime.PPCEABI.H/fn_801796FC.c:
+Runtime.PPCEABI.H/__moddi3.c:
 	.text       start:0x801796FC end:0x80179C30
+	.sdata2     start:0x80670370 end:0x80670470
+
+Runtime.PPCEABI.H/__pure_virtual.c:
+	.text       start:0x80179C30 end:0x80179C50
+
+Runtime.PPCEABI.H/__udivdi3.c:
+	.text       start:0x80179C50 end:0x8017A134
+	.sdata2     start:0x80670470 end:0x80670570
+
+Runtime.PPCEABI.H/__umoddi3.c:
+	.text       start:0x8017A134 end:0x8017A5CC
+	.sdata2     start:0x80670570 end:0x80670678
+
+Dolphin/os/fn_8017A5CC.c:
+	.text       start:0x8017A5CC end:0x8017A620
+	.rodata     start:0x8049C94C end:0x8049CB40
+	.data       start:0x804D0670 end:0x804D0674
 
 Dolphin/os/fn_8017A620.c:
 	.text       start:0x8017A620 end:0x8017A67C
+	.data       start:0x804D0678 end:0x804D0680
+
+Dolphin/os/fn_8017A67C.c:
+	.text       start:0x8017A67C end:0x8017A6CC
 
 Dolphin/os/fn_8017A6CC.c:
 	.text       start:0x8017A6CC end:0x8017A6EC
 
+Dolphin/os/fn_8017A6EC.c:
+	.text       start:0x8017A6EC end:0x8017A70C
+
 Dolphin/os/fn_8017A70C.c:
 	.text       start:0x8017A70C end:0x8017A71C
 
+Dolphin/os/fn_8017A71C.c:
+	.text       start:0x8017A71C end:0x8017A73C
+
+Dolphin/os/fn_8017A73C.c:
+	.text       start:0x8017A73C end:0x8017A75C
+
+Dolphin/os/fn_8017A75C.c:
+	.text       start:0x8017A75C end:0x8017A800
+
 Dolphin/os/PPCArch.c:
-	.text       start:0x8017A800 end:0x8017AAAC
-	.sbss       start:0x8066F1D0 end:0x8066F1F0
+	.text       start:0x8017A800 end:0x8017A920
+
+Dolphin/os/OS.c:
+	.text       start:0x8017A920 end:0x8017B3EC
+	.data       start:0x804D0680 end:0x804D0878
+	.bss        start:0x8057C500 end:0x8057C570
+	.sdata      start:0x8066C3B8 end:0x8066C3C8
+	.sbss       start:0x8066F1D0 end:0x8066F208
+
+Dolphin/os/OSInitAlarm.c:
+	.text       start:0x8017B3EC end:0x8017B444
+	.data       start:0x804D0878 end:0x804D0A70
+	.sbss       start:0x8066F208 end:0x8066F210
 
 Dolphin/os/fn_8017B444.c:
 	.text       start:0x8017B444 end:0x8017B454
 
+Dolphin/os/InsertAlarm.c:
+	.text       start:0x8017B454 end:0x8017B6A4
+
+Dolphin/os/OSSetAlarm.c:
+	.text       start:0x8017B6A4 end:0x8017B70C
+
+Dolphin/os/OSSetPeriodicAlarm.c:
+	.text       start:0x8017B70C end:0x8017B788
+
+Dolphin/os/OSCancelAlarm.c:
+	.text       start:0x8017B788 end:0x8017B8A4
+
+Dolphin/os/OSDecrementer.c:
+	.text       start:0x8017B8A4 end:0x8017BB24
+
+Dolphin/os/fn_8017BB24.c:
+	.text       start:0x8017BB24 end:0x8017BBC4
+
+Dolphin/os/OSArena.c:
+	.text       start:0x8017BBC4 end:0x8017BC10
+	.sdata      start:0x8066C3C8 end:0x8066C3D0
+	.sbss       start:0x8066F210 end:0x8066F218
+
+Dolphin/os/OSAudioSystem.c:
+	.text       start:0x8017BC10 end:0x8017BEA4
+	.data       start:0x804D0A70 end:0x804D0AF0
+
 Dolphin/os/OSCache.c:
 	.text       start:0x8017BEA4 end:0x8017C088
+
+Dolphin/os/__OSCacheInit.c:
+	.text       start:0x8017C088 end:0x8017C2DC
+	.data       start:0x804D0AF0 end:0x804D0D20
+
+Dolphin/os/__OSLoadFPUContext.c:
+	.text       start:0x8017C2DC end:0x8017C400
+
+Dolphin/os/__OSSaveFPUContext.c:
+	.text       start:0x8017C400 end:0x8017C528
+
+Dolphin/os/OSSaveFPUContext.c:
+	.text       start:0x8017C528 end:0x8017C530
+
+Dolphin/os/OSSetCurrentContext.c:
+	.text       start:0x8017C530 end:0x8017C58C
+
+Dolphin/os/OSGetCurrentContext.c:
+	.text       start:0x8017C58C end:0x8017C598
+
+Dolphin/os/OSSaveContext.c:
+	.text       start:0x8017C598 end:0x8017C618
+
+Dolphin/os/OSLoadContext.c:
+	.text       start:0x8017C618 end:0x8017C6F0
+
+Dolphin/os/OSGetStackPointer.c:
+	.text       start:0x8017C6F0 end:0x8017C6F8
+
+Dolphin/os/OSSwitchStack.c:
+	.text       start:0x8017C6F8 end:0x8017C728
+
+Dolphin/os/OSClearContext.c:
+	.text       start:0x8017C728 end:0x8017C74C
+
+Dolphin/os/OSInitContext.c:
+	.text       start:0x8017C74C end:0x8017C808
+
+Dolphin/os/OSDumpContext.c:
+	.text       start:0x8017C808 end:0x8017CB7C
+	.data       start:0x804D0D20 end:0x804D0EF8
+
+Dolphin/os/OSReport.c:
+	.text       start:0x8017CB7C end:0x8017CBFC
+
+Dolphin/os/OSPanic.c:
+	.text       start:0x8017CBFC end:0x8017D228
+	.data       start:0x804D0EF8 end:0x804D1214
+	.bss        start:0x8057C570 end:0x8057C5B4
+	.sdata      start:0x8066C3D0 end:0x8066C3D8
+
+Dolphin/os/PackArgs.c:
+	.text       start:0x8017D228 end:0x8017D3B0
+
+Dolphin/os/fn_8017D3B0.c:
+	.text       start:0x8017D3B0 end:0x8017D3D8
+
+Dolphin/os/OSAlarm.c:
+	.text       start:0x8017D3D8 end:0x8017D3EC
+
+Dolphin/os/ReadDiscBlocking.c:
+	.text       start:0x8017D3EC end:0x8017D458
+
+Dolphin/os/__OSSetAlarmState.c:
+	.text       start:0x8017D458 end:0x8017D464
+	.sbss       start:0x8066F218 end:0x8066F220
+
+Dolphin/os/fn_8017D464.c:
+	.text       start:0x8017D464 end:0x8017D4A4
+
+Dolphin/os/fn_8017D4A4.c:
+	.text       start:0x8017D4A4 end:0x8017D568
+
+Dolphin/os/__OSBootDolSimple.c:
+	.text       start:0x8017D568 end:0x8017D9EC
+	.data       start:0x804D1218 end:0x804D1228
+
+Dolphin/os/__OSBootDol.c:
+	.text       start:0x8017D9EC end:0x8017DB88
+	.sdata      start:0x8066C3D8 end:0x8066C3E0
 
 Dolphin/os/OSInterrupt.c:
 	.text       start:0x8017DB88 end:0x8017DBD4
 
-Dolphin/os/fn_8017FB84.c:
-	.text       start:0x8017FB84 end:0x8017FBA4
+Dolphin/os/__OSSetInterruptHandler.c:
+	.text       start:0x8017DBD4 end:0x8017DBF0
+	.sbss       start:0x8066F220 end:0x8066F238
 
-Dolphin/os/fn_8017FD64.c:
+Dolphin/os/__OSGetInterruptHandler.c:
+	.text       start:0x8017DBF0 end:0x8017DC04
+
+Dolphin/os/__OSInterruptInit.c:
+	.text       start:0x8017DC04 end:0x8017DC78
+
+Dolphin/os/SetInterruptMask.c:
+	.text       start:0x8017DC78 end:0x8017DF50
+
+Dolphin/os/OSInterruptMask.c:
+	.text       start:0x8017DF50 end:0x8017E060
+
+Dolphin/os/__OSDispatchInterrupt.c:
+	.text       start:0x8017E060 end:0x8017E3A4
+	.data       start:0x804D1228 end:0x804D1258
+
+Dolphin/os/ExternalInterruptHandler.c:
+	.text       start:0x8017E3A4 end:0x8017E3F4
+
+Dolphin/os/__OSModuleInit.c:
+	.text       start:0x8017E3F4 end:0x8017E40C
+	.data       start:0x804D1258 end:0x804D12A8
+
+Dolphin/os/OSMemory.c:
+	.text       start:0x8017E40C end:0x8017E5B4
+
+Dolphin/os/RealMode.c:
+	.text       start:0x8017E5B4 end:0x8017E5CC
+
+Dolphin/os/__OSInitMemoryProtection.c:
+	.text       start:0x8017E5CC end:0x8017E6E4
+	.data       start:0x804D12A8 end:0x804D12B8
+
+Dolphin/os/fn_8017E6E4.c:
+	.text       start:0x8017E6E4 end:0x8017E754
+
+Dolphin/os/OSGetSaveRegion.c:
+	.text       start:0x8017E754 end:0x8017E768
+	.sbss       start:0x8066F238 end:0x8066F240
+
+Dolphin/os/OSRegisterResetFunction.c:
+	.text       start:0x8017E768 end:0x8017E7EC
+	.sbss       start:0x8066F240 end:0x8066F24C
+
+Dolphin/os/CallResetFunctions.c:
+	.text       start:0x8017E7EC end:0x8017E894
+
+Dolphin/os/Reset.c:
+	.text       start:0x8017E894 end:0x8017E904
+
+Dolphin/os/KillThreads.c:
+	.text       start:0x8017E904 end:0x8017E96C
+
+Dolphin/os/__OSDoHotReset.c:
+	.text       start:0x8017E96C end:0x8017E9B4
+
+Dolphin/os/OSResetSystem.c:
+	.text       start:0x8017E9B4 end:0x8017EBB4
+	.data       start:0x804D12B8 end:0x804D1308
+
+Dolphin/os/OSGetResetCode.c:
+	.text       start:0x8017EBB4 end:0x8017EBEC
+
+Dolphin/os/__OSResetSWInterruptHandler.c:
+	.text       start:0x8017EBEC end:0x8017ECE0
+	.sbss       start:0x8066F250 end:0x8066F270
+
+Dolphin/os/OSGetResetButtonState.c:
+	.text       start:0x8017ECE0 end:0x8017EF78
+
+Dolphin/os/WriteSramCallback.c:
+	.text       start:0x8017EF78 end:0x8017EFD8
+
+Dolphin/os/WriteSram.c:
+	.text       start:0x8017EFD8 end:0x8017F0F0
+
+Dolphin/os/__OSInitSram.c:
+	.text       start:0x8017F0F0 end:0x8017F668
+	.bss        start:0x8057C5C0 end:0x8057C614 align:32
+
+Dolphin/os/__OSSyncSram.c:
+	.text       start:0x8017F668 end:0x8017F678
+
+Dolphin/os/__OSReadROM.c:
+	.text       start:0x8017F678 end:0x8017F79C
+
+Dolphin/os/OSGetSoundMode.c:
+	.text       start:0x8017F79C end:0x8017F81C
+
+Dolphin/os/OSSetSoundMode.c:
+	.text       start:0x8017F81C end:0x8017F8C0
+
+Dolphin/os/OSGetLanguage.c:
+	.text       start:0x8017F8C0 end:0x8017F92C
+
+Dolphin/os/OSGetWirelessID.c:
+	.text       start:0x8017F92C end:0x8017F9B0
+
+Dolphin/os/OSSetWirelessID.c:
+	.text       start:0x8017F9B0 end:0x8017FA5C
+
+Dolphin/os/OSGetGbsMode.c:
+	.text       start:0x8017FA5C end:0x8017FACC
+
+Dolphin/os/OSSetGbsMode.c:
+	.text       start:0x8017FACC end:0x8017FB84
+
+Dolphin/os/OSSync.c:
+	.text       start:0x8017FB84 end:0x8017FC08
+
+Dolphin/os/DefaultSwitchThreadCallback.c:
+	.text       start:0x8017FC08 end:0x8017FC0C
+
+Dolphin/os/__OSThreadInit.c:
+	.text       start:0x8017FC0C end:0x8017FD64
+	.bss        start:0x8057C618 end:0x8057D010
+	.sdata      start:0x8066C3E0 end:0x8066C3E4
+
+Dolphin/os/OSInitThreadQueue.c:
 	.text       start:0x8017FD64 end:0x8017FD74
 
 Dolphin/os/fn_8017FD74.c:
@@ -135,22 +1137,328 @@ Dolphin/os/fn_8017FD80.c:
 
 Dolphin/os/OSThread.c:
 	.text       start:0x8017FDB4 end:0x801800E8
-	.sbss       start:0x8066F270 end:0x8066F280
+	.data       start:0x804D1308 end:0x804D1B18
+	.sbss       start:0x8066F270 end:0x8066F27C
+
+Dolphin/os/SelectThread.c:
+	.text       start:0x801800E8 end:0x80180310
 
 Dolphin/os/OSYieldThread.c:
 	.text       start:0x80180310 end:0x8018037C
 
+Dolphin/os/OSCreateThread.c:
+	.text       start:0x8018037C end:0x80180564
+
+Dolphin/os/OSExitThread.c:
+	.text       start:0x80180564 end:0x80180648
+
+Dolphin/os/OSCancelThread.c:
+	.text       start:0x80180648 end:0x80180804
+
+Dolphin/os/OSResumeThread.c:
+	.text       start:0x80180804 end:0x80180A8C
+
+Dolphin/os/OSSuspendThread.c:
+	.text       start:0x80180A8C end:0x80180BFC
+
+Dolphin/os/OSSleepThread.c:
+	.text       start:0x80180BFC end:0x80180CE8
+
+Dolphin/os/OSWakeupThread.c:
+	.text       start:0x80180CE8 end:0x80180DEC
+
+Dolphin/os/OSSetThreadPriority.c:
+	.text       start:0x80180DEC end:0x80180EAC
+
+Dolphin/os/OSClearStack.c:
+	.text       start:0x80180EAC end:0x80180F58
+
 Dolphin/os/OSTime.c:
 	.text       start:0x80180F58 end:0x801813D4
+	.data       start:0x804D1B18 end:0x804D1B78
+
+Dolphin/os/fn_801813D4.c:
+	.text       start:0x801813D4 end:0x8018149C
+
+Dolphin/os/_ExitProcess.c:
+	.text       start:0x8018149C end:0x801814BC
+
+Dolphin/os/OSMutex.c:
+	.text       start:0x801814BC end:0x80181708
+
+Dolphin/si/SIBusy.c:
+	.text       start:0x80181708 end:0x80181728
+
+Dolphin/si/SIIsChanBusy.c:
+	.text       start:0x80181728 end:0x80181764
+
+Dolphin/si/CompleteTransfer.c:
+	.text       start:0x80181764 end:0x80181A60
+
+Dolphin/si/SIInterruptHandler.c:
+	.text       start:0x80181A60 end:0x80181DA4
+	.data       start:0x804D1B78 end:0x804D1C90
+	.bss        start:0x8057D010 end:0x8057D220
+	.sbss       start:0x8066F280 end:0x8066F28C
+
+Dolphin/si/SIEnablePollingInterrupt.c:
+	.text       start:0x80181DA4 end:0x80181E3C
+
+Dolphin/si/SIRegisterPollingHandler.c:
+	.text       start:0x80181E3C end:0x80181F08
+
+Dolphin/si/SIUnregisterPollingHandler.c:
+	.text       start:0x80181F08 end:0x80181FFC
+
+Dolphin/si/SIInit.c:
+	.text       start:0x80181FFC end:0x801820B0
+	.sdata      start:0x8066C3E8 end:0x8066C404
 
 Dolphin/si/SIBios.c:
 	.text       start:0x801820B0 end:0x80183070
+	.data       start:0x804D1C90 end:0x804D1D28
+	.sbss       start:0x8066F290 end:0x8066F298
 
 Dolphin/db/db.c:
-	.text       start:0x80183070 end:0x80183098
+	.text       start:0x80183070 end:0x8018315C
+	.data       start:0x804D1D28 end:0x804D1D40
+	.sbss       start:0x8066F298 end:0x8066F2A0
 
 Dolphin/dvd/dvdfs.c:
-	.text       start:0x8018315C end:0x801835C4
+	.text       start:0x8018315C end:0x80183DC8
+	.data       start:0x804D1D40 end:0x804D2130
+	.sdata      start:0x8066C408 end:0x8066C410
+	.sbss       start:0x8066F2A0 end:0x8066F2C0
+
+Dolphin/dvd/dvd.c:
+	.text       start:0x80183DC8 end:0x80185F1C
+	.data       start:0x804D2130 end:0x804D21F8
+	.bss        start:0x8057D220 end:0x8057D2B8
+	.sdata      start:0x8066C410 end:0x8066C430
+	.sbss       start:0x8066F2C0 end:0x8066F318
+
+Dolphin/dvd/DVDChangeDiskAsync.c:
+	.data       start:0x804D21F8 end:0x804D2248
+
+Dolphin/dvd/DVDGetDriveStatus.c:
+	.text       start:0x80185F1C end:0x80185FC8
+
+Dolphin/dvd/DVDSetAutoInvalidation.c:
+	.text       start:0x80185FC8 end:0x80185FD8
+
+Dolphin/dvd/DVDResume.c:
+	.text       start:0x80185FD8 end:0x80186028
+
+Dolphin/dvd/DVDCancelAsync.c:
+	.text       start:0x80186028 end:0x80186474
+	.data       start:0x804D2248 end:0x804D22B0
+
+Dolphin/dvd/__DVDPrepareResetAsync.c:
+	.text       start:0x80186474 end:0x80186590
+
+Dolphin/dvd/fn_80186590.c:
+	.text       start:0x80186590 end:0x801865C8
+
+Dolphin/dvd/dvdqueue.c:
+	.text       start:0x801865C8 end:0x801867C0
+	.data       start:0x804D22B0 end:0x804D2418
+	.bss        start:0x8057D2B8 end:0x8057D2D8
+	.sdata      start:0x8066C430 end:0x8066C468
+
+Dolphin/dvd/dvderror.c:
+	.text       start:0x801867C0 end:0x80186958
+	.data       start:0x804D2418 end:0x804D2460
+
+Dolphin/dvd/DVDCompareDiskID.c:
+	.text       start:0x80186958 end:0x80186A50
+
+Dolphin/dvd/__DVDPrintFatalMessage.c:
+	.text       start:0x80186A50 end:0x80186A80
+	.data       start:0x804D2460 end:0x804D2810
+	.sbss       start:0x8066F318 end:0x8066F31C
+
+Dolphin/dvd/fstload.c:
+	.text       start:0x80186A80 end:0x80186CC0
+	.data       start:0x804D2810 end:0x804D2880
+	.bss        start:0x8057D2D8 end:0x8057D348
+	.sdata      start:0x8066C470 end:0x8066C480 align:16
+	.sbss       start:0x8066F320 end:0x8066F330
+
+Dolphin/dvd/__DVDInitWA.c:
+	.text       start:0x80186CC0 end:0x80186D00
+
+Dolphin/dvd/__DVDInterruptHandler.c:
+	.text       start:0x80186D00 end:0x80186FE0
+	.sdata      start:0x8066C480 end:0x8066C484
+	.sbss       start:0x8066F330 end:0x8066F340
+
+Dolphin/dvd/AlarmHandler_80186FE0.c:
+	.text       start:0x80186FE0 end:0x80187064
+
+Dolphin/dvd/AlarmHandlerForTimeout.c:
+	.text       start:0x80187064 end:0x801870D4
+
+Dolphin/dvd/DVDLowRead.c:
+	.text       start:0x801870D4 end:0x801874FC
+	.bss        start:0x8057D348 end:0x8057D418
+
+Dolphin/dvd/DVDLowSeek.c:
+	.text       start:0x801874FC end:0x80187590
+
+Dolphin/dvd/DVDLowWaitCoverClose.c:
+	.text       start:0x80187590 end:0x801875BC
+
+Dolphin/dvd/DVDLowReadDiskID.c:
+	.text       start:0x801875BC end:0x80187660
+
+Dolphin/dvd/DVDLowStopMotor.c:
+	.text       start:0x80187660 end:0x801876EC
+
+Dolphin/dvd/DVDLowRequestError.c:
+	.text       start:0x801876EC end:0x80187778
+
+Dolphin/dvd/DVDLowInquiry.c:
+	.text       start:0x80187778 end:0x80187814
+
+Dolphin/dvd/DVDLowAudioStream.c:
+	.text       start:0x80187814 end:0x801878AC
+
+Dolphin/dvd/DVDLowRequestAudioStatus.c:
+	.text       start:0x801878AC end:0x80187938
+
+Dolphin/dvd/DVDLowAudioBufferConfig.c:
+	.text       start:0x80187938 end:0x801879D4
+
+Dolphin/dvd/DVDLowReset.c:
+	.text       start:0x801879D4 end:0x80187A90
+	.sbss       start:0x8066F340 end:0x8066F378
+
+Dolphin/dvd/DVDLowBreak.c:
+	.text       start:0x80187A90 end:0x80187AA4
+
+Dolphin/dvd/DVDLowClearCallback.c:
+	.text       start:0x80187AA4 end:0x80187AC0
+
+Dolphin/dvd/__DVDLowSetWAType.c:
+	.text       start:0x80187AC0 end:0x80187B04
+
+Dolphin/dvd/__DVDIsDVDAlarm.c:
+	.text       start:0x80187B04 end:0x80187B3C
+
+Dolphin/vi/__VIRetraceHandler.c:
+	.text       start:0x80187B3C end:0x80187DB0
+	.sbss       start:0x8066F378 end:0x8066F3D8
+
+Dolphin/dvd/DVDLowSetCoverCallback.c:
+	.text       start:0x80187DB0 end:0x80187DF4
+
+Dolphin/dvd/DVDLowSetResetCoverCallback.c:
+	.text       start:0x80187DF4 end:0x80187E38
+
+Dolphin/vi/VIInit.c:
+	.text       start:0x80187E38 end:0x8018960C
+	.data       start:0x804D2880 end:0x804D2AE0
+	.bss        start:0x8057D418 end:0x8057D560
+	.sdata      start:0x8066C488 end:0x8066C498
+
+Dolphin/vi/VIFlush.c:
+	.text       start:0x8018960C end:0x8018973C
+
+Dolphin/vi/VISetNextFrameBuffer.c:
+	.text       start:0x8018973C end:0x801897A8
+
+Dolphin/vi/VISetBlack.c:
+	.text       start:0x801897A8 end:0x80189824
+
+Dolphin/vi/VIGetRetraceCount.c:
+	.text       start:0x80189824 end:0x8018982C
+
+Dolphin/vi/getCurrentFieldEvenOdd.c:
+	.text       start:0x8018982C end:0x80189894
+
+Dolphin/vi/VIGetCurrentLine.c:
+	.text       start:0x80189894 end:0x8018992C
+
+Dolphin/vi/VIGetTvFormat.c:
+	.text       start:0x8018992C end:0x80189994
+	.data       start:0x804D2AE0 end:0x804D2C50
+
+Dolphin/vi/__VIDisplayPositionToXY.c:
+	.text       start:0x80189994 end:0x80189BB0
+
+Dolphin/vi/__VIGetCurrentPosition.c:
+	.text       start:0x80189BB0 end:0x80189C10
+
+Dolphin/pad/UpdateOrigin.c:
+	.text       start:0x80189C10 end:0x80189DB4
+	.sdata      start:0x8066C498 end:0x8066C4B8
+
+Dolphin/pad/PADOriginCallback.c:
+	.text       start:0x80189DB4 end:0x80189E78
+	.sbss       start:0x8066F3D8 end:0x8066F408
+
+Dolphin/pad/PADOriginUpdateCallback.c:
+	.text       start:0x80189E78 end:0x80189F44
+
+Dolphin/pad/PADProbeCallback.c:
+	.text       start:0x80189F44 end:0x8018A01C
+
+Dolphin/pad/PADTypeAndStatusCallback.c:
+	.text       start:0x8018A01C end:0x8018A348
+	.bss        start:0x8057D560 end:0x8057D5B0
+
+Dolphin/pad/PADReceiveCheckCallback.c:
+	.text       start:0x8018A348 end:0x8018A488
+
+Dolphin/pad/PADReset.c:
+	.text       start:0x8018A488 end:0x8018A598
+
+Dolphin/pad/PADRecalibrate.c:
+	.text       start:0x8018A598 end:0x8018A6AC
+
+Dolphin/pad/PADInit.c:
+	.text       start:0x8018A6AC end:0x8018A7FC
+	.data       start:0x804D2C50 end:0x804D2CA8
+
+Dolphin/pad/PADRead.c:
+	.text       start:0x8018A7FC end:0x8018AAFC
+
+Dolphin/pad/PADControlAllMotors.c:
+	.text       start:0x8018AAFC end:0x8018ABC8
+
+Dolphin/pad/PADControlMotor.c:
+	.text       start:0x8018ABC8 end:0x8018AC80
+
+Dolphin/pad/PADSetSpec.c:
+	.text       start:0x8018AC80 end:0x8018ACE0
+
+Dolphin/pad/SPEC0_MakeStatus.c:
+	.text       start:0x8018ACE0 end:0x8018AE54
+
+Dolphin/pad/SPEC1_MakeStatus.c:
+	.text       start:0x8018AE54 end:0x8018AFC8
+
+Dolphin/pad/SPEC2_MakeStatus.c:
+	.text       start:0x8018AFC8 end:0x8018B438
+
+Dolphin/pad/OnReset.c:
+	.text       start:0x8018B438 end:0x8018B4F4
+
+Dolphin/pad/SamplingHandler.c:
+	.text       start:0x8018B4F4 end:0x8018B554
+
+Dolphin/pad/PADSetSamplingCallback.c:
+	.text       start:0x8018B554 end:0x8018B5A8
+
+Dolphin/pad/__PADDisableRecalibration.c:
+	.text       start:0x8018B5A8 end:0x8018B624
+
+Dolphin/ai/AIRegisterDMACallback.c:
+	.text       start:0x8018B624 end:0x8018B668
+	.sbss       start:0x8066F408 end:0x8066F448
+
+Dolphin/ai/AIInitDMA.c:
+	.text       start:0x8018B668 end:0x8018B6F0
 
 Dolphin/ai/AIStartDMA.c:
 	.text       start:0x8018B6F0 end:0x8018B708
@@ -158,8 +1466,1631 @@ Dolphin/ai/AIStartDMA.c:
 Dolphin/ai/AIStopDMA.c:
 	.text       start:0x8018B708 end:0x8018B720
 
+Dolphin/ai/AISetStreamPlayState.c:
+	.text       start:0x8018B720 end:0x8018B7F8
+
 Dolphin/ai/AIGetStreamPlayState.c:
 	.text       start:0x8018B7F8 end:0x8018B808
 
-Dolphin/gx/GXInit.c:
+Dolphin/ai/AISetDSPSampleRate.c:
+	.text       start:0x8018B808 end:0x8018B8E8
+
+Dolphin/ai/AIGetDSPSampleRate.c:
+	.text       start:0x8018B8E8 end:0x8018B8FC
+
+Dolphin/ai/__AI_set_stream_sample_rate.c:
+	.text       start:0x8018B8FC end:0x8018B9D0
+
+Dolphin/ai/AIGetStreamSampleRate.c:
+	.text       start:0x8018B9D0 end:0x8018B9E0
+
+Dolphin/ai/AISetStreamVolLeft.c:
+	.text       start:0x8018B9E0 end:0x8018B9FC
+
+Dolphin/ai/AIGetStreamVolLeft.c:
+	.text       start:0x8018B9FC end:0x8018BA0C
+
+Dolphin/ai/AISetStreamVolRight.c:
+	.text       start:0x8018BA0C end:0x8018BA28
+
+Dolphin/ai/AIGetStreamVolRight.c:
+	.text       start:0x8018BA28 end:0x8018BA38
+
+Dolphin/ai/AIInit.c:
+	.text       start:0x8018BA38 end:0x8018BBA4
+	.data       start:0x804D2CA8 end:0x804D2CEC
+	.sdata      start:0x8066C4B8 end:0x8066C4BC
+
+Dolphin/ai/__AISHandler.c:
+	.text       start:0x8018BBA4 end:0x8018BC20
+
+Dolphin/ai/__AIDHandler.c:
+	.text       start:0x8018BC20 end:0x8018BCCC
+
+Dolphin/ai/__AICallbackStackSwitch.c:
+	.text       start:0x8018BCCC end:0x8018BD24
+
+Dolphin/ai/__AI_SRC_INIT.c:
+	.text       start:0x8018BD24 end:0x8018BF08
+
+Dolphin/gx/GXSetVtxDesc.c:
+	.text       start:0x8018BF08 end:0x8018C174
+	.data       start:0x804D2CF0 end:0x804D2D58
+
+Dolphin/gx/GXSetVtxDescv.c:
+	.text       start:0x8018C174 end:0x8018C3FC
+	.data       start:0x804D2D58 end:0x804D2DC0
+
+Dolphin/gx/__GXSetVCD.c:
+	.text       start:0x8018C3FC end:0x8018C4B8
+
+Dolphin/gx/__GXCalculateVLim.c:
+	.text       start:0x8018C4B8 end:0x8018C5DC
+	.sdata      start:0x8066C4C0 end:0x8066C4CC
+
+Dolphin/gx/GXGetVtxDesc.c:
+	.text       start:0x8018C5DC end:0x8018C790
+	.data       start:0x804D2DC0 end:0x804D2E28
+
+Dolphin/gx/GXGetVtxDescv.c:
+	.text       start:0x8018C790 end:0x8018C820
+
+Dolphin/gx/GXClearVtxDesc.c:
+	.text       start:0x8018C820 end:0x8018C858
+
+Dolphin/gx/GXSetVtxAttrFmt.c:
+	.text       start:0x8018C858 end:0x8018CD34
+	.data       start:0x804D2E28 end:0x804D2EB0
+
+Dolphin/gx/__GXSetVAT.c:
+	.text       start:0x8018CD34 end:0x8018CDBC
+
+Dolphin/gx/GXGetVtxAttrFmt.c:
+	.text       start:0x8018CDBC end:0x8018D384
+	.data       start:0x804D2EB0 end:0x804D2F64
+
+Dolphin/gx/GXSetNumTexGens.c:
+	.text       start:0x8018D384 end:0x8018D3C0
+
+Dolphin/gx/__GXSetDirtyState.c:
+	.text       start:0x8018D3C0 end:0x8018D440
+
+Dolphin/gx/GXBegin.c:
+	.text       start:0x8018D440 end:0x8018D510
+
+Dolphin/gx/__GXSendFlushPrim.c:
+	.text       start:0x8018D510 end:0x8018D598
+
+Dolphin/gx/GXSetLineWidth.c:
+	.text       start:0x8018D598 end:0x8018D5D8
+
+Dolphin/gx/GXSetPointSize.c:
+	.text       start:0x8018D5D8 end:0x8018D618
+
+Dolphin/gx/GXEnableTexOffsets.c:
+	.text       start:0x8018D618 end:0x8018D660
+
+Dolphin/gx/GXSetCullMode.c:
+	.text       start:0x8018D660 end:0x8018D688
+
+Dolphin/gx/GXSetCoPlanar.c:
+	.text       start:0x8018D688 end:0x8018D6BC
+
+Dolphin/gx/__GXSetGenMode.c:
+	.text       start:0x8018D6BC end:0x8018D6E0
+
+Dolphin/gx/GXInitLightAttn.c:
+	.text       start:0x8018D6E0 end:0x8018D6FC
+
+Dolphin/gx/GXInitLightAttnK.c:
+	.text       start:0x8018D6FC end:0x8018D70C
+
+Dolphin/gx/GXInitLightSpot.c:
+	.text       start:0x8018D70C end:0x8018D89C
+	.data       start:0x804D2F68 end:0x804D2F84
+	.sdata2     start:0x80670678 end:0x806706C0
+
+Dolphin/gx/GXInitLightPos.c:
+	.text       start:0x8018D89C end:0x8018D8AC
+
+Dolphin/gx/GXInitLightDir.c:
+	.text       start:0x8018D8AC end:0x8018D8C8
+
+Dolphin/gx/GXInitLightColor.c:
+	.text       start:0x8018D8C8 end:0x8018D8D4
+
+Dolphin/gx/GXLoadLightObjImm.c:
+	.text       start:0x8018D8D4 end:0x8018D950
+
+Dolphin/gx/GXSetChanAmbColor.c:
+	.text       start:0x8018D950 end:0x8018DA38
+
+Dolphin/gx/GXSetChanMatColor.c:
+	.text       start:0x8018DA38 end:0x8018DB20
+
+Dolphin/gx/GXSetNumChans.c:
+	.text       start:0x8018DB20 end:0x8018DB5C
+
+Dolphin/gx/GXSetChanCtrl.c:
+	.text       start:0x8018DB5C end:0x8018DC0C
+
+Dolphin/gx/__GXGetTexTileShift.c:
+	.text       start:0x8018DC0C end:0x8018E28C
+	.data       start:0x804D2F88 end:0x804D32A0
+	.sdata      start:0x8066C4D0 end:0x8066C518
+	.sdata2     start:0x806706C0 end:0x806706F8
+
+Dolphin/gx/GXAttr.c:
+	.text       start:0x8018E28C end:0x8018E29C
+	.text       start:0x8018E29C end:0x8018E2B8
+
+Dolphin/gx/GXTexture.c:
+	.text       start:0x8018E2B8 end:0x8018E3A0
+
+Dolphin/gx/GXLoadTexObjPreLoaded.c:
+	.text       start:0x8018E3A0 end:0x8018E51C
+
+Dolphin/gx/GXLoadTexObj.c:
+	.text       start:0x8018E51C end:0x8018E570
+
+Dolphin/gx/GXInitTlutObj.c:
+	.text       start:0x8018E570 end:0x8018E5A8
+
+Dolphin/gx/GXGetTlutObjAll.c:
+	.text       start:0x8018E5A8 end:0x8018E5CC
+
+Dolphin/gx/GXGetTlutObjData.c:
+	.text       start:0x8018E5CC end:0x8018E5D8
+
+Dolphin/gx/GXLoadTlut.c:
+	.text       start:0x8018E5D8 end:0x8018E670
+
+Dolphin/gx/GXInitTexCacheRegion.c:
+	.text       start:0x8018E670 end:0x8018E764
+
+Dolphin/gx/GXInitTlutRegion.c:
 	.text       start:0x8018E764 end:0x8018E7E4
+
+Dolphin/gx/GXSetTexRegionCallback.c:
+	.text       start:0x8018E7E4 end:0x8018E7F8
+
+Dolphin/gx/GXSetTlutRegionCallback.c:
+	.text       start:0x8018E7F8 end:0x8018E80C
+
+Dolphin/gx/GXSetSUTexRegs.c:
+	.text       start:0x8018E80C end:0x8018EA28
+
+Dolphin/gx/__GXSetTmemConfig.c:
+	.text       start:0x8018EA28 end:0x8018ED7C
+
+Dolphin/gx/GXSetTevIndirect.c:
+	.text       start:0x8018ED7C end:0x8018EDE8
+
+Dolphin/gx/GXSetIndTexMtx.c:
+	.text       start:0x8018EDE8 end:0x8018EF60
+	.sdata2     start:0x806706F8 end:0x80670710
+
+Dolphin/gx/GXSetIndTexCoordScale.c:
+	.text       start:0x8018EF60 end:0x8018F0A4
+
+Dolphin/gx/GXSetIndTexOrder.c:
+	.text       start:0x8018F0A4 end:0x8018F190
+
+Dolphin/gx/GXSetNumIndStages.c:
+	.text       start:0x8018F190 end:0x8018F1B4
+
+Dolphin/gx/GXSetTevDirect.c:
+	.text       start:0x8018F1B4 end:0x8018F1FC
+
+Dolphin/gx/GXSetTevIndRepeat.c:
+	.text       start:0x8018F1FC end:0x8018F244
+
+Dolphin/gx/GXUpdateBPMask.c:
+	.text       start:0x8018F244 end:0x8018F248
+
+Dolphin/gx/GXSetIndirectMask.c:
+	.text       start:0x8018F248 end:0x8018F278
+
+Dolphin/gx/GXFlushTextureState.c:
+	.text       start:0x8018F278 end:0x8018F29C
+
+Dolphin/gx/GXSetTevOp.c:
+	.text       start:0x8018F29C end:0x8018F328
+	.data       start:0x804D32A0 end:0x804D3314
+
+Dolphin/gx/GXSetTevColorIn.c:
+	.text       start:0x8018F328 end:0x8018F36C
+
+Dolphin/gx/GXSetTevAlphaIn.c:
+	.text       start:0x8018F36C end:0x8018F3B0
+
+Dolphin/gx/GXSetTevColorOp.c:
+	.text       start:0x8018F3B0 end:0x8018F418
+
+Dolphin/gx/GXSetTevAlphaOp.c:
+	.text       start:0x8018F418 end:0x8018F480
+
+Dolphin/gx/GXSetTevColor.c:
+	.text       start:0x8018F480 end:0x8018F4E0
+
+Dolphin/gx/GXSetTevKColor.c:
+	.text       start:0x8018F4E0 end:0x8018F544
+
+Dolphin/gx/GXSetTevKColorSel.c:
+	.text       start:0x8018F544 end:0x8018F5A0
+
+Dolphin/gx/GXSetTevKAlphaSel.c:
+	.text       start:0x8018F5A0 end:0x8018F5FC
+
+Dolphin/gx/GXSetTevSwapMode.c:
+	.text       start:0x8018F5FC end:0x8018F644
+
+Dolphin/gx/GXSetTevSwapModeTable.c:
+	.text       start:0x8018F644 end:0x8018F6C4
+
+Dolphin/gx/GXSetAlphaCompare.c:
+	.text       start:0x8018F6C4 end:0x8018F708
+
+Dolphin/gx/GXSetZTexture.c:
+	.text       start:0x8018F708 end:0x8018F794
+
+Dolphin/gx/GXSetTevOrder.c:
+	.text       start:0x8018F794 end:0x8018F930
+
+Dolphin/gx/GXSetNumTevStages.c:
+	.text       start:0x8018F930 end:0x8018F958
+
+Dolphin/gx/GXSetFog.c:
+	.text       start:0x8018F958 end:0x8018FB6C
+	.sdata2     start:0x80670710 end:0x80670770
+
+Dolphin/gx/GXSetFogRangeAdj.c:
+	.text       start:0x8018FB6C end:0x8018FC90
+
+Dolphin/gx/GXSetBlendMode.c:
+	.text       start:0x8018FC90 end:0x8018FCE4
+
+Dolphin/gx/GXSetColorUpdate.c:
+	.text       start:0x8018FCE4 end:0x8018FD10
+
+Dolphin/gx/GXSetAlphaUpdate.c:
+	.text       start:0x8018FD10 end:0x8018FD3C
+
+Dolphin/gx/GXSetZMode.c:
+	.text       start:0x8018FD3C end:0x8018FD70
+
+Dolphin/gx/GXSetZCompLoc.c:
+	.text       start:0x8018FD70 end:0x8018FDA4
+
+Dolphin/gx/GXSetPixelFmt.c:
+	.text       start:0x8018FDA4 end:0x8018FE78
+	.data       start:0x804D3318 end:0x804D3338
+
+Dolphin/gx/GXSetDither.c:
+	.text       start:0x8018FE78 end:0x8018FEA4
+
+Dolphin/gx/GXSetDstAlpha.c:
+	.text       start:0x8018FEA4 end:0x8018FEE0
+
+Dolphin/gx/GXSetFieldMask.c:
+	.text       start:0x8018FEE0 end:0x8018FF18
+
+Dolphin/gx/GXSetFieldMode.c:
+	.text       start:0x8018FF18 end:0x8018FF90
+
+Dolphin/gx/GXTransform.c:
+	.text       start:0x8018FF90 end:0x801900C0
+	.sdata2     start:0x80670770 end:0x80670778
+
+Dolphin/gx/GXLoadPosMtxImm.c:
+	.text       start:0x801900C0 end:0x80190110
+
+Dolphin/gx/GXLoadNrmMtxImm.c:
+	.text       start:0x80190110 end:0x80190160
+
+Dolphin/gx/GXSetCurrentMtx.c:
+	.text       start:0x80190160 end:0x80190194
+
+Dolphin/gx/GXLoadTexMtxImm.c:
+	.text       start:0x80190194 end:0x80190248
+
+Dolphin/gx/GXSetViewport.c:
+	.text       start:0x80190248 end:0x80190320
+	.sdata2     start:0x80670778 end:0x80670788
+
+Dolphin/gx/GXSetScissor.c:
+	.text       start:0x80190320 end:0x80190398
+
+Dolphin/gx/GXSetScissorBoxOffset.c:
+	.text       start:0x80190398 end:0x801903D8
+
+Dolphin/gx/GXSetClipMode.c:
+	.text       start:0x801903D8 end:0x80190400
+
+Dolphin/gx/__GXSetMatrixIndex.c:
+	.text       start:0x80190400 end:0x80190484
+
+Dolphin/gx/__GXDefaultTexRegionCallback.c:
+	.text       start:0x80190484 end:0x80190580
+
+Dolphin/gx/__GXDefaultTlutRegionCallback.c:
+	.text       start:0x80190580 end:0x801905A4
+
+Dolphin/gx/__GXShutdown.c:
+	.text       start:0x801905A4 end:0x80190734
+	.sbss       start:0x8066F448 end:0x8066F470
+
+Dolphin/gx/__GXInitRevisionBits.c:
+	.text       start:0x80190734 end:0x801908D8
+
+Dolphin/gx/GXInit.c:
+	.text       start:0x801908D8 end:0x80191810
+	.data       start:0x804D3340 end:0x804D3580 align:16
+	.bss        start:0x8057D5B0 end:0x8057DBE0
+	.sdata      start:0x8066C518 end:0x8066C520
+	.sdata2     start:0x80670788 end:0x806707B0
+
+Dolphin/gx/GXCPInterruptHandler.c:
+	.text       start:0x80191810 end:0x80191944
+	.sbss       start:0x8066F470 end:0x8066F48C
+
+Dolphin/gx/GXInitFifoBase.c:
+	.text       start:0x80191944 end:0x801919B0
+
+Dolphin/gx/GXInitFifoPtrs.c:
+	.text       start:0x801919B0 end:0x80191A20
+
+Dolphin/gx/GXInitFifoLimits.c:
+	.text       start:0x80191A20 end:0x80191A2C
+
+Dolphin/gx/GXSetCPUFifo.c:
+	.text       start:0x80191A2C end:0x80191B54
+
+Dolphin/gx/GXSetGPFifo.c:
+	.text       start:0x80191B54 end:0x80191CF4
+
+Dolphin/gx/GXSaveCPUFifo.c:
+	.text       start:0x80191CF4 end:0x80191D28
+
+Dolphin/gx/__GXSaveCPUFifoAux.c:
+	.text       start:0x80191D28 end:0x80191DF0
+
+Dolphin/gx/GXSetBreakPtCallback.c:
+	.text       start:0x80191DF0 end:0x80191E34
+
+Dolphin/gx/__GXFifoInit.c:
+	.text       start:0x80191E34 end:0x80191E80
+
+Dolphin/gx/__GXFifoReadEnable.c:
+	.text       start:0x80191E80 end:0x80191EA4
+
+Dolphin/gx/__GXFifoReadDisable.c:
+	.text       start:0x80191EA4 end:0x80191EC8
+
+Dolphin/gx/__GXFifoLink.c:
+	.text       start:0x80191EC8 end:0x80191EFC
+
+Dolphin/gx/__GXWriteFifoIntEnable.c:
+	.text       start:0x80191EFC end:0x80191F2C
+
+Dolphin/gx/__GXWriteFifoIntReset.c:
+	.text       start:0x80191F2C end:0x80191F5C
+
+Dolphin/gx/__GXCleanGPFifo.c:
+	.text       start:0x80191F5C end:0x8019205C
+
+Dolphin/gx/GXGetCPUFifo.c:
+	.text       start:0x8019205C end:0x80192064
+
+Dolphin/gx/GXGetGPFifo.c:
+	.text       start:0x80192064 end:0x8019206C
+
+Dolphin/gx/GXSetMisc.c:
+	.text       start:0x8019206C end:0x80192100
+	.data       start:0x804D3580 end:0x804D35D8
+
+Dolphin/gx/GXFlush.c:
+	.text       start:0x80192100 end:0x8019215C
+
+Dolphin/gx/GXResetWriteGatherPipe.c:
+	.text       start:0x8019215C end:0x80192190
+
+Dolphin/gx/__GXAbort.c:
+	.text       start:0x80192190 end:0x801922FC
+
+Dolphin/gx/GXAbortFrame.c:
+	.text       start:0x801922FC end:0x801924C4
+
+Dolphin/gx/GXDrawDone.c:
+	.text       start:0x801924C4 end:0x80192544
+	.sbss       start:0x8066F490 end:0x8066F4A4
+
+Dolphin/gx/GXFlushTextureStateDup.c:
+	.text       start:0x80192544 end:0x80192568
+
+Dolphin/gx/GXPokeAlphaMode.c:
+	.text       start:0x80192568 end:0x8019257C
+
+Dolphin/gx/GXPokeAlphaRead.c:
+	.text       start:0x8019257C end:0x8019259C
+
+Dolphin/gx/GXPokeAlphaUpdate.c:
+	.text       start:0x8019259C end:0x801925B4
+
+Dolphin/gx/GXPokeBlendMode.c:
+	.text       start:0x801925B4 end:0x80192618
+
+Dolphin/gx/GXPokeColorUpdate.c:
+	.text       start:0x80192618 end:0x80192630
+
+Dolphin/gx/GXPokeDstAlpha.c:
+	.text       start:0x80192630 end:0x80192654
+
+Dolphin/gx/GXPokeDither.c:
+	.text       start:0x80192654 end:0x8019266C
+
+Dolphin/gx/GXPokeZMode.c:
+	.text       start:0x8019266C end:0x8019268C
+
+Dolphin/gx/GXSetDrawSyncCallback.c:
+	.text       start:0x8019268C end:0x801926D0
+
+Dolphin/gx/GXTokenInterruptHandler.c:
+	.text       start:0x801926D0 end:0x80192758
+
+Dolphin/gx/GXSetDrawDoneCallback.c:
+	.text       start:0x80192758 end:0x8019279C
+
+Dolphin/gx/GXFinishInterruptHandler.c:
+	.text       start:0x8019279C end:0x8019281C
+
+Dolphin/gx/GXPEInit.c:
+	.text       start:0x8019281C end:0x80192890
+
+Dolphin/gx/GXSetDispCopySrc.c:
+	.text       start:0x80192890 end:0x8019290C
+	.data       start:0x804D35D8 end:0x804D3738
+
+Dolphin/gx/GXSetTexCopySrc.c:
+	.text       start:0x8019290C end:0x80192988
+
+Dolphin/gx/GXSetDispCopyDst.c:
+	.text       start:0x80192988 end:0x801929BC
+
+Dolphin/gx/GXSetTexCopyDst.c:
+	.text       start:0x801929BC end:0x80192AEC
+
+Dolphin/gx/GXSetDispCopyFrame2Field.c:
+	.text       start:0x80192AEC end:0x80192B10
+
+Dolphin/gx/GXSetCopyClamp.c:
+	.text       start:0x80192B10 end:0x80192B68
+
+Dolphin/gx/GXSetDispCopyYScale.c:
+	.text       start:0x80192B68 end:0x80192E6C
+	.sdata2     start:0x806707B0 end:0x806707C0
+
+Dolphin/gx/GXSetCopyClear.c:
+	.text       start:0x80192E6C end:0x80192EE4
+
+Dolphin/gx/GXSetCopyFilter.c:
+	.text       start:0x80192EE4 end:0x801930EC
+
+Dolphin/gx/GXSetDispCopyGamma.c:
+	.text       start:0x801930EC end:0x80193100
+
+Dolphin/gx/GXCopyDisp.c:
+	.text       start:0x80193100 end:0x80193268
+
+Dolphin/gx/GXCopyTex.c:
+	.text       start:0x80193268 end:0x801933F4
+
+Dolphin/gx/GXClearBoundingBox.c:
+	.text       start:0x801933F4 end:0x8019342C
+
+Dolphin/gx/GXSetGPMetric.c:
+	.text       start:0x8019342C end:0x80193E1C
+	.data       start:0x804D3738 end:0x804D3880
+
+Dolphin/gx/GXClearGPMetric.c:
+	.text       start:0x80193E1C end:0x80193E2C
+
+Dolphin/gx/GXPerfStubs.c:
+	.text       start:0x80193E2C end:0x80193E54
+
+Dolphin/exi/SetExiInterruptMask.c:
+	.text       start:0x80193E54 end:0x80193F48
+	.bss        start:0x8057DBE0 end:0x8057DCA0
+
+Dolphin/exi/EXIImm.c:
+	.text       start:0x80193F48 end:0x801941A4
+
+Dolphin/exi/EXIImmEx.c:
+	.text       start:0x801941A4 end:0x80194244
+
+Dolphin/exi/EXIDma.c:
+	.text       start:0x80194244 end:0x80194330
+
+Dolphin/exi/EXISync.c:
+	.text       start:0x80194330 end:0x8019457C
+
+Dolphin/exi/EXIClearInterrupts.c:
+	.text       start:0x8019457C end:0x801945C4
+
+Dolphin/exi/EXISetExiCallback.c:
+	.text       start:0x801945C4 end:0x80194640
+
+Dolphin/exi/__EXIProbe.c:
+	.text       start:0x80194640 end:0x801947B4
+
+Dolphin/exi/EXIProbe.c:
+	.text       start:0x801947B4 end:0x80194834
+
+Dolphin/exi/EXIProbeEx.c:
+	.text       start:0x80194834 end:0x801948E8
+
+Dolphin/exi/EXIAttach.c:
+	.text       start:0x801948E8 end:0x801949F4
+
+Dolphin/exi/EXIDetach.c:
+	.text       start:0x801949F4 end:0x80194AB0
+
+Dolphin/exi/EXISelect.c:
+	.text       start:0x80194AB0 end:0x80194BDC
+
+Dolphin/exi/EXIDeselect.c:
+	.text       start:0x80194BDC end:0x80194CEC
+
+Dolphin/exi/EXIIntrruptHandler.c:
+	.text       start:0x80194CEC end:0x80194DB4
+
+Dolphin/exi/TCIntrruptHandler.c:
+	.text       start:0x80194DB4 end:0x80194FCC
+
+Dolphin/exi/EXTIntrruptHandler.c:
+	.text       start:0x80194FCC end:0x8019509C
+
+Dolphin/exi/EXIInit.c:
+	.text       start:0x8019509C end:0x80195270
+	.data       start:0x804D3880 end:0x804D398C
+	.sdata      start:0x8066C520 end:0x8066C558
+	.sbss       start:0x8066F4A8 end:0x8066F4AC
+
+Dolphin/exi/EXILock.c:
+	.text       start:0x80195270 end:0x80195364
+
+Dolphin/exi/EXIUnlock.c:
+	.text       start:0x80195364 end:0x80195440
+
+Dolphin/exi/EXIGetState.c:
+	.text       start:0x80195440 end:0x80195458
+
+Dolphin/exi/UnlockedHandler.c:
+	.text       start:0x80195458 end:0x80195480
+
+Dolphin/exi/EXIGetID.c:
+	.text       start:0x80195480 end:0x80195830
+
+Dolphin/exi/ProbeBarnacle.c:
+	.text       start:0x80195830 end:0x801959BC
+
+Dolphin/exi/__OSEnableBarnacle.c:
+	.text       start:0x801959BC end:0x80195B78
+	.sbss       start:0x8066F4B0 end:0x8066F4C0
+
+Dolphin/exi/InitializeUART.c:
+	.text       start:0x80195B78 end:0x80195BE8
+
+Dolphin/exi/WriteUARTN.c:
+	.text       start:0x80195BE8 end:0x80195E04
+
+Dolphin/OdemuExi2/DBOpen.c:
+	.text       start:0x80195E04 end:0x80195E08
+
+Dolphin/OdemuExi2/DBClose.c:
+	.text       start:0x80195E08 end:0x80195E0C
+
+Dolphin/OdemuExi2/DBWrite.c:
+	.text       start:0x80195E0C end:0x8019606C
+	.sdata      start:0x8066C558 end:0x8066C560
+
+Dolphin/OdemuExi2/DBRead.c:
+	.text       start:0x8019606C end:0x801960F8
+	.sbss       start:0x8066F4C0 end:0x8066F4D8
+
+Dolphin/OdemuExi2/DBQueryData.c:
+	.text       start:0x801960F8 end:0x80196194
+
+Dolphin/OdemuExi2/DBInitInterrupts.c:
+	.text       start:0x80196194 end:0x801961E8
+
+Dolphin/OdemuExi2/DBInitComm.c:
+	.text       start:0x801961E8 end:0x80196260
+
+Dolphin/OdemuExi2/DBGHandler.c:
+	.text       start:0x80196260 end:0x801962DC
+
+Dolphin/OdemuExi2/DBGReadStatus.c:
+	.text       start:0x801962DC end:0x80196388
+
+Dolphin/OdemuExi2/DBGWrite.c:
+	.text       start:0x80196388 end:0x80196464
+
+Dolphin/OdemuExi2/DBGRead.c:
+	.text       start:0x80196464 end:0x80196540
+
+Dolphin/OdemuExi2/DBGReadMailbox.c:
+	.text       start:0x80196540 end:0x801965EC
+
+Dolphin/OdemuExi2/DBGEXIImm.c:
+	.text       start:0x801965EC end:0x80196884
+
+Runtime.PPCEABI.H/__ieee754_asin.c:
+	.text       start:0x803FF3B0 end:0x803FF60C
+	.sdata      start:0x8066CCC8 end:0x8066CD48
+
+Runtime.PPCEABI.H/__ieee754_exp.c:
+	.text       start:0x803FF60C end:0x803FF888
+	.sdata      start:0x8066CD48 end:0x8066CDC0
+	.sdata2     start:0x80670828 end:0x80670858
+
+Runtime.PPCEABI.H/__ieee754_fmod2.c:
+	.text       start:0x803FF888 end:0x803FFBE0
+	.sdata2     start:0x80670858 end:0x80670868
+
+Runtime.PPCEABI.H/__ieee754_asinf.c:
+	.text       start:0x803FFBE0 end:0x803FFE0C
+	.sdata      start:0x8066CDC0 end:0x8066CE00
+
+Runtime.PPCEABI.H/__ieee754_expf.c:
+	.text       start:0x803FFE0C end:0x80400038
+	.sdata      start:0x8066CE00 end:0x8066CE48
+	.sdata2     start:0x80670868 end:0x80670880
+
+Runtime.PPCEABI.H/__ieee754_fmodf.c:
+	.text       start:0x80400038 end:0x80400200
+	.sdata2     start:0x80670880 end:0x80670888
+
+Runtime.PPCEABI.H/__ieee754_logf.c:
+	.text       start:0x80400200 end:0x80400480
+	.sdata      start:0x8066CE48 end:0x8066CE90
+
+Runtime.PPCEABI.H/ceilf.c:
+	.text       start:0x80400480 end:0x80400544
+	.sdata      start:0x8066CE90 end:0x8066CE98
+
+Runtime.PPCEABI.H/tolower2.c:
+	.text       start:0x80400544 end:0x80400560
+
+Runtime.PPCEABI.H/fclose.c:
+	.text       start:0x80400560 end:0x80400618
+
+Runtime.PPCEABI.H/fprintf.c:
+	.text       start:0x80400618 end:0x804006AC
+
+Runtime.PPCEABI.H/printf.c:
+	.text       start:0x804006AC end:0x80400758
+
+Runtime.PPCEABI.H/snprintf.c:
+	.text       start:0x80400758 end:0x80400834
+
+Runtime.PPCEABI.H/vprintf.c:
+	.text       start:0x80400834 end:0x80400868
+
+Runtime.PPCEABI.H/strncat.c:
+	.text       start:0x80400868 end:0x80400914
+
+Runtime.PPCEABI.H/__floatdisf.c:
+	.text       start:0x80400914 end:0x804009C4
+	.rodata     start:0x804BF448 end:0x804BF460
+
+Dolphin/vm/VMInit.c:
+	.text       start:0x804009C4 end:0x80400AAC
+	.sdata      start:0x8066CE98 end:0x8066CE9C
+	.sbss       start:0x8066F948 end:0x8066F964
+
+Dolphin/vm/VMSetLogStatsCallback.c:
+	.text       start:0x80400AAC end:0x80400AB4
+
+Dolphin/vm/__VMGetNumPagesInMRAM.c:
+	.text       start:0x80400AB4 end:0x80400ABC
+
+Dolphin/vm/VMGetARAMSize.c:
+	.text       start:0x80400ABC end:0x80400AC4
+
+Dolphin/vm/VMGetARAMBase.c:
+	.text       start:0x80400AC4 end:0x80400ACC
+
+Dolphin/vm/__VMAllocMRAMSwapSpace.c:
+	.text       start:0x80400ACC end:0x80400AFC
+
+Dolphin/vm/__VMSwapPageIn.c:
+	.text       start:0x80400AFC end:0x80400CEC
+
+Dolphin/vm/__VMGetPageToReplace.c:
+	.text       start:0x80400CEC end:0x80400D30
+	.sdata      start:0x8066CEA0 end:0x8066CEA8
+
+Dolphin/vm/__VMPageReplacementLRU.c:
+	.text       start:0x80400D30 end:0x80400F00
+	.sbss       start:0x8066F968 end:0x8066F96C
+
+Dolphin/vm/__VMPageReplacementRandom.c:
+	.text       start:0x80400F00 end:0x80400F94
+
+Dolphin/vm/__VMPageReplacementFIFO.c:
+	.text       start:0x80400F94 end:0x80401000
+
+Dolphin/vm/VMAlloc.c:
+	.text       start:0x80401000 end:0x80401100
+	.sbss       start:0x8066F970 end:0x8066F980
+
+Dolphin/vm/__VMTranslateVMPageToARAMPage.c:
+	.text       start:0x80401100 end:0x80401140
+
+Dolphin/vm/__VMDoesMappingExist.c:
+	.text       start:0x80401140 end:0x80401160
+
+Dolphin/vm/__VMMappingErrorAlert.c:
+	.text       start:0x80401160 end:0x80401198
+	.data       start:0x804DCD98 end:0x804DCE00
+
+Dolphin/vm/__VMSetARAMPageAsDirty.c:
+	.text       start:0x80401198 end:0x804011B0
+
+Dolphin/vm/__VMIsARAMPageDirty.c:
+	.text       start:0x804011B0 end:0x804011C4
+
+Dolphin/vm/__VMAllocVirtualToARAMLUT.c:
+	.text       start:0x804011C4 end:0x8040126C
+
+Dolphin/vm/__VMAllocARAMToVirtualLUT.c:
+	.text       start:0x8040126C end:0x8040130C
+
+Dolphin/vm/VMBASEInit.c:
+	.text       start:0x8040130C end:0x804013B0
+	.sbss       start:0x8066F980 end:0x8066F998
+
+Dolphin/vm/VMBASESetPageTableEntry.c:
+	.text       start:0x804013B0 end:0x8040141C
+
+Dolphin/vm/VMBASEClearPageTableEntry.c:
+	.text       start:0x8040141C end:0x80401488
+
+Dolphin/vm/VMBASEIsPageValid.c:
+	.text       start:0x80401488 end:0x804014B0
+
+Dolphin/vm/VMBASEIsPageReferenced.c:
+	.text       start:0x804014B0 end:0x804014D8
+
+Dolphin/vm/VMBASEIsPageDirty.c:
+	.text       start:0x804014D8 end:0x80401500
+
+Dolphin/vm/VMBASESetPageReferenced.c:
+	.text       start:0x80401500 end:0x80401550
+
+Dolphin/vm/__VMBASEClearPageFromTLB.c:
+	.text       start:0x80401550 end:0x80401560
+
+Dolphin/vm/VMBASEGetVirtualAddrFromPageInMRAM.c:
+	.text       start:0x80401560 end:0x80401570
+
+Dolphin/vm/__VMBASESetVirtualAddressForPageInMRAM.c:
+	.text       start:0x80401570 end:0x80401580
+
+Dolphin/vm/VMBASEIsPageLocked.c:
+	.text       start:0x80401580 end:0x8040158C
+
+Dolphin/vm/VMBASESetPageLocked.c:
+	.text       start:0x8040158C end:0x804015B4
+
+Dolphin/vm/__VMBASESetSwapPageCallback.c:
+	.text       start:0x804015B4 end:0x804015BC
+
+Dolphin/vm/__VMBASEInitPageTable.c:
+	.text       start:0x804015BC end:0x804015F8
+
+Dolphin/vm/__VMBASEInitLockedPageTable.c:
+	.text       start:0x804015F8 end:0x80401628
+
+Dolphin/vm/__VMBASEInitReversePageTable.c:
+	.text       start:0x80401628 end:0x80401658
+
+Dolphin/vm/__VMBASEInvalidatePageTable.c:
+	.text       start:0x80401658 end:0x80401794
+
+Dolphin/vm/__VMBASEInvalidateLockedPageTable.c:
+	.text       start:0x80401794 end:0x8040186C
+
+Dolphin/vm/__VMBASEInvalidateReversePageTable.c:
+	.text       start:0x8040186C end:0x804018E4
+
+Dolphin/vm/__VMBASEVirtualAddrToPageTableAddr.c:
+	.text       start:0x804018E4 end:0x804018FC
+
+Dolphin/vm/__VMBASEInvalidateEntireTLB.c:
+	.text       start:0x804018FC end:0x80401954
+
+Dolphin/vm/__VMBASESetupVMRegisters.c:
+	.text       start:0x80401954 end:0x8040199C
+
+Dolphin/vm/__VMBASESetupSDR1.c:
+	.text       start:0x8040199C end:0x804019E4
+
+Dolphin/vm/__VMBASESetupExceptionHandlers.c:
+	.text       start:0x804019E4 end:0x80401B60
+
+Dolphin/vm/__VMBASEDSIExceptionHandler.c:
+	.text       start:0x80401B60 end:0x80401C54
+
+Dolphin/vm/__VMBASEDSIServiceExceptionPrep.c:
+	.text       start:0x80401C54 end:0x80401CA4
+
+Dolphin/vm/__VMBASEDSIServiceException.c:
+	.text       start:0x80401CA4 end:0x80401D08
+
+Dolphin/vm/__VMBASEISIExceptionHandler.c:
+	.text       start:0x80401D08 end:0x80401DFC
+
+Dolphin/vm/__VMBASEISIServiceExceptionPrep.c:
+	.text       start:0x80401DFC end:0x80401E4C
+
+Dolphin/vm/__VMBASEISIServiceException.c:
+	.text       start:0x80401E4C end:0x80401EB0
+
+Runtime.PPCEABI.H/__save_gpr.c:
+	.text       start:0x80401EB0 end:0x80401EFC
+
+Runtime.PPCEABI.H/__restore_gpr.c:
+	.text       start:0x80401EFC end:0x80401F48
+
+Dolphin/os/OSAllocFromHeap.c:
+	.text       start:0x80401F48 end:0x80402044
+	.data       start:0x804DCE00 end:0x804DD198
+	.sbss       start:0x8066F998 end:0x8066F9A8
+
+Dolphin/os/OSSetCurrentHeap.c:
+	.text       start:0x80402044 end:0x80402054
+	.sdata      start:0x8066CEA8 end:0x8066CEAC
+
+Dolphin/os/OSInitAlloc.c:
+	.text       start:0x80402054 end:0x804020C4
+
+Dolphin/os/OSCreateHeap.c:
+	.text       start:0x804020C4 end:0x80402130
+
+Dolphin/os/ScreenReport.c:
+	.text       start:0x80402130 end:0x8040250C
+
+Dolphin/os/ConfigureVideo.c:
+	.text       start:0x8040250C end:0x80402608
+
+Dolphin/os/OSFatal.c:
+	.text       start:0x80402608 end:0x804027E0
+	.bss        start:0x8064EF50 end:0x8064F228
+
+Dolphin/os/Halt.c:
+	.text       start:0x804027E0 end:0x80402DC0
+	.sdata      start:0x8066CEB0 end:0x8066CEB8
+	.sdata2     start:0x80670888 end:0x806708C8
+
+Dolphin/os/GetFontCode.c:
+	.text       start:0x80402DC0 end:0x80402F34
+	.data       start:0x804DD198 end:0x804DDCA8
+
+Dolphin/os/OSUtf.c:
+	.data       start:0x804DDCA8 end:0x804EEEE8
+
+Dolphin/os/Decode.c:
+	.text       start:0x80402F34 end:0x804030A8
+
+Dolphin/os/OSGetFontEncode.c:
+	.text       start:0x804030A8 end:0x8040310C
+	.sdata      start:0x8066CEB8 end:0x8066CEC0
+	.sbss       start:0x8066F9A8 end:0x8066F9B8
+
+Dolphin/os/ReadFont.c:
+	.text       start:0x8040310C end:0x80403430
+	.sdata2     start:0x806708C8 end:0x806708D0
+
+Dolphin/os/OSLoadFont.c:
+	.text       start:0x80403430 end:0x80403570
+
+Dolphin/os/ParseStringS.c:
+	.text       start:0x80403570 end:0x804036AC
+
+Dolphin/os/OSGetFontTexel.c:
+	.text       start:0x804036AC end:0x8040394C
+
+Dolphin/os/ExpandFontSheet.c:
+	.text       start:0x8040394C end:0x80403CF8
+
+Dolphin/os/OSInitFont.c:
+	.text       start:0x80403CF8 end:0x80403F04
+
+Dolphin/os/OSGetFontTexture.c:
+	.text       start:0x80403F04 end:0x80404074
+
+Dolphin/os/OSGetFontWidth.c:
+	.text       start:0x80404074 end:0x80404148
+
+Dolphin/os/OSInitMessageQueue.c:
+	.text       start:0x80404148 end:0x804041A8
+
+Dolphin/os/OSSendMessage.c:
+	.text       start:0x804041A8 end:0x80404270
+
+Dolphin/os/OSReceiveMessage.c:
+	.text       start:0x80404270 end:0x8040434C
+
+Dolphin/os/OSInitSemaphore.c:
+	.text       start:0x8040434C end:0x804043A4
+
+Dolphin/os/OSWaitSemaphore.c:
+	.text       start:0x804043A4 end:0x80404414
+
+Dolphin/os/OSTryWaitSemaphore.c:
+	.text       start:0x80404414 end:0x80404468
+
+Dolphin/os/OSSignalSemaphore.c:
+	.text       start:0x80404468 end:0x804044C8
+
+Dolphin/mtx/PSMTXIdentity.c:
+	.text       start:0x804044C8 end:0x804044F4
+	.sdata2     start:0x806708D0 end:0x806708F0
+
+Dolphin/mtx/PSMTXConcat.c:
+	.text       start:0x804044F4 end:0x804045C0
+	.sdata      start:0x8066CEC0 end:0x8066CEC8
+
+Dolphin/mtx/PSMTXTranspose.c:
+	.text       start:0x804045C0 end:0x80404610
+
+Dolphin/mtx/PSMTXInverse.c:
+	.text       start:0x80404610 end:0x80404708
+
+Dolphin/mtx/PSMTXTrans.c:
+	.text       start:0x80404708 end:0x8040473C
+
+Dolphin/mtx/PSMTXScale.c:
+	.text       start:0x8040473C end:0x80404764
+
+Dolphin/mtx/C_MTXPerspective.c:
+	.text       start:0x80404764 end:0x80404834
+	.data       start:0x804EEEE8 end:0x804EEEF8
+
+Dolphin/mtx/C_MTXOrtho.c:
+	.text       start:0x80404834 end:0x804048CC
+	.sdata2     start:0x806708F0 end:0x80670910
+
+Dolphin/mtx/vec.c:
+	.sdata2     start:0x80670910 end:0x80670938
+
+Dolphin/ar/ARRegisterDMACallback.c:
+	.text       start:0x804048CC end:0x80404910
+	.sbss       start:0x8066F9B8 end:0x8066F9D8
+
+Dolphin/ar/ARGetDMAStatus.c:
+	.text       start:0x80404910 end:0x8040494C
+
+Dolphin/ar/ARStartDMA.c:
+	.text       start:0x8040494C end:0x80404A3C
+
+Dolphin/ar/ARInit.c:
+	.text       start:0x80404A3C end:0x80404B00
+	.data       start:0x804EEEF8 end:0x804EEF3C
+	.sdata      start:0x8066CEC8 end:0x8066CECC
+
+Dolphin/ar/ARGetBaseAddress.c:
+	.text       start:0x80404B00 end:0x80404B08
+
+Dolphin/ar/__ARHandler.c:
+	.text       start:0x80404B08 end:0x80404B80
+
+Dolphin/ar/__ARClearInterrupt.c:
+	.text       start:0x80404B80 end:0x80404BA0
+
+Dolphin/ar/__ARGetInterruptStatus.c:
+	.text       start:0x80404BA0 end:0x80404BB0
+
+Dolphin/ar/__ARChecksize.c:
+	.text       start:0x80404BB0 end:0x804063A4
+
+Dolphin/arq/__ARQServiceQueueLo.c:
+	.text       start:0x804063A4 end:0x804064A4
+	.sbss       start:0x8066F9D8 end:0x8066FA08
+
+Dolphin/arq/__ARQCallbackHack.c:
+	.text       start:0x804064A4 end:0x804064A8
+
+Dolphin/arq/__ARQInterruptServiceRoutine.c:
+	.text       start:0x804064A8 end:0x80406574
+
+Dolphin/arq/ARQInit.c:
+	.text       start:0x80406574 end:0x804065E4
+	.data       start:0x804EEF40 end:0x804EEF88
+	.sdata      start:0x8066CED0 end:0x8066CED4
+
+Dolphin/arq/ARQPostRequest.c:
+	.text       start:0x804065E4 end:0x80406740
+
+Dolphin/arq/ARQRemoveRequest.c:
+	.text       start:0x80406740 end:0x80406828
+
+Dolphin/ax/AXInit.c:
+	.text       start:0x80406828 end:0x8040684C
+
+Dolphin/ax/AXInitEx.c:
+	.text       start:0x8040684C end:0x80406898
+	.data       start:0x804EEF88 end:0x804EEFCC
+	.sdata      start:0x8066CED8 end:0x8066CEDC
+
+Dolphin/ax/AXQuit.c:
+	.text       start:0x80406898 end:0x804068CC
+
+Dolphin/ax/__AXGetStackHead.c:
+	.text       start:0x804068CC end:0x804068E4
+	.bss        start:0x8064F228 end:0x8064F328
+
+Dolphin/ax/__AXServiceCallbackStack.c:
+	.text       start:0x804068E4 end:0x80406958
+
+Dolphin/ax/__AXAllocInit.c:
+	.text       start:0x80406958 end:0x80406A0C
+	.sbss       start:0x8066FA08 end:0x8066FA0C
+
+Dolphin/ax/__AXAllocQuit.c:
+	.text       start:0x80406A0C end:0x80406AC0
+
+Dolphin/ax/__AXPushFreeStack.c:
+	.text       start:0x80406AC0 end:0x80406AE0
+
+Dolphin/ax/__AXPushCallbackStack.c:
+	.text       start:0x80406AE0 end:0x80406AF0
+
+Dolphin/ax/__AXPopCallbackStack.c:
+	.text       start:0x80406AF0 end:0x80406B0C
+
+Dolphin/ax/__AXRemoveFromStack.c:
+	.text       start:0x80406B0C end:0x80406BA0
+
+Dolphin/ax/AXFreeVoice.c:
+	.text       start:0x80406BA0 end:0x80406C20
+
+Dolphin/ax/AXAcquireVoice.c:
+	.text       start:0x80406C20 end:0x80406D94
+
+Dolphin/ax/__AXAuxInit.c:
+	.text       start:0x80406D94 end:0x80406E78
+	.sbss       start:0x8066FA10 end:0x8066FA44
+
+Dolphin/ax/__AXAuxQuit.c:
+	.text       start:0x80406E78 end:0x80406E88
+
+Dolphin/ax/__AXGetAuxAInput.c:
+	.text       start:0x80406E88 end:0x80406EBC
+
+Dolphin/ax/__AXGetAuxAInputDpl2.c:
+	.text       start:0x80406EBC end:0x80406EDC
+
+Dolphin/ax/__AXGetAuxAOutput.c:
+	.text       start:0x80406EDC end:0x80406EF8
+
+Dolphin/ax/__AXGetAuxAOutputDpl2R.c:
+	.text       start:0x80406EF8 end:0x80406F18
+
+Dolphin/ax/__AXGetAuxAOutputDpl2Ls.c:
+	.text       start:0x80406F18 end:0x80406F38
+
+Dolphin/ax/__AXGetAuxAOutputDpl2Rs.c:
+	.text       start:0x80406F38 end:0x80406F58
+
+Dolphin/ax/__AXGetAuxBInput.c:
+	.text       start:0x80406F58 end:0x80406F8C
+
+Dolphin/ax/__AXGetAuxBOutput.c:
+	.text       start:0x80406F8C end:0x80406FA8
+
+Dolphin/ax/__AXGetAuxBForDPL2.c:
+	.text       start:0x80406FA8 end:0x80406FC4
+
+Dolphin/ax/__AXGetAuxBOutputDPL2.c:
+	.text       start:0x80406FC4 end:0x80406FE0
+
+Dolphin/ax/__AXProcessAux.c:
+	.text       start:0x80406FE0 end:0x8040721C
+	.bss        start:0x8064F340 end:0x80652040 align:32
+
+Dolphin/ax/AXRegisterAuxACallback.c:
+	.text       start:0x8040721C end:0x80407228
+
+Dolphin/ax/__AXGetCommandListCycles.c:
+	.text       start:0x80407228 end:0x80407230
+	.sbss       start:0x8066FA48 end:0x8066FA5C
+
+Dolphin/ax/__AXGetCommandListAddress.c:
+	.text       start:0x80407230 end:0x8040726C
+	.bss        start:0x80652040 end:0x80652640
+
+Dolphin/ax/__AXNextFrame.c:
+	.text       start:0x8040726C end:0x8040791C
+
+Dolphin/ax/__AXClInit.c:
+	.text       start:0x8040791C end:0x80407940
+
+Dolphin/ax/__AXClQuit.c:
+	.text       start:0x80407940 end:0x80407944
+
+Dolphin/ax/AXSetMode.c:
+	.text       start:0x80407944 end:0x80407958
+
+Dolphin/ax/AXSetCompressor.c:
+	.text       start:0x80407958 end:0x80407960
+
+Dolphin/ax/__AXOutNewFrame.c:
+	.text       start:0x80407960 end:0x80407B18
+	.sbss       start:0x8066FA60 end:0x8066FA98
+
+Dolphin/ax/__AXOutAiCallback.c:
+	.text       start:0x80407B18 end:0x80407BD4
+
+Dolphin/ax/__AXDSPInitCallback.c:
+	.text       start:0x80407BD4 end:0x80407BE0
+
+Dolphin/ax/__AXDSPResumeCallback.c:
+	.text       start:0x80407BE0 end:0x80407C38
+
+Dolphin/ax/__AXDSPDoneCallback.c:
+	.text       start:0x80407C38 end:0x80407C64
+
+Dolphin/ax/__AXOutInitDSP.c:
+	.text       start:0x80407C64 end:0x80407D30
+
+Dolphin/ax/__AXOutInit.c:
+	.text       start:0x80407D30 end:0x804080D0
+	.bss        start:0x80652640 end:0x806570C0
+
+Dolphin/ax/__AXOutQuit.c:
+	.text       start:0x804080D0 end:0x80408128
+
+Dolphin/ax/__AXGetStudio.c:
+	.text       start:0x80408128 end:0x80408134
+
+Dolphin/ax/__AXPrintStudio.c:
+	.text       start:0x80408134 end:0x8040852C
+	.bss        start:0x806570C0 end:0x80657100
+	.sbss       start:0x8066FA98 end:0x8066FAC0
+
+Dolphin/ax/__AXSPBInit.c:
+	.text       start:0x8040852C end:0x80408558
+
+Dolphin/ax/__AXSPBQuit.c:
+	.text       start:0x80408558 end:0x8040855C
+
+Dolphin/ax/__AXDepopVoice.c:
+	.text       start:0x8040855C end:0x804085F0
+
+Dolphin/ax/__AXGetNumVoices.c:
+	.text       start:0x804085F0 end:0x804085F8
+	.sbss       start:0x8066FAC0 end:0x8066FACC
+
+Dolphin/ax/__AXServiceVPB.c:
+	.text       start:0x804085F8 end:0x80408D44
+
+Dolphin/ax/__AXSyncPBs.c:
+	.text       start:0x80408D44 end:0x80409208
+	.data       start:0x804EEFD0 end:0x804EF0A4
+	.bss        start:0x80657100 end:0x80668900 align:32
+
+Dolphin/ax/AXComp.c:
+	.data       start:0x804EF0C0 end:0x804F0B00 align:32
+
+Dolphin/ax/DSPCode.c:
+	.data       start:0x804F0B00 end:0x804F29C0
+	.sdata      start:0x8066CEE0 end:0x8066CEE2
+
+Dolphin/ax/__AXVPBQuit.c:
+	.text       start:0x80409208 end:0x8040920C
+
+Dolphin/ax/AXSetVoiceSrcType.c:
+	.text       start:0x8040920C end:0x804092D0
+
+Dolphin/ax/AXSetVoiceState.c:
+	.text       start:0x804092D0 end:0x8040932C
+
+Dolphin/ax/AXSetVoiceAddr.c:
+	.text       start:0x8040932C end:0x8040943C
+
+Dolphin/ax/AXSetVoiceAdpcm.c:
+	.text       start:0x8040943C end:0x804094E0
+
+Dolphin/ax/AXSetVoiceSrcRatio.c:
+	.text       start:0x804094E0 end:0x80409578
+	.sdata2     start:0x80670938 end:0x80670970
+
+Dolphin/ax/AXSetVoiceAdpcmLoop.c:
+	.text       start:0x80409578 end:0x804095E4
+
+Dolphin/ax/__AXGetCurrentProfile.c:
+	.text       start:0x804095E4 end:0x8040962C
+	.sbss       start:0x8066FAD0 end:0x8066FAE0
+
+Dolphin/dsp/DSPCheckMailToDSP.c:
+	.text       start:0x8040962C end:0x8040963C
+
+Dolphin/dsp/DSPCheckMailFromDSP.c:
+	.text       start:0x8040963C end:0x8040964C
+
+Dolphin/dsp/DSPReadMailFromDSP.c:
+	.text       start:0x8040964C end:0x80409664
+
+Dolphin/dsp/DSPSendMailToDSP.c:
+	.text       start:0x80409664 end:0x80409678
+
+Dolphin/dsp/DSPInit.c:
+	.text       start:0x80409678 end:0x8040973C
+	.data       start:0x804F29C0 end:0x804F2A40
+	.sdata      start:0x8066CEE8 end:0x8066CEEC
+	.sbss       start:0x8066FAE0 end:0x8066FAE4
+
+Dolphin/dsp/DSPCheckInit.c:
+	.text       start:0x8040973C end:0x80409744
+
+Dolphin/dsp/DSPAddTask.c:
+	.text       start:0x80409744 end:0x804097B4
+
+Dolphin/dsp/DSPCancelTask.c:
+	.text       start:0x804097B4 end:0x804097F4
+
+Dolphin/dsp/DSPAssertTask.c:
+	.text       start:0x804097F4 end:0x804098BC
+
+Dolphin/dsp/__DSP_debug_printf.c:
+	.text       start:0x804098BC end:0x8040990C
+
+Dolphin/dsp/__DSPHandler.c:
+	.text       start:0x8040990C end:0x80409D30
+	.sbss       start:0x8066FAE8 end:0x8066FB0C
+
+Dolphin/dsp/__DSP_exec_task.c:
+	.text       start:0x80409D30 end:0x80409ED0
+
+Dolphin/dsp/__DSP_boot_task.c:
+	.text       start:0x80409ED0 end:0x8040A05C
+	.data       start:0x804F2A40 end:0x804F2B80
+
+Dolphin/dsp/__DSP_insert_task.c:
+	.text       start:0x8040A05C end:0x8040A0FC
+
+Dolphin/dsp/__DSP_remove_task.c:
+	.text       start:0x8040A0FC end:0x8040A190
+
+Dolphin/card/__CARDDefaultApiCallback.c:
+	.text       start:0x8040A190 end:0x8040A194
+
+Dolphin/card/__CARDSyncCallback.c:
+	.text       start:0x8040A194 end:0x8040A1C8
+
+Dolphin/card/__CARDExtHandler.c:
+	.text       start:0x8040A1C8 end:0x8040A2A0
+
+Dolphin/card/__CARDExiHandler.c:
+	.text       start:0x8040A2A0 end:0x8040A3B8
+
+Dolphin/card/__CARDTxHandler.c:
+	.text       start:0x8040A3B8 end:0x8040A460
+
+Dolphin/card/__CARDUnlockedHandler.c:
+	.text       start:0x8040A460 end:0x8040A4E4
+
+Dolphin/card/__CARDEnableInterrupt.c:
+	.text       start:0x8040A4E4 end:0x8040A5A4
+
+Dolphin/card/__CARDReadStatus.c:
+	.text       start:0x8040A5A4 end:0x8040A694
+
+Dolphin/card/__CARDClearStatus.c:
+	.text       start:0x8040A694 end:0x8040A740
+
+Dolphin/card/TimeoutHandler.c:
+	.text       start:0x8040A740 end:0x8040A7E4
+
+Dolphin/card/Retry.c:
+	.text       start:0x8040A7E4 end:0x8040AA10
+
+Dolphin/card/UnlockedCallback.c:
+	.text       start:0x8040AA10 end:0x8040AB20
+
+Dolphin/card/__CARDStart.c:
+	.text       start:0x8040AB20 end:0x8040ACD4
+
+Dolphin/card/__CARDReadSegment.c:
+	.text       start:0x8040ACD4 end:0x8040AE08
+
+Dolphin/card/__CARDWritePage.c:
+	.text       start:0x8040AE08 end:0x8040AF24
+
+Dolphin/card/__CARDEraseSector.c:
+	.text       start:0x8040AF24 end:0x8040B004
+
+Dolphin/card/CARDInit.c:
+	.text       start:0x8040B004 end:0x8040B0F0
+	.data       start:0x804F2B80 end:0x804F2BD8
+	.bss        start:0x80668900 end:0x80668B40
+	.sdata      start:0x8066CEF0 end:0x8066CEF8
+	.sbss       start:0x8066FB10 end:0x8066FB14
+
+Dolphin/card/__CARDGetControlBlock.c:
+	.text       start:0x8040B0F0 end:0x8040B1A8
+
+Dolphin/card/__CARDPutControlBlock.c:
+	.text       start:0x8040B1A8 end:0x8040B20C
+
+Dolphin/card/CARDFreeBlocks.c:
+	.text       start:0x8040B20C end:0x8040B35C
+
+Dolphin/card/CARDGetSectorSize.c:
+	.text       start:0x8040B35C end:0x8040B3E0
+
+Dolphin/card/__CARDSync.c:
+	.text       start:0x8040B3E0 end:0x8040B478
+
+Dolphin/card/OnReset.c:
+	.text       start:0x8040B478 end:0x8040B4C8
+
+Dolphin/card/__CARDGetFatBlock.c:
+	.text       start:0x8040B4C8 end:0x8040B4D0
+
+Dolphin/card/WriteCallback_8040B4D0.c:
+	.text       start:0x8040B4D0 end:0x8040B5A4
+
+Dolphin/card/EraseCallback_8040B5A4.c:
+	.text       start:0x8040B5A4 end:0x8040B66C
+
+Dolphin/card/__CARDAllocBlock.c:
+	.text       start:0x8040B66C end:0x8040B784
+
+Dolphin/card/__CARDFreeBlock.c:
+	.text       start:0x8040B784 end:0x8040B820
+
+Dolphin/card/__CARDUpdateFatBlock.c:
+	.text       start:0x8040B820 end:0x8040B8CC
+
+Dolphin/card/__CARDGetDirBlock.c:
+	.text       start:0x8040B8CC end:0x8040B8D4
+
+Dolphin/card/WriteCallback_8040B8D4.c:
+	.text       start:0x8040B8D4 end:0x8040B9A4
+
+Dolphin/card/EraseCallback_8040B9A4.c:
+	.text       start:0x8040B9A4 end:0x8040BA6C
+
+Dolphin/card/__CARDUpdateDir.c:
+	.text       start:0x8040BA6C end:0x8040BB30
+
+Dolphin/card/__CARDCheckSum.c:
+	.text       start:0x8040BB30 end:0x8040BCE0
+
+Dolphin/card/VerifyID.c:
+	.text       start:0x8040BCE0 end:0x8040BF64
+
+Dolphin/card/VerifyDir.c:
+	.text       start:0x8040BF64 end:0x8040C1A4
+
+Dolphin/card/VerifyFAT.c:
+	.text       start:0x8040C1A4 end:0x8040C428
+
+Dolphin/card/__CARDVerify.c:
+	.text       start:0x8040C428 end:0x8040C4B4
+
+Dolphin/card/CARDCheckExAsync.c:
+	.text       start:0x8040C4B4 end:0x8040CA44
+
+Dolphin/card/CARDCheck.c:
+	.text       start:0x8040CA44 end:0x8040CA98
+
+Dolphin/card/IsCard.c:
+	.text       start:0x8040CA98 end:0x8040CB64
+	.data       start:0x804F2BD8 end:0x804F2C18
+	.sdata      start:0x8066CEF8 end:0x8066CEFB
+
+Dolphin/card/CARDProbeEx.c:
+	.text       start:0x8040CB64 end:0x8040CCE0
+
+Dolphin/card/DoMount.c:
+	.text       start:0x8040CCE0 end:0x8040D0F0
+
+Dolphin/card/__CARDMountCallback.c:
+	.text       start:0x8040D0F0 end:0x8040D228
+
+Dolphin/card/CARDMountAsync.c:
+	.text       start:0x8040D228 end:0x8040D3C8
+
+Dolphin/card/CARDMount.c:
+	.text       start:0x8040D3C8 end:0x8040D410
+
+Dolphin/card/DoUnmount.c:
+	.text       start:0x8040D410 end:0x8040D4AC
+
+Dolphin/card/CARDUnmount.c:
+	.text       start:0x8040D4AC end:0x8040D558
+
+Dolphin/card/FormatCallback.c:
+	.text       start:0x8040D558 end:0x8040D69C
+
+Dolphin/card/__CARDFormatRegionAsync.c:
+	.text       start:0x8040D69C end:0x8040DCF4
+
+Dolphin/card/CARDFormat.c:
+	.text       start:0x8040DCF4 end:0x8040DD48
+
+Dolphin/card/__CARDCompareFileName.c:
+	.text       start:0x8040DD48 end:0x8040DDB0
+
+Dolphin/card/__CARDAccess.c:
+	.text       start:0x8040DDB0 end:0x8040DE44
+
+Dolphin/card/__CARDIsWritable.c:
+	.text       start:0x8040DE44 end:0x8040DF78
+
+Dolphin/card/__CARDIsReadable.c:
+	.text       start:0x8040DF78 end:0x8040E06C
+
+Dolphin/card/__CARDGetFileNo.c:
+	.text       start:0x8040E06C end:0x8040E1BC
+
+Dolphin/card/CARDFastOpen.c:
+	.text       start:0x8040E1BC end:0x8040E2C0
+
+Dolphin/card/CARDOpen.c:
+	.text       start:0x8040E2C0 end:0x8040E3DC
+
+Dolphin/card/CARDClose.c:
+	.text       start:0x8040E3DC end:0x8040E430
+
+Dolphin/card/__CARDIsOpened.c:
+	.text       start:0x8040E430 end:0x8040E438
+
+Dolphin/card/CreateCallbackFat.c:
+	.text       start:0x8040E438 end:0x8040E568
+
+Dolphin/card/CARDCreateAsync.c:
+	.text       start:0x8040E568 end:0x8040E788
+
+Dolphin/card/CARDCreate.c:
+	.text       start:0x8040E788 end:0x8040E7D0
+
+Dolphin/card/__CARDSeek.c:
+	.text       start:0x8040E7D0 end:0x8040E988
+
+Dolphin/card/ReadCallback.c:
+	.text       start:0x8040E988 end:0x8040EAB8
+
+Dolphin/card/CARDReadAsync.c:
+	.text       start:0x8040EAB8 end:0x8040EBFC
+
+Dolphin/card/CARDRead.c:
+	.text       start:0x8040EBFC end:0x8040EC44
+
+Dolphin/card/WriteCallback_8040EC44.c:
+	.text       start:0x8040EC44 end:0x8040EDB4
+
+Dolphin/card/EraseCallback_8040EDB4.c:
+	.text       start:0x8040EDB4 end:0x8040EE64
+
+Dolphin/card/CARDWriteAsync.c:
+	.text       start:0x8040EE64 end:0x8040EF78
+
+Dolphin/card/CARDWrite.c:
+	.text       start:0x8040EF78 end:0x8040EFC0
+
+Dolphin/card/DeleteCallback.c:
+	.text       start:0x8040EFC0 end:0x8040F064
+
+Dolphin/card/CARDFastDeleteAsync.c:
+	.text       start:0x8040F064 end:0x8040F190
+
+Dolphin/card/CARDFastDelete.c:
+	.text       start:0x8040F190 end:0x8040F1D8
+
+Dolphin/card/CARDDeleteAsync.c:
+	.text       start:0x8040F1D8 end:0x8040F2E8
+
+Dolphin/card/CARDDelete.c:
+	.text       start:0x8040F2E8 end:0x8040F330
+
+Dolphin/card/UpdateIconOffsets.c:
+	.text       start:0x8040F330 end:0x8040F528
+
+Dolphin/card/CARDGetStatus.c:
+	.text       start:0x8040F528 end:0x8040F63C
+
+Dolphin/card/CARDSetStatusAsync.c:
+	.text       start:0x8040F63C end:0x8040F7B0
+
+Dolphin/card/CARDSetStatus.c:
+	.text       start:0x8040F7B0 end:0x8040F7F8
+
+Dolphin/card/CARDGetSerialNo.c:
+	.text       start:0x8040F7F8 end:0x8040F8BC
+
+Dolphin/card/CARDSetAttributesAsync.c:
+	.text       start:0x8040F8BC end:0x8040F9A0
+
+Dolphin/card/CARDSetAttributes.c:
+	.text       start:0x8040F9A0 end:0x8040F9E8
+
+Dolphin/card/bitrev.c:
+	.text       start:0x8040F9E8 end:0x8040FB54
+
+Dolphin/card/ReadArrayUnlock.c:
+	.text       start:0x8040FB54 end:0x8040FC98
+
+Dolphin/card/DummyLen.c:
+	.text       start:0x8040FC98 end:0x8040FD5C
+	.sdata      start:0x8066CF00 end:0x8066CF04
+
+Dolphin/card/CARDUnlock.c:
+	.text       start:0x8040FD5C end:0x804108B4
+	.data       start:0x804F2C20 end:0x804F2D80 align:32
+
+Dolphin/card/InitCallback.c:
+	.text       start:0x804108B4 end:0x80410924
+
+Dolphin/card/DoneCallback.c:
+	.text       start:0x80410924 end:0x80410C48
+
+Dolphin/card/BlockReadCallback.c:
+	.text       start:0x80410C48 end:0x80410D24
+
+Dolphin/card/__CARDRead.c:
+	.text       start:0x80410D24 end:0x80410D88
+
+Dolphin/card/BlockWriteCallback.c:
+	.text       start:0x80410D88 end:0x80410E64
+
+Dolphin/card/__CARDWrite.c:
+	.text       start:0x80410E64 end:0x80410EC8
+
+Dolphin/card/__CARDGetStatusEx.c:
+	.text       start:0x80410EC8 end:0x80410F6C
+
+Dolphin/card/__CARDSetStatusExAsync.c:
+	.text       start:0x80410F6C end:0x80411208
+
+Dolphin/gx/GXEndDisplayList.c:
+	.text       start:0x80411208 end:0x80411398
+	.bss        start:0x80668B40 end:0x80669114
+	.sbss       start:0x8066FB18 end:0x8066FB1C
+
+Dolphin/gx/GDBase.c:
+	.sbss       start:0x8066FB20 end:0x8066FB24
+
+Runtime.PPCEABI.H/reent.c:
+	.sbss       start:0x8066FB30 end:0x8066FB34
+
+Dolphin/gx/GXCallDisplayList.c:
+	.text       start:0x80411398 end:0x80411408
+
+Dolphin/texPalette/TEXGet.c:
+	.text       start:0x80411408 end:0x804114EC
+	.data       start:0x804F2D80 end:0x804F2DBC
+	.sdata2     start:0x80670970 end:0x80670978
+
+Dolphin/os/fn_80003254.c:
+	.init       start:0x80003254 end:0x800032C0
+
+Dolphin/os/__check_pad3.c:
+	.init       start:0x800032C0 end:0x80003300
+
+Dolphin/os/fn_80003300.c:
+	.init       start:0x80003300 end:0x80003328
+
+Dolphin/os/fn_80003334.c:
+	.init       start:0x80003328 end:0x80003464
+
+Dolphin/os/fn_80003464.c:
+	.init       start:0x80003464 end:0x80003468
+
+Dolphin/os/__init_hardware.c:
+	.init       start:0x80003468 end:0x800034A0
