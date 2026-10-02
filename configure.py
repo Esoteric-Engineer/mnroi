@@ -972,6 +972,7 @@ config.libs = [
             Object(Matching, "Dolphin/os/OSFatal.c"),
             Object(Matching, "Dolphin/os/Halt.c"),
             Object(Matching, "Dolphin/os/GetFontCode.c"),
+            Object(Matching, "Dolphin/os/OSUtf.c"),
             Object(Matching, "Dolphin/os/Decode.c"),
             Object(Matching, "Dolphin/os/OSGetFontEncode.c"),
             Object(Matching, "Dolphin/os/ReadFont.c"),

@@ -2368,6 +2368,9 @@ Dolphin/os/GetFontCode.c:
 	.text       start:0x80402DC0 end:0x80402F34
 	.data       start:0x804DD198 end:0x804DDCA8
 
+Dolphin/os/OSUtf.c:
+	.data       start:0x804DDCA8 end:0x804EEEE8
+
 Dolphin/os/Decode.c:
 	.text       start:0x80402F34 end:0x804030A8
 
