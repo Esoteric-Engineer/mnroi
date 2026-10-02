@@ -22,6 +22,18 @@ from pathlib import Path
 sys.path.insert(0, "tools")
 import sdk_scout  # noqa: E402  (RANGES and LIBS are the single source of truth)
 
+# NOT QUEUED bytes that are a real symbol with no queue row, per the bucketing below -- but a named
+# symbol can still be permanently, deliberately left undefined by every TU that reaches it (a
+# literal-pool duplicate, a dtk-chunk's unreferenced alignment filler). Confirmed against
+# splits.txt/report.json and the owning row's own note before being added here; don't add one on a
+# guess. Update/remove an entry the moment the bytes actually get claimed.
+KNOWN_PERMANENT_GAPS = {
+    (".sbss", 0x8066F96C, 0x8066F970):
+        "unreferenced 8-alignment pad before VMAlloc.c's data, see Dolphin/vm/__VMPageReplacementLRU.c's row",
+    (".sdata2", 0x806708D0, 0x806708D8):
+        "MtxOneConst/MtxZeroConst: defining them in-unit duplicates PSMTXIdentity's own literal pool, see matching_notes.md",
+}
+
 ap = argparse.ArgumentParser()
 ap.add_argument("--version", default="GVLE69")
 ap.add_argument("--lo", type=lambda x: int(x, 0), default=None)
@@ -213,7 +225,14 @@ print(f"  total: {tot['total']} bytes of library data, {tot['split']} split, {to
       f" ({tot['queued']} queued, {tot['unqueued']} not queued, {tot['pad']} padding)")
 print(f"  unsplit (queued) bytes by library: {dict(lib_data.most_common())}")
 for sec, a, b in unqueued_gaps:
-    print(f"  NOT QUEUED: {sec} {a:#x}-{b:#x} ({b - a} bytes): add data rows or fix the run")
+    known = KNOWN_PERMANENT_GAPS.get((sec, a, b))
+    if known:
+        print(f"  NOT QUEUED (known permanent gap): {sec} {a:#x}-{b:#x} ({b - a} bytes): {known}")
+    else:
+        print(f"  NOT QUEUED: {sec} {a:#x}-{b:#x} ({b - a} bytes): add data rows or fix the run"
+              " -- before adding a row, check whether splits.txt/report.json actually cover a nearby"
+              " row that claims this span (a stale 'matched' row can overclaim its size); don't"
+              " assume a new NOT QUEUED range is automatically a documented exception")
 outside = [(sec, a, b, u) for sec in DATA_SECS for a, b, u in splits.get(sec, [])
            if u in lib_units and not any(s == sec and lo <= a and b <= hi for s, lo, hi, _ in sdk_scout.DATA_RANGES)]
 for sec, a, b, u in outside:
