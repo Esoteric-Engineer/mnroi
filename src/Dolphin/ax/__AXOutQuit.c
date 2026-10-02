@@ -4,7 +4,7 @@ extern void OSSleepThread(void*);
 extern void DSPCancelTask(void*);
 extern void AIStopDMA(void);
 
-extern char lbl_80657040[0x80];
+extern unsigned char __AXDSPTask[0x80];
 extern unsigned long __AXUserFrameCallback;
 extern unsigned long __AXOutThreadQueue[2];
 
@@ -12,7 +12,7 @@ void __AXOutQuit(void)
 {
     int old = OSDisableInterrupts();
     __AXUserFrameCallback = 0;
-    DSPCancelTask(lbl_80657040);
+    DSPCancelTask(__AXDSPTask);
     OSSleepThread(__AXOutThreadQueue);
     AIStopDMA();
     OSRestoreInterrupts(old);

@@ -4,7 +4,7 @@ extern void __AXOutNewFrame(unsigned long);
 extern void DSPAssertTask(void*);
 
 extern char __AXOutBuffer[];
-extern char lbl_80657040[0x80];
+extern unsigned char __AXDSPTask[0x80];
 extern unsigned long __AXAiDmaFrame;
 extern unsigned long __AXOutDspReady;
 extern volatile long long __AXOsTime;
@@ -20,7 +20,7 @@ void __AXOutAiCallback(void)
         __AXOutNewFrame(0);
     } else {
         __AXOutDspReady = 2;
-        DSPAssertTask(lbl_80657040);
+        DSPAssertTask(__AXDSPTask);
     }
     if (__AXOutputBufferMode == 1) {
         AIInitDMA(__AXOutBuffer + __AXAiDmaFrame * 0x280, 0x280);

@@ -16,6 +16,12 @@ extern unsigned long __AXOutputBufferMode;
 unsigned long __AXOutBuffer[480];
 unsigned long __AXOutSBuffer[160];
 
+// Both arrays are unreferenced here, so they're in reverse declaration order.
+// - DramImage is only reached via pointer arithmetic off __AXOutBuffer in __AXOutInitDSP.c
+// - DSPTask is read by __AXOutAiCallback/__AXOutQuit via their own extern
+unsigned char __AXDSPTask[0x80];
+unsigned char __AXDramImage[0x4000];
+
 void __AXOutInit(unsigned long outputMode)
 {
     int i;
