@@ -176,6 +176,13 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   file blocked by the pair ([`nonmatching.md`](nonmatching.md)); it does not prove the file is C
   (`Game/fn_80088740.c`, next to the pair-less C++ `.nsc` parser).
 
+- **A parameter spilled as `mr r0, rN` / `mr r9, r0` / `sth r9` is 16-bit, and `clrlwi`-on-read makes
+  it unsigned.** Arguments arrive promoted to a word, so a 16-bit parameter needs the two copies to
+  truncate before the halfword store, where an `int` one is a bare `stw`; reading it back as `lhz`
+  plus a redundant `clrlwi rX, rY, 16` is the promotion back to `int` (`extsh` would be `short`).
+  Declaring it `int` instead costs 8 bytes and reads the low half of the word slot, `lhz 0xa(r31)`
+  (`Game/fn_800B5BC4.cpp`, the pad hooks).
+
 - **Two *identical* back-to-back branches to the epilogue at the end of an `if` body mean an explicit
   `else` whose own last statement returns, not the C++ function-end pair.** The first is the `return`'s
   branch, the second is the jump over the `else`, and both land on the epilogue because the else

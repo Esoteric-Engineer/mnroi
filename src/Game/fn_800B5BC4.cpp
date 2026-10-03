@@ -1,6 +1,6 @@
 // GameFlow: the debug-menu command dispatcher, the per-frame update, the overlays, the command
-// queue and the level-load entry points. The class and its field meanings are docs/versus.md
-// section 6; the unit owns the string literals and float pool at 0x8048BDE0-0x8048BE78.
+// queue, the level-load entry points and the pad hooks. The class and its fields are in
+// docs/versus.md section 6; the unit owns the .rodata pool at 0x8048BDE0-0x8048BE78.
 
 // Offsets are all that is known of the class; its real size is unknown.
 class GameFlow
@@ -62,6 +62,7 @@ typedef struct Unk7E
 } Unk7E;
 
 extern char lbl_80552110[]; // the game-state object G (docs/versus.md section 4.1)
+extern GameFlow lbl_80552920; // the single GameFlow instance
 extern char lbl_8052F060[]; // the level/world object
 extern char lbl_80593BE8[]; // the globals object of Game/fn_80443908.cpp
 extern char lbl_805722E8[];
@@ -154,6 +155,9 @@ extern void fn_800B831C(GameFlow *p);
 extern void fn_800B8408(GameFlow *p);
 extern void fn_800B84F4(GameFlow *p);
 extern void fn_800B8544(GameFlow *p);
+
+extern void fn_800B4AB8(GameFlow *p, unsigned short port);
+extern void fn_800B4CF8(GameFlow *p, unsigned short port);
 
 }
 
@@ -655,4 +659,15 @@ int GameFlow::SetCommandBlocking(int command)
 int GameFlow::GetHistory(unsigned char index)
 {
     return history[index];
+}
+
+// The two pad hooks fn_801AA5E4 registers (fn_80445F28 / fn_80445F4C); the port is the SI channel.
+void OnPadRemoved(unsigned short port)
+{
+    fn_800B4AB8(&lbl_80552920, port);
+}
+
+void OnPadInserted(unsigned short port)
+{
+    fn_800B4CF8(&lbl_80552920, port);
 }
