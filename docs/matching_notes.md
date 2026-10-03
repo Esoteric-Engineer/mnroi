@@ -61,6 +61,10 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   pseudo that register allocation puts in a call-saved register, while a plain local always gets a
   frame slot. Add `register` to the local (`Game/fn_80114420.cpp`, the actor in the player loop).
 
+- **Two register copies before a byte store (`mr r0, r4` / `mr r11, r0` / `stb r11`) mean the
+  parameter is `int` and the field `char`.** The second copy is the QImode conversion; an `int` field
+  stores straight from the first copy (`Game/fn_804437D8.c`, `fn_80443860`).
+
 - **A `switch` dispatch tree whose ordering tests are `cmplwi` where yours are `cmpwi` means the
   switch expression is unsigned.** The equality tests are `cmpwi` either way, so the ordering ones are
   the only tell; declaring the callee that produces the index `unsigned int` is enough
@@ -78,7 +82,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   it goes through r0. It is not a constructor-vs-plain-call difference, and the two dead `mr r0, rX`
   that open a compiler-generated array-constructor loop come from the same place.
 
-- **A unit a few instructions off size despite near-100% fuzzy%: check `.cpp` vs `.c`.** C++ (even `extern "C"`) adds a redundant second branch to the epilogue after every `return` that plain C skips. Oversized means the unit should be `.c` (`fn_80431CCC`); *undersized* by exactly the missing tail branches means it should be `.cpp`, including for a `void` function with no `return` statement, where the pair lands after the last body label (`Game/fn_8001C258.cpp`). See [`prodg.md`](prodg.md#flags). But C emits one branch per `return`, so a pair can equally be two `return;` statements in C: settle the language from the body (next bullet) before changing the extension (`Game/fn_80023010.c`).
+- **A unit a few instructions off size despite near-100% fuzzy%: check `.cpp` vs `.c`.** C++ (even `extern "C"`) adds a redundant second branch to the epilogue after every `return` that plain C skips. Oversized means the unit should be `.c` (`fn_80431CCC`); *undersized* by exactly the missing tail branches means it should be `.cpp`, including for a `void` function with no `return` statement, where the pair lands after the last body label (`Game/fn_8001C258.cpp`). See [`prodg.md`](prodg.md#flags). But C emits one branch per `return`, so a pair can equally be two `return;` statements in C: settle the language from the body (next bullet) before changing the extension (`Game/fn_80023010.c`). The pair-carrying configuration *is* the one our `cc1plus` emits, so a cluster of pair-carrying functions inside a run of pair-less ones is a file boundary, not a blocker: give it its own `.cpp` unit and match it there (`Game/fn_80443908.cpp`, four functions between two `.c` runs).
 
 - **`p->tbl[i].f` in an expression that also holds a call: cc1 and cc1plus order it differently.** cc1 loads `i`, emits the index `mulli`, then loads `tbl`; cc1plus loads `tbl` first into a non-volatile, which also grows the frame and the `stmw` range. No source rewrite moves it (index-first sums and `(char *)`/int casts all fold to the same tree), and cc1plus agrees with cc1 only when the base is a frame slot instead of a call, so this diff alone means the unit is `.c` (`Game/fn_80023010.c`).
 

@@ -1,5 +1,64 @@
-// Player-slot and game-state accessors, plus two on unrelated objects.
-// The slot array is G+0x10, stride 0xB0.
+// Accessors on unrelated objects: a random-name table, an actor factor block, the game-state player slots (G+0x10, stride 0xB0) and two one-offs.
+// Field meanings are in docs/versus.md and docs/characters.md.
+
+// The object fn_8009AD80 returns for an actor. Only these four factors are known.
+typedef struct Factors
+{
+    char unk0[0x48];
+    float unk48;
+    char unk4C[0x8];
+    float unk54;
+    float unk58;
+    float unk5C;
+} Factors;
+
+float fn_804439E8(register Factors *f)
+{
+    return f->unk48 * f->unk54 * f->unk58 * f->unk5C;
+}
+
+// The table at fn_804326B4(lbl_8054EF38): three name lists, each with its own count.
+typedef struct NameTable
+{
+    char unk0[0x340];
+    char list0[3][0x20]; // +0x340
+    char list1[3][0x20]; // +0x3A0
+    char list2[3][0x20]; // +0x400
+    char unk460[0x1B];
+    unsigned char count0; // +0x47B
+    unsigned char count1;
+    unsigned char count2;
+} NameTable;
+
+char *fn_80443A2C(register NameTable *t, register int index)
+{
+    return t->list0[index];
+}
+
+char *fn_80443A68(register NameTable *t, register int index)
+{
+    return t->list1[index];
+}
+
+char *fn_80443AA4(register NameTable *t, register int index)
+{
+    return t->list2[index];
+}
+
+int fn_80443AE0(register NameTable *t)
+{
+    return t->count0;
+}
+
+int fn_80443B10(register NameTable *t)
+{
+    return t->count1;
+}
+
+int fn_80443B40(register NameTable *t)
+{
+    return t->count2;
+}
 
 // A player slot in the game-state object. Only the fields these use are known.
 typedef struct Slot
