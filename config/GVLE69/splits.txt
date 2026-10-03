@@ -3102,7 +3102,7 @@ Game/fn_80431CCC.c:
 	.text       start:0x80431CCC end:0x80431D58
 
 Game/fn_80443B70.c:
-	.text       start:0x80443B70 end:0x80443DF8
+	.text       start:0x80443B70 end:0x80443E9C
 
 Game/fn_8044B1D4.c:
 	.text       start:0x8044B1D4 end:0x8044B4EC

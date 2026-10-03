@@ -1,4 +1,4 @@
-// Player-slot accessors, plus five on the game-state object itself.
+// Player-slot and game-state accessors, plus two on unrelated objects.
 // The slot array is G+0x10, stride 0xB0.
 
 // A player slot in the game-state object. Only the fields these use are known.
@@ -91,4 +91,32 @@ int fn_80443DBC(register GameState *g)
 {
     g->curSlot = &g->slots[g->curIndex];
     return 1;
+}
+
+// Not a Slot: fn_80095EAC passes its own +0x68 pointer. Only this field is known.
+typedef struct Unk68
+{
+    char unk0[0x44];
+    int unk44;
+} Unk68;
+
+void fn_80443DF8(register Unk68 *obj, register int value)
+{
+    obj->unk44 = value;
+}
+
+// A seed passed by pointer; callers build one on the stack and draw from it.
+typedef struct Random
+{
+    int seed;
+} Random;
+
+extern float fn_8042CE28(unsigned int value); // unsigned int -> float
+extern const float lbl_8048A514[]; // 1/2^31, in the 0x8009xxxx file's literal pool
+
+float fn_80443E20(register Random *r)
+{
+    float value = fn_8042CE28(r->seed & 0x7FFFFFFF) * lbl_8048A514[0];
+    r->seed = r->seed * 0x19660D + 0x3C6EF35F;
+    return value;
 }
