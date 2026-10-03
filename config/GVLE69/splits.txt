@@ -15,6 +15,9 @@ Game/fn_800092CC.cpp:
 	.ctors      start:0x804825A4 end:0x804825A8
 	.sbss       start:0x8066CF80 end:0x8066D044
 
+Game/fn_80020E60.c:
+	.text       start:0x80020E60 end:0x800219D4
+
 Game/handlers/characterselect.cpp:
 	.text       start:0x801037B0 end:0x80103BAC
 

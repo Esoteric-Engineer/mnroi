@@ -17,7 +17,7 @@ The code uses two separate numberings. Don't mix them up.
 
 ### Type IDs (`fn_80020E60`)
 
-`fn_80020E60(actor)` returns -1 unless `fn_800B0C58(actor)` passes. It then gets an info object with `fn_800B14A0(actor)` and returns the cached ID at `info+0x3D4`. On the first call it lowercases the name at `info+0xDC`, compares it against every character name with `strcmp`, and caches the result.
+**Matched** (`Game/fn_80020E60.c`, 0x80020E60-0x800219D4; plain C at `-O0`). `fn_80020E60(actor)` returns -1 for a null actor or one `fn_800B0C58` rejects. It then gets an info object with `fn_800B14A0(actor)` and returns the cached ID at `info+0x3D4` whenever that is nonzero, so 0 means "not looked up yet" and -1 means "not a character". On the first call it `strcpy`s the name at `info+0xDC` into a 32-byte stack buffer, lowercases it with `strlwr`, then runs an `else if` chain of 56 `strcmp`s and caches the result; an empty name or no match caches -1.
 
 | ID | Name | ID | Name | ID | Name |
 |---|---|---|---|---|---|
@@ -28,7 +28,7 @@ The code uses two separate numberings. Don't mix them up.
 | 5 | `magneto` | 11 | `roekel` | 17 | `biohazard` |
 | 6 | `elektra` | 12 | `megalith` | 18 | `heatwave` |
 
-`alt_<name>` maps to `id + 20`. `human1`-`3` map to 100, `brute1`-`3` to 101, `flier1`-`3` to 102, and the civilians (`Human`, `businessmana`, `cop`...) to 103. The internal names are codenames, so `roekel` is Van Roekel and `defcon`, `megalith`, `aftershock`, `biohazard` and `heatwave` are the Imperfects.
+`alt_<name>` maps to `id + 20`. `human1`-`3` map to 100, `brute1`-`3` to 101, `flier1`-`3` to 102, and eleven civilians to 103: `Human`, `businessmana`, `businessmanb`, `businesswomana`, `businesswomanb`, `securityguard`, `scientist`, `scientist1`, `scientist2`, `scientist3`, `cop`. The chain is compared in exactly that order, and `Human` is **dead**: the name is lowercased before the first `strcmp`, so an actor called `Human` falls through to -1. The internal names are codenames, so `roekel` is Van Roekel and `defcon`, `megalith`, `aftershock`, `biohazard` and `heatwave` are the Imperfects.
 
 Only three functions call it: `fn_8001C258`, `fn_80023010` and `fn_8002623C`.
 
@@ -99,7 +99,7 @@ These are every function that references four or more character-name strings, pl
 |---|---|
 | `clashCharSelect_GetCharList` | Loop bound 18, and nine script array names (section 2). |
 | Roster tables `lbl_804CA51C`, `lbl_804CAB0C`, remap `lbl_804CB0FC` | `Record[20]` and `int[20]`. Indices 0 and 19 are filler. |
-| `fn_80020E60` | Name → type ID chain (section 1). |
+| `fn_80020E60` | Name → type ID chain, 56 `strcmp`s in a fixed order (section 1). **Matched**, so a new name is a source edit. |
 | `fn_80023010` (0x638) | Per-character aura effects (`KEY_IRONMAN_AURA`, `KEY_STORM_AURA`...). It also reads `G+0x590`. |
 | `fn_80114420` (0x3B4) | Per-character SFX banks (`SFX_Venom`...). |
 | `lbl_804CF8E8` | AI profile names, `char*[31]` with a NULL end: `AI_DEFAULT`, the 18 characters in alphabetical order, then NPCs. |

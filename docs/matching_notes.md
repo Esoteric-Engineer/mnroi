@@ -27,7 +27,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   return type.** A `char`- or `short`-returning function whose result is converted to `int` emits a
   bare `mr r0, r3` with no `extsb`/`extsh`, while an `int`- or pointer-returning one stores `r3`
   straight to the slot. The roster stat accessors are declared `char` for this reason, and their
-  caller only matched once they were (`Game/handlers/characterselect.cpp`).
+  caller only matched once they were (`Game/handlers/characterselect.cpp`). That applies to a value
+  stored into an argument temp; a plain assignment to a local (`info = fn_800B14A0(actor);`) copies
+  through `r0` whatever the return type is (`Game/fn_80020E60.c`).
 - **A C++ function returning a class by value comes out 8 bytes over size, with two extra unreachable
   branches to the epilogue.** No release, flag or source shape fixes it; see
   [`prodg.md`](prodg.md#release). Stop instead of reshaping the source.
