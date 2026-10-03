@@ -55,6 +55,22 @@ Because every access is resolved from the final layout, `.sdata2` constants keep
 
 A compiled object can only reach an `.sdata2` object through a symbol some object defines: an `extern` of a name that only exists in `symbols.txt` (e.g. another unit's anonymous literal) fails to link as `undefined`. Give the owning unit a real definition of it (see `C_MTXOrtho.c`), or address it from a defined symbol in the same object (`GXTexObjMinLodScaleConst-32` in `GXTexture.c`).
 
+## Shifted Builds
+
+A mod that changes a function's size moves every address after it, so the whole DOL has to relink correctly at new addresses. This was tested on 2026-10-02 by padding the start of `.text` (in `Game/fn_800092CC.cpp`) and the start of various `.rodata`/`.data` units, then diffing the shifted DOL against the original and booting it in Dolphin through a scripted versus match.
+
+**What relinks correctly:** every pointer in `.data`/`.rodata`, all 171 constructors, crt0's section bounds, and the arena (which follows `.sdata2`). Video, input, menus, character loading and gameplay match the original.
+
+**Fixed for this:**
+
+- `fn_800350F4` (7 KB, reached only through a pointer) was in `skip_cfa_ranges`, because its inline FP epilogue looks like the `_restfpr_14` sled. dtk analyses nothing in a skipped range, so its 77 data references and 213 branches stayed raw numbers. It is now a function in `symbols.txt` that ends where the sled starts; dtk still names the sled `__restore_fpr`, and the function falls through into it as in the original.
+- 17 `lis` instructions whose low half sits after a branch join, or whose high half is kept in a saved register or CTR, had no relocation. They now have `add_relocations` entries.
+- dtk relocated six words of pixel data in the embedded `SHPG` texture bank `lbl_804BFA80` that only look like pointers. They now have `block_relocations` entries.
+
+**Not fixed:**
+
+- **Audio screeches in some shifted builds**: the DSP output saturates (RMS ~32,700 against ~1,000-2,000) from boot. It happens only when the code moves by an amount that is not a multiple of 0x200 **and** some data after `0x8049C1D0` (`.rodata` from the Newlib constants onward, or `.data`) moves by exactly the same amount. Any shift that is a multiple of 0x200, or one that changes the distance between code and that data, plays correctly. It reproduces with the cached interpreter and with DSP LLE, so it is the game's behaviour rather than Dolphin's JIT or DSP HLE. The cause is not found yet. Until it is, keep each change's size growth a multiple of 0x200 bytes (pad the end of the changed unit's `.text`).
+
 ## `config.yml` Reference
 
 - **`skip_cfa_ranges`:** Hand-written Nintendo SDK supervisor-mode assembly that dtk's control-flow analysis cannot trace through (`bl .+4`, `rfi`, tail `b`).
