@@ -30,7 +30,7 @@ The code uses two separate numberings. Don't mix them up.
 
 `alt_<name>` maps to `id + 20`. `human1`-`3` map to 100, `brute1`-`3` to 101, `flier1`-`3` to 102, and eleven civilians to 103: `Human`, `businessmana`, `businessmanb`, `businesswomana`, `businesswomanb`, `securityguard`, `scientist`, `scientist1`, `scientist2`, `scientist3`, `cop`. The chain is compared in exactly that order, and `Human` is **dead**: the name is lowercased before the first `strcmp`, so an actor called `Human` falls through to -1. The internal names are codenames, so `roekel` is Van Roekel and `defcon`, `megalith`, `aftershock`, `biohazard` and `heatwave` are the Imperfects.
 
-Only three functions call it: `fn_8001C258` (**matched**, `Game/fn_8001C258.cpp`), `fn_80023010` and `fn_8002623C`.
+Only three functions call it: `fn_8001C258` (**matched**, `Game/fn_8001C258.cpp`), `fn_80023010` (**matched**, `Game/fn_80023010.c`) and `fn_8002623C`.
 
 ---
 
@@ -101,34 +101,51 @@ These are every function that references four or more character-name strings, pl
 | Roster tables `lbl_804CA51C`, `lbl_804CAB0C`, remap `lbl_804CB0FC` | `Record[20]` and `int[20]`. Indices 0 and 19 are filler. |
 | `fn_80020E60` | Name → type ID chain, 56 `strcmp`s in a fixed order (section 1). **Matched**, so a new name is a source edit. |
 | `fn_8001C258` (0x2C0) | Turns the aura on or off, `fn_8001C258(actor, 1/0)`. **Matched** (`Game/fn_8001C258.cpp`), so a new character is a source edit. |
-| `fn_80023010` (0x638) | Per-character aura effects (`KEY_IRONMAN_AURA`, `KEY_STORM_AURA`...). It also reads `G+0x590`. |
+| `fn_80023010` (0x638) | Looks up all 19 effect keys and spawns the two flame auras. **Matched** (`Game/fn_80023010.c`), so a new character is a source edit. It also reads `G+0x590`. |
 | `fn_80114420` (0x3B4) | Per-character SFX banks (`SFX_Venom`...). |
 | `lbl_804CF8E8` | AI profile names, `char*[31]` with a NULL end: `AI_DEFAULT`, the 18 characters in alphabetical order, then NPCs. |
 | `fn_801BEE2C`, `fn_801F7C68` | Story mode boss and level lists. Not needed for versus. |
 
 ### Auras
 
-Only five characters have an aura, and both aura functions key off a shared **aura index**, not the type ID:
+The aura functions key off a shared **aura index**, not the type ID. `fn_80023010`'s `switch`
+(**matched**, `Game/fn_80023010.c`) names all 19 of them, so the index space is complete: 0-2 are
+explosions, 3-10 are the eight base auras and 11-18 the alts, always base + 8.
 
-| Type ID | Character | Aura index | Alt type ID | Alt aura index |
-|---|---|---|---|---|
-| 2 | `ironman` | 5 | 22 | 13 |
-| 7 | `storm` | 6 | 27 | 14 |
-| 11 | `roekel` | 8 | 31 | 16 |
-| 12 | `megalith` | 7 | 32 | 15 |
-| 16 | `johnnyohm` | 3 | 36 | 11 |
+| Index | Key | Character | Type ID | Alt index | Alt key |
+|---|---|---|---|---|---|
+| 0 | `KEY_SMALL_EXPLOSION` | | | | |
+| 1 | `KEY_MED_EXPLOSION` | | | | |
+| 2 | `KEY_LARGE_EXPLOSION` | | | | |
+| 3 | `KEY_JOHNNYOHM_AURA` | `johnnyohm` | 16 | 11 | `KEY_ALTJOHNNYOHM_AURA` |
+| 4 | `KEY_HUMANTORCH_AURA` | `humantorch` | 8 | 12 | `KEY_ALTHUMANTORCH_AURA` |
+| 5 | `KEY_IRONMAN_AURA` | `ironman` | 2 | 13 | `KEY_ALTIRONMAN_AURA` |
+| 6 | `KEY_STORM_AURA` | `storm` | 7 | 14 | `KEY_ALTSTORM_AURA` |
+| 7 | `KEY_BRIGADE_AURA` | `megalith` | 12 | 15 | `KEY_ALTBRIGADE_AURA` |
+| 8 | `KEY_ROEKEL_AURA` | `roekel` | 11 | 16 | `KEY_ALTROEKEL_AURA` |
+| 9 | `KEY_HAZMAT_AURA` | `biohazard` | 17 | 17 | `KEY_ALTHAZMAT_AURA` |
+| 10 | `KEY_SOLARA_AURA` | `heatwave` | 18 | 18 | `KEY_ALTSOLARA_AURA` |
 
-The alternate costume is always base index + 8. `fn_8001C258`'s `switch` is in that order (the five
-base costumes, then the five alts), and indices 4 and 12 are skipped, so two more slots belong to
-something else. The index addresses two `.bss` tables, `lbl_805200A0` (0x4C, the effect key, -1 when
-the character has no aura loaded) and `lbl_805200EC` (0x54); `fn_80023010` is what fills them, storing
--1 and 0 to clear a slot. Both functions then spawn the effect with
-`fn_8002298C(fn_80022EC8(), key, lbl_805200EC[i], &color, n, actor, 0.0f, 0.0f)`, where `color` is four
-floats built by `fn_8042D768` from `fn_800B2620(actor) * 0.5f` as the blue channel, and `n` is 1 in
-`fn_80023010` against 2 in `fn_8001C258`. That `n` is the effect's `+0x30` field: to switch the aura
-off, `fn_8001C258` walks the effect manager's table (`fn_80022EC8()`, effects at `+0x390` on a 0x50
-stride, count at `+0x1790`) and calls `fn_8002289C` on every entry whose `+0x30` is 2 and whose `+0x34`
-is this actor.
+So three of the eight auras are named after a codename the roster doesn't use: Brigade is Megalith,
+Hazmat is Biohazard and Solara is Heatwave (guessed from the index order, which lines up with
+`fn_8001C258`'s `switch` for the five it handles). The two functions split the eight: `fn_8001C258`
+switches indices 3, 5, 6, 7, 8 (and their alts) on and off per actor, `fn_80023010` spawns 4 and 10
+(and their alts) for the players in the match, and nothing found so far uses 9/17.
+
+The index addresses two `.bss` tables, `lbl_805200A0` (0x4C, 19 ints) and `lbl_805200EC` (0x54).
+`fn_80023010` fills them: it clears each entry to -1/0, then walks the two effect managers'
+definition tables (`fn_80022EC8()` first, then `fn_80022F00()`, records of 0x30 at `+0x2C`, count at
+`+0x30`, a name table at `+0x44`) and `strcmp`s each record's name against the key, storing the
+record's index in `lbl_805200A0[i]` and which manager it came from (0 or 1) in `lbl_805200EC[i]`. So
+-1 means the key isn't loaded, and the pair is "which effect definition, in which manager".
+
+Both functions then spawn the effect with
+`fn_8002298C(fn_80022EC8(), lbl_805200A0[i], lbl_805200EC[i], &color, n, actor, 0.0f, 0.0f)`, where
+`color` is four floats built by `fn_8042D768` from `fn_800B2620(actor) * 0.5f` as the blue channel,
+and `n` is 1 in `fn_80023010` against 2 in `fn_8001C258`. That `n` is the effect's `+0x30` field: to
+switch the aura off, `fn_8001C258` walks the effect manager's table (`fn_80022EC8()`, effects at
+`+0x390` on a 0x50 stride, count at `+0x1790`) and calls `fn_8002289C` on every entry whose `+0x30`
+is 2 and whose `+0x34` is this actor.
 
 Not yet searched for: more code that branches on a numeric type ID or roster index (`switch` jump
 tables, `cmpwi` against 1-38), and arrays sized 18, 20 or 38 that are indexed by character.

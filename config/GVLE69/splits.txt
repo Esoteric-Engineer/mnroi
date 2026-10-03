@@ -22,6 +22,10 @@ Game/fn_8001C258.cpp:
 Game/fn_80020E60.c:
 	.text       start:0x80020E60 end:0x800219D4
 
+Game/fn_80023010.c:
+	.text       start:0x80023010 end:0x80023648
+	.rodata     start:0x80484ADC end:0x80484AE8
+
 Game/handlers/characterselect.cpp:
 	.text       start:0x801037B0 end:0x80103BAC
 
