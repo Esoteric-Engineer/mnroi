@@ -84,6 +84,12 @@ constructor (in C++), so it does not settle the question by itself.
   so most game units that touch a vector need the class. Its 4-byte `.rodata` pool at 0x80482CC8
   cannot be claimed on its own: `dtk dol split` reports a cyclic link-order dependency, so the
   function stays unclaimed for now.
+- **`new T` calls `__builtin_new`, not `operator new`, and `fn_801ACED4` (0x801ACED4) is it.** GCC
+  2.95 emits `bl __builtin_new` for the allocation and `bl __<len><Class>` for the constructor, so
+  `rec = new NameTable;` on a 0x5C8-byte class compiles to `li r3, 0x5c8` / `bl __builtin_new` /
+  three register copies / `bl __9NameTable`. All 329 of `fn_801ACED4`'s call sites in the DOL have
+  that shape and no other callee in the DOL does, so every one of them is a `new` expression and the
+  file holding it is C++. Both symbols are renamed in `symbols.txt`.
 - **Static initialization.** For a file with global objects that have constructors, GCC 2.95 emits a local `__static_initialization_and_destruction_0(int initialize, int priority)` and a local `_GLOBAL_.I.<first global's name>` that calls it with `(1, 0xFFFF)`, at the end of the file's `.text`. A `_GLOBAL_.I` function in the DOL therefore marks the end of a file. In `symbols.txt`, give both their GCC names with `scope:local`.
 - **`T x = T(...);`, not `T x(...);`:** copy-initialization keeps the constructor's returned `this` (`mr r0,r3` after each call), which the game's static initializers have.
 - **A class passed or returned by value travels through memory.** The caller puts it in a stack temp

@@ -25,8 +25,9 @@ so both branches are jumps to the immediately following label and GCC's `jump_op
 
 The two shapes cluster by file in the DOL, which is what makes this a compiler-configuration problem
 rather than a source one: in `.text` order, 0x80024C60-0x8002623C all carry the pair, 0x8002623C-
-0x80027D58 all lack it, 0x80027D58-0x8002800C carry it again. Both of the project's matched `.cpp`
-units (`Game/fn_8001C258.cpp`, `Game/fn_800092CC.cpp`) happen to sit in files that carry it.
+0x80027D58 all lack it, 0x80027D58-0x8002800C carry it again, and 0x800887AC lacks it.
+Both of the project's matched `.cpp` units (`Game/fn_8001C258.cpp`, `Game/fn_800092CC.cpp`) happen
+to sit in files that carry it.
 
 Ruled out: all five releases, every source shape tried (`return` early / late / absent, `goto`,
 nested blocks, member function, `extern "C"`, non-void return, last statement an `if` / loop /
@@ -63,6 +64,22 @@ experiments must drive `CPP.exe` and `cc1plus.exe` directly.
 
 `clashCharSelect_GetPrevCharList` (0x80103BAC) ends with the same copy/destructor/return sequence, so
 the rest of the file is blocked the same way.
+
+---
+
+## `Game/fn_800887AC.cpp` — the `.nsc` mission/arena script parser
+
+0x800887AC-0x80089710, 99.80% fuzzy, 8 bytes over size. Every one of the 985 instructions matches,
+along with the 0x4e0 frame, the `stmw r27` range, all 98 calls and the 448-byte `.rodata` string
+pool the unit claims. The only difference is the C++ function-end branch pair above, which the DOL
+does not have.
+
+The unit is C++ rather than C because of the `new NameTable` and the `p->arr[p->n++]` copy pair
+([`matching_notes.md`](matching_notes.md)); as `.c` it is instead 8 bytes *short*, missing those two
+shapes. 0x800887AC is therefore a pair-less C++ file, and so is whatever else sits between
+`_GLOBAL_.I` at 0x80081DCC and the one at 0x800898E4. Nothing else is left to try here: when
+[`prodg.md`](prodg.md#release) turns up the configuration that drops the pair, this unit should flip
+straight to `Matching`.
 
 ---
 

@@ -64,8 +64,8 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
 - `fn_80443D44(G, player)` is how gameplay code gets a player's actor, and is the most-called of these
   accessors (20+ callers): it returns `fn_8042FF2C(&G->slots[player])`, or NULL when
   `player < 0 || player >= G+0x590`. **Matched** (`Game/fn_80443B70.c`).
-- `fn_80131060(player)` returns that player's slot name, or `"plr_wolverine"` if the slot is empty. **Matched** (`Game/fn_80131060.c`), which fills in the rest: it returns `"plr_wolverine"` for any `player > 1`, and only consults the slot's own name (`fn_80443BC8`) while a match is running (`fn_80130718`). For an unused slot in a running match it falls back to the name at `+0x320` of the tuning record `fn_804326B4(lbl_8054ED80)` holds, and to `"plr_wolverine"` if that is empty.
-- `fn_800887AC` (0xF64) builds names from `plr_%s` and `plr_alt%s`. `fn_801311C0` and `fn_800061CC` handle the `plr_alt` prefix. `fn_801311C0(player)` is **matched** (`Game/fn_80131060.c`): it is the display name for a player, `fn_80461288(fn_80131060(player), strstr(name, "plr_alt") != 0)`, and when the key that comes back starts with `~` it is localised through `fn_8012F32C`. So the `alt` flag the roster lookup takes is decided by the `plr_alt` prefix in the entity name, not stored separately.
+- `fn_80131060(player)` returns that player's slot name, or `"plr_wolverine"` if the slot is empty. **Matched** (`Game/fn_80131060.c`), which fills in the rest: it returns `"plr_wolverine"` for any `player > 1`, and only consults the slot's own name (`fn_80443BC8`) while a match is running (`fn_80130718`). For an unused slot in a running match it falls back to the name at `+0x320` of the script record `fn_804326B4(lbl_8054ED80)` holds, which is the `boss` of the running mission (section 4), and to `"plr_wolverine"` if that is empty.
+- `fn_800887AC` is the `.nsc` script parser (section 4), and its `plr_%s` / `plr_alt%s` is how a `boss` line names a character. `fn_801311C0` and `fn_800061CC` handle the `plr_alt` prefix. `fn_801311C0(player)` is **matched** (`Game/fn_80131060.c`): it is the display name for a player, `fn_80461288(fn_80131060(player), strstr(name, "plr_alt") != 0)`, and when the key that comes back starts with `~` it is localised through `fn_8012F32C`. So the `alt` flag the roster lookup takes is decided by the `plr_alt` prefix in the entity name, not stored separately.
 - `fn_800B5BC4` (0xBC8) is a large state machine that looks like the game-flow or load driver. It reads the slots and writes `G`'s level-name buffers.
 - **Not found yet:** where the `plr_<name>` entity template is defined and how it points to the model, motion set and NVB. A plain search of `CLASH.BIG` finds `plr_wolverine` only in HUD text, so the definitions are probably in compressed or binary level or global data (`Misc/Global.not`, `Levels/*.nsd`).
 
@@ -92,29 +92,55 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
 
 The loaders are generic engine code that takes a name, with nothing character-specific in them: `fn_8019E9DC` (`Bundles/%s`), `fn_8019EA38`, `fn_8019EBF8` (`Animation:Bundles`), `fn_801A0814` (`Model bundle missed`), `fn_801A8FC4` (`Motions`), `fn_80232C4C` (`Texture bundle missed`) and the NVB functions above.
 
-### The Tuning Record in Memory
+### The Script Record in Memory
 
 0x804428E0-0x80443678 is **matched** (`Game/fn_804428E0.c`): one long run of leaf setters and getters
-on the object the `.nvb` record is believed to load into, plus a few on the object that owns those
-records. They fix the layout without naming the fields. The record is at least 0x5C8 bytes, and every
-`char[0x20]` field is `strncpy`'d with 0x20 and then terminated by hand at its last byte, like
-`slot+0x4` ([`versus.md`](versus.md#3-selection-to-spawn)).
+on a 0x5C8-byte record, plus a few on the object that owns those records. Every `char[0x20]` field is
+`strncpy`'d with 0x20 and then terminated by hand at its last byte, like `slot+0x4`
+([`versus.md`](versus.md#3-selection-to-spawn)).
 
-| Offset | Type | Accessors |
-|---|---|---|
-| +0x00 | `char[0x20]` | `fn_80442918` |
-| +0x20 | `char[0x200]` | `fn_80442964`; the one long buffer in the record |
-| +0x240, +0x320 | `char[0x20]` | `fn_80442C3C`, `fn_804430AC` |
-| +0x260-+0x300 | `char[0x20]` x6 | `fn_80442A04` (+0x260), `fn_804429B4` (+0x280), `fn_80442A80` and getter `fn_80442A54` (+0x2A0), `fn_80442B20` (+0x2C0), `fn_80442AD0` (+0x2E0), `fn_80442B70` (+0x300) |
-| +0x340, +0x3A0, +0x400 | `char[3][0x20]` | `fn_80442C8C`, `fn_80442D24`, `fn_80442DBC` append; `fn_80443A2C`-`fn_80443B40` read one at random |
-| +0x460, +0x46C, +0x470, +0x474 | int | `fn_80442EA8` and getter `fn_80442E7C` (+0x460), `fn_80442EF8`, `fn_80442F20`, `fn_80442F48` |
-| +0x464 | int | flags, see below |
-| +0x468 | float | `fn_80442ED0` |
-| +0x478-+0x47A | `unsigned char` | three set/get pairs, `fn_80442F98`/`fn_80442FC4`, `fn_80442FF4`/`fn_80443020`, `fn_80443050`/`fn_8044307C`; the getters return int |
-| +0x47B-+0x47D | `unsigned char` | entry count for the list at +0x340, +0x3A0 and +0x400. Each append runs only `if (count <= 2)`, so the lists cap at three |
-| +0x480 | `int[4]` | `fn_80442BC0` writes all four, `fn_80442C00(record, i)` reads one |
-| +0x4A4-+0x5A4 | `char[0x20]` x9 | `fn_804430FC`, one 10-argument function that writes all nine |
-| +0x5C4 | int | `fn_80442F70` |
+The record is **not** the `.nvb` tuning record, as earlier guessed: it is one entry of an `.nsc`
+mission/arena script, and the "Keyword" column below is the `.nsc` line that writes each field.
+`fn_800887AC` is the parser (0x800887AC-0x80089710, claimed as `Game/fn_800887AC.cpp`, **NonMatching**
+at 99.8% — see [`nonmatching.md`](nonmatching.md)), which reads a text file line by line, lowercases
+the first token and dispatches on it. A `mission` line opens a record (`new NameTable`) and an
+`endmission` line stamps its index and appends it, so every other keyword applies to the record
+opened last. `Misc/clashMP.nsc` is the versus arena list; the "clashmp.nsc" string sits in the same
+unit's string pool.
+
+| Offset | Type | Keyword | Accessors |
+|---|---|---|---|
+| +0x00 | `char[0x20]` | `mission` arg 1 — the record's name | `fn_80442918` |
+| +0x20 | `char[0x200]` | `description` | `fn_80442964`; the one long buffer in the record |
+| +0x240 | `char[0x20]` | `objective` arg 2 | `fn_80442C3C` |
+| +0x260 | `char[0x20]` | `mission` arg 2 | `fn_80442A04` |
+| +0x280 | `char[0x20]` | `mission` arg 3 | `fn_804429B4` |
+| +0x2A0 | `char[0x20]` | `mission` arg 4 | `fn_80442A80`, getter `fn_80442A54` |
+| +0x2C0 | `char[0x20]` | `loadscreen` arg 1 | `fn_80442B20` |
+| +0x2E0 | `char[0x20]` | `loadscreen` arg 2, or arg 1 again when the line has only one | `fn_80442AD0` |
+| +0x300 | `char[0x20]` | `loadtext`, and `objective` arg 1 | `fn_80442B70` |
+| +0x320 | `char[0x20]` | `boss`, as `plr_<name>` or `plr_alt<name>` | `fn_804430AC` |
+| +0x340 | `char[3][0x20]` | `intro` | `fn_80442C8C` appends |
+| +0x3A0 | `char[3][0x20]` | `extro` | `fn_80442D24` appends |
+| +0x400 | `char[3][0x20]` | `fail` | `fn_80442DBC` appends; `fn_80443A2C`-`fn_80443B40` read one of the three lists at random |
+| +0x460 | int | none: `endmission` stamps the record's own index in `records[]` | `fn_80442EA8`, getter `fn_80442E7C` |
+| +0x464 | int | `flags`, taken as the low 16 bits (see below) | `fn_80442E54` |
+| +0x468 | float | `teleportdist` (`atof`) | `fn_80442ED0` |
+| +0x46C | int | `teleportdelay` | `fn_80442EF8` |
+| +0x470 | int | `replayfrequency` | `fn_80442F20` |
+| +0x474 | int | `replaydelay` | `fn_80442F48` |
+| +0x478 | `unsigned char` | `character`, rejected unless <= 19 — a roster index | `fn_80442F98`, getter `fn_80442FC4` |
+| +0x479 | `unsigned char` | `unlockchar`, rejected unless <= 18 — a playable roster index | `fn_80442FF4`, getter `fn_80443020` |
+| +0x47A | `unsigned char` | `sacrifice`, rejected unless <= 19 — a roster index | `fn_80443050`, getter `fn_8044307C` |
+| +0x47B-+0x47D | `unsigned char` | entry count for the list at +0x340, +0x3A0 and +0x400. Each append runs only `if (count <= 2)`, so the lists cap at three |  |
+| +0x480 | `int[4]` | `rewards`, four `%d` | `fn_80442BC0` writes all four, `fn_80442C00(record, i)` reads one |
+| +0x4A4-+0x5A4 | `char[0x20]` x9 | `soundbanks`, up to nine names; a missing one is `""` | `fn_804430FC`, one 10-argument function that writes all nine |
+| +0x5C4 | int | `maxblessed` | `fn_80442F70` |
+
+Four more keywords parse and do nothing: `precutscene`, `postcutscene`, `unlocked` and `unlock`.
+`profileid` (clamped to 0-5) and `gametype` go on the owning table, not the record, so they are
+file-level settings. Lines starting with `;`, `#` or `//`, blank lines and whitespace-only lines are
+skipped.
 
 Nothing in the run touches +0x220 or +0x490-+0x4A3. The flags at +0x464 have one tester each for 0x2,
 0x4, 0x8, 0x10, 0x20, 0x80, 0x100, 0x200, 0x800 and 0x4000 (`fn_804432D8`-`fn_80443488`, in no bit
@@ -122,10 +148,13 @@ order), `fn_804432AC` sets 0x8000, and `fn_8044324C(record, enable)` sets or cle
 the new word.
 
 **The owner object** is separate, and `fn_800876D4` is what tells the two apart: it walks `owner+0xC`
-as `TuningRecord *[100]` and copies bits out of each record's +0x464 into the owner's own int flags at
+as `ScriptRecord *[100]` and copies bits out of each record's +0x464 into the owner's own int flags at
 `+0x1AC` (`fn_80443518` ORs, `fn_80443548` clears, `fn_8044357C` assigns, `fn_804435A4` reads; the
 values seen are 1, 4, 8 and 0x200). That `+0x1AC` is **not** `actor+0x1AC`, the type ID `fn_8009ABEC`
-returns (section 5) — same offset, different object.
+returns (section 5) — same offset, different object. `fn_800887AC` fills in the rest of its head:
+`+0x0` is `profileid` (`unsigned`, clamped to 0-5), `+0x4` is `gametype` (`unsigned`), `+0x8` is the
+number of records and `+0xC` the array of them, and `+0x1A4` is an int the parser zeroes before it
+starts reading. `fn_80088740`, just before the parser, is a second entry point on the same object.
 
 Four `.data` tables are written by index from the same run: `lbl_804CBE94` as `int[]`
 (`fn_804435D0`), and `lbl_804CB14C`, `lbl_804CB328` and `lbl_804CBEB8` as arrays of 0x44-byte records

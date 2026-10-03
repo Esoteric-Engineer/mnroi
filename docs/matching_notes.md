@@ -101,6 +101,31 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   it goes through r0. It is not a constructor-vs-plain-call difference, and the two dead `mr r0, rX`
   that open a compiler-generated array-constructor loop come from the same place.
 
+- **Three register copies between an allocation call and a one-argument call (`mr r0, r3` /
+  `mr rX, r0` / `mr r3, rX`) is a C++ `new T`, and settles the unit's language.** A plain nested
+  call emits two copies, and no prototype, cast or temporary adds the third; only the
+  new-expression's own temp does. The allocator is `__builtin_new` (`fn_801ACED4`,
+  [`prodg.md`](prodg.md#c)), so a unit calling it is `.cpp` and the constructor that follows needs
+  its mangled name in `symbols.txt` (`Game/fn_800887AC.cpp`).
+
+- **`p->arr[p->n++] = x` with two register copies before the index `slwi` is cc1plus; cc1 emits
+  one.** Another `.c`-vs-`.cpp` test that needs no size evidence, and the extra copy widens the
+  `stmw` range and the frame by one register (`Game/fn_800887AC.cpp`).
+
+- **A compare whose branch targets the instruction right after it is an `if` with an empty body, and
+  a `b` to a label that itself only holds a `b` is an empty `else`.** The game's release build
+  strips its diagnostics but keeps the test, so `if (x) { }` and `if (x) { ... } else { }` are
+  normal source here; both are 1:1 reproducible. In a long `else if` chain, the *last* arm having a
+  jump over the rest of the chain means the chain ends in an empty `else` too
+  (`Game/fn_800887AC.cpp`, 20 of them).
+
+- **`while (1)` emits two branches at the loop top (`b body` / `b end`), so a loop whose top holds
+  only its test is `while (<test>)`.** `expand_exit_loop_if_false` always emits the conditional jump
+  plus an unconditional one, and a constant condition degenerates to a pair. The `continue` target
+  tells the two apart from `for`/`do`: `continue` branches to a `while`'s start label, i.e. the top,
+  but to a separate end-of-body label in a `for (;;)` or `do`, so `continue`s that jump to the loop
+  top rule out both (`Game/fn_800887AC.cpp`).
+
 - **A unit a few instructions off size despite near-100% fuzzy%: check `.cpp` vs `.c`.** C++ (even `extern "C"`) adds a redundant second branch to the epilogue after every `return` that plain C skips. Oversized means the unit should be `.c` (`fn_80431CCC`); *undersized* by exactly the missing tail branches means it should be `.cpp`, including for a `void` function with no `return` statement, where the pair lands after the last body label (`Game/fn_8001C258.cpp`). See [`prodg.md`](prodg.md#flags). But C emits one branch per `return`, so a pair can equally be two `return;` statements in C: settle the language from the body (next bullet) before changing the extension (`Game/fn_80023010.c`). The pair-carrying configuration *is* the one our `cc1plus` emits, so a cluster of pair-carrying functions inside a run of pair-less ones is a file boundary, not a blocker: give it its own `.cpp` unit and match it there (`Game/fn_80443908.cpp`, four functions between two `.c` runs).
 
 - **`p->tbl[i].f` in an expression that also holds a call: cc1 and cc1plus order it differently.** cc1 loads `i`, emits the index `mulli`, then loads `tbl`; cc1plus loads `tbl` first into a non-volatile, which also grows the frame and the `stmw` range. No source rewrite moves it (index-first sums and `(char *)`/int casts all fold to the same tree), and cc1plus agrees with cc1 only when the base is a frame slot instead of a call, so this diff alone means the unit is `.c` (`Game/fn_80023010.c`).
