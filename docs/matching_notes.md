@@ -83,6 +83,13 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **Spare branches and pads at `-O0` come from statement shape, not expressions** (measured on `Game/fn_80023010.c`): a `break` on a `switch`'s textually last case still emits a branch to the switch's end, and so does a `default:` clause, so one spare branch there and a dispatch tree whose out-of-range tests already jump to the switch's end means the original had no `default:` (`Game/fn_80114420.cpp`); each `return` emits one branch to the epilogue; and a `nop` between the prologue and the first statement means the original's first statement was not a loop, since cc1 pads one that is, ahead of even a `for`'s init (`i = 0;` plus `while` drops the pad).
 
+- **Two *identical* back-to-back branches to the epilogue at the end of an `if` body mean an explicit
+  `else` whose own last statement returns, not the C++ function-end pair.** The first is the `return`'s
+  branch, the second is the jump over the `else`, and both land on the epilogue because the else
+  branch returns too; dropping the `else` loses one of them. Tell them apart by position: this pair
+  sits mid-function with the else body after it, while the C++ pair ([`nonmatching.md`](nonmatching.md))
+  is the last thing before the epilogue (`Game/fn_80443B70.c`, `fn_80443D44`).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

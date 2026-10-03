@@ -1,4 +1,4 @@
-// Player-slot accessors, plus two on the game-state object itself.
+// Player-slot accessors, plus five on the game-state object itself.
 // The slot array is G+0x10, stride 0xB0.
 
 // A player slot in the game-state object. Only the fields these use are known.
@@ -17,13 +17,19 @@ typedef struct Slot
 typedef struct GameState
 {
     char unk0[0x10];
-    Slot slots[8]; // +0x10
-    char unk590[0x22C];
+    Slot slots[8];  // +0x10
+    int numPlayers; // +0x590 active slot count
+    char unk594[0x4];
+    int curIndex; // +0x598 index into slots
+    char unk59C[0x1A8];
+    Slot *curSlot; // +0x744 &slots[curIndex]
+    char unk748[0x74];
     int unk7BC;
 } GameState;
 
 extern char *strncpy(char *dst, const char *src, int n);
 extern void fn_804428E0(Slot *slot, int value);
+extern void *fn_8042FF2C(Slot *slot); // slot+0x28, the slot's actor
 
 void fn_80443B70(register Slot *slot, register char *name, register int player)
 {
@@ -65,4 +71,24 @@ int fn_80443CA0(register GameState *g)
 void fn_80443CCC(register GameState *g, register int player, register int value)
 {
     fn_804428E0(&g->slots[player], value);
+}
+
+void fn_80443D1C(register GameState *g, register int index)
+{
+    g->curIndex = index;
+}
+
+void *fn_80443D44(register GameState *g, register int player)
+{
+    if (player < 0 || player >= g->numPlayers) {
+        return 0;
+    } else {
+        return fn_8042FF2C(&g->slots[player]);
+    }
+}
+
+int fn_80443DBC(register GameState *g)
+{
+    g->curSlot = &g->slots[g->curIndex];
+    return 1;
 }
