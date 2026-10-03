@@ -58,17 +58,32 @@ Plain `char` is signed. `cc1` sign-extends it (`extsb`), even though `ngccc`'s p
 
 All five releases (3.5, 3.5b140, 3.7, 3.8.1, 3.9.3) give the same output for everything compiled so far: the six Newlib functions, the `-O0` member functions and the static initializer. `PRODG_VERSION` stays at 3.9.3 until some function compiles differently on two releases; then pin it to the release that matches.
 
-**No release reproduces a C++ return of a class by value.** Such a function ends with three
-unreachable branches to the epilogue on every release (the five `cc1plus.exe` builds are distinct:
-V1.37, v1.40, v1.46, v1.55, v1.76), where the DOL has one: 123 of its 127 aggregate-return epilogues
-carry a single branch, and the four with three are POD structs copied inline, which our compilers do
-match. Scalar returns agree with the DOL, doubled branch and all (`fn_8022EA78`). So a C++ unit
-stalls 8 bytes over size per class-returning function until a release that emits one branch turns up;
-[`nonmatching.md`](nonmatching.md) lists what has been ruled out.
+**No release reproduces the DOL's C++ function ends.** Every bundled `cc1plus` (the five builds are
+distinct: V1.37, v1.40, v1.46, v1.55, v1.76) closes every function that is not a constructor with two
+unreachable branches to the epilogue, and **most of the DOL's C++ functions do not have them.** The
+two shapes cluster by source file, so the DOL was built with at least two compiler configurations and
+the bundled releases are the minority one. Constructors are the exception and agree with the DOL
+(`Vector::Vector()` compiles byte for byte to 0x80428F74), as do scalar returns in the files that do
+carry the pair (`fn_8022EA78`, `Game/fn_8001C258.cpp`, `Game/fn_800092CC.cpp`). So any C++ unit in a
+pair-less file stalls 8 bytes over size per function until the other configuration turns up; this is
+the single biggest obstacle to the game's C++, and [`nonmatching.md`](nonmatching.md) lists
+everything ruled out, including 6138 option/form combinations on `cc1plus.exe`.
+
+A quick way to tell which configuration a file was built with, before claiming anything: look at the
+instructions just before a function's last label. Two identical branches to it means the file carries
+the pair and is reachable today; none means it does not. A single branch is a `return` (in C) or a
+constructor (in C++), so it does not settle the question by itself.
 
 ## C++
 
 - **Mangling** is GCC 2.95's: `Color::Color(unsigned char, unsigned char, unsigned char, unsigned char)` is `__5ColorUcUcUcUc`. When a unit calls a function that is still asm, rename dtk's `fn_` symbol in `symbols.txt` to the mangled name so the two sides link.
+- **`__6Vector` (0x80428F74) is `Vector::Vector()`**, the default constructor of the game's 16-byte
+  vector; it sets only `w`, to 1.0f, and returns `this`. `class Vector { public: float x, y, z, w;
+  Vector(); } __attribute__((aligned(8)));` with `Vector::Vector() { w = 1.0f; }` compiles byte for
+  byte to it, which is what confirms both the name and the 8-byte alignment. 1696 call sites use it,
+  so most game units that touch a vector need the class. Its 4-byte `.rodata` pool at 0x80482CC8
+  cannot be claimed on its own: `dtk dol split` reports a cyclic link-order dependency, so the
+  function stays unclaimed for now.
 - **Static initialization.** For a file with global objects that have constructors, GCC 2.95 emits a local `__static_initialization_and_destruction_0(int initialize, int priority)` and a local `_GLOBAL_.I.<first global's name>` that calls it with `(1, 0xFFFF)`, at the end of the file's `.text`. A `_GLOBAL_.I` function in the DOL therefore marks the end of a file. In `symbols.txt`, give both their GCC names with `scope:local`.
 - **`T x = T(...);`, not `T x(...);`:** copy-initialization keeps the constructor's returned `this` (`mr r0,r3` after each call), which the game's static initializers have.
 - **A class passed or returned by value travels through memory.** The caller puts it in a stack temp

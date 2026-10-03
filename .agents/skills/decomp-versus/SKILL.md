@@ -33,6 +33,14 @@ means, update the tables in `docs/versus.md` (and remove the item from its "Open
 settled). Facts about characters (IDs, roster fields, NVB field meanings, what a new character
 needs) go in `docs/characters.md`. Keep entries factual and short; mark guesses as guesses.
 
+**The notes go in `docs/`, not at the top of the unit.** Cap a source file's header comment at at most
+three lines: what the function does, and which doc holds the rest. One line each is worth spending on
+a local fact the next editor can't get from the docs — the `.rodata` pool the unit owns, a symbol it
+renamed, a struct field that only this file explains. Nothing else: no diff walkthrough, no fuzzy
+percentage, no list of what was ruled out, no repeat of a `matching_notes.md` rule. Comments inside
+the file are one-liners too; an offset in a struct is a trailing `// +0xNN`, not a paragraph. The
+existing long headers in `src/Game/` predate this rule — don't copy their length.
+
 ## Report
 
 Use decomp-next's report, and add one line on what the work taught about versus mode, if anything

@@ -33,9 +33,38 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   caller only matched once they were (`Game/handlers/characterselect.cpp`). That applies to a value
   stored into an argument temp; a plain assignment to a local (`info = fn_800B14A0(actor);`) copies
   through `r0` whatever the return type is (`Game/fn_80020E60.c`).
-- **A C++ function returning a class by value comes out 8 bytes over size, with two extra unreachable
-  branches to the epilogue.** No release, flag or source shape fixes it; see
-  [`prodg.md`](prodg.md#release). Stop instead of reshaping the source.
+- **A C++ unit comes out 8 bytes over size, with two extra unreachable branches to the epilogue
+  (`b .L` / `b .L` / `.L:` / epilogue).** `cc1plus` emits them at the end of every function that is
+  not a constructor, and most of the DOL's C++ functions do not have them; a class returned by value
+  is only where it was first noticed, not the cause. No release, flag (6138 option/form combinations
+  on `cc1plus.exe`) or source shape fixes it; see [`prodg.md`](prodg.md#release). Stop instead of
+  reshaping the source (`Game/fn_8002623C.cpp`, `Game/handlers/characterselect.cpp`).
+
+- **A C++ constructor has exactly *one* trailing branch to the epilogue, not the pair.** So the
+  `.c`-vs-`.cpp` trailing-branch test below must exempt constructors: a one-branch tail on a function
+  that takes `this` in r30 and returns it in r3 is a `.cpp` constructor, not C. Verified by
+  `Vector::Vector() { w = 1.0f; }` compiling byte for byte to 0x80428F74 (`__6Vector`).
+
+- **`lhz` / `extsh` / `add this` / `lwz 0x4(same)` / `stw` to a frame temp / `mtlr` / `blrl` off a
+  pointer loaded from a fixed object offset is a virtual call.** GCC 2.95 here has no vtable thunks,
+  so a vtable entry is 8 bytes (`short delta; short index; void *pfn`) and a `-O0` call reads delta
+  and pfn from one computed entry address with no index check. The vptr is placed *after* the data
+  members, so a reconstructed class's data has to fill exactly the vptr's offset, and the entry at
+  byte offset `N` is the `(N / 8) - 1`'th declared virtual function (`Actor+0x198`, slots 0x58 and
+  0x60, in `Game/fn_8002623C.cpp`). Writing it as a struct of pointers-to-member instead evaluates
+  the entry address twice and does not match.
+
+- **A field load off a global array that the DOL does as `add rX, <variable>, <base>` plus a load
+  displacement, where ours folds the field offset into the symbol and uses `lwzx`/`lfsx`, means the
+  type's alignment is not 4.** GCC applies the constant bitpos before the variable offset only when
+  the reference's alignment equals the field mode's alignment, so a 4-aligned struct takes the folded
+  path. `__attribute__((aligned(8)))` on the innermost type restores the DOL's shape; it also decides
+  whether a 16-byte member copy's address folds into the symbol (`Game/fn_8002623C.cpp`, `Vector`).
+
+- **`addi r0, rX, N` / `mr r3, r0` instead of `addi r3, rX, N` before a call is only about the frame
+  offset.** GCC targets r3 directly only when the object is the first local (offset 8); anywhere else
+  it goes through r0. It is not a constructor-vs-plain-call difference, and the two dead `mr r0, rX`
+  that open a compiler-generated array-constructor loop come from the same place.
 
 - **A unit a few instructions off size despite near-100% fuzzy%: check `.cpp` vs `.c`.** C++ (even `extern "C"`) adds a redundant second branch to the epilogue after every `return` that plain C skips. Oversized means the unit should be `.c` (`fn_80431CCC`); *undersized* by exactly the missing tail branches means it should be `.cpp`, including for a `void` function with no `return` statement, where the pair lands after the last body label (`Game/fn_8001C258.cpp`). See [`prodg.md`](prodg.md#flags). But C emits one branch per `return`, so a pair can equally be two `return;` statements in C: settle the language from the body (next bullet) before changing the extension (`Game/fn_80023010.c`).
 

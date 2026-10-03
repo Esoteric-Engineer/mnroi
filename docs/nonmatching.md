@@ -4,6 +4,42 @@ Functions claimed as `NonMatching`, with what has already been tried. Don't re-g
 
 ---
 
+## The C++ function-end branch pair
+
+Two of the three entries below are the same blocker, and it is not about aggregate returns: **our
+`cc1plus` ends every function that is not a constructor with two unreachable branches to the
+epilogue, and most of the DOL's C++ functions do not have them.** The generated assembly is literally
+
+```
+.L4:
+	b .L5          # goto no_return_label
+	b .L2          # goto return_label, the cleanup path
+.L5:
+.L2:
+	<epilogue>
+```
+
+so both branches are jumps to the immediately following label and GCC's `jump_optimize` — which
+2.95 runs only when `optimize > 0` — would delete them. Every unit that needs them gone is therefore
+8 bytes over size with an otherwise perfect diff.
+
+The two shapes cluster by file in the DOL, which is what makes this a compiler-configuration problem
+rather than a source one: in `.text` order, 0x80024C60-0x8002623C all carry the pair, 0x8002623C-
+0x80027D58 all lack it, 0x80027D58-0x8002800C carry it again. Both of the project's matched `.cpp`
+units (`Game/fn_8001C258.cpp`, `Game/fn_800092CC.cpp`) happen to sit in files that carry it.
+
+Ruled out: all five releases, every source shape tried (`return` early / late / absent, `goto`,
+nested blocks, member function, `extern "C"`, non-void return, last statement an `if` / loop /
+`switch` / declaration), and 6138 option/form combinations driving `cc1plus.exe` directly (1023
+option strings from its own string table in `-f`, `-fno-`, `-W`, `-Wno-`, `-m` and bare form, each
+checked for a still-valid compile). `-Wreturn-type` and `-W`, which are what enable `jump_optimize`
+at `-O0` in stock GCC 2.95, change nothing here.
+
+So this is the same open question as [`prodg.md`](prodg.md#release): the bundled releases are the
+*minority* configuration, and most of the game's C++ needs the other one.
+
+---
+
 ## `Game/handlers/characterselect.cpp` — `clashCharSelect_GetCharList`
 
 0x801037B0-0x80103BAC, 99.2% fuzzy. Every instruction matches and the frame layout is identical; the
@@ -13,12 +49,10 @@ original has one:
 - Original: copy constructor, destructor, `b .L`, then `.L: mr r3, r30` and the epilogue.
 - Ours: the same, then `b .L` twice more.
 
-The two extras are unreachable, and they are not a source-shape artifact. Every C++ function that
-returns a class by value emits them on all five bundled ProDG releases (`return local;`,
-`return T(local);`, `return T(args);`, `(T)local`, `inline`, `static`, nested scopes, returns inside
-loops and non-final returns all tested), while 123 of the DOL's 127 aggregate-return epilogues have a
-single branch. The four that have three are POD structs copied inline, which is the one case our
-compilers do reproduce. See [`prodg.md`](prodg.md#release).
+The two extras are the function-end pair described above, so this is not an aggregate-return problem:
+returning a class by value is just where it was first noticed. 123 of the DOL's 127 aggregate-return
+epilogues have a single branch, and the four with three are in files that carry the pair.
+See [`prodg.md`](prodg.md#release).
 
 Also tried, with no effect: all five releases, all five assemblers (plus `ngcasm`), every `-f` option
 string in `cc1plus.exe` (1564 candidates in both `-f` and `-fno-` forms; only
@@ -59,3 +93,19 @@ these last few also changed the instruction shape, not just the register, so the
 in addition to not fixing the register). The source given here is otherwise an exact byte/instruction
 match and is the believed-correct C; whatever controls this specific register choice in ProDG's GCC
 2.95 hasn't been found. Try [decomp-permuter](https://github.com/simonlindholm/decomp-permuter) next.
+
+---
+
+## `Game/fn_8002623C.cpp` — the actor's per-frame effect gather
+
+0x8002623C-0x80026B9C, 95.2% fuzzy, 8 bytes over size. The reconstruction is otherwise exact: every
+instruction, the 0x1c8 frame, the `stmw r25` range, both virtual calls, the 0xA0 and 16-byte struct
+copies, the five parallel arrays and the 11-argument call to `fn_8001DCE0` all match. The only
+difference is the C++ function-end branch pair above, which the DOL does not have.
+
+One cosmetic non-difference: the 16-byte copy out of `lbl_80515030.managers[g].effects[k].pos`
+relocates against `lbl_80515030 + 0x3A0` where dtk's extracted object relocates against
+`lbl_805153D0 + 0`. Both resolve to 0x805153D0, so `main.dol` is unaffected and `report.json` scores
+it 100%; only `objdiff_mismatches.py` flags it. It is the same object — dtk invented `lbl_805153D0`
+because a relocation pointed inside the `.bss` blob — and merging the symbols would need a hand-set
+size on an auto-named `lbl_`, which dtk does not preserve.

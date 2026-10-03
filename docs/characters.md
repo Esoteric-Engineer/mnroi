@@ -30,7 +30,7 @@ The code uses two separate numberings. Don't mix them up.
 
 `alt_<name>` maps to `id + 20`. `human1`-`3` map to 100, `brute1`-`3` to 101, `flier1`-`3` to 102, and eleven civilians to 103: `Human`, `businessmana`, `businessmanb`, `businesswomana`, `businesswomanb`, `securityguard`, `scientist`, `scientist1`, `scientist2`, `scientist3`, `cop`. The chain is compared in exactly that order, and `Human` is **dead**: the name is lowercased before the first `strcmp`, so an actor called `Human` falls through to -1. The internal names are codenames, so `roekel` is Van Roekel and `defcon`, `megalith`, `aftershock`, `biohazard` and `heatwave` are the Imperfects.
 
-Only three functions call it: `fn_8001C258` (**matched**, `Game/fn_8001C258.cpp`), `fn_80023010` (**matched**, `Game/fn_80023010.c`) and `fn_8002623C`.
+Only three functions call it: `fn_8001C258` (**matched**, `Game/fn_8001C258.cpp`), `fn_80023010` (**matched**, `Game/fn_80023010.c`) and `fn_8002623C` (claimed, `Game/fn_8002623C.cpp`, **NonMatching** at 95.2%; see [`nonmatching.md`](nonmatching.md)). `fn_8002623C` only passes the type ID on to `fn_8001DCE0`, so it is not itself a place a new character needs an entry.
 
 ---
 
@@ -102,7 +102,7 @@ These are every function that references four or more character-name strings, pl
 | `fn_80020E60` | Name → type ID chain, 56 `strcmp`s in a fixed order (section 1). **Matched**, so a new name is a source edit. |
 | `fn_8001C258` (0x2C0) | Turns the aura on or off, `fn_8001C258(actor, 1/0)`. **Matched** (`Game/fn_8001C258.cpp`), so a new character is a source edit. |
 | `fn_80023010` (0x638) | Looks up all 19 effect keys and spawns the two flame auras. **Matched** (`Game/fn_80023010.c`), so a new character is a source edit. It also reads `G+0x590`. |
-| `fn_80114420` (0x3B4) | Per-character SFX banks (`SFX_Venom`...). |
+| `fn_80114420` (0x3B4) | Per-character SFX banks (`SFX_Venom`...). The next target after `fn_8002623C`. |
 | `lbl_804CF8E8` | AI profile names, `char*[31]` with a NULL end: `AI_DEFAULT`, the 18 characters in alphabetical order, then NPCs. |
 | `fn_801BEE2C`, `fn_801F7C68` | Story mode boss and level lists. Not needed for versus. |
 
@@ -131,6 +131,18 @@ Hazmat is Biohazard and Solara is Heatwave (guessed from the index order, which 
 `fn_8001C258`'s `switch` for the five it handles). The two functions split the eight: `fn_8001C258`
 switches indices 3, 5, 6, 7, 8 (and their alts) on and off per actor, `fn_80023010` spawns 4 and 10
 (and their alts) for the players in the match, and nothing found so far uses 9/17.
+
+### The effect managers
+
+`fn_8002623C` (`Game/fn_8002623C.cpp`) pins down the rest of the `EffectManager` layout that
+`fn_8001C258` started, and where the managers live:
+
+| Where | What |
+|---|---|
+| `lbl_80515030` | One `.bss` object, 0xB050: `EffectManager managers[6]`, 0xF0 of something at +0x9630, then one more `EffectManager` at +0x9720. `fn_8002623C` reaches the last one as an offset from the start of the object, which is what shows they are one global and not two. |
+| `lbl_8066B5EC` | int, which entry of `managers` is current. `fn_80022EC8()` returns `&lbl_80515030.managers[lbl_8066B5EC]`; `fn_80022F00()` returns `&lbl_80515030` + 0x9720 (dtk's `lbl_8051E750`). |
+| `EffectManager` | 0x1930 bytes. +0x00 int (0 means the manager is not set up), +0x2C `EffectDef *`, +0x30 count, +0x3C a pointer to 0x4C-byte records, +0x44 the name table, +0x390 `Effect effects[64]`, +0x1790 the live count. |
+| `Effect` | 0x50 bytes. +0x10 `Vector` (position), +0x28 int, +0x30 the type `fn_8001C258` matches on, +0x34 the owning actor, +0x40 float. |
 
 The index addresses two `.bss` tables, `lbl_805200A0` (0x4C, 19 ints) and `lbl_805200EC` (0x54).
 `fn_80023010` fills them: it clears each entry to -1/0, then walks the two effect managers'
