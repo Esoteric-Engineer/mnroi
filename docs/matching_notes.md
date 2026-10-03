@@ -115,7 +115,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A compare whose branch targets the instruction right after it is an `if` with an empty body, and
   a `b` to a label that itself only holds a `b` is an empty `else`.** The game's release build
   strips its diagnostics but keeps the test, so `if (x) { }` and `if (x) { ... } else { }` are
-  normal source here; both are 1:1 reproducible. In a long `else if` chain, the *last* arm having a
+  normal source here; both are 1:1 reproducible. The empty body's branch polarity still gives the
+  test's sense: `beq` to the next instruction is `if (x) { }`, `bne` is `if (!x) { }`
+  (`Game/fn_80088740.c`). In a long `else if` chain, the *last* arm having a
   jump over the rest of the chain means the chain ends in an empty `else` too
   (`Game/fn_800887AC.cpp`, 20 of them).
 
@@ -141,6 +143,14 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   Splitting it into `x |= BIT; return x;` reloads the field after the store, which shows up as an extra
   `lwz`; the returning form also adds one register copy before the store that the `void` setter beside
   it does not have (`Game/fn_804428E0.c`, `fn_8044324C` vs `fn_804432AC`).
+
+- **A `void` function with *no* trailing branch to the epilogue is language-ambiguous, so it can be
+  matched as `.c` even in a C++ file.** Both plain C and the DOL's pair-less C++ configuration emit
+  nothing there, so when such a function's body has no C++-only construct, give it its own `.c` unit
+  and write `this` as a `register` first parameter, which reproduces the C++ `this`-in-`r30` shape
+  (the rest of the parameters still spill). That is currently the only way to pick a function out of a
+  file blocked by the pair ([`nonmatching.md`](nonmatching.md)); it does not prove the file is C
+  (`Game/fn_80088740.c`, next to the pair-less C++ `.nsc` parser).
 
 - **Two *identical* back-to-back branches to the epilogue at the end of an `if` body mean an explicit
   `else` whose own last statement returns, not the C++ function-end pair.** The first is the `return`'s

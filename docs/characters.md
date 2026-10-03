@@ -154,7 +154,7 @@ values seen are 1, 4, 8 and 0x200). That `+0x1AC` is **not** `actor+0x1AC`, the 
 returns (section 5) — same offset, different object. `fn_800887AC` fills in the rest of its head:
 `+0x0` is `profileid` (`unsigned`, clamped to 0-5), `+0x4` is `gametype` (`unsigned`), `+0x8` is the
 number of records and `+0xC` the array of them, and `+0x1A4` is an int the parser zeroes before it
-starts reading. `fn_80088740`, just before the parser, is a second entry point on the same object.
+starts reading. `fn_80088740(table, actor, flag)`, just before the parser, is **matched** (`Game/fn_80088740.c`): all that is left of it is the lookup of the record the table is on, `fn_804332C4(table, fn_80431DB0(table))`, whose result it drops, so `+0x1A4` is an index into `records[]` and `fn_80431DB0` its getter. What it did with the actor went out with the diagnostics, like its empty `if (!flag)`.
 
 Four `.data` tables are written by index from the same run: `lbl_804CBE94` as `int[]`
 (`fn_804435D0`), and `lbl_804CB14C`, `lbl_804CB328` and `lbl_804CBEB8` as arrays of 0x44-byte records
