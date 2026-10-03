@@ -15,48 +15,56 @@ extern CharacterRecord *fn_80431CCC(register int index, register int remap, regi
 
 char *fn_8044B1D4(register int index, register int remap, register int alt)
 {
-    CharacterRecord *rec = fn_80431CCC(index, remap, alt);
+    register CharacterRecord *tmp = fn_80431CCC(index, remap, alt);
+    CharacterRecord *rec = tmp;
     return rec->nameKey;
 }
 
 char fn_8044B234(register int index, register int remap, register int alt)
 {
-    CharacterRecord *rec = fn_80431CCC(index, remap, alt);
+    register CharacterRecord *tmp = fn_80431CCC(index, remap, alt);
+    CharacterRecord *rec = tmp;
     return rec->stats[0];
 }
 
 char fn_8044B298(register int index, register int remap, register int alt)
 {
-    CharacterRecord *rec = fn_80431CCC(index, remap, alt);
+    register CharacterRecord *tmp = fn_80431CCC(index, remap, alt);
+    CharacterRecord *rec = tmp;
     return rec->stats[1];
 }
 
 char fn_8044B2FC(register int index, register int remap, register int alt)
 {
-    CharacterRecord *rec = fn_80431CCC(index, remap, alt);
+    register CharacterRecord *tmp = fn_80431CCC(index, remap, alt);
+    CharacterRecord *rec = tmp;
     return rec->stats[2];
 }
 
 char fn_8044B360(register int index, register int remap, register int alt)
 {
-    CharacterRecord *rec = fn_80431CCC(index, remap, alt);
+    register CharacterRecord *tmp = fn_80431CCC(index, remap, alt);
+    CharacterRecord *rec = tmp;
     return rec->stats[3];
 }
 
 char fn_8044B3C4(register int index, register int remap, register int alt)
 {
-    CharacterRecord *rec = fn_80431CCC(index, remap, alt);
+    register CharacterRecord *tmp = fn_80431CCC(index, remap, alt);
+    CharacterRecord *rec = tmp;
     return rec->stats[4];
 }
 
 char fn_8044B428(register int index, register int remap, register int alt)
 {
-    CharacterRecord *rec = fn_80431CCC(index, remap, alt);
+    register CharacterRecord *tmp = fn_80431CCC(index, remap, alt);
+    CharacterRecord *rec = tmp;
     return rec->stats[5];
 }
 
 int fn_8044B48C(register int index, register int remap, register int alt)
 {
-    CharacterRecord *rec = fn_80431CCC(index, remap, alt);
+    register CharacterRecord *tmp = fn_80431CCC(index, remap, alt);
+    CharacterRecord *rec = tmp;
     return rec->unlocked;
 }

@@ -50,7 +50,9 @@ The table is in `.data`, and `+0x48` probably changes at runtime as characters a
 
 Accessors, one per field, called by `clashCharSelect_GetCharList`: `fn_8044B1D4` (name key), `fn_8044B234` (intel), `fn_8044B298` (strength), `fn_8044B2FC` (speed), `fn_8044B360` (durability), `fn_8044B3C4` (energy), `fn_8044B428` (skill), and `fn_8044B48C` (unlocked, 5 callers). Each takes `(index, remap, alt)`. The six stat accessors return `char`, not `int`: their caller only matches when they are declared that way, which confirms the stats are `s8`. `fn_8044B1D4` returns `char *` and `fn_8044B48C` returns `int`. Other readers of the table: `fn_804316B0`, `fn_80443678`, `fn_804436D4`, `fn_8044F070` and `fn_80461288`.
 
-**Confirmed** (`Game/fn_8044B1D4.c`, 0x8044B1D4-0x8044B4EC): each is `fn_80431CCC(index, remap, alt)` followed by one field read, which confirms the `+0x40`-`+0x45` stats order (intel, strength, speed, durability, energy, skill) and the `+0x48` unlocked field. They're plain C like `fn_80431CCC`, not registered as APT handlers themselves. `fn_8044B1D4`'s two callers (0x80103830 in the characterselect range, 0x8010B744 in the mission.cpp range) both call it directly. The surrounding 0x8044AF58-0x8044EE3C region is mostly unrelated: a chain of generic registration-constructor templates (`fn_8044AF58`, `fn_8044B11C`, `fn_8044BBC8`...) that are called from the six *handler* files (section 2), not from this one; this accessor block just happens to be link-adjacent to them. The unit is **NonMatching** at 99%: see [`nonmatching.md`](nonmatching.md#game-fn_8044b1d4c--roster-field-accessors) for the one-register diff.
+Three of those are now known. `fn_80443678(index, remap, alt)` just returns the record (**matched**, `Game/fn_804428E0.c`). `fn_804436D4(index, unlocked, remap)` writes `+0x48` in *both* tables, so unlocking a character unlocks its alternate costume with it; it is the one function in 0x804428E0-0x804437D8 still unmatched ([`nonmatching.md`](nonmatching.md)). `fn_80461288(name, alt)` is the reverse lookup: it walks all 20 records of one table comparing `name` against `+0x00` and returns that record's `+0x20` localisation key, or `name` itself when nothing matches, which confirms `+0x20` as the key field.
+
+**Confirmed** (`Game/fn_8044B1D4.c`, 0x8044B1D4-0x8044B4EC): each is `fn_80431CCC(index, remap, alt)` followed by one field read, which confirms the `+0x40`-`+0x45` stats order (intel, strength, speed, durability, energy, skill) and the `+0x48` unlocked field. They're plain C like `fn_80431CCC`, not registered as APT handlers themselves. `fn_8044B1D4`'s two callers (0x80103830 in the characterselect range, 0x8010B744 in the mission.cpp range) both call it directly. The surrounding 0x8044AF58-0x8044EE3C region is mostly unrelated: a chain of generic registration-constructor templates (`fn_8044AF58`, `fn_8044B11C`, `fn_8044BBC8`...) that are called from the six *handler* files (section 2), not from this one; this accessor block just happens to be link-adjacent to them. The unit is **matched**; the register shape it was stuck on is in [`matching_notes.md`](matching_notes.md) (a `register` local assigned to a plain one).
 
 **`clashCharSelect_GetCharList` loops `for (i = 1; i <= 18; i++)`**: the roster size is a literal in the code, not read from the data. Each iteration fills nine parallel script arrays, which are the names a UI mod would have to keep: `aHeroName`, `aIntel`, `aStr`, `aSpd`, `aDur`, `aEng`, `aSkl`, `aIsUnLocked1` (`fn_8044B48C(i, 1, 0)`, the normal costume's `+0x48`) and `aIsUnLocked2` (`fn_8044B48C(i, 1, 1)`, the same field in the alternate-costume table). The handler is claimed as `Game/handlers/characterselect.cpp`, `NonMatching` at 99.2% ([`nonmatching.md`](nonmatching.md)).
 
@@ -62,8 +64,8 @@ Accessors, one per field, called by `clashCharSelect_GetCharList`: `fn_8044B1D4`
 - `fn_80443D44(G, player)` is how gameplay code gets a player's actor, and is the most-called of these
   accessors (20+ callers): it returns `fn_8042FF2C(&G->slots[player])`, or NULL when
   `player < 0 || player >= G+0x590`. **Matched** (`Game/fn_80443B70.c`).
-- `fn_80131060(player)` returns that player's slot name, or `"plr_wolverine"` if the slot is empty.
-- `fn_800887AC` (0xF64) builds names from `plr_%s` and `plr_alt%s`. `fn_801311C0` and `fn_800061CC` handle the `plr_alt` prefix.
+- `fn_80131060(player)` returns that player's slot name, or `"plr_wolverine"` if the slot is empty. **Matched** (`Game/fn_80131060.c`), which fills in the rest: it returns `"plr_wolverine"` for any `player > 1`, and only consults the slot's own name (`fn_80443BC8`) while a match is running (`fn_80130718`). For an unused slot in a running match it falls back to the name at `+0x320` of the tuning record `fn_804326B4(lbl_8054ED80)` holds, and to `"plr_wolverine"` if that is empty.
+- `fn_800887AC` (0xF64) builds names from `plr_%s` and `plr_alt%s`. `fn_801311C0` and `fn_800061CC` handle the `plr_alt` prefix. `fn_801311C0(player)` is **matched** (`Game/fn_80131060.c`): it is the display name for a player, `fn_80461288(fn_80131060(player), strstr(name, "plr_alt") != 0)`, and when the key that comes back starts with `~` it is localised through `fn_8012F32C`. So the `alt` flag the roster lookup takes is decided by the `plr_alt` prefix in the entity name, not stored separately.
 - `fn_800B5BC4` (0xBC8) is a large state machine that looks like the game-flow or load driver. It reads the slots and writes `G`'s level-name buffers.
 - **Not found yet:** where the `plr_<name>` entity template is defined and how it points to the model, motion set and NVB. A plain search of `CLASH.BIG` finds `plr_wolverine` only in HUD text, so the definitions are probably in compressed or binary level or global data (`Misc/Global.not`, `Levels/*.nsd`).
 
@@ -125,9 +127,11 @@ as `TuningRecord *[100]` and copies bits out of each record's +0x464 into the ow
 values seen are 1, 4, 8 and 0x200). That `+0x1AC` is **not** `actor+0x1AC`, the type ID `fn_8009ABEC`
 returns (section 5) — same offset, different object.
 
-Three `.data` tables are written by index from the same run: `lbl_804CBE94` as `int[]`
-(`fn_804435D0`), and `lbl_804CB328` and `lbl_804CBEB8` as arrays of 0x44-byte records with an int at
-`+0x40` (`fn_80443608`, `fn_80443640`). What they hold is unknown.
+Four `.data` tables are written by index from the same run: `lbl_804CBE94` as `int[]`
+(`fn_804435D0`), and `lbl_804CB14C`, `lbl_804CB328` and `lbl_804CBEB8` as arrays of 0x44-byte records
+with an int at `+0x40` (`fn_8044374C` in `Game/fn_8044374C.c`, then `fn_80443608` and `fn_80443640`).
+What they hold is unknown. `lbl_804CB14C` is `Record44[7]`: it ends exactly where `lbl_804CB328`
+starts, and dtk mis-types it as a 0xF-byte string because each record starts with text.
 
 **Physics** is Havok (`hk*`, the `hkRagdollConstraintData` ragdolls, `RagdollRecover_*`). No character-specific physics code has turned up yet. Per-character physical tuning is most likely in the NVB fields.
 

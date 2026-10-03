@@ -33,7 +33,21 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   straight to the slot. The roster stat accessors are declared `char` for this reason, and their
   caller only matched once they were (`Game/handlers/characterselect.cpp`). That applies to a value
   stored into an argument temp; a plain assignment to a local (`info = fn_800B14A0(actor);`) copies
-  through `r0` whatever the return type is (`Game/fn_80020E60.c`).
+  through `r0` whatever the return type is (`Game/fn_80020E60.c`) **unless the assignment converts
+  the pointer type**, which stores `r3` straight to the slot instead: `const char *key = f();` off a
+  `char *`-returning `f` is direct, `char *key = f();` goes through `r0`, and so does a `void *`
+  return into a `void *` local. So the three store shapes pick the declaration: `mr r0, r3` means the
+  types match exactly, a bare `stw r3` means they differ by a qualifier or pointer type
+  (`Game/fn_80131060.c`, `fn_801311C0`), and `mr rNN, r3` into a call-saved register means two
+  locals (next bullet).
+
+- **`mr rNN, r3` into a call-saved register, then `stw rNN` to a frame slot that every later use
+  reads back, is two locals: a `register` one assigned to a plain one.** `register` alone puts the
+  value in a call-saved register with no frame slot at all, and a plain local alone copies through
+  `r0` or stores `r3` direct (previous bullet), so the shape needs
+  `register T *tmp = f(); T *x = tmp;`, which also widens the `stmw`/`lmw` range by one register.
+  This is what the roster accessors were stuck on (`Game/fn_8044B1D4.c`, `Game/fn_80131060.c`'s `fn_80131294`).
+
 - **A C++ unit comes out 8 bytes over size, with two extra unreachable branches to the epilogue
   (`b .L` / `b .L` / `.L:` / epilogue).** `cc1plus` emits them at the end of every function that is
   not a constructor, and most of the DOL's C++ functions do not have them; a class returned by value

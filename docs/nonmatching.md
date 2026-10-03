@@ -66,33 +66,29 @@ the rest of the file is blocked the same way.
 
 ---
 
-## `Game/fn_8044B1D4.c` — roster field accessors
+## `fn_804436D4` — the roster unlock setter (unclaimed)
 
-All 8 functions (`fn_8044B1D4`, `fn_8044B234`, `fn_8044B298`, `fn_8044B2FC`, `fn_8044B360`,
-`fn_8044B3C4`, `fn_8044B428`, `fn_8044B48C`; 0x8044B1D4-0x8044B4EC) sit at 99.0-99.04% fuzzy, each
-stuck on exactly the same one-register diff. Shape, instruction count and size are all byte-for-byte
-right; only the register number differs:
+0x804436D4-0x8044374C, 98.17% fuzzy, and the only gap left in the 0x804428E0-0x804437D8 run, which
+is why `Game/fn_804428E0.c` stops at it and the three accessors after it are a separate unit
+(`Game/fn_8044374C.c`). The reconstruction is
+`fn_804436D4(index, unlocked, remap)`: `fn_80431CCC(index, remap, 0)` and `fn_80431CCC(index, remap, 1)`,
+each through the two-local shape of [`matching_notes.md`](matching_notes.md), then `rec->unlocked = unlocked`
+(`+0x48`) on both. Every instruction, the 0x28 frame, the `stmw r26` range and both calls match; only
+which call-saved register each of the five register variables gets differs:
 
-- Original: `stmw r27, 0x14(r1)` (frame 0x28), copies the `fn_80431CCC` return value through
-  `mr r27, r3` before `stw r27, 0x8(r31)`, restores with `lmw r27, -0x14(r11)`.
-- Ours: `stmw r28, 0x10(r1)` (frame 0x20), copies through the volatile `mr r0, r3` instead, restores
-  `lmw r28, -0x10(r11)`.
+- Original: first call's temp `r30`, then the three parameters `r29`, `r28`, `r27`, then the second
+  call's temp `r26`.
+- Ours: parameters `r30`, `r29`, `r28`, then the temps `r27` and `r26`.
 
-So the original reserves one extra non-volatile register (r27) purely to hold the `CharacterRecord *`
-local across the `stw` to its frame slot, where ours uses `r0` as a throwaway copy. The result is
-read back from the frame slot either way (`lwz r9, 0x8(r31)`), never from r27 again, so the extra
-register is functionally dead — a pure register-allocation artifact of GCC 2.95's `-O0` pass, not a
-reachable behavior difference.
-
-Tried without effect on the register choice (all reproduce the exact same `r0`-based output, or move
-further away): combined vs. split declaration+init, `volatile` on the local, wrapping the assignment
-in `(x = call())->field`, an explicit redundant cast on the call result, K&R-style parameter
-declarations, an unprototyped (K&R) `extern` for `fn_80431CCC`, byte-pointer arithmetic instead of a
-struct pointer, a dummy initializer, and a second named local for the final return value (each of
-these last few also changed the instruction shape, not just the register, so they're confirmed wrong
-in addition to not fixing the register). The source given here is otherwise an exact byte/instruction
-match and is the believed-correct C; whatever controls this specific register choice in ProDG's GCC
-2.95 hasn't been found. Try [decomp-permuter](https://github.com/simonlindholm/decomp-permuter) next.
+So the original allocated the first temp *before* the parameters, which no ordering rule in GCC
+2.95's `-O0` allocator (`stupid.c`, which allocates in birth order) explains. The sibling functions
+rule out a source fix: `fn_8044B1D4` and `fn_80443678` have the same parameters plus one temp and
+match with parameters first, and `fn_80461288` (not claimed) gives its two parameters `r29` and
+`r30`, so the DOL's own order is not consistent either. Tried without effect: declaration order of
+the two temps (swapping them is worse, 97.83%), splitting declarations from assignments, a nested
+block for the second pair, declaring the plain locals first, a fourth `register` parameter to absorb
+`r30`, and chaining the second store off the first. Try
+[decomp-permuter](https://github.com/simonlindholm/decomp-permuter) next.
 
 ---
 

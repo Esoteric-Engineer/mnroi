@@ -378,3 +378,20 @@ void fn_80443640(register int index, register int value)
 {
     lbl_804CBEB8[index].unk40 = value;
 }
+
+// One roster entry; the full layout is in docs/characters.md section 2.
+typedef struct CharacterRecord
+{
+    char unk0[0x48];
+    int unlocked; // +0x48
+} CharacterRecord;
+
+extern CharacterRecord *fn_80431CCC(register int index, register int remap, register int alt);
+
+CharacterRecord *fn_80443678(register int index, register int remap, register int alt)
+{
+    register CharacterRecord *tmp = fn_80431CCC(index, remap, alt);
+    CharacterRecord *rec = tmp;
+
+    return rec;
+}

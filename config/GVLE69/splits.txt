@@ -36,6 +36,9 @@ Game/handlers/characterselect.cpp:
 Game/fn_80114420.cpp:
 	.text       start:0x80114420 end:0x801147D4
 
+Game/fn_80131060.c:
+	.text       start:0x80131060 end:0x80131308
+
 SN/fn_80168770.c:
 	.text       start:0x80168770 end:0x801687E8
 
@@ -3102,7 +3105,10 @@ Game/fn_80431CCC.c:
 	.text       start:0x80431CCC end:0x80431D58
 
 Game/fn_804428E0.c:
-	.text       start:0x804428E0 end:0x80443678
+	.text       start:0x804428E0 end:0x804436D4
+
+Game/fn_8044374C.c:
+	.text       start:0x8044374C end:0x804437D8
 
 Game/fn_804437D8.c:
 	.text       start:0x804437D8 end:0x80443908
