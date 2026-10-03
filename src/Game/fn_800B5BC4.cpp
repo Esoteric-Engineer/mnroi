@@ -1,6 +1,5 @@
-// GameFlow: the debug-menu command dispatcher, then the per-frame update.
-// Owns the string literals at 0x8048BDE0-0x8048BE4C; fn_800B5BC4 and fn_800B678C are renamed
-// RunCommand__8GameFlow and Update__8GameFlow, which are this project's names.
+// GameFlow: the debug-menu command dispatcher, the per-frame update, and the frame-rate and load-progress overlays.
+// Owns the string literals and the float pool at 0x8048BDE0-0x8048BE78.
 
 // Offsets are all that is known of the class; its real size is unknown.
 class GameFlow
@@ -28,6 +27,9 @@ public:
 
     void RunCommand();
     void Update();
+    void DrawFrameRate();
+    void SetLoadProgress(float progress, int redraw);
+    void DrawLoadProgress(int a, int b);
 };
 
 // The pad or input object; only its flags word at +0x7E is known.
@@ -42,6 +44,7 @@ extern char lbl_8052F060[]; // the level/world object
 extern char lbl_80593BE8[]; // the globals object of Game/fn_80443908.cpp
 extern char lbl_8057E430[];
 extern void *lbl_8066BE10;
+extern void *lbl_8066D6DC; // the overlay text object (docs/versus.md section 6)
 
 extern "C" {
 
@@ -68,7 +71,14 @@ extern void fn_8021A5FC(int a);
 extern void fn_801284D4(void);
 extern int fn_800B5124(GameFlow *p);
 extern void fn_800B47C0(GameFlow *p);
-extern void fn_800B689C(GameFlow *p);
+
+extern int sprintf(char *dst, const char *fmt, ...);
+extern unsigned int fn_804324EC(char *globals);
+extern int fn_800FE284(int index);
+extern int fn_80426E88(void *text, int font);
+extern void fn_80101188(void *text, float height);
+extern void fn_80100C08(void *text, int a);
+extern int fn_800B92DC(void **text, const char *s, float x, float y);
 
 extern void fn_800B6AA4(GameFlow *p);
 extern void fn_800B6B34(GameFlow *p, int screen, int a);
@@ -448,7 +458,43 @@ void GameFlow::Update()
     }
 
     if (unk1E0 == 1) {
-        fn_800B689C(this);
+        DrawFrameRate();
     }
     fn_800B47C0(this);
+}
+
+void GameFlow::DrawFrameRate()
+{
+    float frameTime;
+    float fps;
+    char unk10[0x18];       // dead locals; only their stack slots survive in the release build
+    int oldFont;
+    int unk2C;
+    char text[0x80];
+
+    frameTime = fn_804324EC(lbl_80593BE8) * 0.001f;
+    fps = 1.0f / frameTime;
+
+    oldFont = fn_80426E88(lbl_8066D6DC, fn_800FE284(5));
+    if (unk1E0 == 1) {
+        fn_80101188(lbl_8066D6DC, 32.0f);
+    } else {
+        fn_80101188(lbl_8066D6DC, 16.0f);
+    }
+    fn_80100C08(lbl_8066D6DC, 0);
+    sprintf(text, "%.0f", fps);
+    fn_800B92DC(&lbl_8066D6DC, text, 555.0f, 30.0f);
+    fn_80426E88(lbl_8066D6DC, oldFont);
+}
+
+// The loader calls this with a fraction in [0,1]; the drawing itself is stripped in the release.
+void GameFlow::SetLoadProgress(float progress, int redraw)
+{
+    if (redraw != 0) {
+        DrawLoadProgress(1, 0);
+    }
+}
+
+void GameFlow::DrawLoadProgress(int a, int b)
+{
 }

@@ -38,8 +38,8 @@ Game/fn_800887AC.cpp:
 	.rodata     start:0x804887C4 end:0x80488984
 
 Game/fn_800B5BC4.cpp:
-	.text       start:0x800B5BC4 end:0x800B689C
-	.rodata     start:0x8048BDE0 end:0x8048BE4C
+	.text       start:0x800B5BC4 end:0x800B6A60
+	.rodata     start:0x8048BDE0 end:0x8048BE78
 
 Game/handlers/characterselect.cpp:
 	.text       start:0x801037B0 end:0x80103BAC
