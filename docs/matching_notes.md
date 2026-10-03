@@ -143,7 +143,10 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **`rlwinm rX, rY, 0, n, n` with no record bit is a single-bit mask, `x & (1 << (31 - n))`, and
   `clrlwi rX, rY, 31` is `x & 1`.** GCC 2.95 picks `rlwinm` over `andi.` for every single-bit `&`, so a
   run of near-identical small getters differing only in `n` is a flags word's bit testers
-  (`Game/fn_804428E0.c`, `fn_804432D8`-`fn_80443488`).
+  (`Game/fn_804428E0.c`, `fn_804432D8`-`fn_80443488`). After an `lbz`, a second `clrlwi rZ, rX, 24`
+  on the mask's result means the field is a plain `unsigned char`, not a bitfield: the shorten rule
+  for bitwise operators does the `&` in QImode and zero-extends it back to int, which is why the bit
+  stays in place instead of being shifted down (`Game/fn_800B5BC4.cpp`, `GameFlow+0x1C`).
 
 - **A compound assignment whose stored register also feeds `mr r3` is one statement, `return x |= BIT;`.**
   Splitting it into `x |= BIT; return x;` reloads the field after the store, which shows up as an extra

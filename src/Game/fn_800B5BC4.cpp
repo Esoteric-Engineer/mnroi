@@ -1,24 +1,33 @@
-// Debug-menu command dispatcher.
-// Owns the string literals at 0x8048BDE0-0x8048BE4C; dtk's fn_800B5BC4 is renamed RunCommand__8GameFlow.
+// GameFlow: the debug-menu command dispatcher, then the per-frame update.
+// Owns the string literals at 0x8048BDE0-0x8048BE4C; fn_800B5BC4 and fn_800B678C are renamed
+// RunCommand__8GameFlow and Update__8GameFlow, which are this project's names.
 
 // Offsets are all that is known of the class; its real size is unknown.
 class GameFlow
 {
 public:
     char unk0[0x14];
-    int unk14;             // +0x14
-    char unk18[0x8];
-    unsigned int command;  // +0x20
+    int unk14;              // +0x14
+    char unk18[0x4];
+    unsigned char flags1C;  // +0x1C, single-bit flags
+    char unk1D[0x3];
+    unsigned int command;   // +0x20
     char unk24[0x108];
-    int unk12C;            // +0x12C
-    char unk130[0x28];
-    int unk158;            // +0x158
+    int unk12C;             // +0x12C
+    char unk130[0x4];
+    int unk134;             // +0x134
+    void *unk138;           // +0x138
+    char unk13C[0x1C];
+    int unk158;             // +0x158
     char unk15C[0x60];
-    int unk1BC;            // +0x1BC
-    char unk1C0[0xC0];
-    int unk280;            // +0x280
+    int unk1BC;             // +0x1BC
+    char unk1C0[0x20];
+    int unk1E0;             // +0x1E0
+    char unk1E4[0x9C];
+    int unk280;             // +0x280
 
     void RunCommand();
+    void Update();
 };
 
 // The pad or input object; only its flags word at +0x7E is known.
@@ -30,6 +39,7 @@ typedef struct Unk7E
 
 extern char lbl_80552110[]; // the game-state object G (docs/versus.md section 4.1)
 extern char lbl_8052F060[]; // the level/world object
+extern char lbl_80593BE8[]; // the globals object of Game/fn_80443908.cpp
 extern char lbl_8057E430[];
 extern void *lbl_8066BE10;
 
@@ -47,6 +57,18 @@ extern void *fn_80085AF0(void *entity);
 extern int fn_80430050(char *level);
 extern void fn_80096268(void *actor, int a, int b);
 extern void fn_80446094(GameFlow *p, int a);
+extern int fn_80431DDC(GameFlow *p);
+extern int fn_80431E08(char *level);
+extern int fn_80196BF0(void *p);
+extern float fn_8042E998(char *globals);
+extern void *fn_80432BC4(void);
+extern int fn_804460BC(void *p);
+extern int fn_8016732C(void *p);
+extern void fn_8021A5FC(int a);
+extern void fn_801284D4(void);
+extern int fn_800B5124(GameFlow *p);
+extern void fn_800B47C0(GameFlow *p);
+extern void fn_800B689C(GameFlow *p);
 
 extern void fn_800B6AA4(GameFlow *p);
 extern void fn_800B6B34(GameFlow *p, int screen, int a);
@@ -399,4 +421,34 @@ void GameFlow::RunCommand()
     default:
         break;
     }
+}
+
+void GameFlow::Update()
+{
+    float dt;
+
+    if (fn_80431DDC(this) != 0 && fn_80431E08(lbl_8052F060) == 0) {
+        return;
+    }
+
+    fn_80196BF0(unk138);
+    dt = fn_8042E998(lbl_80593BE8);
+
+    if ((flags1C & 1) && fn_804460BC(fn_80432BC4()) == 0) {
+        if (unk134 != 0) {
+            fn_8021A5FC(-1);
+        }
+        fn_801284D4();
+    }
+
+    fn_8016732C(fn_80432BC4());
+
+    if (fn_800B5124(this) != 0) {
+        return;
+    }
+
+    if (unk1E0 == 1) {
+        fn_800B689C(this);
+    }
+    fn_800B47C0(this);
 }
