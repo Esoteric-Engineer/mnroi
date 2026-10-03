@@ -25,7 +25,10 @@ so both branches are jumps to the immediately following label and GCC's `jump_op
 
 The two shapes cluster by file in the DOL, which is what makes this a compiler-configuration problem
 rather than a source one: in `.text` order, 0x80024C60-0x8002623C all carry the pair, 0x8002623C-
-0x80027D58 all lack it, 0x80027D58-0x8002800C carry it again, and 0x800887AC lacks it.
+0x80027D58 all lack it, 0x80027D58-0x8002800C carry it again, and 0x800887AC lacks it. The clusters
+line up with file edges to the instruction: 0x800B5BC4-0x800B7094 carries the pair and the
+static-init-only file right after it, 0x800B7094-0x800B7204, does not
+([`matching_notes.md`](matching_notes.md) has how that one was matched as `.c` anyway).
 Both of the project's matched `.cpp` units (`Game/fn_8001C258.cpp`, `Game/fn_800092CC.cpp`) happen
 to sit in files that carry it.
 

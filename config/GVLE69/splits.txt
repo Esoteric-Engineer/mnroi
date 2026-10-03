@@ -41,6 +41,13 @@ Game/fn_800B5BC4.cpp:
 	.text       start:0x800B5BC4 end:0x800B7094
 	.rodata     start:0x8048BDE0 end:0x8048BE78
 
+Game/fn_800B7094.c:
+	.text       start:0x800B7094 end:0x800B7204
+	.ctors      start:0x80482628 end:0x8048262C
+	.dtors      start:0x80482884 end:0x80482888
+	.rodata     start:0x8048BEC0 end:0x8048BED0
+	.sbss       start:0x8066D6AC end:0x8066D6BC
+
 Game/handlers/characterselect.cpp:
 	.text       start:0x801037B0 end:0x80103BAC
 

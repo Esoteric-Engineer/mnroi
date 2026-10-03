@@ -23,6 +23,17 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A float (or double) argument must be written as a literal, and its `.rodata` pool claimed.** GCC puts each function's float literals in an anonymous `.rodata` pool, in order of first use, laid out per function in `.text` order, and loads each one late in the argument setup as its own `lis sym@ha` / `lfs sym@l(r9)` pair. Referencing dtk's `lbl_` instead changes the code: an `extern float` scalar becomes an `R_PPC_EMB_SDA21` load (small data, since the size is <= 8), and an `extern float x[]` makes GCC materialise the base with `lis` into a non-volatile *before* the call that computes another argument. So keep the literal and give the unit the pool's range in `splits.txt` (`Game/fn_8001C258.cpp`: `.rodata start:0x804845DC end:0x804845E8`), after checking no other unit references those `lbl_`s.
 - **Within a unit's `.rodata`, each function's string literals come before its float pool, not after.** `cc1plus` writes a string out as soon as it is first used, which is while the function's own body is still being expanded, but defers the float and double constants to the pool it dumps after the body. So a function's claimed range runs string(s) then floats, and an unsigned-to-float conversion's `0x4330000000000000` magic double is one of those pool entries, first in use order (`Game/fn_800B5BC4.cpp`, `DrawFrameRate`: `"%.0f"` at 0x8048BE4C, then the double and six floats).
 
+- **A float pool's order is the order the constants are *forced into registers*, not the order they
+  appear in the expression, so it reads the source's operand order back out.** `expand_expr` of a
+  `REAL_CST` returns an immediate and pools nothing; the constant reaches the pool only when
+  `expand_binop` needs it in a register, after the other operand has been expanded. So
+  `320.0f - w * 0.5f` pools `0.5` first and emits `lfs w` / `lis 0.5@ha` / `lfs 0.5@l` / `fmuls` /
+  `lis 320@ha` / `lfs 320@l` / `fsubs`, and a `fadds rD, r13, r0` whose product was computed first
+  means the *other* operand is op0 (`Game/fn_800B7094.c`, four pool entries in 0x8048BEC0-0x8048BED0).
+  The `extern const float lbl_<addr>[]` workaround below does not reproduce this: an array base is
+  an address computation, so its `lis` is hoisted ahead of the whole statement instead of landing at
+  the load.
+
 - **But check the pool address first: one that breaks the unit's `.rodata` ordering is another unit's literal, so reference it instead of claiming it.** Pool addresses rise with `.text` order (`Game/fn_8002623C.cpp` -> 0x80484E58, `Dolphin/os/__cvt_fp2unsigned.c` -> 0x8049C1C8), so a `lis`/`lfs` pair reading from *below* that line is a cross-TU reference, and claiming its range makes `dtk dol split` fail with a cyclic dependency, since the claim puts the unit both before (by `.rodata`) and after (by `.text`) that other unit. `extern const float lbl_<addr>[];` plus `lbl_<addr>[0]` gives the `ADDR16_HA`/`_LO` pair without claiming anything (`Game/fn_80443B70.c`, `fn_80443E20`: its 2^-31 sits in the 0x8009xxxx file's pool).
 - **`objdiff_mismatches.py` can report a `DIFF_REPLACE` with `[R_PPC_NONE]` on the original side alone, on an indexed load right after an `addi rX, rX, sym@l`.** Both sides' instructions are byte-identical and `readelf -r` shows no relocation at that offset in either object: objdiff synthesises the entry. Confirm with `readelf -r` and treat it as matched (`Game/fn_8001C258.cpp`, the `lwzx` at 0x8001C3A8).
 - **A claimed literal pool shows up as unmatched data in the progress table.** The `Data:` line counts objdiff's `matched_data`, which pairs data by symbol name, and a compiler-generated pool is anonymous where dtk's extracted object has `lbl_<addr>` symbols. `report.json` still gives the unit `complete_data` 100% and `main.dol` is `OK`, so there is nothing to chase; naming the pool is not possible without breaking the function (previous entry).
@@ -189,6 +200,27 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   branch returns too; dropping the `else` loses one of them. Tell them apart by position: this pair
   sits mid-function with the else body after it, while the C++ pair ([`nonmatching.md`](nonmatching.md))
   is the last thing before the epilogue (`Game/fn_80443B70.c`, `fn_80443D44`).
+- **A generated `__static_initialization_and_destruction_0` and its `_GLOBAL_.I`/`_GLOBAL_.D`
+  wrappers can be hand-written in a `.c` unit.** Real C++ static initialization is unusable wherever
+  the DOL's `__sti` has no function-end branch pair ([`nonmatching.md`](nonmatching.md)), because
+  cc1plus puts one on every generated `__sti`. Writing the three functions by hand reproduces them
+  exactly: `__sti(int initialize, int priority)` is `if (priority == 65535) { if (initialize) {
+  <initializers>; ctor(&obj); } else { dtor(&obj, 2); } }` (65535 is GCC 2.95's default init
+  priority, which it materialises as `li r9, 0` / `ori r9, r9, 0xffff`), and each wrapper is a
+  `static void f(void)` that calls it with `(1, 65535)` / `(0, 65535)`. The `.ctors` and `.dtors`
+  words come from `static void (*const e)(void) __attribute__((section(".ctors"))) = wrapper;`, with
+  both ranges claimed in `splits.txt` (`Game/fn_800B7094.c`).
+- **mwld drops a whole object nothing outside references, `.ctors` word and all, so a static-init
+  unit must define a symbol someone else uses.** The symptom is a link that succeeds while
+  `.text` comes out short by exactly the unit's size and `.ctors`/`.dtors` by 4 bytes each; `.ctors`
+  then starts 0x170 low in `objdump -h build/GVLE69/main.elf`. Claiming the file's own `.bss`/`.sbss`
+  globals fixes it, which is what kept the original object alive too (`Game/fn_800B7094.c`).
+- **An uninitialised global in a `.c` unit is COMMON, which lands in `.bss` and breaks every
+  `@sda21` reference to it.** mwld says `Small data relocation (109) ... requires that symbol
+  'lbl_X' ... be in a small data section but is in .bss`. `= 0.0f` makes it a definition but puts it
+  in `.sdata`, 16 bytes of real data the DOL does not have;
+  `__attribute__((section(".sbss")))` is what gives a nobits `.sbss` contribution
+  (`Game/fn_800B7094.c`). C++ units are unaffected: C++ has no tentative definitions.
 
 ## General
 
