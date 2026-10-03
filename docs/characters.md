@@ -30,7 +30,7 @@ The code uses two separate numberings. Don't mix them up.
 
 `alt_<name>` maps to `id + 20`. `human1`-`3` map to 100, `brute1`-`3` to 101, `flier1`-`3` to 102, and eleven civilians to 103: `Human`, `businessmana`, `businessmanb`, `businesswomana`, `businesswomanb`, `securityguard`, `scientist`, `scientist1`, `scientist2`, `scientist3`, `cop`. The chain is compared in exactly that order, and `Human` is **dead**: the name is lowercased before the first `strcmp`, so an actor called `Human` falls through to -1. The internal names are codenames, so `roekel` is Van Roekel and `defcon`, `megalith`, `aftershock`, `biohazard` and `heatwave` are the Imperfects.
 
-Only three functions call it: `fn_8001C258`, `fn_80023010` and `fn_8002623C`.
+Only three functions call it: `fn_8001C258` (**matched**, `Game/fn_8001C258.cpp`), `fn_80023010` and `fn_8002623C`.
 
 ---
 
@@ -100,12 +100,40 @@ These are every function that references four or more character-name strings, pl
 | `clashCharSelect_GetCharList` | Loop bound 18, and nine script array names (section 2). |
 | Roster tables `lbl_804CA51C`, `lbl_804CAB0C`, remap `lbl_804CB0FC` | `Record[20]` and `int[20]`. Indices 0 and 19 are filler. |
 | `fn_80020E60` | Name → type ID chain, 56 `strcmp`s in a fixed order (section 1). **Matched**, so a new name is a source edit. |
+| `fn_8001C258` (0x2C0) | Turns the aura on or off, `fn_8001C258(actor, 1/0)`. **Matched** (`Game/fn_8001C258.cpp`), so a new character is a source edit. |
 | `fn_80023010` (0x638) | Per-character aura effects (`KEY_IRONMAN_AURA`, `KEY_STORM_AURA`...). It also reads `G+0x590`. |
 | `fn_80114420` (0x3B4) | Per-character SFX banks (`SFX_Venom`...). |
 | `lbl_804CF8E8` | AI profile names, `char*[31]` with a NULL end: `AI_DEFAULT`, the 18 characters in alphabetical order, then NPCs. |
 | `fn_801BEE2C`, `fn_801F7C68` | Story mode boss and level lists. Not needed for versus. |
 
-Not yet searched for: code that branches on a numeric type ID or roster index (`switch` jump tables, `cmpwi` against 1-38), and arrays sized 18, 20 or 38 that are indexed by character.
+### Auras
+
+Only five characters have an aura, and both aura functions key off a shared **aura index**, not the type ID:
+
+| Type ID | Character | Aura index | Alt type ID | Alt aura index |
+|---|---|---|---|---|
+| 2 | `ironman` | 5 | 22 | 13 |
+| 7 | `storm` | 6 | 27 | 14 |
+| 11 | `roekel` | 8 | 31 | 16 |
+| 12 | `megalith` | 7 | 32 | 15 |
+| 16 | `johnnyohm` | 3 | 36 | 11 |
+
+The alternate costume is always base index + 8. `fn_8001C258`'s `switch` is in that order (the five
+base costumes, then the five alts), and indices 4 and 12 are skipped, so two more slots belong to
+something else. The index addresses two `.bss` tables, `lbl_805200A0` (0x4C, the effect key, -1 when
+the character has no aura loaded) and `lbl_805200EC` (0x54); `fn_80023010` is what fills them, storing
+-1 and 0 to clear a slot. Both functions then spawn the effect with
+`fn_8002298C(fn_80022EC8(), key, lbl_805200EC[i], &color, n, actor, 0.0f, 0.0f)`, where `color` is four
+floats built by `fn_8042D768` from `fn_800B2620(actor) * 0.5f` as the blue channel, and `n` is 1 in
+`fn_80023010` against 2 in `fn_8001C258`. That `n` is the effect's `+0x30` field: to switch the aura
+off, `fn_8001C258` walks the effect manager's table (`fn_80022EC8()`, effects at `+0x390` on a 0x50
+stride, count at `+0x1790`) and calls `fn_8002289C` on every entry whose `+0x30` is 2 and whose `+0x34`
+is this actor.
+
+Not yet searched for: more code that branches on a numeric type ID or roster index (`switch` jump
+tables, `cmpwi` against 1-38), and arrays sized 18, 20 or 38 that are indexed by character.
+`fn_8001C258` is the first such `switch` found, and it ignores the 13 characters with no aura rather
+than having a default branch, so a new character needs an entry only if it should glow.
 
 ## 6. Adding a Character (Working Hypothesis)
 
