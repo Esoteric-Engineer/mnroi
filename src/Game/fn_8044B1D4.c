@@ -19,37 +19,37 @@ char *fn_8044B1D4(register int index, register int remap, register int alt)
     return rec->nameKey;
 }
 
-int fn_8044B234(register int index, register int remap, register int alt)
+char fn_8044B234(register int index, register int remap, register int alt)
 {
     CharacterRecord *rec = fn_80431CCC(index, remap, alt);
     return rec->stats[0];
 }
 
-int fn_8044B298(register int index, register int remap, register int alt)
+char fn_8044B298(register int index, register int remap, register int alt)
 {
     CharacterRecord *rec = fn_80431CCC(index, remap, alt);
     return rec->stats[1];
 }
 
-int fn_8044B2FC(register int index, register int remap, register int alt)
+char fn_8044B2FC(register int index, register int remap, register int alt)
 {
     CharacterRecord *rec = fn_80431CCC(index, remap, alt);
     return rec->stats[2];
 }
 
-int fn_8044B360(register int index, register int remap, register int alt)
+char fn_8044B360(register int index, register int remap, register int alt)
 {
     CharacterRecord *rec = fn_80431CCC(index, remap, alt);
     return rec->stats[3];
 }
 
-int fn_8044B3C4(register int index, register int remap, register int alt)
+char fn_8044B3C4(register int index, register int remap, register int alt)
 {
     CharacterRecord *rec = fn_80431CCC(index, remap, alt);
     return rec->stats[4];
 }
 
-int fn_8044B428(register int index, register int remap, register int alt)
+char fn_8044B428(register int index, register int remap, register int alt)
 {
     CharacterRecord *rec = fn_80431CCC(index, remap, alt);
     return rec->stats[5];

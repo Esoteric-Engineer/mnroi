@@ -30,6 +30,9 @@ The `prodg` rule in `tools/project.py`:
 - **Small data:** `dtk elf bake-sda` runs afterwards, as for MWCC objects (see [`baseline.md`](baseline.md#small-data-r13-problem)). `.sdata`/`.sbss` references stay `R_PPC_EMB_SDA21` relocations, which mwld resolves through `r13` like SN's linker did.
 - **MWCC-only options:** `shift_jis` is ignored, and `extab_padding` is an error.
 - **decomp.me:** ProDG units get scratches with the `prodg_35` .. `prodg_393` compilers.
+- **Unknown options are discarded.** `ngccc` forwards only what it recognises, so game code reaches
+  `cc1plus` as plain `-O0 -quiet`: `-W`, `-Wall` and most `-f` options never arrive. Run `CPP.exe`
+  and `cc1plus.exe` by hand (`ngccc -v` prints the exact command lines) when testing a flag.
 
 `ngccc` ships without headers. `include/gcc` has freestanding `stddef.h` and `limits.h`, and the ProDG flags put it on the include path. There is no `stdarg.h` yet: this GCC has no `__builtin_va_list`, and the DOL calls a `__va_arg` function, so SN's header was not GCC's. Reconstruct it when the first varargs function is matched.
 
@@ -55,11 +58,25 @@ Plain `char` is signed. `cc1` sign-extends it (`extsb`), even though `ngccc`'s p
 
 All five releases (3.5, 3.5b140, 3.7, 3.8.1, 3.9.3) give the same output for everything compiled so far: the six Newlib functions, the `-O0` member functions and the static initializer. `PRODG_VERSION` stays at 3.9.3 until some function compiles differently on two releases; then pin it to the release that matches.
 
+**No release reproduces a C++ return of a class by value.** Such a function ends with three
+unreachable branches to the epilogue on every release (the five `cc1plus.exe` builds are distinct:
+V1.37, v1.40, v1.46, v1.55, v1.76), where the DOL has one: 123 of its 127 aggregate-return epilogues
+carry a single branch, and the four with three are POD structs copied inline, which our compilers do
+match. Scalar returns agree with the DOL, doubled branch and all (`fn_8022EA78`). So a C++ unit
+stalls 8 bytes over size per class-returning function until a release that emits one branch turns up;
+[`nonmatching.md`](nonmatching.md) lists what has been ruled out.
+
 ## C++
 
 - **Mangling** is GCC 2.95's: `Color::Color(unsigned char, unsigned char, unsigned char, unsigned char)` is `__5ColorUcUcUcUc`. When a unit calls a function that is still asm, rename dtk's `fn_` symbol in `symbols.txt` to the mangled name so the two sides link.
 - **Static initialization.** For a file with global objects that have constructors, GCC 2.95 emits a local `__static_initialization_and_destruction_0(int initialize, int priority)` and a local `_GLOBAL_.I.<first global's name>` that calls it with `(1, 0xFFFF)`, at the end of the file's `.text`. A `_GLOBAL_.I` function in the DOL therefore marks the end of a file. In `symbols.txt`, give both their GCC names with `scope:local`.
 - **`T x = T(...);`, not `T x(...);`:** copy-initialization keeps the constructor's returned `this` (`mr r0,r3` after each call), which the game's static initializers have.
+- **A class passed or returned by value travels through memory.** The caller puts it in a stack temp
+  and passes the address, so a by-value parameter looks like a pointer one; the hidden return pointer
+  arrives in r3 and stays in r30 for the whole function, which pushes `this` to r29. Plain C structs
+  use the same convention (checked on a three-deep call chain), so C and C++ call sites look alike.
+  What separates them is the temps: C++ allocates a fresh one per statement in statement order, and
+  never reuses the ones whose address a reference parameter binds to.
 - **Exceptions and RTTI:** no exception tables have shown up yet. Settle the flags when the first unit needs them.
 
 ## Constructor and destructor lists

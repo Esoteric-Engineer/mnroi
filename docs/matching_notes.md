@@ -23,6 +23,15 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **Linker-generated addresses (`_stack_addr`, `_stack_end`, `__ArenaLo`, `__ArenaHi`) are defined in [`ldscript.lcf`](../config/GVLE69/ldscript.lcf).** If `main.dol` differs only in `lis`/`addi` pairs near `0x8067xxxx`/`0x8068xxxx`, check these first.
 - **`.sdata2` symbols work in compiled code** (see [`baseline.md`](baseline.md#small-data-r13-problem)). `Range Error for small data relocation` means `build.ninja` wasn't generated with `dtk-dev`, or `build/GVLE69/sda_bake.json` is missing. In asm, name the symbol instead of writing a raw `off(r13)`.
 
+- **A missing or spurious `mr r0, r3` before a call result is stored: check the callee's declared
+  return type.** A `char`- or `short`-returning function whose result is converted to `int` emits a
+  bare `mr r0, r3` with no `extsb`/`extsh`, while an `int`- or pointer-returning one stores `r3`
+  straight to the slot. The roster stat accessors are declared `char` for this reason, and their
+  caller only matched once they were (`Game/handlers/characterselect.cpp`).
+- **A C++ function returning a class by value comes out 8 bytes over size, with two extra unreachable
+  branches to the epilogue.** No release, flag or source shape fixes it; see
+  [`prodg.md`](prodg.md#release). Stop instead of reshaping the source.
+
 - **A `NonMatching` leaf function stuck a few instructions oversized despite near-100% fuzzy%: check `.cpp` vs `.c`.** C++ (even `extern "C"`) adds a redundant second branch to the epilogue after every `return` that plain C skips. See [`prodg.md`](prodg.md#flags).
 
 ## General

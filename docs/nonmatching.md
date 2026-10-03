@@ -4,6 +4,34 @@ Functions claimed as `NonMatching`, with what has already been tried. Don't re-g
 
 ---
 
+## `Game/handlers/characterselect.cpp` — `clashCharSelect_GetCharList`
+
+0x801037B0-0x80103BAC, 99.2% fuzzy. Every instruction matches and the frame layout is identical; the
+unit is 8 bytes over size because our build emits **three** branches to the epilogue where the
+original has one:
+
+- Original: copy constructor, destructor, `b .L`, then `.L: mr r3, r30` and the epilogue.
+- Ours: the same, then `b .L` twice more.
+
+The two extras are unreachable, and they are not a source-shape artifact. Every C++ function that
+returns a class by value emits them on all five bundled ProDG releases (`return local;`,
+`return T(local);`, `return T(args);`, `(T)local`, `inline`, `static`, nested scopes, returns inside
+loops and non-final returns all tested), while 123 of the DOL's 127 aggregate-return epilogues have a
+single branch. The four that have three are POD structs copied inline, which is the one case our
+compilers do reproduce. See [`prodg.md`](prodg.md#release).
+
+Also tried, with no effect: all five releases, all five assemblers (plus `ngcasm`), every `-f` option
+string in `cc1plus.exe` (1564 candidates in both `-f` and `-fno-` forms; only
+`-fprefix-function-name` changed anything, by renaming the symbol), `-fno-exceptions`,
+`-fno-rtti`, `-fpcc-struct-return`, `-freg-struct-return`, and `-O1`/`-O2` (which drop the `-O0`
+spills the original has). Note that `ngccc` silently discards options it does not recognise, so flag
+experiments must drive `CPP.exe` and `cc1plus.exe` directly.
+
+`clashCharSelect_GetPrevCharList` (0x80103BAC) ends with the same copy/destructor/return sequence, so
+the rest of the file is blocked the same way.
+
+---
+
 ## `Game/fn_8044B1D4.c` — roster field accessors
 
 All 8 functions (`fn_8044B1D4`, `fn_8044B234`, `fn_8044B298`, `fn_8044B2FC`, `fn_8044B360`,

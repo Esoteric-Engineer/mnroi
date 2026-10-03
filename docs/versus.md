@@ -24,7 +24,8 @@ r7 = __LINE__                  // 211
 
 That gives 171 handlers across six files, with no duplicate names or shared handlers. In `symbols.txt` each handler is named after its script name, and each file's registering function is `__static_initialization_and_destruction_0` (`scope:local`).
 
-**The handler names are provisional.** They are the script-visible strings, not confirmed C++ symbols. A C++ unit emits GCC 2.95-mangled names (`Control_SetMatchInfo__Fiiii`), so when you match a handler, either rename it in `symbols.txt` to the mangled name you've worked out, or declare it `extern "C"` if that's what matches.
+**The handler names are provisional.** They are the script-visible strings, not confirmed C++ symbols. A C++ unit emits GCC 2.95-mangled names (`Control_SetMatchInfo__Fiiii`), so when you match a handler, either rename it in `symbols.txt` to the mangled name you've worked out, or declare it `extern "C"` if that's what matches. The first one claimed came out as
+`clashCharSelect_GetCharList__Fv`: a no-argument handler that returns the APT object it fills in.
 
 ---
 
@@ -35,7 +36,8 @@ A `_GLOBAL_.I` function in `.ctors` ends each file ([`prodg.md`](prodg.md#c)). I
 | File | `.text` range | Handlers | Static init / `_GLOBAL_.I` | Notes |
 |---|---|---|---|---|
 | ? | ..0x801021A0 | | `fn_80102164` (`_GLOBAL_.I`) | |
-| `Game/handlers/characterselect.cpp` | **at most** 0x801021A0-0x801040F4 | 2 | 0x80103FF4 / 0x801040B8 | The start is an upper bound: files without global constructors have no end marker, so 0x801021A0-0x801037B0 may hold other files. |
+| ? (APT script variables) | 0x801021A0-0x801037B0 | | | Engine code, not characterselect: `fn_80102E60`, `fn_80102F10`, `fn_80102FD0`, `fn_8010329C` and `fn_80103080` are called from `0x8044B694`/`0x8044B758` in another file. See below. |
+| `Game/handlers/characterselect.cpp` | 0x801037B0-0x801040F4 | 2 | 0x80103FF4 / 0x801040B8 | Confirmed: the `__LINE__` arguments in the static initializer put `GetCharList` at line 41, `GetPrevCharList` at 95 and `fn_80103FC4` at 100, so nothing precedes the first handler. |
 | `Game/handlers/control.cpp` | 0x801040F4-0x80106B34 | 64 | 0x8010611C / 0x80106AF8 | Handlers only, lines 48-1057. |
 | `Game/handlers/feonline.cpp` | 0x80106B34-0x801070FC | 17 | 0x80106D80 / 0x801070C0 | Online only (`Online_*`). |
 | ? | 0x801070FC-0x80107244 | | 0x8010718C / 0x80107208 | Unidentified. |
@@ -43,6 +45,26 @@ A `_GLOBAL_.I` function in `.ctors` ends each file ([`prodg.md`](prodg.md#c)). I
 | `Game/handlers/mission.cpp` | 0x8010A448-0x8010BED8 | 16 | 0x8010BB80 / 0x8010BE9C | Story mode. |
 | `Game/handlers/venuetable.cpp` | 0x8010BED8-0x8010C528 | 6 | 0x8010C338 / 0x8010C4EC | Handlers only. |
 | ? | 0x8010C528-0x8010CA44 | | / 0x8010CA08 | |
+
+### The APT script-variable classes
+
+Two engine classes carry every value a handler hands to the UI. Layout and signatures come from the
+code; **the class and member names are guesses**, so renaming them means redoing every mangled symbol
+below.
+
+| Class | Size | Members | Symbol |
+|---|---|---|---|
+| `AptObject` | 8 | ctor / copy ctor / dtor | `__9AptObject` (0x8044B608), `__9AptObjectRC9AptObject` (0x8044B568), `_._9AptObject` (0x8044B510) |
+| | | `operator[](const char *name)` -> `AptRef` | `__vc__9AptObjectPCc` (0x80102E60) |
+| `AptRef` | 12 | `+0x0` owning object, `+0x4` property name, `+0x8` element index (-1 for the property itself) | |
+| | | `operator[](int index)` -> `AptRef` | `__vc__6AptRefi` (0x8044B5B0) |
+| | | `operator=(char *const &)` | `__as__6AptRefRCPc` (0x8044B694) |
+| | | `operator=(const int &)` | `__as__6AptRefRCi` (0x8044B758) |
+
+So `list["aIntel"][i - 1] = value;` compiles to the four-call chain the handlers are built from. The
+assignment operators take a reference, which is why each assigned value gets its own stack temp.
+`fn_80102F10` hashes a property name (djb2, seed 0x1505) and looks it up in the object's table at
+`+0x50`, with `+0xAD0` as the count.
 
 Other source paths in the DOL (assert strings), for later: `Game/HUD/glueAEMS.cpp` (`fn_80111BB8`), `Game/Sim/simCutPlayer.cpp` (`fn_80438FAC`), `Std/BufferAllocator.cpp` (`fn_801B0C90`), `Std/stdBigHashedVFS.cpp` (`fn_801B1270`, `fn_801B1D74`), `DirectGC/directTexture.cpp` (`fn_802338A8`), `ExternalGC/nsiAllocator.cpp` (`fn_8016840C`).
 
@@ -116,7 +138,7 @@ These are plain getters and setters around small-data globals. The setup handler
 
 Work these in order and skip whatever is already matched (check `configure.py`). The character code comes first because adding characters is the first mod the community wants ([`characters.md`](characters.md)). Name each unit after its real source file when it is known (section 2), and grow it as one contiguous `.text` range from the file's first function, so that the unit becomes the whole file once it is finished. Where the file is unknown, use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-1. **`characterselect.cpp`** (unit `Game/handlers/characterselect.cpp`): `clashCharSelect_GetCharList` (the hard-coded 18-character loop), `clashCharSelect_GetPrevCharList`, `fn_80103FC4`, and the static initializer. The file's start is unknown (section 2). Either settle it first, or start the unit at 0x801037B0 and extend it downward later. Its helpers `fn_80102E60`-`fn_80103480` build the APT arrays.
+1. **`characterselect.cpp`** (unit `Game/handlers/characterselect.cpp`, 0x801037B0-0x801040F4, start confirmed in section 2). `clashCharSelect_GetCharList` is **claimed and `NonMatching` at 99.2%**: it is blocked, with `clashCharSelect_GetPrevCharList` behind it, by the C++ aggregate-return branch gap in [`nonmatching.md`](nonmatching.md). `fn_80103FC4` and the static initializer are not affected but sit after the two blocked handlers. Pick this file up again when [`prodg.md`](prodg.md#release) says a release reproduces a class returned by value.
 2. **Character roster** ([`characters.md`](characters.md) section 2): `fn_80431CCC`, the per-field accessors `fn_8044B1D4`-`fn_8044B48C`, and the roster data `lbl_804CA51C`, `lbl_804CAB0C` and `lbl_804CB0FC`. The accessors sit among the APT registration constructors at 0x8044AF58-0x8044EE3C, so work out the file boundaries there before claiming anything.
 3. **Character type** ([`characters.md`](characters.md) sections 1 and 5): `fn_80020E60` (a long but simple `-O0` `strcmp` chain), then its callers `fn_8001C258`, `fn_80023010` (auras) and `fn_8002623C`, and `fn_80114420` (SFX).
 4. **Selection to spawn** ([`characters.md`](characters.md) section 3): the slot methods `fn_80443B70`, `fn_80443BC8`, `fn_80443BF4`, `fn_80443CCC` and `fn_804428E0`, then `fn_80131060`, `fn_800887AC`, `fn_801311C0`, and `fn_800B5BC4` with its helpers. This is where the entity name should lead to the model, motion set and NVB loads.
@@ -134,4 +156,5 @@ Out of scope for versus: `memcard.cpp` (except for checking whether saves depend
 - What is the `Slot` layout (0xB0 bytes)? Flag `4` at `+0x34` and `99` at `+0x3C` are set for slot 1 in match type 1.
 - What is `SetMatchInfo`'s unused third argument?
 - What is in the unidentified files at 0x801070FC and 0x8010C528?
+- Which file holds the `AptObject`/`AptRef` methods at 0x801021A0-0x801037B0 and 0x8044B4EC-0x8044B81C, and what are the classes really called?
 - Character questions are in [`characters.md`](characters.md) (sections 3 and 5).

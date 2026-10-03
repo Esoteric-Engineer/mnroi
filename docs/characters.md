@@ -48,11 +48,11 @@ Only three functions call it: `fn_8001C258`, `fn_80023010` and `fn_8002623C`.
 
 The table is in `.data`, and `+0x48` probably changes at runtime as characters are unlocked. That may tie the record count to the save-file layout; check `memcard.cpp` before changing the count.
 
-Accessors, one per field, called by `clashCharSelect_GetCharList`: `fn_8044B1D4` (name key), `fn_8044B234` (intel), `fn_8044B298`, `fn_8044B2FC`, `fn_8044B360`, `fn_8044B3C4`, `fn_8044B428`, and `fn_8044B48C` (unlocked, 5 callers). Other readers of the table: `fn_804316B0`, `fn_80443678`, `fn_804436D4`, `fn_8044F070` and `fn_80461288`.
+Accessors, one per field, called by `clashCharSelect_GetCharList`: `fn_8044B1D4` (name key), `fn_8044B234` (intel), `fn_8044B298` (strength), `fn_8044B2FC` (speed), `fn_8044B360` (durability), `fn_8044B3C4` (energy), `fn_8044B428` (skill), and `fn_8044B48C` (unlocked, 5 callers). Each takes `(index, remap, alt)`. The six stat accessors return `char`, not `int`: their caller only matches when they are declared that way, which confirms the stats are `s8`. `fn_8044B1D4` returns `char *` and `fn_8044B48C` returns `int`. Other readers of the table: `fn_804316B0`, `fn_80443678`, `fn_804436D4`, `fn_8044F070` and `fn_80461288`.
 
 **Confirmed** (`Game/fn_8044B1D4.c`, 0x8044B1D4-0x8044B4EC): each is `fn_80431CCC(index, remap, alt)` followed by one field read, which confirms the `+0x40`-`+0x45` stats order (intel, strength, speed, durability, energy, skill) and the `+0x48` unlocked field. They're plain C like `fn_80431CCC`, not registered as APT handlers themselves — `fn_8044B1D4`'s two callers (0x80103830 in the characterselect range, 0x8010B744 in the mission.cpp range) both call it directly. The surrounding 0x8044AF58-0x8044EE3C region is mostly unrelated: a chain of generic registration-constructor templates (`fn_8044AF58`, `fn_8044B11C`, `fn_8044BBC8`...) that are called from the six *handler* files (section 2), not from this one; this accessor block just happens to be link-adjacent to them. The unit is **NonMatching** at 99%: see [`nonmatching.md`](nonmatching.md#game-fn_8044b1d4c--roster-field-accessors) for the one-register diff.
 
-**`clashCharSelect_GetCharList` loops `for (i = 1; i <= 18; i++)`**: the roster size is a literal in the code, not read from the data.
+**`clashCharSelect_GetCharList` loops `for (i = 1; i <= 18; i++)`**: the roster size is a literal in the code, not read from the data. Each iteration fills nine parallel script arrays, which are the names a UI mod would have to keep: `aHeroName`, `aIntel`, `aStr`, `aSpd`, `aDur`, `aEng`, `aSkl`, `aIsUnLocked1` (`fn_8044B48C(i, 1, 0)`, the normal costume's `+0x48`) and `aIsUnLocked2` (`fn_8044B48C(i, 1, 1)`, the same field in the alternate-costume table). The handler is claimed as `Game/handlers/characterselect.cpp`, `NonMatching` at 99.2% ([`nonmatching.md`](nonmatching.md)).
 
 ---
 
@@ -97,7 +97,7 @@ These are every function that references four or more character-name strings, pl
 
 | Where | What |
 |---|---|
-| `clashCharSelect_GetCharList` | Loop bound 18. |
+| `clashCharSelect_GetCharList` | Loop bound 18, and nine script array names (section 2). |
 | Roster tables `lbl_804CA51C`, `lbl_804CAB0C`, remap `lbl_804CB0FC` | `Record[20]` and `int[20]`. Indices 0 and 19 are filler. |
 | `fn_80020E60` | Name → type ID chain (section 1). |
 | `fn_80023010` (0x638) | Per-character aura effects (`KEY_IRONMAN_AURA`, `KEY_STORM_AURA`...). It also reads `G+0x590`. |
