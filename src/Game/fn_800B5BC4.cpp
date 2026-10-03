@@ -1,0 +1,402 @@
+// Debug-menu command dispatcher.
+// Owns the string literals at 0x8048BDE0-0x8048BE4C; dtk's fn_800B5BC4 is renamed RunCommand__8GameFlow.
+
+// Offsets are all that is known of the class; its real size is unknown.
+class GameFlow
+{
+public:
+    char unk0[0x14];
+    int unk14;             // +0x14
+    char unk18[0x8];
+    unsigned int command;  // +0x20
+    char unk24[0x108];
+    int unk12C;            // +0x12C
+    char unk130[0x28];
+    int unk158;            // +0x158
+    char unk15C[0x60];
+    int unk1BC;            // +0x1BC
+    char unk1C0[0xC0];
+    int unk280;            // +0x280
+
+    void RunCommand();
+};
+
+// The pad or input object; only its flags word at +0x7E is known.
+typedef struct Unk7E
+{
+    char unk0[0x7E];
+    unsigned short flags7E;
+} Unk7E;
+
+extern char lbl_80552110[]; // the game-state object G (docs/versus.md section 4.1)
+extern char lbl_8052F060[]; // the level/world object
+extern char lbl_8057E430[];
+extern void *lbl_8066BE10;
+
+extern "C" {
+
+extern int fn_8012D470(void);
+extern int fn_8005287C(void);
+extern void fn_8011C008(void *obj, int a);
+extern void fn_8002DB78(char *level);
+extern void fn_8002D7A8(char *level, const char *name, int a, int b, int c, int d);
+extern void fn_80128C3C(const char *name);
+extern void *fn_8009543C(char *g, int a, const char *name);
+extern int fn_800B0C1C(void *entity);
+extern void *fn_80085AF0(void *entity);
+extern int fn_80430050(char *level);
+extern void fn_80096268(void *actor, int a, int b);
+extern void fn_80446094(GameFlow *p, int a);
+
+extern void fn_800B6AA4(GameFlow *p);
+extern void fn_800B6B34(GameFlow *p, int screen, int a);
+extern void fn_800B6E44(GameFlow *p, int state);
+extern void fn_800B7204(GameFlow *p);
+extern void fn_800B7268(GameFlow *p);
+extern void fn_800B72B4(GameFlow *p);
+extern void fn_800B73C4(GameFlow *p);
+extern void fn_800B743C(GameFlow *p);
+extern void fn_800B74C4(GameFlow *p);
+extern void fn_800B7514(GameFlow *p);
+extern void fn_800B7584(GameFlow *p);
+extern void fn_800B7654(GameFlow *p);
+extern void fn_800B76C0(GameFlow *p);
+extern void fn_800B7894(GameFlow *p);
+extern void fn_800B7918(GameFlow *p);
+extern void fn_800B797C(GameFlow *p);
+extern void fn_800B7A0C(GameFlow *p);
+extern void fn_800B7AA4(GameFlow *p);
+extern void fn_800B7B34(GameFlow *p);
+extern void fn_800B7B98(GameFlow *p);
+extern void fn_800B7BD4(GameFlow *p);
+extern void fn_800B7C50(GameFlow *p);
+extern void fn_800B7D28(GameFlow *p);
+extern void fn_800B7D6C(GameFlow *p);
+extern void fn_800B7DB0(GameFlow *p);
+extern void fn_800B7DF4(GameFlow *p);
+extern void fn_800B7E38(GameFlow *p);
+extern void fn_800B7EA4(GameFlow *p);
+extern void fn_800B7F04(GameFlow *p);
+extern void fn_800B7F64(GameFlow *p);
+extern void fn_800B7FC4(GameFlow *p);
+extern void fn_800B8024(GameFlow *p);
+extern void fn_800B8084(GameFlow *p);
+extern void fn_800B80E0(GameFlow *p);
+extern void fn_800B8174(GameFlow *p, int a);
+extern void fn_800B81D0(GameFlow *p);
+extern void fn_800B8210(GameFlow *p);
+extern int fn_800B8290(GameFlow *p);
+extern void fn_800B831C(GameFlow *p);
+extern void fn_800B8408(GameFlow *p);
+extern void fn_800B84F4(GameFlow *p);
+extern void fn_800B8544(GameFlow *p);
+
+}
+
+void GameFlow::RunCommand()
+{
+    void *entity;
+    register void *actor;
+
+    unk12C = 0;
+
+    if (fn_8012D470() == 0 || unk158 != 0) {
+        return;
+    }
+
+    if (command > 0x33 && command <= 0x38) {
+        fn_800B7204(this);
+        return;
+    }
+
+    if (command > 0x38 && command <= 0x3D) {
+        unk1BC = command - 5;
+        fn_800B6B34(this, 4, 1);
+        fn_800B6E44(this, 0);
+        return;
+    } else if (command > 0x2E && command <= 0x33) {
+        fn_800B7268(this);
+    } else if (command > 0x560 && command <= 0x661) {
+        fn_800B73C4(this);
+    } else if (command > 0x35E && command <= 0x45F) {
+        fn_800B743C(this);
+    } else if (command > 0x45F && command <= 0x560) {
+        fn_800B74C4(this);
+    } else if (command > 0x25D && command <= 0x35E) {
+        fn_800B7584(this);
+    }
+
+    switch (command) {
+    case 0x0:
+        break;
+    case 0x13:
+        fn_800B6B34(this, 0x21, 1);
+        fn_800B6E44(this, 4);
+        break;
+    case 0x15:
+        fn_800B7C50(this);
+        break;
+    case 0x16:
+        break;
+    case 0x19:
+        fn_800B6E44(this, 0x4A);
+        break;
+    case 0x8:
+        fn_800B7E38(this);
+        fn_8011C008(lbl_8066BE10, 1);
+        break;
+    case 0x2:
+        fn_800B7DB0(this);
+        break;
+    case 0x1:
+        fn_800B7D6C(this);
+        break;
+    case 0x4:
+        fn_800B7D28(this);
+        break;
+    case 0x5:
+        fn_800B7DF4(this);
+        break;
+    case 0x26:
+        fn_800B6E44(this, 0);
+        fn_800B6B34(this, 0xC, 1);
+        break;
+    case 0x27:
+        fn_800B81D0(this);
+        fn_800B6E44(this, 0x26);
+        unk1BC = 0x10;
+        break;
+    case 0x2E:
+        fn_800B7514(this);
+        break;
+    case 0x1C:
+        fn_800B7EA4(this);
+        break;
+    case 0x1D:
+        fn_800B7F04(this);
+        break;
+    case 0x1E:
+        fn_800B80E0(this);
+        break;
+    case 0x1F:
+        fn_800B7F64(this);
+        break;
+    case 0x20:
+        fn_800B7FC4(this);
+        break;
+    case 0x21:
+        fn_800B8024(this);
+        break;
+    case 0x22:
+        fn_800B8084(this);
+        break;
+    case 0x59:
+        fn_800B8174(this, 0);
+        break;
+    case 0x5A:
+        fn_800B8174(this, 1);
+        break;
+    case 0x5B:
+        fn_800B8174(this, 2);
+        break;
+    case 0x9:
+        fn_800B6B34(this, 0x11, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x28:
+        fn_800B8210(this);
+        break;
+    case 0x2B:
+        if (fn_800B8290(this) == 0) {
+            return;
+        }
+    case 0x2C:
+        fn_800B831C(this);
+        break;
+    case 0x29:
+        if (fn_800B8290(this) == 0) {
+            return;
+        }
+    case 0x2A:
+        fn_800B8408(this);
+        break;
+    case 0xA:
+        fn_800B6B34(this, 0x15, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x2D:
+        fn_800B7BD4(this);
+        break;
+    case 0x23:
+        fn_800B6B34(this, 0x1B, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x24:
+        fn_800B6B34(this, 0x1D, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x25:
+        fn_800B6B34(this, 0x1E, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0xB:
+        fn_800B6B34(this, 0x17, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0xD:
+        fn_800B6B34(this, 0x18, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x4F:
+        fn_800B8544(this);
+        break;
+    case 0x6:
+        fn_800B84F4(this);
+        break;
+    case 0xE:
+        fn_800B6B34(this, 0x19, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0xF:
+        fn_800B6B34(this, 0x1A, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x11:
+        fn_800B6B34(this, 0x1F, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x12:
+        fn_800B6B34(this, 0x20, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x17:
+        fn_800B6E44(this, 0x18);
+        break;
+    case 0x10:
+        fn_800B72B4(this);
+        break;
+    case 0x18:
+        fn_800B7654(this);
+        break;
+    case 0x14:
+        fn_800B76C0(this);
+        break;
+    case 0x3E:
+        if (fn_8005287C() == 0) {
+            fn_800B6E44(this, 0);
+            fn_800B6AA4(this);
+            break;
+        }
+        unk14 = 1;
+        if ((((Unk7E *)lbl_8057E430)->flags7E & 4) != 0) {
+        }
+        fn_80446094(this, 0);
+        fn_800B7894(this);
+        break;
+    case 0x3F:
+        fn_80446094(this, 1);
+        fn_800B7894(this);
+        break;
+    case 0x42:
+        fn_80446094(this, 2);
+        fn_800B7894(this);
+        break;
+    case 0x41:
+        fn_800B6B34(this, 0x6, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x40:
+        fn_800B6B34(this, 0x1, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x43:
+        unk14 = 0;
+        fn_800B7918(this);
+        break;
+    case 0x46:
+        fn_800B797C(this);
+        break;
+    case 0x44:
+        fn_800B6B34(this, 0x8, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x45:
+        fn_800B7A0C(this);
+        break;
+    case 0x47:
+        fn_800B6B34(this, 0x2, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x48:
+        fn_800B6B34(this, 0x3, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x49:
+        fn_800B6B34(this, 0x5, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x4A:
+        unk14 = 0;
+        fn_800B7AA4(this);
+        break;
+    case 0x58:
+        fn_8002DB78(lbl_8052F060);
+        break;
+    case 0x4B:
+        fn_800B7B34(this);
+        break;
+    case 0x4C:
+        fn_800B6B34(this, 0xA, 1);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x50:
+        entity = fn_8009543C(lbl_80552110, unk280, "plr_wolverine");
+        if (entity != 0 && fn_800B0C1C(entity) != 0) {
+            actor = fn_80085AF0(entity);
+            fn_80096268(actor, fn_80430050(lbl_8052F060), 0);
+        }
+        fn_800B6E44(this, 0);
+        break;
+    case 0x51:
+        entity = fn_8009543C(lbl_80552110, unk280, "plr_ironman");
+        if (entity != 0 && fn_800B0C1C(entity) != 0) {
+            actor = fn_80085AF0(entity);
+            fn_80096268(actor, fn_80430050(lbl_8052F060), 0);
+        }
+        fn_800B6E44(this, 0);
+        break;
+    case 0x52:
+        fn_8002D7A8(lbl_8052F060, "powerplant", 8, 0, 0, 0);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x53:
+        fn_8002D7A8(lbl_8052F060, "0_Test_Clash", 8, 0, 0, 0);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x54:
+        fn_8002D7A8(lbl_8052F060, "0_Test_Arena", 8, 0, 0, 0);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x55:
+        fn_8002D7A8(lbl_8052F060, "0_Test_Look", 8, 0, 0, 0);
+        fn_800B6E44(this, 0);
+        break;
+    case 0x56:
+        fn_80128C3C("example1");
+        fn_800B6E44(this, 0);
+        break;
+    case 0x57:
+        fn_80128C3C("example2");
+        fn_800B6E44(this, 0);
+        break;
+    case 0x4D:
+        fn_800B7B98(this);
+        break;
+    case 0x4E:
+        fn_800B6B34(this, 0xB, 1);
+        fn_800B6E44(this, 0);
+        break;
+    default:
+        break;
+    }
+}

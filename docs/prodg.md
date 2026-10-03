@@ -90,6 +90,14 @@ constructor (in C++), so it does not settle the question by itself.
   three register copies / `bl __9NameTable`. All 329 of `fn_801ACED4`'s call sites in the DOL have
   that shape and no other callee in the DOL does, so every one of them is a `new` expression and the
   file holding it is C++. Both symbols are renamed in `symbols.txt`.
+- **A member function mangles as `<name>__<len><Class>`, with no `v` for an empty parameter list**
+  (a free function's is `__Fv`): `void GameFlow::RunCommand()` is `RunCommand__8GameFlow`
+  (0x800B5BC4). Don't guess a mangling: register the unit `NonMatching`, compile it, read the name
+  out of `build/GVLE69/src/<unit>.o` with `readelf -sW`, and put that in `symbols.txt`.
+- **Declare the sibling methods a matched method calls as `extern "C"` taking the object pointer.**
+  A non-virtual member call at `-O0` is `mr r3, r30`, the arguments, then `bl`, which is exactly a
+  free call with `this` as the first argument, so the asm side keeps its `fn_` name and nothing has to
+  be renamed. `Game/fn_800B5BC4.cpp` calls 50 of its own class's methods that way.
 - **Static initialization.** For a file with global objects that have constructors, GCC 2.95 emits a local `__static_initialization_and_destruction_0(int initialize, int priority)` and a local `_GLOBAL_.I.<first global's name>` that calls it with `(1, 0xFFFF)`, at the end of the file's `.text`. A `_GLOBAL_.I` function in the DOL therefore marks the end of a file. In `symbols.txt`, give both their GCC names with `scope:local`.
 - **`T x = T(...);`, not `T x(...);`:** copy-initialization keeps the constructor's returned `this` (`mr r0,r3` after each call), which the game's static initializers have.
 - **A class passed or returned by value travels through memory.** The caller puts it in a stack temp
