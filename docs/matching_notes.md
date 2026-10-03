@@ -63,7 +63,12 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **Two register copies before a byte store (`mr r0, r4` / `mr r11, r0` / `stb r11`) mean the
   parameter is `int` and the field `char`.** The second copy is the QImode conversion; an `int` field
-  stores straight from the first copy (`Game/fn_804437D8.c`, `fn_80443860`).
+  stores straight from the first copy (`Game/fn_804437D8.c`, `fn_80443860`). Before a *word* store
+  the same pair means something else: the body assigned to a local of its own rather than to the
+  parameter, and at `-O0` each `register` pseudo gets its own volatile
+  (`register unsigned int clamped = value;` then `if (clamped > 2) clamped = 2;` in
+  `Game/fn_804428E0.c`, where clamping the parameter in place emits one copy). `cmplwi` for the
+  comparison is what makes the type unsigned.
 
 - **A `switch` dispatch tree whose ordering tests are `cmplwi` where yours are `cmpwi` means the
   switch expression is unsigned.** The equality tests are `cmpwi` either way, so the ordering ones are
