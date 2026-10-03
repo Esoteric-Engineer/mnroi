@@ -93,6 +93,16 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **Spare branches and pads at `-O0` come from statement shape, not expressions** (measured on `Game/fn_80023010.c`): a `break` on a `switch`'s textually last case still emits a branch to the switch's end, and so does a `default:` clause, so one spare branch there and a dispatch tree whose out-of-range tests already jump to the switch's end means the original had no `default:` (`Game/fn_80114420.cpp`); each `return` emits one branch to the epilogue; and a `nop` between the prologue and the first statement means the original's first statement was not a loop, since cc1 pads one that is, ahead of even a `for`'s init (`i = 0;` plus `while` drops the pad).
 
+- **`rlwinm rX, rY, 0, n, n` with no record bit is a single-bit mask, `x & (1 << (31 - n))`, and
+  `clrlwi rX, rY, 31` is `x & 1`.** GCC 2.95 picks `rlwinm` over `andi.` for every single-bit `&`, so a
+  run of near-identical small getters differing only in `n` is a flags word's bit testers
+  (`Game/fn_804428E0.c`, `fn_804432D8`-`fn_80443488`).
+
+- **A compound assignment whose stored register also feeds `mr r3` is one statement, `return x |= BIT;`.**
+  Splitting it into `x |= BIT; return x;` reloads the field after the store, which shows up as an extra
+  `lwz`; the returning form also adds one register copy before the store that the `void` setter beside
+  it does not have (`Game/fn_804428E0.c`, `fn_8044324C` vs `fn_804432AC`).
+
 - **Two *identical* back-to-back branches to the epilogue at the end of an `if` body mean an explicit
   `else` whose own last statement returns, not the C++ function-end pair.** The first is the `return`'s
   branch, the second is the jump over the `else`, and both land on the epilogue because the else

@@ -90,6 +90,45 @@ Accessors, one per field, called by `clashCharSelect_GetCharList`: `fn_8044B1D4`
 
 The loaders are generic engine code that takes a name, with nothing character-specific in them: `fn_8019E9DC` (`Bundles/%s`), `fn_8019EA38`, `fn_8019EBF8` (`Animation:Bundles`), `fn_801A0814` (`Model bundle missed`), `fn_801A8FC4` (`Motions`), `fn_80232C4C` (`Texture bundle missed`) and the NVB functions above.
 
+### The Tuning Record in Memory
+
+0x804428E0-0x80443678 is **matched** (`Game/fn_804428E0.c`): one long run of leaf setters and getters
+on the object the `.nvb` record is believed to load into, plus a few on the object that owns those
+records. They fix the layout without naming the fields. The record is at least 0x5C8 bytes, and every
+`char[0x20]` field is `strncpy`'d with 0x20 and then terminated by hand at its last byte, like
+`slot+0x4` ([`versus.md`](versus.md#3-selection-to-spawn)).
+
+| Offset | Type | Accessors |
+|---|---|---|
+| +0x00 | `char[0x20]` | `fn_80442918` |
+| +0x20 | `char[0x200]` | `fn_80442964`; the one long buffer in the record |
+| +0x240, +0x320 | `char[0x20]` | `fn_80442C3C`, `fn_804430AC` |
+| +0x260-+0x300 | `char[0x20]` x6 | `fn_80442A04` (+0x260), `fn_804429B4` (+0x280), `fn_80442A80` and getter `fn_80442A54` (+0x2A0), `fn_80442B20` (+0x2C0), `fn_80442AD0` (+0x2E0), `fn_80442B70` (+0x300) |
+| +0x340, +0x3A0, +0x400 | `char[3][0x20]` | `fn_80442C8C`, `fn_80442D24`, `fn_80442DBC` append; `fn_80443A2C`-`fn_80443B40` read one at random |
+| +0x460, +0x46C, +0x470, +0x474 | int | `fn_80442EA8` and getter `fn_80442E7C` (+0x460), `fn_80442EF8`, `fn_80442F20`, `fn_80442F48` |
+| +0x464 | int | flags, see below |
+| +0x468 | float | `fn_80442ED0` |
+| +0x478-+0x47A | `unsigned char` | three set/get pairs, `fn_80442F98`/`fn_80442FC4`, `fn_80442FF4`/`fn_80443020`, `fn_80443050`/`fn_8044307C`; the getters return int |
+| +0x47B-+0x47D | `unsigned char` | entry count for the list at +0x340, +0x3A0 and +0x400. Each append runs only `if (count <= 2)`, so the lists cap at three |
+| +0x480 | `int[4]` | `fn_80442BC0` writes all four, `fn_80442C00(record, i)` reads one |
+| +0x4A4-+0x5A4 | `char[0x20]` x9 | `fn_804430FC`, one 10-argument function that writes all nine |
+| +0x5C4 | int | `fn_80442F70` |
+
+Nothing in the run touches +0x220 or +0x490-+0x4A3. The flags at +0x464 have one tester each for 0x2,
+0x4, 0x8, 0x10, 0x20, 0x80, 0x100, 0x200, 0x800 and 0x4000 (`fn_804432D8`-`fn_80443488`, in no bit
+order), `fn_804432AC` sets 0x8000, and `fn_8044324C(record, enable)` sets or clears 0x4000 and returns
+the new word.
+
+**The owner object** is separate, and `fn_800876D4` is what tells the two apart: it walks `owner+0xC`
+as `TuningRecord *[100]` and copies bits out of each record's +0x464 into the owner's own int flags at
+`+0x1AC` (`fn_80443518` ORs, `fn_80443548` clears, `fn_8044357C` assigns, `fn_804435A4` reads; the
+values seen are 1, 4, 8 and 0x200). That `+0x1AC` is **not** `actor+0x1AC`, the type ID `fn_8009ABEC`
+returns (section 5) — same offset, different object.
+
+Three `.data` tables are written by index from the same run: `lbl_804CBE94` as `int[]`
+(`fn_804435D0`), and `lbl_804CB328` and `lbl_804CBEB8` as arrays of 0x44-byte records with an int at
+`+0x40` (`fn_80443608`, `fn_80443640`). What they hold is unknown.
+
 **Physics** is Havok (`hk*`, the `hkRagdollConstraintData` ragdolls, `RagdollRecover_*`). No character-specific physics code has turned up yet. Per-character physical tuning is most likely in the NVB fields.
 
 ---
