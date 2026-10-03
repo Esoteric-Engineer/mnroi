@@ -1,5 +1,5 @@
 // Accessors on two globals: a counter object, and lbl_80593BE8, which holds two
-// fn_80443E20 seeds (+0x4, +0x8) and a count at +0x5C.
+// fn_80443E20 seeds (+0x4, +0x8) and a loading flag at +0x5C.
 // C++, not C: the unit's tail branch pairs are the cc1plus function end (docs/prodg.md).
 
 typedef struct Counter
@@ -13,7 +13,7 @@ typedef struct Globals
     int seed1; // +0x04
     int seed2; // +0x08
     char unk0C[0x50];
-    int unk5C; // +0x5C
+    int loading; // +0x5C
 } Globals;
 
 extern "C" {
@@ -35,7 +35,7 @@ int fn_80443970(register Globals *g)
 
 int fn_804439A4(register Globals *g)
 {
-    return g->unk5C > 0;
+    return g->loading > 0;
 }
 
 }

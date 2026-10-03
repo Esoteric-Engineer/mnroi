@@ -1,5 +1,6 @@
-// GameFlow: the debug-menu command dispatcher, the per-frame update, and the frame-rate and load-progress overlays.
-// Owns the string literals and the float pool at 0x8048BDE0-0x8048BE78.
+// GameFlow: the debug-menu command dispatcher, the per-frame update, the overlays, the command
+// queue and the level-load entry points. The class and its field meanings are docs/versus.md
+// section 6; the unit owns the string literals and float pool at 0x8048BDE0-0x8048BE78.
 
 // Offsets are all that is known of the class; its real size is unknown.
 class GameFlow
@@ -11,18 +12,25 @@ public:
     unsigned char flags1C;  // +0x1C, single-bit flags
     char unk1D[0x3];
     unsigned int command;   // +0x20
-    char unk24[0x108];
+    char unk24[0x4];
+    int pendingScreen;      // +0x28
+    char levelName[0x100];  // +0x2C
     int unk12C;             // +0x12C
     char unk130[0x4];
     int unk134;             // +0x134
     void *unk138;           // +0x138
     char unk13C[0x1C];
     int unk158;             // +0x158
-    char unk15C[0x60];
+    char unk15C[0x24];
+    int unk180;             // +0x180
+    char unk184[0x1C];
+    int history[5];         // +0x1A0, most recent command first
+    char unk1B4[0x8];
     int unk1BC;             // +0x1BC
     char unk1C0[0x20];
     int unk1E0;             // +0x1E0
-    char unk1E4[0x9C];
+    char unk1E4[0x14];
+    int unk1F8[0x22];       // +0x1F8
     int unk280;             // +0x280
 
     void RunCommand();
@@ -30,6 +38,20 @@ public:
     void DrawFrameRate();
     void SetLoadProgress(float progress, int redraw);
     void DrawLoadProgress(int a, int b);
+    void BeginLoad();
+    void EndLoad();
+    void ClearPendingScreen();
+    void OpenScreen(int screen, int keep);
+    void LoadLevel(char *name);
+    void LoadFrontend();
+    void EndLevel(int a);
+    int Stub6CFC(int index, void *table);
+    void Stub6D48();
+    void ClearCommandHistory();
+    void Stub6E1C();
+    int SetCommand(int command);
+    int SetCommandBlocking(int command);
+    int GetHistory(unsigned char index);
 };
 
 // The pad or input object; only its flags word at +0x7E is known.
@@ -42,7 +64,9 @@ typedef struct Unk7E
 extern char lbl_80552110[]; // the game-state object G (docs/versus.md section 4.1)
 extern char lbl_8052F060[]; // the level/world object
 extern char lbl_80593BE8[]; // the globals object of Game/fn_80443908.cpp
+extern char lbl_805722E8[];
 extern char lbl_8057E430[];
+extern const char lbl_8048BEA8[]; // "LATER", in the pool after this unit's claimed .rodata
 extern void *lbl_8066BE10;
 extern void *lbl_8066D6DC; // the overlay text object (docs/versus.md section 6)
 
@@ -80,9 +104,17 @@ extern void fn_80101188(void *text, float height);
 extern void fn_80100C08(void *text, int a);
 extern int fn_800B92DC(void **text, const char *s, float x, float y);
 
-extern void fn_800B6AA4(GameFlow *p);
-extern void fn_800B6B34(GameFlow *p, int screen, int a);
-extern void fn_800B6E44(GameFlow *p, int state);
+extern void fn_801AA368(void);
+extern void fn_8044606C(GameFlow *p);
+extern void fn_804325CC(char *globals);
+extern void fn_801AF754(char *globals);
+extern int fn_80432D74(GameFlow *p);
+extern void fn_8002F884(char *level, int a);
+extern void fn_8012D400(int a);
+extern void fn_8002D90C(char *level, const char *when);
+extern void fn_8012873C(void);
+extern void fn_8043323C(char *p, int a);
+extern char *strcpy(char *dst, const char *src);
 extern void fn_800B7204(GameFlow *p);
 extern void fn_800B7268(GameFlow *p);
 extern void fn_800B72B4(GameFlow *p);
@@ -143,8 +175,8 @@ void GameFlow::RunCommand()
 
     if (command > 0x38 && command <= 0x3D) {
         unk1BC = command - 5;
-        fn_800B6B34(this, 4, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(4, 1);
+        SetCommand(0);
         return;
     } else if (command > 0x2E && command <= 0x33) {
         fn_800B7268(this);
@@ -162,8 +194,8 @@ void GameFlow::RunCommand()
     case 0x0:
         break;
     case 0x13:
-        fn_800B6B34(this, 0x21, 1);
-        fn_800B6E44(this, 4);
+        OpenScreen(0x21, 1);
+        SetCommand(4);
         break;
     case 0x15:
         fn_800B7C50(this);
@@ -171,7 +203,7 @@ void GameFlow::RunCommand()
     case 0x16:
         break;
     case 0x19:
-        fn_800B6E44(this, 0x4A);
+        SetCommand(0x4A);
         break;
     case 0x8:
         fn_800B7E38(this);
@@ -190,12 +222,12 @@ void GameFlow::RunCommand()
         fn_800B7DF4(this);
         break;
     case 0x26:
-        fn_800B6E44(this, 0);
-        fn_800B6B34(this, 0xC, 1);
+        SetCommand(0);
+        OpenScreen(0xC, 1);
         break;
     case 0x27:
         fn_800B81D0(this);
-        fn_800B6E44(this, 0x26);
+        SetCommand(0x26);
         unk1BC = 0x10;
         break;
     case 0x2E:
@@ -232,8 +264,8 @@ void GameFlow::RunCommand()
         fn_800B8174(this, 2);
         break;
     case 0x9:
-        fn_800B6B34(this, 0x11, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x11, 1);
+        SetCommand(0);
         break;
     case 0x28:
         fn_800B8210(this);
@@ -253,31 +285,31 @@ void GameFlow::RunCommand()
         fn_800B8408(this);
         break;
     case 0xA:
-        fn_800B6B34(this, 0x15, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x15, 1);
+        SetCommand(0);
         break;
     case 0x2D:
         fn_800B7BD4(this);
         break;
     case 0x23:
-        fn_800B6B34(this, 0x1B, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x1B, 1);
+        SetCommand(0);
         break;
     case 0x24:
-        fn_800B6B34(this, 0x1D, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x1D, 1);
+        SetCommand(0);
         break;
     case 0x25:
-        fn_800B6B34(this, 0x1E, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x1E, 1);
+        SetCommand(0);
         break;
     case 0xB:
-        fn_800B6B34(this, 0x17, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x17, 1);
+        SetCommand(0);
         break;
     case 0xD:
-        fn_800B6B34(this, 0x18, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x18, 1);
+        SetCommand(0);
         break;
     case 0x4F:
         fn_800B8544(this);
@@ -286,23 +318,23 @@ void GameFlow::RunCommand()
         fn_800B84F4(this);
         break;
     case 0xE:
-        fn_800B6B34(this, 0x19, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x19, 1);
+        SetCommand(0);
         break;
     case 0xF:
-        fn_800B6B34(this, 0x1A, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x1A, 1);
+        SetCommand(0);
         break;
     case 0x11:
-        fn_800B6B34(this, 0x1F, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x1F, 1);
+        SetCommand(0);
         break;
     case 0x12:
-        fn_800B6B34(this, 0x20, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x20, 1);
+        SetCommand(0);
         break;
     case 0x17:
-        fn_800B6E44(this, 0x18);
+        SetCommand(0x18);
         break;
     case 0x10:
         fn_800B72B4(this);
@@ -315,8 +347,8 @@ void GameFlow::RunCommand()
         break;
     case 0x3E:
         if (fn_8005287C() == 0) {
-            fn_800B6E44(this, 0);
-            fn_800B6AA4(this);
+            SetCommand(0);
+            EndLoad();
             break;
         }
         unk14 = 1;
@@ -334,12 +366,12 @@ void GameFlow::RunCommand()
         fn_800B7894(this);
         break;
     case 0x41:
-        fn_800B6B34(this, 0x6, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x6, 1);
+        SetCommand(0);
         break;
     case 0x40:
-        fn_800B6B34(this, 0x1, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x1, 1);
+        SetCommand(0);
         break;
     case 0x43:
         unk14 = 0;
@@ -349,23 +381,23 @@ void GameFlow::RunCommand()
         fn_800B797C(this);
         break;
     case 0x44:
-        fn_800B6B34(this, 0x8, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x8, 1);
+        SetCommand(0);
         break;
     case 0x45:
         fn_800B7A0C(this);
         break;
     case 0x47:
-        fn_800B6B34(this, 0x2, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x2, 1);
+        SetCommand(0);
         break;
     case 0x48:
-        fn_800B6B34(this, 0x3, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x3, 1);
+        SetCommand(0);
         break;
     case 0x49:
-        fn_800B6B34(this, 0x5, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0x5, 1);
+        SetCommand(0);
         break;
     case 0x4A:
         unk14 = 0;
@@ -378,8 +410,8 @@ void GameFlow::RunCommand()
         fn_800B7B34(this);
         break;
     case 0x4C:
-        fn_800B6B34(this, 0xA, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0xA, 1);
+        SetCommand(0);
         break;
     case 0x50:
         entity = fn_8009543C(lbl_80552110, unk280, "plr_wolverine");
@@ -387,7 +419,7 @@ void GameFlow::RunCommand()
             actor = fn_80085AF0(entity);
             fn_80096268(actor, fn_80430050(lbl_8052F060), 0);
         }
-        fn_800B6E44(this, 0);
+        SetCommand(0);
         break;
     case 0x51:
         entity = fn_8009543C(lbl_80552110, unk280, "plr_ironman");
@@ -395,38 +427,38 @@ void GameFlow::RunCommand()
             actor = fn_80085AF0(entity);
             fn_80096268(actor, fn_80430050(lbl_8052F060), 0);
         }
-        fn_800B6E44(this, 0);
+        SetCommand(0);
         break;
     case 0x52:
         fn_8002D7A8(lbl_8052F060, "powerplant", 8, 0, 0, 0);
-        fn_800B6E44(this, 0);
+        SetCommand(0);
         break;
     case 0x53:
         fn_8002D7A8(lbl_8052F060, "0_Test_Clash", 8, 0, 0, 0);
-        fn_800B6E44(this, 0);
+        SetCommand(0);
         break;
     case 0x54:
         fn_8002D7A8(lbl_8052F060, "0_Test_Arena", 8, 0, 0, 0);
-        fn_800B6E44(this, 0);
+        SetCommand(0);
         break;
     case 0x55:
         fn_8002D7A8(lbl_8052F060, "0_Test_Look", 8, 0, 0, 0);
-        fn_800B6E44(this, 0);
+        SetCommand(0);
         break;
     case 0x56:
         fn_80128C3C("example1");
-        fn_800B6E44(this, 0);
+        SetCommand(0);
         break;
     case 0x57:
         fn_80128C3C("example2");
-        fn_800B6E44(this, 0);
+        SetCommand(0);
         break;
     case 0x4D:
         fn_800B7B98(this);
         break;
     case 0x4E:
-        fn_800B6B34(this, 0xB, 1);
-        fn_800B6E44(this, 0);
+        OpenScreen(0xB, 1);
+        SetCommand(0);
         break;
     default:
         break;
@@ -497,4 +529,130 @@ void GameFlow::SetLoadProgress(float progress, int redraw)
 
 void GameFlow::DrawLoadProgress(int a, int b)
 {
+}
+
+// Called at the head of every level load; EndLoad() undoes it when the load finishes.
+void GameFlow::BeginLoad()
+{
+    flags1C = 3;
+    fn_801AA368();
+}
+
+void GameFlow::EndLoad()
+{
+    fn_8044606C(this);
+    flags1C = 4;
+    fn_804325CC(lbl_80593BE8);
+}
+
+void GameFlow::ClearPendingScreen()
+{
+    if (pendingScreen != 0) {
+        pendingScreen = 0;
+    }
+}
+
+void GameFlow::OpenScreen(int screen, int keep)
+{
+    pendingScreen = screen;
+    if (fn_80432D74(this) != 0 || keep == 0) {
+        ClearPendingScreen();
+    }
+}
+
+void GameFlow::LoadLevel(char *name)
+{
+    BeginLoad();
+    fn_801AF754(lbl_80593BE8);
+    fn_8002F884(lbl_8052F060, 5);
+    if (name != 0) {
+        strcpy(levelName, name);
+    } else {
+        levelName[0] = 0;
+    }
+    SetCommand(0x42);
+}
+
+void GameFlow::LoadFrontend()
+{
+    BeginLoad();
+    fn_801AF754(lbl_80593BE8);
+    fn_8002F884(lbl_8052F060, 5);
+    SetCommand(8);
+    fn_8012D400(0);
+}
+
+void GameFlow::EndLevel(int a)
+{
+    fn_8002D90C(lbl_8052F060, lbl_8048BEA8);
+}
+
+int GameFlow::Stub6CFC(int index, void *table)
+{
+    if (index < 0) {
+        return 0;
+    }
+    return 1;
+}
+
+void GameFlow::Stub6D48()
+{
+    return;
+}
+
+void GameFlow::ClearCommandHistory()
+{
+    unsigned int i;
+
+    i = 0;
+    while (i <= 4) {
+        history[i] = 0;
+        i++;
+    }
+    i = 0;
+    while (i <= 0x21) {
+        unk1F8[i] = 0;
+        i++;
+    }
+}
+
+void GameFlow::Stub6E1C()
+{
+}
+
+// Queues a command for RunCommand() and pushes it onto the five-deep history.
+int GameFlow::SetCommand(int command)
+{
+    int i;
+
+    unk180 = 0xFF;
+    Stub6E1C();
+    fn_8012873C();
+    fn_801284D4();
+    this->command = command;
+    if (this->command == 0) {
+        return 0;
+    }
+    if (this->command != 6) {
+        i = 4;
+        while (i != 0) {
+            history[i] = history[i - 1];
+            i--;
+        }
+        history[0] = this->command;
+    }
+    return 1;
+}
+
+// Blocks RunCommand() through +0x158 until the transition on lbl_805722E8 is done.
+int GameFlow::SetCommandBlocking(int command)
+{
+    unk158 = 1;
+    fn_8043323C(lbl_805722E8, 1);
+    return SetCommand(command);
+}
+
+int GameFlow::GetHistory(unsigned char index)
+{
+    return history[index];
 }
