@@ -33,6 +33,9 @@ Game/fn_8002623C.cpp:
 Game/handlers/characterselect.cpp:
 	.text       start:0x801037B0 end:0x80103BAC
 
+Game/fn_80114420.cpp:
+	.text       start:0x80114420 end:0x801147D4
+
 SN/fn_80168770.c:
 	.text       start:0x80168770 end:0x801687E8
 

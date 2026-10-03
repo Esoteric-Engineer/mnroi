@@ -54,6 +54,17 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   0x60, in `Game/fn_8002623C.cpp`). Writing it as a struct of pointers-to-member instead evaluates
   the entry address twice and does not match.
 
+- **The DOL copies a call result through a non-volatile (`mr r30, r3` / `mr r3, r30`) with no frame
+  slot for it, and its `stmw`/`lmw` range is one register wider than yours.** `obey_regdecls` is on at
+  `-O0`, so GCC 2.95 honours the `register` keyword there and only there: `register` gives the local a
+  pseudo that register allocation puts in a call-saved register, while a plain local always gets a
+  frame slot. Add `register` to the local (`Game/fn_80114420.cpp`, the actor in the player loop).
+
+- **A `switch` dispatch tree whose ordering tests are `cmplwi` where yours are `cmpwi` means the
+  switch expression is unsigned.** The equality tests are `cmpwi` either way, so the ordering ones are
+  the only tell; declaring the callee that produces the index `unsigned int` is enough
+  (`Game/fn_80114420.cpp`, `fn_8009ABEC`).
+
 - **A field load off a global array that the DOL does as `add rX, <variable>, <base>` plus a load
   displacement, where ours folds the field offset into the symbol and uses `lwzx`/`lfsx`, means the
   type's alignment is not 4.** GCC applies the constant bitpos before the variable offset only when
@@ -70,7 +81,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **`p->tbl[i].f` in an expression that also holds a call: cc1 and cc1plus order it differently.** cc1 loads `i`, emits the index `mulli`, then loads `tbl`; cc1plus loads `tbl` first into a non-volatile, which also grows the frame and the `stmw` range. No source rewrite moves it (index-first sums and `(char *)`/int casts all fold to the same tree), and cc1plus agrees with cc1 only when the base is a frame slot instead of a call, so this diff alone means the unit is `.c` (`Game/fn_80023010.c`).
 
-- **Spare branches and pads at `-O0` come from statement shape, not expressions** (measured on `Game/fn_80023010.c`): a `break` on a `switch`'s textually last case still emits a branch to the switch's end; each `return` emits one branch to the epilogue; and a `nop` between the prologue and the first statement means the original's first statement was not a loop, since cc1 pads one that is, ahead of even a `for`'s init (`i = 0;` plus `while` drops the pad).
+- **Spare branches and pads at `-O0` come from statement shape, not expressions** (measured on `Game/fn_80023010.c`): a `break` on a `switch`'s textually last case still emits a branch to the switch's end, and so does a `default:` clause, so one spare branch there and a dispatch tree whose out-of-range tests already jump to the switch's end means the original had no `default:` (`Game/fn_80114420.cpp`); each `return` emits one branch to the epilogue; and a `nop` between the prologue and the first statement means the original's first statement was not a loop, since cc1 pads one that is, ahead of even a `for`'s init (`i = 0;` plus `while` drops the pad).
 
 ## General
 

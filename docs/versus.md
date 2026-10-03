@@ -106,13 +106,13 @@ This is a C++ singleton that 211 functions reference, so it is the whole game st
 | Offset | Type | Meaning (guess) | Written by | Read by |
 |---|---|---|---|---|
 | +0x10 | `Slot[8]`, stride 0xB0 | Player slots (dtk's `lbl_80552120`). `fn_804317BC(G, i)` returns `&slot[i]`, and `fn_8042FF2C(slot)` returns the slot's actor. | | |
-| +0x590 | int | Number of active player slots, not a role index: `fn_80023010` (matched) loops `p` from 0 while `p < G+0x590` and reads slot `p` each time. `SetMatchInfo` setting it to 2 for match types 0 and 1 fits a 2-player match. | `fn_80431844` | `fn_80023010`, `fn_80096B98`, `fn_80096D6C` |
-| +0x59C, +0x5BC, +0x5DC, +0x5FC | `char[0x20]` x4 | Level/venue name buffers. Writers store the terminator at `+0x5BB` and so on. | `Control_SetSelectInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel`, `clashVenue_ChooseOption`, `fn_80028BAC`, `fn_8008856C` | `fn_800B76C0` |
+| +0x590 | int | Number of active player slots, not a role index: `fn_80023010` (matched) loops `p` from 0 while `p < G+0x590` and reads slot `p` each time. `SetMatchInfo` setting it to 2 for match types 0 and 1 fits a 2-player match. | `fn_80431844` | `fn_80434900` (getter), `fn_80023010`, `fn_80114420`, `fn_80096B98`, `fn_80096D6C` |
+| +0x59C, +0x5BC, +0x5DC, +0x5FC | `char[0x20]` x4 | Level/venue name buffers. Writers store the terminator at `+0x5BB` and so on. | `Control_SetSelectInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel`, `clashVenue_ChooseOption`, `fn_80028BAC`, `fn_8008856C` | `fn_800B76C0`, `fn_80114420` (`strcmp` against `"0_Test_Arena"`, which confirms `+0x59C` holds the level name) |
 | +0x61C | int | Set to 1 for match type 2 and by both `StartLevel` handlers | `Control_SetMatchInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel` | `fn_8002BD34` |
 | +0x75C | int | Timer mode: 1 = timed, 2 = untimed | `Control_SetMatchInfo`, `clashVenue_ChooseOption`, `fn_80028BAC` | `Control_SetSelectInfo`, `fn_8011A94C`, `fn_8011AB34` |
 | +0x760 | int | Written by 14 functions; probably a game phase or state | `fn_8002D90C`, `fn_80092550`... | `fn_80018290`... |
 | +0x764 | int | Time limit in ms | `Control_SetMatchInfo`, `fn_80028BAC` | `fn_80131434` |
-| +0x770, +0x774 | int | Role indices (see `SetMatchInfo`) | `fn_804317F4`, `fn_8043181C` | |
+| +0x770, +0x774 | int | Role indices (see `SetMatchInfo`). `fn_80114420` treats "either one nonzero" as "a match is running", which holds for match types 0 and 1 but not 2. | `fn_804317F4`, `fn_8043181C` | `fn_80432844` (+0x770) and `fn_80432870` (+0x774), the getters; `fn_80114420` |
 
 `fn_80028BAC` writes most of these fields, along with `+0x74`-`+0x7C` and `+0x620`-`+0x62C`. It looks like a "set up the match from settings" or reset function, and is a good early target.
 
@@ -140,7 +140,7 @@ Work these in order and skip whatever is already matched (check `configure.py`).
 
 1. **`characterselect.cpp`** (unit `Game/handlers/characterselect.cpp`, 0x801037B0-0x801040F4, start confirmed in section 2). `clashCharSelect_GetCharList` is **claimed and `NonMatching` at 99.2%**: it is blocked, with `clashCharSelect_GetPrevCharList` behind it, by the C++ aggregate-return branch gap in [`nonmatching.md`](nonmatching.md). `fn_80103FC4` and the static initializer are not affected but sit after the two blocked handlers. Pick this file up again when [`prodg.md`](prodg.md#release) says a release reproduces a class returned by value.
 2. **Character roster** ([`characters.md`](characters.md) section 2): `fn_80431CCC`, the per-field accessors `fn_8044B1D4`-`fn_8044B48C`, and the roster data `lbl_804CA51C`, `lbl_804CAB0C` and `lbl_804CB0FC`. The accessors sit among the APT registration constructors at 0x8044AF58-0x8044EE3C, so work out the file boundaries there before claiming anything.
-3. **Character type** ([`characters.md`](characters.md) sections 1 and 5): `fn_80020E60` is **matched** (`Game/fn_80020E60.c`), as are its callers `fn_8001C258` (`Game/fn_8001C258.cpp`, the aura on/off) and `fn_80023010` (`Game/fn_80023010.c`, which fills the two aura tables and spawns the flame auras). Its last caller `fn_8002623C` is **claimed and `NonMatching` at 95.2%**, blocked only by the C++ function-end branch pair in [`nonmatching.md`](nonmatching.md), so the whole file 0x8002623C-0x80027D58 is out of reach until that is solved. Next is `fn_80114420` (SFX).
+3. **Character type** ([`characters.md`](characters.md) sections 1 and 5): `fn_80020E60` is **matched** (`Game/fn_80020E60.c`), as are its callers `fn_8001C258` (`Game/fn_8001C258.cpp`, the aura on/off) and `fn_80023010` (`Game/fn_80023010.c`, which fills the two aura tables and spawns the flame auras). Its last caller `fn_8002623C` is **claimed and `NonMatching` at 95.2%**, blocked only by the C++ function-end branch pair in [`nonmatching.md`](nonmatching.md), so the whole file 0x8002623C-0x80027D58 is out of reach until that is solved. `fn_80114420` (the per-character SFX banks) is **matched** (`Game/fn_80114420.cpp`), which completes this step apart from `fn_8002623C`.
 4. **Selection to spawn** ([`characters.md`](characters.md) section 3): the slot methods `fn_80443B70`, `fn_80443BC8`, `fn_80443BF4`, `fn_80443CCC` and `fn_804428E0`, then `fn_80131060`, `fn_800887AC`, `fn_801311C0`, and `fn_800B5BC4` with its helpers. This is where the entity name should lead to the model, motion set and NVB loads.
 5. **`control.cpp`** (unit `Game/handlers/control.cpp`, starting at 0x801040F4). The first twelve functions are small getters (`gPALMode` through `gPlatform`). After them come the versus handlers in address order: `Control_ChangeScreen`, `Control_EnableControllerCheck`, `Control_SetMatchInfo`, `Control_SetSelectInfo`, `Control_StartLoad`, `Control_StartProgressBar`, `Control_StartGame` and `Control_EndOfMatch`. Then finish the file (`Control_BindController` is further down), ending with its static initializer.
 6. **`venuetable.cpp`** (unit `Game/handlers/venuetable.cpp`): all six handlers.
@@ -152,7 +152,7 @@ Out of scope for versus: `memcard.cpp` (except for checking whether saves depend
 
 ## 6. Open Questions
 
-- What do the role indices at `+0x770`/`+0x774` mean, and what are match types 0, 1 and 2? (`+0x590` is settled: the active slot count, section 4.1.)
+- What do the role indices at `+0x770`/`+0x774` mean, and what are match types 0, 1 and 2? `fn_80114420` only gates on whether either is nonzero, so it narrows this to "nonzero means a versus match" without naming the values. (`+0x590` is settled: the active slot count, section 4.1.)
 - What is the `Slot` layout (0xB0 bytes)? Flag `4` at `+0x34` and `99` at `+0x3C` are set for slot 1 in match type 1.
 - What is `SetMatchInfo`'s unused third argument?
 - What is in the unidentified files at 0x801070FC and 0x8010C528?
