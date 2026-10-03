@@ -23,6 +23,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **Linker-generated addresses (`_stack_addr`, `_stack_end`, `__ArenaLo`, `__ArenaHi`) are defined in [`ldscript.lcf`](../config/GVLE69/ldscript.lcf).** If `main.dol` differs only in `lis`/`addi` pairs near `0x8067xxxx`/`0x8068xxxx`, check these first.
 - **`.sdata2` symbols work in compiled code** (see [`baseline.md`](baseline.md#small-data-r13-problem)). `Range Error for small data relocation` means `build.ninja` wasn't generated with `dtk-dev`, or `build/GVLE69/sda_bake.json` is missing. In asm, name the symbol instead of writing a raw `off(r13)`.
 
+- **A `NonMatching` leaf function stuck a few instructions oversized despite near-100% fuzzy%: check `.cpp` vs `.c`.** C++ (even `extern "C"`) adds a redundant second branch to the epilogue after every `return` that plain C skips. See [`prodg.md`](prodg.md#flags).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

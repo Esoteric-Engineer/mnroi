@@ -304,6 +304,7 @@ config.libs = [
         "progress_category": "game",
         "objects": [
             Object(Matching, "Game/fn_800092CC.cpp"),
+            Object(Matching, "Game/fn_80431CCC.c"),
         ],
     },
     {

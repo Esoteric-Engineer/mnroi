@@ -36,7 +36,7 @@ Only three functions call it: `fn_8001C258`, `fn_80023010` and `fn_8002623C`.
 
 ## 2. Roster Table
 
-`fn_80431CCC(int index, int remap, int alt)` returns `&table[index]`, where the table is `lbl_804CA51C` (normal costumes) or, when `alt == 1`, `lbl_804CAB0C` (alternate costumes). If `remap` is set, `index` first goes through `lbl_804CB0FC`, an `int[20]` that maps select-screen order to roster index. Both tables are `Record[20]`, which is 0x5F0 bytes each.
+`fn_80431CCC(int index, int remap, int alt)` returns `&table[index]`, where the table is `lbl_804CA51C` (normal costumes) or, when `alt == 1`, `lbl_804CAB0C` (alternate costumes). If `remap` is set, `index` first goes through `lbl_804CB0FC`, an `int[20]` that maps select-screen order to roster index. Both tables are `Record[20]`, which is 0x5F0 bytes each (`Record` is 0x4C bytes). **Matched** (`Game/fn_80431CCC.c`); it's plain C, not a C++ method, despite sitting among C++ handler files (see [`prodg.md`](prodg.md#flags)).
 
 | Offset | Type | Meaning | Wolverine |
 |---|---|---|---|

@@ -47,6 +47,8 @@ Plain `char` is signed. `cc1` sign-extends it (`extsb`), even though `ngccc`'s p
 
 `-O2 -fno-omit-frame-pointer` gives the same prologue but not the doubled branch or the spills. Checked on `fn_8000923C`, `fn_80009280` (member calls through `this+0x39C0`) and the static initializer in `Game/fn_800092CC.cpp`.
 
+**The doubled branch only shows up through `cc1plus`.** A plain C leaf function (no calls) compiled at `-O0` with `register` on its parameters and any never-reassigned local keeps them in registers for the whole function (no frame slot, no `stw`/`lwz` round-trip) and emits exactly one `b` per `return`. The same source compiled as C++ (even `extern "C"`) adds a redundant second `b .Lepilogue` after each `return`'s branch (both relocated `R_PPC_REL24`/`_REL14` to the same target) and spills every parameter to the frame regardless of `register`. Symptom: a `NonMatching` unit stuck a few instructions over size with otherwise-perfect fuzzy%. Fix: if the function has no class/this and no C++-only construct, give its unit a `.c` extension instead of `.cpp`. Confirmed on `fn_80431CCC` (0x80431CCC, roster accessor, [`characters.md`](characters.md#2-roster-table)).
+
 **Not everything is `-O0`.** The colour constructor `__5ColorUcUcUcUc` (0x80426EC4) keeps its arguments in registers, and about half the functions in 0x80196884-0x803FF3B0 have no frame pointer: some files, perhaps a middleware library, used other flags. Give those units their own flags when they come up.
 
 ### Release
