@@ -50,6 +50,8 @@ The table is in `.data`, and `+0x48` probably changes at runtime as characters a
 
 Accessors, one per field, called by `clashCharSelect_GetCharList`: `fn_8044B1D4` (name key), `fn_8044B234` (intel), `fn_8044B298`, `fn_8044B2FC`, `fn_8044B360`, `fn_8044B3C4`, `fn_8044B428`, and `fn_8044B48C` (unlocked, 5 callers). Other readers of the table: `fn_804316B0`, `fn_80443678`, `fn_804436D4`, `fn_8044F070` and `fn_80461288`.
 
+**Confirmed** (`Game/fn_8044B1D4.c`, 0x8044B1D4-0x8044B4EC): each is `fn_80431CCC(index, remap, alt)` followed by one field read, which confirms the `+0x40`-`+0x45` stats order (intel, strength, speed, durability, energy, skill) and the `+0x48` unlocked field. They're plain C like `fn_80431CCC`, not registered as APT handlers themselves — `fn_8044B1D4`'s two callers (0x80103830 in the characterselect range, 0x8010B744 in the mission.cpp range) both call it directly. The surrounding 0x8044AF58-0x8044EE3C region is mostly unrelated: a chain of generic registration-constructor templates (`fn_8044AF58`, `fn_8044B11C`, `fn_8044BBC8`...) that are called from the six *handler* files (section 2), not from this one; this accessor block just happens to be link-adjacent to them. The unit is **NonMatching** at 99%: see [`nonmatching.md`](nonmatching.md#game-fn_8044b1d4c--roster-field-accessors) for the one-register diff.
+
 **`clashCharSelect_GetCharList` loops `for (i = 1; i <= 18; i++)`**: the roster size is a literal in the code, not read from the data.
 
 ---

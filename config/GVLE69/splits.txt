@@ -3080,6 +3080,9 @@ Dolphin/texPalette/TEXGet.c:
 Game/fn_80431CCC.c:
 	.text       start:0x80431CCC end:0x80431D58
 
+Game/fn_8044B1D4.c:
+	.text       start:0x8044B1D4 end:0x8044B4EC
+
 Dolphin/os/fn_80003254.c:
 	.init       start:0x80003254 end:0x800032C0
 
