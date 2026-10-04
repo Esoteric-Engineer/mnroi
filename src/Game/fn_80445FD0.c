@@ -162,3 +162,11 @@ void fn_80446460(register char *self, register int a)
         *(int *)(self + 0x2D8) |= 1;
     }
 }
+
+extern const float lbl_8048CD14 __attribute__((section(".rodata")));
+
+void fn_804464A8(register float *self)
+{
+    self[3] = self[5]; // +0xC = +0x14
+    self[6] = lbl_8048CD14; // +0x18
+}

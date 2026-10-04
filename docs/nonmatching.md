@@ -113,7 +113,7 @@ block for the second pair, declaring the plain locals first, a fourth `register`
 
 ---
 
-## `fn_80445E50` and `fn_80445F70` — float literals in another unit's `.rodata` pool (unclaimed)
+## `fn_80445E50`, `fn_80445F70` and `fn_804464DC` — float literals in another unit's `.rodata` pool (unclaimed)
 
 0x80445E50-0x80445F00 and 0x80445F70-0x80445FD0. The pool 0x8048BED0-0x8048BF44 (`lbl_8048BEDC` 6.0f,
 `lbl_8048BEE0` 2^31 double, `lbl_8048BEE8` 0.0f...) is read in `.text` order by this file's functions,
@@ -130,6 +130,10 @@ Leaving it unclaimed means the literals have to be `extern`s:
   0x18-byte entries) is 86%: with `lbl_8048BEE8[0]` the `lis` for the 0.0f is emitted *before* the
   `lfsx` of the left operand (the extern's address is legitimised at expansion, a pooled literal's at
   use), and the base/index registers swap. Swapping the operands is worse (78%).
+- `fn_804464DC(self)`: `return self[6] != 0.0f && self[3] != self[5];` (floats; pool 0x8048CD18, claiming
+  0x8048CD14 onwards is cyclic through `auto_04_8048D080_rodata`) is 89.8%: same `lis`-before-`lfs`
+  order. `register float v = self[6];` fixes the order but keeps `v` in `f0` and shifts the later
+  float registers; a `volatile` load of the left operand changes nothing.
 
 ---
 
