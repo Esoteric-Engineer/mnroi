@@ -282,6 +282,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **A call whose integer argument is loaded (`lwz r3`) after `f1`-`f4` is set up has that argument declared after the floats.** The moves into argument registers follow declaration order, and the float and integer register files are independent, so `r3` last means a prototype like `f(float, float, float, float, int, float)`, not an earlier evaluation of the local (`Game/fn_800B4CF8.c`, `fn_800B5124`'s call to `fn_800189E0`).
 
+- **A prologue that spills `r5`-`r10` and, behind a `bne cr1`, `f1`-`f8` into a 0x78 frame is a variadic function, and an empty body reproduces it.** `void f(register void *a, register int b, ...) { }` gives the register-save area and the two `mr` copies of the named parameters (`Game/fn_80442010.c`, `fn_8044256C`).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

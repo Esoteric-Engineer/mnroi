@@ -3143,6 +3143,9 @@ Dolphin/texPalette/TEXGet.c:
 Game/fn_80431CCC.c:
 	.text       start:0x80431CCC end:0x80431D58
 
+Game/fn_80442010.c:
+	.text       start:0x80442010 end:0x804428E0
+
 Game/fn_804428E0.c:
 	.text       start:0x804428E0 end:0x804436D4
 
