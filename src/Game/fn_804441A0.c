@@ -12,6 +12,7 @@ extern void *fn_800B14A0(void *p);
 extern int fn_80085E8C(void *p);
 extern int fn_80444544(char *p);
 extern int fn_80426AB0(void *g);
+extern int fn_80444CA4(void *p);
 extern int lbl_8066B664;
 extern char lbl_8052F060[];
 extern char lbl_80552110[]; // G
@@ -100,4 +101,50 @@ int fn_80444544(register char *self)
 int fn_80444570(register char *self)
 {
     return *(unsigned short *)(self + 4) & 0x10;
+}
+
+int fn_804445A4(register char *self)
+{
+    return *(unsigned short *)(self + 4) & 0x200;
+}
+
+int fn_804445D8(register char *self)
+{
+    return *(unsigned short *)(self + 4) & 0x400;
+}
+
+char *fn_8044460C(register char *self)
+{
+    return self + 0x10;
+}
+
+void fn_80444638(register char *self, register int on)
+{
+    if (on)
+        *(unsigned short *)(self + 4) |= 0x1000;
+    else
+        *(unsigned short *)(self + 4) &= ~0x1000;
+}
+
+char *fn_80444688(register char *self)
+{
+    return self + 0x10;
+}
+
+void fn_804446B4(register char *self, register void *p)
+{
+    if (p)
+        *(short *)(self + 0x20) = fn_80444CA4(p);
+    else
+        *(short *)(self + 0x20) = -1;
+}
+
+int fn_80444710(register char *self)
+{
+    return *(unsigned char *)(self + 0x22);
+}
+
+int fn_80444740(register char *self)
+{
+    return *(unsigned char *)(self + 0x2A);
 }
