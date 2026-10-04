@@ -6,6 +6,11 @@ See also:
 - The per-function loop: [`workflow.md`](workflow.md).
 - C++ naming, mangling and static initialization: [`prodg.md`](prodg.md#c).
 
+**This is a reference, not a narrative: read the section you need, not the file.** Section 5 alone is
+enough to pick a target and know its blocker; the rest answers questions as they come up. What a
+matched function does is in its source file, and `configure.py` is the authority on which units are
+matched, so neither is repeated here.
+
 Everything here comes from reading the disassembly. Names in the "Meaning" columns are guesses until a unit matches; update them when you learn better.
 
 ---
@@ -141,28 +146,69 @@ These are plain getters and setters around small-data globals. The setup handler
 
 ## 5. Target Order
 
-Work these in order and skip whatever is already matched (check `configure.py`). The character code comes first because adding characters is the first mod the community wants ([`characters.md`](characters.md)). Name each unit after its real source file when it is known (section 2), and grow it as one contiguous `.text` range from the file's first function, so that the unit becomes the whole file once it is finished. Where the file is unknown, use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
+Work these in order and skip whatever is already matched. `configure.py` is the authority on unit
+status; this table gives the order and the blockers, not a changelog. Name each unit after its real
+source file when it is known (section 2) and grow it as one contiguous `.text` range from the file's
+first function, so the unit becomes the whole file once it is finished; otherwise use decomp-next's
+`Game/fn_XXXXXXXX.cpp` naming. The character code comes first because adding characters is the first
+mod the community wants ([`characters.md`](characters.md)).
 
-1. **`characterselect.cpp`** (unit `Game/handlers/characterselect.cpp`, 0x801037B0-0x801040F4, start confirmed in section 2). `clashCharSelect_GetCharList` is **claimed and `NonMatching` at 99.2%**: it is blocked, with `clashCharSelect_GetPrevCharList` behind it, by the C++ aggregate-return branch gap in [`nonmatching.md`](nonmatching.md). `fn_80103FC4` and the static initializer are not affected but sit after the two blocked handlers. Pick this file up again when [`prodg.md`](prodg.md#release) says a release reproduces a class returned by value.
-2. **Character roster** ([`characters.md`](characters.md) section 2): `fn_80431CCC` and the per-field accessors `fn_8044B1D4`-`fn_8044B48C` are **matched** (`Game/fn_80431CCC.c`, `Game/fn_8044B1D4.c`), which leaves the roster data `lbl_804CA51C`, `lbl_804CAB0C` and `lbl_804CB0FC`. They sit among the APT registration constructors at 0x8044AF58-0x8044EE3C, so work out the file boundaries there before claiming anything.
-3. **Character type** ([`characters.md`](characters.md) sections 1 and 5): `fn_80020E60` is **matched** (`Game/fn_80020E60.c`), as are its callers `fn_8001C258` (`Game/fn_8001C258.cpp`, the aura on/off) and `fn_80023010` (`Game/fn_80023010.c`, which fills the two aura tables and spawns the flame auras). Its last caller `fn_8002623C` is **claimed and `NonMatching` at 95.2%**, blocked only by the C++ function-end branch pair in [`nonmatching.md`](nonmatching.md), so the whole file 0x8002623C-0x80027D58 is out of reach until that is solved. `fn_80114420` (the per-character SFX banks) is **matched** (`Game/fn_80114420.cpp`), which completes this step apart from `fn_8002623C`.
-4. **Selection to spawn** ([`characters.md`](characters.md) section 3): 0x804437D8-0x80443E9C is **matched**, as three units: `Game/fn_804437D8.c` (0x804437D8-0x80443908), `Game/fn_80443908.cpp` (0x80443908-0x804439E8) and `Game/fn_80443B70.c` (0x804439E8-0x80443E9C). 0x804428E0-0x80443678 is **matched** as `Game/fn_804428E0.c`, which grows forward through the accessor run towards 0x804437D8. 0x80443678-0x804437D8 is now **matched** too, except `fn_804436D4` ([`nonmatching.md`](nonmatching.md)): `fn_80443678` extended `Game/fn_804428E0.c`, and the three accessors after the gap are `Game/fn_8044374C.c`. `fn_80131060` and `fn_801311C0` are **matched** with `fn_80131294` as `Game/fn_80131060.c` (0x80131060-0x80131308; the file's own start is not known yet, and `fn_80131294` returns the player entity's lowercased name through `fn_800FC3DC`). `fn_800887AC` is now claimed as `Game/fn_800887AC.cpp` and is **NonMatching** at 99.8%, blocked only by the C++ function-end branch pair ([`nonmatching.md`](nonmatching.md)); it is the `.nsc` mission/arena script parser and it named most of the record's fields ([`characters.md`](characters.md) section 4). `fn_80088740`, the one function before the parser, is now **matched** as `Game/fn_80088740.c`. `fn_800B5BC4` is **matched** too, as `Game/fn_800B5BC4.cpp`: it is the debug-menu command dispatcher, not a state machine, and section 6 has what it gave up. Its file carries the function-end branch pair, and the per-command methods behind it are now **matched** too, as `Game/fn_800B7204.c` (0x800B7204-0x800B869C, 42 functions, section 6). `fn_800B678C`, the per-frame update, is **matched** as `Update__8GameFlow` in the same unit, as are the fifteen methods after it: the frame-rate and load-progress overlays, then the load, screen and command-queue methods (section 6). `fn_800B6FE4` and `fn_800B703C`, the two *free* functions after the methods, are **matched** in the same unit as `OnPadRemoved__FUs` and `OnPadInserted__FUs` (section 6); they needed no `force_active`, because the registration in `fn_801AA5E4` takes their addresses and that relocation keeps them alive. The unit now covers 0x800B5BC4-0x800B7094, and 0x800B7094 is a confirmed file end: 0x800B7094-0x800B7204 is a separate, globals-only source file, **matched** in full as `Game/fn_800B7094.c` (section 6). So this unit cannot grow forwards, and 0x800B5BC4 is a confirmed file *start* as well: the functions before it carry no C++ function-end branch pair while every function in it does ([`nonmatching.md`](nonmatching.md)), so `Game/fn_800B5BC4.cpp` is a whole source file. The file before it is 0x800B43F0-0x800B5BC4, and 0x800B43F0 is its first function, because `fn_800B43AC` (0x800B43AC) is the *previous* file's `_GLOBAL_.I`, with its `.ctors` word at 0x80482624. That file holds more `GameFlow` methods — `fn_800B5988` calls `RunCommand` on `this` and `fn_800B5930` calls `SetCommand`/`BeginLoad` — so the class is split across two source files. It is pair-less, so its constructor and destructor are what a `.cpp` unit can reach: `fn_800B43F0` and `fn_800B4634` are **matched** as `__8GameFlow` and `_._8GameFlow` in `Game/fn_800B43F0.cpp` (0x800B43F0-0x800B46B0), since both end with one trailing branch rather than the pair ([`matching_notes.md`](matching_notes.md)). The four teardown methods after them are **matched** through the `.c` workaround as `Game/fn_800B46B0.c` (0x800B46B0-0x800B47C0, section 6). Everything else in the file needs either the pair-less configuration or that workaround, which `fn_800B5AFC`, `fn_800B5694`, `fn_800B56B4` and the other small ones fit (their returns account for every trailing branch they have). The per-command methods `RunCommand` dispatches to from 0x800B7204 on are in the file *after* the globals file, not in either of these, and that file is **matched** in full as `Game/fn_800B7204.c` (section 6), which gives the menu-to-level load path. The next target in this step is therefore the rest of the pair-less file, from `fn_800B47C0` (0x800B47C0) on; its small `void` methods fit the `.c` workaround. `fn_800B47C0`, the debug overlay `Update` ends the frame with, is the first of them and carries *two* trailing branches, so its language is still open. This is where the entity name should lead to the model, motion set and NVB loads.
-    These are not C++ methods despite acting on a slot: 0x80442010-0x80443E9C is a long run of leaf accessors with `register` parameters (`r3` copied to a volatile, not kept in `r30`), and they match as plain C, so the C++ function-end branch pair in [`nonmatching.md`](nonmatching.md) mostly does not block this step. The run is not one source file: 0x80443908-0x804439E8 is four functions that *do* carry the pair and only match as `.cpp`, between two `.c` runs, so extend the range as separate units and let each function's trailing-branch count pick the language ([`matching_notes.md`](matching_notes.md)). `fn_804428E0` sits *before* the units, so it got its own unit at 0x804428E0 to grow forwards from instead; the last two functions matched are on neither the slot nor `G` (`fn_80443DF8` sets `+0x44` on the object `fn_80095EAC` keeps at its own `+0x68`, and `fn_80443E20` draws a `[0,1)` float from a 4-byte seed object callers build on the stack, `seed = seed * 0x19660D + 0x3C6EF35F`), so the run is not all slot and game-state code. Forwards the unit stops at `fn_80443E9C`, which allocates 0x18 bytes through `fn_801ACED4` and stores a fixed pointer at `+0x4` before calling another constructor (`fn_80444034`): that reads as C++, and a `.c` unit cannot grow into it.
-    What the matched accessors act on, in address order: a 0x30-byte descriptor `fn_8008A010` builds on its stack, with a one-byte member at +0x10 and another at +0x11, each with its own constructor and setter (`fn_804437D8`-`fn_804438DC`); the global `lbl_80593BE8`, which holds two `fn_80443E20` seeds at +0x4 and +0x8, the frame time in milliseconds at +0xC (`fn_804324EC` is its getter; `DrawFrameRate` turns it into the FPS readout) and a loading flag at +0x5C (`fn_80443908`-`fn_804439A4`; `GameFlow::LoadLevel` sets it through `fn_801AF754` and `GameFlow::EndLoad` clears it through `fn_804325CC`, and `fn_804439A4` returns `> 0`); the object `fn_8009AD80` returns for an actor, whose floats at +0x48, +0x54, +0x58 and +0x5C are multiplied together (`fn_804439E8`); the name table at `fn_804326B4(lbl_8054EF38)`, three `char[3][0x20]` lists at +0x340, +0x3A0 and +0x400 with a byte count each at +0x47B-+0x47D, which `fn_80092B7C` picks from at random and plays through `fn_80057894` (`fn_80443A2C`-`fn_80443B40`); and then the player slots and `G`.
-    That name table is only part of a much larger object, and 0x80442918-0x80443678 is the run of setters and getters on it. All of it is **matched**, so its layout is now a table in [`characters.md`](characters.md) section 4 instead of a list here. It is **not** a `.nvb` tuning record, as earlier guessed: `fn_800887AC` fills it from an `.nsc` mission/arena script, one keyword per field. The same run also acts on the object that *owns* those records, whose own int flags live at `+0x1AC` — not the `actor+0x1AC` of [`characters.md`](characters.md) section 5, a different object at the same offset. The unit now stops at `fn_804436D4`, the one function in 0x804428E0-0x804437D8 still unmatched ([`nonmatching.md`](nonmatching.md)); the `mr rNN, r3` shape that used to stall this run and the roster accessors is solved and is in [`matching_notes.md`](matching_notes.md).
-5. **`control.cpp`** (unit `Game/handlers/control.cpp`, starting at 0x801040F4). The first twelve functions are small getters (`gPALMode` through `gPlatform`). After them come the versus handlers in address order: `Control_ChangeScreen`, `Control_EnableControllerCheck`, `Control_SetMatchInfo`, `Control_SetSelectInfo`, `Control_StartLoad`, `Control_StartProgressBar`, `Control_StartGame` and `Control_EndOfMatch`. Then finish the file (`Control_BindController` is further down), ending with its static initializer.
-    Measured before starting it, this file is blocked the same way as `characterselect.cpp`: the twelve getters carry one trailing branch per `return` and `Control_ChangeScreen` one before its C++ temporary's destructor, which is the pair-less shape, so every function comes out 8 bytes over as `.cpp` ([`nonmatching.md`](nonmatching.md)). The getters are pure and would match in a `.c` unit under another name; the handlers that build APT temporaries would not.
-6. **`venuetable.cpp`** (unit `Game/handlers/venuetable.cpp`): all six handlers.
-7. **The last-selection module** (0x801317D8-0x80131E90). These are tiny accessors, so they are quick to match and give names to everything in section 4.2.
-8. **`G`'s other methods called by the above:** `fn_80431788`-`fn_80431844`, then the most-called ones in section 4.1.
-9. **Readers of the match fields:** `fn_80028BAC`, `fn_8002BD34`, `fn_80131434`, `fn_8011A94C`, `fn_8011AB34`, and then whatever they lead to. This is where the game moves from menus into the match itself.
+| # | Target | Next action / blocker |
+|---|---|---|
+| 1 | `characterselect.cpp`, 0x801037B0-0x801040F4 | Blocked: both handlers return a class by value, which hits the function-end branch pair ([`nonmatching.md`](nonmatching.md)). `fn_80103FC4` and the static initializer sit behind them. |
+| 2 | Character roster ([`characters.md`](characters.md) section 2) | Accessors done; the roster *data* (`lbl_804CA51C`, `lbl_804CAB0C`, `lbl_804CB0FC`) is left. It sits among the APT registration constructors at 0x8044AF58-0x8044EE3C, so work out those file boundaries before claiming anything. |
+| 3 | Character type ([`characters.md`](characters.md) sections 1, 5) | Done except `fn_8002623C`, which blocks the whole file 0x8002623C-0x80027D58 on the branch pair. |
+| 4 | Selection to spawn ([`characters.md`](characters.md) section 3) | **Current step**, notes below. Next function: `fn_800B47C0`. |
+| 5 | `control.cpp`, from 0x801040F4 | Blocked like step 1: the twelve getters and `Control_ChangeScreen` are pair-less, so each is 8 bytes over as `.cpp`. The getters would match in a `.c` unit under another name; the handlers that build APT temporaries would not. Handler order after the getters: `Control_ChangeScreen`, `Control_EnableControllerCheck`, `Control_SetMatchInfo`, `Control_SetSelectInfo`, `Control_StartLoad`, `Control_StartProgressBar`, `Control_StartGame`, `Control_EndOfMatch`, then the rest of the file (`Control_BindController` is further down) and its static initializer. |
+| 6 | `venuetable.cpp` | All six handlers. |
+| 7 | Last-selection module, 0x801317D8-0x80131E90 | Tiny accessors; they name everything in section 4.2. |
+| 8 | `G`'s other methods | `fn_80431788`-`fn_80431844`, then the most-called ones in section 4.1. |
+| 9 | Readers of the match fields | `fn_80028BAC`, `fn_8002BD34`, `fn_80131434`, `fn_8011A94C`, `fn_8011AB34`, and what they lead to. This is where the game leaves the menus. |
 
-Out of scope for versus: `memcard.cpp` (except for checking whether saves depend on the roster size, see [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
+Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size,
+[`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code
+(Havok `hk*`, RealCore, RealGraph).
+
+### Step 4: files and boundaries
+
+Only what costs disassembly to re-derive. What a matched function *does* is in its source file.
+
+- **0x80442010-0x80443E9C** is a long run of leaf accessors with `register` parameters: plain C
+  despite acting on a slot, so the branch pair mostly does not block this step. It is not one source
+  file — 0x80443908-0x804439E8 carries the pair between two pair-less runs — so let each function's
+  trailing-branch count pick the language ([`matching_notes.md`](matching_notes.md)). Forwards it
+  stops at `fn_80443E9C`, which is C++ (`new` through `fn_801ACED4`). `fn_804436D4` is the one
+  unmatched gap ([`nonmatching.md`](nonmatching.md)).
+- **What those accessors act on**, in address order: a 0x30-byte descriptor `fn_8008A010` builds on
+  its stack; the globals object `lbl_80593BE8` (two RNG seeds at +0x4 and +0x8, frame time in ms at
+  +0xC, loading flag at +0x5C); the object `fn_8009AD80` returns for an actor; the name table at
+  `fn_804326B4(lbl_8054EF38)`, whose layout is [`characters.md`](characters.md) section 4; then the
+  player slots and `G`. That name-table object is filled from an `.nsc` script by `fn_800887AC`, not
+  from a `.nvb` record, and the object that *owns* those records keeps its own int flags at `+0x1AC`
+  (not the `actor+0x1AC` of [`characters.md`](characters.md) section 5).
+- **`GameFlow` is split across four source files.** The pair clusters by file, which fixes every
+  boundary below to the instruction ([`nonmatching.md`](nonmatching.md)):
+
+  | Range | Pair? | Unit | Left to do |
+  |---|---|---|---|
+  | 0x800B43F0-0x800B5BC4 | pair-less | `Game/fn_800B43F0.cpp`, `Game/fn_800B46B0.c` | **From `fn_800B47C0` on.** Only the constructor and destructor are reachable as `.cpp`; the rest needs the `.c` workaround, which `fn_800B5AFC`, `fn_800B5694`, `fn_800B56B4` and the other small `void` ones fit. `fn_800B47C0` carries *two* trailing branches, so its language is still open. |
+  | 0x800B5BC4-0x800B7094 | carries it | `Game/fn_800B5BC4.cpp` | Done. |
+  | 0x800B7094-0x800B7204 | pair-less | `Game/fn_800B7094.c` | Done; globals only. |
+  | 0x800B7204-0x800B869C | pair-less | `Game/fn_800B7204.c` | Done; 40 per-command methods. |
+
+  0x800B43F0 is a confirmed file *start*: `fn_800B43AC` is the previous file's `_GLOBAL_.I`, with its
+  `.ctors` word at 0x80482624. The first file also holds `fn_800B5988` (calls `RunCommand`) and
+  `fn_800B5930` (calls `SetCommand`/`BeginLoad`), and is where the entity name should lead to the
+  model, motion set and NVB loads.
 
 ## 6. The `GameFlow` Command Dispatcher
 
-`RunCommand__8GameFlow` (0x800B5BC4, dtk's `fn_800B5BC4`) is **matched** (`Game/fn_800B5BC4.cpp`,
-which now covers 0x800B5BC4-0x800B7094). It is not the state machine section 5 guessed at: it is a per-frame command dispatcher, called from `fn_800B5988` once a frame. The single instance is `lbl_80552920` (`.bss`), which `fn_8002B9F0`'s main loop drives directly. It runs only while `fn_8012D470()` (the `lbl_8066BE94` flag) is set and `this+0x158` is clear, then switches on the pending command at `this+0x20` (`unsigned`): 71 case values in 0-0x5B plus an empty `default`, most arms one call on `this`. So the class owns some 50 per-command methods in 0x800B6AA4-0x800B869C, and the unit's `switch` is the command-to-method map; the 40 of them in 0x800B7204-0x800B869C are **matched** and mapped below.
+`RunCommand__8GameFlow` (0x800B5BC4) is a per-frame command dispatcher, called from `fn_800B5988`
+once a frame. The single instance is `lbl_80552920` (`.bss`), which `fn_8002B9F0`'s main loop drives
+directly. It runs only while `fn_8012D470()` (the `lbl_8066BE94` flag) is set and `this+0x158` is
+clear, then switches on the pending command at `this+0x20` (`unsigned`): 71 case values in 0-0x5B
+plus an empty `default`, most arms one call on `this`. So the class owns some 50 per-command methods
+in 0x800B6AA4-0x800B869C, and that `switch` is the command-to-method map.
 
 Two of them carry 20 of the arms: `fn_800B6B34(this, n, 1)` with `n` in 1-0x21, followed by `fn_800B6E44(this, 0)`. They read as "open screen `n`" and "go to state `n`", which would make the second argument of each a screen or state id rather than a command.
 
@@ -179,28 +225,17 @@ Two of them carry 20 of the arms: `fn_800B6B34(this, n, 1)` with `n` in 1-0x21, 
 
 Ahead of the switch, five command **ranges** go to one handler each, so the id space is wider than the menu: 0x34-0x38 to `fn_800B7204`; 0x39-0x3D to `fn_800B6B34(this, 4, 1)` with `this+0x1BC = command - 5`; 0x2F-0x33 to `fn_800B7268`; and 0x25E-0x35E, 0x35F-0x45F, 0x460-0x560 and 0x561-0x661 to `fn_800B7584`, `fn_800B743C`, `fn_800B74C4` and `fn_800B73C4`.
 
-`Update__8GameFlow` (0x800B678C) is **matched** in the same unit. The main loop calls it on
-`lbl_80552920` once a frame (0x8002C0C8), gated on `+0x68` of its own object; it is the flow's tick,
-not part of the dispatcher. In order it bails out when `fn_80431DDC(this)` (a getter on `+0x130`) is
-set and the level object `lbl_8052F060`'s `+0x4` is 0; calls `fn_80196BF0(this+0x138)`; reads a float
-from `lbl_80593BE8+0x30` into a local the release build no longer uses; while `+0x1C & 1` is set and
-`fn_804460BC(fn_80432BC4())` is 0 (that is, the singleton's `+0x4` is not 3) runs the paused path
-(`fn_8021A5FC(-1)` when `+0x134` is set, then `fn_801284D4`); then `fn_8016732C(fn_80432BC4())`,
-`fn_800B5124(this)` — which ends the frame when it returns nonzero — `fn_800B689C(this)` when
-`+0x1E0 == 1`, and `fn_800B47C0(this)`.
+`Update__8GameFlow` (0x800B678C) is the flow's per-frame tick, not part of the dispatcher: the
+main loop calls it on `lbl_80552920` once a frame (0x8002C0C8), gated on `+0x68` of its own object.
+It runs the paused path while `+0x1C & 1` is set, then `fn_800B5124(this)` (which ends the frame when
+it returns nonzero), `DrawFrameRate` when `+0x1E0 == 1`, and `fn_800B47C0(this)`.
 
-Three more of the class's methods are **matched** in the same unit:
-
-- `DrawFrameRate__8GameFlow` (0x800B689C), which `Update` calls when `+0x1E0 == 1`. It reads the
-  frame time from the globals object (`fn_804324EC(lbl_80593BE8)` returns `lbl_80593BE8+0xC` as an
-  `unsigned`, in milliseconds), prints `1.0f / (ms * 0.001f)` with `"%.0f"` and draws it at
-  (555, 30) through `fn_800B92DC`. It picks font 5 (`fn_800FE284`), sets the height to 32 when
-  `+0x1E0 == 1` and 16 otherwise, and restores the old font afterwards.
-- `SetLoadProgress__8GameFlowfi` (0x800B69D4) and `DrawLoadProgress__8GameFlowii` (0x800B6A30),
-  the load-progress hook. The level loader calls `SetLoadProgress(fraction, 1)` with 0.0, 0.05, 0.5
-  and 1.0 as a level loads (0x8002C6F0 onwards, and from 0x8009B6A4 and 0x800B2A50); it forwards to
-  `DrawLoadProgress(1, 0)`, which the release build has stripped to an empty body. So the progress
-  bar `Control_StartProgressBar` sets up is driven from here.
+Three more of the class's methods, same unit: `DrawFrameRate__8GameFlow` (0x800B689C) draws the FPS
+readout from the globals object's frame time at `lbl_80593BE8+0xC`, and
+`SetLoadProgress__8GameFlowfi` (0x800B69D4) forwards to `DrawLoadProgress__8GameFlowii`
+(0x800B6A30), whose body the release stripped. The level loader calls `SetLoadProgress(fraction, 1)`
+with 0.0, 0.05, 0.5 and 1.0 as a level loads (0x8002C6F0 onwards, plus 0x8009B6A4 and 0x800B2A50),
+so the progress bar `Control_StartProgressBar` sets up is driven from here.
 
 `lbl_8066D6DC` (`.sbss`) is the overlay text object every one of these prints through: `fn_80426E88`
 swaps its font at `+0x18` and returns the old one, `fn_80101188` sets its height at `+0x40`, and
@@ -241,41 +276,22 @@ argument of the player spawn), and `int[2]` at `+0x288`, which the constructor f
 renaming any of them means redoing the mangled symbol. `Stub<addr>` marks a method whose body the
 release build stripped.
 
-The constructor `__8GameFlow` (0x800B43F0, **matched** as `Game/fn_800B43F0.cpp`) is the class's own
-field list, so it settles the types of 50 of them. Beyond the fields above it sets, in its own order:
-`+0x290 = 0`, `+0x168 = 1`, `+0x0 = -1.0f`, `+0x134 = 0`, `+0x4 = 0`, `+0x8 = 0`, `+0x18 = -1.0f`,
-`+0x1C0 = 0`, `+0x180 = 0xFF`, `+0x184 = 0.0f`, `+0x188 = 0.0f`, `+0x130 = 0`,
-`+0x1F4 = 0xFF` (an `unsigned char`), `+0x144 = 0`, `+0x148 = 1`, `+0x1C8`, `+0x1CC`, `+0x1D4`,
-`+0x1D0`, `+0x1C = 4`, `+0x20 = 0`, `+0x1B4`, `+0x1B8`, `+0x1BC`, `+0x28`, `+0x19C`,
-`levelName[0] = 0`, `+0x16C`, `+0x170`, `+0x174`, `+0x178`, `+0x1D8`, then four packed ARGB colors
-(`+0x1E4 = 0xFFE0E0E0`, `+0x1E8 = 0xFF008080`, `+0x1EC = 0x8000E0E0`, `+0x1F0 = 0x80008080`),
-`+0x1DC`, `+0x140`, `+0x13C = 1`, `+0x15C`, `+0x1E0`, `+0x24`, `+0x284`, `+0x280`, `+0x160`,
-`+0x164`, `+0xC = 1`, `+0x14`, `+0x138 = 0`, `+0x150`, `+0x154`, the `-1` loop over `+0x288`, and
-finally `ClearCommandHistory()`. All of them are `int` unless marked. `+0x0` and `+0x18` are floats
-set to -1.0f, and `+0x184`/`+0x188` floats set to 0.0f. Ahead of the body it constructs a member
-object at `+0x18C` through `fn_80430728`, whose body is empty, so `+0x18C`-`+0x19C` is a subobject of
-a class this unit does not have to name.
+### The constructor, destructor and teardown (0x800B43F0-0x800B47C0)
 
-### The destructor and the teardown methods
+`__8GameFlow` and `_._8GameFlow` are the class's own field list, so between them they settle the
+types of 50 fields; the assignments themselves are `src/Game/fn_800B43F0.cpp`. All are `int` except
+`+0x0` and `+0x18` (floats set to -1.0f), `+0x184`/`+0x188` (floats set to 0.0f) and `+0x1F4`
+(`unsigned char`). `+0x18C`-`+0x19C` is a member subobject constructed through `fn_80430728`, whose
+body is empty, so this unit never has to name its class. Only the static initializer of
+`Game/fn_800B7094.c` constructs or destroys the object, the destructor as `(&obj, 2)`.
 
-`_._8GameFlow` (0x800B4634, **matched** in the same unit) releases `+0x138` through `fn_80196B30`
-when it is set, then calls the three teardown methods below in order; its `__in_chrg` second
-parameter and `__builtin_delete` tail are the compiler's ([`prodg.md`](prodg.md#c)), not the
-source's. Only the static initializer of `Game/fn_800B7094.c` calls it, as `(&obj, 2)`.
-
-The three, plus the one after them, are **matched** as `Game/fn_800B46B0.c`:
-
-| Method | Address | What it does |
-|---|---|---|
-| `fn_800B46B0`, `fn_800B46D0` | 0x800B46B0, 0x800B46D0 | Empty; both bodies stripped from the release. |
-| `fn_800B46F0` | 0x800B46F0 | Clears `+0x1D8`, then `fn_8002A624()`, `fn_8044606C(this)` (`+0x1DC = 0`) and `fn_800B5548(this)`; finally releases `+0x16C` through `fn_80232B78` and nulls it. |
-| `fn_800B4764` | 0x800B4764 | When `+0x178` is set: clears the globals' loading flag (`fn_804325CC(lbl_80593BE8)`) if `+0x10` is set, then clears `+0x178`. Called from 0x800B590C, not from the destructor. |
-
-Fields these settle, all `int`: `+0x10` a flag `fn_800B4764` gates the loading-flag clear on,
-`+0x16C` a handle `fn_80232B78` releases, `+0x178` a flag paired with the globals' loading flag, and
-`+0x1D8` a flag the teardown zeroes. `fn_800B47C0`, the function after them, reads `+0x170` and
-`+0x174` as **pointers** to objects with `u16` fields at `+0x58` and `+0x5A`, so the constructor's
-zeroes there are null pointers rather than ints.
+The four teardown methods after them are `Game/fn_800B46B0.c`; `fn_800B4764` is called from
+0x800B590C rather than from the destructor. Fields they settle, all `int`: `+0x10` a flag
+`fn_800B4764` gates the loading-flag clear on, `+0x16C` a handle `fn_80232B78` releases, `+0x178` a
+flag paired with the globals' loading flag (`fn_804325CC(lbl_80593BE8)`, the same call `EndLoad`
+makes), and `+0x1D8` a flag the teardown zeroes. `fn_800B47C0` reads `+0x170` and `+0x174` as
+**pointers** to objects with `u16` fields at `+0x58` and `+0x5A`, so the constructor's zeroes there
+are null pointers rather than ints.
 
 ### The per-command methods (0x800B7204-0x800B869C)
 
@@ -286,7 +302,7 @@ The file after the globals file is **matched** in full as `Game/fn_800B7204.c`: 
 dtk's `fn_800B8594` / `fn_800B8660` are renamed `GameFlowCmdStaticInit` / `GameFlowCmdGlobalInit`.
 The other 40 keep their `fn_` names: they are `GameFlow` methods, but nothing in the DOL names them.
 
-The command-to-method map, completing section 6's switch (`N` after a name is the value the method
+The command-to-method map, completing the switch above (`N` after a name is the value the method
 passes to `fn_80446094`, which sets `this+0x17C`):
 
 | Command | Method | What it does |
@@ -358,40 +374,25 @@ rectangle `Game/fn_800B7094.c` builds, computed from a second width/height pair
 (`lbl_8066BA38`/`lbl_8066BA3C` instead of `lbl_8066BA24`/`lbl_8066BA28`). Nothing outside the file
 reads them.
 
-### The globals file (0x800B7094-0x800B7204)
+### The globals file (0x800B7094-0x800B7204) and the pad hooks
 
-The three functions after the pad hooks are a whole source file of their own, **matched** as
-`Game/fn_800B7094.c`: GCC's `__static_initialization_and_destruction_0` (named
-`GameFlowStaticInit` here, because `symbols.txt` already carries seven locals under the GCC name)
-and its `_GLOBAL_.I` / `_GLOBAL_.D` wrappers, which call it with `(1, 65535)` and `(0, 65535)`.
-The file has no functions of its own, only globals:
+`Game/fn_800B7094.c` is a whole source file with no functions of its own: GCC's
+`__static_initialization_and_destruction_0` (named `GameFlowStaticInit` here, because `symbols.txt`
+already carries seven locals under the GCC name), its `_GLOBAL_.I`/`_GLOBAL_.D` wrappers, and two
+globals. The first is `lbl_80552920`, the `GameFlow` instance, which nothing else in the DOL
+constructs or destroys. The second is four `.sbss` floats at 0x8066D6AC-0x8066D6BC, a rectangle
+derived from the screen size in `.sdata` (`lbl_8066BA24` width, `lbl_8066BA28` height); only
+`lbl_8066D6B4` has another reader, `fn_800B5124` at 0x800B5218.
 
-- `lbl_80552920`, the `GameFlow` instance. Its constructor is `fn_800B43F0` and its destructor
-  `fn_800B4634`, which the static initializer calls as `_._8GameFlow(&obj, 2)`; the destructor's
-  `if (__in_chrg & 1) __builtin_delete(this)` tail is what identifies the pair. Nothing else in the
-  DOL calls either, so the object is only ever constructed from here.
-- four `.sbss` floats at 0x8066D6AC-0x8066D6BC, a rectangle derived from the screen size in
-  `.sdata` (`lbl_8066BA24` width, `lbl_8066BA28` height): `320 - w/2`, that plus `w/2`,
-  `240 - h/2`, and `h/2` plus that minus 12. Only `lbl_8066D6B4` has another reader,
-  `fn_800B5124` at 0x800B5218.
-
-It is a `.c` unit because the original `__sti` has no C++ function-end branch pair
-([`nonmatching.md`](nonmatching.md)) while the file before it does, which is what places the file
-boundary at 0x800B7094 to the instruction.
-
-### The pad hooks
-
-`OnPadRemoved(unsigned short port)` (0x800B6FE4) and `OnPadInserted(unsigned short port)`
-(0x800B703C) are free functions, not methods, and are **matched** in the same unit; both names are
-this project's. Each forwards the SI port to a `GameFlow` method on `lbl_80552920`
-(`fn_800B4AB8` for removed, `fn_800B4CF8` for inserted).
-
-`fn_801AA5E4` registers them once, through `fn_80445F28` and `fn_80445F4C`, which store them in the
-`.sdata` callback slots `lbl_8066C644` and `lbl_8066C648`. That function polls `SIProbe` on ports
-0-3 each pass and keeps a per-port state word at `lbl_805932A0 + port * 0x19C`: a probe type of
-0x8B100000 or 0x09000000 with the state clear means a new pad, so it calls `PADReset`, sets the
-state and fires `lbl_8066C648`; a failed probe with the state set clears it and fires
-`lbl_8066C644`. So the hooks are hotplug notifications and the argument is the port, not a mask.
+`OnPadRemoved__FUs` (0x800B6FE4) and `OnPadInserted__FUs` (0x800B703C) are free functions, not
+methods, and each forwards an SI port to a `GameFlow` method on the instance (`fn_800B4AB8` removed,
+`fn_800B4CF8` inserted). They are hotplug notifications, so the argument is a port and not a mask:
+`fn_801AA5E4` registers them once through `fn_80445F28`/`fn_80445F4C` into the `.sdata` callback
+slots `lbl_8066C644`/`lbl_8066C648`, then polls `SIProbe` on ports 0-3 each pass, keeping a per-port
+state word at `lbl_805932A0 + port * 0x19C`: a probe type of 0x8B100000 or 0x09000000 with the state
+clear means a new pad (`PADReset`, set the state, fire `lbl_8066C648`), and a failed probe with the
+state set clears it and fires `lbl_8066C644`. They needed no `force_active`, because that
+registration takes their addresses and the relocation keeps them alive.
 
 ## 7. Open Questions
 
