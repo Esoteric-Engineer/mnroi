@@ -81,11 +81,12 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   This is what the roster accessors were stuck on (`Game/fn_8044B1D4.c`, `Game/fn_80131060.c`'s `fn_80131294`).
 
 - **A C++ unit comes out 8 bytes over size, with two extra unreachable branches to the epilogue
-  (`b .L` / `b .L` / `.L:` / epilogue).** `cc1plus` emits them at the end of every function that is
-  not a constructor, and most of the DOL's C++ functions do not have them; a class returned by value
-  is only where it was first noticed, not the cause. No release, flag (6138 option/form combinations
-  on `cc1plus.exe`) or source shape fixes it; see [`prodg.md`](prodg.md#release). Stop instead of
-  reshaping the source (`Game/fn_8002623C.cpp`, `Game/handlers/characterselect.cpp`).
+  (`b .L` / `b .L` / `.L:` / epilogue).** `cc1plus` emits them unless an earlier function in the same
+  translation unit set `current_function_return_value`. A constructor or a top-level `return <param/local/
+  global/this>;` sets it, even in an unused inline function, and a `case` or a label clears it. In the
+  original, the setter was usually a constructor or a header's inline function. Put
+  `inline int sn_return_decl(int a) { return a; }` ahead of the unit's first function, or use
+  `strip_fn_end_pair`. See [`prodg.md`](prodg.md#the-function-end-branch-pair).
 
 - **A C++ constructor has exactly *one* trailing branch to the epilogue, not the pair.** So the
   `.c`-vs-`.cpp` trailing-branch test below must exempt constructors: a one-branch tail on a function

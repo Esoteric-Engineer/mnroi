@@ -58,39 +58,83 @@ Plain `char` is signed. `cc1` sign-extends it (`extsb`), even though `ngccc`'s p
 
 All five releases (3.5, 3.5b140, 3.7, 3.8.1, 3.9.3) give the same output for everything compiled so far: the six Newlib functions, the `-O0` member functions and the static initializer. `PRODG_VERSION` stays at 3.9.3 until some function compiles differently on two releases; then pin it to the release that matches.
 
-**No release reproduces the DOL's C++ function ends.** Every bundled `cc1plus` (the five builds are
-distinct: V1.37, v1.40, v1.46, v1.55, v1.76) closes every function that is not a constructor with two
-unreachable branches to the epilogue, and **most of the DOL's C++ functions do not have them.** The
-two shapes cluster by source file, so the DOL was built with at least two compiler configurations.
-Neither is a small minority (see the pair map below). Constructors are the exception and agree with the DOL
-(`Vector::Vector()` compiles byte for byte to 0x80428F74), as do scalar returns in the files that do
-carry the pair (`fn_8022EA78`, `Game/fn_8001C258.cpp`, `Game/fn_800092CC.cpp`). So any C++ unit in a
-pair-less file is 8 bytes over size per function with the stock build. The workaround is
-`strip_fn_end_pair=True` on the unit, which runs `tools/prodg_nopair.py` to delete the pair from the
-generated assembly ([`nonmatching.md`](nonmatching.md) has the details and everything ruled out,
-including 6138 option/form combinations on `cc1plus.exe`). The real configuration is still unknown.
+### The function-end branch pair
+
+`cc1plus` closes a C++ function with two unreachable branches to the epilogue (`b .L5` / `b .L4` / `.L5:` /
+`.L4:`) unless an earlier function **in the same translation unit** left a flag set. The flag explains both
+shapes in the DOL, and one compiler produces both. It is not an option, and the release doesn't matter.
+
+**The code.** GCC 2.95.3's `finish_function` (`cp/decl.c`) creates `no_return_label`, and with it the pair, when
+
+```c
+return_label != NULL_RTX && current_function_return_value == NULL_TREE
+    && ! DECL_NAME (DECL_RESULT (current_function_decl))
+```
+
+and then emits `goto no_return_label` / `emit_jump (return_label)` / `no_return_label:`. -O0's
+`jump_optimize` only marks dead insns, so both jumps reach the output. SN's build has the stock code
+(v1.76 `cc1plus.exe`, `finish_function` at 0x428B10):
+
+| Address | What |
+|---|---|
+| 0x429223 | `cmp %ebp,0x659ce0`: `return_label` |
+| 0x42922B | `mov 0x65b248,%eax`: `current_function_return_value` |
+| 0x429234 | `DECL_NAME (DECL_RESULT (fndecl))` |
+| 0x42924A | `build_decl (LABEL_DECL, 0, 0)` (`no_return_label`) |
+| 0x42928D, 0x4292EF, 0x4292FC | `expand_goto`, `emit_jump (return_label)`, `expand_label` |
+
+`return_label` is never null at expand time: `expand_function_start` (0x4F82F5) clears it only if
+`HAVE_return`, and rs6000's `direct_return` (0x401610) is false before reload. No option, environment
+variable, `sn.ini` setting or pragma touches the other two values.
+
+**The state.** `current_function_return_value` is set by `c_expand_return` (`cp/typeck.c`, binary
+0x46F816) when the returned expression is a declaration and the `return` is not inside an `if`, loop or
+`switch`. **Nothing resets it at the start of a function.** Only `define_label` and `define_case_label`
+clear it (0x41D11B, 0x41D24D): a user label, or a `case`/`default`. So it carries over from one function
+to the next, including inline functions that emit no code:
+
+- **Set by:** any constructor definition (`finish_ctor` returns `this`, a `PARM_DECL`), including an unused
+  in-class inline one in a header such as `B() : y(1) {}`, and one the compiler synthesizes mid-file for a
+  `new`. Also set by a top-level `return this;`, `return <param>;`, `return <local>;` or
+  `return <global>;`, in an inline function too.
+- **Not set by:** a destructor, `return this->x;` or any other expression, a nested `return`, an enumerator,
+  or a `static const` that folds.
+- **Cleared by:** a `switch` with `case`/`default` labels, or a user `label:`, in the function being compiled.
+- A function with the flag set loses the pair and keeps one branch per `return`. A constructor never has
+  the pair, because it sets the flag itself.
+
+**The DOL agrees.** -O0 compiles a switch to a compare chain, and a B function (void, no trailing
+`return`) can't set the flag again after its own `case` labels. So no B function should contain a switch.
+**2 of 1,666 B functions do** (`Global_PlayFEStream` and `Cheat_Enable`, whose C-style names suggest C
+functions with a `register` first parameter, which `pair_map.py` can't tell from methods). **390 of 2,629 A
+functions do.** After a constructor, the next classed function is B 93 times and A 12 times, against a 39%
+B baseline, and 7 of those 12 contain a switch.
+
+**Matching a pair-less unit without `strip_fn_end_pair`.** Put a flag-setter ahead of the unit's first
+function, for example `inline int sn_return_decl(int a) { return a; }` or a header class's in-class
+constructor. It emits no code. With that line, plain `ngccc` gives `Game/fn_800887AC.cpp` and
+`Game/handlers/characterselect.cpp` the same `.text` bytes and relocations as their matched
+`strip_fn_end_pair` objects. Without it each is 8 bytes over. Order matters inside a unit: a function
+that comes before the first setter, or after a `switch`/label, keeps the pair.
 
 **Pair map.** `python3 tools/pair_map.py` classes every GCC function by its epilogue, and
-`python3 tools/pair_map.py 0x80103BAC` says which run an address is in. A = carries the pair; B = a method
-(`this` in r30) with no trailing branch at all, so certainly not a constructor or C. What it shows:
+`python3 tools/pair_map.py 0x80103BAC` says which run an address is in. A = carries the pair (flag clear);
+B = a method (`this` in r30) with no trailing branch at all (flag set). What it shows:
 
 - 2,629 functions are A and 1,666 are B, in 467 runs. B is undercounted, because a pair-less free function
   with no `return` can't be told from C, so read the totals as "both are common", not as a ratio.
-- A and B alternate through the whole `.text`, 153 of the runs being one or two functions long, so the
-  setting follows individual source files, not libraries or eras.
+- A and B alternate through the whole `.text`, 153 of the runs being one or two functions long: the
+  flag follows each file's headers and function order.
 - B dominates the tail, 0x80440000-0x80480000 (80% of classed functions), where most of the versus-mode
   work lives. A dominates 0x800C0000-0x800F0000 (89%) and 0x80200000-0x80240000 (84%).
-- Prologues and epilogues are identical in A and B, down to the saved-register ranges and frame layout. The
-  code generator is the same and only the function-end branches differ, which favours a per-file source or
-  option difference over a different compiler family, though a second ProDG release is not ruled out.
 - It reproduces every boundary stated above (0x80024C60-0x8002623C and 0x800B5BC4-0x800B7094 are A, 0x80027D58
   starts A again, 0x80443908-0x804439E8 is A between B runs) and agrees with every unit already flagged
   `strip_fn_end_pair`.
 
-A quick way to tell which configuration a file was built with, before claiming anything: look at the
-instructions just before a function's last label. Two identical branches to it means the file carries
-the pair and is reachable today; none means it does not. A single branch is a `return` (in C) or a
-constructor (in C++), so it does not settle the question by itself.
+A quick way to tell a function's state before claiming anything: look at the instructions just before its
+last label. Two identical branches to it means the flag was clear; none means it was set. A single branch
+is a `return` (in C, or in C++ with the flag set) or a constructor, so it does not settle the question by
+itself.
 
 ## C++
 

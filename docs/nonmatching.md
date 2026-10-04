@@ -4,19 +4,20 @@ Functions claimed as `NonMatching`, with what has already been tried. Don't re-g
 
 ---
 
-## The C++ function-end branch pair (worked around)
+## The C++ function-end branch pair (worked around, cause known)
 
-`cc1plus` ends every C++ function that is not a constructor with two unreachable branches to the
-epilogue (`b .L5` / `b .L4` / `.L5:` / `.L4:`), and most of the DOL's C++ functions do not have them.
-No `cc1plus` option removes them (all five releases, every source shape, and 6138 option/form
-combinations on `cc1plus.exe`, plus the `-g`, `-p`, `-a`, `-d` and `-O` families), so the original
-configuration is still unknown ([`prodg.md`](prodg.md#release)).
+`cc1plus` ends a C++ function with two unreachable branches to the epilogue (`b .L5` / `b .L4` / `.L5:` /
+`.L4:`) unless an earlier function in the same translation unit set `current_function_return_value`. A
+constructor sets it, and so does a top-level `return` of a parameter, local, global or `this`, even
+inside an unused inline function. Only a `case`/`default` or a user label clears it. No option changes it.
+[`prodg.md`](prodg.md#the-function-end-branch-pair) has the code, the evidence and the source fix (one
+`inline` setter ahead of the unit's first function).
 
 **Workaround:** give the unit `strip_fn_end_pair=True` in `configure.py`. The build then runs
 `tools/prodg_nopair.py`, which compiles to assembly with `ngccc -S`, deletes the two branches, and assembles
 the result (an assembly detour gives a byte-identical object). A `return` keeps its own single branch.
 Use it for every C++ unit in a pair-less file; units in files that carry the pair (see
-[`prodg.md`](prodg.md#release) for how to tell) must not set it. Flipped so far:
+[`prodg.md`](prodg.md#the-function-end-branch-pair) for how to tell) must not set it. Flipped so far:
 `Game/fn_800887AC.cpp` and `Game/handlers/characterselect.cpp`.
 
 ---
