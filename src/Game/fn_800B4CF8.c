@@ -1,5 +1,5 @@
-// GameFlow::OnPadInserted (the method behind OnPadInserted__FUs): drops the player whose pad came back.
-// A .c unit: the file is pair-less C++, so `this` is a register first parameter.
+// GameFlow::OnPadInserted (the method behind OnPadInserted__FUs): drops the player whose pad came back;
+// fn_800B4F50 clears the unplugged list. A .c unit: the file is pair-less C++, so `this` is a register first parameter.
 
 typedef struct GameFlow
 {
@@ -73,5 +73,16 @@ void fn_800B4CF8(register GameFlow *this, unsigned short port)
         if (this->numUnplugged == 0) {
             this->unk4 = 0;
         }
+    }
+}
+
+void fn_800B4F50(register GameFlow *this)
+{
+    int i;
+
+    this->unk4 = 0;
+    this->numUnplugged = 0;
+    for (i = 0; i < 2; i++) {
+        this->unplugged[i] = -1;
     }
 }
