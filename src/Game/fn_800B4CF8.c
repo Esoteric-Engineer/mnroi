@@ -6,7 +6,10 @@ typedef struct GameFlow
     char unk0[4];
     int unk4;                  // +0x4
     int unk8;                  // +0x8
-    char unkC[0x10];
+    int unkC;                  // +0xC
+    int unk10;                 // +0x10
+    int unk14;                 // +0x14
+    char unk18[4];
     unsigned char unk1C;       // +0x1C
     char unk1D[0x267];
     int numUnplugged;          // +0x284
@@ -29,6 +32,13 @@ extern int fn_8012D63C(int port);
 extern int fn_80122228(void);
 extern int fn_80123298(int a);
 extern int fn_800B4FC0(GameFlow *flow);
+extern int fn_800531AC(void);
+extern int fn_80430024(int a);
+extern int fn_8042D4CC(void);
+extern int fn_8042D52C(int a);
+extern int fn_80121E38(int a);
+extern int fn_80432BC4(void);
+extern int fn_804460BC(int a);
 
 void fn_800B4CF8(register GameFlow *this, unsigned short port)
 {
@@ -85,4 +95,29 @@ void fn_800B4F50(register GameFlow *this)
     for (i = 0; i < 2; i++) {
         this->unplugged[i] = -1;
     }
+}
+
+int fn_800B4FC0(register GameFlow *this)
+{
+    int found = 0;
+    int result = this->unkC;
+
+    if (fn_800531AC()) {
+        found = fn_80430024(fn_800531AC());
+    }
+    if (fn_8042D52C(fn_8042D4CC()) != 0 || fn_80121E38(fn_80122228()) != 0 || fn_80123298(fn_80122228()) != 0
+        || (found != 0 && (this->unk1C & 3) == 0)) {
+        result = 0;
+    } else if (fn_804329E0(lbl_8052F060) == 0) {
+        if (fn_804460BC(fn_80432BC4())) {
+            result = 0;
+        }
+    } else {
+        if (fn_804329E0(lbl_8052F060)) {
+            if (this->unk14 != 0) {
+                result = 1;
+            }
+        }
+    }
+    return result;
 }

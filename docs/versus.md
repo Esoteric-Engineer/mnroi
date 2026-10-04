@@ -159,7 +159,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 1 | `characterselect.cpp`, 0x801037B0-0x801040F4 | Blocked: both handlers return a class by value, which hits the function-end branch pair ([`nonmatching.md`](nonmatching.md)). `fn_80103FC4` and the static initializer sit behind them. |
 | 2 | Character roster ([`characters.md`](characters.md) section 2) | Accessors done; the roster *data* (`lbl_804CA51C`, `lbl_804CAB0C`, `lbl_804CB0FC`) is left. It sits among the APT registration constructors at 0x8044AF58-0x8044EE3C, so work out those file boundaries before claiming anything. |
 | 3 | Character type ([`characters.md`](characters.md) sections 1, 5) | Done except `fn_8002623C`, which blocks the whole file 0x8002623C-0x80027D58 on the branch pair. |
-| 4 | Selection to spawn ([`characters.md`](characters.md) section 3) | **Current step**, notes below. Next function: `fn_800B4FC0`. |
+| 4 | Selection to spawn ([`characters.md`](characters.md) section 3) | **Current step**, notes below. Next function: `fn_800B5124`. |
 | 5 | `control.cpp`, from 0x801040F4 | Blocked like step 1: the twelve getters and `Control_ChangeScreen` are pair-less, so each is 8 bytes over as `.cpp`. The getters would match in a `.c` unit under another name; the handlers that build APT temporaries would not. Handler order after the getters: `Control_ChangeScreen`, `Control_EnableControllerCheck`, `Control_SetMatchInfo`, `Control_SetSelectInfo`, `Control_StartLoad`, `Control_StartProgressBar`, `Control_StartGame`, `Control_EndOfMatch`, then the rest of the file (`Control_BindController` is further down) and its static initializer. |
 | 6 | `venuetable.cpp` | All six handlers. |
 | 7 | Last-selection module, 0x801317D8-0x80131E90 | Tiny accessors; they name everything in section 4.2. |
@@ -192,7 +192,7 @@ Only what costs disassembly to re-derive. What a matched function *does* is in i
 
   | Range | Pair? | Unit | Left to do |
   |---|---|---|---|
-  | 0x800B43F0-0x800B5BC4 | pair-less | `Game/fn_800B43F0.cpp`, `Game/fn_800B46B0.c` | **From `fn_800B4FC0` on.** `fn_800B4AB8` is parked `NonMatching` in its own unit ([`nonmatching.md`](nonmatching.md)). Only the constructor and destructor are reachable as `.cpp`; the rest needs the `.c` workaround, which `fn_800B5AFC`, `fn_800B5694`, `fn_800B56B4` and the other small `void` ones fit. Pair-less is settled for the whole file: no function in it has more than one trailing branch except `fn_800B47C0`, whose two are two `return;` statements. |
+  | 0x800B43F0-0x800B5BC4 | pair-less | `Game/fn_800B43F0.cpp`, `Game/fn_800B46B0.c` | **From `fn_800B5124` on.** `fn_800B4AB8` is parked `NonMatching` in its own unit ([`nonmatching.md`](nonmatching.md)). Only the constructor and destructor are reachable as `.cpp`; the rest needs the `.c` workaround, which `fn_800B5AFC`, `fn_800B5694`, `fn_800B56B4` and the other small `void` ones fit. Pair-less is settled for the whole file: no function in it has more than one trailing branch except `fn_800B47C0`, whose two are two `return;` statements. |
   | 0x800B5BC4-0x800B7094 | carries it | `Game/fn_800B5BC4.cpp` | Done. |
   | 0x800B7094-0x800B7204 | pair-less | `Game/fn_800B7094.c` | Done; globals only. |
   | 0x800B7204-0x800B869C | pair-less | `Game/fn_800B7204.c` | Done; 40 per-command methods. |
@@ -270,7 +270,7 @@ Fourteen more of the class's methods are **matched** in the same unit. They are 
 | `Stub6D48()`, `Stub6E1C()` | 0x800B6D48, 0x800B6E1C | Empty; both stripped. `SetCommand` calls `Stub6E1C` first. |
 
 Fields of the class, types confirmed, meanings guessed. The instance `lbl_80552920` is 0x2A0 bytes:
-`+0x14` int (set to 1 by command 0x3E, cleared by 0x43 and 0x4A), `+0x1C` `unsigned char` of
+`+0xC` int (the default result of `fn_800B4FC0`, which forces 0 or 1 from other state), `+0x14` int (set to 1 by command 0x3E, cleared by 0x43 and 0x4A), `+0x1C` `unsigned char` of
 single-bit flags (bits 0x1, 0x2, 0x4 and 0x8 are each tested on their own, 0x1 by `Update`), though
 `BeginLoad` and `EndLoad` assign it the whole values 3 and 4, so it may be a small state instead,
 `+0x20` the command, `+0x28` int the pending screen, `+0x2C` `char[0x100]` the level name,
