@@ -43,6 +43,18 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **But check the pool address first: one that breaks the unit's `.rodata` ordering is another unit's literal, so reference it instead of claiming it.** Pool addresses rise with `.text` order (`Game/fn_8002623C.cpp` -> 0x80484E58, `Dolphin/os/__cvt_fp2unsigned.c` -> 0x8049C1C8), so a `lis`/`lfs` pair reading from *below* that line is a cross-TU reference, and claiming its range makes `dtk dol split` fail with a cyclic dependency, since the claim puts the unit both before (by `.rodata`) and after (by `.text`) that other unit. `extern const float lbl_<addr>[];` plus `lbl_<addr>[0]` gives the `ADDR16_HA`/`_LO` pair without claiming anything (`Game/fn_80443B70.c`, `fn_80443E20`: its 2^-31 sits in the 0x8009xxxx file's pool).
 - **`objdiff_mismatches.py` can report a `DIFF_REPLACE` with `[R_PPC_NONE]` on the original side alone, on an indexed load right after an `addi rX, rX, sym@l`.** Both sides' instructions are byte-identical and `readelf -r` shows no relocation at that offset in either object: objdiff synthesises the entry. Confirm with `readelf -r` and treat it as matched (`Game/fn_8001C258.cpp`, the `lwzx` at 0x8001C3A8).
+- **A unit whose `.rodata` claim is not a multiple of the section's alignment shifts every later
+  contribution, and `main.dol` comes out a few dozen bytes long.** The assembler pads a section's
+  size up to its own alignment, which is 8 as soon as the pool holds a double (the
+  unsigned-to-float magic), so a 0x34-byte claim becomes a 0x38-byte contribution and the next
+  object starts 4 bytes late; the cascade of realignments is what makes the total delta larger than
+  the padding. `objdump -s -j .rodata` on `build/GVLE69/{src,obj}/<unit>.o` shows identical bytes
+  and a longer size. The fix is to extend the claim to the next 8-aligned boundary and define
+  whatever objects fall inside it; a string literal belonging to a function further down the file is
+  fine, as long as it goes **after** the last function in the source, since cc1 writes file-scope
+  data where it is defined but dumps a function's pool ahead of that function's body
+  (`Game/fn_800B46B0.c` defines `fn_800B5124`'s format string for this reason).
+
 - **A claimed literal pool shows up as unmatched data in the progress table.** The `Data:` line counts objdiff's `matched_data`, which pairs data by symbol name, and a compiler-generated pool is anonymous where dtk's extracted object has `lbl_<addr>` symbols. `report.json` still gives the unit `complete_data` 100% and `main.dol` is `OK`, so there is nothing to chase; naming the pool is not possible without breaking the function (previous entry).
 - **Linker-generated addresses (`_stack_addr`, `_stack_end`, `__ArenaLo`, `__ArenaHi`) are defined in [`ldscript.lcf`](../config/GVLE69/ldscript.lcf).** If `main.dol` differs only in `lis`/`addi` pairs near `0x8067xxxx`/`0x8068xxxx`, check these first.
 - **`.sdata2` symbols work in compiled code** (see [`baseline.md`](baseline.md#small-data-r13-problem)). `Range Error for small data relocation` means `build.ninja` wasn't generated with `dtk-dev`, or `build/GVLE69/sda_bake.json` is missing. In asm, name the symbol instead of writing a raw `off(r13)`.
@@ -145,6 +157,15 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **`p->arr[p->n++] = x` with two register copies before the index `slwi` is cc1plus; cc1 emits
   one.** Another `.c`-vs-`.cpp` test that needs no size evidence, and the extra copy widens the
   `stmw` range and the frame by one register (`Game/fn_800887AC.cpp`).
+
+- **A guard whose last test is `bne Lafter` / `b Lbody`, with `Lbody` emitted immediately and
+  holding one branch, is a negated conjunction: `if (!a || !b || !c) return;`.** `do_jump` reverses
+  a test to a single `beq` only while it has no true-label, which is the case for every operand but
+  the last; the last one gets both labels, so it keeps its own sense and is followed by a jump to
+  the short-circuit label that `TRUTH_ORIF`/`TRUTH_NOT` created. Writing the same guard as
+  `if (a == 0 || b == 0 || c == 0)` swaps the two labels and does not match, and
+  `if (a && b && c) { ... }` is three plain `beq`s to one label with no fourth branch
+  (`Game/fn_800B46B0.c`, `fn_800B47C0`).
 
 - **A compare whose branch targets the instruction right after it is an `if` with an empty body, and
   a `b` to a label that itself only holds a `b` is an empty `else`.** The game's release build
