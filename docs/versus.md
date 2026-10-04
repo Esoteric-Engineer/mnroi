@@ -95,7 +95,7 @@ The versus setup screens (`clashLoadscreenVersus.big` and the `VERSUS MODE SETUP
 - It saves `matchType`, `timed` and `seconds` in the last-selection module (`fn_801317D8`, `fn_80131828`, `fn_801318C8`).
 - It switches on `matchType`, assigning the role indices at `G+0x770`, `G+0x774` and `G+0x590` through tiny setters (`fn_804317F4`, `fn_8043181C`, `fn_80431844`):
   - `0`: `+0x774=0`, `+0x770=1`, `+0x590=2`.
-  - `1`: `+0x770=0`, `+0x590=2`, `+0x774=1`. It also takes slot 1 (`fn_804317BC(G, 1)`) and calls `fn_80431788` on it, which ORs `slot+0x34` with `4` and sets `slot+0x3C = 99`. That may mark the slot as CPU-controlled.
+  - `1`: `+0x770=0`, `+0x590=2`, `+0x774=1`. It also takes slot 1 (`fn_804317BC(G, 1)`) and calls `fn_80431788` on it, which ORs `slot+0x34` with `4` and sets `slot+0x3C = 99`. That marks the slot as CPU-controlled: `GameFlow`'s pad-unplugged handler skips slots with the bit set.
   - `2`: `G+0x61C = 1`, `+0x774=0`.
 - `timed == 0` sets `G+0x75C = 2`. Otherwise it sets `G+0x75C = 1` and `G+0x764 = seconds * 1000`.
 - For players 0 and 1 it calls `fn_80443CCC(G, player, fn_801318A0())`, which forwards to a method on slot `player` (`fn_804428E0`).
@@ -110,12 +110,13 @@ This is a C++ singleton that 211 functions reference, so it is the whole game st
 
 | Offset | Type | Meaning (guess) | Written by | Read by |
 |---|---|---|---|---|
-| +0x10 | `Slot[8]`, stride 0xB0 | Player slots (dtk's `lbl_80552120`). `fn_804317BC(G, i)` returns `&slot[i]`, and `fn_8042FF2C(slot)` returns the slot's actor. Known fields: `+0x0` int player index, `+0x4` `char[0x20]` entity name, `+0x34` int flags (bit 0 = in use), `+0x38` int, `+0x3C` int, `+0x40` float. The 0xB0 stride is now confirmed from the source side: `fn_80443CCC` only matches with `Slot` padded to 0xB0. | | |
+| +0x10 | `Slot[8]`, stride 0xB0 | Player slots (dtk's `lbl_80552120`). `fn_804317BC(G, i)` returns `&slot[i]`, and `fn_8042FF2C(slot)` returns the slot's actor. Known fields: `+0x0` int player index, `+0x4` `char[0x20]` entity name, `+0x34` int flags (bit 0 = in use, bit 2 = CPU-controlled), `+0x38` int, `+0x3E` `unsigned short` the controller port the slot plays on (the pad hotplug handlers match it against the SI port), `+0x3C` int, `+0x40` float. The 0xB0 stride is now confirmed from the source side: `fn_80443CCC` only matches with `Slot` padded to 0xB0. | | |
 | +0x590 | int | Number of active player slots, not a role index: `fn_80023010` (matched) loops `p` from 0 while `p < G+0x590` and reads slot `p` each time, and `fn_80443D44` (matched) uses it as the bound on `slots` when looking a player up. `SetMatchInfo` setting it to 2 for match types 0 and 1 fits a 2-player match. | `fn_80431844` | `fn_80434900` (getter), `fn_80023010`, `fn_80114420`, `fn_80443D44`, `fn_80096B98`, `fn_80096D6C` |
 | +0x598 | int | Index into `slots`: `fn_80443DBC` uses it to set `+0x744`. A plain setter, no getter found. Both are **matched** (`Game/fn_80443B70.c`), which confirms the field is a plain `int` slot index. | `fn_80443D1C` | `fn_80443DBC` |
 | +0x59C, +0x5BC, +0x5DC, +0x5FC | `char[0x20]` x4 | Level/venue name buffers. `+0x59C` is dtk's `lbl_805526AC` (0x80552110 + 0x59C), which confirms the 0x20 size, and `GameFlow`'s command 0x14 (`fn_800B76C0`, section 6) is what loads the level it names. Writers store the terminator at `+0x5BB` and so on. | `Control_SetSelectInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel`, `clashVenue_ChooseOption`, `fn_80028BAC`, `fn_8008856C` | `fn_800B76C0`, `fn_80114420` (`strcmp` against `"0_Test_Arena"`, which confirms `+0x59C` holds the level name) |
 | +0x61C | int | Set to 1 for match type 2 and by both `StartLevel` handlers | `Control_SetMatchInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel` | `fn_8002BD34` |
 | +0x744 | `Slot *` | The current slot, `&G->slots[G+0x598]`. Confirmed as a pointer: `fn_80443DBC` is **matched** as `g->curSlot = &g->slots[g->curIndex]; return 1;` (the `1` is a constant, not a success test). | `fn_80443DBC` | `fn_80095100`, `fn_800950E8` |
+| +0x750 | `Slot *` | Slot iteration cursor: `fn_804427FC(G)` resets it to `&slots[G+0x598]` and returns 1, `fn_804427D0(G)` reads it, and `fn_80094A9C(G)` (unmatched) advances it and returns nonzero while slots remain. | `fn_804427FC`, `fn_80094A9C` | `fn_804427D0` |
 | +0x75C | int | Timer mode: 1 = timed, 2 = untimed | `Control_SetMatchInfo`, `clashVenue_ChooseOption`, `fn_80028BAC` | `Control_SetSelectInfo`, `fn_8011A94C`, `fn_8011AB34` |
 | +0x760 | int | Written by 14 functions; probably a game phase or state | `fn_8002D90C`, `fn_80092550`... | `fn_80018290`... |
 | +0x764 | int | Time limit in ms | `Control_SetMatchInfo`, `fn_80028BAC` | `fn_80131434` |
@@ -158,7 +159,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 1 | `characterselect.cpp`, 0x801037B0-0x801040F4 | Blocked: both handlers return a class by value, which hits the function-end branch pair ([`nonmatching.md`](nonmatching.md)). `fn_80103FC4` and the static initializer sit behind them. |
 | 2 | Character roster ([`characters.md`](characters.md) section 2) | Accessors done; the roster *data* (`lbl_804CA51C`, `lbl_804CAB0C`, `lbl_804CB0FC`) is left. It sits among the APT registration constructors at 0x8044AF58-0x8044EE3C, so work out those file boundaries before claiming anything. |
 | 3 | Character type ([`characters.md`](characters.md) sections 1, 5) | Done except `fn_8002623C`, which blocks the whole file 0x8002623C-0x80027D58 on the branch pair. |
-| 4 | Selection to spawn ([`characters.md`](characters.md) section 3) | **Current step**, notes below. Next function: `fn_800B4AB8`. |
+| 4 | Selection to spawn ([`characters.md`](characters.md) section 3) | **Current step**, notes below. Next function: `fn_800B4F50`. |
 | 5 | `control.cpp`, from 0x801040F4 | Blocked like step 1: the twelve getters and `Control_ChangeScreen` are pair-less, so each is 8 bytes over as `.cpp`. The getters would match in a `.c` unit under another name; the handlers that build APT temporaries would not. Handler order after the getters: `Control_ChangeScreen`, `Control_EnableControllerCheck`, `Control_SetMatchInfo`, `Control_SetSelectInfo`, `Control_StartLoad`, `Control_StartProgressBar`, `Control_StartGame`, `Control_EndOfMatch`, then the rest of the file (`Control_BindController` is further down) and its static initializer. |
 | 6 | `venuetable.cpp` | All six handlers. |
 | 7 | Last-selection module, 0x801317D8-0x80131E90 | Tiny accessors; they name everything in section 4.2. |
@@ -191,7 +192,7 @@ Only what costs disassembly to re-derive. What a matched function *does* is in i
 
   | Range | Pair? | Unit | Left to do |
   |---|---|---|---|
-  | 0x800B43F0-0x800B5BC4 | pair-less | `Game/fn_800B43F0.cpp`, `Game/fn_800B46B0.c` | **From `fn_800B4AB8` on.** Only the constructor and destructor are reachable as `.cpp`; the rest needs the `.c` workaround, which `fn_800B5AFC`, `fn_800B5694`, `fn_800B56B4` and the other small `void` ones fit. Pair-less is settled for the whole file: no function in it has more than one trailing branch except `fn_800B47C0`, whose two are two `return;` statements. |
+  | 0x800B43F0-0x800B5BC4 | pair-less | `Game/fn_800B43F0.cpp`, `Game/fn_800B46B0.c` | **From `fn_800B4F50` on.** `fn_800B4AB8` is parked `NonMatching` in its own unit ([`nonmatching.md`](nonmatching.md)). Only the constructor and destructor are reachable as `.cpp`; the rest needs the `.c` workaround, which `fn_800B5AFC`, `fn_800B5694`, `fn_800B56B4` and the other small `void` ones fit. Pair-less is settled for the whole file: no function in it has more than one trailing branch except `fn_800B47C0`, whose two are two `return;` statements. |
   | 0x800B5BC4-0x800B7094 | carries it | `Game/fn_800B5BC4.cpp` | Done. |
   | 0x800B7094-0x800B7204 | pair-less | `Game/fn_800B7094.c` | Done; globals only. |
   | 0x800B7204-0x800B869C | pair-less | `Game/fn_800B7204.c` | Done; 40 per-command methods. |
@@ -277,7 +278,7 @@ single-bit flags (bits 0x1, 0x2, 0x4 and 0x8 are each tested on their own, 0x1 b
 dispatch, `+0x180` int set to 0xFF by `SetCommand`, `+0x1A0` `int[5]` the command history with the
 most recent first, `+0x1BC` int, `+0x1C0` int (read by `fn_80432D74`), `+0x1DC` int (zeroed by
 `fn_8044606C`), `+0x1E0` int compared against 1, `+0x1F8` `int[0x22]`, `+0x280` int (the second
-argument of the player spawn), and `int[2]` at `+0x288`, which the constructor fills with -1.
+argument of the player spawn), `+0x4` int set while any pad is unplugged, `+0x8` int set alongside `fn_801AF754(globals)`, `+0x284` int count and `int[2]` at `+0x288` the player indices whose pad is unplugged (-1 when empty; the constructor and `fn_800B4F50` fill it).
 `GameFlow` and every method name above are **this project's names**: they are not in the DOL, so
 renaming any of them means redoing the mangled symbol. `Stub<addr>` marks a method whose body the
 release build stripped.

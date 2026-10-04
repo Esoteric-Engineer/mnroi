@@ -126,3 +126,20 @@ relocates against `lbl_80515030 + 0x3A0` where dtk's extracted object relocates 
 it 100%; only `objdiff_mismatches.py` flags it. It is the same object — dtk invented `lbl_805153D0`
 because a relocation pointed inside the `.bss` blob — and merging the symbols would need a hand-set
 size on an auto-named `lbl_`, which dtk does not preserve.
+
+---
+
+## `Game/fn_800B4AB8.c` — `GameFlow::OnPadRemoved`
+
+0x800B4AB8-0x800B4CF8, 99.97% fuzzy, the right size. One operand differs: the statement
+`unplugged[numUnplugged++] = player` has the original copy the loaded count into a call-saved register
+and index from *that* (`mr r29, r11` / `mr r10, r29`), where ours indexes from the load (`mr r10, r11`).
+It is the cc1plus-only shape of [`matching_notes.md`](matching_notes.md) (`p->arr[p->n++] = x`), in a
+file with no function-end pair, so there is no `.cpp` unit that reproduces it either.
+
+`register int n; unplugged[n = numUnplugged++] = player;` gets the `mr r29, r11` and the right
+`stmw r29` range, which is the 99.97%, but `n = x++` yields the loaded value rather than `n`. Tried
+without effect: `register int n = numUnplugged++` and `n = ...` as a separate statement (both emit the
+increment before the store), a comma expression, `register unsigned`, `+ 0`, `-(-n)`, `(unsigned)`,
+swapped `(n = ...)[unplugged]`, pointer-arithmetic forms, a second register local, a `?:`, and
+`register volatile` (which takes a frame slot).

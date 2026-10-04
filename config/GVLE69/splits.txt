@@ -45,6 +45,12 @@ Game/fn_800B46B0.c:
 	.text       start:0x800B46B0 end:0x800B4AB8
 	.rodata     start:0x8048BD68 end:0x8048BDB8
 
+Game/fn_800B4AB8.c:
+	.text       start:0x800B4AB8 end:0x800B4CF8
+
+Game/fn_800B4CF8.c:
+	.text       start:0x800B4CF8 end:0x800B4F50
+
 Game/fn_800B5BC4.cpp:
 	.text       start:0x800B5BC4 end:0x800B7094
 	.rodata     start:0x8048BDE0 end:0x8048BE78
