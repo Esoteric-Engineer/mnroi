@@ -1,4 +1,4 @@
-// GameFlow methods in the pair-less file (OnPadInserted, the pad checks, the +0x19C release, the load-screen start).
+// GameFlow methods in the pair-less file (OnPadInserted, the pad checks, the +0x19C release, the load-screen start, the slot pick).
 // A .c unit: `this` is a register first parameter. docs/versus.md section 6 has the class.
 
 typedef struct GameFlow
@@ -15,7 +15,11 @@ typedef struct GameFlow
     int unk24;                 // +0x24
     char unk28[0x110];
     int unk138;                // +0x138
-    char unk13C[0x60];
+    int unk13C;                // +0x13C
+    char unk140[0x20];
+    int unk160;                // +0x160
+    int unk164;                // +0x164
+    char unk168[0x34];
     int unk19C;                // +0x19C
     char unk1A0[0xE4];
     int numUnplugged;          // +0x284
@@ -76,6 +80,16 @@ extern int fn_8012F32C(int a, char *name);
 extern void fn_800189E0(float x, float y, float w, float h, int image, float alpha);
 extern void fn_804325CC(char *globals);
 extern int fn_80432764(int a, unsigned short *port);
+extern void *fn_804317BC(void *g, int i); // &G.slots[i]
+extern int fn_80434900(void *g);          // G+0x590, the active slot count
+extern void fn_801AA570(int a);
+extern int fn_80445F70(int a);
+extern int fn_80432DCC(GameFlow *flow);
+extern int fn_8044272C(char *slot);
+extern int fn_80442774(char *slot);
+extern int fn_80432708(int a);
+extern void fn_800B4764(GameFlow *flow);
+extern void fn_800B5930(GameFlow *flow);
 extern void fn_80443C4C(char *slot, int port);
 extern void fn_80112B2C(int a);
 extern void fn_8011C284(void *obj, int a);
@@ -290,4 +304,53 @@ void fn_800B5594(register GameFlow *this, int begin)
     }
     fn_80445F28(OnPadRemoved__FUs);
     fn_80445F4C(OnPadInserted__FUs);
+}
+
+void fn_800B5694(register GameFlow *this)
+{
+}
+
+int fn_800B56B4(register GameFlow *this)
+{
+    return 0;
+}
+
+int fn_800B56DC(register GameFlow *this)
+{
+    unsigned int i;
+    unsigned int j;
+    void *slot;
+    int level;
+
+    for (i = 0; i < fn_80434900(lbl_80552110); i++) {
+        fn_801AA570(fn_80442624(fn_804317BC(lbl_80552110, i)));
+        if (fn_80445F70(3) && fn_80445F70(4) && fn_80445F70(10)) {
+            return 0;
+        }
+    }
+    if (fn_80432DCC(this) == 0 && fn_804439A4(lbl_80593BE8) == 0) {
+        for (j = 0; j < fn_80434900(lbl_80552110); j++) {
+            slot = fn_804317BC(lbl_80552110, j);
+            if (fn_8044272C(slot) != 0 || fn_80442774(slot) != 0) {
+                continue;
+            }
+            fn_801AA570(fn_80442624(slot));
+            level = 0;
+            if (fn_800531AC()) {
+                level = fn_80430024(fn_800531AC());
+            }
+            if (fn_80432708(10) != 0 && level == 0) {
+                this->unk160 = fn_80442624(fn_804317BC(lbl_80552110, j));
+                this->unk164 = j;
+                this->unk13C = 0;
+                fn_800B5930(this);
+                return 1;
+            }
+        }
+    } else {
+        if (fn_80432764(15, 0)) {
+            fn_800B4764(this);
+        }
+    }
+    return 0;
 }
