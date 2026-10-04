@@ -87,6 +87,16 @@ straight to `Matching`.
 
 ---
 
+## `Game/fn_8044655C.c` — axis clamp-and-scale setter
+
+0x8044655C-0x8044667C, 98.75% fuzzy, size matches. The pool (0.0f, -1.0f, 1.0f at 0x8048CD1C-0x8048CD24) is
+`extern const float lbl_...[]`, since claiming it is cyclic. Left: only the float register assignment. The
+DOL has `t`=f13, `v`=f12, `s`=f11, `c`=f10 (the clamp temp), mine has `v`=f13, `t`=f12. The source uses one
+`register float t` for both the clamp temp and the second branch's target. Tried: separate `c`/`s`/`t` in all six
+declaration orders (96.7-97.2%); ternaries instead of `if` chains (first branch +4 bytes, second -20).
+
+---
+
 ## `fn_804436D4` — the roster unlock setter (unclaimed)
 
 0x804436D4-0x8044374C, 98.17% fuzzy, and the only gap left in the 0x804428E0-0x804437D8 run, which
