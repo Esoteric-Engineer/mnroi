@@ -15,6 +15,7 @@ extern int fn_80444544(char *p);
 extern int fn_80426AB0(void *g);
 extern int fn_80444CA4(char *p);
 extern char *fn_80430050(void *p);
+extern void fn_80435FB4(void *p);
 extern int lbl_8066B664;
 extern char lbl_8052F060[];
 extern char lbl_80552110[]; // G
@@ -512,4 +513,66 @@ void fn_80445A88(register char *self, register int a)
 int fn_80445AD0(register char *self)
 {
     return ((*(unsigned int *)self >> 2) ^ 1) & 1;
+}
+
+typedef struct Entry
+{
+    char pad[8];
+    int v[7];
+} Entry; // 0x24 bytes, indexed through +0x24 of the owner
+
+void *fn_80445B08(register void *self)
+{
+    return self;
+}
+
+char *fn_80445B30(register char *self)
+{
+    return self + 0x40;
+}
+
+int fn_80445B5C(register void *self)
+{
+    return 0;
+}
+
+void fn_80445B84(register void *self, register int a)
+{
+}
+
+int fn_80445BA8(register void *self)
+{
+    return 1;
+}
+
+void fn_80445BD0(register char *self, register int a)
+{
+    *(int *)(self + 0x64) = a;
+}
+
+void fn_80445BF8(register char *self, register float *v)
+{
+    *(float *)(self + 0x30) = *(float *)(self + 0x30) + v[0];
+    *(float *)(self + 0x34) = *(float *)(self + 0x34) + v[1];
+    *(float *)(self + 0x38) = *(float *)(self + 0x38) + v[2];
+}
+
+int fn_80445C4C(register char *self, register int a, register int b)
+{
+    return (*(Entry **)(self + 0x24))[a].v[b];
+}
+
+void *fn_80445C98(register char *self)
+{
+    fn_80435FB4(self + 0x10);
+    return self;
+}
+
+void fn_80445CDC(register int *self, register int a)
+{
+    *self = a;
+}
+
+void fn_80445D04(register void *self, register int a, register int b)
+{
 }
