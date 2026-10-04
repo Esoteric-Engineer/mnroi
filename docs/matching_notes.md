@@ -94,6 +94,14 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   That also makes a constructor the one function reachable inside a file blocked by the pair
   ([`nonmatching.md`](nonmatching.md)): give it a `.cpp` unit of its own (`Game/fn_800B43F0.cpp`).
 
+- **A call result stored into a member with a bare `stw r3` (no `mr r0, r3`) is a member initializer,
+  not an assignment.** `result = f();` in a constructor body always copies through `r0`, whatever the
+  pointer types; `: result(f())` in the init list stores `r3` straight. The init list also fixes the
+  order (base constructor, vptr, members in declaration order), so a base constructor the DOL calls
+  first needs a real base class: declare `class Base { Base(); }`, rename its `fn_` symbol to the
+  mangled `__4Base`, and make the vptr the first member, initialised first in the list
+  (`Game/fn_80444034.cpp`).
+
 - **A C++ *destructor* ends with one trailing branch too, so it is reachable in a pair-less file.**
   Its `if (__in_chrg & 1) __builtin_delete(this)` tail ([`prodg.md`](prodg.md#c)) is where that one
   branch comes from, which makes the destructor the second function (after the constructor) that a
