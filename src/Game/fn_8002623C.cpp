@@ -203,6 +203,8 @@ extern char lbl_8057E430[];
 extern int lbl_8066B5EC; // which manager in lbl_80515030.managers is current
 extern int lbl_8066B600;
 
+inline int sn_return_decl(int a) { return a; }
+
 extern "C" void fn_8002623C(void *entity)
 {
     Actor *x = fn_800B1568(entity);

@@ -1,7 +1,6 @@
 // c:/Clash/mainline/Code/Game/handlers/characterselect.cpp
 //
 // Built at -O0. The whole file is 0x801037B0-0x801040F4, three handlers (docs/versus.md).
-// NonMatching: two extra unreachable branches at the end, from the C++ by-value return that no bundled ProDG release reproduces.
 
 // APT script variables, engine classes shared with the other handler files. The names are guesses; the layouts and the symbols come from the code.
 class AptRef {
@@ -50,6 +49,10 @@ extern char lbl_80490134[]; // "aEng"
 extern char lbl_8049013C[]; // "aSkl"
 extern char lbl_80490144[]; // "aIsUnLocked1"
 extern char lbl_80490154[]; // "aIsUnLocked2"
+
+// Emits no code. A top-level `return <parameter>;` makes cc1plus drop the function-end branch pair for every later function in the unit.
+// The original file got that from a constructor or inline function in a header, which this stands in for.
+inline int sn_return_decl(int a) { return a; }
 
 AptObject clashCharSelect_GetCharList()
 {

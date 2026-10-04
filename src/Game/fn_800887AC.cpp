@@ -97,6 +97,8 @@ extern void fn_804430FC(NameTable *rec, char *n0, char *n1, char *n2, char *n3, 
 
 }
 
+inline int sn_return_decl(int a) { return a; }
+
 extern "C" int fn_800887AC(register ScriptTable *table, const char *path)
 {
     void *file;

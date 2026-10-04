@@ -4,21 +4,19 @@ Functions claimed as `NonMatching`, with what has already been tried. Don't re-g
 
 ---
 
-## The C++ function-end branch pair (worked around, cause known)
+## The C++ function-end branch pair
 
 `cc1plus` ends a C++ function with two unreachable branches to the epilogue (`b .L5` / `b .L4` / `.L5:` /
 `.L4:`) unless an earlier function in the same translation unit set `current_function_return_value`. A
 constructor sets it, and so does a top-level `return` of a parameter, local, global or `this`, even
 inside an unused inline function. Only a `case`/`default` or a user label clears it. No option changes it.
-[`prodg.md`](prodg.md#the-function-end-branch-pair) has the code, the evidence and the source fix (one
-`inline` setter ahead of the unit's first function).
 
-**Workaround:** give the unit `strip_fn_end_pair=True` in `configure.py`. The build then runs
-`tools/prodg_nopair.py`, which compiles to assembly with `ngccc -S`, deletes the two branches, and assembles
-the result (an assembly detour gives a byte-identical object). A `return` keeps its own single branch.
-Use it for every C++ unit in a pair-less file; units in files that carry the pair (see
-[`prodg.md`](prodg.md#the-function-end-branch-pair) for how to tell) must not set it. Flipped so far:
-`Game/fn_800887AC.cpp` and `Game/handlers/characterselect.cpp`.
+**Fix:** put `inline int sn_return_decl(int a) { return a; }` ahead of the unit's first function when the
+original's flag was already set there (`Game/fn_800887AC.cpp`, `Game/handlers/characterselect.cpp` and
+`Game/fn_8002623C.cpp` do). [`prodg.md`](prodg.md#the-function-end-branch-pair) has the code, the evidence
+and the ordering rules, and `python3 tools/pair_map.py <address>` says which state a function was in. There
+is no build-side workaround: the build used to have a per-unit `strip_fn_end_pair` that deleted the pair from
+the assembly, and it was removed because it can't model a file where a `switch` brings the pair back.
 
 ---
 
@@ -100,7 +98,7 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 ## `Game/fn_8002623C.cpp` — the actor's per-frame effect gather
 
-0x8002623C-0x80026B9C, 99.998% fuzzy, size matches (with `strip_fn_end_pair`, see the first section).
+0x8002623C-0x80026B9C, 99.998% fuzzy, size matches (the pair is solved with a setter line, see the first section).
 Every instruction, the 0x1c8 frame, the `stmw r25` range, both virtual calls, the 0xA0 and 16-byte struct
 copies, the five parallel arrays and the 11-argument call to `fn_8001DCE0` match. What is left:
 
@@ -141,6 +139,6 @@ matches except the tail: the DOL has `bl; b .L; .L: mr r3, r30; <epilogue>`, our
 matched `Game/fn_80444034.cpp` and `Game/fn_80447618.cpp`), so `b` and `mr` are swapped. In `Dir` the parameter registers also
 come out `this`=r29, `src`=r30 against the DOL's r30/r29. An explicit `return;` in the constructor body gives `b A` / `mr r3` /
 `b END` / `A: mr r3` / `b END`, i.e. the DOL's tail plus 12 dead bytes, so the original is probably that source in the
-pair-less configuration ([the branch pair](#the-c-function-end-branch-pair)). The same tail is on `fn_80448A28`,
+pair absent (the flag set by an earlier function, [the branch pair](#the-c-function-end-branch-pair)). The same tail is on `fn_80448A28`,
 `fn_80448A74`, `fn_80448AC0`, `fn_80448FD0` and `fn_80449020`; a constructor with `mr r3, r30` *before* the `b` is fine. The
 `Vector` constructor's two doubles (0x8048DEA8, 0x8048DEB0) are also cyclic to claim.

@@ -110,12 +110,12 @@ functions with a `register` first parameter, which `pair_map.py` can't tell from
 functions do.** After a constructor, the next classed function is B 93 times and A 12 times, against a 39%
 B baseline, and 7 of those 12 contain a switch.
 
-**Matching a pair-less unit without `strip_fn_end_pair`.** Put a flag-setter ahead of the unit's first
-function, for example `inline int sn_return_decl(int a) { return a; }` or a header class's in-class
-constructor. It emits no code. With that line, plain `ngccc` gives `Game/fn_800887AC.cpp` and
-`Game/handlers/characterselect.cpp` the same `.text` bytes and relocations as their matched
-`strip_fn_end_pair` objects. Without it each is 8 bytes over. Order matters inside a unit: a function
-that comes before the first setter, or after a `switch`/label, keeps the pair.
+**Matching a pair-less unit.** Put a flag-setter ahead of the unit's first function, for example
+`inline int sn_return_decl(int a) { return a; }` or a header class's in-class constructor. It emits no code.
+`Game/fn_800887AC.cpp`, `Game/handlers/characterselect.cpp` and `Game/fn_8002623C.cpp` use that line, and
+without it each is 8 bytes over per function. Order matters inside a unit: a function that comes before the
+first setter, or after a `switch`/label, keeps the pair, so use a real constructor or header function when
+the original's is known.
 
 **Pair map.** `python3 tools/pair_map.py` classes every GCC function by its epilogue, and
 `python3 tools/pair_map.py 0x80103BAC` says which run an address is in. A = carries the pair (flag clear);
@@ -128,8 +128,7 @@ B = a method (`this` in r30) with no trailing branch at all (flag set). What it 
 - B dominates the tail, 0x80440000-0x80480000 (80% of classed functions), where most of the versus-mode
   work lives. A dominates 0x800C0000-0x800F0000 (89%) and 0x80200000-0x80240000 (84%).
 - It reproduces every boundary stated above (0x80024C60-0x8002623C and 0x800B5BC4-0x800B7094 are A, 0x80027D58
-  starts A again, 0x80443908-0x804439E8 is A between B runs) and agrees with every unit already flagged
-  `strip_fn_end_pair`.
+  starts A again, 0x80443908-0x804439E8 is A between B runs) and agrees with the matched pair-less units.
 
 A quick way to tell a function's state before claiming anything: look at the instructions just before its
 last label. Two identical branches to it means the flag was clear; none means it was set. A single branch

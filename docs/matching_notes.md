@@ -85,8 +85,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   translation unit set `current_function_return_value`. A constructor or a top-level `return <param/local/
   global/this>;` sets it, even in an unused inline function, and a `case` or a label clears it. In the
   original, the setter was usually a constructor or a header's inline function. Put
-  `inline int sn_return_decl(int a) { return a; }` ahead of the unit's first function, or use
-  `strip_fn_end_pair`. See [`prodg.md`](prodg.md#the-function-end-branch-pair).
+  `inline int sn_return_decl(int a) { return a; }` ahead of the unit's first function. See
+  [`prodg.md`](prodg.md#the-function-end-branch-pair).
 
 - **A C++ constructor has exactly *one* trailing branch to the epilogue, not the pair.** So the
   `.c`-vs-`.cpp` trailing-branch test below must exempt constructors: a one-branch tail on a function
@@ -237,11 +237,10 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **`rlwinm rX, rY, 0, n, n` followed by `clrlwi rZ, rX, 16` on a getter's result is a 16-bit return, not a wider field.** Keep the `int` return type and write `return (unsigned short)(*(unsigned short *)(self + N) & MASK);`; the `unsigned short` return type would change the callers' prototypes (`Game/fn_804441A0.c`, `fn_80444CD0`).
 
 - **A `void` function with *no* trailing branch to the epilogue is language-ambiguous, so it can be
-  matched as `.c` even in a C++ file.** Both plain C and the DOL's pair-less C++ configuration emit
+  matched as `.c` even in a C++ file.** Both plain C and C++ with the pair's flag set emit
   nothing there, so when such a function's body has no C++-only construct, give it its own `.c` unit
   and write `this` as a `register` first parameter, which reproduces the C++ `this`-in-`r30` shape
-  (the rest of the parameters still spill). That is currently the only way to pick a function out of a
-  file blocked by the pair ([`nonmatching.md`](nonmatching.md)); it does not prove the file is C
+  (the rest of the parameters still spill). It does not prove the file is C
   (`Game/fn_80088740.c`, next to the pair-less C++ `.nsc` parser). It scales to a whole file when
   *nothing* in it needs C++: a `.c` unit matched all 42 functions of the pair-less C++ file at
   0x800B7204-0x800B869C, static initializer included (`Game/fn_800B7204.c`).
