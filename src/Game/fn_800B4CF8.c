@@ -1,6 +1,5 @@
-// GameFlow::OnPadInserted (behind OnPadInserted__FUs), plus fn_800B4F50 (clears the unplugged list), fn_800B5124
-// (per-frame pad check) and fn_800B5524 (stripped empty method) and fn_800B5548 (releases the +0x19C handle). A .c unit: the file is pair-less C++, so `this`
-// is a register first parameter. docs/versus.md section 6 has the class.
+// GameFlow methods in the pair-less file (OnPadInserted, the pad checks, the +0x19C release, the load-screen start).
+// A .c unit: `this` is a register first parameter. docs/versus.md section 6 has the class.
 
 typedef struct GameFlow
 {
@@ -12,7 +11,11 @@ typedef struct GameFlow
     int unk14;                 // +0x14
     char unk18[4];
     unsigned char unk1C;       // +0x1C
-    char unk1D[0x17F];
+    char unk1D[7];
+    int unk24;                 // +0x24
+    char unk28[0x110];
+    int unk138;                // +0x138
+    char unk13C[0x60];
     int unk19C;                // +0x19C
     char unk1A0[0xE4];
     int numUnplugged;          // +0x284
@@ -23,6 +26,26 @@ extern char lbl_80552110[]; // the game-state object G
 extern char lbl_8052F060[]; // the level/world object
 
 extern void fn_80232B78(int handle);
+extern void fn_800B86CC(void **text);
+extern int fn_801969CC(float f1, float f2, float f3, float f4, unsigned short a, unsigned short b);
+extern int fn_80196BF0(int handle);
+extern int SetCommand__8GameFlowi(GameFlow *p, int command);
+extern void BeginLoad__8GameFlow(GameFlow *p);
+extern void EndLoad__8GameFlow(GameFlow *p);
+extern void fn_80445F28(void (*hook)(unsigned short));
+extern void fn_80445F4C(void (*hook)(unsigned short));
+extern void OnPadRemoved__FUs(unsigned short port);
+extern void OnPadInserted__FUs(unsigned short port);
+extern void *lbl_8066D6DC; // the overlay text object (docs/versus.md section 6)
+extern int lbl_8066C660;
+typedef struct PadInfo
+{
+    char unk0[0x78];
+    unsigned short unk78; // +0x78
+    unsigned short unk7A; // +0x7A
+} PadInfo;
+
+extern PadInfo lbl_8057E430;
 extern int fn_804329E0(char *level);
 extern int fn_804427FC(char *g);
 extern char *fn_804427D0(char *g);
@@ -246,4 +269,25 @@ void fn_800B5548(register GameFlow *this)
         fn_80232B78(this->unk19C);
         this->unk19C = 0;
     }
+}
+
+void fn_800B5594(register GameFlow *this, int begin)
+{
+    fn_800B86CC(&lbl_8066D6DC);
+    lbl_8066C660 = 1;
+    if (this->unk138 == 0) {
+        this->unk138 = fn_801969CC(80.0f, 0.01f, 300.0f, 1.0f,
+                                   lbl_8057E430.unk7A, lbl_8057E430.unk78);
+    }
+    fn_80196BF0(this->unk138);
+    lbl_8066C660 = 0;
+    SetCommand__8GameFlowi(this, 0x13);
+    this->unk24 = 0;
+    if (begin != 0) {
+        BeginLoad__8GameFlow(this);
+    } else {
+        EndLoad__8GameFlow(this);
+    }
+    fn_80445F28(OnPadRemoved__FUs);
+    fn_80445F4C(OnPadInserted__FUs);
 }
