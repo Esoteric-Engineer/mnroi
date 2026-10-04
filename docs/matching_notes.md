@@ -82,6 +82,12 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   That also makes a constructor the one function reachable inside a file blocked by the pair
   ([`nonmatching.md`](nonmatching.md)): give it a `.cpp` unit of its own (`Game/fn_800B43F0.cpp`).
 
+- **A C++ *destructor* ends with one trailing branch too, so it is reachable in a pair-less file.**
+  Its `if (__in_chrg & 1) __builtin_delete(this)` tail ([`prodg.md`](prodg.md#c)) is where that one
+  branch comes from, which makes the destructor the second function (after the constructor) that a
+  `.cpp` unit can pick out of a file blocked by the pair ([`nonmatching.md`](nonmatching.md))
+  (`Game/fn_800B43F0.cpp`, `_._8GameFlow`).
+
 - **A call on `this + N` as the first thing a constructor does is a member subobject's constructor,
   and an explicit call reproduces it.** GCC 2.95 emits member construction ahead of the body, so
   `fn_X((char *)this + 0xNN);` written as the body's first statement gives the same

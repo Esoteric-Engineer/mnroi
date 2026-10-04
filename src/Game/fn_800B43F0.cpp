@@ -1,4 +1,4 @@
-// GameFlow's constructor, the first function of the source file that ends at 0x800B5BC4.
+// GameFlow's constructor and destructor, the first functions of the source file that ends at 0x800B5BC4.
 // The class and its fields are in docs/versus.md section 6.
 // This unit owns the .rodata pool at 0x8048BD3C-0x8048BD44.
 
@@ -70,11 +70,16 @@ public:
     int unk290;             // +0x290
 
     GameFlow();
+    ~GameFlow();
     void ClearCommandHistory();
 };
 
 extern "C" {
 extern void *fn_80430728(void *p); // the +0x18C member's constructor
+extern void fn_80196B30(void *p);
+extern void fn_800B46B0(GameFlow *flow);
+extern void fn_800B46D0(GameFlow *flow);
+extern void fn_800B46F0(GameFlow *flow);
 }
 
 GameFlow::GameFlow()
@@ -139,4 +144,14 @@ GameFlow::GameFlow()
         i++;
     }
     ClearCommandHistory();
+}
+
+GameFlow::~GameFlow()
+{
+    if (unk138 != 0) {
+        fn_80196B30(unk138);
+    }
+    fn_800B46B0(this);
+    fn_800B46D0(this);
+    fn_800B46F0(this);
 }

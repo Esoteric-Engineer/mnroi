@@ -11,7 +11,8 @@ float lbl_8066D6B8 __attribute__((section(".sbss")));
 extern char lbl_80552920[]; // the GameFlow instance
 
 extern void __8GameFlow(char *flow);             // GameFlow::GameFlow()
-extern void fn_800B4634(char *flow, int inChrg); // GameFlow::~GameFlow()
+// GameFlow::~GameFlow(); the mangled name has dots, so it needs an asm label.
+extern void GameFlowDtor(char *flow, int inChrg) __asm__("_._8GameFlow");
 
 static void GameFlowStaticInit(int initialize, int priority)
 {
@@ -23,7 +24,7 @@ static void GameFlowStaticInit(int initialize, int priority)
             lbl_8066D6B8 = lbl_8066BA28 * 0.5f + lbl_8066D6B4 - 12.0f;
             __8GameFlow(lbl_80552920);
         } else {
-            fn_800B4634(lbl_80552920, 2);
+            GameFlowDtor(lbl_80552920, 2);
         }
     }
 }

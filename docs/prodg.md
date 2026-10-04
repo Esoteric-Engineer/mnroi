@@ -90,6 +90,12 @@ constructor (in C++), so it does not settle the question by itself.
   three register copies / `bl __9NameTable`. All 329 of `fn_801ACED4`'s call sites in the DOL have
   that shape and no other callee in the DOL does, so every one of them is a `new` expression and the
   file holding it is C++. Both symbols are renamed in `symbols.txt`.
+- **A destructor mangles as `_._<len><Class>` and calls `__builtin_delete` (`fn_801ACF9C`).** GCC
+  2.95 gives every destructor an implicit second parameter, `__in_chrg`, and appends
+  `if (__in_chrg & 1) __builtin_delete(this);` after the body, so a two-argument call to a
+  destructor-shaped function is the compiler's, not the source's. Both symbols are renamed in
+  `symbols.txt`; the dots in the name mean a `.c` unit has to reach it through an `__asm__` label
+  (`Game/fn_800B7094.c`).
 - **A member function mangles as `<name>__<len><Class>`, with no `v` for an empty parameter list**
   (a free function's is `__Fv`): `void GameFlow::RunCommand()` is `RunCommand__8GameFlow`
   (0x800B5BC4). Don't guess a mangling: register the unit `NonMatching`, compile it, read the name
