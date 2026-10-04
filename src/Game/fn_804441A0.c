@@ -386,3 +386,16 @@ void fn_8044517C(register unsigned int *p)
     SWAP32(14);
     SWAP32(15);
 }
+
+int fn_8044551C(register char *self)
+{
+    return *(int *)(self + 4) & 0x400;
+}
+
+extern void __6Vector(void *v);
+
+char *fn_8044554C(register char *self)
+{
+    __6Vector(self + 0x30);
+    return self;
+}
