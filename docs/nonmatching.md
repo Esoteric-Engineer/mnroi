@@ -113,6 +113,26 @@ block for the second pair, declaring the plain locals first, a fourth `register`
 
 ---
 
+## `fn_80445E50` and `fn_80445F70` — float literals in another unit's `.rodata` pool (unclaimed)
+
+0x80445E50-0x80445F00 and 0x80445F70-0x80445FD0. The pool 0x8048BED0-0x8048BF44 (`lbl_8048BEDC` 6.0f,
+`lbl_8048BEE0` 2^31 double, `lbl_8048BEE8` 0.0f...) is read in `.text` order by this file's functions,
+but `Game/fn_800B7204.c` claims 0x8048BF44 and sits *earlier* in `.text`, so claiming any of it fails
+with a cyclic link order (`Game/fn_80445E50.c -> auto_04_8048BEE8_rodata -> Game/fn_800B7204.c -> ...`).
+Leaving it unclaimed means the literals have to be `extern`s:
+
+- `fn_80445E50(self, float w)`: `if (w != self->w /* +0x4C */) { self->w = w; GXSetLineWidth((unsigned char)(unsigned int)(self->w * 6.0f), 0); }`
+  is 95% with the literal form, differing only in the pool relocations (the float-to-unsigned
+  conversion's own 2^31 double is an anonymous pool entry, so it cannot be an extern). Hand-writing the
+  conversion with `extern const double` and `register` temps gives 82% (extra `fmr`s, wider
+  `stmw`/`stfd` range, `bge` where the built-in expansion has `cror un, eq, gt` / `bso`).
+- `fn_80445F70(index)`: `lbl_8066C63C != 0 && lbl_8066C63C->entries[index].value > 0.0f` (table at `+0x1C`,
+  0x18-byte entries) is 86%: with `lbl_8048BEE8[0]` the `lis` for the 0.0f is emitted *before* the
+  `lfsx` of the left operand (the extern's address is legitimised at expansion, a pooled literal's at
+  use), and the base/index registers swap. Swapping the operands is worse (78%).
+
+---
+
 ## `Game/fn_8002623C.cpp` — the actor's per-frame effect gather
 
 0x8002623C-0x80026B9C, 95.2% fuzzy, 8 bytes over size. The reconstruction is otherwise exact: every
