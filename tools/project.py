@@ -68,6 +68,7 @@ class Object:
             "shift_jis": None,
             "source": name,
             "src_dir": None,
+            "strip_fn_end_pair": None,
         }
         self.options.update(options)
 
@@ -703,6 +704,12 @@ def generate_build_ninja(
         prodg_env = f"SN_NGC_PATH={compiler_path} "
     prodg_cmd = f"{CHAIN}{prodg_env}{wrapper_cmd}{ngccc} $cflags -MD -c $in -o $out"
     prodg_implicit: List[Optional[Path]] = [compilers_implicit or ngccc, wrapper_implicit]
+    # Same, through tools/prodg_nopair.py, which deletes cc1plus's function-end branch pair (see docs/nonmatching.md)
+    prodg_nopair = config.tools_dir / "prodg_nopair.py"
+    prodg_nopair_cmd = (
+        f"{CHAIN}{prodg_env}$python {prodg_nopair} {wrapper or '-'} {ngccc} $cflags -MD -c $in -o $out"
+    )
+    prodg_nopair_implicit: List[Optional[Path]] = [*prodg_implicit, prodg_nopair]
 
     # MWLD
     mwld = compiler_path / "mwldeppc.exe"
@@ -759,12 +766,14 @@ def generate_build_ninja(
         mwcc_extab_cmd += sda_bake_cmd
         mwcc_sjis_extab_cmd += sda_bake_cmd
         prodg_cmd += sda_bake_cmd
+        prodg_nopair_cmd += sda_bake_cmd
         for implicit in (
             mwcc_implicit,
             mwcc_sjis_implicit,
             mwcc_extab_implicit,
             mwcc_sjis_extab_implicit,
             prodg_implicit,
+            prodg_nopair_implicit,
         ):
             implicit.extend([dtk, sda_bake_path])
         mwld_cmd += f" && {dtk} elf resolve-sda $out $out"
@@ -832,6 +841,16 @@ def generate_build_ninja(
     n.rule(
         name="prodg",
         command=prodg_cmd,
+        description="PRODG $out",
+        depfile="$basefile.d",
+        deps="gcc",
+    )
+    n.newline()
+
+    n.comment("SN ProDG build, function-end branch pair removed")
+    n.rule(
+        name="prodg_nopair",
+        command=prodg_nopair_cmd,
         description="PRODG $out",
         depfile="$basefile.d",
         deps="gcc",
@@ -1107,6 +1126,9 @@ def generate_build_ninja(
                     sys.exit(f"{obj.name}: extab_padding is MWCC-only")
                 build_rule = "prodg"
                 build_implcit = prodg_implicit
+                if obj.options["strip_fn_end_pair"]:
+                    build_rule = "prodg_nopair"
+                    build_implcit = prodg_nopair_implicit
             elif obj.options["shift_jis"] and obj.options["extab_padding"] is not None:
                 build_rule = "mwcc_sjis_extab"
                 build_implcit = mwcc_sjis_extab_implicit

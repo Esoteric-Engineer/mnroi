@@ -65,9 +65,10 @@ two shapes cluster by source file, so the DOL was built with at least two compil
 the bundled releases are the minority one. Constructors are the exception and agree with the DOL
 (`Vector::Vector()` compiles byte for byte to 0x80428F74), as do scalar returns in the files that do
 carry the pair (`fn_8022EA78`, `Game/fn_8001C258.cpp`, `Game/fn_800092CC.cpp`). So any C++ unit in a
-pair-less file stalls 8 bytes over size per function until the other configuration turns up; this is
-the single biggest obstacle to the game's C++, and [`nonmatching.md`](nonmatching.md) lists
-everything ruled out, including 6138 option/form combinations on `cc1plus.exe`.
+pair-less file is 8 bytes over size per function with the stock build. The workaround is
+`strip_fn_end_pair=True` on the unit, which runs `tools/prodg_nopair.py` to delete the pair from the
+generated assembly ([`nonmatching.md`](nonmatching.md) has the details and everything ruled out,
+including 6138 option/form combinations on `cc1plus.exe`). The real configuration is still unknown.
 
 A quick way to tell which configuration a file was built with, before claiming anything: look at the
 instructions just before a function's last label. Two identical branches to it means the file carries
