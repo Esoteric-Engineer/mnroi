@@ -3164,6 +3164,9 @@ Game/fn_80443B70.c:
 Game/fn_80443E9C.cpp:
 	.text       start:0x80443E9C end:0x80443F0C
 
+Game/fn_80443F0C.c:
+	.text       start:0x80443F0C end:0x80444034
+
 Game/fn_8044B1D4.c:
 	.text       start:0x8044B1D4 end:0x8044B4EC
 
