@@ -1,4 +1,4 @@
-// GameFlow methods in the pair-less file (OnPadInserted, the pad checks, the +0x19C release, the load-screen start, the slot pick, the 0x3E load start).
+// GameFlow methods in the pair-less file (OnPadInserted, the pad checks, the +0x19C release, the load-screen start, the slot pick, the 0x3E load start, the per-frame tick that calls RunCommand).
 // A .c unit: `this` is a register first parameter. docs/versus.md section 6 has the class.
 
 typedef struct GameFlow
@@ -91,6 +91,9 @@ extern int fn_80432708(int a);
 extern void fn_800B4764(GameFlow *flow);
 extern void fn_800B5930(GameFlow *flow);
 extern void fn_80443C4C(char *slot, int port);
+extern void fn_80128358(int a);
+extern void Stub6D48__8GameFlow(GameFlow *p);
+extern void RunCommand__8GameFlow(GameFlow *p);
 extern void fn_80112B2C(int a);
 extern void fn_8011C284(void *obj, int a);
 extern int fn_801AA368(void);
@@ -361,4 +364,19 @@ void fn_800B5930(register GameFlow *this)
         SetCommand__8GameFlowi(this, 0x3e);
         BeginLoad__8GameFlow(this);
     }
+}
+
+int fn_800B5988(register GameFlow *this)
+{
+    register int found = 0;
+
+    if (this->unk4 != 0) {
+        if (fn_804460BC(fn_80432BC4()) == 0) {
+            found = 1;
+        }
+    }
+    fn_80128358(found);
+    Stub6D48__8GameFlow(this);
+    RunCommand__8GameFlow(this);
+    return 0;
 }
