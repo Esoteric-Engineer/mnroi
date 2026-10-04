@@ -1,5 +1,5 @@
 // GameFlow::OnPadInserted (behind OnPadInserted__FUs), plus fn_800B4F50 (clears the unplugged list), fn_800B5124
-// (per-frame pad check) and fn_800B5524 (stripped empty method). A .c unit: the file is pair-less C++, so `this`
+// (per-frame pad check) and fn_800B5524 (stripped empty method) and fn_800B5548 (releases the +0x19C handle). A .c unit: the file is pair-less C++, so `this`
 // is a register first parameter. docs/versus.md section 6 has the class.
 
 typedef struct GameFlow
@@ -12,7 +12,9 @@ typedef struct GameFlow
     int unk14;                 // +0x14
     char unk18[4];
     unsigned char unk1C;       // +0x1C
-    char unk1D[0x267];
+    char unk1D[0x17F];
+    int unk19C;                // +0x19C
+    char unk1A0[0xE4];
     int numUnplugged;          // +0x284
     int unplugged[2];          // +0x288
 } GameFlow;
@@ -20,6 +22,7 @@ typedef struct GameFlow
 extern char lbl_80552110[]; // the game-state object G
 extern char lbl_8052F060[]; // the level/world object
 
+extern void fn_80232B78(int handle);
 extern int fn_804329E0(char *level);
 extern int fn_804427FC(char *g);
 extern char *fn_804427D0(char *g);
@@ -235,4 +238,12 @@ int fn_800B5124(register GameFlow *this)
 void fn_800B5524(register GameFlow *this)
 {
     return;
+}
+
+void fn_800B5548(register GameFlow *this)
+{
+    if (this->unk19C != 0) {
+        fn_80232B78(this->unk19C);
+        this->unk19C = 0;
+    }
 }
