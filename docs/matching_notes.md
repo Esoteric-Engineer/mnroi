@@ -200,7 +200,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   and write `this` as a `register` first parameter, which reproduces the C++ `this`-in-`r30` shape
   (the rest of the parameters still spill). That is currently the only way to pick a function out of a
   file blocked by the pair ([`nonmatching.md`](nonmatching.md)); it does not prove the file is C
-  (`Game/fn_80088740.c`, next to the pair-less C++ `.nsc` parser).
+  (`Game/fn_80088740.c`, next to the pair-less C++ `.nsc` parser). It scales to a whole file when
+  *nothing* in it needs C++: a `.c` unit matched all 42 functions of the pair-less C++ file at
+  0x800B7204-0x800B869C, static initializer included (`Game/fn_800B7204.c`).
 
 - **A parameter spilled as `mr r0, rN` / `mr r9, r0` / `sth r9` is 16-bit, and `clrlwi`-on-read makes
   it unsigned.** Arguments arrive promoted to a word, so a 16-bit parameter needs the two copies to
@@ -224,7 +226,10 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   priority, which it materialises as `li r9, 0` / `ori r9, r9, 0xffff`), and each wrapper is a
   `static void f(void)` that calls it with `(1, 65535)` / `(0, 65535)`. The `.ctors` and `.dtors`
   words come from `static void (*const e)(void) __attribute__((section(".ctors"))) = wrapper;`, with
-  both ranges claimed in `splits.txt` (`Game/fn_800B7094.c`).
+  both ranges claimed in `splits.txt` (`Game/fn_800B7094.c`). A file with initializers but no
+  destructors has only a `_GLOBAL_.I` and a `.ctors` word, and its `__sti` still ends the
+  `if (initialize)` body with one branch over an empty `else`, so keep the `else { }`
+  (`Game/fn_800B7204.c`).
 - **mwld drops a whole object nothing outside references, `.ctors` word and all, so a static-init
   unit must define a symbol someone else uses.** The symptom is a link that succeeds while
   `.text` comes out short by exactly the unit's size and `.ctors`/`.dtors` by 4 bytes each; `.ctors`
@@ -236,6 +241,12 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   in `.sdata`, 16 bytes of real data the DOL does not have;
   `__attribute__((section(".sbss")))` is what gives a nobits `.sbss` contribution
   (`Game/fn_800B7094.c`). C++ units are unaffected: C++ has no tentative definitions.
+
+- **`cmpwi cr7, rX, 0` / `mfcr r0` / `extrwi r0, r0, 1, 30` feeding an argument register is `!x`.**
+  GCC 2.95 materialises a logical negation as a value through the CR rather than a branch, and
+  `extrwi ..., 1, 30` picks cr7's EQ bit. The call it belongs to still evaluates this argument ahead
+  of the earlier ones, so argument 1 is loaded after the sequence
+  (`Game/fn_800B7204.c`, `fn_804323E4(lbl_8066B690, !fn_804323B4(lbl_8066B690))`).
 
 ## General
 
