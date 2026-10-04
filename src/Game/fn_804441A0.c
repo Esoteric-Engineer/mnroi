@@ -1,6 +1,7 @@
 // Small methods of the handle-class family after fn_804440B0; class names and layouts are guesses.
 
 extern char lbl_804F4C80[];
+extern const float lbl_8048AAA4[]; // another unit's .rodata pool
 extern const float lbl_8048A830[]; // 0.0f, in another unit's .rodata pool
 
 extern void fn_8042A514(void *self, void *name);
@@ -12,7 +13,7 @@ extern void *fn_800B14A0(void *p);
 extern int fn_80085E8C(void *p);
 extern int fn_80444544(char *p);
 extern int fn_80426AB0(void *g);
-extern int fn_80444CA4(void *p);
+extern int fn_80444CA4(char *p);
 extern char *fn_80430050(void *p);
 extern int lbl_8066B664;
 extern char lbl_8052F060[];
@@ -168,4 +169,220 @@ int fn_80444808(register char *self)
 int fn_8044483C(register char *self)
 {
     return *(unsigned short *)(self + 0x2C) & 0x1000;
+}
+
+void fn_80444870(register char *self, register int on)
+{
+    if (on)
+        *(unsigned short *)(self + 0x2C) |= 0x400;
+    else
+        *(unsigned short *)(self + 0x2C) &= ~0x400;
+}
+
+void fn_804448C0(register char *self)
+{
+    *(int *)self = 0;
+    *(short *)(self + 0x44) = 0;
+    *(int *)(self + 0x50) = 0;
+    *(float *)(self + 0x48) = lbl_8048AAA4[0];
+}
+
+char *fn_80444904(register char *self, register char *owner)
+{
+    register char *entry;
+    if (owner)
+        entry = *(unsigned short *)self * 0x60 + *(char **)(owner + 0x154);
+    else
+        entry = *(unsigned short *)self * 0x60 + *(char **)(fn_80430050(lbl_8052F060) + 0x154);
+    return entry;
+}
+
+char *fn_80444984(register char *self, register char *owner)
+{
+    register char *entry;
+    if (owner)
+        entry = *(unsigned short *)(self + 2) * 0x60 + *(char **)(owner + 0x154);
+    else
+        entry = *(unsigned short *)(self + 2) * 0x60 + *(char **)(fn_80430050(lbl_8052F060) + 0x154);
+    return entry;
+}
+
+char *fn_80444A04(register char *self, register char *owner)
+{
+    return fn_80444688(fn_80444904(self, owner));
+}
+
+extern int fn_80444D6C(char *self);
+extern int fn_80444CD0(char *self);
+extern int fn_80444D04(char *self);
+extern int fn_80444D38(char *self);
+extern int fn_80444DE0(char *self);
+extern int fn_80444DA0(char *self);
+extern int fn_80444E48(char *self);
+extern int fn_80444E7C(char *self);
+extern int fn_80444E14(char *self);
+
+int fn_80444A5C(register char *self, register int mask)
+{
+    if (!(mask & 0x2000000) && fn_80444D6C(self))
+        return 0;
+    if ((mask & 0x40000) && fn_80444570(self))
+        return 0;
+    if ((mask & 0x100000) && fn_80444CD0(self))
+        return 0;
+    if (!(mask & 0x200000) && fn_80444D04(self))
+        return 0;
+    if (!(mask & 0x400000) && fn_804445A4(self))
+        return 0;
+    if (!(mask & 0x800000) && fn_804445D8(self))
+        return 0;
+    if (!(mask & 0x1000000) && fn_80444D38(self))
+        return 0;
+    return 1;
+}
+
+int fn_80444BB0(register char *self, register int mask)
+{
+    if (fn_80444DE0(self))
+        return 0;
+    if (fn_80444DA0(self))
+        return 1;
+    if (fn_80444808(self))
+    {
+        if (!fn_80444E48(self))
+            return 1;
+        if (!(mask & 0x80000) && fn_80444E7C(self))
+            return 1;
+    }
+    if (fn_80444E14(self) && (mask & 0x200000))
+        return 1;
+    return 0;
+}
+
+int fn_80444CA4(register char *self)
+{
+    return *(int *)(self + 8);
+}
+
+int fn_80444CD0(register char *self)
+{
+    return (unsigned short)(*(unsigned short *)(self + 4) & 0x80);
+}
+
+int fn_80444D04(register char *self)
+{
+    return (unsigned short)(*(unsigned short *)(self + 4) & 0x100);
+}
+
+int fn_80444D38(register char *self)
+{
+    return (unsigned short)(*(unsigned short *)(self + 4) & 0x800);
+}
+
+int fn_80444D6C(register char *self)
+{
+    return (unsigned short)(*(unsigned short *)(self + 4) & 0x1000);
+}
+
+int fn_80444DA0(register char *self)
+{
+    return !(unsigned short)(*(unsigned short *)(self + 0x2C) & 0x3FF0);
+}
+
+int fn_80444DE0(register char *self)
+{
+    return (unsigned short)(*(unsigned short *)(self + 0x2C) & 0x400);
+}
+
+int fn_80444E14(register char *self)
+{
+    return (unsigned short)(*(unsigned short *)(self + 0x2C) & 0x2000);
+}
+
+int fn_80444E48(register char *self)
+{
+    return (unsigned short)(*(unsigned short *)(self + 0x2C) & 0x4);
+}
+
+int fn_80444E7C(register char *self)
+{
+    register int result = 0;
+    if (*(unsigned short *)(self + 0x24) != 0xFFFF || *(unsigned short *)(self + 0x26) != 0xFFFF)
+        result = 1;
+    return result;
+}
+
+void fn_80444EE0(register void *self, register int a)
+{
+    fn_8044427C(self, a);
+}
+
+extern void fn_8038C0C0(void *self, int a, int b, int c, float f, int d, int e, int g, int h, int flag);
+
+void fn_80444F20(register char *self, register int a, register int b, register int c, register float f, register int d, register int e, register int g, register int h, register unsigned char flag)
+{
+    fn_8038C0C0(self + 0x610, a, b, c, f, d, e, g, h, flag);
+}
+
+extern void fn_8042DC84(void *self, int a);
+extern void fn_801B6768(void *self, int a);
+extern void fn_80445590(void *self, int a);
+
+void fn_80444FB4(register char *self, register int a)
+{
+    fn_8042DC84(self + 0x20, a);
+    *(int *)(self + 4) |= 0x800;
+}
+
+char *fn_80445004(register char *self)
+{
+    return (*(int *)(self + 4) & 0x800) ? self + 0x20 : 0;
+}
+
+void fn_80445048(register char *self)
+{
+    *(int *)(self + 0x40) = 0xD00;
+    *(int *)(self + 0xE8) = -1;
+}
+
+void fn_80445078(register void *self, register int a)
+{
+    fn_8044427C(self, a);
+}
+
+void fn_804450B8(register void *self, register int a)
+{
+    fn_804443E8(self, a);
+}
+
+void fn_804450F8(register char *self, register int a)
+{
+    fn_801B6768(self + 0x324, a);
+}
+
+void fn_8044513C(register void *self, register int a)
+{
+    fn_80445590(self, a);
+}
+
+#define SWAP32(i) p[i] = (p[i] >> 24) | ((p[i] >> 8) & 0xFF00) | ((p[i] & 0xFF00) << 8) | (p[i] << 24)
+
+void fn_8044517C(register unsigned int *p)
+{
+    SWAP32(0);
+    SWAP32(1);
+    SWAP32(2);
+    SWAP32(3);
+    SWAP32(4);
+    SWAP32(5);
+    SWAP32(6);
+    SWAP32(7);
+    SWAP32(8);
+    SWAP32(9);
+    SWAP32(10);
+    SWAP32(11);
+    SWAP32(12);
+    SWAP32(13);
+    SWAP32(14);
+    SWAP32(15);
 }

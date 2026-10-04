@@ -233,6 +233,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   `lwz`; the returning form also adds one register copy before the store that the `void` setter beside
   it does not have (`Game/fn_804428E0.c`, `fn_8044324C` vs `fn_804432AC`).
 
+- **`rlwinm rX, rY, 0, n, n` followed by `clrlwi rZ, rX, 16` on a getter's result is a 16-bit return, not a wider field.** Keep the `int` return type and write `return (unsigned short)(*(unsigned short *)(self + N) & MASK);`; the `unsigned short` return type would change the callers' prototypes (`Game/fn_804441A0.c`, `fn_80444CD0`).
+
 - **A `void` function with *no* trailing branch to the epilogue is language-ambiguous, so it can be
   matched as `.c` even in a C++ file.** Both plain C and the DOL's pair-less C++ configuration emit
   nothing there, so when such a function's body has no C++-only construct, give it its own `.c` unit
