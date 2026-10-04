@@ -10,7 +10,7 @@ float lbl_8066D6B8 __attribute__((section(".sbss")));
 
 extern char lbl_80552920[]; // the GameFlow instance
 
-extern void fn_800B43F0(char *flow);             // GameFlow::GameFlow()
+extern void __8GameFlow(char *flow);             // GameFlow::GameFlow()
 extern void fn_800B4634(char *flow, int inChrg); // GameFlow::~GameFlow()
 
 static void GameFlowStaticInit(int initialize, int priority)
@@ -21,7 +21,7 @@ static void GameFlowStaticInit(int initialize, int priority)
             lbl_8066D6B0 = lbl_8066D6AC + lbl_8066BA24 * 0.5f;
             lbl_8066D6B4 = 240.0f - lbl_8066BA28 * 0.5f;
             lbl_8066D6B8 = lbl_8066BA28 * 0.5f + lbl_8066D6B4 - 12.0f;
-            fn_800B43F0(lbl_80552920);
+            __8GameFlow(lbl_80552920);
         } else {
             fn_800B4634(lbl_80552920, 2);
         }

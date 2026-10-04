@@ -104,6 +104,12 @@ block_relocations:
 - source: .data:0x804C64E4
 - source: .data:0x804C8B9C
 - source: .data:0x804CA364
+# Two ARGB colors the GameFlow constructor stores (0x8000E0E0 and 0x80008080); dtk read both
+# halves of each as an ADDR16_HI/LO pair against the function at that address.
+- source: .text:0x800B453C
+- source: .text:0x800B4540
+- source: .text:0x800B4548
+- source: .text:0x800B454C
 add_relocations:
 - source: .init:0x80003160
   type: PpcAddr16Lo

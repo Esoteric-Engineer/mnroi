@@ -18,6 +18,13 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **To check whether a function was dead-stripped, grep `build/GVLE69/asm/`.** It holds the whole program (claimed units plus `auto_*`), so `grep -rn <symbol> build/GVLE69/asm/` is an exhaustive reference count. A string's presence only proves its file was linked: mwld drops functions nothing calls but keeps the file's data.
 - **A table of code addresses must be typed function pointers, not raw bytes.** Hex constants match byte-for-byte, but they aren't relocations, so mwld dead-strips every function that only the table references, and `.text` comes out short.
 - **A plain numeric table below 100% while `main.dol` matches: dtk read values that look like addresses as relocations.** Add `noreloc` to the symbol in `symbols.txt` (it needs a nonzero `size`).
+- **The same in code: an `lis`/`ori` pair loading a constant that looks like an address comes back
+  as `lis rX, sym@h` plus a `nop` carrying `[R_PPC_ADDR16_LO]`.** The bytes are identical, so
+  `main.dol` is unaffected, but objdiff reports two `DIFF_ARG_MISMATCH`/`DIFF_REPLACE` lines against
+  your plain immediates and the function never reaches 100%. Block both halves by instruction address
+  in `config.yml`'s `block_relocations` (`.text:0x800B453C` and `.text:0x800B4540` for one pair), and
+  check the invented target has other referrers first, or blocking can let mwld dead-strip it
+  (`Game/fn_800B43F0.cpp`, four packed ARGB colors).
 - **A zero word in `.text` that a `bl` targets is code, not padding.** dtk names it `pad_<addr>_text`. Check zero runs against branch targets before treating them as padding (`fn_801796B4`).
 - **Claiming data whose owning unit is far later in link order needs no `link_order_callback`.** dtk re-slots the `auto_` objects around the claim. The exception is the common `.bss`/`.sbss` tail ([`common_bss.md`](common_bss.md)), where `dtk dol split` reports a cyclic dependency.
 - **A float (or double) argument must be written as a literal, and its `.rodata` pool claimed.** GCC puts each function's float literals in an anonymous `.rodata` pool, in order of first use, laid out per function in `.text` order, and loads each one late in the argument setup as its own `lis sym@ha` / `lfs sym@l(r9)` pair. Referencing dtk's `lbl_` instead changes the code: an `extern float` scalar becomes an `R_PPC_EMB_SDA21` load (small data, since the size is <= 8), and an `extern float x[]` makes GCC materialise the base with `lis` into a non-volatile *before* the call that computes another argument. So keep the literal and give the unit the pool's range in `splits.txt` (`Game/fn_8001C258.cpp`: `.rodata start:0x804845DC end:0x804845E8`), after checking no other unit references those `lbl_`s.
@@ -72,6 +79,14 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   `.c`-vs-`.cpp` trailing-branch test below must exempt constructors: a one-branch tail on a function
   that takes `this` in r30 and returns it in r3 is a `.cpp` constructor, not C. Verified by
   `Vector::Vector() { w = 1.0f; }` compiling byte for byte to 0x80428F74 (`__6Vector`).
+  That also makes a constructor the one function reachable inside a file blocked by the pair
+  ([`nonmatching.md`](nonmatching.md)): give it a `.cpp` unit of its own (`Game/fn_800B43F0.cpp`).
+
+- **A call on `this + N` as the first thing a constructor does is a member subobject's constructor,
+  and an explicit call reproduces it.** GCC 2.95 emits member construction ahead of the body, so
+  `fn_X((char *)this + 0xNN);` written as the body's first statement gives the same
+  `addi r0, r30, 0xNN` / `mr r3, r0` / `bl`. That avoids naming the member's class and mangling its
+  constructor just to get the prologue right (`Game/fn_800B43F0.cpp`, `GameFlow+0x18C`).
 
 - **`lhz` / `extsh` / `add this` / `lwz 0x4(same)` / `stw` to a frame temp / `mtlr` / `blrl` off a
   pointer loaded from a fixed object offset is a virtual call.** GCC 2.95 here has no vtable thunks,
