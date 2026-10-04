@@ -437,3 +437,79 @@ void fn_80445590(register float *m, register float *angles)
     m[14] = lbl_8048B680[0];
     m[15] = lbl_8048B684[0];
 }
+
+extern int lbl_8066B9D0;
+extern int fn_8043798C(void *p);
+extern void fn_804426D4(void *p);
+extern void fn_80442700(void *p);
+
+void fn_804457F4(register void *self)
+{
+    if (++lbl_8066B9D0 == 0)
+        lbl_8066B9D0 = 1;
+}
+
+void fn_80445834(register char *self)
+{
+    if (fn_8043798C(self))
+        *(unsigned int *)self |= 8;
+    else
+        *(unsigned int *)self &= ~8;
+}
+
+void fn_80445894(register char *self)
+{
+    if (*(unsigned int *)self & 8)
+        fn_804426D4(self);
+    else
+        fn_80442700(self);
+}
+
+void fn_804458E8(register void *self, register int a)
+{
+    fn_8044427C(self, a);
+}
+
+void fn_80445928(register float *dst, register float *src)
+{
+    dst[0] = src[0];
+    dst[1] = src[1];
+    dst[2] = src[2];
+    dst[3] = src[3];
+}
+
+void fn_8044596C(register float *dst, register float *a, register float *b, register float t)
+{
+    dst[0] = a[0] + (b[0] - a[0]) * t;
+    dst[1] = a[1] + (b[1] - a[1]) * t;
+    dst[2] = a[2] + (b[2] - a[2]) * t;
+    dst[3] = a[3] + (b[3] - a[3]) * t;
+}
+
+char *fn_80445A08(register char *self)
+{
+    return self + 0x10;
+}
+
+int fn_80445A34(register char *self)
+{
+    return *(int *)(self + 0xC);
+}
+
+void fn_80445A60(register char *self, register int a)
+{
+    *(int *)(self + 0xC) = a;
+}
+
+void fn_80445A88(register char *self, register int a)
+{
+    if (a)
+        *(unsigned int *)self &= ~4;
+    else
+        *(unsigned int *)self |= 4;
+}
+
+int fn_80445AD0(register char *self)
+{
+    return ((*(unsigned int *)self >> 2) ^ 1) & 1;
+}
