@@ -224,6 +224,10 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   for bitwise operators does the `&` in QImode and zero-extends it back to int, which is why the bit
   stays in place instead of being shifted down (`Game/fn_800B5BC4.cpp`, `GameFlow+0x1C`).
 
+- **`(1 << n) & field` compiles to `sraw` / `clrlwi 31` where the DOL has `slw` / `and`: the field is `unsigned int`.** `fold` turns a signed `(1 << n) & x` test into `(x >> n) & 1`, and an unsigned operand blocks it. Likewise an extra `mr rX, r0` copy of a `register` parameter at its use in a comparison means the parameter is `char` or `short` (promoted, so reading it copies), not `int` (`Game/fn_804441A0.c`, `fn_80444370`).
+
+- **`lis` / `addi r11` for a global's address followed by `lwz 0xNN(r11)`, where yours folds into `lis sym+0xNN@ha`, means the field is read through a struct pointer.** `*(int *)(sym + 0xNN)` folds the offset into the symbol; `((S *)sym)->field` with `char pad[0xNN]` before it does not (`Game/fn_804441A0.c`, `fn_80444454`).
+
 - **A compound assignment whose stored register also feeds `mr r3` is one statement, `return x |= BIT;`.**
   Splitting it into `x |= BIT; return x;` reloads the field after the store, which shows up as an extra
   `lwz`; the returning form also adds one register copy before the store that the `void` setter beside
