@@ -30,9 +30,10 @@ The `prodg` rule in `tools/project.py`:
 - **Small data:** `dtk elf bake-sda` runs afterwards, as for MWCC objects (see [`baseline.md`](baseline.md#small-data-r13-problem)). `.sdata`/`.sbss` references stay `R_PPC_EMB_SDA21` relocations, which mwld resolves through `r13` like SN's linker did.
 - **MWCC-only options:** `shift_jis` is ignored, and `extab_padding` is an error.
 - **decomp.me:** ProDG units get scratches with the `prodg_35` .. `prodg_393` compilers.
-- **Unknown options are discarded.** `ngccc` forwards only what it recognises, so game code reaches
-  `cc1plus` as plain `-O0 -quiet`: `-W`, `-Wall` and most `-f` options never arrive. Run `CPP.exe`
-  and `cc1plus.exe` by hand (`ngccc -v` prints the exact command lines) when testing a flag.
+- **Options reach the compiler.** `ngccc` passes every `-O`, `-f`, `-m`, `-W` and `-G` option on to
+  `cc1`/`cc1plus` unchanged, including ones `cc1plus` doesn't know (`ngccc -v` prints the exact command
+  lines), so per-unit flags such as `-fno-strength-reduce -G0` work through the normal rule on every
+  release. Game code reaches `cc1plus` as `-O0 -quiet`.
 
 `ngccc` ships without headers. `include/gcc` has freestanding `stddef.h` and `limits.h`, and the ProDG flags put it on the include path. There is no `stdarg.h` yet: this GCC has no `__builtin_va_list`, and the DOL calls a `__va_arg` function, so SN's header was not GCC's. Reconstruct it when the first varargs function is matched.
 
@@ -50,9 +51,95 @@ Plain `char` is signed. `cc1` sign-extends it (`extsb`), even though `ngccc`'s p
 
 `-O2 -fno-omit-frame-pointer` gives the same prologue but not the doubled branch or the spills. Checked on `fn_8000923C`, `fn_80009280` (member calls through `this+0x39C0`) and the static initializer in `Game/fn_800092CC.cpp`.
 
-**The doubled branch only shows up through `cc1plus`.** A plain C leaf function (no calls) compiled at `-O0` with `register` on its parameters and any never-reassigned local keeps them in registers for the whole function (no frame slot, no `stw`/`lwz` round-trip) and emits exactly one `b` per `return`. The same source compiled as C++ (even `extern "C"`) adds a redundant second `b .Lepilogue` after each `return`'s branch (both relocated `R_PPC_REL24`/`_REL14` to the same target) and spills every parameter to the frame regardless of `register`. Symptom: a `NonMatching` unit stuck a few instructions over size with otherwise-perfect fuzzy%. Fix: if the function has no class/this and no C++-only construct, give its unit a `.c` extension instead of `.cpp`. Confirmed on `fn_80431CCC` (0x80431CCC, roster accessor, [`characters.md`](characters.md#2-roster-table)).
+**The doubled branch only shows up through `cc1plus`.** A plain C leaf function (no calls) compiled at `-O0` with `register` on its parameters and any never-reassigned local keeps them in registers for the whole function (no frame slot, no `stw`/`lwz` round-trip) and emits exactly one `b` per `return`. The same source compiled as C++ (even `extern "C"`) adds a redundant second `b .Lepilogue` after each `return`'s branch (both relocated `R_PPC_REL24`/`_REL14` to the same target). `register` parameters stay in registers in C++ too: `fn_80431CCC`'s source compiled as C++ has no spills, and so does `__5ColorUcUcUcUc` below. Symptom: a `NonMatching` unit stuck a few instructions over size with otherwise-perfect fuzzy%. Fix: if the function has no class/this and no C++-only construct, give its unit a `.c` extension instead of `.cpp`. Confirmed on `fn_80431CCC` (0x80431CCC, roster accessor, [`characters.md`](characters.md#2-roster-table)).
 
-**Not everything is `-O0`.** The colour constructor `__5ColorUcUcUcUc` (0x80426EC4) keeps its arguments in registers, and about half the functions in 0x80196884-0x803FF3B0 have no frame pointer: some files, perhaps a middleware library, used other flags. Give those units their own flags when they come up.
+**The colour constructor is `-O0`.** `__5ColorUcUcUcUc` (0x80426EC4) keeps its arguments in registers
+because they are declared `register`: `Color::Color(register unsigned char r_, ...) { r = r_; g = g_;
+b = b_; a = a_; }` compiles byte for byte to it at `-O0` as C++, and without `register` it spills them.
+
+**Middleware: `-O2`, and one block with `-fno-strength-reduce -G0`.** Every function without a frame
+pointer in the game ranges is middleware: EA's RealCore, Apt, RealGraph/EAGL, an AV/MAD video player,
+Refpack, and Havok. All of `c:/Clash/mainline` is `-O0`: the 14 source paths under it are referenced from
+`-O0` code, and the 4 RealCore/RealGraph paths from optimized code. The optimized code sits in three runs
+with nothing `-O0` inside them, and the `-O0` ranges have no function without a frame pointer except
+the `__restore_fpr` tail of `fn_800350F4` ([`baseline.md`](baseline.md#shifted-builds)).
+
+| Range | Flags | Functions | Contents |
+|---|---|---|---|
+| 0x8023D994-0x80243F94 | `-O2` | 189 | RealCore 6.27 (file system, DVD, threads) |
+| 0x80243F94-0x8026D828 | `-O2 -fno-strength-reduce -G0` | 816 | CSIS allocator, audio, the core of the Apt runtime |
+| 0x8026D828-0x803864CC | `-O2` | 2,980 | Apt, memory card, RealGraph/EAGL, AV/MAD video, Refpack, Havok |
+| 0x804114EC-0x80426A2C | `-O2` | 160 | wrappers around RealCore, Havok shapes, GX display lists |
+| 0x80472F34-0x8047EED8 | `-O2` | 352 | Havok |
+
+`python3 tools/flavor_map.py` prints this table with the evidence counted from the DOL, and
+`python3 tools/flavor_map.py 0x80246024` says which class and flag set a function belongs to. The
+middle block's edges are only known to within the functions that carry no evidence: it starts after
+0x80243EC0 (RealCore's last use of `r13`) and by 0x80246024 (first function proven `-G0`), and ends
+before 0x8026D828 (first use of `r13`).
+
+The proof is 40 functions matched in throwaway units, the same on all five releases (each name
+below is the function's DOL address):
+
+- **`-O2`:** RealCore `fn_8023DAA0`, `fn_8023DAE0` (a loop over 8 function pointers), `fn_8023DB6C` (a
+  7-case switch), `fn_8023DC08`, `fn_8023DC84`; Apt `fn_8026F77C`, `fn_8026F7AC`, `fn_8026F7D0`,
+  `fn_8026F7DC`, `fn_8026F7E4`, `fn_802AFD6C` (allocates with `new int[n]` and fills it); Havok
+  `fn_802E8348`, `fn_802E8350`, `fn_80416B08` (`hkVector4` member copies), `fn_80473620`, `fn_80475994`,
+  `fn_8047534C` (an `hkBool` returned by value), `fn_80474FF0`; `fn_80419AF8`, `fn_80419B1C` (display-list
+  writes) and `fn_80413E78`, `fn_80413EA4`.
+- **`-O2 -fno-strength-reduce -G0`:** `fn_80246024`, `fn_8024606C`, `fn_802460AC`, `fn_802460E4`,
+  `fn_80246130` (the CSIS allocator), `fn_802456C8` (table CRC-16), `fn_8024CD8C`, `fn_8025B34C` (`y[i] +=
+  a * x[i]`), `fn_8024D32C` (quarter-wave sine table), `fn_8025882C`/`fn_80258838`, `fn_80267834`,
+  `fn_8026788C` and five accessors at 0x8026799C-0x802679BC.
+
+What tells the sets apart, and what each proof rules out:
+
+- **Not `-O1`:** `-O1` doesn't schedule (`-fschedule-insns`, `-fschedule-insns2`), which reorders loads
+  and stores in nearly every proof. `-O2 -fno-schedule-insns` breaks `fn_802E8350`, `fn_80416B08`, `fn_80473620` and
+  `fn_802AFD6C`; `-fno-schedule-insns2` breaks those and the display-list writes and wrappers too.
+- **Not `-Os`:** `-Os` keeps loops and addresses differently (`fn_8023DAE0`, `fn_802456C8`, `fn_802AFD6C`,
+  `fn_80473620` all differ), as it does for Newlib's `strlen`.
+- **Not `-O3`:** `-O3`'s `-finline-functions` inlines a small function into a caller later in the same
+  file, and the DOL doesn't: `fn_8023DC08` calls `fn_8023DB6C`, `fn_80258838` calls `fn_8025882C` (both
+  checked by compiling), `fn_8026F7EC` calls `fn_8026F7D0`, `fn_802EEDA4` calls three two-instruction
+  getters, and `fn_80412858` calls `fn_80412838`.
+- **Strength reduction:** with it, a counted loop becomes a `mtctr`/`bdnz` loop over a pointer; without
+  it, the loop keeps its counter and indexes with `slwi` + `lwzx`/`stwx`/`lfsx`. The middle block has
+  81 functions with such indexed loops and no `bdnz` loop (except `fn_80260AEC`, below), and
+  `fn_802456C8`, `fn_8024CD8C` and `fn_8025B34C` only match with `-fno-strength-reduce`. The `-O2`
+  ranges have 159 functions with `bdnz` loops, and `fn_8023DAE0` and `fn_802AFD6C` only match with it on.
+- **`-G0`:** no small data, so every global is reached through `lis`/`addi`. The middle block's 816
+  functions never use `r13`. `fn_80267BC4` reads RealCore's 4-byte `.sdata` variable `lbl_8066C884`
+  through `lis`/`lwz`, where RealCore's own code uses `@sda21`. That is only possible from a `-G0`
+  unit, unless the header declared the variable as an incomplete array. The CSIS functions and
+  `fn_80267834` need `-G0` to match, and RealCore's `fn_8023DAA0` and Apt's `fn_8026F7AC` stop matching
+  with it.
+- **No effect on the proofs:** `-fno-defer-pop`, `-ffast-math`, `-f[no-]strict-aliasing`, `-fno-regmove`,
+  `-fno-gcse`, `-fno-caller-saves`, `-mcpu=750`, `-fno-rtti` and `-fno-exceptions` (the last two are
+  `cc1plus`'s defaults here), so they are undetermined. `-fno-inline`, `-finline-functions`,
+  `-funroll-loops` and `-fno-omit-frame-pointer` each break some.
+
+At `-O2` the C++ pair is gone and `cc1` and `cc1plus` give the same code for anything without
+classes, so the language of an optimized unit follows its content: vtable calls or `new` make it
+C++.
+
+**Not compiler output:** `fn_802DF3F0` to `fn_802E0038` (12 functions, 0xD0C bytes, in the video
+code) use paired-single instructions (`psq_l`, `ps_madd`, ...), which GCC 2.95 never emits:
+hand-written assembly. Havok's `mftb` (150 functions) is inline assembly inside compiled functions,
+so those are still `-O2` output. Two optimized functions keep a frame pointer because they call
+`alloca` (`fn_802424F8`, `fn_802C8DD8`, with `stwux r11,r1,r0`). `tools/flavor_map.py` classes them
+as `asm` and `alloca`.
+
+**Telling a function's flags apart before claiming it:**
+
+1. `mr r31,r1` in the prologue (and no `stwux`) means `-O0` with the game flags; check the branch pair
+   with `pair_map.py`.
+2. No frame pointer means middleware: `python3 tools/flavor_map.py <address>` gives the range's flags.
+3. Inside the optimized ranges, `r13` access rules out `-G0`, a `lis` access into `.sdata`/`.sbss`
+   requires it, a `bdnz` loop rules out `-fno-strength-reduce`, and call-free loops that index with
+   `slwi` point to it.
+4. A function at the edge of a range, or one whose evidence contradicts its range, decides its own
+   file's flags: compile it both ways.
 
 ### Release
 
@@ -204,7 +291,17 @@ Most of the read-only data the SDK clusters own belongs to GCC-built runtime cod
 ## Open questions
 
 - Which release (above).
-- Which files use flags other than `-O0`, and what they are.
+- The exact edges of the `-fno-strength-reduce -G0` block (see [Flags](#flags)), and `fn_80260AEC`
+  inside it: its two loops are `bdnz` loops, so its file was built with strength reduction on. It
+  doesn't use small data, so `-O2 -G0` is the likely set; compile it to find out.
+- The `-O2` ranges have 22 functions whose call-free loops still index with `slwi` (`fn_803372F0`, a
+  search loop with its first iteration peeled, is the smallest). Strength reduction can leave a loop
+  like that, but none has been matched, so a few `-fno-strength-reduce` files in Havok or Apt are not
+  ruled out.
+- Region C (0x80472F34-0x8047EED8) has no caller of a small earlier function, so `-O3` is ruled out
+  there only by analogy with the rest of Havok.
+- `-fno-defer-pop`, `-ffast-math`, strict aliasing, `-mcpu` and the other options that changed none
+  of the proofs.
 - File boundaries: a `_GLOBAL_.I` function ends a file, but most files have none. `Game/fn_800092CC.cpp` may start before 0x800092CC.
 - Uninitialized C globals become COMMON symbols (`-fno-common` or the rules in [`common_bss.md`](common_bss.md)).
 - SN's `stdarg.h`.
