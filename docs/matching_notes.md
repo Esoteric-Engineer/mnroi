@@ -300,6 +300,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **`clrlwi rX, rY, 31` then a second `clrlwi rZ, rX, 24` before a `cmpwi` on a flag test means the parameter is `unsigned char`, but its callers pass an `int`.** A narrow definition conflicts with an `int` prototype in the same file, and a K&R definition adds copies. Declare the caller's prototype under another C name with `__asm__("fn_XXXXXXXX")` (`Game/fn_80445FD0.c`, `fn_80446214`).
 
+- **`fadds fN, fM, fM` where the source has a doubling, and float temps in `f29`-`f31` with no `register` local, is `2.0f * expr` written as one expression.** `2.0f * x` folds to `x + x` with no pooled literal, and each saved sub-expression lands in a call-saved FPR when it spans calls; naming it as a `register float` adds an `fmr` copy. Several `fn_804352C8(v, i)` calls whose results are all loaded after the last call are one expression, not separate statements (`Game/fn_804467B0.c`).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.
