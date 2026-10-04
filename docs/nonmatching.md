@@ -147,6 +147,18 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 ---
 
+## `Game/fn_80446C80.c` — float setters through `fn_8042FB28(self + 0x80)`
+
+0x80446C80-0x80446DE8, 95.9% fuzzy, size matches: `fn_80446C80`/`fn_80446CD4` store `v` at `[0]`/`[2]` of the returned float array, `fn_80446D28`/`fn_80446D88` store `fn_801BDB9C(v)` there. The DOL source is `*f(...) = v` in C++, which compiles here to `mr r0, r3` / `mr r29, r0` / `stfs 0(r29)` (and, for the call-on-the-right pair, `mr r28, r3` ... `mr r29, r28`), but cc1 emits the call result direct. 18 `.c` shapes tried (register locals, assignment-as-value, casts through `int`/`char *`/`void *`, two locals, `if ((p = f()))`): the closest, `register float *p; *(p = f()) = v;`, is 99.3% for the first two and has the temp in `r9` instead of `r0`; the last two stay at 95.1% (`stmw r29` vs `r28`). No pair in the DOL, so there is no `.cpp` unit for them either.
+
+---
+
+## `Game/fn_80446ACC.c` — dead-zone remap
+
+0x80446ACC-0x80446BD8, 98.43% fuzzy, 4 bytes over size. Only the early `return 0.0f` differs: the DOL loads the literal straight into `f1` (`lfs f1`), ours loads `f13` and copies (`fmr f1, f13`) because the value comes from an `extern const float[]` rather than a literal. `*p`, `(float)p[0]`, `+p[0]` give the same. The pool (0x8048CD34-0x8048CD48) is the unit's own, but claiming it is cyclic (`matching_notes.md`), so the literal form can't be used.
+
+---
+
 ## `Game/fn_8002623C.cpp` — the actor's per-frame effect gather
 
 0x8002623C-0x80026B9C, 95.2% fuzzy, 8 bytes over size. The reconstruction is otherwise exact: every

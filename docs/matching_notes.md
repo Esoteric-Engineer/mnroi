@@ -302,6 +302,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **`fadds fN, fM, fM` where the source has a doubling, and float temps in `f29`-`f31` with no `register` local, is `2.0f * expr` written as one expression.** `2.0f * x` folds to `x + x` with no pooled literal, and each saved sub-expression lands in a call-saved FPR when it spans calls; naming it as a `register float` adds an `fmr` copy. Several `fn_804352C8(v, i)` calls whose results are all loaded after the last call are one expression, not separate statements (`Game/fn_804467B0.c`).
 
+- **A store through a call result, `*f(x) = v;`, comes out `mr r0, r3` / `mr rN, r0` / `stfs 0(rN)` in cc1plus and with the result used direct in cc1, so a pair-less function with that shape has no `.c` form.** The call-on-the-right variant (`*f(x) = g(v)`) shows `mr rN, r3` ... `mr rM, rN` before the store in cc1plus and a single register in cc1. Measured on a scratch `.cpp` against the DOL; the best `.c` shape (`*(p = f(x)) = v;`) leaves the temp in `r9` (`Game/fn_80446C80.c`).
+- **Float temps one register low (`f12` where the DOL has `f13`) after a clamp: the result was a `register float` local, and the DOL kept it in an expression temp.** A `register` float lives for the whole function and takes `f13` first; `return a >= lo ? (a <= hi ? a : hi) : lo;` leaves the temps at `f13` (`Game/fn_80446ACC.c`).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.
