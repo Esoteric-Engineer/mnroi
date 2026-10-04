@@ -159,7 +159,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 1 | `characterselect.cpp`, 0x801037B0-0x801040F4 | Blocked: both handlers return a class by value, which hits the function-end branch pair ([`nonmatching.md`](nonmatching.md)). `fn_80103FC4` and the static initializer sit behind them. |
 | 2 | Character roster ([`characters.md`](characters.md) section 2) | Accessors done; the roster *data* (`lbl_804CA51C`, `lbl_804CAB0C`, `lbl_804CB0FC`) is left. It sits among the APT registration constructors at 0x8044AF58-0x8044EE3C, so work out those file boundaries before claiming anything. |
 | 3 | Character type ([`characters.md`](characters.md) sections 1, 5) | Done except `fn_8002623C`, which blocks the whole file 0x8002623C-0x80027D58 on the branch pair. |
-| 4 | Selection to spawn ([`characters.md`](characters.md) section 3) | **Current step**, notes below. Next: `fn_80443E9C`, then the one unmatched gap `fn_804436D4`. |
+| 4 | Selection to spawn ([`characters.md`](characters.md) section 3) | **Current step**, notes below. Next: the one unmatched gap `fn_804436D4`, then `fn_80443F0C` onwards (a family of handle classes). |
 | 5 | `control.cpp`, from 0x801040F4 | Blocked like step 1: the twelve getters and `Control_ChangeScreen` are pair-less, so each is 8 bytes over as `.cpp`. The getters would match in a `.c` unit under another name; the handlers that build APT temporaries would not. Handler order after the getters: `Control_ChangeScreen`, `Control_EnableControllerCheck`, `Control_SetMatchInfo`, `Control_SetSelectInfo`, `Control_StartLoad`, `Control_StartProgressBar`, `Control_StartGame`, `Control_EndOfMatch`, then the rest of the file (`Control_BindController` is further down) and its static initializer. |
 | 6 | `venuetable.cpp` | All six handlers. |
 | 7 | Last-selection module, 0x801317D8-0x80131E90 | Tiny accessors; they name everything in section 4.2. |
@@ -178,7 +178,10 @@ Only what costs disassembly to re-derive. What a matched function *does* is in i
   despite acting on a slot, so the branch pair mostly does not block this step. It is not one source
   file — 0x80443908-0x804439E8 carries the pair between two pair-less runs — so let each function's
   trailing-branch count pick the language ([`matching_notes.md`](matching_notes.md)). Forwards it
-  stops at `fn_80443E9C`, which is C++ (`new` through `fn_801ACED4`). `fn_804436D4` is the one
+  stops at 0x80443E9C, where a run of C++ handle classes starts: a constructor that stores a vptr
+  (+0x4) and `new`s a 0x18-byte implementation object into +0x0, its callee `fn_80444034` (the
+  implementation's constructor) and more of the same. `fn_8042841C` is an identical instantiation
+  for another type, sharing the vtable `lbl_804F2E28`. `fn_804436D4` is the one
   unmatched gap ([`nonmatching.md`](nonmatching.md)).
 - **What those accessors act on**, in address order: a 0x30-byte descriptor `fn_8008A010` builds on
   its stack; the globals object `lbl_80593BE8` (two RNG seeds at +0x4 and +0x8, frame time in ms at
