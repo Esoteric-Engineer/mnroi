@@ -298,6 +298,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **A prologue that spills `r5`-`r10` and, behind a `bne cr1`, `f1`-`f8` into a 0x78 frame is a variadic function, and an empty body reproduces it.** `void f(register void *a, register int b, ...) { }` gives the register-save area and the two `mr` copies of the named parameters (`Game/fn_80442010.c`, `fn_8044256C`).
 
+- **`clrlwi rX, rY, 31` then a second `clrlwi rZ, rX, 24` before a `cmpwi` on a flag test means the parameter is `unsigned char`, but its callers pass an `int`.** A narrow definition conflicts with an `int` prototype in the same file, and a K&R definition adds copies. Declare the caller's prototype under another C name with `__asm__("fn_XXXXXXXX")` (`Game/fn_80445FD0.c`, `fn_80446214`).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

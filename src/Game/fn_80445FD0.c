@@ -1,4 +1,4 @@
-// Retries fn_804460F4 on lbl_80628B00 after fn_80446214, plus four small methods; the queue is lbl_80628B00.
+// Retries fn_804460F4 on lbl_80628B00 after fn_80446214, plus small methods; the queue is lbl_80628B00.
 
 typedef struct
 {
@@ -18,14 +18,14 @@ typedef struct
 extern Queue lbl_80628B00;
 
 extern int fn_804460F4(Queue *self, float x, float y, int a);
-extern void fn_80446214(int a);
+extern void fn_80446214_int(int a) __asm__("fn_80446214");
 extern void fn_80445F00(char *self);
 
 void fn_80445FD0(register float x, register float y, register int a, register int b)
 {
     if (fn_804460F4(&lbl_80628B00, x, y, a) != 0)
     {
-        fn_80446214(b);
+        fn_80446214_int(b);
         fn_80445F00((char *)&lbl_80628B00);
         fn_804460F4(&lbl_80628B00, x, y, a);
     }
@@ -65,4 +65,100 @@ int fn_804460F4(register Queue *self, register float x, register float y, regist
     self->e[self->count].color = (self->e[self->count].color << 8) | (unsigned char)(self->e[self->count].color >> 24);
     self->count = self->count + 1;
     return 0;
+}
+
+extern void fn_8022A0D0(char *self);
+extern void fn_8022A214(char *self);
+extern void fn_8022A358(char *self);
+
+void fn_80446214(register unsigned char flags)
+{
+    if (flags & 1)
+    {
+        fn_8022A0D0((char *)&lbl_80628B00);
+    }
+    else if (flags & 2)
+    {
+        fn_8022A358((char *)&lbl_80628B00);
+    }
+    else
+    {
+        fn_8022A214((char *)&lbl_80628B00);
+    }
+}
+
+int fn_80446290(register char *self)
+{
+    return *(int *)(self + 0x248) & 8;
+}
+
+void fn_804462C0(register char *self, register int a)
+{
+    if (a)
+    {
+        *(int *)(self + 0x248) |= 8;
+    }
+    else
+    {
+        *(int *)(self + 0x248) &= ~8;
+    }
+}
+
+int fn_80446308(register char *self)
+{
+    return *(int *)(self + 0x448) & 1;
+}
+
+void fn_80446338(register char *self, register int a)
+{
+    if (a)
+    {
+        *(int *)(self + 0x448) |= 1;
+    }
+    else
+    {
+        *(int *)(self + 0x448) &= ~1;
+    }
+}
+
+void fn_80446380(register char *self)
+{
+    if (++*(int *)(self + 0x450) == 9)
+    {
+        *(int *)(self + 0x450) = 0;
+    }
+}
+
+void fn_804463C0(register char *self, register unsigned int a)
+{
+    register unsigned int v = a;
+    if (v > 2)
+    {
+        v = 2;
+    }
+    *(unsigned int *)(self + 0x44C) = v;
+}
+
+void fn_804463F8(register char *self)
+{
+    *(int *)(self + 0x1DC) = 1;
+}
+
+extern void fn_8043AC1C(char *self, int a);
+
+void fn_80446420(register char *self, register int a)
+{
+    fn_8043AC1C(self, a);
+}
+
+void fn_80446460(register char *self, register int a)
+{
+    if (a)
+    {
+        *(int *)(self + 0x2D8) &= ~1;
+    }
+    else
+    {
+        *(int *)(self + 0x2D8) |= 1;
+    }
 }
