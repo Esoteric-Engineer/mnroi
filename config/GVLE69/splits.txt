@@ -3215,6 +3215,45 @@ Game/fn_80446DE8.c:
 Game/fn_80447378.cpp:
 	.text       start:0x80447378 end:0x804473BC
 
+Game/fn_804473BC.c:
+	.text       start:0x804473BC end:0x804473E8
+
+Game/fn_804473E8.cpp:
+	.text       start:0x804473E8 end:0x80447434
+
+Game/fn_80447434.c:
+	.text       start:0x80447434 end:0x80447618
+
+Game/fn_80447618.cpp:
+	.text       start:0x80447618 end:0x80447670
+
+Game/fn_80447670.c:
+	.text       start:0x80447670 end:0x80447830
+
+Game/fn_80447830.cpp:
+	.text       start:0x80447830 end:0x804479B0
+
+Game/fn_804479B0.cpp:
+	.text       start:0x804479B0 end:0x80447A18
+
+Game/fn_80447A18.c:
+	.text       start:0x80447A18 end:0x80447A7C
+
+Game/fn_80447A7C.c:
+	.text       start:0x80447A7C end:0x80447C38
+
+Game/fn_80447C38.cpp:
+	.text       start:0x80447C38 end:0x80447C84
+
+Game/fn_80447C84.c:
+	.text       start:0x80447C84 end:0x80447DBC
+
+Game/fn_80447DBC.c:
+	.text       start:0x80447DBC end:0x80447F78
+
+Game/fn_80447F78.c:
+	.text       start:0x80447F78 end:0x8044802C
+
 Game/fn_8044B1D4.c:
 	.text       start:0x8044B1D4 end:0x8044B4EC
 

@@ -305,6 +305,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A store through a call result, `*f(x) = v;`, comes out `mr r0, r3` / `mr rN, r0` / `stfs 0(rN)` in cc1plus and with the result used direct in cc1, so a pair-less function with that shape has no `.c` form.** The call-on-the-right variant (`*f(x) = g(v)`) shows `mr rN, r3` ... `mr rM, rN` before the store in cc1plus and a single register in cc1. Measured on a scratch `.cpp` against the DOL; the best `.c` shape (`*(p = f(x)) = v;`) leaves the temp in `r9` (`Game/fn_80446C80.c`).
 - **Float temps one register low (`f12` where the DOL has `f13`) after a clamp: the result was a `register float` local, and the DOL kept it in an expression temp.** A `register` float lives for the whole function and takes `f13` first; `return a >= lo ? (a <= hi ? a : hi) : lo;` leaves the temps at `f13` (`Game/fn_80446ACC.c`).
 
+- **A destructor whose `__in_chrg` flag sits in a call-saved register (`mr r30, r4`), where the `.cpp` form spills it (`stw r4, 0x8(r31)` and a reload before `clrlwi 31`), is hand-written C.** Write `void f(register T *self, register int inChrg)` with the member destructors as plain calls with `2`, then `if (inChrg & 1) { __builtin_delete(self); } else { }` (the empty `else` is the `b` after the delete call); keep the `fn_XXXXXXXX` name, no mangling needed. A member guarded by `if (p) { if (p) g(p); else { } }` shows the same `b` after its call (`Game/fn_80447DBC.c`). The `GameFlow` destructor, which does spill, is the `.cpp` kind.
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

@@ -144,6 +144,10 @@ Leaving it unclaimed means the literals have to be `extern`s:
   0x8048CD14 onwards is cyclic through `auto_04_8048D080_rodata`) is 89.8%: same `lis`-before-`lfs`
   order. `register float v = self[6];` fixes the order but keeps `v` in `f0` and shifts the later
   float registers; a `volatile` load of the left operand changes nothing.
+- `Game/fn_80447A18.c` (`fn_80447A18(index)`, 0x80447A18-0x80447A7C): `lbl_8066C63C != 0 && lbl_8066C63C->e[index].f0 >= 0.9f`
+  with the literal is 99.6%, only the pool relocation differs, but the pool (0x8048E498-0x8048E4C8) is
+  cyclic to claim, so the unit stays `NonMatching`; with `extern const float lbl_8048E498[]` it is 90.6% (same
+  `lis`-before-`lfsx` order, and the pointer/index registers swap); a `volatile` read of the extern changes nothing.
 
 ---
 
@@ -189,3 +193,17 @@ without effect: `register int n = numUnplugged++` and `n = ...` as a separate st
 increment before the store), a comma expression, `register unsigned`, `+ 0`, `-(-n)`, `(unsigned)`,
 swapped `(n = ...)[unplugged]`, pointer-arithmetic forms, a second register local, a `?:`, and
 `register volatile` (which takes a frame slot).
+
+---
+
+## `Game/fn_804473E8.cpp`, `Game/fn_80447830.cpp` — constructors that end `b .L` / `.L: mr r3, r30`
+
+0x804473E8-0x80447434 (`Dir::Dir(const void *)`, base `Vector(const short *)`) and 0x80447830-0x804479B0 (that `Vector` constructor, a
+local `Vector` built from four packed shorts and copied into `*this`), 88.2% and 97.2% fuzzy, size matches. Every instruction
+matches except the tail: the DOL has `bl; b .L; .L: mr r3, r30; <epilogue>`, ours has `bl; mr r3, rN; b .L` (the shape that
+matched `Game/fn_80444034.cpp` and `Game/fn_80447618.cpp`), so `b` and `mr` are swapped. In `Dir` the parameter registers also
+come out `this`=r29, `src`=r30 against the DOL's r30/r29. An explicit `return;` in the constructor body gives `b A` / `mr r3` /
+`b END` / `A: mr r3` / `b END`, i.e. the DOL's tail plus 12 dead bytes, so the original is probably that source in the
+pair-less configuration ([the branch pair](#the-c-function-end-branch-pair)). The same tail is on `fn_80448A28`,
+`fn_80448A74`, `fn_80448AC0`, `fn_80448FD0` and `fn_80449020`; a constructor with `mr r3, r30` *before* the `b` is fine. The
+`Vector` constructor's two doubles (0x8048DEA8, 0x8048DEB0) are also cyclic to claim.
