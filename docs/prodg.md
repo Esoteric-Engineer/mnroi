@@ -61,14 +61,31 @@ All five releases (3.5, 3.5b140, 3.7, 3.8.1, 3.9.3) give the same output for eve
 **No release reproduces the DOL's C++ function ends.** Every bundled `cc1plus` (the five builds are
 distinct: V1.37, v1.40, v1.46, v1.55, v1.76) closes every function that is not a constructor with two
 unreachable branches to the epilogue, and **most of the DOL's C++ functions do not have them.** The
-two shapes cluster by source file, so the DOL was built with at least two compiler configurations and
-the bundled releases are the minority one. Constructors are the exception and agree with the DOL
+two shapes cluster by source file, so the DOL was built with at least two compiler configurations.
+Neither is a small minority (see the pair map below). Constructors are the exception and agree with the DOL
 (`Vector::Vector()` compiles byte for byte to 0x80428F74), as do scalar returns in the files that do
 carry the pair (`fn_8022EA78`, `Game/fn_8001C258.cpp`, `Game/fn_800092CC.cpp`). So any C++ unit in a
 pair-less file is 8 bytes over size per function with the stock build. The workaround is
 `strip_fn_end_pair=True` on the unit, which runs `tools/prodg_nopair.py` to delete the pair from the
 generated assembly ([`nonmatching.md`](nonmatching.md) has the details and everything ruled out,
 including 6138 option/form combinations on `cc1plus.exe`). The real configuration is still unknown.
+
+**Pair map.** `python3 tools/pair_map.py` classes every GCC function by its epilogue, and
+`python3 tools/pair_map.py 0x80103BAC` says which run an address is in. A = carries the pair; B = a method
+(`this` in r30) with no trailing branch at all, so certainly not a constructor or C. What it shows:
+
+- 2,629 functions are A and 1,666 are B, in 467 runs. B is undercounted, because a pair-less free function
+  with no `return` can't be told from C, so read the totals as "both are common", not as a ratio.
+- A and B alternate through the whole `.text`, 153 of the runs being one or two functions long, so the
+  setting follows individual source files, not libraries or eras.
+- B dominates the tail, 0x80440000-0x80480000 (80% of classed functions), where most of the versus-mode
+  work lives. A dominates 0x800C0000-0x800F0000 (89%) and 0x80200000-0x80240000 (84%).
+- Prologues and epilogues are identical in A and B, down to the saved-register ranges and frame layout. The
+  code generator is the same and only the function-end branches differ, which favours a per-file source or
+  option difference over a different compiler family, though a second ProDG release is not ruled out.
+- It reproduces every boundary stated above (0x80024C60-0x8002623C and 0x800B5BC4-0x800B7094 are A, 0x80027D58
+  starts A again, 0x80443908-0x804439E8 is A between B runs) and agrees with every unit already flagged
+  `strip_fn_end_pair`.
 
 A quick way to tell which configuration a file was built with, before claiming anything: look at the
 instructions just before a function's last label. Two identical branches to it means the file carries
