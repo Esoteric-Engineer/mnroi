@@ -1,6 +1,6 @@
-// GameFlow::OnPadInserted (the method behind OnPadInserted__FUs): drops the player whose pad came back;
-// fn_800B4F50 clears the unplugged list, fn_800B5124 is the per-frame pad check. A .c unit: the file is
-// pair-less C++, so `this` is a register first parameter. docs/versus.md section 6 has the class.
+// GameFlow::OnPadInserted (behind OnPadInserted__FUs), plus fn_800B4F50 (clears the unplugged list), fn_800B5124
+// (per-frame pad check) and fn_800B5524 (stripped empty method). A .c unit: the file is pair-less C++, so `this`
+// is a register first parameter. docs/versus.md section 6 has the class.
 
 typedef struct GameFlow
 {
@@ -230,4 +230,9 @@ int fn_800B5124(register GameFlow *this)
         fn_801AA368();
     }
     return paused;
+}
+
+void fn_800B5524(register GameFlow *this)
+{
+    return;
 }

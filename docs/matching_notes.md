@@ -231,6 +231,11 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   *nothing* in it needs C++: a `.c` unit matched all 42 functions of the pair-less C++ file at
   0x800B7204-0x800B869C, static initializer included (`Game/fn_800B7204.c`).
 
+- **An empty `void` method with one `b` to its epilogue (`mr r0, r3` / `b .L` / epilogue) is
+  `.c` with an explicit `return;`.** Plain C emits that one branch per `return` and nothing for a bare
+  `{ }`, so the empty body is 4 bytes short; `register T *this` supplies the `mr r0, r3` copy
+  (`Game/fn_800B4CF8.c`, `fn_800B5524`).
+
 - **A parameter spilled as `mr r0, rN` / `mr r9, r0` / `sth r9` is 16-bit, and `clrlwi`-on-read makes
   it unsigned.** Arguments arrive promoted to a word, so a 16-bit parameter needs the two copies to
   truncate before the halfword store, where an `int` one is a bare `stw`; reading it back as `lhz`
