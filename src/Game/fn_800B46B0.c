@@ -111,5 +111,5 @@ void fn_800B47C0(register GameFlow *this)
     return;
 }
 
-// fn_800B5124's format string, defined here so this unit's .rodata ends 8-aligned
+// fn_800B5124's format string (Game/fn_800B4CF8.c), defined here so this unit's .rodata ends 8-aligned
 const char lbl_8048BD9C[] = "kT_INSERT_CONTROLLER%d_NGC";
