@@ -1,9 +1,9 @@
-// GameFlow methods in the pair-less file (OnPadInserted, the pad checks, the +0x19C release, the load-screen start, the slot pick, the 0x3E load start, the per-frame tick that calls RunCommand).
+// GameFlow methods of 0x800B4CF8-0x800B5BC4: pad checks, slot pick, load start, the per-frame tick and its state stage.
 // A .c unit: `this` is a register first parameter. docs/versus.md section 6 has the class.
 
 typedef struct GameFlow
 {
-    char unk0[4];
+    float timer;               // +0x0
     int unk4;                  // +0x4
     int unk8;                  // +0x8
     int unkC;                  // +0xC
@@ -80,6 +80,9 @@ extern int fn_8012F32C(int a, char *name);
 extern void fn_800189E0(float x, float y, float w, float h, int image, float alpha);
 extern void fn_804325CC(char *globals);
 extern int fn_80432764(int a, unsigned short *port);
+extern float fn_8042E998(char *globals);
+extern int fn_8005287C(void);
+extern void fn_801A7C14(void);
 extern void *fn_804317BC(void *g, int i); // &G.slots[i]
 extern int fn_80434900(void *g);          // G+0x590, the active slot count
 extern void fn_801AA570(int a);
@@ -379,4 +382,37 @@ int fn_800B5988(register GameFlow *this)
     Stub6D48__8GameFlow(this);
     RunCommand__8GameFlow(this);
     return 0;
+}
+
+int fn_800B5A08(register GameFlow *this)
+{
+    if (fn_80432764(1, 0) || fn_80432764(10, 0)) {
+        this->timer = 0.0f;
+    }
+    this->timer -= fn_8042E998(lbl_80593BE8);
+    if (this->timer <= 0.0f && fn_8005287C()) {
+        this->unk13C = 0;
+        BeginLoad__8GameFlow(this);
+        SetCommand__8GameFlowi(this, 0x42);
+    }
+    if (this->timer < 4.0f) {
+        return 0;
+    }
+    return 1;
+}
+
+void fn_800B5AFC(register GameFlow *this)
+{
+    if (this->timer > 0.0f && fn_800B5A08(this)) {
+        return;
+    }
+    fn_800B5524(this);
+    if ((this->unk1C & 8) && fn_800B56B4(this)) {
+        return;
+    }
+    if ((this->unk1C & 4) && fn_800B56DC(this)) {
+        return;
+    }
+    fn_801A7C14();
+    fn_800B5988(this);
 }
