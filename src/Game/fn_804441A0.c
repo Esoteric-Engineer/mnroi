@@ -326,7 +326,7 @@ void fn_80444F20(register char *self, register int a, register int b, register i
 
 extern void fn_8042DC84(void *self, int a);
 extern void fn_801B6768(void *self, int a);
-extern void fn_80445590(void *self, int a);
+extern void fn_80445590(float *m, float *angles);
 
 void fn_80444FB4(register char *self, register int a)
 {
@@ -362,7 +362,7 @@ void fn_804450F8(register char *self, register int a)
 
 void fn_8044513C(register void *self, register int a)
 {
-    fn_80445590(self, a);
+    fn_80445590((float *)self, (float *)a);
 }
 
 #define SWAP32(i) p[i] = (p[i] >> 24) | ((p[i] >> 8) & 0xFF00) | ((p[i] & 0xFF00) << 8) | (p[i] << 24)
@@ -398,4 +398,42 @@ char *fn_8044554C(register char *self)
 {
     __6Vector(self + 0x30);
     return self;
+}
+
+extern const double lbl_8048B678[]; // degrees to radians
+extern const float lbl_8048B680[]; // 0.0f
+extern const float lbl_8048B684[]; // 1.0f
+extern double sin(double x);
+extern double cos(double x);
+
+// Builds a 4x4 rotation matrix from the three angles in degrees.
+void fn_80445590(register float *m, register float *angles)
+{
+    float ca, sa, cc, sc, cb, sb, t0, t1, t2, t3;
+    sa = sin(angles[0] * lbl_8048B678[0]);
+    ca = cos(angles[0] * lbl_8048B678[0]);
+    sc = sin(angles[2] * lbl_8048B678[0]);
+    cc = cos(angles[2] * lbl_8048B678[0]);
+    sb = sin(angles[1] * lbl_8048B678[0]);
+    cb = cos(angles[1] * lbl_8048B678[0]);
+    t0 = sa * sc;
+    t1 = sa * cc;
+    t2 = ca * sc;
+    t3 = ca * cc;
+    m[0] = cb * cc;
+    m[1] = cb * sc;
+    m[2] = -sb;
+    m[3] = lbl_8048B680[0];
+    m[4] = sb * t1 - t2;
+    m[5] = sb * t0 + t3;
+    m[6] = cb * sa;
+    m[7] = lbl_8048B680[0];
+    m[8] = sb * t3 + t0;
+    m[9] = sb * t2 - t1;
+    m[10] = ca * cb;
+    m[11] = lbl_8048B680[0];
+    m[12] = lbl_8048B680[0];
+    m[13] = lbl_8048B680[0];
+    m[14] = lbl_8048B680[0];
+    m[15] = lbl_8048B684[0];
 }

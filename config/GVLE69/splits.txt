@@ -3174,7 +3174,7 @@ Game/fn_804440B0.c:
 	.text       start:0x804440B0 end:0x804441A0
 
 Game/fn_804441A0.c:
-	.text       start:0x804441A0 end:0x80445590
+	.text       start:0x804441A0 end:0x804457F4
 
 Game/fn_8044B1D4.c:
 	.text       start:0x8044B1D4 end:0x8044B4EC
