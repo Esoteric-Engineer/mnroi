@@ -13,6 +13,7 @@ extern int fn_80085E8C(void *p);
 extern int fn_80444544(char *p);
 extern int fn_80426AB0(void *g);
 extern int fn_80444CA4(void *p);
+extern char *fn_80430050(void *p);
 extern int lbl_8066B664;
 extern char lbl_8052F060[];
 extern char lbl_80552110[]; // G
@@ -147,4 +148,24 @@ int fn_80444710(register char *self)
 int fn_80444740(register char *self)
 {
     return *(unsigned char *)(self + 0x2A);
+}
+
+char *fn_80444770(register char *self, register int index)
+{
+    return *(char **)(fn_80430050(lbl_8052F060) + 0x158) + (*(unsigned short *)(self + 0x28) + index) * 0x30;
+}
+
+int fn_804447D4(register char *self)
+{
+    return *(unsigned short *)(self + 0x2C) & 0x70;
+}
+
+int fn_80444808(register char *self)
+{
+    return *(unsigned short *)(self + 0x2C) & 0x80;
+}
+
+int fn_8044483C(register char *self)
+{
+    return *(unsigned short *)(self + 0x2C) & 0x1000;
 }
