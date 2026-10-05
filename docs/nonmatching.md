@@ -102,6 +102,12 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 ---
 
+## `Game/fn_8044AC7C.c` — `String` temp passed by reference
+
+0x8044AC7C-0x8044ACEC, 96.07% fuzzy, 4 bytes short. Same dead `mr r0, r3` after `fn_804493A0` and `&tmp` through `r9` as `fn_8044916C` below: `fn_8044AB94(self, String(b), c)` with a real `String` temporary is the source, blocked by the same unnameable `_._6String`. A comma expression `(fn_804493A0(tmp, b), tmp)` as the argument changes nothing.
+
+---
+
 ## `Game/fn_8044916C.cpp` — `String` temp passed by reference
 
 0x8044916C-0x804491DC, 99.64% fuzzy, size matches. The DOL builds a `String` temporary with `fn_804493A0`, copies the result into `r0` and drops it, then forms `&tmp` through `r9` (`addi r9, r31, 0x18`). `fn_80449084(self, String(b), c)` with the callee taking `const String &` and a real `~String()` reproduces that exactly (100%, verified), but the destructor call is then `_._6String` and `fn_80449298` cannot carry that name: it is a hand-written `.c` destructor (a `.cpp` one spills the in-charge flag), and a `.c` definition cannot be named `_._6String` (`ngcas` rejects the label, with an `__asm__` label too). Renaming the symbol was tried and reverted. The checked-in version calls `fn_80449298(&tmp, 2)` explicitly, which leaves `addi r0` where the DOL has `addi r9`. `__asm__("fn_80449298")` on the destructor declaration makes cc1plus inline a deleting destructor instead.
@@ -176,7 +182,7 @@ matched `Game/fn_80444034.cpp` and `Game/fn_80447618.cpp`), so `b` and `mr` are 
 come out `this`=r29, `src`=r30 against the DOL's r30/r29. An explicit `return;` in the constructor body gives `b A` / `mr r3` /
 `b END` / `A: mr r3` / `b END`, i.e. the DOL's tail plus 12 dead bytes, so the original is probably that source in the
 pair absent (the flag set by an earlier function, [the branch pair](#the-c-function-end-branch-pair)). The same tail is on `fn_80448A28`,
-`fn_80448A74`, `fn_80448AC0`, `fn_80448FD0` and `fn_80449020`; a constructor with `mr r3, r30` *before* the `b` is fine. The
+`fn_80448A74`, `fn_80448AC0`, `fn_80448FD0`, `fn_80449020`, `fn_8044AA94`, `fn_8044AAE0` and `fn_8044AB30`; a constructor with `mr r3, r30` *before* the `b` is fine. The
 `Vector` constructor's two doubles (0x8048DEA8, 0x8048DEB0) are also cyclic to claim.
 
 ---
