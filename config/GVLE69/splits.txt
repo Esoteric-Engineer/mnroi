@@ -74,6 +74,45 @@ Game/handlers/characterselect.cpp:
 	.ctors      start:0x8048264C end:0x80482650
 	.sbss       start:0x8066D700 end:0x8066D704
 
+Game/handlers/control.cpp:
+	.text       start:0x801040F4 end:0x801044B0
+
+Game/fn_801044B0.cpp:
+	.text       start:0x801044B0 end:0x80104504
+
+Game/fn_80104504.cpp:
+	.text       start:0x80104504 end:0x80104DB0
+
+Game/fn_80104DB0.cpp:
+	.text       start:0x80104DB0 end:0x80104E88
+
+Game/fn_80104E88.cpp:
+	.text       start:0x80104E88 end:0x80104EC4
+
+Game/fn_80104EC4.cpp:
+	.text       start:0x80104EC4 end:0x80104F80
+
+Game/fn_80104F80.cpp:
+	.text       start:0x80104F80 end:0x80105018
+
+Game/fn_80105018.cpp:
+	.text       start:0x80105018 end:0x8010513C
+
+Game/fn_8010513C.cpp:
+	.text       start:0x8010513C end:0x80105CA4
+
+Game/fn_80105CA4.cpp:
+	.text       start:0x80105CA4 end:0x80106028
+
+Game/fn_80106028.cpp:
+	.text       start:0x80106028 end:0x8010611C
+
+Game/fn_8010611C.cpp:
+	.text       start:0x8010611C end:0x80106B34
+	.ctors      start:0x80482650 end:0x80482654
+	.rodata     start:0x80490B28 end:0x80490B38
+	.sbss       start:0x8066D704 end:0x8066D754
+
 Game/fn_80114420.cpp:
 	.text       start:0x80114420 end:0x801147D4
 
