@@ -272,7 +272,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   priority, which it materialises as `li r9, 0` / `ori r9, r9, 0xffff`), and each wrapper is a
   `static void f(void)` that calls it with `(1, 65535)` / `(0, 65535)`. The `.ctors` and `.dtors`
   words come from `static void (*const e)(void) __attribute__((section(".ctors"))) = wrapper;`, with
-  both ranges claimed in `splits.txt` (`Game/fn_800B7094.c`). A file with initializers but no
+  both ranges claimed in `splits.txt` (`Game/fn_800B7094.c`). The same works in a `.cpp` unit that already has the
+  setter line, but `__sti` and `_GLOBAL_.I` must be non-`static` or mwld warns `FORCEACTIVE symbol ... not a global symbol` and `main.dol` comes out wrong, and `symbols.txt` names them with their C++ mangling (`..._0__Fii`, `fn_801040B8__Fv`) (`Game/handlers/characterselect.cpp`). A file with initializers but no
   destructors has only a `_GLOBAL_.I` and a `.ctors` word, and its `__sti` still ends the
   `if (initialize)` body with one branch over an empty `else`, so keep the `else { }`
   (`Game/fn_800B7204.c`).

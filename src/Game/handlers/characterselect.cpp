@@ -1,6 +1,7 @@
 // c:/Clash/mainline/Code/Game/handlers/characterselect.cpp
 //
-// Built at -O0. The whole file is 0x801037B0-0x801040F4; static initializer not yet claimed (docs/versus.md).
+// Built at -O0; the whole file is 0x801037B0-0x801040F4, docs/versus.md section 5.
+// The static initializer is hand-written (matching_notes.md) and owns the three handler-registration objects in .sbss.
 
 // APT script variables, engine classes shared with the other handler files. The names are guesses; the layouts and the symbols come from the code.
 class AptRef {
@@ -48,6 +49,10 @@ int fn_80131A34(int slot);
 int fn_80131AF4(int slot);
 int fn_80131BB4(int slot);
 void fn_80131E1C(); // reset
+
+// Handler registration (APT script name, function, source file, line); the objects are empty classes in the original.
+void *fn_8044AF58(void *reg, const char *name, void *func, const char *file, int line);
+void *fn_8044B11C(void *reg, const char *name, void *func, const char *file, int line);
 }
 
 // Literals still owned by the auto-generated .rodata.
@@ -73,6 +78,10 @@ extern char lbl_804901D0[]; // "nCusType1"
 extern char lbl_804901DC[]; // "nController0"
 extern char lbl_804901EC[]; // "nController1"
 extern char lbl_804901FC[]; // "bValid"
+extern char lbl_80490218[]; // "clashCharSelect_GetCharList"
+extern char lbl_80490234[]; // this file's path
+extern char lbl_80490270[]; // "clashCharSelect_GetPrevCharList"
+extern char lbl_80490290[]; // "clashCharSelect_ResetCharList"
 
 // Emits no code. A top-level `return <parameter>;` makes cc1plus drop the function-end branch pair for every later function in the unit.
 // The original file got that from a constructor or inline function in a header, which this stands in for.
@@ -145,3 +154,27 @@ void fn_80103FC4()
 {
     fn_80131E1C();
 }
+
+static char sGetCharListReg;
+static char sGetPrevCharListReg;
+static short sResetCharListReg;
+
+// 65535 is GCC 2.95's default init priority.
+void __static_initialization_and_destruction_0(int initialize, int priority)
+{
+    if (priority == 65535) {
+        if (initialize) {
+            fn_8044AF58(&sGetCharListReg, lbl_80490218, (void *)clashCharSelect_GetCharList, lbl_80490234, 41);
+            fn_8044AF58(&sGetPrevCharListReg, lbl_80490270, (void *)clashCharSelect_GetPrevCharList, lbl_80490234, 95);
+            fn_8044B11C(&sResetCharListReg, lbl_80490290, (void *)fn_80103FC4, lbl_80490234, 100);
+        } else {
+        }
+    }
+}
+
+void fn_801040B8(void)
+{
+    __static_initialization_and_destruction_0(1, 65535);
+}
+
+static void (*const sCtorEntry)(void) __attribute__((section(".ctors"))) = fn_801040B8;
