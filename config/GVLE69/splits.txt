@@ -3307,6 +3307,9 @@ Game/fn_804494AC.c:
 Game/fn_804497E4.c:
 	.text       start:0x804497E4 end:0x804498C8
 
+Game/fn_80449930.cpp:
+	.text       start:0x80449930 end:0x80449B80
+
 Game/fn_8044B1D4.c:
 	.text       start:0x8044B1D4 end:0x8044B4EC
 

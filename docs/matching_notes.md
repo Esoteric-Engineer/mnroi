@@ -314,6 +314,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A bare `b` to the very next instruction, with no compare before it, is `goto L; L:`.** `if (1) {}`, `while (0);` and `{ }` emit nothing or different branches (`Game/fn_804491DC.c`, `fn_80449260`; `Game/fn_80448B24.c` uses the same).
 - **A call whose pointer result the DOL stores straight into a frame slot (`stw r3`) instead of through `r0` wants a result type that differs from the local's by a qualifier:** declare the callee `const char *` and the local `char *` (`Game/fn_804494AC.c`, the iterator temporaries).
 
+- **A `const T &` parameter bound to a by-value parameter whose spill slot the DOL puts *after* the locals: declare that parameter `register`.** A plain parameter gets its frame slot at function entry (slot 8, ahead of every local), but a `register` one is a pseudo until `&s` is taken, so the slot is allocated at the call and lands after the locals while the prologue still stores `r4` to it. The call's other arguments (`fn_8044A2D8(self, s, p, fn_80449C48(self))` with `const char *const &` and `void *const &` parameters) are C++ temporaries, which gives the `stw r3, slot` / `addi rN, r31, slot` shape and the early `addi r29` for the hoisted one. Declare a second prototype with `__asm__("fn_XXXXXXXX")` when two callers need different reference types (`Game/fn_80449930.cpp`, `fn_80449A6C`).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.
