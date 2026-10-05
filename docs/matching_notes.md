@@ -316,6 +316,11 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **A `const T &` parameter bound to a by-value parameter whose spill slot the DOL puts *after* the locals: declare that parameter `register`.** A plain parameter gets its frame slot at function entry (slot 8, ahead of every local), but a `register` one is a pseudo until `&s` is taken, so the slot is allocated at the call and lands after the locals while the prologue still stores `r4` to it. The call's other arguments (`fn_8044A2D8(self, s, p, fn_80449C48(self))` with `const char *const &` and `void *const &` parameters) are C++ temporaries, which gives the `stw r3, slot` / `addi rN, r31, slot` shape and the early `addi r29` for the hoisted one. Declare a second prototype with `__asm__("fn_XXXXXXXX")` when two callers need different reference types (`Game/fn_80449930.cpp`, `fn_80449A6C`).
 
+- **`bl f` / `mr r9, r3` / `mr r0, r9` / `mr r3, r0` in a function that returns the call's result: both are `char` (or `short`) returning.** A pointer or `int` result takes two copies; the extra one is the narrowing, with no `extsb` because the value is returned unchanged (`Game/fn_80449B80.cpp`, `fn_80449D58`). Callers that store the result into an `int` field look the same, so the width is a guess.
+- **A dead `mr r0, r3` after a constructor call, then a fresh `addi r3, r31, N` for the method call, is a temporary: `return Iter(a, b).begin();`.** A named local (`Iter it(a, b); return it.begin();`) has no copy. A leaf constructor that shows `mr r0, r4` / `mr r9, r5` copies before its stores needs `register` parameters, with the members in the init list (`Game/fn_80449B80.cpp`, `Game/fn_8044A61C.cpp`).
+- **`mr r9, rA` / `mr r8, rB` before `lbz` / `stb` in a byte loop is `*out++ = *first++;`.** Separate `*out = *first; first++; out++;` statements have no copies and load into other registers (`Game/fn_80449B80.cpp`, `fn_80449DA4`).
+- **A file whose first function carries the pair and whose later ones do not: put `sn_return_decl` *after* the first function.** Ahead of it the first function loses its pair too (`Game/fn_80449B80.cpp`, `fn_80449B80` has three trailing branches, `fn_80449BE4` one).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

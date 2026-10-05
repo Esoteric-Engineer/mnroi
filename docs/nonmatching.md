@@ -108,6 +108,12 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 ---
 
+## `Game/fn_80449EEC.cpp`, `Game/fn_8044A2D8.cpp`, `Game/fn_8044A5F4.cpp` — pool 0x804900C0-0x804900D0
+
+Each is 99.9-99.0% fuzzy with the size matching and only the pool relocation differing. `fn_80449EEC` and `fn_8044A2D8` (the string insert-range cores, memcpy and byte-loop copy variants) load the int-to-float magic double from `lbl_804900C0` and `lbl_804900C8`, and `fn_8044A5F4` returns the 1.6f literal from `lbl_804900D0`. Claiming the pool fails in `dtk dol split` with a cycle through the Runtime units (their `.rodata` at 0x8049C1C8 and up sits after it, their `.text` before it), the magic double is a compiler-made pool entry (cannot be an `extern`), and `return lbl[0]` for the 1.6f adds an `fmr` and the branch pair. The sources are otherwise exact.
+
+---
+
 ## `Game/fn_80448364.c` — glyph-quad layout and sprite quad
 
 0x80448364-0x804488C0 (`fn_80448364`, then the sprite-quad `fn_804485AC`, 99.19%), size matches. Only the pool relocations differ: the pool (0x8048FCD8-0x8048FD18: unsigned-to-float magic double, 0.0f, 0.5f, signed magic double, then `fn_804485AC`'s) is the unit's own, but claiming it is cyclic (`dtk dol split` fails through `auto_04_8048FCF0_rodata`), and the magic doubles are anonymous compiler pool entries, so they cannot be `extern`s either. Prototype order of `fn_800FDFA8` (floats `x`, `y` first, then the four ints, then the scale float) and a block-scoped colour temp sharing slot 0x10 with the later `face` local are what fixed the code.
