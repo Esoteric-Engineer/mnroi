@@ -35,7 +35,7 @@ const unsigned long long DivdiClzTab29 = 0x0808080808080808ULL;
 const unsigned long long DivdiClzTab30 = 0x0808080808080808ULL;
 const unsigned long long DivdiClzTab31 = 0x0808080808080808ULL;
 
-asm long long fn_80179138(long long a, long long b)
+asm long long __divdi3(long long a, long long b)
 {
     // clang-format off
     nofralloc
