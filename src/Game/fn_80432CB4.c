@@ -16,7 +16,7 @@ extern int lbl_8066BE48;
 
 extern int fn_801B6A44(void *list);
 extern const Node *fn_801B5D3C(void *list, int i);
-extern void fn_80433588(Handle *h);
+extern void fn_80433588(Handle *h) __asm__("release__4Link");
 
 void fn_80432CB4(register int v)
 {

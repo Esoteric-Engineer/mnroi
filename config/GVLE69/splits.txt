@@ -3256,6 +3256,9 @@ Game/fn_80433420.cpp:
 Game/fn_80433528.c:
 	.text       start:0x80433528 end:0x80433588
 
+Game/fn_80433588.cpp:
+	.text       start:0x80433588 end:0x80433838
+
 Game/fn_80442010.c:
 	.text       start:0x80442010 end:0x804428E0
 
