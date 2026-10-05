@@ -320,6 +320,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A dead `mr r0, r3` after a constructor call, then a fresh `addi r3, r31, N` for the method call, is a temporary: `return Iter(a, b).begin();`.** A named local (`Iter it(a, b); return it.begin();`) has no copy. A leaf constructor that shows `mr r0, r4` / `mr r9, r5` copies before its stores needs `register` parameters, with the members in the init list (`Game/fn_80449B80.cpp`, `Game/fn_8044A61C.cpp`).
 - **`mr r9, rA` / `mr r8, rB` before `lbz` / `stb` in a byte loop is `*out++ = *first++;`.** Separate `*out = *first; first++; out++;` statements have no copies and load into other registers (`Game/fn_80449B80.cpp`, `fn_80449DA4`).
 - **A file whose first function carries the pair and whose later ones do not: put `sn_return_decl` *after* the first function.** Ahead of it the first function loses its pair too (`Game/fn_80449B80.cpp`, `fn_80449B80` has three trailing branches, `fn_80449BE4` one).
+- **A constant the DOL loads into a volatile temp (`li r9, 1` / `rlwinm r0, r9, ...`) where `register int f = 1;` lands in a call-saved register and a statement expression gives `li r0`:** pin it with `register int f __asm__("r9") = 1;` in its own block. The `if (f & 2)` is a compiler-generated array-destructor flag test (`Game/fn_8044A880.c`).
 
 ## General
 

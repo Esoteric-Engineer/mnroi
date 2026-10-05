@@ -3334,6 +3334,9 @@ Game/fn_8044A5F4.cpp:
 Game/fn_8044A61C.cpp:
 	.text       start:0x8044A61C end:0x8044A880
 
+Game/fn_8044A880.c:
+	.text       start:0x8044A880 end:0x8044A928
+
 Game/fn_8044B1D4.c:
 	.text       start:0x8044B1D4 end:0x8044B4EC
 
