@@ -46,6 +46,7 @@ extern "C" int fn_804336A8(register char *self)
 extern "C" char lbl_804F31D0[];
 extern "C" char lbl_804F31A8[];
 extern "C" char lbl_804F3180[];
+extern "C" char lbl_804F3160[];
 extern "C" void *fn_8042A400(void *self, void *owner, int key);
 
 struct Name
@@ -107,9 +108,74 @@ public:
     int name;         // +0x8
     int *result;      // +0xC
     CueImpl(const int *name);
+    int *getResult();
+    void invoke(int arg);
 };
 
 CueImpl::CueImpl(register const int *name)
     : vptr(lbl_804F3180), name(*name), result((int *)fn_8042A400(this, 0, *name))
 {
+}
+
+class EntryBase
+{
+public:
+    void *x[3]; // +0x0; the real constructor also stores its own vptr at +0xC
+    EntryBase();
+};
+
+class ListEntry : public EntryBase
+{
+public:
+    const void *vptr; // +0xC
+    int value;        // +0x10
+    ListEntry();
+    void notify();
+};
+
+ListEntry::ListEntry() : vptr(lbl_804F3160) {}
+
+class LinkFlagVT
+{
+public:
+    int unk0; // +0x0, the vptr follows at +0x4
+    virtual void v0();
+    virtual int v1();
+    virtual void v2(int flag);
+};
+
+struct LinkFlag
+{
+    LinkFlagVT *impl; // +0x0
+};
+
+extern "C" void fn_80433884(register LinkFlag *self, register int flag)
+{
+    self->impl->v2(flag);
+}
+
+extern "C" void fn_8043323C(void *list, int flag);
+
+void ListEntry::notify()
+{
+    fn_8043323C(x[0], value);
+}
+
+extern "C" void fn_8042A5A0(void *self, int inChrg);
+
+extern "C" void fn_8043392C(register CueImpl *self, register int inChrg)
+{
+    self->vptr = lbl_804F3180;
+    fn_8042A5A0(self, inChrg);
+}
+
+int *CueImpl::getResult()
+{
+    return result;
+}
+
+void CueImpl::invoke(register int arg)
+{
+    ((void (*)(int))name)(arg);
+    return;
 }

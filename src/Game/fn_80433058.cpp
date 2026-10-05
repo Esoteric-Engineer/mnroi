@@ -51,7 +51,7 @@ extern "C" void fn_80165118(void *);
 extern "C" void fn_80165138(void *);
 extern "C" void *fn_804336A8(void *);
 extern "C" void *fn_8043365C(int size, void *owner);
-extern "C" void *fn_80433838(void *);
+extern "C" void *fn_80433838(void *) __asm__("__9ListEntry");
 extern "C" void fn_80164544(void *list, void *entry, void *self, int b);
 
 struct Owner
