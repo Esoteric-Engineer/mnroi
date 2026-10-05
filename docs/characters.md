@@ -30,7 +30,7 @@ The code uses two separate numberings. Don't mix them up.
 
 `alt_<name>` maps to `id + 20`. `human1`-`3` map to 100, `brute1`-`3` to 101, `flier1`-`3` to 102, and eleven civilians to 103: `Human`, `businessmana`, `businessmanb`, `businesswomana`, `businesswomanb`, `securityguard`, `scientist`, `scientist1`, `scientist2`, `scientist3`, `cop`. The chain is compared in exactly that order, and `Human` is **dead**: the name is lowercased before the first `strcmp`, so an actor called `Human` falls through to -1. The internal names are codenames, so `roekel` is Van Roekel and `defcon`, `megalith`, `aftershock`, `biohazard` and `heatwave` are the Imperfects.
 
-Only three functions call it: `fn_8001C258` (**matched**, `Game/fn_8001C258.cpp`), `fn_80023010` (**matched**, `Game/fn_80023010.c`) and `fn_8002623C` (claimed, `Game/fn_8002623C.cpp`, **NonMatching** at 95.2%; see [`nonmatching.md`](nonmatching.md)). `fn_8002623C` only passes the type ID on to `fn_8001DCE0`, so it is not itself a place a new character needs an entry.
+Only three functions call it: `fn_8001C258` (**matched**, `Game/fn_8001C258.cpp`), `fn_80023010` (**matched**, `Game/fn_80023010.c`) and `fn_8002623C` (**matched**, `Game/fn_8002623C.cpp`). `fn_8002623C` only passes the type ID on to `fn_8001DCE0`, so it is not itself a place a new character needs an entry.
 
 ---
 
@@ -50,11 +50,11 @@ The table is in `.data`, and `+0x48` probably changes at runtime as characters a
 
 Accessors, one per field, called by `clashCharSelect_GetCharList`: `fn_8044B1D4` (name key), `fn_8044B234` (intel), `fn_8044B298` (strength), `fn_8044B2FC` (speed), `fn_8044B360` (durability), `fn_8044B3C4` (energy), `fn_8044B428` (skill), and `fn_8044B48C` (unlocked, 5 callers). Each takes `(index, remap, alt)`. The six stat accessors return `char`, not `int`: their caller only matches when they are declared that way, which confirms the stats are `s8`. `fn_8044B1D4` returns `char *` and `fn_8044B48C` returns `int`. Other readers of the table: `fn_804316B0`, `fn_80443678`, `fn_804436D4`, `fn_8044F070` and `fn_80461288`.
 
-Three of those are now known. `fn_80443678(index, remap, alt)` just returns the record (**matched**, `Game/fn_804428E0.c`). `fn_804436D4(index, unlocked, remap)` writes `+0x48` in *both* tables, so unlocking a character unlocks its alternate costume with it; it is the one function in 0x804428E0-0x804437D8 still unmatched ([`nonmatching.md`](nonmatching.md)). `fn_80461288(name, alt)` is the reverse lookup: it walks all 20 records of one table comparing `name` against `+0x00` and returns that record's `+0x20` localisation key, or `name` itself when nothing matches, which confirms `+0x20` as the key field.
+Three of those are now known. `fn_80443678(index, remap, alt)` just returns the record (**matched**, `Game/fn_804428E0.c`). `fn_804436D4(index, unlocked, remap)` writes `+0x48` in *both* tables, so unlocking a character unlocks its alternate costume with it; it is **matched** as `Game/fn_804436D4.cpp`, a C++ unit because it binds both records to reference locals. `fn_80461288(name, alt)` is the reverse lookup: it walks all 20 records of one table comparing `name` against `+0x00` and returns that record's `+0x20` localisation key, or `name` itself when nothing matches, which confirms `+0x20` as the key field.
 
 **Confirmed** (`Game/fn_8044B1D4.c`, 0x8044B1D4-0x8044B4EC): each is `fn_80431CCC(index, remap, alt)` followed by one field read, which confirms the `+0x40`-`+0x45` stats order (intel, strength, speed, durability, energy, skill) and the `+0x48` unlocked field. They're plain C like `fn_80431CCC`, not registered as APT handlers themselves. `fn_8044B1D4`'s two callers (0x80103830 in the characterselect range, 0x8010B744 in the mission.cpp range) both call it directly. The surrounding 0x8044AF58-0x8044EE3C region is mostly unrelated: a chain of generic registration-constructor templates (`fn_8044AF58`, `fn_8044B11C`, `fn_8044BBC8`...) that are called from the six *handler* files (section 2), not from this one; this accessor block just happens to be link-adjacent to them. The unit is **matched**; the register shape it was stuck on is in [`matching_notes.md`](matching_notes.md) (a `register` local assigned to a plain one).
 
-**`clashCharSelect_GetCharList` loops `for (i = 1; i <= 18; i++)`**: the roster size is a literal in the code, not read from the data. Each iteration fills nine parallel script arrays, which are the names a UI mod would have to keep: `aHeroName`, `aIntel`, `aStr`, `aSpd`, `aDur`, `aEng`, `aSkl`, `aIsUnLocked1` (`fn_8044B48C(i, 1, 0)`, the normal costume's `+0x48`) and `aIsUnLocked2` (`fn_8044B48C(i, 1, 1)`, the same field in the alternate-costume table). The handler is claimed as `Game/handlers/characterselect.cpp`, `NonMatching` at 99.2% ([`nonmatching.md`](nonmatching.md)).
+**`clashCharSelect_GetCharList` loops `for (i = 1; i <= 18; i++)`**: the roster size is a literal in the code, not read from the data. Each iteration fills nine parallel script arrays, which are the names a UI mod would have to keep: `aHeroName`, `aIntel`, `aStr`, `aSpd`, `aDur`, `aEng`, `aSkl`, `aIsUnLocked1` (`fn_8044B48C(i, 1, 0)`, the normal costume's `+0x48`) and `aIsUnLocked2` (`fn_8044B48C(i, 1, 1)`, the same field in the alternate-costume table). The handler is matched as `Game/handlers/characterselect.cpp`.
 
 ---
 
@@ -101,8 +101,7 @@ on a 0x5C8-byte record, plus a few on the object that owns those records. Every 
 
 The record is **not** the `.nvb` tuning record, as earlier guessed: it is one entry of an `.nsc`
 mission/arena script, and the "Keyword" column below is the `.nsc` line that writes each field.
-`fn_800887AC` is the parser (0x800887AC-0x80089710, claimed as `Game/fn_800887AC.cpp`, **NonMatching**
-at 99.8% — see [`nonmatching.md`](nonmatching.md)), which reads a text file line by line, lowercases
+`fn_800887AC` is the parser (0x800887AC-0x80089710, **matched**, `Game/fn_800887AC.cpp`), which reads a text file line by line, lowercases
 the first token and dispatches on it. A `mission` line opens a record (`new NameTable`) and an
 `endmission` line stamps its index and appends it, so every other keyword applies to the record
 opened last. `Misc/clashMP.nsc` is the versus arena list; the "clashmp.nsc" string sits in the same

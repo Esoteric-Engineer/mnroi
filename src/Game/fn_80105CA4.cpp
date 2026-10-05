@@ -1,8 +1,8 @@
-// Cheat_Enable(String): NonMatching, docs/nonmatching.md.
+// Cheat_Enable(String); the by-value String is destroyed here, through _._6String (Game/fn_804491DC.c).
 class String {
 public:
     char data[0x4C];
-    String(const char *s) __asm__("fn_804493A0");
+    String(const char *s) __asm__("__6StringPCc");
     ~String();
     const char *c_str() __asm__("fn_804496C8");
 };

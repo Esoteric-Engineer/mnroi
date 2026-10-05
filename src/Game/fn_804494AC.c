@@ -9,8 +9,8 @@ typedef struct
 
 extern int fn_80449234(String *self);
 extern char *fn_80449260(String *self, int idx);
-extern void fn_80449298(void *self, int inChrg);
-extern int fn_804493A0(void *self, const char *s);
+extern void fn_80449298(void *self, int inChrg) __asm__("_._6String");
+extern int fn_804493A0(void *self, const char *s) __asm__("__6StringPCc");
 typedef struct
 {
     char c[6];

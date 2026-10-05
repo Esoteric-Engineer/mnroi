@@ -1,4 +1,4 @@
-// Global_PlayUISound(String): NonMatching, docs/nonmatching.md.
+// Global_PlayUISound(String); the by-value String is destroyed here, through _._6String (Game/fn_804491DC.c).
 class String {
 public:
     char data[0x4C];

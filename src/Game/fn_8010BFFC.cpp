@@ -1,4 +1,4 @@
-// clashVenue_StartLevel(String): NonMatching, docs/nonmatching.md (the by-value String's destructor).
+// clashVenue_StartLevel(String); the by-value String is destroyed here, through _._6String (Game/fn_804491DC.c).
 class String {
 public:
     char data[0x4C];

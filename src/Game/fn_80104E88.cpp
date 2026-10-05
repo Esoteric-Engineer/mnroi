@@ -1,4 +1,4 @@
-// c:/Clash/mainline/Code/Game/handlers/control.cpp, Global_StartAudio (0x80104E88); the file is split around its String-parameter handlers (docs/nonmatching.md).
+// c:/Clash/mainline/Code/Game/handlers/control.cpp, Global_StartAudio (0x80104E88); the file is split around its String-parameter handlers, which are units of their own.
 
 extern "C" void fn_80435238(void *audio, int a);
 

@@ -1,4 +1,4 @@
-// Entry-table threshold test (fn_80447A7C.c has the layout); still non-matching, docs/nonmatching.md.
+// Entry-table threshold test (fn_80447A7C.c has the layout).
 typedef struct Entry
 {
     float f0;  // +0x0

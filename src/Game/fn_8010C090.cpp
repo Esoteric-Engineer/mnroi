@@ -1,10 +1,10 @@
 // c:/Clash/mainline/Code/Game/handlers/venuetable.cpp, from clashVenue_ChooseOption (0x8010C090); see Game/handlers/venuetable.cpp.
 
-// 0x4C-byte string; fn_804493A0 builds one from a literal.
+// 0x4C-byte string; String(const char *) (0x804493A0) builds one from a literal.
 class String {
 public:
     char data[0x4C];
-    String(const char *s) __asm__("fn_804493A0");
+    String(const char *s) __asm__("__6StringPCc");
 };
 
 extern "C" {

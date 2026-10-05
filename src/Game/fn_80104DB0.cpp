@@ -1,9 +1,9 @@
-// Locale_GetString(String): NonMatching, docs/nonmatching.md.
+// Locale_GetString(String); the by-value String is destroyed here, through _._6String (Game/fn_804491DC.c).
 class String {
 public:
     char data[0x4C];
-    String() __asm__("fn_804498C8");
-    String(const String &s) __asm__("fn_804496F4");
+    String() __asm__("__6String");
+    String(const String &s) __asm__("__6StringRC6String");
     ~String();
     void operator=(const char *s) __asm__("fn_80449A0C");
     const char *c_str() __asm__("fn_804496C8");

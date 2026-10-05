@@ -1,5 +1,5 @@
 // Link's destructor (vptr reset, release the implementation, deleting variant); hand-written C because the DOL keeps the flag in r30.
-// Defined as fn_80433528 plus an assembler alias, since ngcas rejects a `_._` label (docs/nonmatching.md).
+// Defined as fn_80433528 plus an assembler alias, since ngcas rejects a `_._` label (docs/matching_notes.md).
 extern char lbl_804F3148[];
 extern void fn_8042A37C(void *impl);
 extern void __builtin_delete(void *p);

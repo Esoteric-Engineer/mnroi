@@ -79,6 +79,8 @@ Add it to the `Game` library's `objects` in `config.libs`, which compiles with P
         ],
 ```
 
+A function whose float literals the original keeps in another file's `.rodata` (anything in the tail of `.text` whose pool `dtk dol split` calls cyclic when claimed) takes `extern_pool=<address of its first literal>` on its `Object` instead of a `.rodata` line in `splits.txt`; [`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text) explains why.
+
 > **The `Object` name must be character-for-character identical to the `splits.txt` unit name:** If they differ, the build silently ignores your source. `configure.py` prints `Missing configuration for <name>` when a unit has no matching object.
 
 **`NonMatching` vs `Matching`:**

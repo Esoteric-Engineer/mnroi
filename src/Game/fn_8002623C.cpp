@@ -47,11 +47,10 @@ typedef struct EffectManager
     char unk1794[0x19C];
 } EffectManager; // 0x1930
 
-// lbl_80515030, one global of 0xB050: `extra` is reached as an offset from its start.
+// lbl_80515030, one global of 0xB050: `extra` follows the six managers directly and is reached as an offset from its start.
 typedef struct EffectSystem
 {
     EffectManager managers[6]; // +0x0000
-    char unk9630[0xF0];
     EffectManager extra;       // +0x9720
 } EffectSystem;
 

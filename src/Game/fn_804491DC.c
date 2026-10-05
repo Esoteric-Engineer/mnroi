@@ -34,6 +34,9 @@ body:
     return self->data + idx;
 }
 
+// String's destructor, hand-written C; the label gives it the mangled name its C++ callers need (docs/matching_notes.md).
+__asm__(".text\n\t.globl _._6String\n\t.type _._6String,@function\n_._6String:");
+
 void fn_80449298(register String *self, register int inChrg)
 {
     if (!fn_80449CAC(self))
@@ -45,6 +48,8 @@ void fn_80449298(register String *self, register int inChrg)
         fn_80449D20(self);
     }
 }
+
+__asm__(".size _._6String, 0x64");
 
 void *fn_804492FC(register String *self, register int v)
 {

@@ -1,5 +1,5 @@
 // String-array owner destructor (strings at +0xD0..+0xA50); see docs/versus.md.
-extern void fn_80449298(void *self, int inChrg);
+extern void fn_80449298(void *self, int inChrg) __asm__("_._6String");
 extern void fn_8044AA1C(void *self);
 extern void fn_8044A9D0(void *self, int inChrg);
 

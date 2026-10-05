@@ -1,10 +1,10 @@
 // String builder: self += copy(b) + sep + copy(c); fn_80449298 is the string destructor, fn_80448AC0 a copy constructor.
-extern int fn_804496F4(void *self, void *src);
+extern int fn_804496F4(void *self, void *src) __asm__("__6StringRC6String");
 extern int fn_804494AC(void *self);
 extern int fn_80449234(void *self);
 extern int fn_80449A6C(void *self, const char *s);
 extern int fn_80449B04(void *self, void *src);
-extern int fn_80449298(void *self, int inChrg);
+extern int fn_80449298(void *self, int inChrg) __asm__("_._6String");
 extern void fn_80448AC0(void *self, void *src);
 extern char lbl_804900B4[];
 extern char lbl_804900B8[];

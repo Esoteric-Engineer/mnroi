@@ -1,7 +1,7 @@
 // String builders: tmp1 = String(b); tmp1 += String(n); then fn_8044AB94 / fn_80449084; see docs/versus.md.
-extern int fn_804493A0(void *self, const char *s);
+extern int fn_804493A0(void *self, const char *s) __asm__("__6StringPCc");
 extern int fn_80449020(void *self, int *src);
-extern int fn_80449298(void *self, int inChrg);
+extern int fn_80449298(void *self, int inChrg) __asm__("_._6String");
 extern int fn_80449B04(void *self, void *src);
 extern void fn_80449084(void *self, void *b, int c);
 extern void fn_8044AB94(void *self, void *b, int c);

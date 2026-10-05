@@ -1,4 +1,4 @@
-// Control_ChangeScreen(String): NonMatching, docs/nonmatching.md.
+// Control_ChangeScreen(String); the by-value String is destroyed here, through _._6String (Game/fn_804491DC.c).
 class String {
 public:
     char data[0x4C];

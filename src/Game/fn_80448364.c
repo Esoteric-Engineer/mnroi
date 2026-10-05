@@ -26,7 +26,7 @@ extern void fn_801016BC(float a, float b);
 float fn_80448364(register struct Owner *self, register char *glyph, register float x, register float y, register unsigned int *color, register float *depth, register float *scale, register float *extent, register float *origin, register int *flags)
 {
     y = y + (float)self->obj->count * *scale;
-    if (*depth < 0.0f)
+    if (*depth < 1.0f)
     {
         unsigned int tint = (*color & 0xff000000) | 0xffffff;
         fn_80101704(tint, *color, *depth);
@@ -85,7 +85,7 @@ int fn_804485AC(register struct SpriteOwner *self, register float x, register fl
     ratio = (float)size / (float)(int)self->sprite->h;
     dy = (float)(int)self->sprite->h * ratio * fn_8042E7E4(&lbl_8066F4DC)[1];
     dx = (float)(int)self->sprite->w * ratio * fn_8042E7E4(&lbl_8066F4DC)[0];
-    y = y - dy * 0.5f;
+    y = y - dy * 0.8f;
     fn_8042F42C(lbl_80594EF0, self->sprite, 0);
     GXBegin(0x80, 2, 4);
     fn_801015B4(x, y, z);

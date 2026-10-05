@@ -1,5 +1,5 @@
 // Three leaf accessors: one on a .data table of 0x44-byte records, two on objects that only these functions touch.
-// fn_804436D4 before them is unmatched (docs/nonmatching.md), which is why this run is its own unit.
+// fn_804436D4 before them is a C++ unit of its own (Game/fn_804436D4.cpp), which is why this run is its own unit.
 
 typedef struct Record44
 {

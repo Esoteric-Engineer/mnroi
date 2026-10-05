@@ -1,23 +1,17 @@
-// Dead-zone remap of a stick axis (+-0.1 to 0, rescaled, squared, clamped to [-1, 1]); the pool is another unit's.
-extern const float lbl_8048CD34[]; // 0.0f
-extern const float lbl_8048CD38[]; // 0.1f
-extern const float lbl_8048CD3C[]; // 1.1111112f
-extern const float lbl_8048CD40[]; // -1.0f
-extern const float lbl_8048CD44[]; // 1.0f
-
+// Dead-zone remap of a stick axis: +-0.1 maps to 0, the rest is rescaled, squared with its sign and clamped to [-1, 1].
 float fn_80446ACC(register float x)
 {
-    if ((x < lbl_8048CD34[0] ? -x : x) <= lbl_8048CD38[0])
-        return lbl_8048CD34[0];
-    if (x < lbl_8048CD34[0])
+    if ((x < 0.0f ? -x : x) <= 0.1f)
+        return 0.0f;
+    if (x < 0.0f)
     {
-        x = (x + lbl_8048CD38[0]) * lbl_8048CD3C[0];
+        x = (x + 0.1f) * (1.0f / 0.9f);
         x = x * -x;
     }
     else
     {
-        x = (x - lbl_8048CD38[0]) * lbl_8048CD3C[0];
+        x = (x - 0.1f) * (1.0f / 0.9f);
         x = x * x;
     }
-    return x >= lbl_8048CD40[0] ? (x <= lbl_8048CD44[0] ? x : lbl_8048CD44[0]) : lbl_8048CD40[0];
+    return x >= -1.0f ? (x <= 1.0f ? x : 1.0f) : -1.0f;
 }

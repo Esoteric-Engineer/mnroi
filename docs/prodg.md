@@ -21,6 +21,7 @@ The evidence: 11,679 of the game's 16,181 functions set up a GCC frame pointer (
 | `cflags_prodg_game` | Game code, the `Game` library |
 | `cflags_prodg_lib` | SN's prebuilt Newlib/libgcc |
 | `ProDGLibObject(...)` | One ProDG object inside a library whose other objects are still MWCC asm (`Runtime.PPCEABI.H/strlen.c`) |
+| `Object(..., extern_pool=0x8048DEA8)` | A unit whose float pool has to stay in the original's `.rodata` (see [Inline functions](#inline-functions-and-the-tail-of-text)) |
 
 The `prodg` rule in `tools/project.py`:
 
@@ -28,12 +29,15 @@ The `prodg` rule in `tools/project.py`:
 - **Language:** `ngccc` picks C or C++ from the extension (`.c`, `.cpp`), so no `-lang` flag is added.
 - **Dependencies:** `-MD`, not `-MMD`: GCC 2.95's `-MMD` leaves out every `<...>` include.
 - **Small data:** `dtk elf bake-sda` runs afterwards, as for MWCC objects (see [`baseline.md`](baseline.md#small-data-r13-problem)). `.sdata`/`.sbss` references stay `R_PPC_EMB_SDA21` relocations, which mwld resolves through `r13` like SN's linker did.
+- **Literal pool:** a unit registered with `extern_pool=<address>` goes through `tools/extern_pool.py` between the compile and `bake-sda` (the `prodg_pool` rule).
 - **MWCC-only options:** `shift_jis` is ignored, and `extab_padding` is an error.
 - **decomp.me:** ProDG units get scratches with the `prodg_35` .. `prodg_393` compilers.
 - **Options reach the compiler.** `ngccc` passes every `-O`, `-f`, `-m`, `-W` and `-G` option on to
   `cc1`/`cc1plus` unchanged, including ones `cc1plus` doesn't know (`ngccc -v` prints the exact command
   lines), so per-unit flags such as `-fno-strength-reduce -G0` work through the normal rule on every
   release. Game code reaches `cc1plus` as `-O0 -quiet`.
+
+`-d` options reach the compiler too: `ngccc -O0 -dr -dg -c file.cpp` leaves `<temp name>.rtl` (the RTL as generated) and `<temp name>.greg` (after register allocation) in the current directory, so run it outside the repository.
 
 `ngccc` ships without headers. `include/gcc` has freestanding `stddef.h` and `limits.h`, and the ProDG flags put it on the include path. There is no `stdarg.h` yet: this GCC has no `__builtin_va_list`, and the DOL calls a `__va_arg` function, so SN's header was not GCC's. Reconstruct it when the first varargs function is matched.
 
@@ -224,6 +228,84 @@ last label. Two identical branches to it means the flag was clear; none means it
 is a `return` (in C, or in C++ with the flag set) or a constructor, so it does not settle the question by
 itself.
 
+### Inline functions and the tail of `.text`
+
+`cc1plus` emits every function defined in a class body, every `inline` function and every template
+instantiation into a section of its own, `.gnu.linkonce.t.<mangled name>`, with a weak symbol; only
+ordinary functions go to `.text`. Compiling `class V { public: float x; float half() { return x * 0.5f; } };`
+with a caller gives `.text` (the caller) and `.gnu.linkonce.t.half__1V`. The function's float pool does
+**not** follow it: all pools go to the file's one `.rodata`, in the order the compiler wrote the functions
+out, and it writes the linkonce ones last.
+
+A linker keeps one copy of each linkonce function, and SN's placed them after the ordinary `.text`. The
+game's shared classes are there, from `Color` and `Vector` (0x80426EC4, 0x80428F74) through the `String` class
+(0x80448xxx-0x8044Axxx). The DOL shows it three ways:
+
+- **Their float pools sit in the middle of other files' `.rodata`.** `unpack__6Packed` (0x80447830) reads its
+  two doubles from 0x8048DEA8, between the float pool and the `"deb_big0"` strings of a 0x800Dxxxx file.
+  `fn_80445E50` reads 0x8048BEDC, between the pools of `Game/fn_800B7094.c` and `Game/fn_800B7204.c`.
+  `__6Vector` reads its 1.0f from 0x80482CC8, in the first kilobyte of `.rodata`.
+- **The pools are there once per file that used the function, the code once.** `fn_80445E50`'s pool (6.0f and
+  the 2^31 double) is in `.rodata` three times: at 0x8048BEDC, which the code reads, and unreferenced at
+  0x804A2468 and 0x804BEC10; the function is called from 0x8022xxxx and 0x803E83xx. The 0.0f, -1.0f, 1.0f of
+  `fn_8044655C` is at 0x8048CD1C and again, unreferenced, at 0x8048DEB8, right behind `unpack__6Packed`'s
+  doubles, in the file that calls it from 0x800D3Dxx. This is where dtk's oversized `lbl_`s with one
+  referenced word in front come from.
+- **The function-end pair is mostly absent there** ([above](#the-function-end-branch-pair)), which fits
+  functions written out at the end of a file, after its constructors have set the flag.
+
+**Such a pool cannot be claimed.** A unit with `.text` at 0x80447830 and `.rodata` at 0x8048DEA8 has to link
+after `Game/fn_8010611C.cpp` by `.text` and before it by `.rodata`, and mwld has one link order. That is the
+"cyclic dependency" `dtk dol split` reports.
+
+**`extern_pool`.** A unit that holds such a function keeps its literals in the source and is registered as
+`Object(Matching, "Game/fn_80447830.cpp", extern_pool=0x8048DEA8)`, the address of its first literal in the
+original. `tools/extern_pool.py` then runs on the compiled object: it checks the object's literals against
+the original DOL from that address on, retargets each relocation against the pool to the `lbl_<address>`
+symbol dtk gave that literal, and empties the section. The literals stay in dtk's unclaimed `.rodata`, the
+code is what the literal form compiles to, and the relocations equal the original's. A literal that does not
+match the original fails the build with its offset and the two values.
+
+The two copies of a pool need not be laid out alike: a double is 8-aligned, so a pool that starts 4 bytes off
+an 8-byte boundary in the original has its padding in other places than the object's, which always starts on
+one (`Game/fn_80445E50.c`: 6.0f, padding, double here; 6.0f, double there). So the tool takes each literal's
+size from the `lfs` or `lfd` that loads it, lays the original out again from the address with the same
+alignment rule, and compares literal by literal. Whatever in the object's `.rodata` no `lfs` or `lfd` loads
+has to be zero padding, so a unit with a string literal or a table in `.rodata` is rejected: `extern_pool`
+is for float pools only.
+
+The pool addresses of consecutive functions are consecutive when the original file wrote them out together,
+so several functions can share a unit and one address (`Game/fn_80448364.c`). When they are not, give each
+function its own unit. A unit that owns its `.rodata` for real (strings, a file's ordinary functions) claims
+it in `splits.txt` as before; `extern_pool` is for the linkonce functions.
+
+Faithful would be one object per original file, with its inline functions in linkonce sections. That needs the
+whole file matched and a linker that places those sections, which mwld does not.
+
+### Register allocation at `-O0`
+
+Only `register` variables, parameters declared `register`, `this` and compiler temporaries live in
+registers at `-O0`. GCC 2.95's `stupid.c` allocates them in one pass:
+
+- **Order:** longest lifetime first, then fewest references, then the order the compiler created them. Each
+  takes the first free register of its kind: `r30` downwards if its lifetime spans a call, else `r0`, `r9`,
+  `r11`, `r10`...; floats `f0`, `f13`, `f12`, `f11`... or `f31` downwards.
+- **A `register` parameter** lives from its entry copy to a `use` at the very end. All of them tie, so the one
+  with the fewest references gets the first register, and equal ones go in declaration order. That is why a
+  seldom-used parameter can sit above `this`.
+- **A `register` local** lives from its declaration to the end of its block, which is always shorter than a
+  parameter, so it comes after every `register` parameter.
+- **A value the compiler saves** (`SAVE_EXPR`: the initializer of a C++ reference local, an operand `fold`
+  evaluates once for several uses) lives from just after the parameters' entry copies to just after their
+  final `use`s. One of them is a step shorter than the parameters. With two, the first ties with the
+  parameters and wins on reference count, and the second comes last. `fn_804436D4` has exactly that: `r30`
+  for the first reference, `r29`-`r27` for the parameters, `r26` for the second reference.
+- **Other temporaries** live from their set to their last use and take whatever is free.
+
+`-dr -dg` (above) shows all of it: in the `.rtl` file the `(use (reg N))` insns after `NOTE_INSN_FUNCTION_BEG`
+and before `NOTE_INSN_FUNCTION_END` bound each lifetime, and the `.greg` file's `Register dispositions` line
+gives the hard register of each pseudo.
+
 ## C++
 
 - **Mangling** is GCC 2.95's: `Color::Color(unsigned char, unsigned char, unsigned char, unsigned char)` is `__5ColorUcUcUcUc`. When a unit calls a function that is still asm, rename dtk's `fn_` symbol in `symbols.txt` to the mangled name so the two sides link.
@@ -232,8 +314,9 @@ itself.
   Vector(); } __attribute__((aligned(8)));` with `Vector::Vector() { w = 1.0f; }` compiles byte for
   byte to it, which is what confirms both the name and the 8-byte alignment. 1696 call sites use it,
   so most game units that touch a vector need the class. Its 4-byte `.rodata` pool at 0x80482CC8
-  cannot be claimed on its own: `dtk dol split` reports a cyclic link-order dependency, so the
-  function stays unclaimed for now.
+  cannot be claimed (`dtk dol split` reports a cyclic link-order dependency), so the function is
+  still unclaimed; `extern_pool=0x80482CC8` should be what it needs
+  ([Inline functions](#inline-functions-and-the-tail-of-text)), which has not been tried.
 - **`new T` calls `__builtin_new`, not `operator new`, and `fn_801ACED4` (0x801ACED4) is it.** GCC
   2.95 emits `bl __builtin_new` for the allocation and `bl __<len><Class>` for the constructor, so
   `rec = new NameTable;` on a 0x5C8-byte class compiles to `li r3, 0x5c8` / `bl __builtin_new` /
@@ -304,6 +387,7 @@ Most of the read-only data the SDK clusters own belongs to GCC-built runtime cod
   there only by analogy with the rest of Havok.
 - `-fno-defer-pop`, `-ffast-math`, strict aliasing, `-mcpu` and the other options that changed none
   of the proofs.
+- Which file each tail function's pool belongs to, and so which inline functions each file used ([Inline functions](#inline-functions-and-the-tail-of-text)).
 - File boundaries: a `_GLOBAL_.I` function ends a file, but most files have none. `Game/fn_800092CC.cpp` may start before 0x800092CC.
 - Uninitialized C globals become COMMON symbols (`-fno-common` or the rules in [`common_bss.md`](common_bss.md)).
 - SN's `stdarg.h`.

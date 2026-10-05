@@ -1,8 +1,8 @@
 // String copy-construct and append helpers, plus a release-and-set pointer setter; see docs/versus.md.
 extern "C" {
-extern void fn_80449298(void *self, int inChrg);
-extern void *fn_804493A0(void *self, const char *s);
-extern void *fn_804496F4(void *self, void *src);
+extern void fn_80449298(void *self, int inChrg) __asm__("_._6String");
+extern void *fn_804493A0(void *self, const char *s) __asm__("__6StringPCc");
+extern void *fn_804496F4(void *self, void *src) __asm__("__6StringRC6String");
 extern void fn_8044A108(void *a, void *b);
 extern void fn_8044A16C(void *self, void *src);
 extern void fn_8044A2D8(void *self, void *const &a, void *const &b, void *const &c);

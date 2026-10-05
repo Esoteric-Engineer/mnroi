@@ -1,4 +1,4 @@
-// Global_PlayFEStream(String): NonMatching, docs/nonmatching.md.
+// Global_PlayFEStream(String); the by-value String is destroyed here, through _._6String (Game/fn_804491DC.c).
 class String {
 public:
     char data[0x4C];
@@ -27,7 +27,7 @@ inline int sn_return_decl(int a) { return a; }
 void Global_PlayFEStream(String name)
 {
     char path[0x100];
-    char lang[0x18];
+    char lang[0x20];
 
     fn_8012818C();
     fn_8010FAE8();

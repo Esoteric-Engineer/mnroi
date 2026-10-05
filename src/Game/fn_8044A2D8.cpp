@@ -1,4 +1,4 @@
-// String insert-range core, memcpy variant (grows through the 0x8044A5F4 factor); see docs/nonmatching.md.
+// String insert-range core, memcpy variant (grows through the 0x8044A5F4 factor). Its pool stays in the original's .rodata (extern_pool, docs/prodg.md).
 extern "C" {
 extern char *fn_80449BE4(register char *self);
 extern char *fn_80449C48(register char *self);

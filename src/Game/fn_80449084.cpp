@@ -3,8 +3,8 @@ extern "C" {
 void fn_80449020(void *self, int *src);
 void fn_804494AC(void *self);
 int fn_80449234(void *self);
-void fn_80449298(void *self, int inChrg);
-void fn_804496F4(void *self, void *src);
+void fn_80449298(void *self, int inChrg) __asm__("_._6String");
+void fn_804496F4(void *self, void *src) __asm__("__6StringRC6String");
 void fn_80449A6C(void *self, const char *s);
 void fn_80449B04(void *self, void *src);
 extern char lbl_804900B4[];

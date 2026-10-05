@@ -1,4 +1,4 @@
-// Vector subclass built from the packed shorts at +0x4 of a record (the base is fn_80447830). Class names are guesses.
+// A 0xC-byte key's value: the packed shorts at +0x4 unpacked into a Vector, returned by value. Class names are guesses.
 class Vector
 {
 public:
@@ -6,15 +6,26 @@ public:
     float y;
     float z;
     float w;
-    Vector(const short *packed);
 } __attribute__((aligned(8)));
 
-class Dir : public Vector
+class Packed
 {
 public:
-    Dir(const void *record);
+    short v[4];
+    Vector unpack();
 };
 
-Dir::Dir(register const void *record) : Vector((const short *)((const char *)record + 4))
+class Key
 {
+public:
+    float time;
+    Packed packed; // +0x4
+    Vector value();
+};
+
+inline int sn_return_decl(int a) { return a; }
+
+Vector Key::value()
+{
+    return packed.unpack();
 }
