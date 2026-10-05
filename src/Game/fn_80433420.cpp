@@ -1,4 +1,4 @@
-// Constructors of the async loader (0x40 bytes) and the attract-movie object (0x18 bytes); names are guesses, see fn_80432B4C.cpp.
+// Constructors of the async loader (0x40 bytes), the attract-movie object (0x18 bytes) and Link's copy constructor; names are guesses, see fn_80432B4C.cpp.
 
 extern "C" void fn_80433BD4(void *self);
 
@@ -38,4 +38,22 @@ cAttractMovie::cAttractMovie()
     unkC = 0;
     unk10 = 6;
     unk14 = 60000;
+}
+
+extern "C" char lbl_804F3148[];
+extern "C" void fn_8042A350(void *impl);
+
+class Link
+{
+public:
+    void *impl;       // +0x0
+    const void *vptr; // +0x4
+    Link(const Link &other);
+};
+
+Link::Link(register const Link &other)
+{
+    vptr = lbl_804F3148;
+    fn_8042A350(other.impl);
+    impl = other.impl;
 }

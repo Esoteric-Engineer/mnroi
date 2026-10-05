@@ -333,6 +333,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A by-value class parameter's `bl _._NClass` is not a blocker when the destructor is still unclaimed:** rename it to `_._NClass` in `symbols.txt` and the call matches (the `String` case is stuck only because `fn_80449298` is a defined `.c` function). Methods and constructors it needs are renamed to their mangled names the same way (`Game/fn_80432EE8.cpp`, `_._4Link`, `__4LinkRC4Link`; the by-value parameter shows in the symbol as `FPvG4Link`).
 - **`lwz r0, A` / `stw r0, B` / `lwz r0, B` / `cmpwi` before a virtual `delete` of a pointer already held in slot A is a second local: `Link *dead = link; delete dead;`.** `delete link` tests slot A directly. A class with a `virtual ~T()` gets its vptr implicitly at the end of the data, so do not also declare a `vptr` member (it doubles the vptr and shifts the vtable load from `0x4` to `0x8`) (`Game/fn_80433058.cpp`).
 
+- **A `.c` unit can define a symbol ngcas will not take as a function name (`_._4Link`) with a top-level `__asm__` label ahead of the function.** `__asm__("_._4Link")` on the definition makes cc1 emit a `.L_f*_._4Link_s:` label that ngcas rejects, and `.set` aliases are silently dropped, but `__asm__(".text\n\t.globl _._4Link\n\t.type _._4Link,@function\n_._4Link:");` placed directly before the function gives a second label at its address, and `__asm__(".size _._4Link, 0x60");` after it sizes it. The object then holds both `_._4Link` and the C name, and objdiff matches the former (`Game/fn_80433528.c`, a hand-written destructor whose callers need the mangled name).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

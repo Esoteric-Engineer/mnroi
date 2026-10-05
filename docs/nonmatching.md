@@ -121,7 +121,7 @@ unit has a cyclic link order. Tried: `~String() __asm__("fn_80449298")` (cc1plus
 a guard class whose destructor calls it (an out-of-line call to the guard); `goto` plus an explicit
 `fn_80449298(&s, 2)` (90%: the label clears the pair flag and adds the pair). Renaming the symbol breaks every other
 unit that calls `fn_80449298`, and a `.c` definition named `_._6String` is rejected by ngcas. The same
-blocker parks `Game/fn_8044916C.cpp` and `Game/fn_8044AC7C.c`. Untried: an objdiff symbol mapping plus a linker alias.
+blocker parks `Game/fn_8044916C.cpp` and `Game/fn_8044AC7C.c`. Untried here: the label trick of [`matching_notes.md`](matching_notes.md) (a top-level `__asm__` `_._6String:` label ahead of `fn_80449298`, as `Game/fn_80433528.c` does for `_._4Link`), which needs the symbol renamed to `_._6String` and the `.c` callers of `fn_80449298` declared with `__asm__("_._6String")`.
 
 ---
 
