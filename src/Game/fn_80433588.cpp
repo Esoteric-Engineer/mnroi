@@ -55,6 +55,13 @@ struct Name
     int b;
 };
 
+struct Pmf // a member-function pointer: delta, index, function
+{
+    short delta;
+    short index;
+    void *pfn;
+};
+
 class LinkBase
 {
 public:
@@ -67,13 +74,15 @@ class LinkImpl : public LinkBase
 public:
     const void *vptr; // +0x4
     void *owner;      // +0x8
-    Name name;        // +0xC
+    Pmf name;         // +0xC
     Name *result;     // +0x14
     LinkImpl(void *owner, const void *name);
+    Name *getResult();
+    void invoke();
 };
 
 LinkImpl::LinkImpl(register void *owner, register const void *name)
-    : vptr(lbl_804F31D0), owner(owner), name(*(const Name *)name),
+    : vptr(lbl_804F31D0), owner(owner), name(*(const Pmf *)name),
       result((Name *)fn_8042A400(this, owner, ((const Name *)name)->a))
 {
 }
@@ -83,13 +92,15 @@ class LinkImplB : public LinkBase
 public:
     const void *vptr; // +0x4
     void *owner;      // +0x8
-    Name name;        // +0xC
+    Pmf name;         // +0xC
     Name *result;     // +0x14
     LinkImplB(void *owner, const int *name);
+    Name *getResult();
+    void invoke();
 };
 
 LinkImplB::LinkImplB(register void *owner, register const int *name)
-    : vptr(lbl_804F31A8), owner(owner), name(*(const Name *)name),
+    : vptr(lbl_804F31A8), owner(owner), name(*(const Pmf *)name),
       result((Name *)fn_8042A400(this, owner, ((const Name *)name)->a))
 {
 }
@@ -178,4 +189,38 @@ void CueImpl::invoke(register int arg)
 {
     ((void (*)(int))name)(arg);
     return;
+}
+
+extern "C" void fn_80433C30(void *self, int inChrg);
+
+extern "C" void fn_804339F4(register LinkImplB *self, register int inChrg)
+{
+    self->vptr = lbl_804F31A8;
+    fn_80433C30(self, inChrg);
+}
+
+Name *LinkImplB::getResult()
+{
+    return result;
+}
+
+void LinkImplB::invoke()
+{
+    ((void (*)(void *))name.pfn)((char *)owner + name.delta);
+}
+
+extern "C" void fn_80433AC4(register LinkImpl *self, register int inChrg)
+{
+    self->vptr = lbl_804F31D0;
+    fn_80433C30(self, inChrg);
+}
+
+Name *LinkImpl::getResult()
+{
+    return result;
+}
+
+void LinkImpl::invoke()
+{
+    ((void (*)(void *))name.pfn)((char *)owner + name.delta);
 }
