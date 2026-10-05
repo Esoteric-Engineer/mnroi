@@ -310,6 +310,10 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **A string literal the DOL reads as `addi rX, r13, sym@l` (small data), in a unit whose `.sdata2` pool is cyclic to claim, is an `extern char sym[N]` with the real size.** An unsized `extern char sym[]` compiles to `lis` / `addi`; a known size <= 8 makes cc1 use `r13`, and the symbol stays unclaimed (`Game/fn_804488C0.c`, `"\r"` and `"\n\v"`).
 
+- **A local array the DOL fills with `lis`/`addi sym@l` and an `lwz`/`lhz` copy, in a unit whose `.rodata` is cyclic to claim: copy from an extern struct of the same size.** A string initialiser compiles to the right code but points at the unit's own anonymous pool, so objdiff stays at ~96%. `struct Names { char c[0x18]; }; extern Names lbl_8049004E; Names names = lbl_8049004E;` gives the same block move against dtk's `lbl_`. A size of 8 or less makes cc1 use `r13` (`@sda21`), so declare the 6-byte one as `extern char lbl_80490048[];` and write `*(Chars *)lbl_80490048` (`Game/fn_804494AC.c`).
+- **A bare `b` to the very next instruction, with no compare before it, is `goto L; L:`.** `if (1) {}`, `while (0);` and `{ }` emit nothing or different branches (`Game/fn_804491DC.c`, `fn_80449260`; `Game/fn_80448B24.c` uses the same).
+- **A call whose pointer result the DOL stores straight into a frame slot (`stw r3`) instead of through `r0` wants a result type that differs from the local's by a qualifier:** declare the callee `const char *` and the local `char *` (`Game/fn_804494AC.c`, the iterator temporaries).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

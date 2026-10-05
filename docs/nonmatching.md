@@ -86,7 +86,7 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 ## `Game/fn_80448CB0.c` — string fill constructor, three dead locals
 
-0x80448CB0-0x80448DA0, 96.58% fuzzy, 8 bytes short. The DOL has `addi r0, r28, 8` / `mr r11, r0`, `addi r9, r28, 8` / `mr r11, r9`, `li r10, 0x3f` between the base-constructor call and `self->data = self->buf`: three dead values with no stores, so volatile-register locals, and `n` lands in `r10` because `r11` is still live. Plain `register` locals (initialised or assigned, `char *`/`int`/`void *`/`unsigned char *`) emit the `addi` only and put `n` in `r11`; a `static inline` helper is not expanded at `-O0`. Probably an inlined constructor from the original source.
+0x80448CB0-0x80448DA0, 96.58% fuzzy, 8 bytes short. The DOL has `addi r0, r28, 8` / `mr r11, r0`, `addi r9, r28, 8` / `mr r11, r9`, `li r10, 0x3f` between the base-constructor call and `self->data = self->buf`: three dead values with no stores, so volatile-register locals, and `n` lands in `r10` because `r11` is still live. Plain `register` locals (initialised or assigned, `char *`/`int`/`void *`/`unsigned char *`) emit the `addi` only and put `n` in `r11`; a `static inline` helper is not expanded at `-O0`. Probably an inlined constructor from the original source. The same three dead values open `fn_804493A0` (`String(const char *)`, with an explicit `return;`), `fn_804496F4` and `fn_804498C8`; an in-class `inline` member is not expanded at `-O0` even with `-finline`/`-finline-functions` (scratch test: the call stays out of line, with the arguments in `r0`/`r9`/`r6` where the DOL has `r11`/`r11`/`r10`).
 
 ---
 
@@ -99,6 +99,12 @@ Leaving it unclaimed means the literals have to be `extern`s:
 ## `Game/fn_80448DA0.cpp` — `String(int)`, dead call-result copies
 
 0x80448DA0-0x80448FD0 (`__6Stringi`, name guessed), 93.8% fuzzy, 12 bytes short. cc1plus is right for the body: `*f(x) = v` gives the DOL's `mr r0, r3` / `mr r29, r0` / `stb r0` and `register int value` the r28 parameter. Left: the three calls whose result the DOL copies into `r0` and drops (`fn_804493A0(this, &str)`, `fn_804496F4(this, &res)`, and the `fn_80449298(&res, 2)` after it); declaring them as returning `String &` or `char` changes nothing. `Two str = {c, 0}` (a 2-byte `aligned(2)` struct, uninitialised `r25` insert) matches the halfword build but adds `li r25, 0` ahead of it, and assigning the fields instead stores two bytes. `this` lands in `r29`, not `r30`, because of that `li`. The tail is the parked `b .L` / `.L: mr r3, r30` one (see above).
+
+---
+
+## `Game/fn_8044916C.cpp` — `String` temp passed by reference
+
+0x8044916C-0x804491DC, 99.64% fuzzy, size matches. The DOL builds a `String` temporary with `fn_804493A0`, copies the result into `r0` and drops it, then forms `&tmp` through `r9` (`addi r9, r31, 0x18`). `fn_80449084(self, String(b), c)` with the callee taking `const String &` and a real `~String()` reproduces that exactly (100%, verified), but the destructor call is then `_._6String` and `fn_80449298` cannot carry that name: it is a hand-written `.c` destructor (a `.cpp` one spills the in-charge flag), and a `.c` definition cannot be named `_._6String` (`ngcas` rejects the label, with an `__asm__` label too). Renaming the symbol was tried and reverted. The checked-in version calls `fn_80449298(&tmp, 2)` explicitly, which leaves `addi r0` where the DOL has `addi r9`. `__asm__("fn_80449298")` on the destructor declaration makes cc1plus inline a deleting destructor instead.
 
 ---
 
