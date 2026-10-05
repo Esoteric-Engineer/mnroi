@@ -112,11 +112,11 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 A `String` parameter is destroyed by the callee through `~String()`, symbol `_._6String`, where the DOL calls
 `fn_80449298` (the hand-written `.c` destructor in `Game/fn_804491DC.c`). The real source (`String` by value,
-`~String()` declared) reproduces every instruction, including the single `b` before the cleanup call, so the five
+`~String()` declared) reproduces every instruction, including the single `b` before the cleanup call, so the six
 units below sit at 99.2-99.98% with only `bl _._6String` against `bl fn_80449298` left:
 `Game/fn_801044B0.cpp` (`Control_ChangeScreen`), `Game/fn_80104DB0.cpp` (`Locale_GetString`),
 `Game/fn_80104EC4.cpp` (`Global_PlayUISound`), `Game/fn_80105018.cpp` (`Global_PlayFEStream`) and
-`Game/fn_80105CA4.cpp` (`Cheat_Enable`). Each is its own unit because a unit with a range on each side of another
+`Game/fn_80105CA4.cpp` (`Cheat_Enable`) and `Game/fn_8010BFFC.cpp` (`clashVenue_StartLevel`). Each is its own unit because a unit with a range on each side of another
 unit has a cyclic link order. Tried: `~String() __asm__("fn_80449298")` (cc1plus expands a deleting destructor, 70%);
 a guard class whose destructor calls it (an out-of-line call to the guard); `goto` plus an explicit
 `fn_80449298(&s, 2)` (90%: the label clears the pair flag and adds the pair). Renaming the symbol breaks every other

@@ -413,6 +413,10 @@ config.libs = [
             Object(NonMatching, "Game/fn_80105CA4.cpp"),
             Object(Matching, "Game/fn_80106028.cpp"),
             Object(Matching, "Game/fn_8010611C.cpp"),
+            Object(Matching, "Game/handlers/venuetable.cpp"),
+            Object(NonMatching, "Game/fn_8010BFFC.cpp"),
+            Object(Matching, "Game/fn_8010C090.cpp"),
+            Object(Matching, "Game/fn_8010C338.cpp"),
         ],
     },
     {

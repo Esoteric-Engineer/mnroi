@@ -159,8 +159,10 @@ starts reading. `fn_80088740(table, actor, flag)`, just before the parser, is **
 Four `.data` tables are written by index from the same run: `lbl_804CBE94` as `int[]`
 (`fn_804435D0`), and `lbl_804CB14C`, `lbl_804CB328` and `lbl_804CBEB8` as arrays of 0x44-byte records
 with an int at `+0x40` (`fn_8044374C` in `Game/fn_8044374C.c`, then `fn_80443608` and `fn_80443640`).
-What they hold is unknown. `lbl_804CB14C` is `Record44[7]`: it ends exactly where `lbl_804CB328`
-starts, and dtk mis-types it as a 0xF-byte string because each record starts with text.
+`lbl_804CB14C` is the **venue table**, `Record44[7]`, which `clashVenue_GetVenueList` walks: a name
+at `+0x20` (`fn_8044F19C(i)`, 0x20 bytes) and the unlocked flag at `+0x40` (`fn_8044D5C4(i)`). It ends exactly
+where `lbl_804CB328` starts, and dtk mis-types it as a 0xF-byte string because each record starts with text.
+What the other two tables hold is unknown.
 
 **Physics** is Havok (`hk*`, the `hkRagdollConstraintData` ragdolls, `RagdollRecover_*`). No character-specific physics code has turned up yet. Per-character physical tuning is most likely in the NVB fields.
 

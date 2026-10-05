@@ -113,6 +113,21 @@ Game/fn_8010611C.cpp:
 	.rodata     start:0x80490B28 end:0x80490B38
 	.sbss       start:0x8066D704 end:0x8066D754
 
+Game/handlers/venuetable.cpp:
+	.text       start:0x8010BED8 end:0x8010BFFC
+
+Game/fn_8010BFFC.cpp:
+	.text       start:0x8010BFFC end:0x8010C090
+
+Game/fn_8010C090.cpp:
+	.text       start:0x8010C090 end:0x8010C338
+
+Game/fn_8010C338.cpp:
+	.text       start:0x8010C338 end:0x8010C528
+	.ctors      start:0x80482664 end:0x80482668
+	.rodata     start:0x80492018 end:0x80492028
+	.sbss       start:0x8066D7F0 end:0x8066D808
+
 Game/fn_80114420.cpp:
 	.text       start:0x80114420 end:0x801147D4
 
