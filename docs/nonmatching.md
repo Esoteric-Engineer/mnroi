@@ -84,9 +84,9 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 ---
 
-## `Game/fn_80448364.c` — glyph-quad layout
+## `Game/fn_80448364.c` — glyph-quad layout and sprite quad
 
-0x80448364-0x804485AC, 99.66% fuzzy, size matches. Only the pool relocations differ: the pool (0x8048FCD8-0x8048FCF0: unsigned-to-float magic double, 0.0f, 0.5f, signed magic double) is the unit's own, but claiming it is cyclic (`dtk dol split` fails through `auto_04_8048FCF0_rodata`), and the magic doubles are anonymous compiler pool entries, so they cannot be `extern`s either. Prototype order of `fn_800FDFA8` (floats `x`, `y` first, then the four ints, then the scale float) and a block-scoped colour temp sharing slot 0x10 with the later `face` local are what fixed the code.
+0x80448364-0x804488C0 (`fn_80448364`, then the sprite-quad `fn_804485AC`, 99.19%), size matches. Only the pool relocations differ: the pool (0x8048FCD8-0x8048FD18: unsigned-to-float magic double, 0.0f, 0.5f, signed magic double, then `fn_804485AC`'s) is the unit's own, but claiming it is cyclic (`dtk dol split` fails through `auto_04_8048FCF0_rodata`), and the magic doubles are anonymous compiler pool entries, so they cannot be `extern`s either. Prototype order of `fn_800FDFA8` (floats `x`, `y` first, then the four ints, then the scale float) and a block-scoped colour temp sharing slot 0x10 with the later `face` local are what fixed the code.
 
 ---
 

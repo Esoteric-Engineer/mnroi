@@ -51,3 +51,55 @@ float fn_80448364(register struct Owner *self, register char *glyph, register fl
     return (float)face->a18 * *scale + *origin;
     }
 }
+
+struct Sprite
+{
+    char pad0[0x58];
+    unsigned short w; // +0x58
+    unsigned short h; // +0x5A
+};
+
+struct SpriteOwner
+{
+    char pad0[0xC];
+    struct Sprite *sprite; // +0xC
+};
+
+extern float lbl_8066F4DC;
+extern float lbl_8066F4E0;
+extern char lbl_80594EF0[];
+extern float *fn_8042E7E4(float *scale);
+extern void fn_8042F42C(char *obj, struct Sprite *sprite, int a);
+extern void GXBegin(int prim, int fmt, int count);
+extern void fn_8010160C(unsigned int a, unsigned int b, unsigned int c, unsigned int d);
+extern void fn_80101590(void);
+
+// Draws a screen-scaled sprite quad and returns its rounded width.
+int fn_804485AC(register struct SpriteOwner *self, register float x, register float y, register unsigned int size, register float z, register unsigned int c0, register unsigned int c1, register unsigned int c2, register unsigned int c3, register int unused)
+{
+    float dy;
+    float dx;
+    float ratio;
+    x = x * lbl_8066F4DC;
+    y = y * lbl_8066F4E0;
+    ratio = (float)size / (float)(int)self->sprite->h;
+    dy = (float)(int)self->sprite->h * ratio * fn_8042E7E4(&lbl_8066F4DC)[1];
+    dx = (float)(int)self->sprite->w * ratio * fn_8042E7E4(&lbl_8066F4DC)[0];
+    y = y - dy * 0.5f;
+    fn_8042F42C(lbl_80594EF0, self->sprite, 0);
+    GXBegin(0x80, 2, 4);
+    fn_801015B4(x, y, z);
+    fn_8010160C(c0, c1, c2, c3);
+    fn_801016BC(0.0f, 0.0f);
+    fn_801015B4(x, y + dy, z);
+    fn_8010160C(c0, c1, c2, c3);
+    fn_801016BC(0.0f, 1.0f);
+    fn_801015B4(x + dx, y + dy, z);
+    fn_8010160C(c0, c1, c2, c3);
+    fn_801016BC(1.0f, 1.0f);
+    fn_801015B4(x + dx, y, z);
+    fn_8010160C(c0, c1, c2, c3);
+    fn_801016BC(1.0f, 0.0f);
+    fn_80101590();
+    return dx > 0.0f ? (int)(dx + 0.5) : -(int)(0.5 - dx);
+}
