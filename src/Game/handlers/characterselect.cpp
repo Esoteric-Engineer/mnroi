@@ -1,6 +1,6 @@
 // c:/Clash/mainline/Code/Game/handlers/characterselect.cpp
 //
-// Built at -O0. The whole file is 0x801037B0-0x801040F4, three handlers (docs/versus.md).
+// Built at -O0. The whole file is 0x801037B0-0x801040F4; static initializer not yet claimed (docs/versus.md).
 
 // APT script variables, engine classes shared with the other handler files. The names are guesses; the layouts and the symbols come from the code.
 class AptRef {
@@ -37,6 +37,17 @@ char fn_8044B360(int index, int remap, int alt);  // durability
 char fn_8044B3C4(int index, int remap, int alt);  // energy
 char fn_8044B428(int index, int remap, int alt);  // skill
 int fn_8044B48C(int index, int remap, int alt);   // unlocked
+
+// Last-selection module (docs/versus.md 4.2).
+int fn_80131800();
+int fn_80131850();
+int fn_801318A0();
+int fn_801318F0();
+int fn_80131974(int slot);
+int fn_80131A34(int slot);
+int fn_80131AF4(int slot);
+int fn_80131BB4(int slot);
+void fn_80131E1C(); // reset
 }
 
 // Literals still owned by the auto-generated .rodata.
@@ -49,6 +60,19 @@ extern char lbl_80490134[]; // "aEng"
 extern char lbl_8049013C[]; // "aSkl"
 extern char lbl_80490144[]; // "aIsUnLocked1"
 extern char lbl_80490154[]; // "aIsUnLocked2"
+extern char lbl_80490164[]; // "nCombatType"
+extern char lbl_80490170[]; // "nMatchType"
+extern char lbl_8049017C[]; // "nDiffLevel"
+extern char lbl_80490188[]; // "nTimeLimit"
+extern char lbl_80490194[]; // "nCharId0"
+extern char lbl_804901A0[]; // "nCharId1"
+extern char lbl_804901AC[]; // "nCharLive0"
+extern char lbl_804901B8[]; // "nCharLive1"
+extern char lbl_804901C4[]; // "nCusType0"
+extern char lbl_804901D0[]; // "nCusType1"
+extern char lbl_804901DC[]; // "nController0"
+extern char lbl_804901EC[]; // "nController1"
+extern char lbl_804901FC[]; // "bValid"
 
 // Emits no code. A top-level `return <parameter>;` makes cc1plus drop the function-end branch pair for every later function in the unit.
 // The original file got that from a constructor or inline function in a header, which this stands in for.
@@ -72,4 +96,52 @@ AptObject clashCharSelect_GetCharList()
     }
 
     return list;
+}
+
+AptObject clashCharSelect_GetPrevCharList()
+{
+    AptObject list;
+    int valid = 1;
+    int cur = -1;
+
+    cur = fn_80131800();
+    if (cur < 0) valid = 0;
+    list[lbl_80490164] = cur;
+    cur = fn_80131850();
+    if (cur < 0) valid = 0;
+    list[lbl_80490170] = cur;
+    cur = fn_801318A0();
+    if (cur < 0) valid = 0;
+    list[lbl_8049017C] = cur;
+    cur = fn_801318F0();
+    if (cur < 0) valid = 0;
+    list[lbl_80490188] = cur;
+    cur = fn_80131974(0);
+    if (cur < 0) valid = 0;
+    list[lbl_80490194] = cur;
+    cur = fn_80131974(1);
+    if (cur < 0) valid = 0;
+    list[lbl_804901A0] = cur;
+    cur = fn_80131A34(0);
+    if (cur < 0) valid = 0;
+    list[lbl_804901AC] = cur;
+    cur = fn_80131A34(1);
+    if (cur < 0) valid = 0;
+    list[lbl_804901B8] = cur;
+    cur = fn_80131AF4(0);
+    if (cur < 0) valid = 0;
+    list[lbl_804901C4] = cur;
+    cur = fn_80131AF4(1);
+    if (cur < 0) valid = 0;
+    list[lbl_804901D0] = cur;
+    list[lbl_804901DC] = fn_80131BB4(0);
+    list[lbl_804901EC] = fn_80131BB4(1);
+    list[lbl_804901FC] = valid;
+
+    return list;
+}
+
+void fn_80103FC4()
+{
+    fn_80131E1C();
 }

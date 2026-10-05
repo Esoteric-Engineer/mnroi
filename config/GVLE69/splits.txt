@@ -70,7 +70,7 @@ Game/fn_800B7204.c:
 	.sbss       start:0x8066D6BC end:0x8066D6CC
 
 Game/handlers/characterselect.cpp:
-	.text       start:0x801037B0 end:0x80103BAC
+	.text       start:0x801037B0 end:0x80103FF4
 
 Game/fn_80114420.cpp:
 	.text       start:0x80114420 end:0x801147D4
