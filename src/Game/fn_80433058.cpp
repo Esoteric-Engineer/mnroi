@@ -1,4 +1,5 @@
 // Removes the list entry whose value equals arg.get() and deletes its Link; the by-value Link is destroyed here.
+// fn_80433198 registers a new entry (0x14 bytes, value at +0x10) on the list at Owner+0x24.
 // Class names are guesses; see docs/versus.md section 5.
 
 extern "C" void *fn_801B5D3C(void *list, int index);
@@ -44,4 +45,32 @@ void fn_80433058(register void *list, Link arg)
     delete e;
     Link *dead = link;
     delete dead;
+}
+
+extern "C" void fn_80165118(void *);
+extern "C" void fn_80165138(void *);
+extern "C" void *fn_804336A8(void *);
+extern "C" void *fn_8043365C(int size, void *owner);
+extern "C" void *fn_80433838(void *);
+extern "C" void fn_80164544(void *list, void *entry, void *self, int b);
+
+struct Owner
+{
+    char pad[0x24];
+    void *list; // +0x24
+};
+
+struct NewEntry
+{
+    char pad[0x10];
+    int value; // +0x10
+};
+
+extern "C" void fn_80433198(register Owner *self, register int a, register int b)
+{
+    fn_80165118(fn_804336A8(self->list));
+    NewEntry *e = (NewEntry *)fn_80433838(fn_8043365C(0x14, fn_804336A8(self->list)));
+    e->value = a;
+    fn_80164544(self->list, e, self, b);
+    fn_80165138(fn_804336A8(self->list));
 }
