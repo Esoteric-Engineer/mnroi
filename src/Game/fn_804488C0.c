@@ -31,3 +31,16 @@ void fn_8044895C(register char *self, register int v)
         *(unsigned char *)(self + 0x5) = v;
     }
 }
+
+// Glyph lookup with a fallback to the space glyph (0x20).
+extern int fn_80198248(int a, int b);
+
+int fn_804489B4(register int a, register int b)
+{
+    int r = fn_80198248(a, b);
+    if (r == 0)
+    {
+        r = fn_80198248(a, 0x20);
+    }
+    return r;
+}
