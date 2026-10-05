@@ -84,6 +84,12 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 ---
 
+## `Game/fn_80448CB0.c` — string fill constructor, three dead locals
+
+0x80448CB0-0x80448DA0, 96.58% fuzzy, 8 bytes short. The DOL has `addi r0, r28, 8` / `mr r11, r0`, `addi r9, r28, 8` / `mr r11, r9`, `li r10, 0x3f` between the base-constructor call and `self->data = self->buf`: three dead values with no stores, so volatile-register locals, and `n` lands in `r10` because `r11` is still live. Plain `register` locals (initialised or assigned, `char *`/`int`/`void *`/`unsigned char *`) emit the `addi` only and put `n` in `r11`; a `static inline` helper is not expanded at `-O0`. Probably an inlined constructor from the original source.
+
+---
+
 ## `fn_80448C18` — string temps with dead result copies (unclaimed)
 
 0x80448C18-0x80448CB0, 94.5% fuzzy as `.c` beside `Game/fn_80448B24.c`: `fn_804496F4(tmp1, c)`, `fn_804493A0(tmp2, b)`, `fn_80448B24(self, tmp2, tmp1)`, then the two destructors. The DOL copies each constructor result into a volatile (`mr r0, r3` after the first, `mr r9, r3` after the second) and builds `&tmp2` through `r9` as a result. `(void)`/`(char)` casts and `+ 0` drop the copy, and `register` locals take `r28`/`r29` (frame 0xC0, not 0xB8). It is the one gap in the 0x80448B24 run, so `fn_80448CB0` onwards waits on it or gets its own unit.
