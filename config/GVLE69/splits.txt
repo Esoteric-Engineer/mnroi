@@ -3280,6 +3280,9 @@ Game/fn_8044832C.cpp:
 Game/fn_80448364.c:
 	.text       start:0x80448364 end:0x804488C0
 
+Game/fn_804488C0.c:
+	.text       start:0x804488C0 end:0x8044895C
+
 Game/fn_8044B1D4.c:
 	.text       start:0x8044B1D4 end:0x8044B4EC
 

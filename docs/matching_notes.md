@@ -308,6 +308,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **A destructor whose `__in_chrg` flag sits in a call-saved register (`mr r30, r4`), where the `.cpp` form spills it (`stw r4, 0x8(r31)` and a reload before `clrlwi 31`), is hand-written C.** Write `void f(register T *self, register int inChrg)` with the member destructors as plain calls with `2`, then `if (inChrg & 1) { __builtin_delete(self); } else { }` (the empty `else` is the `b` after the delete call); keep the `fn_XXXXXXXX` name, no mangling needed. A member guarded by `if (p) { if (p) g(p); else { } }` shows the same `b` after its call (`Game/fn_80447DBC.c`). The `GameFlow` destructor, which does spill, is the `.cpp` kind.
 
+- **A string literal the DOL reads as `addi rX, r13, sym@l` (small data), in a unit whose `.sdata2` pool is cyclic to claim, is an `extern char sym[N]` with the real size.** An unsized `extern char sym[]` compiles to `lis` / `addi`; a known size <= 8 makes cc1 use `r13`, and the symbol stays unclaimed (`Game/fn_804488C0.c`, `"\r"` and `"\n\v"`).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.
