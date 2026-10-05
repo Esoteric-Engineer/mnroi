@@ -3337,6 +3337,15 @@ Game/fn_8044A61C.cpp:
 Game/fn_8044A880.c:
 	.text       start:0x8044A880 end:0x8044A928
 
+Game/fn_8044A928.cpp:
+	.text       start:0x8044A928 end:0x8044A980
+
+Game/fn_8044A980.cpp:
+	.text       start:0x8044A980 end:0x8044A9D0
+
+Game/fn_8044A9D0.c:
+	.text       start:0x8044A9D0 end:0x8044AA1C
+
 Game/fn_8044B1D4.c:
 	.text       start:0x8044B1D4 end:0x8044B4EC
 
