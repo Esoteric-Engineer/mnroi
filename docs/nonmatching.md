@@ -84,6 +84,12 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 ---
 
+## `Game/fn_80448364.c` — glyph-quad layout
+
+0x80448364-0x804485AC, 99.66% fuzzy, size matches. Only the pool relocations differ: the pool (0x8048FCD8-0x8048FCF0: unsigned-to-float magic double, 0.0f, 0.5f, signed magic double) is the unit's own, but claiming it is cyclic (`dtk dol split` fails through `auto_04_8048FCF0_rodata`), and the magic doubles are anonymous compiler pool entries, so they cannot be `extern`s either. Prototype order of `fn_800FDFA8` (floats `x`, `y` first, then the four ints, then the scale float) and a block-scoped colour temp sharing slot 0x10 with the later `face` local are what fixed the code.
+
+---
+
 ## `Game/fn_80446C80.c` — float setters through `fn_8042FB28(self + 0x80)`
 
 0x80446C80-0x80446DE8, 95.9% fuzzy, size matches: `fn_80446C80`/`fn_80446CD4` store `v` at `[0]`/`[2]` of the returned float array, `fn_80446D28`/`fn_80446D88` store `fn_801BDB9C(v)` there. The DOL source is `*f(...) = v` in C++, which compiles here to `mr r0, r3` / `mr r29, r0` / `stfs 0(r29)` (and, for the call-on-the-right pair, `mr r28, r3` ... `mr r29, r28`), but cc1 emits the call result direct. 18 `.c` shapes tried (register locals, assignment-as-value, casts through `int`/`char *`/`void *`, two locals, `if ((p = f()))`): the closest, `register float *p; *(p = f()) = v;`, is 99.3% for the first two and has the temp in `r9` instead of `r0`; the last two stay at 95.1% (`stmw r29` vs `r28`). No pair in the DOL, so there is no `.cpp` unit for them either.
