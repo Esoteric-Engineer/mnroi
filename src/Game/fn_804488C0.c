@@ -19,3 +19,15 @@ int fn_804488C0(register int a, register int b)
     }
     return 0;
 }
+
+// GX cache setter: Z-compare location (self+0x5).
+extern void GXSetZCompLoc(unsigned char beforeTex);
+
+void fn_8044895C(register char *self, register int v)
+{
+    if (v != *(unsigned char *)(self + 0x5))
+    {
+        GXSetZCompLoc(v);
+        *(unsigned char *)(self + 0x5) = v;
+    }
+}
