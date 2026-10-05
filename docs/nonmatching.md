@@ -96,6 +96,12 @@ Leaving it unclaimed means the literals have to be `extern`s:
 
 ---
 
+## `Game/fn_80448DA0.cpp` — `String(int)`, dead call-result copies
+
+0x80448DA0-0x80448FD0 (`__6Stringi`, name guessed), 93.8% fuzzy, 12 bytes short. cc1plus is right for the body: `*f(x) = v` gives the DOL's `mr r0, r3` / `mr r29, r0` / `stb r0` and `register int value` the r28 parameter. Left: the three calls whose result the DOL copies into `r0` and drops (`fn_804493A0(this, &str)`, `fn_804496F4(this, &res)`, and the `fn_80449298(&res, 2)` after it); declaring them as returning `String &` or `char` changes nothing. `Two str = {c, 0}` (a 2-byte `aligned(2)` struct, uninitialised `r25` insert) matches the halfword build but adds `li r25, 0` ahead of it, and assigning the fields instead stores two bytes. `this` lands in `r29`, not `r30`, because of that `li`. The tail is the parked `b .L` / `.L: mr r3, r30` one (see above).
+
+---
+
 ## `Game/fn_80448364.c` — glyph-quad layout and sprite quad
 
 0x80448364-0x804488C0 (`fn_80448364`, then the sprite-quad `fn_804485AC`, 99.19%), size matches. Only the pool relocations differ: the pool (0x8048FCD8-0x8048FD18: unsigned-to-float magic double, 0.0f, 0.5f, signed magic double, then `fn_804485AC`'s) is the unit's own, but claiming it is cyclic (`dtk dol split` fails through `auto_04_8048FCF0_rodata`), and the magic doubles are anonymous compiler pool entries, so they cannot be `extern`s either. Prototype order of `fn_800FDFA8` (floats `x`, `y` first, then the four ints, then the scale float) and a block-scoped colour temp sharing slot 0x10 with the later `face` local are what fixed the code.
