@@ -330,6 +330,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **`x >= lo ? (x <= hi ? x : hi) : lo` with float literals, in a unit whose pool is cyclic, takes one `extern const float sym[]` per literal, used as `sym[0]`.** Sharing one array for both bounds adds an `addi` (`Game/fn_80431CCC.c`, the 0..1 clamp setters; their pool at 0x804854AC sits in the cycle through the Runtime units).
 - **`cmpw cr7` / `mfcr` / `extrwi 1, 30` in the `then` arm and `li r9, 0` in the `else` arm is `p != 0 ? a == b : 0`, not `p != 0 && a == b`** (`Game/fn_8043265C.c`, `fn_80432708`). The `&&` form hoists a `li` and branches the other way.
 - **`lis sym@ha` ahead of the index `mulli`s and `addi sym@l` / `addi 0x20` after them is `sym[i].field[j].member`, a nested array reference in a struct, not a char-pointer sum.** Casting through `char *` folds the field offset into the symbol (`lis sym+0x20@ha`). `Obj` has to be padded to its true stride, `Entry entries[15]` plus tail (`Game/fn_8043265C.c`, `fn_80432764`).
+- **A by-value class parameter's `bl _._NClass` is not a blocker when the destructor is still unclaimed:** rename it to `_._NClass` in `symbols.txt` and the call matches (the `String` case is stuck only because `fn_80449298` is a defined `.c` function). Methods and constructors it needs are renamed to their mangled names the same way (`Game/fn_80432EE8.cpp`, `_._4Link`, `__4LinkRC4Link`; the by-value parameter shows in the symbol as `FPvG4Link`).
 
 ## General
 
