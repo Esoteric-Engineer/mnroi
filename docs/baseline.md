@@ -15,18 +15,26 @@ See also:
 
 ## Memory Map
 
-Library code sits in two clusters inside `.text`, with game code on either side. All library code and data is split and matched, so every remaining `auto_` unit is game code or game data.
+Library code sits in two clusters inside `.text`, with game code on either side. All SDK, libc and compiler-runtime code and data is split and matched, so every remaining `auto_` unit is game or middleware code, or their data.
 
 | `.text` range | Contents |
 |---|---|
 | `.init` 0x80003100-0x800034A0 | SN's crt0 (`__start`) and its helpers |
 | 0x800034A0-0x80168768 | Game |
 | 0x80168770-0x80196884 | Library: SN debug stub, compiler runtime, Newlib libc/libm, OS, SI, DB, DVD, VI, PAD, AI, GX, EXI, odenotstub, OdemuExi2 |
-| 0x80196884-0x803FF3B0 | Game. About half of these functions have no frame pointer, so some files were built with other flags (see [`prodg.md`](prodg.md#flags)) |
+| 0x80196884-0x8023D994 | Game (`-O0`) |
+| 0x8023D994-0x80243F94 | Middleware: RealCore (`-O2`) |
+| 0x80243F94-0x8026D828 | Middleware: CSIS allocator, audio, Apt runtime core (`-O2 -fno-strength-reduce -G0`) |
+| 0x8026D828-0x803864CC | Middleware: Apt, memory card, EAGL/RealGraph, AV/MAD video, Refpack, Havok (`-O2`) |
+| 0x803864CC-0x803FF3B0 | Game (`-O0`) |
 | 0x803FF3B0-0x804114EC | Library: Newlib libm/libc, VM, `__save_gpr`/`__restore_gpr`, OS, MTX, AR, ARQ, AX, DSP, CARD, GX display lists, texPalette |
-| 0x804114EC-0x804825A0 | Game |
+| 0x804114EC-0x80426A2C | Middleware: RealCore wrappers, Havok shapes, GX display lists (`-O2`) |
+| 0x80426A2C-0x80472F34 | Game (`-O0`) |
+| 0x80472F34-0x8047EED8 | Middleware: Havok (`-O2`) |
+| 0x8047EED8-0x804825A0 | Game (`-O0`) |
 
-In `configure.py`, the Dolphin SDK is the `DolphinLib` entries, Newlib/libgcc and the compiler runtime are `Runtime.PPCEABI.H`, the debug stub is `SN`, and game code is `Game`. Most of `Runtime.PPCEABI.H`, `SN` and the VM library is `nofralloc` asm transcribed from the GCC output, not C.
+The middleware ranges and flags are from [`prodg.md`](prodg.md#flags) (`python3 tools/flavor_map.py <address>` classifies a function). Their edges are only exact to the functions that carry no evidence.
+In `configure.py`, the Dolphin SDK is the `DolphinLib` entries, Newlib/libgcc and the compiler runtime are `Runtime.PPCEABI.H`, the debug stub is `SN`, game code is `Game`, and the middleware (RealCore, Apt, Havok...) is `Middleware`. Most of `Runtime.PPCEABI.H`, `SN` and the VM library is `nofralloc` asm transcribed from the GCC output, not C.
 
 ## Toolkit Fork Reasoning
 

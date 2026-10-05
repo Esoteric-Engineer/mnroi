@@ -44,13 +44,16 @@ Human-facing references (read the relevant one instead of guessing):
    range to `splits.txt` (tab-indented) and rename `fn_XXXXXXXX` in `symbols.txt` if you know the
    real name (GCC 2.95-mangled for C++). Name a new unit after its first function,
    `Game/fn_XXXXXXXX.cpp`.
-4. **Register** as `Object(NonMatching, "<unit>")` in the `Game` library in `configure.py`. The name
-   must equal the `splits.txt` unit name exactly.
+4. **Register** as `Object(NonMatching, "<unit>")` in the `Game` library in `configure.py`, or in
+   `Middleware` if the function has no frame pointer (`python3 tools/flavor_map.py <address>` says
+   which flags; `docs/workflow.md` step 3 has the `-G0` block's override). The name must equal the
+   `splits.txt` unit name exactly.
 5. **Write** `src/<unit>` and run `ninja`. Inspect remaining differences with
    `python3 tools/objdiff_mismatches.py <unit-without-extension> <function>`; it shows relocation
    types, which byte diffs don't. Form a hypothesis from `docs/matching_notes.md` and `prodg.md`
    instead of random reshaping. If the function's shape doesn't fit `-O0`, suspect the flags before
-   the source.
+   the source (`tools/flavor_map.py`). A C++ unit that is 8 bytes over size per function is the
+   function-end branch pair, not the source (`tools/pair_map.py` and `prodg.md`).
 6. **Verify.** Flip to `Matching`, run `ninja`, and require **both** `main.dol: OK` and 100%
    linked. If `main.dol` breaks, run `python3 tools/diff_dol.py` to locate the bytes. Consider
    `force_active` only if the diff shows the function was dropped or shifted.

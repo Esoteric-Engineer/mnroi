@@ -142,3 +142,19 @@ come out `this`=r29, `src`=r30 against the DOL's r30/r29. An explicit `return;` 
 pair absent (the flag set by an earlier function, [the branch pair](#the-c-function-end-branch-pair)). The same tail is on `fn_80448A28`,
 `fn_80448A74`, `fn_80448AC0`, `fn_80448FD0` and `fn_80449020`; a constructor with `mr r3, r30` *before* the `b` is fine. The
 `Vector` constructor's two doubles (0x8048DEA8, 0x8048DEB0) are also cyclic to claim.
+
+---
+
+## `RealCore/fn_8023DAE0.c` — the pass over the 8 registered callbacks
+
+0x8023DAE0-0x8023DB48, 84% fuzzy, size matches, `-O2`. The source is a counted loop: `lbl_8066C888++;` then
+`for (i = 0; i < 8; i++) { lbl_8066C88C++; if (lbl_804D7D70[i]) lbl_804D7D70[i](); }`. Strength reduction turns
+it into the DOL's pointer loop with the signed `cmpw r31, r30`, and the prologue and call sequence match. What
+differs is order inside the loop: the DOL does `lwz r9, lbl_8066C88C` / `addi` / `stw`, *then* `lwz r0, 0(r31)`
+(the callback) / `addi r31, r31, 4`; ours hoists the callback load above the counter's `addi`/`stw`.
+
+Tried without effect (all give the same schedule): loading the callback into a local first, `x = x + 1`, a table
+pointer local, `slot++` pointer iteration (also gives `cmplw`), and `volatile` on either counter or the table
+(the table one switches the loop to `lwzx`). In the original the scheduler evidently could not move the load above the
+store. The counters are in `.sdata` and the table in `.data`, so they are not one object; what blocks the move is
+unknown.

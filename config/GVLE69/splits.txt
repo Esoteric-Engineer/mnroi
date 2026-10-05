@@ -2188,6 +2188,21 @@ Dolphin/OdemuExi2/DBGReadMailbox.c:
 Dolphin/OdemuExi2/DBGEXIImm.c:
 	.text       start:0x801965EC end:0x80196884
 
+RealCore/fn_8023DAA0.c:
+	.text       start:0x8023DAA0 end:0x8023DAE0
+
+RealCore/fn_8023DAE0.c:
+	.text       start:0x8023DAE0 end:0x8023DB48
+
+CSIS/fn_80246024.c:
+	.text       start:0x80246024 end:0x8024606C
+
+Apt/fn_8026799C.c:
+	.text       start:0x8026799C end:0x802679C4
+
+Havok/fn_802E8348.c:
+	.text       start:0x802E8348 end:0x802E8378
+
 Runtime.PPCEABI.H/__ieee754_asin.c:
 	.text       start:0x803FF3B0 end:0x803FF60C
 	.sdata      start:0x8066CCC8 end:0x8066CD48

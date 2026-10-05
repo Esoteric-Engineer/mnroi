@@ -256,6 +256,19 @@ cflags_prodg_lib = [
     "-O2",
 ]
 
+# Middleware (RealCore, Apt, RealGraph/EAGL, video, Havok): -O2. One block of the Apt runtime and the CSIS allocator,
+# 0x80243F94-0x8026D828, was built with -fno-strength-reduce -G0 (docs/prodg.md, "Middleware"; `python3 tools/flavor_map.py <address>`
+# says which a function is).
+cflags_prodg_middleware = [
+    *cflags_prodg_base,
+    "-O2",
+]
+cflags_prodg_middleware_g0 = [
+    *cflags_prodg_middleware,
+    "-fno-strength-reduce",
+    "-G0",
+]
+
 # Game code. -O0 so far: arguments spilled through r31, `this` kept in r30, and a doubled branch to the epilogue.
 cflags_prodg_game = [
     *cflags_prodg_base,
@@ -359,6 +372,19 @@ config.libs = [
             Object(Matching, "Game/fn_800B7094.c"),
             Object(Matching, "Game/fn_800B7204.c"),
             Object(Matching, "Game/handlers/characterselect.cpp"),
+        ],
+    },
+    {
+        "lib": "Middleware",
+        "mw_version": PRODG_VERSION,
+        "cflags": cflags_prodg_middleware,
+        "progress_category": "middleware",
+        "objects": [
+            Object(Matching, "RealCore/fn_8023DAA0.c"),
+            Object(NonMatching, "RealCore/fn_8023DAE0.c"),
+            Object(Matching, "CSIS/fn_80246024.c", cflags=cflags_prodg_middleware_g0),
+            Object(Matching, "Apt/fn_8026799C.c", cflags=cflags_prodg_middleware_g0),
+            Object(Matching, "Havok/fn_802E8348.c"),
         ],
     },
     {
@@ -1431,6 +1457,7 @@ def link_order_callback(module_id: int, objects: List[str]) -> List[str]:
 config.progress_categories = [
     ProgressCategory("game", "Game Code"),
     ProgressCategory("sdk", "SDK Code"),
+    ProgressCategory("middleware", "Middleware Code"),
 ]
 config.progress_each_module = args.verbose
 # Optional extra arguments to `objdiff-cli report generate`

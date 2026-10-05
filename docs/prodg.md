@@ -79,7 +79,9 @@ middle block's edges are only known to within the functions that carry no eviden
 before 0x8026D828 (first use of `r13`).
 
 The proof is 40 functions matched in throwaway units, the same on all five releases (each name
-below is the function's DOL address):
+below is the function's DOL address). Seven of them are now real units in the `Middleware` library, which
+confirms both flag sets through linking: `RealCore/fn_8023DAA0.c` and `Havok/fn_802E8348.c` (`-O2`,
+`cflags_prodg_middleware`), `CSIS/fn_80246024.c` and `Apt/fn_8026799C.c` (`cflags_prodg_middleware_g0`):
 
 - **`-O2`:** RealCore `fn_8023DAA0`, `fn_8023DAE0` (a loop over 8 function pointers), `fn_8023DB6C` (a
   7-case switch), `fn_8023DC08`, `fn_8023DC84`; Apt `fn_8026F77C`, `fn_8026F7AC`, `fn_8026F7D0`,
