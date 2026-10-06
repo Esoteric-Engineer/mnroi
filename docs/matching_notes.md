@@ -233,6 +233,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **`lis` / `addi r11` for a global's address followed by `lwz 0xNN(r11)`, where yours folds into `lis sym+0xNN@ha`, means the field is read through a struct pointer.** `*(int *)(sym + 0xNN)` folds the offset into the symbol; `((S *)sym)->field` with `char pad[0xNN]` before it does not (`Game/fn_804441A0.c`, `fn_80444454`).
 
+- **`srwi r0, rX, N` / `xori r0, r0, 1` / `clrlwi r0, r0, 31` is `((x >> N) ^ 1) & 1` on an `unsigned int`.** `~(x >> N) & 1` gives `nor` and `((x >> N) & 1) ^ 1` swaps the last two instructions (`Game/fn_80434E0C.c`, `fn_80434F14`). A float read through a pointer field the DOL does as `lwz r11, off(r9)` / `lfs f0, N(r11)`, where a `char *` sum adds an `addi`, is a struct pointer with the float as a member.
+
 - **A compound assignment whose stored register also feeds `mr r3` is one statement, `return x |= BIT;`.**
   Splitting it into `x |= BIT; return x;` reloads the field after the store, which shows up as an extra
   `lwz`; the returning form also adds one register copy before the store that the `void` setter beside
