@@ -153,3 +153,29 @@ extern "C" void fn_804384D8(register Cell *self)
 {
     self->value = 1.0f;
 }
+
+extern "C" char lbl_804F32F8[];
+extern "C" void fn_80436F94(void *self);
+
+class ShapeBaseB
+{
+public:
+    float x;          // +0x0
+    const void *vptr; // +0x4
+    ShapeBaseB();
+};
+
+ShapeBaseB::ShapeBaseB() : vptr(lbl_804F32F8)
+{
+    fn_80436F94(this);
+}
+
+extern "C" int fn_80438550(register Self *self)
+{
+    return self->flags & 0x100;
+}
+
+extern "C" int fn_80438580(register Self *self)
+{
+    return self->flags & 0x1000;
+}
