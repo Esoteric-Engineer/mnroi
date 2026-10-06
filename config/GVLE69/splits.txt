@@ -3355,6 +3355,9 @@ Game/fn_804391E0.c:
 Game/fn_804396F8.c:
 	.text       start:0x804396F8 end:0x80439778
 
+Game/fn_80439778.c:
+	.text       start:0x80439778 end:0x80439AB4
+
 Game/fn_80442010.c:
 	.text       start:0x80442010 end:0x804428E0
 
