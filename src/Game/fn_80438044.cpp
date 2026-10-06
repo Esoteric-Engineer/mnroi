@@ -126,3 +126,30 @@ extern "C" float fn_804383EC(register float *v)
     float s = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
     return s != 0.0f ? fn_80438CC8(s) : 0.0f;
 }
+
+extern "C" int fn_80438480(register int x)
+{
+    return x;
+}
+
+struct Tagged
+{
+    char pad[4];
+    char kind; // +0x4
+};
+
+extern "C" char fn_804384A8(register Tagged *self)
+{
+    return self->kind;
+}
+
+struct Cell
+{
+    char pad[0x14];
+    float value; // +0x14
+};
+
+extern "C" void fn_804384D8(register Cell *self)
+{
+    self->value = 1.0f;
+}
