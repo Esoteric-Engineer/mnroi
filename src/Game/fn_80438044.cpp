@@ -420,7 +420,7 @@ struct Slot
     int a, b, c;  // +0x0
     int *p;       // +0xC
     int *q;       // +0x10
-    Slot() __asm__("fn_80439BD4");
+    Slot() __asm__("__4Slot");
 };
 
 class Streamer

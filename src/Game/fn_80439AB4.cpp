@@ -49,3 +49,23 @@ const Attr &Attr::chain(register const Attr &next) const
     next.link = this;
     return next;
 }
+
+class Slot
+{
+public:
+    int w0; // +0x0
+    int w1; // +0x4
+    int w2; // +0x8
+    int w3; // +0xC
+    int w4; // +0x10
+    Slot();
+};
+
+Slot::Slot()
+{
+    w0 = 0;
+    w1 = 0;
+    w2 = 0;
+    w3 = 0;
+    w4 = 0;
+}
