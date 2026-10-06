@@ -1,9 +1,12 @@
-// Slot buffer allocate, free and read-start; docs/versus.md, row 8.
+// Slot buffer allocate, free, read-start and release; docs/versus.md, row 8.
 extern char lbl_80486C18[0x13];
 extern int lbl_8066B7FC;
 extern void *fn_801AC9EC(int size, char *file, int line, int a, int b, int c);
 extern void fn_801ACC0C(void *p);
 extern int fn_80243EC0(int a, int b, void *c, int d);
+extern int fn_80244120(void *h);
+extern int fn_80243F94(void *h);
+extern void fn_8023E98C(void);
 
 void fn_8043A20C(register char *self, register int size)
 {
@@ -26,4 +29,15 @@ void fn_8043A2DC(register char *self, register int size)
 {
     *(int *)(self + 0x0) = fn_80243EC0(**(int **)(self + 0xC), **(int **)(self + 0x10), *(void **)(self + 0x4), size);
     **(int **)(self + 0x10) = **(int **)(self + 0x10) + size;
+}
+
+void fn_8043A348(register char *self)
+{
+    int r;
+    if (*(void **)(self + 0x0) != 0) {
+        r = fn_80244120(*(void **)(self + 0x0));
+        while (fn_80243F94(*(void **)(self + 0x0)) == 0)
+            fn_8023E98C();
+        *(void **)(self + 0x0) = 0;
+    }
 }
