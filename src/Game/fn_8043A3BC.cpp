@@ -1,4 +1,4 @@
-// Constructors of the 0x50-byte element and of the holder that array-constructs 64 of them (docs/versus.md, row 8).
+// Constructors of the 0x50-byte element, its 64-element holder and the 0x40-byte Mat4 copy (docs/versus.md, row 8).
 
 extern "C" void fn_8042D7B0(void *self);
 
@@ -30,4 +30,18 @@ public:
 
 ElementSet::ElementSet()
 {
+}
+
+extern "C" void *memcpy(void *dst, const void *src, unsigned int n);
+
+class Mat4
+{
+public:
+    float m[16];
+    Mat4(const Mat4 &src);
+};
+
+Mat4::Mat4(register const Mat4 &src)
+{
+    memcpy(this, &src, 0x40);
 }
