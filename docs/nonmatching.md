@@ -2,7 +2,7 @@
 
 Functions claimed as `NonMatching`, with what has already been tried. Don't re-guess these. When a unit flips to `Matching`, delete its entry and move any general lesson to [`matching_notes.md`](matching_notes.md).
 
-No registered unit is `NonMatching` at the moment. What follows is the one compiler behaviour that used to park whole files, and one unclaimed family that is still stuck.
+One registered unit is `NonMatching` (`Game/fn_80437B60.cpp`, below). Besides it, this file holds the one compiler behaviour that used to park whole files, and one unclaimed family that is still stuck.
 
 ---
 
@@ -19,6 +19,24 @@ original's flag was already set there (`Game/fn_800887AC.cpp`, `Game/handlers/ch
 and the ordering rules, and `python3 tools/pair_map.py <address>` says which state a function was in. There
 is no build-side workaround: the build used to have a per-unit `strip_fn_end_pair` that deleted the pair from
 the assembly, and it was removed because it can't model a file where a `switch` brings the pair back.
+
+---
+
+## `fn_80437E50` (`Game/fn_80437B60.cpp`, 99.0%): register numbers around the `radius` call
+
+0x80437E50-0x80438044, `extern_pool=0x80486868` (one 0.0f). Everything matches except register numbers: the
+DOL has `h` of the first virtual call in `r29`, above the parameters (`r28`-`r26`), and the receiver of the
+direct call `fn_802EA5D8` goes `mr r24, r3` / `mr r25, r24` / `mr r3, r25`, so those two sit above the second
+virtual call's entry address (`r23`). By [`prodg.md`](prodg.md#register-allocation-at--o0) that means both are
+whole-function saved values (`SAVE_EXPR`s), and the receiver is a derived-to-base reference conversion.
+The source in the unit is two `register Handle *` locals (`a = f(); b = a; b->radius()`), which gives the
+right instructions and size but the lifetimes of ordinary locals, so the registers come out one lower.
+Tried for the receiver, none giving `r24` -> `r25` -> `r3` with no frame slot: result cast to a derived
+class (`HandleD : Handle { int pad; }`, two levels too), accessor declared returning `HandleD *` or `HandleD &`,
+method on `Handle` or free function taking `Handle *`, `Handle &`, `const Handle &`, `*(Handle *)&...`,
+`Handle &hr = ...` (right pair, then `stw r25` to a slot), `register Handle &hr` (right pair plus a third copy
+`r22`). Next to try: a form whose reference temp has no variable behind it, or `register ... __asm__("rN")`
+pins on `a` and `b` (the `h` register would still be off).
 
 ---
 

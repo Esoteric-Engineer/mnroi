@@ -36,6 +36,7 @@ class ShapeData
 public:
     char d[0x20];
     ShapeData();
+    void setPos(void *p) __asm__("fn_80436878");
 };
 
 struct Result
@@ -58,9 +59,24 @@ public:
     Placement(void *a, void *b, void *c, int d, int e);
 };
 
+class Vector
+{
+public:
+    char d[0x10];
+    Vector();
+    void set(void *v) __asm__("fn_80434BA4");
+};
+
+extern "C" void *fn_80318E90(void *actor);
+extern "C" void *fn_80434EA8(void *body);
+extern "C" void *fn_80434D88(void *p);
+extern "C" float fn_804341BC(void *a, void *b);
+extern "C" void fn_80438398(void *a, void *b);
+
 class Handle
 {
 public:
+    float radius() __asm__("fn_802EA5D8");
     virtual void v0();
     virtual void v1();
     virtual int v2();
@@ -69,6 +85,14 @@ public:
     virtual Result v5(void *a, void *b, ...);
     virtual void v6(void *a, Obj &b, void *c);
 };
+
+class HandleD : public Handle
+{
+public:
+    int pad;
+};
+
+extern "C" HandleD *fn_80435340d(Sub *a) __asm__("fn_80435340");
 
 class Body
 {
@@ -99,4 +123,28 @@ extern "C" void fn_80437B60(register void *self, register Body *body, register i
             body->v0(&pl);
         }
     }
+}
+
+extern "C" void fn_80437E50(register void *self, register Body *body, register int flag)
+{
+    register Handle *b;
+    register Handle *a;
+    if (((Handle *)fn_80435340(fn_8032A228(self)))->v2() == 4)
+    {
+        a = fn_80435340d(fn_8032A228(self));
+        b = a;
+        float radius = b->radius();
+        Vector v;
+        v.set(fn_80318E90(self));
+        if (fn_804341BC(fn_804370E8(fn_80434EA8(body)), &v) < radius * radius)
+        {
+            ShapeData sd;
+            *(float *)(sd.d + 0x14) = 0.0f;
+            sd.setPos(fn_80434D88(fn_80434EA8(body)));
+            fn_80438398(&sd, &sd);
+            Placement pl(fn_8032A228(self), fn_80437378(body), &sd, flag, -1);
+            body->v0(&pl);
+        }
+    }
+    fn_80437B60(self, body, 0);
 }
