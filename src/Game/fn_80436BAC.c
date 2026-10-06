@@ -43,3 +43,8 @@ int fn_80436BAC(register PlaneSet *self, register void *a, register void *b, reg
     }
     return 1;
 }
+
+int fn_80436D5C(register char *self)
+{
+    return *(int *)(self + 0x150);
+}

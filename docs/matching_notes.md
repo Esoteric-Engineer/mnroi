@@ -124,7 +124,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   members, so a reconstructed class's data has to fill exactly the vptr's offset, and the entry at
   byte offset `N` is the `(N / 8) - 1`'th declared virtual function (`Actor+0x198`, slots 0x58 and
   0x60, in `Game/fn_8002623C.cpp`). Writing it as a struct of pointers-to-member instead evaluates
-  the entry address twice and does not match.
+  the entry address twice and does not match. The same shape on a call result (`mr r0, r3` / `mr r28, r0`, then the entry address in the
+  next register) is `f()->slot(...)` on a class with `char data[N]` plus virtuals, not a hand-made entry
+  struct with `register` locals, which gets the copies and registers wrong (`Game/fn_80436D88.cpp`).
 
 - **The DOL copies a call result through a non-volatile (`mr r30, r3` / `mr r3, r30`) with no frame
   slot for it, and its `stmw`/`lmw` range is one register wider than yours.** `obey_regdecls` is on at
