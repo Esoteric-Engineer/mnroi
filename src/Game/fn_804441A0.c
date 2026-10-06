@@ -15,7 +15,7 @@ extern int fn_80444544(char *p);
 extern int fn_80426AB0(void *g);
 extern int fn_80444CA4(char *p);
 extern char *fn_80430050(void *p);
-extern void fn_80435FB4(void *p);
+extern void fn_80435FB4(void *p) __asm__("__7Segment");
 extern int lbl_8066B664;
 extern char lbl_8052F060[];
 extern char lbl_80552110[]; // G
