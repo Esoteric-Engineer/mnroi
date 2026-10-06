@@ -84,3 +84,10 @@ void fn_80433FFC(register float *self)
     self[1] = -self[1];
     self[2] = -self[2];
 }
+
+extern double __ieee754_sqrt(double x);
+
+float fn_80434040(register float *self)
+{
+    return __ieee754_sqrt(self[0] * self[0] + self[1] * self[1] + self[2] * self[2]);
+}
