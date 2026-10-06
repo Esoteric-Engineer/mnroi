@@ -224,3 +224,53 @@ void LinkImpl::invoke()
 {
     ((void (*)(void *))name.pfn)((char *)owner + name.delta);
 }
+
+extern "C" void fn_80433CF0(register void *self, register int inChrg);
+
+extern "C" void fn_80433B94(register void *self, register int inChrg)
+{
+    fn_80433CF0(self, 0);
+}
+
+extern "C" void fn_8023E144(void *self);
+extern "C" void fn_8023E2FC(void *self, void *sub, int a, int b);
+
+class LoadList
+{
+public:
+    char pad[0x1C]; // +0x0
+    LoadList();
+};
+
+LoadList::LoadList()
+{
+    fn_8023E144((char *)this + 0x1C);
+    fn_8023E2FC(this, (char *)this + 0x1C, 0, 0);
+}
+
+extern "C" void fn_8042A780(void *self, int inChrg);
+
+extern "C" void fn_80433C30(register void *self, register int inChrg)
+{
+    fn_8042A780(self, inChrg);
+}
+
+extern "C" char lbl_804F3218[];
+extern "C" char lbl_804F31F8[];
+extern "C" void fn_8042A744(void *self);
+
+LinkBase::LinkBase()
+{
+    fn_8042A744(this);
+    *(const void **)((char *)this + 0x4) = lbl_804F3218;
+}
+
+EntryBase::EntryBase()
+{
+    *(const void **)((char *)this + 0xC) = lbl_804F31F8;
+}
+
+extern "C" void fn_80433CF0(register void *self, register int inChrg)
+{
+    *(const void **)((char *)self + 0xC) = lbl_804F31F8;
+}

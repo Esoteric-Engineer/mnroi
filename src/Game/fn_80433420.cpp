@@ -1,6 +1,6 @@
 // Constructors of the async loader (0x40 bytes), the attract-movie object (0x18 bytes) and Link's copy constructor; names are guesses, see fn_80432B4C.cpp.
 
-extern "C" void fn_80433BD4(void *self);
+extern "C" void fn_80433BD4(void *self) __asm__("__8LoadList");
 
 class CAsyncLoader
 {
