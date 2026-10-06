@@ -398,9 +398,9 @@ public:
     int a;                   // +0x0
     const void *b;           // +0x4
     mutable const Attr *link; // +0x8
-    Attr(int a, int b) __asm__("fn_80439B24");
-    Attr(int a, const char *b) __asm__("fn_80439B64");
-    const Attr &chain(const Attr &next) const __asm__("fn_80439BA4");
+    Attr(int a, int b) __asm__("__4Attrii");
+    Attr(int a, const char *b) __asm__("__4AttriPCc");
+    const Attr &chain(const Attr &next) const __asm__("chain__C4AttrRC4Attr");
 };
 
 extern "C" char lbl_80593C58[];
