@@ -1,4 +1,4 @@
-// Walks the list at +0x24 of its third argument and queues each node that passes fn_8043810C, a skip filter (names guessed; docs/versus.md, row 8).
+// Walks the list at +0x24 of its third argument and queues each node that passes fn_8043810C, a skip filter, then three small float helpers (names guessed; docs/versus.md, row 8).
 
 struct Self;
 struct Node
@@ -23,6 +23,7 @@ extern int lbl_8066B600;
 extern "C" int fn_8004DDD8(Node *node, void *obj, float s, float *out);
 extern "C" void fn_8043764C(Self *self, Node *node, float s);
 extern "C" Node *fn_800B1CF4(Node *node);
+extern "C" float fn_80438CC8(float x);
 
 struct Self
 {
@@ -100,4 +101,22 @@ extern "C" int fn_8043810C(register Self *self, register Node *node)
             return 1;
     }
     return 0;
+}
+
+extern "C" float fn_80438308(register float x)
+{
+    return 1.0f / fn_80438CC8(x);
+}
+
+extern "C" float *fn_80438360(register float *base, register int i)
+{
+    return &base[i];
+}
+
+extern "C" void fn_80438398(register float *out, register float *v)
+{
+    out[0] = -v[0];
+    out[1] = -v[1];
+    out[2] = -v[2];
+    out[3] = -v[3];
 }
