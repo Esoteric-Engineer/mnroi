@@ -223,3 +223,194 @@ Body::Body(register void *src)
     slot84 = 0;
     slot80 = 0;
 }
+
+extern "C" int fn_80438758(register void *self)
+{
+    return 0;
+}
+
+extern "C" int fn_804373A4(register char *self);
+extern "C" int fn_800489BC(void *p);
+
+extern "C" int fn_80438780(register char *self)
+{
+    return fn_804373A4(self) ? fn_800489BC(self + 0x90) : 0;
+}
+
+extern "C" int fn_804387E4(register char *self)
+{
+    return fn_804373A4(self) ? fn_800489BC(self + 0x90) : 0;
+}
+
+extern "C" int fn_80438848(register char *self)
+{
+    return fn_804373A4(self) ? fn_800489BC(self + 0xA0) : 0;
+}
+
+extern "C" int fn_804388AC(register char *self)
+{
+    return *(int *)(self + 0xE0);
+}
+
+extern "C" void fn_804388D8(register char *self, register int v)
+{
+    *(int *)(self + 0x90) = v;
+}
+
+extern "C" void fn_80438900(register char *self, register int v)
+{
+    *(int *)(self + 0x94) = v;
+}
+
+extern "C" void fn_8042DC84(void *dst, void *src);
+extern "C" void fn_80429090(void *out, void *a, void *b, float s);
+extern "C" float fn_80434E0C(char *self);
+extern "C" float fn_80438D68(char *self);
+extern "C" void fn_80438D94(char *self, float s);
+
+extern "C" void fn_80438928(register char *self, register void *a, register void *b, register float s)
+{
+    fn_8042DC84(self, a);
+    fn_8042DC84(self + 0x20, b);
+    *(float *)(self + 0x30) = s;
+    fn_80429090(self + 0x10, self, self + 0x20, *(float *)(self + 0x30));
+}
+
+extern "C" int fn_804389A8(register char *self, register char *v)
+{
+    *(Chunk *)(self + 0x90) = *(Chunk *)v;
+    *(int *)(self + 0x84) = 1;
+    *(int *)(self + 0x80) = 1;
+    return 1;
+}
+
+extern "C" int fn_80438A54(register char *self, register char *v)
+{
+    register float rt;
+    float t;
+    rt = fn_80434E0C(v);
+    t = rt;
+    *(int *)(self + 0x80) = 1;
+    if (fn_80438D68(self + 0x40) >= t)
+    {
+        fn_80438D94(self + 0x40, t);
+        *(Chunk *)(self + 0x90) = *(Chunk *)v;
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+extern "C" int fn_80438B5C(register char *self, register char *v)
+{
+    int a;
+    int b;
+    register float rt;
+    float t;
+    *(int *)(self + 0x80) = 1;
+    if (*(int *)(self + 0x90))
+    {
+        a = 0;
+        b = 0;
+        *(int *)(self + 0x84) = ((int (*)(char *, char *, int, int *, int *))(*(int *)(self + 0x90)))(self, v, *(int *)(self + 0x94), &a, &b);
+        if (a)
+        {
+            *(Chunk *)(self + 0xA0) = *(Chunk *)v;
+        }
+        rt = fn_80434E0C(v);
+        t = rt;
+        if (b)
+        {
+            if (fn_80438D68(self + 0x40) >= t)
+            {
+                fn_80438D94(self + 0x40, t);
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+extern "C" float fn_80438CC8(register float x)
+{
+    union { int i; float f; } a, b;
+    float r;
+    float y;
+    if (x <= 0.0f)
+    {
+        a.i = 0x7F800000;
+        b.i = 0x7F800000;
+        return b.f;
+    }
+    register double in __asm__("45") = x;
+    register double d __asm__("44");
+    __asm__("frsqrte %0, %1" : "=f"(d) : "f"(in));
+    y = d;
+    r = y * 0.5f * (3.0f - x * y * y);
+    return r;
+}
+
+extern "C" float fn_80438D68(register char *self)
+{
+    return *(float *)(self + 0x30);
+}
+
+extern "C" void fn_80438D94(register char *self, register float s)
+{
+    *(float *)(self + 0x30) = s;
+    fn_80429090(self + 0x10, self, self + 0x20, *(float *)(self + 0x30));
+}
+
+extern "C" float fn_8042A2B8(float s);
+
+extern "C" float fn_80438DF0(register float *v)
+{
+    float s;
+    float r;
+    s = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+    r = fn_8042A2B8(s);
+    v[0] = v[0] * r;
+    v[1] = v[1] * r;
+    v[2] = v[2] * r;
+    return s * r;
+}
+
+struct Swap
+{
+    unsigned int w;       // +0x0
+    unsigned short h[4];  // +0x4
+};
+
+extern "C" void fn_80438EA4(register Swap *p)
+{
+    p->w = (p->w >> 24) | ((p->w >> 8) & 0xFF00) | ((p->w & 0xFF00) << 8) | (p->w << 24);
+    p->h[0] = ((p->h[0] & 0xFF) << 8) | (p->h[0] >> 8);
+    p->h[1] = ((p->h[1] & 0xFF) << 8) | (p->h[1] >> 8);
+    p->h[2] = ((p->h[2] & 0xFF) << 8) | (p->h[2] >> 8);
+    p->h[3] = ((p->h[3] & 0xFF) << 8) | (p->h[3] >> 8);
+}
+
+class Attr
+{
+public:
+    int a;                   // +0x0
+    const void *b;           // +0x4
+    mutable const Attr *link; // +0x8
+    Attr(int a, int b) __asm__("fn_80439B24");
+    Attr(int a, const char *b) __asm__("fn_80439B64");
+    const Attr &chain(const Attr &next) const __asm__("fn_80439BA4");
+};
+
+extern "C" char lbl_80593C58[];
+extern "C" int fn_801B0C90(char *a, void *b, const Attr &c);
+extern "C" char lbl_80486C2C[0x15];
+extern "C" char lbl_80486C44[0x31];
+
+extern "C" int fn_80438FAC(register void *self)
+{
+    int r;
+    r = fn_801B0C90(lbl_80593C58, self, Attr(4, 1).chain(Attr(1, lbl_80486C2C)).chain(Attr(5, lbl_80486C44)).chain(Attr(6, 0xFA)));
+    return r;
+}

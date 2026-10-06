@@ -363,6 +363,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **Two counter increments an `-O2` unit keeps in source order (`lwz`/`addi`/`stw`, then the next `lwz`), where ours loads both first, are `volatile`.** The scheduler orders two volatile references and nothing else; one `volatile` is not enough. And read the loop's back-branch target before placing a statement inside the loop (`RealCore/fn_8023DAE0.c`).
 
+- **A PowerPC instruction the compiler has no operator for (`frsqrte`) is inline asm, and the register numbers pick which temporaries are pinned.** `register double in __asm__("45") = x; register double d __asm__("44"); __asm__("frsqrte %0, %1" : "=f"(d) : "f"(in)); y = d;` reproduces `fmr f13, f0` / `frsqrte f12, f13` / `frsp f11, f12`: FPR names are numbers 32 + n here (`"f13"` is rejected), a plain `double` output gets a frame slot (`stfd`/`lfd`), and an unpinned `register double` takes `f13` ahead of the other temps (`Game/fn_80438044.cpp`, `fn_80438CC8`).
+- **A dead `mr r0, r3` after each call that builds an object, then `addi r9, r31, N` / `mr r4, r9` for a later argument, is a chain of temporaries in one expression:** `f(a, b, T(1, 2).chain(T(3, s)).chain(T(4, 5)))` with `chain(const T &) const` and a `mutable` link. Four separate statements on named locals give no dead copy and `addi r0` / `mr r4, r0` instead (`Game/fn_80438044.cpp`, `fn_80438FAC`). A callee the unit does not own yet takes `__asm__("fn_XXXXXXXX")` on its member declaration.
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.
