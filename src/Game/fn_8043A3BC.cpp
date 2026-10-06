@@ -1,4 +1,5 @@
-// Constructors of the 0x50-byte element, its 64-element holder, the 0x40-byte Mat4 copy and the (1,0,0,0) Vec4 (docs/versus.md, row 8).
+// Element/ElementSet/Mat4/Vec4/Marker constructors and the small methods after them (docs/versus.md, row 8).
+// Class names are guesses; the methods carry GCC 2.95 mangled symbol names. 0x8043A71C starts the next file.
 
 extern "C" void fn_8042D7B0(void *self);
 
@@ -85,4 +86,97 @@ Marker::Marker()
     handle = 0;
     delay = 0.0f;
     scale = 30.0f;
+}
+
+class Handle
+{
+public:
+    int target; // +0x0
+    int isSet();
+};
+
+int Handle::isSet()
+{
+    register int r = 1;
+    if (target == 0)
+        r = 0;
+    return r;
+}
+
+class Actor60
+{
+public:
+    char pad[0x60];
+    float x; // +0x60
+    void clearX();
+};
+
+void Actor60::clearX()
+{
+    x = 0.0f;
+}
+
+class Actor1F0
+{
+public:
+    char pad[0x1F0];
+    char a[0x10]; // +0x1F0
+    char b[0x10]; // +0x200
+    void clear();
+};
+
+extern "C" void *memset(void *dst, int c, unsigned int n);
+
+void Actor1F0::clear()
+{
+    memset(a, 0, 0x10);
+    memset(b, 0, 0x10);
+}
+
+class Actor10
+{
+public:
+    char pad[0x10];
+    int value; // +0x10
+    void setValue(register int v);
+};
+
+void Actor10::setValue(register int v)
+{
+    value = v;
+}
+
+class Matrix
+{
+public:
+    char data[0x40];
+    void assign(register const Matrix &src);
+};
+
+void Matrix::assign(register const Matrix &src)
+{
+    memcpy(this, &src, 0x40);
+}
+
+class Scratch
+{
+public:
+    char data[0x40];
+    Scratch() __asm__("fn_8042D7B0");
+};
+
+extern "C" void fn_8042DD30(Scratch *self, const void *src);
+extern "C" void fn_8043AC1C(void *self, Scratch *s);
+
+class Actor
+{
+public:
+    void apply(register const void *src);
+};
+
+void Actor::apply(register const void *src)
+{
+    Scratch s;
+    fn_8042DD30(&s, src);
+    fn_8043AC1C(this, &s);
 }
