@@ -78,3 +78,30 @@ extern "C" void fn_80439C24(register Slot *self)
     fn_8043A348(self);
     fn_8043A278(self);
 }
+
+extern "C" int fn_80243F94(int);
+extern "C" void fn_8023E98C(void);
+extern "C" int fn_80243FFC(int, int *, int *);
+
+extern "C" int fn_80439C64(register int *self, register int unused)
+{
+    int status;
+    int result;
+    int extra;
+    while (1)
+    {
+        status = fn_80243F94(*self);
+        switch (status)
+        {
+        case 0:
+            fn_8023E98C();
+            break;
+        case 1:
+            status = fn_80243FFC(*self, &extra, &result);
+            *self = 0;
+            return result;
+        case -1:
+            break;
+        }
+    }
+}
