@@ -1,4 +1,4 @@
-// Walks the list at +0x24 of its third argument and queues each node that passes fn_8043810C, a skip filter, then small float helpers (names guessed; docs/versus.md, row 8).
+// Walks the list at +0x24 of its third argument and queues each node that passes fn_8043810C, a skip filter, then small float helpers and the Placement and Body constructors (names guessed; docs/versus.md, row 8).
 
 struct Self;
 struct Node
@@ -178,4 +178,48 @@ extern "C" int fn_80438550(register Self *self)
 extern "C" int fn_80438580(register Self *self)
 {
     return self->flags & 0x1000;
+}
+
+extern "C" void __6Vector(void *self);
+extern "C" void fn_80437210(void *self, void *a, void *b, void *c, int d, int e);
+
+class Placement
+{
+public:
+    char d[0x40];
+    Placement(register void *a, register void *b, register void *c, register int d, register int e);
+};
+
+Placement::Placement(register void *a, register void *b, register void *c, register int d, register int e)
+{
+    __6Vector((char *)this + 0x10);
+    __6Vector((char *)this + 0x20);
+    fn_80437210(this, a, b, c, d, e);
+}
+
+extern "C" char lbl_804F3338[];
+
+struct Chunk
+{
+    char d[0x40];
+};
+
+class Body
+{
+public:
+    Chunk a;             // +0x0
+    Chunk b;             // +0x40
+    int slot80;          // +0x80
+    int slot84;          // +0x84
+    const void *vptr;    // +0x88
+    Body(register void *src);
+};
+
+Body::Body(register void *src)
+{
+    vptr = lbl_804F3338;
+    a = *(Chunk *)src;
+    b = *(Chunk *)src;
+    slot84 = 0;
+    slot80 = 0;
 }
