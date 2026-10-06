@@ -1,5 +1,5 @@
 // Derived constructor: base (fn_804479B0), own vptr, member at +0x90. Names are guesses.
-extern "C" char *fn_80434DB4(char *self);
+extern "C" char *fn_80434DB4(char *self) __asm__("__9Placement");
 extern "C" char lbl_804F32A8[];
 
 class Obj
