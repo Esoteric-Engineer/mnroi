@@ -3383,7 +3383,7 @@ Game/fn_8043A20C.c:
 	.text       start:0x8043A20C end:0x8043A3BC
 
 Game/fn_8043A3BC.cpp:
-	.text       start:0x8043A3BC end:0x8043A524
+	.text       start:0x8043A3BC end:0x8043A59C
 
 Game/fn_80442010.c:
 	.text       start:0x80442010 end:0x804428E0

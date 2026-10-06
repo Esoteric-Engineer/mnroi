@@ -63,3 +63,26 @@ Vec4::Vec4()
     z = 0.0f;
     w = 0.0f;
 }
+
+extern "C" void __6Vector(void *self);
+
+class Marker
+{
+public:
+    char pad0[0x40];
+    int handle; // +0x40
+    float delay; // +0x44
+    char pad1[0x8];
+    float scale; // +0x50
+    Marker();
+};
+
+Marker::Marker()
+{
+    fn_8042D7B0(this);
+    __6Vector((char *)this + 0x60);
+    __6Vector((char *)this + 0x70);
+    handle = 0;
+    delay = 0.0f;
+    scale = 30.0f;
+}
