@@ -105,3 +105,13 @@ extern "C" int fn_80439C64(register int *self, register int unused)
         }
     }
 }
+
+extern "C" void fn_8043A20C(void *, int);
+extern "C" void fn_8043A2DC(void *, int);
+
+extern "C" void fn_80439D2C(register Slot *self, register int arg)
+{
+    fn_8043A278(self);
+    fn_8043A20C(self, arg);
+    fn_8043A2DC(self, arg);
+}
