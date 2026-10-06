@@ -3373,6 +3373,9 @@ Game/fn_80439E3C.c:
 Game/fn_80439E94.c:
 	.text       start:0x80439E94 end:0x8043A0A4
 
+Game/fn_8043A0A4.cpp:
+	.text       start:0x8043A0A4 end:0x8043A120
+
 Game/fn_80442010.c:
 	.text       start:0x80442010 end:0x804428E0
 
