@@ -414,3 +414,39 @@ extern "C" int fn_80438FAC(register void *self)
     r = fn_801B0C90(lbl_80593C58, self, Attr(4, 1).chain(Attr(1, lbl_80486C2C)).chain(Attr(5, lbl_80486C44)).chain(Attr(6, 0xFA)));
     return r;
 }
+
+struct Slot
+{
+    int a, b, c;  // +0x0
+    int *p;       // +0xC
+    int *q;       // +0x10
+    Slot() __asm__("fn_80439BD4");
+};
+
+class Streamer
+{
+public:
+    int pad0;       // +0x0
+    int f4;         // +0x4
+    int f8;         // +0x8
+    char pad1[0x1C];
+    int f28;        // +0x28
+    int f2C;        // +0x2C
+    int f30;        // +0x30
+    Slot slots[2];  // +0x34
+    int f5C, f60, f64, f68, f6C, f70, f74;
+    Streamer();
+};
+
+extern "C" void fn_80439DCC(Streamer *self);
+
+Streamer::Streamer()
+    : f4(0), f8(0), f28(0), f2C(0), f30(0), f5C(0), f60(0), f64(0), f68(0), f6C(1), f70(0), f74(0)
+{
+    for (unsigned i = 0; i <= 1; i++)
+    {
+        slots[i].p = &f28;
+        slots[i].q = &f2C;
+    }
+    fn_80439DCC(this);
+}
