@@ -1,4 +1,4 @@
-// Flag-bit getters on two object types (flags words at +0x4 and +0x464, a halfword at +0x7E), plus empty stubs.
+// Flag-bit getters on three object types (flags words at +0x4 and +0x464, a halfword at +0x7E), empty stubs, and the Movie constructor.
 // C++: the first function carries the cc1plus function-end pair (docs/prodg.md).
 
 typedef struct HalfFlags
@@ -27,6 +27,20 @@ typedef struct Fields
     char unk88[0x18];
     int unkA0; // +0xA0
 } Fields;
+
+extern "C" void fn_801022E4();
+
+// 0x2C-byte movie request; the class name is a guess (see Game/fn_8010513C.cpp).
+class Movie {
+public:
+    Movie();
+
+    int unk0, unk4, unk8, unkC;
+    int id; // +0x10
+    int unk14, unk18, unk1C, unk20;
+    void (*callback)(); // +0x24
+    char unk28;
+};
 
 extern "C" {
 
@@ -147,4 +161,19 @@ void fn_8043AB30()
 {
 }
 
+}
+
+Movie::Movie()
+{
+    unk8 = 0;
+    unk4 = 0xA0000;
+    unk14 = 0;
+    unk0 = 0;
+    unk28 = 0;
+    unk18 = 1;
+    unk1C = 0;
+    unk20 = 0;
+    unkC = 0;
+    id = -1;
+    callback = fn_801022E4;
 }
