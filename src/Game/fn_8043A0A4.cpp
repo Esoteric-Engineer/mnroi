@@ -1,4 +1,4 @@
-// OwnedCueImpl constructor (Cue implementation behind fn_80439AB4); docs/versus.md, row 8. Class names are guesses.
+// OwnedCueImpl constructor and destructor (Cue implementation behind fn_80439AB4); docs/versus.md, row 8. Class names are guesses.
 
 extern "C" char lbl_804F3360[];
 extern "C" void *fn_8042A400(void *self, void *owner, int key);
@@ -30,4 +30,12 @@ OwnedCueImpl::OwnedCueImpl(register void *owner, register const int *name)
     : vptr(lbl_804F3360), owner(owner), name(*(const Name *)name),
       result((Name *)fn_8042A400(this, owner, name[0]))
 {
+}
+
+extern "C" void fn_8042A5A0(void *self, int inChrg);
+
+extern "C" void fn_8043A120(register OwnedCueImpl *self, register int inChrg)
+{
+    self->vptr = lbl_804F3360;
+    fn_8042A5A0(self, inChrg);
 }
