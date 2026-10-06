@@ -366,6 +366,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A PowerPC instruction the compiler has no operator for (`frsqrte`) is inline asm, and the register numbers pick which temporaries are pinned.** `register double in __asm__("45") = x; register double d __asm__("44"); __asm__("frsqrte %0, %1" : "=f"(d) : "f"(in)); y = d;` reproduces `fmr f13, f0` / `frsqrte f12, f13` / `frsp f11, f12`: FPR names are numbers 32 + n here (`"f13"` is rejected), a plain `double` output gets a frame slot (`stfd`/`lfd`), and an unpinned `register double` takes `f13` ahead of the other temps (`Game/fn_80438044.cpp`, `fn_80438CC8`).
 - **A dead `mr r0, r3` after each call that builds an object, then `addi r9, r31, N` / `mr r4, r9` for a later argument, is a chain of temporaries in one expression:** `f(a, b, T(1, 2).chain(T(3, s)).chain(T(4, 5)))` with `chain(const T &) const` and a `mutable` link. Four separate statements on named locals give no dead copy and `addi r0` / `mr r4, r0` instead (`Game/fn_80438044.cpp`, `fn_80438FAC`). A callee the unit does not own yet takes `__asm__("fn_XXXXXXXX")` on its member declaration.
 
+- **A sum the DOL keeps unreassociated, `a*4` first and `b*0x90 + 0x198` added to it as a unit, where yours adds the constant to `a*4` (`slwi r11` / `addi r0, r11, 0x198`), is pointer arithmetic.** `fold` reassociates int sums but not pointer ones, so write it as pointers on a null base: `(int)((int *)((char *)((int *)0 + a) + (b * 0x90 + 0x198)) + a)`. Casts of the int terms, `offsetof`-style `&((S *)0)->arr[b]` and parenthesising do not change it (`Game/fn_804391E0.c`, `fn_804394C0`).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

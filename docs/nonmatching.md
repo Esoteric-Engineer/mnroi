@@ -2,7 +2,7 @@
 
 Functions claimed as `NonMatching`, with what has already been tried. Don't re-guess these. When a unit flips to `Matching`, delete its entry and move any general lesson to [`matching_notes.md`](matching_notes.md).
 
-One registered unit is `NonMatching` (`Game/fn_80437B60.cpp`, below). Besides it, this file holds the one compiler behaviour that used to park whole files, and one unclaimed family that is still stuck.
+Two registered units are `NonMatching` (`Game/fn_80437B60.cpp` and `Game/fn_804396F8.c`, below). Besides it, this file holds the one compiler behaviour that used to park whole files, and one unclaimed family that is still stuck.
 
 ---
 
@@ -37,6 +37,18 @@ method on `Handle` or free function taking `Handle *`, `Handle &`, `const Handle
 `Handle &hr = ...` (right pair, then `stw r25` to a slot), `register Handle &hr` (right pair plus a third copy
 `r22`). Next to try: a form whose reference temp has no variable behind it, or `register ... __asm__("rN")`
 pins on `a` and `b` (the `h` register would still be off).
+
+---
+
+## `fn_804396F8` (`Game/fn_804396F8.c`, 89.3%): the slot-field address
+
+0x804396F8-0x80439778. The `fn_80439C64` call and the result stores match. The second argument of `fn_80058284` is
+`*(int *)(self + 0x38 + (self->5C & 1) * 0x14)` and the DOL builds it as `lwz r0` / `clrlwi r9, r0, 31` /
+`mulli r0, r9, 0x14` / `addi r9, r30, 0x38` / `lwzx r4, r9, r0`: index first, the base's constant folded into its own
+`addi`, then an indexed load. Every form tried gives `lwz r9` / `clrlwi r0` / `mulli r9` / `add r11, r9, r30` /
+`addi r9, r11, 0x38` / `lwz r4, 0(r9)` (8 bytes over): char-pointer sum, int-cast sum in either operand order,
+`((T *)(self + 0x38))[k].f` and `[k * 5]` on an `int *`, a `char (*)[0x14]`, and the null-base pointer trick that
+fixed `fn_804394C0` ([`matching_notes.md`](matching_notes.md)). The load also goes into `r0` first where ours uses `r9`.
 
 ---
 
