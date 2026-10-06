@@ -3313,6 +3313,15 @@ Game/fn_80435F1C.c:
 Game/fn_80435F70.cpp:
 	.text       start:0x80435F70 end:0x80436000
 
+Game/fn_80436000.c:
+	.text       start:0x80436000 end:0x80436878
+
+Game/fn_80436878.cpp:
+	.text       start:0x80436878 end:0x80436900
+
+Game/fn_80436900.c:
+	.text       start:0x80436900 end:0x80436BAC
+
 Game/fn_80442010.c:
 	.text       start:0x80442010 end:0x804428E0
 
