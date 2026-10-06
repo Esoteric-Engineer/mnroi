@@ -1,4 +1,4 @@
-// Constructors of the 0x50-byte element, its 64-element holder and the 0x40-byte Mat4 copy (docs/versus.md, row 8).
+// Constructors of the 0x50-byte element, its 64-element holder, the 0x40-byte Mat4 copy and the (1,0,0,0) Vec4 (docs/versus.md, row 8).
 
 extern "C" void fn_8042D7B0(void *self);
 
@@ -44,4 +44,22 @@ public:
 Mat4::Mat4(register const Mat4 &src)
 {
     memcpy(this, &src, 0x40);
+}
+
+class Vec4
+{
+public:
+    float x; // +0x0
+    float y; // +0x4
+    float z; // +0x8
+    float w; // +0xC
+    Vec4();
+};
+
+Vec4::Vec4()
+{
+    x = 1.0f;
+    y = 0.0f;
+    z = 0.0f;
+    w = 0.0f;
 }
