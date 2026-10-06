@@ -167,6 +167,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   [`prodg.md`](prodg.md#c)), so a unit calling it is `.cpp` and the constructor that follows needs
   its mangled name in `symbols.txt` (`Game/fn_800887AC.cpp`).
 
+- **`mr rN, r3` / `mr r3, rN` around a call result that is the receiver (or reference argument) of a method of a *base* class means the accessor returns a derived-class pointer.** The derived-to-base conversion saves the pointer in a whole-function pseudo, so it takes the first call-saved registers (`r30`, `r29`, ...); a same-class receiver gives the plain `mr r0, r3` / `mr r3, r0` pair. Declare `struct Sub : Obj { int pad; }`, make the accessor return `Sub *`, and call `acc(x)->get()`, with `__asm__("fn_XXXXXXXX")` on the base method (`Game/fn_80437B60.cpp`).
+
 - **`p->arr[p->n++] = x` with two register copies before the index `slwi` is cc1plus; cc1 emits
   one.** Another `.c`-vs-`.cpp` test that needs no size evidence, and the extra copy widens the
   `stmw` range and the frame by one register (`Game/fn_800887AC.cpp`).
