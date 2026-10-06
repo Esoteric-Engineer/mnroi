@@ -69,3 +69,12 @@ Slot::Slot()
     w3 = 0;
     w4 = 0;
 }
+
+extern "C" void fn_8043A348(void *);
+extern "C" void fn_8043A278(void *);
+
+extern "C" void fn_80439C24(register Slot *self)
+{
+    fn_8043A348(self);
+    fn_8043A278(self);
+}
