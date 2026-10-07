@@ -85,7 +85,7 @@ The DOL sets a 4-byte local to 0 (`li r0, 0` / `stw r0, 0xc(r31)`), then has a d
 `li r0, 0` / `stb r0, 0x10(r31)` instead: the temporary gets a slot of its own, 4 bytes over. `li r9, 0` /
 `stb r9` after a value in `r0` is how cc1plus copies an empty class (a named `Tag tag;` argument gives
 `lbz r0, 0x10(r31)` / `li r9, 0` / `stb r9, 0x11(r31)`), so the DOL's source is an empty-class value that
-expands to a constant in a register with no slot behind it. Tried without getting that: a named local (plain,
+expands to a constant in a register with no slot behind it. The block-scoped pinned-register form in [`matching_notes.md`](matching_notes.md) (the "dead 1-byte copy" bullet) matched the same shape in `Game/fn_8044C054.cpp`, `fn_8044C1B4`, and is untried here. Tried without getting that: a named local (plain,
 `register`, `const`, `= Tag()`, `= {}`), a file-scope `const Tag` (an `lbz` where the dead `li` is), a default
 argument, template tags (`Type2Type<T>`, `Int2Type<0>`), a derived tag sliced to its base, `(p, Tag())`,
 `z ? Tag() : Tag()`, a one-`char` struct, `*(Tag *)p`, and a reference or pointer parameter (one slot, but
