@@ -3934,6 +3934,9 @@ Game/fn_8044F614.cpp:
 Game/fn_8044F6BC.cpp:
 	.text       start:0x8044F6BC end:0x8044F780
 
+Game/fn_8044F780.c:
+	.text       start:0x8044F780 end:0x8044F824
+
 Dolphin/os/fn_80003254.c:
 	.init       start:0x80003254 end:0x800032C0
 
