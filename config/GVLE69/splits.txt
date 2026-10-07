@@ -3847,6 +3847,9 @@ Game/fn_8044BE48.cpp:
 Game/fn_8044C054.cpp:
 	.text       start:0x8044C054 end:0x8044C414
 
+Game/fn_8044C414.cpp:
+	.text       start:0x8044C414 end:0x8044C6EC
+
 Dolphin/os/fn_80003254.c:
 	.init       start:0x80003254 end:0x800032C0
 
