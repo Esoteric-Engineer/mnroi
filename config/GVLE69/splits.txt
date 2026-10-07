@@ -3394,6 +3394,21 @@ Game/fn_8043ABD0.c:
 Game/fn_8043AC1C.c:
 	.text       start:0x8043AC1C end:0x8043B16C
 
+Game/fn_8043B16C.c:
+	.text       start:0x8043B16C end:0x8043B3DC
+
+Game/fn_8043B3DC.cpp:
+	.text       start:0x8043B3DC end:0x8043B4A4
+
+Game/fn_8043B4A4.c:
+	.text       start:0x8043B4A4 end:0x8043BC48
+
+Game/fn_8043BC48.cpp:
+	.text       start:0x8043BC48 end:0x8043BDC0
+
+Game/fn_8043BDC0.c:
+	.text       start:0x8043BDC0 end:0x8043C134
+
 Game/fn_80442010.c:
 	.text       start:0x80442010 end:0x804428E0
 
