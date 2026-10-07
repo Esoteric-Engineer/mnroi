@@ -3817,6 +3817,9 @@ Game/fn_8044AC7C.cpp:
 Game/fn_8044ACEC.c:
 	.text       start:0x8044ACEC end:0x8044AE3C
 
+Game/fn_8044AE3C.cpp:
+	.text       start:0x8044AE3C end:0x8044B1D4
+
 Game/fn_8044B1D4.c:
 	.text       start:0x8044B1D4 end:0x8044B4EC
 

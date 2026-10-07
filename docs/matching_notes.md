@@ -387,6 +387,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **`subi` / `cmpwi` / `bge` / `li 0` clamping a load, with no frame slots, is one expression: `a + (x - 2 >= 0 ? x - 2 : 0)`.** `fold` turns the `?:` into a `MAX_EXPR` that works in expression temps; named `register` locals for the pieces take the registers the DOL's temps use, and plain locals add frame slots (`Game/fn_8043E540.c`, `fn_8043E604`). A float-free `x * 2` is `mr r0, rX` / `add rX, r0, rX`.
 
 - **`stw rLo, 4(p)` then `srawi rT, rLo, 31` / `stw rT, 0(p)` is `*(long long *)p = (int)v;`; `li rT, 0` in place of the `srawi` is the unsigned variant** (`Game/fn_8043F5F0.c`, `fn_8043F7B8`, `fn_8043F7E8`).
+- **A call returning a class of 8 bytes or less, with `crclr cr1eq` before the `bl`/`blrl` where the DOL has none: the class lacks a user-declared copy constructor.** Without one, the compiler treats it as a small aggregate; any user copy constructor (even undefined) removes the `crclr`. Larger classes never get it (`Game/fn_8044AE3C.cpp`, `AptObject`).
+
+- **A dead 1-byte copy (`lbz r28, 0(r26)`, never read) allocated between parameters, and `li r0, 0` / `li r9, 0` / `stb r9` for a zero-initialised byte, are reproduced with pinned registers.** `register Tag c __asm__("r28") = *tag;` (a one-`char` struct gives the bare `lbz`) and `register int z __asm__("r0") = 0; register unsigned char zero __asm__("r9") = 0; Tag tag; tag.v = zero;`. The natural source was not found; the allocation matches bytes, not intent (`Game/fn_8044AE3C.cpp`).
 
 ## General
 
