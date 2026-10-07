@@ -90,6 +90,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   `inline int sn_return_decl(int a) { return a; }` ahead of the unit's first function. See
   [`prodg.md`](prodg.md#the-function-end-branch-pair).
 
+- **Definitions are emitted in source order, so one placed ahead of an earlier function shifts it.** The symptom is `main.dol` failing with single-byte diffs in the low byte of `bl` displacements at many call sites while every function still reads 100% in objdiff. Write the definitions in address order, a constructor's included (`Game/fn_8043C1EC.cpp`, `Byte1::Byte1`). A constructor *definition* carrying `__asm__("fn_XXXXXXXX")` fails in ngcas (`Unrecognised opcode ".l_f"`); rename the symbol to its mangled name instead (declarations may keep `__asm__`).
+
 - **A C++ constructor has exactly *one* trailing branch to the epilogue, not the pair.** So the
   `.c`-vs-`.cpp` trailing-branch test below must exempt constructors: a one-branch tail on a function
   that takes `this` in r30 and returns it in r3 is a `.cpp` constructor, not C. Verified by
@@ -153,7 +155,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   type's alignment is not 4.** GCC applies the constant bitpos before the variable offset only when
   the reference's alignment equals the field mode's alignment, so a 4-aligned struct takes the folded
   path. `__attribute__((aligned(8)))` on the innermost type restores the DOL's shape; it also decides
-  whether a 16-byte member copy's address folds into the symbol (`Game/fn_8002623C.cpp`, `Vector`).
+  whether a 16-byte member copy's address folds into the symbol (`Game/fn_8002623C.cpp`, `Vector`). The same holds for a byte field read through a pointer member (`p->tbl->e[i].kind`, DOL `add` then `lbz 0x2b`, ours `addi 0x2b` then `lbzx`): `__attribute__((aligned(4)))` on the element struct (`Game/fn_8043C1EC.cpp`, `fn_8043C3C0`).
 
 - **`addi r0, rX, N` / `mr r3, r0` instead of `addi r3, rX, N` before a call is only about the frame
   offset.** GCC targets r3 directly only when the object is the first local (offset 8); anywhere else
