@@ -2,7 +2,7 @@
 
 Functions claimed as `NonMatching`, with what has already been tried. Don't re-guess these. When a unit flips to `Matching`, delete its entry and move any general lesson to [`matching_notes.md`](matching_notes.md).
 
-Two registered units are `NonMatching` (`Game/fn_80437B60.cpp` and `Game/fn_804396F8.c`, below). Besides it, this file holds the one compiler behaviour that used to park whole files, and one unclaimed family that is still stuck.
+Three registered units are `NonMatching` (`Game/fn_80437B60.cpp`, `Game/fn_804396F8.c` and `Game/fn_8043E148.cpp`, below). Besides it, this file holds the one compiler behaviour that used to park whole files, and one unclaimed family that is still stuck.
 
 ---
 
@@ -37,6 +37,19 @@ method on `Handle` or free function taking `Handle *`, `Handle &`, `const Handle
 `Handle &hr = ...` (right pair, then `stw r25` to a slot), `register Handle &hr` (right pair plus a third copy
 `r22`). Next to try: a form whose reference temp has no variable behind it, or `register ... __asm__("rN")`
 pins on `a` and `b` (the `h` register would still be off).
+
+---
+
+## `fn_8043E148` (`Game/fn_8043E148.cpp`, 99.4%): operand order of the entry-address `add`
+
+`return self[i].word != 0;` on a 0x30-byte entry matches except one instruction: the DOL has `add r10, r0, r11`
+(self, then the `mulli` result), ours `add r10, r11, r0`. `expand_expr` in `EXPAND_SUM` mode puts a `MULT` first
+inside a field reference's address, so the DOL's order means the product was a register before the sum.
+`&self[i]` (`fn_8043E190`) comes out in the DOL's order, since it is not a field reference. Tried with no change
+to the order: `.c` and `.cpp`, `(self + i)->word`, `*(self + i)`, `((Entry *)((char *)self + i * 0x30))->word`,
+`(int)` casts, `unsigned` index, `?:` return, `aligned(1..16)` on `Entry`. A `register int off = i * 0x30` local
+fixes the order but holds `r11`, which shifts the other temps (98.1%); `register Entry *e = self + i` shifts them
+the same way. The store-flag shape (`li r11, 1` after the address `add`, no named local) is already right.
 
 ---
 

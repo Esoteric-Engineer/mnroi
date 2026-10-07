@@ -81,6 +81,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   the first reference's register is allocated ahead of the `register` parameters and the second
   one's after them, where `register` locals all come after (`Game/fn_804436D4.cpp`, declare the
   callee as returning `T &`).
+  The same save-then-slot shape for an `int` result is `register int tmp = f(); int cap = tmp;` (`Game/fn_8043ED84.cpp`), and for a heap
+  object whose virtual call reads the slot twice it is `Heap &heap = *f();` (`Game/fn_80440774.cpp`, `fn_804407E8`).
 
 - **A C++ unit comes out 8 bytes over size, with two extra unreachable branches to the epilogue
   (`b .L` / `b .L` / `.L:` / epilogue).** `cc1plus` emits them unless an earlier function in the same
@@ -377,6 +379,14 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A chain of copies between register locals (`li r8, 8` / `mr r10, r8` / `ori r10` / `mr r0, r10`) is separate locals, and the allocator hands out volatiles in declaration order, so declare the last-used one first.** `register int n, m, t; t = c ? 8 : 0; m = t; ... n = m;` gives `t` r8, `m` r10, `n` r0; declaring `t` first hands them out the other way round (`Game/fn_8043B4A4.c`, `fn_8043B534`).
 
 - **A virtual `delete` in hand-written C: write the call directly, `((void (*)(void *, int))e->pfn)((char *)self + e->delta, 3);`.** Naming the function pointer in a local adds a second frame slot (`0x10` next to the call's own `0x8`). An `if (self) { ... } else { }` supplies the `b` after the `blrl` (`Game/fn_8043B4A4.c`, `fn_8043B878`).
+
+- **`mulli` / `addi` building an offset *before* the base's `lwz`, then `add rX, offset, base`, is a pointer plus a parenthesised int sum: `self->recs + (self->kind * 0x18 + 0x1c)`.** `&self->recs[...]` does the same. `(char *)0 + ... + (int)self->recs` and `(char *)(int expr) + (int)p` reassociate the constant onto the base and load the base first (`Game/fn_8043EB4C.c`, `fn_8043EB4C`).
+
+- **A sum's operand order decides load order and register numbers, not just the add.** `self->w0 + n * tbl[idx]` matched where `n * tbl[idx] + self->w0` shifted every temp by one register (`Game/fn_8043EB4C.c`, `fn_8043EBB4`); `self->base->f7C + self->wC * 2` loads the pointer first and doubles with one `mr` / `add` (`Game/fn_8043E540.c`, `fn_8043E6C0`).
+
+- **`subi` / `cmpwi` / `bge` / `li 0` clamping a load, with no frame slots, is one expression: `a + (x - 2 >= 0 ? x - 2 : 0)`.** `fold` turns the `?:` into a `MAX_EXPR` that works in expression temps; named `register` locals for the pieces take the registers the DOL's temps use, and plain locals add frame slots (`Game/fn_8043E540.c`, `fn_8043E604`). A float-free `x * 2` is `mr r0, rX` / `add rX, r0, rX`.
+
+- **`stw rLo, 4(p)` then `srawi rT, rLo, 31` / `stw rT, 0(p)` is `*(long long *)p = (int)v;`; `li rT, 0` in place of the `srawi` is the unsigned variant** (`Game/fn_8043F5F0.c`, `fn_8043F7B8`, `fn_8043F7E8`).
 
 ## General
 
