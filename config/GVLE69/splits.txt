@@ -3415,6 +3415,9 @@ Game/fn_8043C1EC.cpp:
 Game/fn_8043CCAC.c:
 	.text       start:0x8043CCAC end:0x8043CD50
 
+Game/fn_8043CD50.c:
+	.text       start:0x8043CD50 end:0x8043CFDC
+
 Game/fn_80442010.c:
 	.text       start:0x80442010 end:0x804428E0
 
