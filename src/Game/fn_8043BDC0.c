@@ -15,6 +15,7 @@ extern void *fn_80317950(void *self);
 extern int fn_8043CA10(void *a, int *b);
 extern void fn_80317B2C(void *self, int v);
 extern void fn_803299DC(int a, void *self);
+extern void fn_80325C78(int a, void *self, int v);
 extern void __builtin_delete(void *p);
 
 extern char lbl_804DC280[];
@@ -96,5 +97,23 @@ void fn_8043C0C8(register void *self)
         if (fn_8043CA10(fn_80317950(self), &lbl_8066B838) == -1) {
             fn_80317B2C(self, lbl_8066B838);
         }
+    }
+}
+
+void fn_8043C134(register void *self, register int flag)
+{
+    if (flag) {
+        fn_803299DC(lbl_8066B840, self);
+    } else {
+        fn_803299DC(lbl_8066B834, self);
+    }
+}
+
+void fn_8043C18C(register void *self, register int flag)
+{
+    if (flag) {
+        fn_80325C78(lbl_8066B840, self, 1);
+    } else {
+        fn_80325C78(lbl_8066B834, self, 1);
     }
 }
