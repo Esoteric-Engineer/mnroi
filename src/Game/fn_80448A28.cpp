@@ -1,5 +1,4 @@
-// A String as a String, returned by value: the conversion and the tag-dispatched overload that forwards to it.
-// The one-argument front, fn_80448AC0, is not matched yet (docs/nonmatching.md). Names are guesses.
+// A String as a String, returned by value: the conversion, the tag-dispatched overload and the one-argument front.
 class String
 {
 public:
@@ -22,4 +21,23 @@ extern "C" String fn_80448A28(register const String &s)
 extern "C" String fn_80448A74(const String &s, Tag)
 {
     return fn_80448A28(s);
+}
+
+struct TagV
+{
+    unsigned char v;
+};
+
+extern "C" String fn_80448A74_v(const String &value, const TagV &) __asm__("fn_80448A74");
+
+extern "C" String fn_80448AC0(const String &value)
+{
+    int *p = 0;
+    {
+        register int z __asm__("r0") = 0;
+        register unsigned char zero __asm__("r9") = 0;
+        TagV tag;
+        tag.v = zero;
+        return fn_80448A74_v(value, tag);
+    }
 }
