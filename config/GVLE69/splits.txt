@@ -3410,7 +3410,7 @@ Game/fn_8043BDC0.c:
 	.text       start:0x8043BDC0 end:0x8043C1EC
 
 Game/fn_8043C1EC.cpp:
-	.text       start:0x8043C1EC end:0x8043C250
+	.text       start:0x8043C1EC end:0x8043C3C0
 
 Game/fn_80442010.c:
 	.text       start:0x80442010 end:0x804428E0
