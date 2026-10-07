@@ -89,3 +89,21 @@ int fn_8044D5C4(register int i)
 {
     return lbl_804CB14C[i].val;
 }
+
+extern void fn_8044D90C(char *slot, int v);
+
+// Sets the word at +0x80 of slot idx; the slots are 0xB0 bytes from +0x10.
+void fn_8044D600(register char *self, register int idx, register int v)
+{
+    fn_8044D90C(self + (idx * 0xB0 + 0x10), v);
+}
+
+int fn_8044D650(register int c, register int *out)
+{
+    if (c > 0x2F && c <= 0x39) {
+        *out = c - 0x30;
+        return 1;
+    } else {
+        return 0;
+    }
+}
