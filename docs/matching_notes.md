@@ -110,6 +110,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   mangled `__4Base`, and make the vptr the first member, initialised first in the list
   (`Game/fn_80444034.cpp`).
 
+- **A function that returns a plain `register int` local but still carries the branch pair: declare the local `unsigned int`.** A top-level `return <local>;` of the function's own return type sets `current_function_return_value` and drops the pair; the signedness mismatch makes the return expression a conversion, not a declaration, with no extra copy. A `char` local also keeps the pair but adds `mr r0` / `mr r3` (`Game/fn_804580CC.cpp`, `fn_804581A0`).
+
 - **A C++ *destructor* ends with one trailing branch too, so it is reachable in a pair-less file.**
   Its `if (__in_chrg & 1) __builtin_delete(this)` tail ([`prodg.md`](prodg.md#c)) is where that one
   branch comes from, which makes the destructor the second function (after the constructor) that a
