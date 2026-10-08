@@ -4060,6 +4060,24 @@ Game/fn_80451FCC.c:
 Game/fn_8045207C.c:
 	.text       start:0x8045207C end:0x804523B0
 
+Game/fn_804523B0.c:
+	.text       start:0x804523B0 end:0x80452454
+
+Game/fn_80452454.c:
+	.text       start:0x80452454 end:0x80452518
+
+Game/fn_80452518.c:
+	.text       start:0x80452518 end:0x8045256C
+
+Game/fn_8045256C.c:
+	.text       start:0x8045256C end:0x8045261C
+
+Game/fn_8045261C.c:
+	.text       start:0x8045261C end:0x804526CC
+
+Game/fn_804526CC.c:
+	.text       start:0x804526CC end:0x80452A00
+
 Dolphin/os/fn_80003254.c:
 	.init       start:0x80003254 end:0x800032C0
 
