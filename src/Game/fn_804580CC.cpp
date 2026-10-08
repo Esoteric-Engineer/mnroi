@@ -221,3 +221,17 @@ extern "C" ObjD *fn_804587DC(register int handle, register int index)
     }
     return new ObjD(0, 50, value);
 }
+
+extern "C" int fn_800CCA88(void *p);
+
+extern "C" int fn_804588AC(register void *actor, register int index)
+{
+    if (lbl_8066BD60 != 0) {
+        return 0;
+    }
+    if (actor != 0 && fn_800B0C1C(actor)) {
+        register void *p = fn_80085954(fn_800B14C8(actor));
+        return fn_800CCA88(p) != 0 ? 1 : 0;
+    }
+    return 0;
+}
