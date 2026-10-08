@@ -1,4 +1,4 @@
-// Obj90/Obj92 factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup); docs/versus.md section 5, row 2.
+// Obj90/Obj92/ObjC (guessed name) factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup); docs/versus.md section 5, row 2.
 
 struct Slot
 {
@@ -153,4 +153,17 @@ extern "C" void fn_8045855C(register void *self, register int unused, register i
     fn_8045C524(self, fn_80118C64(lbl_8066F06C));
     fn_8045C4D4(self, fn_80118C3C(lbl_8066F068));
     fn_8045C568(self, 0x384);
+}
+
+class ObjC
+{
+public:
+    char data[0xC];
+    ObjC(register int a, register int b);
+    void *operator new(unsigned size) __asm__("fn_8045D2E8");
+};
+
+extern "C" ObjC *fn_80458608(register int handle, register int index)
+{
+    return new ObjC(0, 0);
 }
