@@ -1,11 +1,14 @@
-// Obj90 factory and fn_804581A0, a record check that caches a node handle at +0x50 (docs/versus.md section 5, row 2).
+// Obj90 factory, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup); docs/versus.md section 5, row 2.
 
 struct Slot
 {
     void *owner;
     char pad0[0x1C];
     int source; // +0x20
-    char pad1[0x2C];
+    int state24; // +0x24
+    char pad1[4];
+    int handle2C; // +0x2C
+    char pad2a[0x20];
     void *node; // +0x50
     char pad2[0xC];
 } __attribute__((aligned(8)));
@@ -75,5 +78,27 @@ extern "C" int fn_804581A0(register void *actor, register int index)
             }
         }
         return found;
+    }
+}
+
+extern "C" void fn_80112214(void *rec, int handle, int flag);
+extern "C" int fn_80118C64(int v);
+extern "C" int fn_80118C3C(int v);
+extern "C" void fn_8045C38C(void *self, int v);
+extern "C" void fn_8045C33C(void *self, int v);
+extern "C" void fn_8045C414(void *self, int v);
+extern int lbl_8066F06C;
+extern int lbl_8066F068;
+extern char lbl_80567770[];
+
+extern "C" void fn_804582F0(register void *self, register int unused, register int index)
+{
+    fn_80112214(lbl_80567770 + index * 0x60, lbl_80567760[index].handle2C, 1);
+    fn_8045C38C(self, fn_80118C64(lbl_8066F06C));
+    fn_8045C33C(self, fn_80118C3C(lbl_8066F068));
+    if (lbl_80567760[index].state24 > 0x257) {
+        fn_8045C414(self, 1);
+    } else {
+        fn_8045C414(self, 0);
     }
 }
