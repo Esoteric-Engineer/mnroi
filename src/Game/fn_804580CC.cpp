@@ -1,4 +1,4 @@
-// Obj90/Obj92/ObjC (guessed name) factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup), fn_8045866C (actor check), fn_8045873C and fn_8045895C (record setups), fn_804589FC (`new ObjE(0)` factory); docs/versus.md section 5, row 2.
+// Obj90/Obj92/ObjC (guessed name) factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup), fn_8045866C (actor check), fn_8045873C and fn_8045895C (record setups), fn_804589FC (`new ObjE(0)` factory), fn_80458A5C (actor check, height compare); docs/versus.md section 5, row 2.
 
 struct Slot
 {
@@ -257,4 +257,28 @@ public:
 extern "C" ObjE *fn_804589FC(register int handle, register int index)
 {
     return new ObjE(0);
+}
+
+extern "C" int fn_800CCAB8(void *p);
+extern "C" float fn_80086730(void *entity);
+extern "C" float fn_8008677C(void *entity);
+
+extern "C" int fn_80458A5C(register void *actor, register int index)
+{
+    if (lbl_8066BD60 != 0) {
+        return 0;
+    }
+    if (actor != 0 && fn_800B0C1C(actor)) {
+        register void *p;
+        register unsigned int found = 0;
+        p = fn_80085954(fn_800B14C8(actor));
+        if (fn_800CCAB8(p) != 0) {
+            register float a = fn_80086730(fn_800B14C8(actor));
+            if (a < fn_8008677C(fn_800B14C8(actor))) {
+                found = 1;
+            }
+        }
+        return found;
+    }
+    return 0;
 }
