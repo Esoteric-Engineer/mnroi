@@ -1,4 +1,4 @@
-// Obj90/Obj92/ObjC (guessed name) factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup); docs/versus.md section 5, row 2.
+// Obj90/Obj92/ObjC (guessed name) factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup), fn_8045866C (actor check); docs/versus.md section 5, row 2.
 
 struct Slot
 {
@@ -166,4 +166,30 @@ public:
 extern "C" ObjC *fn_80458608(register int handle, register int index)
 {
     return new ObjC(0, 0);
+}
+
+struct Pos
+{
+    float pad[2];
+    float z; // +0x8
+};
+
+extern "C" int fn_8005ABF0(void *actor);
+extern "C" float fn_800670CC(void *actor);
+extern "C" unsigned int fn_8010C7EC(void *obj, int a, int b);
+extern "C" Pos *fn_800B1724(void *actor);
+extern char lbl_8066D808[8];
+
+extern "C" int fn_8045866C(register void *actor, register int index)
+{
+    register unsigned int found = 0;
+    if (fn_8005ABF0(actor)) {
+        register float height = fn_800670CC(actor);
+        if (height > (float)fn_8010C7EC(lbl_8066D808, 1, 0x65)) {
+            if (fn_800B1724(actor)->z > -30.0f) {
+                found = 1;
+            }
+        }
+    }
+    return found;
 }
