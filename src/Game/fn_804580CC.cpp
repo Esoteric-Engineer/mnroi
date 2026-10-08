@@ -11,7 +11,10 @@ struct Slot
     int handle2C; // +0x2C
     char pad2a[4];
     int handle34; // +0x34
-    char pad2b[0x18];
+    int id38; // +0x38
+    char pad2b[0xC];
+    int free48; // +0x48
+    char pad2c[4];
     void *node; // +0x50
     char pad2[0xC];
 } __attribute__((aligned(8)));
@@ -493,4 +496,49 @@ extern "C" ObjJ *fn_8045938C(register int handle, register int index)
         value = lbl_804CF638[fn_8009ABEC(fn_800B1568(actor))];
     }
     return new ObjJ(0, 0, 1000, value);
+}
+
+struct ActorInfo
+{
+    unsigned int getA() __asm__("fn_8009B04C");
+    unsigned int getB() __asm__("fn_8009AFC8");
+};
+
+struct ActorInfoSub : ActorInfo
+{
+    int pad;
+};
+
+extern "C" ActorInfoSub *fn_800B14A0(void *actor);
+extern "C" int fn_800B13D8(void *actor);
+
+extern "C" int fn_80459474(register void *actor, register int index)
+{
+    if (lbl_8066BD60 != 0) {
+        return 0;
+    }
+    if (actor != 0 && fn_800B0C58(actor)) {
+        if (lbl_80567760[index].id38 == -1) {
+            int v = fn_800B14A0(actor)->getA();
+            if (v == 0) {
+                v = fn_800B14A0(actor)->getB();
+            }
+            lbl_80567760[index].id38 = v;
+            for (unsigned int i = 0; i <= 0x2F; i++) {
+                if (i == index) {
+                    continue;
+                }
+                if (lbl_80567760[i].free48 != 0 && lbl_80567760[i].handle2C == 0x39
+                    && lbl_80567760[i].source == fn_800B13D8(actor)) {
+                    return 0;
+                }
+            }
+        }
+        int w = fn_800B14A0(actor)->getA();
+        if (w == 0) {
+            w = fn_800B14A0(actor)->getB();
+        }
+        return lbl_80567760[index].id38 == w;
+    }
+    return 0;
 }

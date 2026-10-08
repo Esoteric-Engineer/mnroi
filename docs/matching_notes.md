@@ -69,7 +69,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   through `r0` whatever the return type is (`Game/fn_80020E60.c`) **unless the assignment converts
   the pointer type**, which stores `r3` straight to the slot instead: `const char *key = f();` off a
   `char *`-returning `f` is direct, `char *key = f();` goes through `r0`, and so does a `void *`
-  return into a `void *` local. So the three store shapes pick the declaration: `mr r0, r3` means the
+  return into a `void *` local; an `unsigned int` return into an `int` local is direct too
+  (`Game/fn_804580CC.cpp`, `fn_80459474`). So the three store shapes pick the declaration: `mr r0, r3` means the
   types match exactly, a bare `stw r3` means they differ by a qualifier or pointer type
   (`Game/fn_80131060.c`, `fn_801311C0`), and `mr rNN, r3` into a call-saved register means two
   locals (next bullet).
