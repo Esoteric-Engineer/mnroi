@@ -1,4 +1,4 @@
-// Obj90/Obj92/ObjC (guessed name) factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup), fn_8045866C (actor check), fn_8045873C and fn_8045895C (record setups), fn_804589FC (`new ObjE(0)` factory), fn_80458A5C (actor check, height compare); docs/versus.md section 5, row 2.
+// Obj90/Obj92/ObjC (guessed name) factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup), fn_8045866C (actor check), fn_8045873C and fn_8045895C (record setups), fn_804589FC (`new ObjE(0)` factory), fn_80458A5C (actor check, height compare), fn_80458B4C (record setup passing an int percentage of two actor floats); docs/versus.md section 5, row 2.
 
 struct Slot
 {
@@ -281,4 +281,16 @@ extern "C" int fn_80458A5C(register void *actor, register int index)
         return found;
     }
     return 0;
+}
+
+extern "C" void fn_8045D0FC(void *self, int v);
+
+extern "C" void fn_80458B4C(register void *self, register void *actor, register int index)
+{
+    int value = 0;
+    if (actor != 0 && fn_800B0C1C(actor)) {
+        register float a = fn_80086730(fn_800B14C8(actor));
+        value = (int)(a * 1000.0f / fn_8008677C(fn_800B14C8(actor)));
+    }
+    fn_8045D0FC(self, value);
 }
