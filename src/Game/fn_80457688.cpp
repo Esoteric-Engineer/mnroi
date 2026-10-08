@@ -1,4 +1,4 @@
-// RecArr (guessed name): an array of 0x40-byte named-resource records; the constructor, fn_8045777C (loads one by name) and fn_80457B44 (releases them all).
+// RecArr (guessed name): an array of 0x40-byte named-resource records; the constructor, fn_8045777C (loads one by name) and fn_80457B44 (releases them all) and fn_80457CDC (the same without clearing the used flag).
 
 extern "C" int fn_80119398(void *table, int size, void *attr);
 extern char lbl_804975BC[];
@@ -138,6 +138,25 @@ extern "C" void fn_80457B44(register RecArr *self)
             }
             self->recs[i].w1C = 0;
             self->recs[i].w0 = 0;
+        }
+    }
+}
+
+extern "C" void fn_80457CDC(register RecArr *self)
+{
+    for (int i = 0; i < self->count; i++) {
+        if (self->recs[i].w0 != 0) {
+            if (self->recs[i].w4 != 0) {
+                fn_8024936C(self->recs[i].w8);
+                self->recs[i].w4 = 0;
+            }
+            for (int j = 0; j < self->recs[i].w1C; j++) {
+                int p = self->recs[i].words[j];
+                if (p != 0) {
+                    fn_80119404(lbl_80568DF0, p, 0);
+                }
+            }
+            self->recs[i].w1C = 0;
         }
     }
 }
