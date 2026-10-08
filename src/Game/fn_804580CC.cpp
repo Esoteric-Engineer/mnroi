@@ -1,4 +1,4 @@
-// Obj90/Obj92/ObjC (guessed name) factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup), fn_8045866C (actor check), fn_8045873C and fn_8045895C (record setups), fn_804589FC (`new ObjE(0)` factory), fn_80458A5C (actor check, height compare), fn_80458B4C (record setup passing an int percentage of two actor floats), fn_80458CDC (record setup), fn_80458D7C (`new ObjG` factory resetting record +0x34 from -1); docs/versus.md section 5, row 2.
+// Obj90/Obj92/ObjC (guessed name) factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check), fn_8045855C (record setup), fn_8045866C (actor check), fn_8045873C and fn_8045895C (record setups), fn_804589FC (`new ObjE(0)` factory), fn_80458A5C (actor check, height compare), fn_80458B4C (record setup passing an int percentage of two actor floats), fn_80458CDC (record setup), fn_80458D7C (`new ObjG` factory resetting record +0x34 from -1), fn_80458E48 (actor check); docs/versus.md section 5, row 2.
 
 struct Slot
 {
@@ -348,4 +348,21 @@ extern "C" ObjG *fn_80458D7C(register int handle, register int index)
         lbl_80567760[index].handle34 = 0;
     }
     return new ObjG(0, 0, 50, 0, value, lbl_80567760[index].handle34);
+}
+
+extern int lbl_8066BDF8;
+extern int lbl_8066BE04;
+
+extern "C" int fn_80458E48(register void *actor, register int index)
+{
+    if (lbl_80567760[index].handle2C == 0x108 && lbl_8066BDF8 == 0x30 && lbl_8066BE04 == 1) {
+        return 0;
+    }
+    if (lbl_80567760[index].handle2C == 0x204 && lbl_80567760[index].handle34 == 1) {
+        return 0;
+    }
+    if (lbl_8066BD60 != 0) {
+        return 0;
+    }
+    return 1;
 }
