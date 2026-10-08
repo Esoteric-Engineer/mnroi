@@ -419,3 +419,21 @@ extern "C" void fn_80459060(register void *self, register void *actor, register 
     }
     fn_8045C1C4(self, value);
 }
+
+class ObjI
+{
+public:
+    char data[0x14];
+    ObjI(register int a, register int b, register int c, register int d);
+    void *operator new(unsigned size) __asm__("fn_8045D4E8");
+};
+
+extern "C" ObjI *fn_80459168(register int handle, register int index)
+{
+    int value = 0;
+    void *actor = fn_800ACFA8(lbl_80567760[index].source);
+    if (actor != 0) {
+        value = fn_8010D3C4(fn_8009ABEC(fn_800B1568(actor)));
+    }
+    return new ObjI(0, 0, 0, value);
+}
