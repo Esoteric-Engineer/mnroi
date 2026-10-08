@@ -1,4 +1,4 @@
-// RecArr (guessed name): an array of 0x40-byte named-resource records; the constructor and fn_8045777C, which loads one by name.
+// RecArr (guessed name): an array of 0x40-byte named-resource records; the constructor, fn_8045777C (loads one by name) and fn_80457B44 (releases them all).
 
 extern "C" int fn_80119398(void *table, int size, void *attr);
 extern char lbl_804975BC[];
@@ -16,6 +16,8 @@ extern "C" int fn_80249F74(void);
 extern "C" void fn_800164A0(void);
 extern "C" void fn_8023E98C(void);
 extern "C" int fn_80111BB8();
+extern "C" void fn_8024936C(int handle);
+extern "C" void fn_80119404(void *table, int p, int flag);
 extern char lbl_80593C58[];
 extern char lbl_804975C8[];
 extern char lbl_804975D8[];
@@ -42,7 +44,7 @@ struct Rec
     int w0;  // +0x0
     int w4;  // +0x4
     int w8;  // +0x8
-    char padC[0x10];
+    int words[4]; // +0xC
     int w1C; // +0x1C
     char pad20[0x20];
 };
@@ -116,6 +118,26 @@ extern "C" void fn_8045777C(register RecArr *self, register char *name, register
             strcpy((char *)&self->recs[j] + 0x20, name);
             fn_801B0E50(lbl_80593C58, h, 0);
             return;
+        }
+    }
+}
+
+extern "C" void fn_80457B44(register RecArr *self)
+{
+    for (int i = 0; i < self->count; i++) {
+        if (self->recs[i].w0 != 0) {
+            if (self->recs[i].w4 != 0) {
+                fn_8024936C(self->recs[i].w8);
+                self->recs[i].w4 = 0;
+            }
+            for (int j = 0; j < self->recs[i].w1C; j++) {
+                int p = self->recs[i].words[j];
+                if (p != 0) {
+                    fn_80119404(lbl_80568DF0, p, 0);
+                }
+            }
+            self->recs[i].w1C = 0;
+            self->recs[i].w0 = 0;
         }
     }
 }
