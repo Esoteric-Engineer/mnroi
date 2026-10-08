@@ -203,3 +203,21 @@ extern "C" void fn_8045873C(register void *self, register int unused, register i
     fn_8045D2A4(self, fn_80118C64(lbl_8066F06C));
     fn_8045D254(self, fn_80118C3C(lbl_8066F068));
 }
+
+class ObjD
+{
+public:
+    char data[0x10];
+    ObjD(register int a, register int b, register int c);
+    void *operator new(unsigned size) __asm__("fn_8045B474");
+};
+
+extern "C" ObjD *fn_804587DC(register int handle, register int index)
+{
+    int value = 0;
+    void *actor = fn_800ACFA8(lbl_80567760[index].source);
+    if (actor != 0) {
+        value = lbl_804CF638[fn_8009ABEC(fn_800B1568(actor))];
+    }
+    return new ObjD(0, 50, value);
+}
