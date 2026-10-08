@@ -437,3 +437,28 @@ extern "C" ObjI *fn_80459168(register int handle, register int index)
     }
     return new ObjI(0, 0, 0, value);
 }
+
+struct Obj2
+{
+    int get() __asm__("fn_800B1138");
+};
+
+struct Sub2 : Obj2
+{
+    int pad;
+};
+
+extern "C" Sub2 *fn_800B1478(void *actor);
+extern "C" int fn_800B0CC0(void *actor);
+
+extern "C" int fn_80459230(register void *actor, register int index)
+{
+    if (lbl_8066BD60 != 0) {
+        return 0;
+    }
+    if (fn_800B0CC0(actor)) {
+        int v = fn_800B1478(actor)->get();
+        return v == 0;
+    }
+    return 0;
+}
