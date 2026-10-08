@@ -110,7 +110,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   mangled `__4Base`, and make the vptr the first member, initialised first in the list
   (`Game/fn_80444034.cpp`).
 
-- **A function that returns a plain `register int` local but still carries the branch pair: declare the local `unsigned int`.** A top-level `return <local>;` of the function's own return type sets `current_function_return_value` and drops the pair; the signedness mismatch makes the return expression a conversion, not a declaration, with no extra copy. A `char` local also keeps the pair but adds `mr r0` / `mr r3` (`Game/fn_804580CC.cpp`, `fn_804581A0`).
+- **A function that returns a plain `register int` local but still carries the branch pair: declare the local `unsigned int`.** A top-level `return <local>;` of the function's own return type sets `current_function_return_value` and drops the pair; the signedness mismatch makes the return expression a conversion, not a declaration, with no extra copy. A `char` local also keeps the pair but adds `mr r0` / `mr r3` (`Game/fn_804580CC.cpp`, `fn_804581A0`). If the DOL also stores the flag to a frame slot and reloads it (`stw r27, 0x8(r31)` / `lwz r0, 0x8(r31)` / `mr r3, r0`), add a plain `int result = found; return result;`; declare a call-result `register` local ahead of the flag when it must take the lower call-saved register (`fn_8045849C`).
 
 - **A C++ *destructor* ends with one trailing branch too, so it is reachable in a pair-less file.**
   Its `if (__in_chrg & 1) __builtin_delete(this)` tail ([`prodg.md`](prodg.md#c)) is where that one

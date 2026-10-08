@@ -1,4 +1,4 @@
-// Obj90/Obj92 factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup); docs/versus.md section 5, row 2.
+// Obj90/Obj92 factories, fn_804581A0 (record check caching a node handle at +0x50) and fn_804582F0 (record setup), fn_8045849C (actor check); docs/versus.md section 5, row 2.
 
 struct Slot
 {
@@ -119,4 +119,26 @@ extern "C" Obj92 *fn_804583C8(register int handle, register int index)
         value = lbl_804CF638[fn_8009ABEC(fn_800B1568(actor))];
     }
     return new Obj92(0, 50, 900, value);
+}
+
+extern "C" int fn_800B0C1C(void *actor);
+extern "C" void *fn_80085954(void *entity);
+extern "C" int fn_800CCA08(void *p);
+extern int lbl_8066BD30;
+
+extern "C" int fn_8045849C(register void *actor, register int index)
+{
+    if (lbl_8066BD60 != 0) {
+        return 0;
+    }
+    if (fn_800B0C1C(actor)) {
+        register void *p;
+        register unsigned int found = 0;
+        if (lbl_8066BD30 != 0 || (p = fn_80085954(fn_800B14C8(actor)), fn_800CCA08(p))) {
+            found = 1;
+        }
+        int result = found;
+        return result;
+    }
+    return 0;
 }
