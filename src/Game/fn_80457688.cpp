@@ -1,4 +1,5 @@
 // RecArr (guessed name): an array of 0x40-byte named-resource records; the constructor, fn_8045777C (loads one by name) and fn_80457B44 (releases them all) and fn_80457CDC (the same without clearing the used flag).
+// HandleA (guessed name) is the 0x68-byte handle constructor: vptr, then a 0x10-byte impl (fn_8045DB68).
 
 extern "C" int fn_80119398(void *table, int size, void *attr);
 extern char lbl_804975BC[];
@@ -170,4 +171,27 @@ extern "C" void fn_80457E58(register RecArr *self)
             self->recs[i].w4 = 1;
         }
     }
+}
+
+extern char lbl_804F2E28[];
+
+class ImplA
+{
+public:
+    char data[0x10];
+    ImplA(register const void *name) __asm__("fn_8045DB68");
+};
+
+class HandleA
+{
+public:
+    ImplA *impl;      // +0x0
+    const void *vptr; // +0x4
+    HandleA(register const void *name);
+};
+
+HandleA::HandleA(register const void *name)
+{
+    vptr = lbl_804F2E28;
+    impl = new ImplA(name);
 }
