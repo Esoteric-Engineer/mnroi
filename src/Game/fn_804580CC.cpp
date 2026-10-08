@@ -474,3 +474,23 @@ extern "C" void fn_804592D0(register void *self, register void *actor, register 
     fn_8045D40C(self, fn_80118C3C(lbl_8066F068));
     fn_8045D4A4(self, lbl_80567760[index].state24);
 }
+
+class ObjJ
+{
+public:
+    char data[0x14];
+    ObjJ(register int a, register int b, register int c, register int d);
+    void *operator new(unsigned size) __asm__("fn_8045B820");
+};
+
+extern "C" int fn_800B0C58(void *actor);
+
+extern "C" ObjJ *fn_8045938C(register int handle, register int index)
+{
+    void *actor = fn_800ACFA8(lbl_80567760[index].source);
+    int value = 0;
+    if (actor != 0 && fn_800B0C58(actor)) {
+        value = lbl_804CF638[fn_8009ABEC(fn_800B1568(actor))];
+    }
+    return new ObjJ(0, 0, 1000, value);
+}
