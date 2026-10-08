@@ -294,3 +294,19 @@ extern "C" void fn_80458B4C(register void *self, register void *actor, register 
     }
     fn_8045D0FC(self, value);
 }
+
+class ObjF
+{
+public:
+    char data[0x14];
+    ObjF(register int a, register int b, register int c, register int d);
+    void *operator new(unsigned size) __asm__("fn_8045CD4C");
+};
+
+extern "C" int fn_8010DDAC(int handle);
+
+extern "C" ObjF *fn_80458C18(register int handle, register int index)
+{
+    int value = fn_8010DDAC(handle);
+    return new ObjF(0, 0, 50, value);
+}
