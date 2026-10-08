@@ -310,3 +310,11 @@ extern "C" ObjF *fn_80458C18(register int handle, register int index)
     int value = fn_8010DDAC(handle);
     return new ObjF(0, 0, 50, value);
 }
+
+extern "C" int fn_80458C94(register void *actor, register int index)
+{
+    if (lbl_8066BD60 != 0) {
+        return 0;
+    }
+    return 1;
+}
