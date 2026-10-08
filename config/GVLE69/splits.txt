@@ -4294,6 +4294,9 @@ Game/fn_80455B6C.c:
 Game/fn_80455BB8.cpp:
 	.text       start:0x80455BB8 end:0x80455C70
 
+Game/fn_80455C70.c:
+	.text       start:0x80455C70 end:0x80455CCC
+
 Dolphin/os/fn_80003254.c:
 	.init       start:0x80003254 end:0x800032C0
 
