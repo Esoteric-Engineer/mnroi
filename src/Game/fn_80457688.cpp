@@ -240,3 +240,19 @@ HandleC::HandleC(register const void *name)
     vptr = lbl_804F2E40;
     impl = new ImplC(name);
 }
+
+class WordTriple
+{
+public:
+    int a; // +0x0
+    int b; // +0x4
+    int c; // +0x8
+    WordTriple();
+};
+
+WordTriple::WordTriple()
+{
+    a = 0;
+    b = 0;
+    c = 0;
+}
