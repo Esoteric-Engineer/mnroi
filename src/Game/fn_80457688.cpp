@@ -160,3 +160,14 @@ extern "C" void fn_80457CDC(register RecArr *self)
         }
     }
 }
+
+extern "C" void fn_80457E58(register RecArr *self)
+{
+    for (int i = 0; i < self->count; i++) {
+        if (self->recs[i].w0 != 0 && self->recs[i].w4 == 0) {
+            self->recs[i].w0 = 0;
+            fn_8045777C(self, (char *)&self->recs[i] + 0x20, 1);
+            self->recs[i].w4 = 1;
+        }
+    }
+}
