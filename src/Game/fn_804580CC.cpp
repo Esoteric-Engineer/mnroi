@@ -570,3 +570,31 @@ extern "C" ObjK *fn_80459710(register int handle, register int index)
     }
     return new ObjK(0, 0, 1000, value);
 }
+
+extern "C" int fn_804597F8(register void *actor, register int index)
+{
+    if (actor != 0 && fn_800B0C58(actor)) {
+        if (lbl_80567760[index].id38 == -1) {
+            int v = fn_800B14A0(actor)->getA();
+            if (v == 0) {
+                v = fn_800B14A0(actor)->getB();
+            }
+            lbl_80567760[index].id38 = v;
+            for (unsigned int i = 0; i <= 0x2F; i++) {
+                if (i == index) {
+                    continue;
+                }
+                if (lbl_80567760[i].free48 != 0 && lbl_80567760[i].handle2C == 0x3A
+                    && lbl_80567760[i].source == fn_800B13D8(actor)) {
+                    return 0;
+                }
+            }
+        }
+        int w = fn_800B14A0(actor)->getA();
+        if (w == 0) {
+            w = fn_800B14A0(actor)->getB();
+        }
+        return lbl_80567760[index].id38 == w;
+    }
+    return 0;
+}
