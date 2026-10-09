@@ -634,3 +634,23 @@ extern "C" int fn_80459B6C(register void *actor, register int index)
     }
     return 1;
 }
+
+extern "C" void fn_8045BB0C(void *self, int v);
+extern "C" void fn_8045BABC(void *self, int v);
+extern "C" void fn_8045BB54(void *self, int v);
+
+extern "C" void fn_80459BB4(register void *self, register void *actor, register int index)
+{
+    fn_80112214(lbl_80567770 + index * 0x60, lbl_80567760[index].handle2C, 1);
+    fn_8045BB0C(self, fn_80118C64(lbl_8066F06C));
+    fn_8045BABC(self, fn_80118C3C(lbl_8066F068));
+    float h = fn_800670CC(actor);
+    int value = (int)(h * 200.0f);
+    if (value < 0) {
+        value = 0;
+    }
+    if (value > 1000) {
+        value = 1000;
+    }
+    fn_8045BB54(self, value);
+}
