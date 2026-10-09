@@ -1,4 +1,4 @@
-// FrameCtx level teardown (guessed): clears the context's state and returns 1; see docs/versus.md section 5, row 9d.
+// FrameCtx level teardown (guessed) and its caller fn_8002CB1C (state 13 hook); see docs/versus.md section 5, row 9d.
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -10,6 +10,8 @@ void fn_8002CD84(void *self, int v);
 void fn_8002C924(void *self);
 void fn_801B60F4(void *p);
 void fn_80016570();
+int fn_80431E08(void *p);
+void fn_8002E4B4(void *self, int v);
 void fn_80113EE8();
 void fn_801147D4();
 void fn_80126F0C(int a, int b);
@@ -46,5 +48,14 @@ extern "C" int fn_8002CA58(register FrameCtx *self)
     fn_80126F0C(0, 0);
     fn_80198360();
     fn_80432CB4(0);
+    return 1;
+}
+
+extern "C" int fn_8002CB1C(register FrameCtx *self)
+{
+    if (fn_80431E08(self)) {
+        fn_8002CA58(self);
+    }
+    fn_8002E4B4(self, 0);
     return 1;
 }
