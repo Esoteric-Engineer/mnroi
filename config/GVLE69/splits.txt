@@ -4487,7 +4487,31 @@ Game/fn_8045DB68.cpp:
 	.text       start:0x8045DB68 end:0x8045E6AC
 
 Game/fn_8045E6AC.cpp:
-	.text       start:0x8045E6AC end:0x8045E954
+	.text       start:0x8045E6AC end:0x8045ECE0
+
+Game/fn_8045ECE0.c:
+	.text       start:0x8045ECE0 end:0x8045ED40
+
+Game/fn_8045ED40.cpp:
+	.text       start:0x8045ED40 end:0x8045ED98
+
+Game/fn_8045ED98.cpp:
+	.text       start:0x8045ED98 end:0x8045EE08
+
+Game/fn_8045EE08.cpp:
+	.text       start:0x8045EE08 end:0x8045EE74
+
+Game/fn_8045EE74.c:
+	.text       start:0x8045EE74 end:0x8045EED4
+
+Game/fn_8045EED4.cpp:
+	.text       start:0x8045EED4 end:0x8045EF2C
+
+Game/fn_8045EF2C.cpp:
+	.text       start:0x8045EF2C end:0x8045EF9C
+
+Game/fn_8045EF9C.cpp:
+	.text       start:0x8045EF9C end:0x8045F064
 
 Dolphin/os/fn_80003254.c:
 	.init       start:0x80003254 end:0x800032C0
