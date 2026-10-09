@@ -61,3 +61,54 @@ extern "C" void fn_8045E818(register void *self, register int inChrg)
 {
     fn_8045E790(self, inChrg);
 }
+
+// Getters on a class of unknown identity (name guessed)
+class Host
+{
+public:
+    char pad0[0x2DC];
+    int a; // +0x2DC
+    char pad1[0x2B4];
+    int b; // +0x594
+    int Get2DC();
+    int Get594();
+};
+
+int Host::Get2DC()
+{
+    return a;
+}
+
+int Host::Get594()
+{
+    return b;
+}
+
+// Registers an entry on the list at +0x24 (same shape as fn_80433198, over a derived entry class)
+extern "C" void fn_80165118(void *);
+extern "C" void fn_80165138(void *);
+extern "C" void *fn_804336A8(void *);
+extern "C" void *fn_8043365C(int size, void *owner);
+extern "C" void *fn_8045EBBC(void *) __asm__("fn_8045EBBC");
+extern "C" void fn_80164544(void *list, void *entry, void *self, int b);
+
+struct Owner
+{
+    char pad[0x24];
+    void *list; // +0x24
+};
+
+struct NewEntry
+{
+    char pad[0x10];
+    int value; // +0x10
+};
+
+extern "C" void fn_8045E8B0(register Owner *self, register int a, register int b)
+{
+    fn_80165118(fn_804336A8(self->list));
+    NewEntry *e = (NewEntry *)fn_8045EBBC(fn_8043365C(0x14, fn_804336A8(self->list)));
+    e->value = a;
+    fn_80164544(self->list, e, self, b);
+    fn_80165138(fn_804336A8(self->list));
+}
