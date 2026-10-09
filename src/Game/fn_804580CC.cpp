@@ -626,3 +626,11 @@ extern "C" ObjL *fn_80459A80(register int handle, register int index)
     }
     return new ObjL(0, 0, 0x32, value, 0);
 }
+
+extern "C" int fn_80459B6C(register void *actor, register int index)
+{
+    if (lbl_8066BD60 != 0) {
+        return 0;
+    }
+    return 1;
+}
