@@ -598,3 +598,13 @@ extern "C" int fn_804597F8(register void *actor, register int index)
     }
     return 0;
 }
+
+extern "C" void fn_8045BFA0(void *self, int v);
+extern "C" void fn_8045BF50(void *self, int v);
+
+extern "C" void fn_804599E0(register void *self, register void *actor, register int index)
+{
+    fn_80112214(lbl_80567770 + index * 0x60, lbl_80567760[index].handle2C, 1);
+    fn_8045BFA0(self, fn_80118C64(lbl_8066F06C));
+    fn_8045BF50(self, fn_80118C3C(lbl_8066F068));
+}
