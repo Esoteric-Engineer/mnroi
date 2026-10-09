@@ -133,7 +133,7 @@ class BaseE
 {
 public:
     int x; // +0x0
-    BaseE() __asm__("fn_8045F3C4");
+    BaseE();
 };
 
 class ImplD : public BaseD

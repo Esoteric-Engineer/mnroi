@@ -6,7 +6,7 @@ class BaseF
 {
 public:
     int x; // +0x0; the base constructor also stores its own vptr at +0x4
-    BaseF() __asm__("fn_8045F450");
+    BaseF();
 };
 
 class ImplF : public BaseF
