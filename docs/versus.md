@@ -118,7 +118,7 @@ This is a C++ singleton that 211 functions reference, so it is the whole game st
 | +0x61C | int | Set to 1 for match type 2 and by both `StartLevel` handlers | `Control_SetMatchInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel` | `fn_8002BD34` |
 | +0x744 | `Slot *` | The current slot, `&G->slots[G+0x598]`. Confirmed as a pointer: `fn_80443DBC` is **matched** as `g->curSlot = &g->slots[g->curIndex]; return 1;` (the `1` is a constant, not a success test). | `fn_80443DBC` | `fn_80095100`, `fn_800950E8` |
 | +0x750 | `Slot *` | Slot iteration cursor: `fn_804427FC(G)` resets it to `&slots[G+0x598]` and returns 1, `fn_804427D0(G)` reads it, and `fn_80094A9C(G)` (unmatched) advances it and returns nonzero while slots remain. | `fn_804427FC`, `fn_80094A9C` | `fn_804427D0` |
-| +0x75C | int | Timer mode: 1 = timed, 2 = untimed | `Control_SetMatchInfo`, `clashVenue_ChooseOption`, `fn_80028BAC` | `Control_SetSelectInfo`, `fn_8011A94C`, `fn_8011AB34` |
+| +0x75C | int | Timer mode: 1 = timed, 2 = untimed | `Control_SetMatchInfo`, `clashVenue_ChooseOption`, `fn_80028BAC` | `Control_SetSelectInfo`, `fn_8011A94C`, `fn_8011AB34`, `fn_8013156C` (is-timed test) |
 | +0x760 | int | Written by 14 functions; probably a game phase or state | `fn_8002D90C`, `fn_80092550`... | `fn_80018290`... |
 | +0x764 | int | Time limit in ms | `Control_SetMatchInfo`, `fn_80028BAC` | `fn_80131434` |
 | +0x768 | int | Added to the time limit (`+0x764`) in the match clock's total; a bonus/extra-time offset or a start time (guess). Read-modify-written in `fn_8009xxxx` (0x80092128, 0x80094000) and at 0x800C0088 | several, unchecked | `fn_80131434` |
@@ -168,7 +168,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 6 | `venuetable.cpp`, 0x8010BED8-0x8010C528 | Done: `Game/handlers/venuetable.cpp` (`GetVenueList`), `Game/fn_8010C090.cpp` (the other handlers) and `Game/fn_8010C338.cpp` (static initializer). `clashVenue_StartLevel` is `Game/fn_8010BFFC.cpp`, a unit of its own for the same reason as row 5's. |
 | 7 | Last-selection module, 0x801317D8-0x80131E90 | Done: `Game/fn_801317D8.cpp`, the whole range. |
 | 8 | `G`'s other methods | Done, 0x80431788 up to the string code of row 4. Notes: [Step 8](#step-8-files-and-boundaries). |
-| 9a | Match clock: `fn_80131434` (done), then the other 8 functions of its gap, next `fn_8013156C` (0x3C) | **Current step.** [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
+| 9a | Match clock: `fn_80131434` and `fn_8013156C` (done), then the other 6 functions of its gap, next `fn_80131654` (0x34) | **Current step.** [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
 | 9b | Timer-mode readers: `fn_8011AB34`, `fn_8011A94C` | Open. |
 | 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | Open. |
 | 9d | Main loop and frame body, 0x8002B9F0-0x8002C214, then the level loaders | Open. |
@@ -210,14 +210,13 @@ up to it. Then fill the range in the "Then" column, one function per run.
 
 | Row | Pinned | Then | File |
 |---|---|---|---|
-| 9a | `fn_80131434` (0x138) | the other 8 functions of 0x8013156C-0x801317D8, the gap between `Game/fn_80131434.c` (grows contiguously) and `Game/fn_801317D8.cpp` | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
+| 9a | `fn_80131434` (0x138) | the other 6 functions of 0x80131654-0x801317D8, the gap between `Game/fn_8013156C.c` (grows contiguously) and `Game/fn_801317D8.cpp` | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | `fn_8011AB34` (0xA4), then `fn_8011A94C` (0x184) | nothing, unless their meaning needs `fn_8011A824` (0x94), which both call | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | `fn_80028BAC` (0x13C8) | the rest of the file, from `fn_800288AC` | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
 | 9d | none: grow from the file's first function, `fn_8002B9F0`, through `fn_8002BD34` (five functions, 0x824 bytes) | the level loaders section 6 reaches, pinned: `fn_8002C690`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002F884` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** The gap's first two functions return the per-player words at slot `+0x7C`/`+0x80` for
-  players 0-1, which the code at 0x8000E438 compares (meaning unknown). In the rest, `fn_8013156C`
-  reads `G`, `fn_801315A8` reads `lbl_8054ED80` and the string `lbl_8049A584`, and the last six are
+  players 0-1, which the code at 0x8000E438 compares (meaning unknown). The rest are
   accessors on `.sdata` `lbl_8066B578`.
 - **9b.** Free functions that carry the pair. `fn_8011AB34(int player)` acts only when
   `G+0x75C == 1`: `fn_8011A824()`, then `.sdata` `lbl_8066BDF0 = 0x1F` when `Get594__4Host(G) == 1`
