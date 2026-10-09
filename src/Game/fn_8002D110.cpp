@@ -69,6 +69,8 @@ void fn_800909A0(char *name, int a);
 unsigned int fn_80432B20(void *p);
 char *fn_8007A2C4(void *p);
 int fn_800B13D8(void *p);
+void fn_801AA368();
+void fn_800919F0(void *g);
 }
 
 class GameFlow
@@ -287,4 +289,11 @@ extern "C" void fn_8002D5F8(register FrameCtx *self, int a, int b)
         fn_801147D4();
         fn_80016570();
     }
+}
+
+extern "C" void fn_8002D760(register FrameCtx *self, int a)
+{
+    fn_801AA368();
+    fn_80052820();
+    fn_800919F0(lbl_80552110);
 }
