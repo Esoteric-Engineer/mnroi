@@ -143,6 +143,9 @@ Game/fn_80131434.c:
 Game/fn_8013156C.c:
 	.text       start:0x8013156C end:0x80131654
 
+Game/fn_80131654.c:
+	.text       start:0x80131654 end:0x80131688
+
 Game/fn_801317D8.cpp:
 	.text       start:0x801317D8 end:0x80131E90
 
