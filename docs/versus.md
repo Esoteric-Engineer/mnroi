@@ -213,7 +213,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | done | | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
-| 9d | done (`fn_8002F884`, the mode setter) | the other level loaders section 6 reaches, pinned: `fn_8002CB7C`, `fn_8002DB78`, `fn_8002FA70` (`fn_8002C690`, `fn_8002CA58`, `fn_8002D7A8`, `fn_8002D90C` are done); then grow `Game/fn_8002B9F0.cpp` from 0x8002C214 | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
+| 9d | done (`fn_8002F884`, the mode setter) | the other level loaders section 6 reaches, pinned: `fn_8002DB78`, `fn_8002FA70` (`fn_8002C690`, `fn_8002CA58`, `fn_8002CB7C`, `fn_8002D7A8`, `fn_8002D90C` are done); then grow `Game/fn_8002B9F0.cpp` from 0x8002C214 | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
 - **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.
@@ -230,6 +230,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
   the phase mask for it at `+0x68` (1: 0x29, 2: 0x99, 3: 0xDF, 4: 0xDB, 5: 0xDD, 6: 0xD1, 7: 0x109); other modes change nothing.
   `fn_8002C690(ctx, name, name2, flags)` (`Game/fn_8002C690.cpp`) is the level-load entry the other loaders call.
   `fn_8002D7A8(ctx, name, flags, v, name2, name3)` (`Game/fn_8002D7A8.cpp`) is the deferred request: it only records, after checking `<name>.ngl` opens. Fields: `+0x70` flags (the third argument; `0x2000` no name, `0x4000` name2 given, `0x8000` name3 given), `+0xB4` = `v`, names at `+0x74`, `+0xB8`, `+0xD8` (0x20 each), `+0x5C = 0x10`, `+0x6C = 0`.
+  `fn_8002CB7C(ctx, name, name2, c, flags)` (`Game/fn_8002CB7C.cpp`) is the load body `fn_8002C690` calls: spins until `fn_8042D3B0` on `lbl_80593BE8` passes 499 (a timer; unit unknown), runs `fn_8002CE78` (0x298, unclaimed; returns 0 on failure) and `fn_8002D110` (0x4E8, unclaimed; takes `flags`), sets `+0x8 = 1`. `flags & 8` clears `+0x38`.
   `fn_8002C214` (0x380) is next in the file. The file's functions are pair-less, so the unit is `.cpp` with `sn_return_decl`.
 
 ### Step 4: files and boundaries
