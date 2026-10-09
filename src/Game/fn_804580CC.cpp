@@ -608,3 +608,21 @@ extern "C" void fn_804599E0(register void *self, register void *actor, register 
     fn_8045BFA0(self, fn_80118C64(lbl_8066F06C));
     fn_8045BF50(self, fn_80118C3C(lbl_8066F068));
 }
+
+class ObjL
+{
+public:
+    char data[0x18];
+    ObjL(register int a, register int b, register int c, register int d, register int e);
+    void *operator new(unsigned size) __asm__("fn_8045BB98");
+};
+
+extern "C" ObjL *fn_80459A80(register int handle, register int index)
+{
+    void *actor = fn_800ACFA8(lbl_80567760[index].source);
+    int value = 0;
+    if (actor != 0 && fn_800B0C58(actor)) {
+        value = lbl_804CF638[fn_8009ABEC(fn_800B1568(actor))];
+    }
+    return new ObjL(0, 0, 0x32, value, 0);
+}
