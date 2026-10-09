@@ -213,7 +213,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | done | | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
-| 9d | done (`fn_8002F884`, the mode setter) | the other level loaders section 6 reaches, pinned: `fn_8002D90C` (`fn_8002C690`, `fn_8002D7A8` are done); then grow `Game/fn_8002B9F0.cpp` from 0x8002C214 | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
+| 9d | done (`fn_8002F884`, the mode setter) | the other level loaders section 6 reaches, pinned: `fn_8002CA58`, `fn_8002CB7C`, `fn_8002DB78`, `fn_8002FA70` (`fn_8002C690`, `fn_8002D7A8`, `fn_8002D90C` are done); then grow `Game/fn_8002B9F0.cpp` from 0x8002C214 | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
 - **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.
@@ -344,7 +344,7 @@ Fourteen more of the class's methods are **matched** in the same unit. They are 
 | `EndLoad()` | 0x800B6AA4 | `fn_8044606C(this)` (`+0x1DC = 0`), `+0x1C = 4`, then clears the globals' loading flag (`fn_804325CC(lbl_80593BE8)`). |
 | `LoadLevel(char *)` | 0x800B6BA8 | `BeginLoad()`, sets the loading flag, `fn_8002F884(lbl_8052F060, 5)`, copies the name into `+0x2C` (empties it when the argument is null), then `SetCommand(0x42)`. |
 | `LoadFrontend()` | 0x800B6C3C | The same without a name: `SetCommand(8)` then `fn_8012D400(0)`. |
-| `EndLevel(int)` | 0x800B6CAC | `fn_8002D90C(lbl_8052F060, "LATER")`, which sets `G+0x760 = 0xF` after a 3000 ms timer; the other mode string is at `lbl_80485888`. Its argument is unused. |
+| `EndLevel(int)` | 0x800B6CAC | `fn_8002D90C(lbl_8052F060, "LATER")`, which sets `G+0x760 = 0xF` after a 3000 ms timer; `"NOW"` (`lbl_80485888`) runs `fn_8002D994` (`+0x5C = 0xF`) instead of the timer. Its argument is unused. |
 | `Stub6CFC(int, void *)` | 0x800B6CFC | `return index >= 0;`. The caller passes `command - 0x561` and `lbl_805526AC`, so the body the release stripped indexed something by command. |
 | `Stub6D48()`, `Stub6E1C()` | 0x800B6D48, 0x800B6E1C | Empty; both stripped. `SetCommand` calls `Stub6E1C` first. |
 
