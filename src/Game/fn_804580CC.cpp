@@ -1498,3 +1498,1095 @@ extern "C" int fn_8045B474(register void *self)
 {
     return fn_8024606C(self);
 }
+
+extern "C" void fn_8045B4B8(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045DEFC(void *self, int v);
+extern "C" int fn_802465B0(void *table, void *key, void *self);
+extern "C" void fn_80245CBC(void *table, void *name);
+extern char lbl_8066D89C[8];
+extern char lbl_8066BBF0[8];
+
+ObjD::ObjD(register int a, register int b, register int c)
+{
+    int r;
+    fn_8045B3E0((Setting *)this, a);
+    fn_8045B430((Setting *)this, b);
+    fn_8045DEFC(this, c);
+    r = fn_802465B0(lbl_8066D89C, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D89C, lbl_8066BBF0);
+        r = fn_802465B0(lbl_8066D89C, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045B5A8(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045B5F8(register Setting *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045B640(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045B684(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 19) {
+        v = 19;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045B6C8(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 10) {
+        v = 10;
+    }
+    self->f14 = v;
+}
+
+extern "C" void fn_8045B70C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 20) {
+        v = 20;
+    }
+    self->f18 = v;
+}
+
+extern "C" void fn_8045B750(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045B788(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045B7D8(register void *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" int fn_8045B820(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045B864(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045DF40(void *self, int v);
+extern "C" void fn_8045DF84(void *self, int v);
+extern char lbl_8066D8AC[8];
+extern char lbl_8066BC00[8];
+
+ObjJ::ObjJ(register int a, register int b, register int c, register int d)
+{
+    int r;
+    fn_8045B788(this, a);
+    fn_8045B7D8(this, b);
+    fn_8045DF40(this, c);
+    fn_8045DF84(this, d);
+    r = fn_802465B0(lbl_8066D8AC, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D8AC, lbl_8066BC00);
+        r = fn_802465B0(lbl_8066D8AC, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045B964(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045B9B4(register Setting *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045B9FC(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045BA40(register Setting *self, register int v)
+{
+    if (v < 1) {
+        v = 1;
+    } else if (v > 40) {
+        v = 40;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045BA84(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045BABC(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045BB0C(register void *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" void fn_8045BB54(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f14 = v;
+}
+
+extern "C" int fn_8045BB98(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045BBDC(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045DFC8(void *self, int v);
+extern "C" void fn_8045E00C(void *self, int v);
+extern char lbl_8066D8BC[8];
+extern char lbl_8066BC10[8];
+
+ObjL::ObjL(register int a, register int b, register int c, register int d, register int e)
+{
+    int r;
+    fn_8045BABC(this, a);
+    fn_8045BB0C(this, b);
+    fn_8045DFC8(this, c);
+    fn_8045E00C(this, d);
+    fn_8045BB54(this, e);
+    r = fn_802465B0(lbl_8066D8BC, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D8BC, lbl_8066BC10);
+        r = fn_802465B0(lbl_8066D8BC, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045BCEC(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045BD3C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045BD80(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 40) {
+        v = 40;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045BDC4(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045BDFC(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045BE4C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045BE90(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 40) {
+        v = 40;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045BED4(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 100) {
+        v = 100;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045BF18(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045BF50(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045BFA0(register void *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" int fn_8045BFE8(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045C02C(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045E050(void *self, int v);
+extern "C" void fn_8045E094(void *self, int v);
+extern char lbl_8066D8DC[8];
+extern char lbl_8066BC28[8];
+
+ObjK::ObjK(register int a, register int b, register int c, register int d)
+{
+    int r;
+    fn_8045BF50(this, a);
+    fn_8045BFA0(this, b);
+    fn_8045E050(this, c);
+    fn_8045E094(this, d);
+    r = fn_802465B0(lbl_8066D8DC, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D8DC, lbl_8066BC28);
+        r = fn_802465B0(lbl_8066D8DC, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045C12C(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045C17C(register void *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" void fn_8045C1C4(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->fC = v;
+}
+
+extern "C" int fn_8045C208(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045C24C(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern char lbl_8066D8E4[8];
+extern char lbl_8066BC30[8];
+
+ObjH::ObjH(register int a, register int b, register int c)
+{
+    int r;
+    fn_8045C12C(this, a);
+    fn_8045C17C(this, b);
+    fn_8045C1C4(this, c);
+    r = fn_802465B0(lbl_8066D8E4, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D8E4, lbl_8066BC30);
+        r = fn_802465B0(lbl_8066D8E4, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045C33C(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045C38C(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" void fn_8045C3D0(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 50) {
+        v = 50;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045C414(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1) {
+        v = 1;
+    }
+    ((Setting *)self)->f10 = v;
+}
+
+extern "C" int fn_8045C458(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045C49C(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045C4D4(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045C524(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" void fn_8045C568(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->fC = v;
+}
+
+extern "C" void fn_8045C5AC(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 50) {
+        v = 50;
+    }
+    self->f10 = v;
+}
+
+extern "C" int fn_8045C5F0(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045C634(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045C66C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045C6BC(register Setting *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045C704(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045C748(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 50) {
+        v = 50;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045C78C(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045C7C4(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045C814(register Setting *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045C85C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045C8A0(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 7) {
+        v = 7;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045C8E4(register Setting *self, register int v)
+{
+    if (v < 1) {
+        v = 1;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f14 = v;
+}
+
+extern "C" void fn_8045C928(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045C960(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045C9B0(register void *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" int fn_8045C9F8(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045CA3C(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045E0D8(void *self, int v);
+extern "C" void fn_8045E11C(void *self, int v);
+extern "C" void fn_8045E160(void *self, int v);
+extern "C" void fn_80456478(void *self, int v);
+extern char lbl_8066D924[8];
+extern char lbl_8066BC58[8];
+
+ObjG::ObjG(register int a, register int b, register int c, register int d, register int e, register int f)
+{
+    int r;
+    fn_8045C960(this, a);
+    fn_8045C9B0(this, b);
+    fn_8045E0D8(this, c);
+    fn_8045E11C(this, d);
+    fn_8045E160(this, e);
+    fn_80456478(this, f);
+    r = fn_802465B0(lbl_8066D924, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D924, lbl_8066BC58);
+        r = fn_802465B0(lbl_8066D924, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045CB5C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045CBAC(register Setting *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045CBF4(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045CC38(register Setting *self, register int v)
+{
+    if (v < 1) {
+        v = 1;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045CC7C(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045CCB4(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045CD04(register void *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" int fn_8045CD4C(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045CD90(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045E1A4(void *self, int v);
+extern "C" void fn_8045E1E8(void *self, int v);
+extern char lbl_8066D934[8];
+extern char lbl_8066BC68[8];
+
+ObjF::ObjF(register int a, register int b, register int c, register int d)
+{
+    int r;
+    fn_8045CCB4(this, a);
+    fn_8045CD04(this, b);
+    fn_8045E1A4(this, c);
+    fn_8045E1E8(this, d);
+    r = fn_802465B0(lbl_8066D934, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D934, lbl_8066BC68);
+        r = fn_802465B0(lbl_8066D934, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045CE90(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 100) {
+        v = 100;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045CED4(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045CF0C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 30) {
+        v = 30;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045CF50(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045CF88(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 30) {
+        v = 30;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045CFCC(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045D004(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 30) {
+        v = 30;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045D048(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045D080(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 30) {
+        v = 30;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045D0C4(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045D0FC(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" int fn_8045D140(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045D184(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern char lbl_8066D964[8];
+extern char lbl_8066BC98[8];
+
+ObjE::ObjE(register int a)
+{
+    int r;
+    fn_8045D0FC(this, a);
+    r = fn_802465B0(lbl_8066D964, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D964, lbl_8066BC98);
+        r = fn_802465B0(lbl_8066D964, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045D254(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045D2A4(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" int fn_8045D2E8(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045D32C(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern char lbl_8066D9C4[8];
+extern char lbl_8066BCA0[8];
+
+ObjC::ObjC(register int a, register int b)
+{
+    int r;
+    fn_8045D254(this, a);
+    fn_8045D2A4(this, b);
+    r = fn_802465B0(lbl_8066D9C4, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D9C4, lbl_8066BCA0);
+        r = fn_802465B0(lbl_8066D9C4, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045D40C(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    ((Setting *)self)->f4 = v;
+}
+
+extern "C" void fn_8045D45C(register void *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->f8 = v;
+}
+
+extern "C" void fn_8045D4A4(register void *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    ((Setting *)self)->fC = v;
+}
+
+extern "C" int fn_8045D4E8(register void *self)
+{
+    return fn_8024606C(self);
+}
+
+extern "C" void fn_8045D52C(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045E22C(void *self, int v);
+extern char lbl_8066D9CC[8];
+extern char lbl_8066BCA8[8];
+
+ObjI::ObjI(register int a, register int b, register int c, register int d)
+{
+    int r;
+    fn_8045D40C(this, a);
+    fn_8045D45C(this, b);
+    fn_8045D4A4(this, c);
+    fn_8045E22C(this, d);
+    r = fn_802465B0(lbl_8066D9CC, (char *)this + 4, this);
+    if (r < 0) {
+        fn_80245CBC(lbl_8066D9CC, lbl_8066BCA8);
+        r = fn_802465B0(lbl_8066D9CC, (char *)this + 4, this);
+    }
+}
+
+extern "C" void fn_8045D62C(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045D664(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045D69C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045D6EC(register Setting *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045D734(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045D778(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1) {
+        v = 1;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045D7BC(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045D7F4(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_8045D82C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045D87C(register Setting *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045D8C4(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045D908(register Setting *self, register int v)
+{
+    if (v < 1) {
+        v = 1;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045D94C(register void *self)
+{
+    fn_802460AC(self);
+}
