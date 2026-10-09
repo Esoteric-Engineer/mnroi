@@ -701,3 +701,13 @@ extern "C" void fn_80459D88(register void *self)
 {
     fn_802460AC(self);
 }
+
+extern "C" void fn_80459DC0(register Level *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 10) {
+        v = 10;
+    }
+    self->value = v;
+}
