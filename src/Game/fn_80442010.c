@@ -271,7 +271,7 @@ int fn_804427FC(register Game *g)
     return 1;
 }
 
-extern void fn_80467428(void *p, int v);
+extern void fn_80467428(void *p, int v) __asm__("_._5Sub24");
 extern void fn_8044427C(void *p, int v);
 
 void fn_80442838(register char *p, register int v)
