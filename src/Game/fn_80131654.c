@@ -6,6 +6,7 @@ extern void fn_80007624(void *obj);
 extern void fn_80007678(void *obj);
 extern void fn_800075EC(void *obj, unsigned a, unsigned b);
 extern void fn_800076CC(void *obj, unsigned a, unsigned b);
+extern void fn_800077C4(void *obj, int flag);
 extern void fn_801AFD14(int total, int *units, unsigned *a, unsigned *b, int *carry);
 
 void fn_80131654(void)
@@ -32,4 +33,9 @@ void fn_801316BC(int total)
 void fn_80131724(unsigned a, unsigned b)
 {
     fn_800076CC(lbl_8066B578, a, b);
+}
+
+void fn_80131768(void)
+{
+    fn_800077C4(lbl_8066B578, 1);
 }
