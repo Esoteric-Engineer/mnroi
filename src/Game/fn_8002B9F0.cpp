@@ -356,7 +356,7 @@ int fn_80126DF0();
 void fn_80128634();
 void fn_8002F4A8(void *p);
 void fn_80015960(int a, int b, int c);
-void fn_8002C594(void *p);
+int fn_8002C594(void *p);
 void fn_8002F9A8(void *p);
 void fn_8002CB1C(void *p);
 void fn_8002E3EC(void *p);
@@ -472,4 +472,33 @@ extern "C" void fn_8002C214(register FrameCtx *self)
     default:
         break;
     }
+}
+
+extern "C" {
+int fn_80426AB0(void *p);
+void *fn_80431DB0(void *p);
+void fn_8008856C(void *p, void *v, int f);
+void fn_80432D00(void *p, int v);
+void fn_8002DBF8(void *p, void *q);
+int fn_80432924(void *g);
+void fn_800949FC(void *g, int v);
+}
+
+extern char lbl_8054ED80[];
+extern char lbl_8054EF38[];
+
+// Frame-start hook run from fn_8002C214's states 10 and 13 (guessed).
+extern "C" int fn_8002C594(register void *self)
+{
+    if (fn_80426AB0(&lbl_80552110)) {
+        fn_8008856C(lbl_8054ED80, fn_80431DB0(lbl_8054ED80), 1);
+    } else {
+        fn_8008856C(lbl_8054EF38, fn_80431DB0(lbl_8054EF38), 1);
+    }
+    fn_80432D00(lbl_80552920, 0);
+    fn_8002DBF8(lbl_8052F060, (char *)fn_80430050(self) + 0x30);
+    if (fn_80432924(&lbl_80552110)) {
+        fn_800949FC(&lbl_80552110, 1);
+    }
+    return 0;
 }
