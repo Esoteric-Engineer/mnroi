@@ -213,7 +213,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | done | | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
-| 9d | done (`fn_8002F884`, the mode setter) | the other level loaders section 6 reaches, pinned: `fn_8002C690`, `fn_8002D7A8`, `fn_8002D90C`; then grow `Game/fn_8002B9F0.cpp` from 0x8002C214 | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
+| 9d | done (`fn_8002F884`, the mode setter) | the other level loaders section 6 reaches, pinned: `fn_8002D7A8`, `fn_8002D90C` (`fn_8002C690` is done); then grow `Game/fn_8002B9F0.cpp` from 0x8002C214 | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
 - **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.
@@ -228,6 +228,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
   `fn_8002BD34` runs per frame: `+0x68` is a flags word (bits 0x1-0x100 gate the frame body's phases; meanings unknown), and
   `fn_8002F884(self, mode)` (`Game/fn_8002F884.cpp`, a unit of its own, pair-carrying) stores `mode` (1-7) at `+0x64` and
   the phase mask for it at `+0x68` (1: 0x29, 2: 0x99, 3: 0xDF, 4: 0xDB, 5: 0xDD, 6: 0xD1, 7: 0x109); other modes change nothing.
+  `fn_8002C690(ctx, name, name2, flags)` (`Game/fn_8002C690.cpp`) is the level-load entry the other loaders call.
   `fn_8002C214` (0x380) is next in the file. The file's functions are pair-less, so the unit is `.cpp` with `sn_return_decl`.
 
 ### Step 4: files and boundaries
