@@ -289,3 +289,25 @@ extern "C" void fn_8045E2A4(register Sink *self, register int inChrg)
     } else {
     }
 }
+
+class Pair2
+{
+public:
+    const char *a; // +0x0
+    const char *b; // +0x4
+    int c;         // +0x8
+    int d;         // +0xC
+    int e;         // +0x10
+    int f;         // +0x14
+    Pair2(register const char *a, register const char *b, register int c, register int d);
+};
+
+Pair2::Pair2(register const char *a, register const char *b, register int c, register int d)
+{
+    this->a = a;
+    this->b = b;
+    this->c = c;
+    this->d = d;
+    e = 0;
+    f = 0;
+}
