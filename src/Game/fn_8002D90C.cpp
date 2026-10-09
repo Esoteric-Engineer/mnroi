@@ -2,9 +2,14 @@
 
 inline int sn_return_decl(int a) { return a; }
 
+struct FrameCtx {
+    char pad0[0x5C];
+    int pending; // +0x5C
+};
+
 extern "C" {
 int strcmp(const char *a, const char *b);
-void fn_8002D994(void *ctx);
+int fn_8002D994(FrameCtx *ctx);
 void fn_80433198(void *owner, int a, int b);
 extern const char lbl_80485888[]; // "NOW"
 extern char lbl_8057229C[];
@@ -16,7 +21,7 @@ struct State {
 };
 extern State lbl_80552110;
 
-extern "C" int fn_8002D90C(register void *self, const char *when)
+extern "C" int fn_8002D90C(register FrameCtx *self, const char *when)
 {
     if (strcmp(when, lbl_80485888) == 0) {
         fn_8002D994(self);
@@ -24,5 +29,11 @@ extern "C" int fn_8002D90C(register void *self, const char *when)
         fn_80433198(lbl_8057229C, 0, 0xBB8);
     }
     lbl_80552110.phase = 0xF;
+    return 1;
+}
+
+extern "C" int fn_8002D994(register FrameCtx *self)
+{
+    self->pending = 0xF;
     return 1;
 }
