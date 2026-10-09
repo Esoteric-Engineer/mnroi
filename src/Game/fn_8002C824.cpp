@@ -15,6 +15,9 @@ void fn_80132AAC();
 void fn_80091AB8(void *g);
 void fn_8001812C();
 void fn_8002A2A8();
+void fn_801A0520();
+void fn_8019F02C();
+void fn_80234470();
 void fn_80428C6C(void *list, struct Cue arg);
 }
 
@@ -81,4 +84,11 @@ extern "C" void fn_8002C924(register FrameCtx *self)
     fn_80091AB8(lbl_80552110);
     fn_8001812C();
     fn_8002A2A8();
+}
+
+extern "C" void fn_8002CA20()
+{
+    fn_801A0520();
+    fn_8019F02C();
+    fn_80234470();
 }
