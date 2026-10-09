@@ -403,6 +403,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **Jumps that land one `b` past an epilogue-bound `b`, with that `b` reached only by fall-through, are `return;`s plus an empty `else { }`.** Inside `if (c) { ...; return; ... } else { }` the `return`s branch to the epilogue label and the `then`-end `b` (jump over the empty `else`) sits ahead of the `else` label that the guard's `bne` skips to. An `else if` chain or a trailing `return;` instead puts every exit on the same side of that `b` (`Game/fn_8044FA9C.c`).
 
+- **Four branches to the epilogue at a void function's end (a loop-exit `b`, a second `b` that the arms' early exits target, then the pair), with the early exits landing on the second one rather than on the epilogue, are `goto done;` plus `return; done: return;`.** A `return;` or `break;` in an arm jumps to the epilogue or the loop end, never to the middle of the run; only a user label does. Without the label the unit is 8 bytes short (`Game/fn_80028BAC.cpp`).
+
 ## General
 
 - Comments and whitespace don't affect output, except through `__LINE__`/`__FILE__` and inside string literals.

@@ -125,7 +125,7 @@ This is a C++ singleton that 211 functions reference, so it is the whole game st
 | +0x770, +0x774 | int | Role indices (see `SetMatchInfo`). `fn_80114420` treats "either one nonzero" as "a match is running", which holds for match types 0 and 1 but not 2. | `fn_804317F4`, `fn_8043181C` | `fn_80432844` (+0x770) and `fn_80432870` (+0x774), the getters; `fn_80114420` |
 | +0x7BC | int | A flag, zeroed by `G`'s constructor `fn_80091174`; its only reader bumps a counter at `G+0x78` when it is 0. | `fn_80091174` | `fn_80443CA0` (getter, matched), `fn_80096884` |
 
-`fn_80028BAC` writes most of these fields, along with `+0x74`-`+0x7C` and `+0x620`-`+0x62C`. It looks like a "set up the match from settings" or reset function, and is a good early target.
+`fn_80028BAC` is the command-line parser (`Game/fn_80028BAC.cpp`). Its `-mp` sets the role `+0x770` to 1, `-vs` the role `+0x774` to 1 (both then set `+0x590` to 2), and `-timed [seconds]` sets `+0x75C` to 1 and `+0x764` to `seconds * 1000` (60000 by default). `-level`, `-scene`, `-mission`, `-mpmission` and `-chron` fill the four name buffers and set `+0x61C`, `+0x620`, `+0x624`/`+0x628` (both on the third buffer) and `+0x62C`.
 
 `fn_80091174` is `G`'s constructor: it zeroes the fields above, sets `+0x75C = 3` and `+0x764 = 0x1993E0`, and seeds slots 0 and 1 with `plr_wolverine` through `fn_80443B70`. So `+0x75C = 3` is a third, pre-match value of the timer mode, not one of `SetMatchInfo`'s two.
 
@@ -170,7 +170,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 8 | `G`'s other methods | Done, 0x80431788 up to the string code of row 4. Notes: [Step 8](#step-8-files-and-boundaries). |
 | 9a | Match clock and the `lbl_8066B578` wrappers, 0x80131434-0x801317D8 | Done: `fn_80131434`, `fn_8013156C` and `Game/fn_80131654.c`. [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
 | 9b | Timer-mode readers `fn_8011A94C`, `fn_8011AB34` | Done: `Game/fn_8011A94C.cpp`, `Game/fn_8011AB34.cpp`. The rest of 0x801196F0-0x8011B768 is not needed for versus. |
-| 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | **Current step.** |
+| 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | **Current step.** The parser is done (`Game/fn_80028BAC.cpp`); fill the rest of the file from `fn_800288AC`. |
 | 9d | Main loop and frame body, 0x8002B9F0-0x8002C214, then the level loaders | Open. |
 | 10 | Tail sweep from `fn_8045FA74` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FA74` (0x3C, same shape as `fn_8045FA38` before it, over `fn_80126B68`); 859 unclaimed functions (0x134C0 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-10-the-registrar-and-handle-class-run). |
 
@@ -212,22 +212,16 @@ up to it. Then fill the range in the "Then" column, one function per run.
 |---|---|---|---|
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
-| 9c | `fn_80028BAC` (0x13C8) | the rest of the file, from `fn_800288AC` | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
+| 9c | done | the rest of the file, from `fn_800288AC` | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
 | 9d | none: grow from the file's first function, `fn_8002B9F0`, through `fn_8002BD34` (five functions, 0x824 bytes) | the level loaders section 6 reaches, pinned: `fn_8002C690`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002F884` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
 - **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.
-- **9c.** `fn_80028BAC` is the command-line parser: a `strtok` loop over some 85 `stricmp` arms, the
-  shape of `Game/fn_80020E60.c`'s `strcmp` chain. Its strings are 0x80484FC4-0x80485378: the
-  delimiters, then the options (`-level`, `-scene`, `-mission`, `-mpmission`, `-player`, `-mp`,
-  `-vs`, `-timed`, `-unlock`, `-difficulty`, `-enablecheats`...; most have a `/` twin). It calls the
-  role setters (`fn_804317F4`, `fn_8043181C`, `fn_80431844`), `fn_80431788` and `fn_80131878`, so its
-  `-mp`, `-vs` and `-timed` arms should settle what the match types are (section 7). It has three
-  trailing branches, so it carries the pair, while four of the small functions before it
-  (`fn_800288AC`, `fn_80028910`, `fn_80028B08`, `fn_80028B28`) have none: the flag changes inside the
-  file. The file's `.rodata` runs from `fn_80028958`'s version strings at 0x80484F84
-  (`"Aug 27 2005 01:28:06"`) through the parser's strings to the static initializer's four floats at
-  0x80485378-0x80485388.
+- **9c.** The parser is a unit of its own (`.rodata` 0x80484FC4-0x80485378 claimed). It carries the
+  pair, while four of the small functions before it (`fn_800288AC`, `fn_80028910`, `fn_80028B08`,
+  `fn_80028B28`) have none: the flag changes inside the file. The file's `.rodata` runs from
+  `fn_80028958`'s version strings at 0x80484F84 (`"Aug 27 2005 01:28:06"`) to the static
+  initializer's four floats at 0x80485378-0x80485388.
 - **9d.** `fn_8002B9F0` (0xC0) is the main loop and `fn_8002BD34` (0x4E0) its per-frame body: a
   pair-less method with 66 calls, `Update__8GameFlow` among them, and the reader of `G+0x61C`.
   Between them are `fn_8002BAB0` (0x1E4), `fn_8002BC94` (0x70) and `fn_8002BD04` (0x30).
@@ -484,7 +478,7 @@ registration takes their addresses and the relocation keeps them alive.
 
 ## 7. Open Questions
 
-- What do the role indices at `+0x770`/`+0x774` mean, and what are match types 0, 1 and 2? `fn_80114420` only gates on whether either is nonzero, so it narrows this to "nonzero means a versus match" without naming the values. (`+0x590` is settled: the active slot count, section 4.1.)
+- What do the role indices at `+0x770`/`+0x774` mean, and what are match types 0, 1 and 2? `fn_80114420` only gates on whether either is nonzero, so it narrows this to "nonzero means a versus match" without naming the values; the command line sets `+0x770` for `-mp` and `+0x774` for `-vs`. (`+0x590` is settled: the active slot count, section 4.1.)
 - What is the rest of the `Slot` layout? The 0xB0 size is confirmed (section 4.1), and `+0x0`,
   `+0x4`, `+0x34`, `+0x38` (int), `+0x3C` (int) and `+0x40` (float) are settled as *types*. The
   meanings of the last three are not: `fn_800956D4` sets `+0x3C = 1` then `+0x38 = 0` on a slot it
