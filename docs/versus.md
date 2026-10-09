@@ -168,7 +168,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 6 | `venuetable.cpp`, 0x8010BED8-0x8010C528 | Done: `Game/handlers/venuetable.cpp` (`GetVenueList`), `Game/fn_8010C090.cpp` (the other handlers) and `Game/fn_8010C338.cpp` (static initializer). `clashVenue_StartLevel` is `Game/fn_8010BFFC.cpp`, a unit of its own for the same reason as row 5's. |
 | 7 | Last-selection module, 0x801317D8-0x80131E90 | Done: `Game/fn_801317D8.cpp`, the whole range. |
 | 8 | `G`'s other methods | Done, 0x80431788 up to the string code of row 4. Notes: [Step 8](#step-8-files-and-boundaries). |
-| 9a | Match clock: `fn_80131434` and `fn_8013156C` (done), then the other 5 functions of its gap, next `fn_80131688` (0x34) | **Current step.** [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
+| 9a | Match clock: `fn_80131434` and `fn_8013156C` (done), then the other 4 functions of its gap, next `fn_801316BC` (0x68) | **Current step.** [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
 | 9b | Timer-mode readers: `fn_8011AB34`, `fn_8011A94C` | Open. |
 | 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | Open. |
 | 9d | Main loop and frame body, 0x8002B9F0-0x8002C214, then the level loaders | Open. |
@@ -210,7 +210,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
 
 | Row | Pinned | Then | File |
 |---|---|---|---|
-| 9a | `fn_80131434` (0x138) | the other 5 functions of 0x80131688-0x801317D8, the gap between `Game/fn_80131654.c` (grows contiguously) and `Game/fn_801317D8.cpp` | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
+| 9a | `fn_80131434` (0x138) | the other 4 functions of 0x801316BC-0x801317D8, the gap between `Game/fn_80131654.c` (grows contiguously) and `Game/fn_801317D8.cpp` | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | `fn_8011AB34` (0xA4), then `fn_8011A94C` (0x184) | nothing, unless their meaning needs `fn_8011A824` (0x94), which both call | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | `fn_80028BAC` (0x13C8) | the rest of the file, from `fn_800288AC` | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
 | 9d | none: grow from the file's first function, `fn_8002B9F0`, through `fn_8002BD34` (five functions, 0x824 bytes) | the level loaders section 6 reaches, pinned: `fn_8002C690`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002F884` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
