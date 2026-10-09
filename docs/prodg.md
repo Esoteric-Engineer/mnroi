@@ -297,9 +297,14 @@ registers at `-O0`. GCC 2.95's `stupid.c` allocates them in one pass:
   parameter, so it comes after every `register` parameter.
 - **A value the compiler saves** (`SAVE_EXPR`: the initializer of a C++ reference local, an operand `fold`
   evaluates once for several uses) lives from just after the parameters' entry copies to just after their
-  final `use`s. One of them is a step shorter than the parameters. With two, the first ties with the
-  parameters and wins on reference count, and the second comes last. `fn_804436D4` has exactly that: `r30`
-  for the first reference, `r29`-`r27` for the parameters, `r26` for the second reference.
+  final `use`s, and the lifetimes nest: with `n` of them, the `k`-th created lives `n - 2k` steps longer than
+  a parameter. One is a step shorter than the parameters. With two, the first ties with the parameters and
+  wins on reference count, and the second comes last: `fn_804436D4` has `r30` for the first reference,
+  `r29`-`r27` for the parameters, `r26` for the second. So a saved value that sits *above* the parameters
+  counts the ones created after it: `fn_80437E50` has five (`r30`, `r29`, parameters, `r25`-`r23`).
+- **What makes one, and in which order:** a virtual call on a call result makes two, the vtable entry
+  address first and the receiver second; a derived-to-base conversion of a call result used as `this` makes
+  one per conversion, the outer conversion first.
 - **Other temporaries** live from their set to their last use and take whatever is free.
 
 `-dr -dg` (above) shows all of it: in the `.rtl` file the `(use (reg N))` insns after `NOTE_INSN_FUNCTION_BEG`

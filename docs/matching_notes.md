@@ -163,6 +163,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   path. `__attribute__((aligned(8)))` on the innermost type restores the DOL's shape; it also decides
   whether a 16-byte member copy's address folds into the symbol (`Game/fn_8002623C.cpp`, `Vector`). The same holds for a byte field read through a pointer member (`p->tbl->e[i].kind`, DOL `add` then `lbz 0x2b`, ours `addi 0x2b` then `lbzx`): `__attribute__((aligned(4)))` on the element struct (`Game/fn_8043C1EC.cpp`, `fn_8043C3C0`).
 
+- **A field of an indexed element that the DOL reads as `mulli` / `addi rB, self, off` / `lwzx rX, rB, product`, or as `mulli` / `add rX, self, product` / `lwz f(rX)`, where pointer arithmetic gives `add rX, product, self` (and an extra `addi`): the element is in a real array member.** `self[i].f` and every cast or `(self + i)->f` spelling of it is a pointer sum, expanded with the product first; `self->entries[i].f` is an array reference, which computes the index into a register by itself and then follows the alignment rule above: a 4-aligned element gives the `addi`/`lwzx` form (`Game/fn_804396F8.c`, `Slot slots[2]`), an `aligned(8)` one the `add` plus displacement (`Game/fn_8043E148.cpp`).
+
 - **`addi r0, rX, N` / `mr r3, r0` instead of `addi r3, rX, N` before a call is only about the frame
   offset.** GCC targets r3 directly only when the object is the first local (offset 8); anywhere else
   it goes through r0. It is not a constructor-vs-plain-call difference, and the two dead `mr r0, rX`
@@ -175,7 +177,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   [`prodg.md`](prodg.md#c)), so a unit calling it is `.cpp` and the constructor that follows needs
   its mangled name in `symbols.txt` (`Game/fn_800887AC.cpp`).
 
-- **`mr rN, r3` / `mr r3, rN` around a call result that is the receiver (or reference argument) of a method of a *base* class means the accessor returns a derived-class pointer.** The derived-to-base conversion saves the pointer in a whole-function pseudo, so it takes the first call-saved registers (`r30`, `r29`, ...); a same-class receiver gives the plain `mr r0, r3` / `mr r3, r0` pair. Declare `struct Sub : Obj { int pad; }`, make the accessor return `Sub *`, and call `acc(x)->get()`, with `__asm__("fn_XXXXXXXX")` on the base method (`Game/fn_80437B60.cpp`).
+- **`mr rN, r3` / `mr r3, rN` around a call result that is the receiver (or reference argument) of a method of a *base* class means the accessor returns a derived-class pointer.** The derived-to-base conversion saves the pointer in a whole-function pseudo, so it takes the first call-saved registers (`r30`, `r29`, ...); a same-class receiver gives the plain `mr r0, r3` / `mr r3, r0` pair. Declare `struct Sub : Obj { int pad; }`, make the accessor return `Sub *`, and call `acc(x)->get()`, with `__asm__("fn_XXXXXXXX")` on the base method (`Game/fn_80437B60.cpp`). Two copies with no frame slot (`mr r24, r3` / `mr r25, r24` / `mr r3, r25`) are two conversions, a base-qualified call: `acc(x)->Mid::get()` with `Sub : Mid : Obj` and `get` declared in `Obj`. Each conversion is one more saved value, which also moves the function's other saved values up ([`prodg.md`](prodg.md#register-allocation-at--o0)); two `register` locals give the copies but not the registers (`fn_80437E50`).
 
 - **`p->arr[p->n++] = x` with two register copies before the index `slwi` is cc1plus; cc1 emits
   one.** Another `.c`-vs-`.cpp` test that needs no size evidence, and the extra copy widens the

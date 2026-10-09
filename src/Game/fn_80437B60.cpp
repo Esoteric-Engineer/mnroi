@@ -86,10 +86,16 @@ public:
     virtual void v6(void *a, Obj &b, void *c);
 };
 
-class HandleD : public Handle
+class HandleM : public Handle
 {
 public:
     int pad;
+};
+
+class HandleD : public HandleM
+{
+public:
+    int pad2;
 };
 
 extern "C" HandleD *fn_80435340d(Sub *a) __asm__("fn_80435340");
@@ -127,13 +133,9 @@ extern "C" void fn_80437B60(register void *self, register Body *body, register i
 
 extern "C" void fn_80437E50(register void *self, register Body *body, register int flag)
 {
-    register Handle *b;
-    register Handle *a;
     if (((Handle *)fn_80435340(fn_8032A228(self)))->v2() == 4)
     {
-        a = fn_80435340d(fn_8032A228(self));
-        b = a;
-        float radius = b->radius();
+        float radius = fn_80435340d(fn_8032A228(self))->HandleM::radius();
         Vector v;
         v.set(fn_80318E90(self));
         if (fn_804341BC(fn_804370E8(fn_80434EA8(body)), &v) < radius * radius)

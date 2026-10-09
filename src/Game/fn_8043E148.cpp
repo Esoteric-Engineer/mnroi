@@ -5,14 +5,19 @@ inline int sn_return_decl(int a)
     return a;
 }
 
-typedef struct Entry
+struct Entry
 {
     char pad[4];
     int word; // +0x4
     char tail[0x28];
-} Entry;
+} __attribute__((aligned(8)));
 
-extern "C" int fn_8043E148(register Entry *self, register int i)
+struct Table
 {
-    return self[i].word != 0;
+    Entry entries[1];
+};
+
+extern "C" int fn_8043E148(register Table *self, register int i)
+{
+    return self->entries[i].word != 0;
 }
