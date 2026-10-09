@@ -170,7 +170,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 8 | `G`'s other methods | Done, 0x80431788 up to the string code of row 4. Notes: [Step 8](#step-8-files-and-boundaries). |
 | 9a | Match clock and the `lbl_8066B578` wrappers, 0x80131434-0x801317D8 | Done: `fn_80131434`, `fn_8013156C` and `Game/fn_80131654.c`. [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
 | 9b | Timer-mode readers `fn_8011A94C`, `fn_8011AB34` | Done: `Game/fn_8011A94C.cpp`, `Game/fn_8011AB34.cpp`. The rest of 0x801196F0-0x8011B768 is not needed for versus. |
-| 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | **Current step.** The parser is done (`Game/fn_80028BAC.cpp`); fill the rest of the file from `fn_800288AC`. |
+| 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | **Current step.** Done to 0x80029F74 (`Game/fn_800288AC.cpp`, `Game/fn_80028BAC.cpp`); the static initializer `fn_80029F74` and its `_GLOBAL_.I`/`.D` (0x8002A078/0x8002A0BC) are left. |
 | 9d | Main loop and frame body, 0x8002B9F0-0x8002C214, then the level loaders | Open. |
 | 10 | Tail sweep from `fn_8045FA74` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FA74` (0x3C, same shape as `fn_8045FA38` before it, over `fn_80126B68`); 859 unclaimed functions (0x134C0 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-10-the-registrar-and-handle-class-run). |
 
@@ -217,11 +217,11 @@ up to it. Then fill the range in the "Then" column, one function per run.
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
 - **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.
-- **9c.** The parser is a unit of its own (`.rodata` 0x80484FC4-0x80485378 claimed). It carries the
-  pair, while four of the small functions before it (`fn_800288AC`, `fn_80028910`, `fn_80028B08`,
-  `fn_80028B28`) have none: the flag changes inside the file. The file's `.rodata` runs from
-  `fn_80028958`'s version strings at 0x80484F84 (`"Aug 27 2005 01:28:06"`) to the static
-  initializer's four floats at 0x80485378-0x80485388.
+- **9c.** The parser is a unit of its own (`.rodata` 0x80484FC4-0x80485378 claimed), with the pair;
+  the ten functions before it are `Game/fn_800288AC.cpp`, pair-less except `fn_8002892C`, whose label
+  clears the flag (`sn_return_decl` goes first). `lbl_8066D568` is an 8-byte flags object (`Config`,
+  guessed; `fn_80028A10` constructs it, `fn_80028AB8` is its destructor) and `lbl_8052EA60` the
+  0xB8-byte build-version record (`Version`, `fn_80028958`); both are built by `fn_80029F74`, whose four floats are at 0x80485378-0x80485388.
 - **9d.** `fn_8002B9F0` (0xC0) is the main loop and `fn_8002BD34` (0x4E0) its per-frame body: a
   pair-less method with 66 calls, `Update__8GameFlow` among them, and the reader of `G+0x61C`.
   Between them are `fn_8002BAB0` (0x1E4), `fn_8002BC94` (0x70) and `fn_8002BD04` (0x30).
