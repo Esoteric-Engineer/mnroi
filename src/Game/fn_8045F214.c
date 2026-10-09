@@ -52,3 +52,17 @@ void fn_8045F308(register Owner *self)
 {
     fn_8045F280(self->list, self->a);
 }
+
+extern void fn_80433CF0(void *self, int inChrg);
+
+void fn_8045F344(register void *self, register int inChrg)
+{
+    fn_80433CF0(self, 0);
+}
+
+extern void fn_8042A780(void *self, int a);
+
+void fn_8045F384(register void *self, register int a)
+{
+    fn_8042A780(self, a);
+}
