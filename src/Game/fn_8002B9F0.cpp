@@ -2,6 +2,8 @@
 
 inline int sn_return_decl(int a) { return a; }
 
+class FrameCtx;
+
 extern "C" {
 void fn_801336F0();
 void fn_800924BC(void *g);
@@ -215,7 +217,7 @@ void fn_80219E64();
 void *fn_8042F024(void *g);
 void fn_80164608(void *a, void *b);
 void *fn_804325A0(void *g);
-void fn_8002C214(void *p);
+void fn_8002C214(FrameCtx *p);
 void fn_8002E97C(void *p);
 void *fn_804324EC(void *g);
 void fn_80430C80(void *p, int a, void *b);
@@ -331,11 +333,143 @@ extern "C" void fn_8002BD34(register FrameCtx *self, int arg)
     }
     fn_80164608(lbl_80571E04, fn_8042F024(lbl_80593BE8));
     fn_80164608(lbl_80571E54, fn_804325A0(lbl_80593BE8));
-    fn_8002C214(lbl_8052F060);
+    fn_8002C214((FrameCtx *)lbl_8052F060);
     fn_8002E97C(self);
     if (lbl_8066B650 != 0) {
     }
     fn_80430C80(fn_8042FA34(), 1, fn_804324EC(lbl_80593BE8));
     fn_80432998(fn_8042FA34());
     fn_8002BD04();
+}
+
+extern "C" {
+void fn_80432AF8(void *p);
+void fn_8002E2C0(void *p);
+void fn_8002E4F8(void *p);
+void fn_8002E61C(void *p, char *s, int v);
+int fn_80432A60(void *p);
+void fn_8002E69C(void *p);
+int fn_8012D470();
+void fn_80432CD8(void *p);
+void EndLoad__8GameFlow(void *p);
+int fn_80126DF0();
+void fn_80128634();
+void fn_8002F4A8(void *p);
+void fn_80015960(int a, int b, int c);
+void fn_8002C594(void *p);
+void fn_8002F9A8(void *p);
+void fn_8002CB1C(void *p);
+void fn_8002E3EC(void *p);
+void fn_8021A9EC(int a, int b);
+int SetCommandBlocking__8GameFlowi(void *p, int v);
+void LoadLevel__8GameFlowPc(void *p, char *name);
+}
+
+extern int lbl_8066B640;
+extern int lbl_8066B6D4;
+extern int lbl_8066B668;
+
+// FrameCtx state machine: acts on the pending state at +0x5C (guessed).
+extern "C" void fn_8002C214(register FrameCtx *self)
+{
+    if ((lbl_8066B6C0 != 1 && lbl_8066B6C0 != 2 && lbl_8066B6C0 != 3) || lbl_8066B640 == 0) {
+        if (lbl_8066B6D4 != 0 && lbl_8066B668 != 0) {
+            lbl_8066B6C0 = 5;
+            fn_8002F884(self, 2);
+            fn_80432AF8(self);
+            lbl_8066B6D4 = 0;
+            return;
+        }
+    }
+    switch (self->f5c) {
+    case 0:
+        if (self->f6c != 0) {
+            fn_8002E2C0(self);
+        }
+        return;
+    case 5:
+        self->f5c = self->f60;
+        self->f60 = 0x12;
+        break;
+    case 1:
+        self->f5c = 0;
+        fn_8002E4F8(self);
+        self->f218 = 0;
+        break;
+    case 2:
+        self->f5c = 0;
+        fn_8002E570(self, &self->b21c);
+        break;
+    case 3:
+        self->f5c = 0;
+        fn_8002E61C(self, &self->b2a4, self->f324);
+        break;
+    case 4:
+        self->f5c = 0;
+        if (fn_80432A60(self) != 2) {
+            fn_8002E69C(self);
+        }
+        break;
+    case 6:
+        break;
+    case 7:
+        if (fn_8012D470() == 0) {
+            break;
+        }
+        fn_80432CD8(lbl_80552920);
+        EndLoad__8GameFlow(lbl_80552920);
+        if (fn_80126DF0() != 0) {
+            fn_80128634();
+        }
+        self->f5c = 0;
+        fn_8002F4A8(self);
+        break;
+    case 8:
+        self->f5c = 0;
+        break;
+    case 9:
+        self->f5c = 0;
+        break;
+    case 10:
+        fn_80015960(fn_8042D4CC(), 3, 0);
+        self->f5c = 0;
+        fn_8002C594(self);
+        break;
+    case 11:
+        self->f5c = 0;
+        fn_8002F9A8(self);
+        break;
+    case 12:
+        break;
+    case 13:
+        self->f5c = 0;
+        fn_8002CB1C(self);
+        break;
+    case 16:
+        self->f5c = 0;
+        fn_8002E2C0(self);
+        break;
+    case 17:
+        self->f5c = 0;
+        fn_8002E3EC(self);
+        self->f100 = 0;
+        break;
+    case 14:
+        if (fn_8005287C() == 0) {
+            break;
+        }
+        self->f5c = 0;
+        fn_8021A9EC(1, 0);
+        SetCommandBlocking__8GameFlowi(lbl_80552920, 0x58);
+        break;
+    case 15:
+        if (fn_8005287C() == 0) {
+            break;
+        }
+        self->f5c = 0;
+        LoadLevel__8GameFlowPc(lbl_80552920, 0);
+        break;
+    default:
+        break;
+    }
 }

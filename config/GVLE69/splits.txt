@@ -50,7 +50,7 @@ Game/fn_80029F74.cpp:
 	.sbss       start:0x8066D558 end:0x8066D570
 
 Game/fn_8002B9F0.cpp:
-	.text       start:0x8002B9F0 end:0x8002C214
+	.text       start:0x8002B9F0 end:0x8002C594
 	.rodata     start:0x80485808 end:0x80485820
 
 Game/fn_8002C690.cpp:
