@@ -7,6 +7,33 @@ extern "C" {
 int strcmp(const char *a, const char *b);
 char *strstr(const char *a, const char *b);
 void fn_80432518(void *g);
+int fn_8042D4CC();
+void fn_80015960(int a, int b, int c);
+void fn_80016570();
+void fn_80018234();
+void fn_8001812C();
+int fn_80126DF0();
+void fn_8012873C();
+void fn_801285E4();
+void fn_80128634();
+void fn_80219D24(int a);
+void fn_8002A2F0();
+void fn_80052820();
+void fn_8039E66C(void *p);
+void fn_8001A100();
+void fn_8007DEF0();
+void fn_800899E4();
+void fn_8003ECA0();
+void fn_8008712C();
+void fn_80132C54();
+void fn_800B3268(int a);
+void fn_800918E0(void *g);
+void fn_8009486C(void *g, int a);
+void fn_800485D4();
+void fn_80023DEC();
+void fn_80126F0C(int a, int b);
+void fn_80113EE8();
+void fn_801147D4();
 void fn_804325CC(void *g);
 void fn_801AA30C();
 void fn_80023DC8();
@@ -96,6 +123,8 @@ struct FrameCtx
     int f10; // +0x10
     char pad14[0x60];
     char s74[0x20]; // +0x74
+    char pad94[0x208];
+    int f29C; // +0x29C
 };
 
 extern GameFlow lbl_80552920;
@@ -204,5 +233,58 @@ extern "C" void fn_8002D110(register FrameCtx *self, Scene *a, int b, int c)
                 fn_800909A0(0, 0);
             }
         }
+    }
+}
+
+extern "C" void fn_8002D5F8(register FrameCtx *self, int a, int b)
+{
+    if ((b & 0x20000) == 0) {
+        fn_80015960(fn_8042D4CC(), 3, 0);
+    }
+    fn_80016570();
+    fn_80018234();
+    if (b == 0) {
+        fn_8001812C();
+    }
+    if (fn_80126DF0() != 0) {
+        fn_8012873C();
+        fn_801285E4();
+        fn_80128634();
+    }
+    fn_80016570();
+    self->f29C = 0;
+    fn_80016570();
+    fn_80219D24(1);
+    fn_8002A2F0();
+    fn_80052820();
+    fn_80016570();
+    fn_8039E66C(lbl_8064AA80);
+    fn_8001A100();
+    fn_80016570();
+    fn_8011C008(lbl_8066BE10, 7);
+    fn_8007DEF0();
+    fn_800899E4();
+    fn_80016570();
+    fn_8003ECA0();
+    fn_8008712C();
+    fn_80016570();
+    fn_8011C008(lbl_8066BE10, 9);
+    fn_80132C54();
+    fn_800B3268(self->f10);
+    fn_80016570();
+    fn_800918E0(lbl_80552110);
+    fn_80016570();
+    fn_8009486C(lbl_80552110, a);
+    fn_800485D4();
+    fn_80016570();
+    fn_80023DEC();
+    fn_80016570();
+    if (b != 0) {
+        fn_80126F0C(1, 0);
+        fn_80016570();
+        fn_80113EE8();
+        fn_80016570();
+        fn_801147D4();
+        fn_80016570();
     }
 }
