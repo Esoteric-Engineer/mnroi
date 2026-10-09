@@ -721,3 +721,96 @@ extern "C" void fn_80459E3C(register void *self)
 {
     fn_802460AC(self);
 }
+
+struct Setting
+{
+    int pad0;
+    int f4; // +0x4
+    int f8; // +0x8
+    int fC; // +0xC
+    int f10; // +0x10
+    int f14; // +0x14
+    int f18; // +0x18
+    int f1C; // +0x1C
+    int f20; // +0x20
+};
+
+extern "C" void fn_80459E74(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_80459EC4(register Setting *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_80459F0C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_80459F50(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 50) {
+        v = 50;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_80459F94(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 4) {
+        v = 4;
+    }
+    self->f14 = v;
+}
+
+extern "C" void fn_80459FD8(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1) {
+        v = 1;
+    }
+    self->f18 = v;
+}
+
+extern "C" void fn_8045A01C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 300) {
+        v = 300;
+    }
+    self->f1C = v;
+}
+
+extern "C" void fn_8045A060(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0x7FFF) {
+        v = 0x7FFF;
+    }
+    self->f20 = v;
+}
