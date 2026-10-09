@@ -311,3 +311,87 @@ Pair2::Pair2(register const char *a, register const char *b, register int c, reg
     e = 0;
     f = 0;
 }
+
+// Loads the music bank "<dir>/<name>.mpf" and starts its streams (the .mus files), then sets the music volume.
+extern "C" int sprintf(char *dst, const char *fmt, ...);
+extern "C" void *fn_801A89C0(char *path, unsigned *size, const char *tag, int a, int b);
+extern "C" int fn_80266134(void *buf);
+extern "C" void fn_8011931C(char *a, char *b);
+extern "C" int fn_8026A57C(unsigned id, char *path, int a);
+extern "C" void fn_8026A5EC(unsigned id, int a, float f);
+extern "C" int fn_8026A758(unsigned id, char *path, int a);
+extern "C" void fn_8026A7CC(unsigned id);
+extern "C" int fn_80264968(unsigned id, int a);
+extern "C" int fn_801192D4(int a);
+extern "C" void fn_80119B20(int v);
+extern "C" int fn_8010E280(void);
+extern "C" unsigned int fn_8010C7EC(void *obj, int a, int b);
+extern "C" void fn_8024D258(void);
+extern "C" void fn_8024D298(void);
+extern "C" void fn_8026B0A0(int a, int b);
+
+extern char lbl_80497B14[], lbl_80497B20[], lbl_80497B2C[], lbl_80497B3C[], lbl_80497B50[];
+extern char lbl_8066D808[8];
+extern int lbl_8066BDD0, lbl_8066BDD4;
+
+struct MusicBank
+{
+    const char *dir;  // +0x0
+    const char *name; // +0x4
+    int hasSecond;    // +0x8
+    int hasOverlay;   // +0xC
+    void *data;       // +0x10
+    unsigned size;    // +0x14
+};
+
+extern "C" void fn_8045E354(register MusicBank *self)
+{
+    char buf[0x80];
+    int a;
+    char pathA[0x80];
+    int b;
+    char pathB[0x80];
+    unsigned c;
+
+    if (self->data) {
+        return;
+    }
+    sprintf(buf, lbl_80497B14, self->dir, self->name);
+    self->data = fn_801A89C0(buf, &self->size, lbl_80497B20, 2, 0x10);
+    lbl_8066BDD4 += self->size;
+    a = fn_80266134(self->data);
+    sprintf(buf, lbl_80497B2C, self->dir);
+    fn_8011931C(buf, pathA);
+    a = fn_8026A57C(0x11000001, pathA, 500);
+    if (a >= 0) {
+        fn_8026A5EC(0x11000001, 3, 2.0f);
+    }
+    if (self->hasSecond) {
+        b = fn_80266134(self->data);
+        sprintf(buf, lbl_80497B3C, self->dir);
+        fn_8011931C(buf, pathB);
+        b = fn_8026A57C(0x11000004, pathB, 500);
+        if (b >= 0) {
+            fn_8026A5EC(0x11000004, 3, 2.0f);
+        }
+    }
+    if (self->hasOverlay) {
+        sprintf(buf, lbl_80497B50, self->dir);
+        fn_8011931C(buf, pathA);
+        a = fn_8026A758(0x11000002, pathA, 2);
+        if (a >= 0) {
+            fn_8026A7CC(0x11000002);
+        }
+        a = fn_80264968(0x11000002, 0);
+    }
+    b = fn_801192D4(1);
+    fn_80119B20(b);
+    c = fn_8010C7EC(lbl_8066D808, 1, fn_8010E280() ? 0x12d : 0x12c);
+    c = c * b / 127;
+    if (lbl_8066BDD0 == 0) {
+        c = 0;
+    }
+    fn_8024D258();
+    fn_8026B0A0(-1, (char)c);
+    fn_8024D298();
+}
