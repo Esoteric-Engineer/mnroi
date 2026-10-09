@@ -27,3 +27,37 @@ extern "C" void fn_8045E6F8(register void *self, register int inChrg)
     } else {
     }
 }
+
+class ListB : public ListA
+{
+public:
+    ListB();
+};
+
+ListB::ListB()
+{
+}
+
+// ListB destructor: forwards to ListA's with the in-charge flag
+extern "C" void fn_8045E790(register void *self, register int inChrg)
+{
+    fn_8045E6F8(self, inChrg);
+}
+
+class ListC : public ListB
+{
+public:
+    char pad[0x20];
+    int n; // +0x24
+    ListC(register int v);
+};
+
+ListC::ListC(register int v) : n(v)
+{
+}
+
+// ListC destructor
+extern "C" void fn_8045E818(register void *self, register int inChrg)
+{
+    fn_8045E790(self, inChrg);
+}
