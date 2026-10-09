@@ -654,3 +654,43 @@ extern "C" void fn_80459BB4(register void *self, register void *actor, register 
     }
     fn_8045BB54(self, value);
 }
+
+inline int sn_return_decl(int a) { return a; }
+
+struct Level
+{
+    int pad0;
+    int value; // +0x4
+    int value2; // +0x8
+    int value3; // +0xC
+};
+
+extern "C" void fn_80459CBC(register Level *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 100) {
+        v = 100;
+    }
+    self->value = v;
+}
+
+extern "C" void fn_80459D00(register Level *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 100) {
+        v = 100;
+    }
+    self->value2 = v;
+}
+
+extern "C" void fn_80459D44(register Level *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 100) {
+        v = 100;
+    }
+    self->value3 = v;
+}
