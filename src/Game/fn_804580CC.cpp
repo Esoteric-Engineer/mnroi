@@ -814,3 +814,8 @@ extern "C" void fn_8045A060(register Setting *self, register int v)
     }
     self->f20 = v;
 }
+
+extern "C" void fn_8045A0A4(register void *self)
+{
+    fn_802460AC(self);
+}
