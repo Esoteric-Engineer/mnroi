@@ -329,6 +329,10 @@ extern "C" unsigned int fn_8010C7EC(void *obj, int a, int b);
 extern "C" void fn_8024D258(void);
 extern "C" void fn_8024D298(void);
 extern "C" void fn_8026B0A0(int a, int b);
+extern "C" void fn_802654BC(int a);
+extern "C" void fn_8026633C(int a);
+extern "C" void fn_80264D20(unsigned id, int a);
+extern "C" void fn_801ACC0C(void *p);
 
 extern char lbl_80497B14[], lbl_80497B20[], lbl_80497B2C[], lbl_80497B3C[], lbl_80497B50[];
 extern char lbl_8066D808[8];
@@ -394,4 +398,22 @@ extern "C" void fn_8045E354(register MusicBank *self)
     fn_8024D258();
     fn_8026B0A0(-1, (char)c);
     fn_8024D298();
+}
+
+// Stops the bank's streams and frees the .mpf buffer.
+extern "C" void fn_8045E618(register MusicBank *self)
+{
+    fn_8024D258();
+    fn_802654BC(-1);
+    fn_8024D298();
+    if (self->data == 0) {
+        return;
+    }
+    if (self->hasOverlay) {
+        fn_80264D20(0x11000002, 0);
+    }
+    fn_8026633C(-1);
+    fn_801ACC0C(self->data);
+    self->data = 0;
+    lbl_8066BDD4 -= self->size;
 }
