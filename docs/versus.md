@@ -169,8 +169,8 @@ mod the community wants ([`characters.md`](characters.md)).
 | 7 | Last-selection module, 0x801317D8-0x80131E90 | Done: `Game/fn_801317D8.cpp`, the whole range. |
 | 8 | `G`'s other methods | Done, 0x80431788 up to the string code of row 4. Notes: [Step 8](#step-8-files-and-boundaries). |
 | 9a | Match clock and the `lbl_8066B578` wrappers, 0x80131434-0x801317D8 | Done: `fn_80131434`, `fn_8013156C` and `Game/fn_80131654.c`. [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
-| 9b | Timer-mode readers: `fn_8011A94C` (`fn_8011AB34` is done) | **Current step.** |
-| 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | Open. |
+| 9b | Timer-mode readers `fn_8011A94C`, `fn_8011AB34` | Done: `Game/fn_8011A94C.cpp`, `Game/fn_8011AB34.cpp`. The rest of 0x801196F0-0x8011B768 is not needed for versus. |
+| 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | **Current step.** |
 | 9d | Main loop and frame body, 0x8002B9F0-0x8002C214, then the level loaders | Open. |
 | 10 | Tail sweep from `fn_8045FA74` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FA74` (0x3C, same shape as `fn_8045FA38` before it, over `fn_80126B68`); 859 unclaimed functions (0x134C0 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-10-the-registrar-and-handle-class-run). |
 
@@ -211,14 +211,12 @@ up to it. Then fill the range in the "Then" column, one function per run.
 | Row | Pinned | Then | File |
 |---|---|---|---|
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
-| 9b | `fn_8011A94C` (0x184) | nothing, unless their meaning needs `fn_8011A824` (0x94), which both call | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
+| 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | `fn_80028BAC` (0x13C8) | the rest of the file, from `fn_800288AC` | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
 | 9d | none: grow from the file's first function, `fn_8002B9F0`, through `fn_8002BD34` (five functions, 0x824 bytes) | the level loaders section 6 reaches, pinned: `fn_8002C690`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002F884` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
-- **9b.** Free functions that carry the pair (`Game/fn_8011AB34.cpp` is the model). `fn_8011A94C`
-  also calls both role getters (`fn_80432844`, `fn_80432870`) and reads `.bss` `lbl_80568E30` and
-  `.sdata` `lbl_8066BE10`; `fn_8011A824` is the callee both share.
+- **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.
 - **9c.** `fn_80028BAC` is the command-line parser: a `strtok` loop over some 85 `stricmp` arms, the
   shape of `Game/fn_80020E60.c`'s `strcmp` chain. Its strings are 0x80484FC4-0x80485378: the
   delimiters, then the options (`-level`, `-scene`, `-mission`, `-mpmission`, `-player`, `-mp`,
