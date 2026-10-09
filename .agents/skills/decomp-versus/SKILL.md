@@ -1,6 +1,6 @@
 ---
 name: decomp-versus
-description: Run decomp-next aimed at the versus-mode code in this GameCube decomp (mnroi, GVLE69). It picks the next unmatched function on the versus path (match setup handlers, venue/character select, the character roster and loading, the game-state fields they drive) and byte-matches it. Use when asked to run "/decomp-versus" or to decompile the versus mode.
+description: Run decomp-next aimed at the versus-mode code in this GameCube decomp (mnroi, GVLE69). It picks the next open target on the versus path (match setup handlers, venue/character select, the character roster and its data, the readers of the game-state fields they drive) and byte-matches it. Use when asked to run "/decomp-versus" or to decompile the versus mode.
 ---
 
 # decomp-versus: decomp-next, aimed at versus mode
@@ -11,20 +11,32 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
 ## Changes to decomp-next
 
 - **Before step 1, read `docs/versus.md` section 5 (Target Order) only** — the status table plus
-  whichever "files and boundaries" subsection covers the step you land on. That is enough to pick a
+  the `Step N` subsection for the row you land on, and no other subsection. That is enough to pick a
   target and know its blocker. Read further sections *on demand*, once you know what you are
   working: section 2 for the file map, section 3 for the setup flow, section 4 for the game-state
   and slot fields, section 6 for `GameFlow`. Don't read the file end to end; it is a reference, and
   reading all of it costs more than it returns. Same for `docs/characters.md` in the character
   steps: go to the section the target needs.
 - **Step 1 (Choose):** if the user named a function or unit, work that one. Otherwise take the
-  first unmatched function in `docs/versus.md` section 5, in that order. Within a file, take the
-  next function after the unit's current `.text` end, so that the unit grows as one contiguous range
-  from the file's first function. Still skip anything in `docs/nonmatching.md`. If that function is
-  stuck, move on to the next file in section 5 instead of leaving a gap in the unit.
+  first row of `docs/versus.md` section 5 that is not done, and in it the first target still open.
+  Rows come in three kinds, and the row's subsection says which:
+  - **A file or run:** take the next function after the unit's current `.text` end, so that the
+    unit grows as one contiguous range from the file's first function.
+  - **Pinned functions:** work the named function itself, even with unclaimed functions between it
+    and the nearest matched unit. Once the row's pinned functions match, fill the range the row
+    gives after them, contiguously from a matched neighbour.
+  - **Data:** there is no function to choose. Follow the row's recipe; decomp-next's steps 3 to 6
+    still apply to the unit (claim, register `NonMatching`, compare, flip, `main.dol: OK`).
+
+  Still skip anything in `docs/nonmatching.md`. If the target is stuck, record it there and take the
+  next open target, then the next row, instead of leaving a gap in a unit. The tail-sweep row is the
+  fallback for a session whose rows above are all stuck, never the default.
 - **Step 3 (Claim):** when `docs/versus.md` section 2 gives the function's source file, name the
   unit after it (`Game/handlers/control.cpp`), not `Game/fn_XXXXXXXX.cpp`. If the unit already
-  exists, extend its range rather than starting a new one.
+  exists, extend its range rather than starting a new one. A pinned function gets a unit of its
+  own; when a later run closes the gap to a neighbour of the same language and pair state, extend
+  that neighbour instead of adding another unit. A data-only unit has no `.text` line, and the row
+  gives its name.
 - **Names:** the handler names in `symbols.txt` are the APT script names, not confirmed C++
   symbols. When the compiled name differs (GCC 2.95 mangling), rename the symbol to match what the
   unit emits; see `docs/versus.md` section 1.
@@ -63,5 +75,6 @@ existing long headers in `src/Game/` predate this rule — don't copy their leng
 ## Report
 
 Use decomp-next's report, and add one line on what the work taught about versus mode, if anything
-(for example "`G+0x75C` confirmed as timer mode"). Then the commit message as decomp-next
-specifies.
+(for example "`G+0x75C` confirmed as timer mode"), and one naming the section 5 row you worked and
+the next open target. If every row above the tail sweep is done, or every open one is stuck, say
+that the target order needs a planning session. Then the commit message as decomp-next specifies.
