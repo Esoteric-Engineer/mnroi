@@ -91,3 +91,24 @@ void *fn_80131308(int player)
 {
     return fn_80443D44(lbl_80552110, player); // the player's actor, null when out of range
 }
+
+extern int fn_804613D8(void *slot); // slot+0x7C
+extern int fn_80461404(void *slot); // slot+0x80
+
+int fn_80131354(int player)
+{
+    if (player <= 1) {
+        return fn_804613D8(fn_804317BC(lbl_80552110, player));
+    } else {
+        return 0;
+    }
+}
+
+int fn_801313C4(int player)
+{
+    if (player <= 1) {
+        return fn_80461404(fn_804317BC(lbl_80552110, player));
+    } else {
+        return 0;
+    }
+}
