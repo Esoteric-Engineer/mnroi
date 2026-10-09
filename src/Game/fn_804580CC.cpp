@@ -819,3 +819,48 @@ extern "C" void fn_8045A0A4(register void *self)
 {
     fn_802460AC(self);
 }
+
+extern "C" void fn_8045A0DC(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 0xFFFF) {
+        v = 0xFFFF;
+    }
+    self->f4 = v;
+}
+
+extern "C" void fn_8045A12C(register Setting *self, register int v)
+{
+    if (v < -1000) {
+        v = -1000;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f8 = v;
+}
+
+extern "C" void fn_8045A174(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045A1B8(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 150) {
+        v = 150;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045A1FC(register void *self)
+{
+    fn_802460AC(self);
+}
