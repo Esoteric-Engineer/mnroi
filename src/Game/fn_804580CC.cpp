@@ -711,3 +711,13 @@ extern "C" void fn_80459DC0(register Level *self, register int v)
     }
     self->value = v;
 }
+
+extern "C" void fn_80459E04(register void *self)
+{
+    fn_802460AC(self);
+}
+
+extern "C" void fn_80459E3C(register void *self)
+{
+    fn_802460AC(self);
+}
