@@ -213,7 +213,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | done | | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
-| 9d | none: grow from the file's first function, `fn_8002B9F0`, through `fn_8002BD34` (five functions, 0x824 bytes) | the level loaders section 6 reaches, pinned: `fn_8002C690`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002F884` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
+| 9d | none: grow from `fn_8002BAB0` (after `Game/fn_8002B9F0.cpp`, matched) through `fn_8002BD34` (four functions, 0x764 bytes) | the level loaders section 6 reaches, pinned: `fn_8002C690`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002F884` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
 - **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.
@@ -223,9 +223,10 @@ up to it. Then fill the range in the "Then" column, one function per run.
   guessed; `fn_80028A10` constructs it, `fn_80028AB8` is its destructor) and `lbl_8052EA60` the
   0xB8-byte build-version record (`Version`, `fn_80028958`); the static initializer's unit owns both
   and the four screen-edge floats at `.sbss` 0x8066D558 (`320 - lbl_8066B630 / 2`, ...).
-- **9d.** `fn_8002B9F0` (0xC0) is the main loop and `fn_8002BD34` (0x4E0) its per-frame body: a
-  pair-less method with 66 calls, `Update__8GameFlow` among them, and the reader of `G+0x61C`.
-  Between them are `fn_8002BAB0` (0x1E4), `fn_8002BC94` (0x70) and `fn_8002BD04` (0x30).
+- **9d.** `fn_8002BD34` (0x4E0) is the per-frame body: a pair-less method with 66 calls,
+  `Update__8GameFlow` among them, and the reader of `G+0x61C`. Before it are `fn_8002BAB0` (0x1E4),
+  `fn_8002BC94` (0x70) and `fn_8002BD04` (0x30). The file's functions are pair-less, so the unit
+  is `.cpp` with `sn_return_decl`.
 
 ### Step 4: files and boundaries
 
