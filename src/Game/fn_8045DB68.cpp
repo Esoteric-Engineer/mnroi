@@ -127,3 +127,165 @@ void ImplA::invoke(register int a)
     ((void (*)(int))name)(a);
     return;
 }
+
+// Clamp setters on the settings object (see Game/fn_804580CC.cpp).
+struct Setting
+{
+    int pad0[3];
+    int fC;  // +0xC
+    int f10; // +0x10
+    int f14; // +0x14
+};
+
+extern "C" void fn_8045DEFC(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 40) {
+        v = 40;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045DF40(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045DF84(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 19) {
+        v = 19;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045DFC8(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045E00C(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 40) {
+        v = 40;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045E050(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045E094(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 19) {
+        v = 19;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045E0D8(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045E11C(register Setting *self, register int v)
+{
+    if (v < 1) {
+        v = 1;
+    } else if (v > 7) {
+        v = 7;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045E160(register Setting *self, register int v)
+{
+    if (v < 1) {
+        v = 1;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f14 = v;
+}
+
+extern "C" void fn_8045E1A4(register Setting *self, register int v)
+{
+    if (v < 0) {
+        v = 0;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->fC = v;
+}
+
+extern "C" void fn_8045E1E8(register Setting *self, register int v)
+{
+    if (v < 1) {
+        v = 1;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f10 = v;
+}
+
+extern "C" void fn_8045E22C(register Setting *self, register int v)
+{
+    if (v < 1) {
+        v = 1;
+    } else if (v > 1000) {
+        v = 1000;
+    }
+    self->f10 = v;
+}
+
+extern char lbl_804F5868[];
+extern "C" void __builtin_delete(void *p);
+
+class Sink
+{
+public:
+    const void *vptr; // +0x0
+    Sink();
+};
+
+Sink::Sink() : vptr(lbl_804F5868)
+{
+}
+
+extern "C" void fn_8045E2A4(register Sink *self, register int inChrg)
+{
+    self->vptr = lbl_804F5868;
+    if (inChrg & 1) {
+        __builtin_delete(self);
+    } else {
+    }
+}
