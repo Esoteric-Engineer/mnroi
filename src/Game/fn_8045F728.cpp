@@ -2,7 +2,7 @@
 class Base
 {
 public:
-    Base() __asm__("fn_8045F804");
+    Base() __asm__("__11MachineBase");
     virtual void first();
 };
 
