@@ -52,7 +52,7 @@ public:
     Chain *setup();
 };
 
-extern "C" void fn_8045F86C(Chain *self);
+extern "C" void fn_8045F86C(Chain *self) __asm__("clear__5Quad4");
 
 Chain *Chain::setup()
 {
