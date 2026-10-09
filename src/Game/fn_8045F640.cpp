@@ -1,11 +1,11 @@
-// Constructor over the base at fn_8045F838: the vtable lbl_804F5B98, a zeroed 0x1C-byte block at +0x8 and a flag at +0x24. Names are guesses.
+// Constructor over the base at fn_8045F838 (BlockBase): the vtable lbl_804F5B98, a zeroed 0x1C-byte block at +0x8 and a flag at +0x24. Names are guesses.
 extern "C" void *memset(void *dst, int c, unsigned int n);
 extern "C" int fn_80126AB8(void *self);
 
 class Base
 {
 public:
-    Base() __asm__("fn_8045F838");
+    Base() __asm__("__9BlockBase");
     virtual void first();
 };
 
