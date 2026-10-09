@@ -287,7 +287,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A generated `__static_initialization_and_destruction_0` and its `_GLOBAL_.I`/`_GLOBAL_.D`
   wrappers can be hand-written in a `.c` unit.** Real C++ static initialization is unusable wherever
   the DOL's `__sti` has no function-end branch pair ([`nonmatching.md`](nonmatching.md)), because
-  cc1plus puts one on every generated `__sti`. Writing the three functions by hand reproduces them
+  cc1plus puts one on every generated `__sti`; where the DOL's has the pair, plain global definitions do (`Game/fn_80029F74.cpp`, with the globals' `.bss`/`.sbss` and the `.ctors`/`.dtors` words claimed). Writing the three functions by hand reproduces them
   exactly: `__sti(int initialize, int priority)` is `if (priority == 65535) { if (initialize) {
   <initializers>; ctor(&obj); } else { dtor(&obj, 2); } }` (65535 is GCC 2.95's default init
   priority, which it materialises as `li r9, 0` / `ori r9, r9, 0xffff`), and each wrapper is a

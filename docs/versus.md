@@ -170,8 +170,8 @@ mod the community wants ([`characters.md`](characters.md)).
 | 8 | `G`'s other methods | Done, 0x80431788 up to the string code of row 4. Notes: [Step 8](#step-8-files-and-boundaries). |
 | 9a | Match clock and the `lbl_8066B578` wrappers, 0x80131434-0x801317D8 | Done: `fn_80131434`, `fn_8013156C` and `Game/fn_80131654.c`. [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
 | 9b | Timer-mode readers `fn_8011A94C`, `fn_8011AB34` | Done: `Game/fn_8011A94C.cpp`, `Game/fn_8011AB34.cpp`. The rest of 0x801196F0-0x8011B768 is not needed for versus. |
-| 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | **Current step.** Done to 0x80029F74 (`Game/fn_800288AC.cpp`, `Game/fn_80028BAC.cpp`); the static initializer `fn_80029F74` and its `_GLOBAL_.I`/`.D` (0x8002A078/0x8002A0BC) are left. |
-| 9d | Main loop and frame body, 0x8002B9F0-0x8002C214, then the level loaders | Open. |
+| 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | Done: `Game/fn_800288AC.cpp`, `Game/fn_80028BAC.cpp`, and the static initializer with its `_GLOBAL_` pair in `Game/fn_80029F74.cpp`. |
+| 9d | Main loop and frame body, 0x8002B9F0-0x8002C214, then the level loaders | **Current step.** |
 | 10 | Tail sweep from `fn_8045FA74` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FA74` (0x3C, same shape as `fn_8045FA38` before it, over `fn_80126B68`); 859 unclaimed functions (0x134C0 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-10-the-registrar-and-handle-class-run). |
 
 When rows 2 to 9d are all done this plan is spent: say so in the report instead of settling into
@@ -212,7 +212,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
 |---|---|---|---|
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
-| 9c | done | the rest of the file, from `fn_800288AC` | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
+| 9c | done | | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
 | 9d | none: grow from the file's first function, `fn_8002B9F0`, through `fn_8002BD34` (five functions, 0x824 bytes) | the level loaders section 6 reaches, pinned: `fn_8002C690`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002F884` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
@@ -221,7 +221,8 @@ up to it. Then fill the range in the "Then" column, one function per run.
   the ten functions before it are `Game/fn_800288AC.cpp`, pair-less except `fn_8002892C`, whose label
   clears the flag (`sn_return_decl` goes first). `lbl_8066D568` is an 8-byte flags object (`Config`,
   guessed; `fn_80028A10` constructs it, `fn_80028AB8` is its destructor) and `lbl_8052EA60` the
-  0xB8-byte build-version record (`Version`, `fn_80028958`); both are built by `fn_80029F74`, whose four floats are at 0x80485378-0x80485388.
+  0xB8-byte build-version record (`Version`, `fn_80028958`); the static initializer's unit owns both
+  and the four screen-edge floats at `.sbss` 0x8066D558 (`320 - lbl_8066B630 / 2`, ...).
 - **9d.** `fn_8002B9F0` (0xC0) is the main loop and `fn_8002BD34` (0x4E0) its per-frame body: a
   pair-less method with 66 calls, `Update__8GameFlow` among them, and the reader of `G+0x61C`.
   Between them are `fn_8002BAB0` (0x1E4), `fn_8002BC94` (0x70) and `fn_8002BD04` (0x30).

@@ -41,6 +41,14 @@ Game/fn_80028BAC.cpp:
 	.text       start:0x80028BAC end:0x80029F74
 	.rodata     start:0x80484FC4 end:0x80485378
 
+Game/fn_80029F74.cpp:
+	.text       start:0x80029F74 end:0x8002A100
+	.ctors      start:0x804825D4 end:0x804825D8
+	.dtors      start:0x80482868 end:0x8048286C
+	.rodata     start:0x80485378 end:0x80485388
+	.bss        start:0x8052EA60 end:0x8052EB18
+	.sbss       start:0x8066D558 end:0x8066D570
+
 Game/fn_80088740.c:
 	.text       start:0x80088740 end:0x800887AC
 
