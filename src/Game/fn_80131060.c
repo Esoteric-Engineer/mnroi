@@ -84,3 +84,10 @@ const char *fn_80131294(void)
     actor = tmp;
     return fn_800FC3DC(actor + 0xFC); // +0xFC, the entity name
 }
+
+extern void *fn_80443D44(void *g, int player);
+
+void *fn_80131308(int player)
+{
+    return fn_80443D44(lbl_80552110, player); // the player's actor, null when out of range
+}
