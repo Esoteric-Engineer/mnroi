@@ -10,6 +10,9 @@ Sections:
 	.sbss       type:bss align:4
 	.sdata2     type:rodata align:32
 
+Game/unlockables.c:
+	.data       start:0x804CA51C end:0x804CC55C
+
 Game/fn_800092CC.cpp:
 	.text       start:0x800092CC end:0x800098CC
 	.ctors      start:0x804825A4 end:0x804825A8

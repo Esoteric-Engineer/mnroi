@@ -46,6 +46,17 @@ Only three functions call it: `fn_8001C258` (**matched**, `Game/fn_8001C258.cpp`
 | +0x46 | `s8[2]` | Always 0 | |
 | +0x48 | int | Unlocked at start | 1 |
 
+The tables are source now (`Game/unlockables.c`, a data-only unit): both `CharacterRecord[20]` arrays, the `int[20]` order table, and three more `Rec` arrays of 0x44 bytes (`char name[0x20]`, `char key[0x20]`, `int unlocked`) beside them:
+
+| Address | Contents |
+|---|---|
+| 0x804CB14C | `Rec[7]` venues, `BrooklynBridge` to `RoekelFacility`; the first three start unlocked |
+| 0x804CB328 | `Rec[43]` cards, `~kT_CARDS<n>` / `~kT_CARDSDESC<n>`, all locked |
+| 0x804CBE94 | `int[9]`, all 0; meaning unknown |
+| 0x804CBEB8 | `Rec[25]` comics, `~kT_COMIC<n>` / `~kT_COMICDESC<n>`, all locked |
+
+Rows 0 and 2 are both Wolverine, and 19 repeats Thing; the order table starts and ends with 0. The alternate table repeats the normal one except for the entity name and, in rows 1, 6, 9, 11, 13, 14 and 16, some stats.
+
 The table is in `.data`, and `+0x48` probably changes at runtime as characters are unlocked. That may tie the record count to the save-file layout; check `memcard.cpp` before changing the count.
 
 Accessors, one per field, called by `clashCharSelect_GetCharList`: `fn_8044B1D4` (name key), `fn_8044B234` (intel), `fn_8044B298` (strength), `fn_8044B2FC` (speed), `fn_8044B360` (durability), `fn_8044B3C4` (energy), `fn_8044B428` (skill), and `fn_8044B48C` (unlocked, 5 callers). Each takes `(index, remap, alt)`. The six stat accessors return `char`, not `int`: their caller only matches when they are declared that way, which confirms the stats are `s8`. `fn_8044B1D4` returns `char *` and `fn_8044B48C` returns `int`. Other readers of the table: `fn_804316B0`, `fn_80443678`, `fn_804436D4`, `fn_8044F070` and `fn_80461288`.

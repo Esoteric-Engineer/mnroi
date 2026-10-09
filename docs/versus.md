@@ -160,14 +160,14 @@ mod the community wants ([`characters.md`](characters.md)).
 | # | Target | Next action / blocker |
 |---|---|---|
 | 1 | `characterselect.cpp`, 0x801037B0-0x801040F4 | Done: the whole file, static initializer included. |
-| 2 | Roster data, `.data` 0x804CA51C-0x804CC55C ([`characters.md`](characters.md) section 2) | **Current step.** The accessors are matched; the tables themselves are unclaimed. One data-only unit: [Step 2](#step-2-the-roster-data). |
+| 2 | Roster data, `.data` 0x804CA51C-0x804CC55C ([`characters.md`](characters.md) section 2) | Done: `Game/unlockables.c`. Notes: [Step 2](#step-2-the-roster-data). |
 | 3 | Character type ([`characters.md`](characters.md) sections 1, 5) | Done. `fn_8002623C` is matched (`Game/fn_8002623C.cpp`), which unblocks the rest of its file, to 0x80027D58. |
 | 4 | Selection to spawn ([`characters.md`](characters.md) section 3) | Done, 0x80448A28-0x8044AE3C. Notes: [Step 4](#step-4-files-and-boundaries). |
 | 5 | `control.cpp`, 0x801040F4-0x80106B34 | Done. `Control_ChangeScreen`, `Locale_GetString`, `Global_PlayUISound`, `Global_PlayFEStream` and `Cheat_Enable`, which take a `String` by value, are units of their own in the file's run (they were parked until the hand-written destructor got its `_._6String` name), the rest is `Game/handlers/control.cpp` and `Game/fn_8010*.cpp`. The static initializer is `Game/fn_8010611C.cpp`. |
 | 6 | `venuetable.cpp`, 0x8010BED8-0x8010C528 | Done: `Game/handlers/venuetable.cpp` (`GetVenueList`), `Game/fn_8010C090.cpp` (the other handlers) and `Game/fn_8010C338.cpp` (static initializer). `clashVenue_StartLevel` is `Game/fn_8010BFFC.cpp`, a unit of its own for the same reason as row 5's. |
 | 7 | Last-selection module, 0x801317D8-0x80131E90 | Done: `Game/fn_801317D8.cpp`, the whole range. |
 | 8 | `G`'s other methods | Done, 0x80431788 up to the string code of row 4. Notes: [Step 8](#step-8-files-and-boundaries). |
-| 9a | Match clock: `fn_80131434` | Open. [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
+| 9a | Match clock: `fn_80131434` | **Current step.** [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
 | 9b | Timer-mode readers: `fn_8011AB34`, `fn_8011A94C` | Open. |
 | 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | Open. |
 | 9d | Main loop and frame body, 0x8002B9F0-0x8002C214, then the level loaders | Open. |
@@ -182,17 +182,8 @@ Out of scope for versus: `memcard.cpp` (except whether saves depend on the roste
 
 ### Step 2: the roster data
 
-One contiguous block of `.data`, 0x804CA51C-0x804CC55C (0x2040 bytes): the game's unlockables.
-
-| Address | Type | Contents |
-|---|---|---|
-| 0x804CA51C | `CharacterRecord[20]` (0x4C each, [`characters.md`](characters.md) section 2) | normal costumes |
-| 0x804CAB0C | `CharacterRecord[20]` | alternate costumes |
-| 0x804CB0FC | `int[20]` | select-screen order -> roster index |
-| 0x804CB14C | `Rec[7]` (0x44 each: `char name[0x20]`, `char key[0x20]`, `int unlocked`) | venues, `BrooklynBridge` to `RoekelFacility`; the first three start unlocked |
-| 0x804CB328 | `Rec[43]` | `~kT_CARDS<n>` / `~kT_CARDSDESC<n>`, all locked |
-| 0x804CBE94 | `int[9]` | all 0; meaning unknown |
-| 0x804CBEB8 | `Rec[25]` | `~kT_COMIC<n>` / `~kT_COMICDESC<n>`, all locked |
+`Game/unlockables.c` is a data-only unit (`.data` and no `.text`) over 0x804CA51C-0x804CC55C, the
+game's unlockables. Its field layouts are in [`characters.md`](characters.md) section 2.
 
 - **Who owns it.** Only tail-of-`.text` functions read the block: `fn_80431728`, `fn_80431CCC`, the
   accessors at 0x804435D0-0x80443784, 0x8044D3B8-0x8044D600 and 0x8044F000-0x8044F1D4, and
@@ -201,26 +192,10 @@ One contiguous block of `.data`, 0x804CA51C-0x804CC55C (0x2040 bytes): the game'
   claim it: that is the same link-order cycle as a tail function's float pool. `.data` is laid out in
   link order, and the block sits between `lbl_804CA504` (read from 0x8004F0BC-0x8004FBA8) and
   `lbl_804CC55C` (read from 0x800A1444), so its file is linked between those two. No ordinary
-  function in that span reads the block, so the file is not identified. The boundaries of the
-  registrar run have no bearing on it.
-- **A data-only unit works.** Checked with a throwaway unit: `.data start:0x804CA51C end:0x804CC55C`
-  with no `.text` splits cleanly, compares at 100% and links to `main.dol: OK` as `Matching`. It will
-  be the first Game unit to claim `.data`.
-- **What it needs:**
-  1. `symbols.txt`: dtk split the venue array at a referenced address. Give `lbl_804CB14C` its real
-     size (`size:0x1DC`, without `data:string`) and delete `lbl_804CB16C`
-     ([`matching_notes.md`](matching_notes.md), "dtk split one object").
-  2. `Game/fn_8044EEF4.c` is the one unit that names `lbl_804CB16C`.
-     `(Rec *)((char *)lbl_804CB14C + 0x20)` in its place keeps `fn_8044F19C` at 100%.
-  3. The source is plain initialised arrays in a `.c` unit: string literals for both name columns
-     (every buffer is zero-padded, and `CharacterRecord`'s two bytes at `+0x46` are zero), and
-     `int lbl_804CBE94[9] = { 0 };` still lands in `.data`. Generate it from the DOL rather than
-     typing 115 records.
-- **Name the unit `Game/unlockables.c`.** That is this project's name; the real file is unknown. The
-  objects can keep their `lbl_` names, which is what the units that read them use.
-- **When it is `Matching`,** row 2 is done: put what a modder needs in
-  [`characters.md`](characters.md) section 2 (the venue, card and comic tables, and that the tables
-  are now source), and cut this subsection down to the ownership bullet.
+  function in that span reads the block, so the file is not identified; the unit sits after
+  `Game/fn_800887AC.cpp` in `splits.txt`.
+- **`lbl_804CB16C` is gone.** It is the key column of the venue array, `lbl_804CB14C + 0x20`;
+  `Game/fn_8044EEF4.c` casts instead.
 
 ### Step 9: readers of the match fields
 

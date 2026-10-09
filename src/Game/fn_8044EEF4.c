@@ -13,7 +13,6 @@ typedef struct Menu
 } Menu;
 
 extern Rec lbl_804CB14C[];
-extern Rec lbl_804CB16C[];
 extern Rec lbl_804CB328[];
 extern Rec lbl_804CBEB8[];
 extern int lbl_804CB0FC[];
@@ -87,5 +86,5 @@ int fn_8044F104(register char *text)
 
 Rec *fn_8044F19C(register int i)
 {
-    return &lbl_804CB16C[i];
+    return &((Rec *)((char *)lbl_804CB14C + 0x20))[i];
 }
