@@ -694,3 +694,10 @@ extern "C" void fn_80459D44(register Level *self, register int v)
     }
     self->value3 = v;
 }
+
+extern "C" void fn_802460AC(void *p);
+
+extern "C" void fn_80459D88(register void *self)
+{
+    fn_802460AC(self);
+}
