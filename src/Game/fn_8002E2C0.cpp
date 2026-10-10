@@ -28,6 +28,21 @@ void fn_8003E5C4();
 void fn_80094F98(void *g);
 void fn_80094ED0(void *g);
 void fn_8007C910();
+int fn_80095B24(void *g);
+int fn_80095B74(void *g);
+void *fn_800945B0(void *g);
+void *fn_804328E0(void *g);
+void *fn_80094630(void *g);
+void fn_80024044(void *scene, void *v);
+void fn_8003FDE4(void *v);
+void fn_8021A1B8();
+void fn_8003CB08(void *v);
+void fn_8001B3C4();
+void fn_8021A1D4();
+void fn_8002EA24(void *p);
+void fn_8001B3F4();
+void fn_80132838();
+void fn_8003EC38();
 }
 
 struct GameFlow {
@@ -38,7 +53,8 @@ struct GameFlow {
 struct FrameCtx {
     char pad0[0x5C];
     int f5C; // +0x5C
-    char pad60[0xC];
+    char pad60[8];
+    unsigned int f68; // +0x68
     int f6C; // +0x6C
     unsigned int f70; // +0x70
     char name[0x20]; // +0x74
@@ -58,6 +74,7 @@ struct FrameCtx {
 extern char lbl_80552110[];
 extern GameFlow lbl_80552920;
 extern char lbl_80593BE8[];
+extern char lbl_8052F060[];
 
 extern "C" void fn_8002E2C0(register FrameCtx *self)
 {
@@ -181,4 +198,36 @@ extern "C" void fn_8002E6DC(register FrameCtx *self)
         fn_80094ED0(lbl_80552110);
     }
     fn_8007C910();
+}
+
+extern "C" void fn_8002E7F4(register FrameCtx *self)
+{
+    int ok = 1;
+    if (fn_80095B24(lbl_80552110)) {
+        if (fn_800945B0(lbl_80552110) != fn_804328E0(lbl_80552110)) {
+            ok = 0;
+        }
+    }
+    if (fn_80095B74(lbl_80552110)) {
+        if (fn_800945B0(lbl_80552110) != fn_804328E0(lbl_80552110)) {
+            ok = 0;
+        }
+    }
+    if (ok) {
+        register void *scene = fn_80430050(self);
+        fn_80024044(scene, fn_80094630(lbl_80552110));
+    }
+    fn_8003FDE4(fn_80094630(lbl_80552110));
+    fn_8021A1B8();
+    fn_8003CB08(fn_80094630(lbl_80552110));
+    fn_8001B3C4();
+    fn_8021A1D4();
+    fn_8021A1B8();
+    if (self->f68 & 0x10) {
+        fn_8002EA24(lbl_8052F060);
+    }
+    fn_8001B3F4();
+    fn_80132838();
+    fn_8003EC38();
+    fn_8021A1D4();
 }
