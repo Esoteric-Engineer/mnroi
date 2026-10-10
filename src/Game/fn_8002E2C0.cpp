@@ -12,6 +12,7 @@ void *fn_800B3A74(void *scene, int v, int a, int b);
 void fn_800AF800(void *g, void *scene, void *node, int a);
 int fn_80432A8C(void *self);
 void fn_8002F884(void *self, int mode);
+char *strncpy(char *dst, const char *src, int n);
 }
 
 struct GameFlow {
@@ -34,6 +35,9 @@ struct FrameCtx {
     int f100; // +0x100
     char pad104[0x114];
     int f218; // +0x218
+    char pad21C[0x88];
+    char b2a4[0x80]; // +0x2A4
+    int f324; // +0x324
 };
 
 extern char lbl_80552110[];
@@ -110,4 +114,13 @@ extern "C" int fn_8002E570(register FrameCtx *self, int v)
     int r = 1;
     r = 0;
     return r;
+}
+
+extern "C" int fn_8002E5B0(register FrameCtx *self, const char *name, int v)
+{
+    strncpy(self->b2a4, name, 0x80);
+    self->b2a4[0x7F] = 0;
+    self->f324 = v;
+    self->f5C = 3;
+    return 1;
 }
