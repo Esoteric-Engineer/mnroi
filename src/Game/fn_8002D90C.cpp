@@ -1,4 +1,4 @@
-// FrameCtx level-load "when" dispatch and the pending-15 handler (guessed); see docs/versus.md section 5, row 9d.
+// FrameCtx level-load "when" dispatch and the pending-14/15 setters (guessed); see docs/versus.md section 5, row 9d.
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -87,4 +87,9 @@ extern "C" int fn_8002D9C4(register FrameCtx *self)
         fn_80433198(lbl_8057229C, 1, 0xBB8);
     }
     return 1;
+}
+
+extern "C" void fn_8002DB50(register FrameCtx *self)
+{
+    self->pending = 0xE;
 }
