@@ -12,6 +12,8 @@ void *fn_800B3A74(void *scene, int v, int a, int b);
 void fn_800AF800(void *g, void *scene, void *node, int a);
 int fn_80432A8C(void *self);
 void fn_8002F884(void *self, int mode);
+void *fn_80052974();
+int fn_80052C88(void *obj, const char *name, int v);
 char *strncpy(char *dst, const char *src, int n);
 }
 
@@ -122,5 +124,11 @@ extern "C" int fn_8002E5B0(register FrameCtx *self, const char *name, int v)
     self->b2a4[0x7F] = 0;
     self->f324 = v;
     self->f5C = 3;
+    return 1;
+}
+
+extern "C" int fn_8002E61C(register FrameCtx *self, const char *name, int v)
+{
+    fn_80052C88(fn_80052974(), name, v);
     return 1;
 }
