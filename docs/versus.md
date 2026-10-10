@@ -123,6 +123,7 @@ This is a C++ singleton that 211 functions reference, so it is the whole game st
 | +0x764 | int | Time limit in ms | `Control_SetMatchInfo`, `fn_80028BAC` | `fn_80131434` |
 | +0x768 | int | Added to the time limit (`+0x764`) in the match clock's total; a bonus/extra-time offset or a start time (guess). Read-modify-written in `fn_8009xxxx` (0x80092128, 0x80094000) and at 0x800C0088 | several, unchecked | `fn_80131434` |
 | +0x770, +0x774 | int | Role indices (see `SetMatchInfo`). `fn_80114420` treats "either one nonzero" as "a match is running", which holds for match types 0 and 1 but not 2. | `fn_804317F4`, `fn_8043181C` | `fn_80432844` (+0x770) and `fn_80432870` (+0x774), the getters; `fn_80114420` |
+| +0x780 | int | Nonzero makes `fn_8002D9C4` load the frontend through `fn_8002DB78` instead of walking the actor list (`fn_80430050(lbl_8052F060)+0x130`, next link `fn_800B1AC4`). Meaning unknown. | | `fn_8002D9C4` |
 | +0x7BC | int | A flag, zeroed by `G`'s constructor `fn_80091174`; its only reader bumps a counter at `G+0x78` when it is 0. | `fn_80091174` | `fn_80443CA0` (getter, matched), `fn_80096884` |
 
 `fn_80028BAC` is the command-line parser (`Game/fn_80028BAC.cpp`). Its `-mp` sets the role `+0x770` to 1, `-vs` the role `+0x774` to 1 (both then set `+0x590` to 2), and `-timed [seconds]` sets `+0x75C` to 1 and `+0x764` to `seconds * 1000` (60000 by default). `-level`, `-scene`, `-mission`, `-mpmission` and `-chron` fill the four name buffers and set `+0x61C`, `+0x620`, `+0x624`/`+0x628` (both on the third buffer) and `+0x62C`.
@@ -213,7 +214,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | done | | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
-| 9d | done (`fn_8002F884`, the mode setter) | the pinned level loaders are done (`fn_8002C690`, `fn_8002CA58`, `fn_8002CB7C`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002DB78`, `fn_8002FA70`); the file's head is done to 0x8002C690; next is `fn_8002D9C4` (0x18C), the run after `Game/fn_8002D90C.cpp` (then `fn_8002DB50`, up to `Game/fn_8002DB78.cpp`) | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
+| 9d | done (`fn_8002F884`, the mode setter) | the pinned level loaders are done (`fn_8002C690`, `fn_8002CA58`, `fn_8002CB7C`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002DB78`, `fn_8002FA70`); the file's head is done to 0x8002C690; next is `fn_8002DB50` (0x28), the run after `Game/fn_8002D90C.cpp`, up to `Game/fn_8002DB78.cpp` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
 - **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.
