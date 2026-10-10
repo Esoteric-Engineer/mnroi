@@ -1,4 +1,4 @@
-// FrameCtx deferred level-request step (guessed), switch on +0x6C, fn_8002E3EC (scene node lookup via +0x100) and fn_8002E4B4 (request state 1); see docs/versus.md section 5, row 9d.
+// FrameCtx deferred level-request step and the small request functions after it; see docs/versus.md section 5, row 9d.
 
 extern "C" {
 int fn_8002CA58(void *self);
@@ -10,7 +10,14 @@ void *fn_80430050(void *self);
 void *fn_80432924(void *g);
 void *fn_800B3A74(void *scene, int v, int a, int b);
 void fn_800AF800(void *g, void *scene, void *node, int a);
+int fn_80432A8C(void *self);
+void fn_8002F884(void *self, int mode);
 }
+
+struct GameFlow {
+    char pad[0x2A0];
+    void SetCommand(int cmd);
+};
 
 struct FrameCtx {
     char pad0[0x5C];
@@ -30,6 +37,7 @@ struct FrameCtx {
 };
 
 extern char lbl_80552110[];
+extern GameFlow lbl_80552920;
 
 extern "C" void fn_8002E2C0(register FrameCtx *self)
 {
@@ -84,5 +92,15 @@ extern "C" int fn_8002E4B4(register FrameCtx *self, int v)
 {
     self->f218 = v;
     self->f5C = 1;
+    return 1;
+}
+
+extern "C" int fn_8002E4F8(register FrameCtx *self)
+{
+    if (fn_80432A8C(self)) {
+        fn_8002CA58(self);
+    }
+    lbl_80552920.SetCommand(1);
+    fn_8002F884(self, 2);
     return 1;
 }
