@@ -12,6 +12,8 @@ struct GameFlow {
 struct FrameCtx {
     char pad0[0xC];
     int f0C; // +0xC
+    char pad1[0x4C];
+    int pending; // +0x5C
 };
 
 extern char lbl_8054ED80[];
@@ -23,4 +25,9 @@ extern "C" int fn_8002DB78(register FrameCtx *self)
     fn_800877AC(lbl_8054ED80);
     lbl_80552920.LoadFrontend();
     return 1;
+}
+
+extern "C" void fn_8002DBD0(register FrameCtx *self)
+{
+    self->pending = 10;
 }
