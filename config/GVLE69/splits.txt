@@ -87,7 +87,8 @@ Game/fn_8002D90C.cpp:
 	.rodata     start:0x8048588C end:0x80485890
 
 Game/fn_8002DB78.cpp:
-	.text       start:0x8002DB78 end:0x8002DCEC
+	.text       start:0x8002DB78 end:0x8002E2C0
+	.rodata     start:0x80485890 end:0x80485894
 
 Game/fn_8002F884.cpp:
 	.text       start:0x8002F884 end:0x8002F95C
