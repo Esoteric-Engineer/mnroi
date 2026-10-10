@@ -104,3 +104,10 @@ extern "C" int fn_8002E4F8(register FrameCtx *self)
     fn_8002F884(self, 2);
     return 1;
 }
+
+extern "C" int fn_8002E570(register FrameCtx *self, int v)
+{
+    int r = 1;
+    r = 0;
+    return r;
+}
