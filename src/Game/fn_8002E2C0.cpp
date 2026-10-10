@@ -231,3 +231,7 @@ extern "C" void fn_8002E7F4(register FrameCtx *self)
     fn_8003EC38();
     fn_8021A1D4();
 }
+
+extern "C" void fn_8002E95C(register FrameCtx *self)
+{
+}
