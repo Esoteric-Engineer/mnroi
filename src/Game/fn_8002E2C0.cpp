@@ -14,6 +14,7 @@ int fn_80432A8C(void *self);
 void fn_8002F884(void *self, int mode);
 void *fn_80052974();
 int fn_80052C88(void *obj, const char *name, int v);
+void fn_80053160(void *obj);
 char *strncpy(char *dst, const char *src, int n);
 }
 
@@ -136,4 +137,9 @@ extern "C" int fn_8002E61C(register FrameCtx *self, const char *name, int v)
 extern "C" void fn_8002E674(register FrameCtx *self)
 {
     self->f5C = 4;
+}
+
+extern "C" void fn_8002E69C(register FrameCtx *self)
+{
+    fn_80053160(fn_80052974());
 }
