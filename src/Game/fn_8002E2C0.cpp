@@ -132,3 +132,8 @@ extern "C" int fn_8002E61C(register FrameCtx *self, const char *name, int v)
     fn_80052C88(fn_80052974(), name, v);
     return 1;
 }
+
+extern "C" void fn_8002E674(register FrameCtx *self)
+{
+    self->f5C = 4;
+}
