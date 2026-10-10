@@ -222,6 +222,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **`p->tbl[i].f` in an expression that also holds a call: cc1 and cc1plus order it differently.** cc1 loads `i`, emits the index `mulli`, then loads `tbl`; cc1plus loads `tbl` first into a non-volatile, which also grows the frame and the `stmw` range. No source rewrite moves it (index-first sums and `(char *)`/int casts all fold to the same tree), and cc1plus agrees with cc1 only when the base is a frame slot instead of a call, so this diff alone means the unit is `.c` (`Game/fn_80023010.c`).
 
 - **A `switch`'s case bodies are emitted in source order, so the `.text` order of the bodies is the
+- **A run of bare `b .Lend` instructions inside a `switch` (one per value) that the dispatch tree reaches as a single range is one `case N: break;` per value.** Writing `case 1: case 2: case 3: break;` emits one `b` and leaves the unit 4 bytes per merged case short; the dispatch still collapses the range (`Game/fn_8002E2C0.cpp`).
   order to write the `case` labels in.** The dispatch tree ahead of them depends only on the set of
   values, so it is no guide; recover value-to-body by simulating the compare/branch tree instead of
   reading it, and treat a body whose guard branches into the *next* body as a fall-through case rather
