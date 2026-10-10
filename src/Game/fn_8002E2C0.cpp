@@ -16,6 +16,18 @@ void *fn_80052974();
 int fn_80052C88(void *obj, const char *name, int v);
 void fn_80053160(void *obj);
 char *strncpy(char *dst, const char *src, int n);
+void fn_80132600();
+void fn_80093F64(void *g);
+int fn_80431DDC(void *g);
+int fn_80432DCC(void *g);
+void fn_80094E04(void *g);
+float fn_80426A84(void *g);
+void fn_800A6E58(void *scene, float v);
+void fn_80052924();
+void fn_8003E5C4();
+void fn_80094F98(void *g);
+void fn_80094ED0(void *g);
+void fn_8007C910();
 }
 
 struct GameFlow {
@@ -45,6 +57,7 @@ struct FrameCtx {
 
 extern char lbl_80552110[];
 extern GameFlow lbl_80552920;
+extern char lbl_80593BE8[];
 
 extern "C" void fn_8002E2C0(register FrameCtx *self)
 {
@@ -142,4 +155,30 @@ extern "C" void fn_8002E674(register FrameCtx *self)
 extern "C" void fn_8002E69C(register FrameCtx *self)
 {
     fn_80053160(fn_80052974());
+}
+
+struct Scene {
+    char pad[0x120];
+    void *f120; // +0x120
+};
+
+extern "C" void fn_8002E6DC(register FrameCtx *self)
+{
+    fn_80132600();
+    fn_80093F64(lbl_80552110);
+    if (!fn_80431DDC(&lbl_80552920) && !fn_80432DCC(&lbl_80552920)) {
+        fn_80094E04(lbl_80552110);
+    }
+    if (((Scene *)fn_80430050(self))->f120) {
+        register Scene *scene = (Scene *)fn_80430050(self);
+        fn_800A6E58(scene->f120, fn_80426A84(lbl_80593BE8));
+    }
+    fn_80052924();
+    fn_8003E5C4();
+    if (fn_80431DDC(&lbl_80552920) || fn_80432DCC(&lbl_80552920)) {
+        fn_80094F98(lbl_80552110);
+    } else {
+        fn_80094ED0(lbl_80552110);
+    }
+    fn_8007C910();
 }
