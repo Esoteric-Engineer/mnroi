@@ -214,7 +214,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | done | | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
-| 9d | done (`fn_8002F884`, the mode setter) | the pinned level loaders are done (`fn_8002C690`, `fn_8002CA58`, `fn_8002CB7C`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002DB78`, `fn_8002FA70`); the file's head is done to 0x8002C690 and the run 0x8002D90C-0x8002E3EC is closed; `Game/fn_8002E2C0.cpp` runs to 0x8002E4B4; next is `fn_8002E4B4` (0x44), the run after it, up to `fn_8002FA70` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
+| 9d | done (`fn_8002F884`, the mode setter) | the pinned level loaders are done (`fn_8002C690`, `fn_8002CA58`, `fn_8002CB7C`, `fn_8002D7A8`, `fn_8002D90C`, `fn_8002DB78`, `fn_8002FA70`); the file's head is done to 0x8002C690 and the run 0x8002D90C-0x8002E3EC is closed; `Game/fn_8002E2C0.cpp` runs to 0x8002E4F8; next is `fn_8002E4F8` (0x78), the run after it, up to `fn_8002FA70` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
 - **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.
@@ -241,6 +241,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
   `lbl_8066B6C0` (`.sdata` int) is the attract/intro state: 0 unset, 1 intro movie pending, 3 set by `fn_8002FA70` once its "Attract_Mode.bik" check passes in state 5, 5 set by `fn_8002BD34` when it skips the "EAGames_logo" check (guess: 1 = logo playing, 5 = attract ready).
   `FrameCtx+0x5C` is the pending state (0-0x11) that `fn_8002C214` dispatches and clears to 0 as it handles it (`+0x60` holds the state to restore for 5). 7 finishes a load (`EndLoad`), 10 and 13 are followed by `fn_8002C594` and `fn_8002CB1C`, 14 and 15 wait on `fn_8005287C` then `SetCommandBlocking(0x58)` / `LoadLevel(0)`. Its guard also reads `.sdata` ints `lbl_8066B640`, `lbl_8066B6D4` (cleared when the attract state is forced to 5) and `lbl_8066B668`.
   `fn_8002C824`/`fn_8002C924` (`Game/fn_8002C824.cpp`, which also holds `fn_8002CA20`, three calls with no arguments; one unit because they share the two member-function-pointer constants at `.rodata` 0x80485830-0x80485840) register and remove three handles on the lists at `lbl_80572354`, `lbl_8057237C` and `lbl_8057229C`: `Link`s over `FrameCtx` methods `fn_8002DB50` (sets `+0x5C = 14`) and `fn_8002D994` (sets `+0x5C = 15`), and a `Cue` on `fn_8002B9F0`.
+  `fn_8002E4B4(ctx, v)` requests pending state 1: stores `v` at `+0x218` (meaning unknown), sets `+0x5C = 1`, returns 1.
   `fn_8002C594(ctx)` (state 10/13 hook) returns 0. The file's functions are pair-less, so the unit is `.cpp` with `sn_return_decl`.
 
 ### Step 4: files and boundaries

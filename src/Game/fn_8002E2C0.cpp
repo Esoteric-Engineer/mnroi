@@ -1,4 +1,4 @@
-// FrameCtx deferred level-request step (guessed), switch on +0x6C, and fn_8002E3EC (scene node lookup via +0x100); see docs/versus.md section 5, row 9d.
+// FrameCtx deferred level-request step (guessed), switch on +0x6C, fn_8002E3EC (scene node lookup via +0x100) and fn_8002E4B4 (request state 1); see docs/versus.md section 5, row 9d.
 
 extern "C" {
 int fn_8002CA58(void *self);
@@ -13,7 +13,9 @@ void fn_800AF800(void *g, void *scene, void *node, int a);
 }
 
 struct FrameCtx {
-    char pad0[0x6C];
+    char pad0[0x5C];
+    int f5C; // +0x5C
+    char pad60[0xC];
     int f6C; // +0x6C
     unsigned int f70; // +0x70
     char name[0x20]; // +0x74
@@ -23,6 +25,8 @@ struct FrameCtx {
     int fF8; // +0xF8
     char padFC[4];
     int f100; // +0x100
+    char pad104[0x114];
+    int f218; // +0x218
 };
 
 extern char lbl_80552110[];
@@ -74,4 +78,11 @@ extern "C" void fn_8002E3EC(register FrameCtx *self)
             }
         }
     }
+}
+
+extern "C" int fn_8002E4B4(register FrameCtx *self, int v)
+{
+    self->f218 = v;
+    self->f5C = 1;
+    return 1;
 }
