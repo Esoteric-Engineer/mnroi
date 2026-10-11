@@ -325,3 +325,15 @@ extern "C" int fn_800980C4(register Actor *self, int a, float *out, int b)
     fn_80435754(out, (char *)self + 0x78);
     return 1;
 }
+
+extern "C" void fn_800B2600(void *self);
+extern "C" void fn_800981FC(void *self);
+extern "C" void fn_80098B18(void *self);
+
+// Runs the three setup steps on the actor in order.
+extern "C" void fn_800981B4(register Actor *self)
+{
+    fn_800B2600(self);
+    fn_800981FC(self);
+    fn_80098B18(self);
+}
