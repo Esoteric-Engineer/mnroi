@@ -78,7 +78,25 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
 - `fn_80131060(player)` returns that player's slot name, or `"plr_wolverine"` if the slot is empty. **Matched** (`Game/fn_80131060.c`), which fills in the rest: it returns `"plr_wolverine"` for any `player > 1`, and only consults the slot's own name (`fn_80443BC8`) while a match is running (`fn_80130718`). For an unused slot in a running match it falls back to the name at `+0x320` of the script record `fn_804326B4(lbl_8054ED80)` holds, which is the `boss` of the running mission (section 4), and to `"plr_wolverine"` if that is empty.
 - `fn_800887AC` is the `.nsc` script parser (section 4), and its `plr_%s` / `plr_alt%s` is how a `boss` line names a character. `fn_801311C0` and `fn_800061CC` handle the `plr_alt` prefix. `fn_801311C0(player)` is **matched** (`Game/fn_80131060.c`): it is the display name for a player, `fn_80461288(fn_80131060(player), strstr(name, "plr_alt") != 0)`, and when the key that comes back starts with `~` it is localised through `fn_8012F32C`. So the `alt` flag the roster lookup takes is decided by the `plr_alt` prefix in the entity name, not stored separately.
 - `fn_800B5BC4` is **matched** (`Game/fn_800B5BC4.cpp`) and is not the load driver it looked like: it is the debug-menu command dispatcher ([`versus.md`](versus.md#6-the-gameflow-command-dispatcher)). It does reach the load path, through `fn_8002D7A8(lbl_8052F060, level, 8, 0, 0, 0)` and `fn_8009543C(G, id, "plr_wolverine")`, which are the two debug commands worth following for how a chosen character becomes a spawned one.
-- **An actor is built from a property list.** Entity templates are looked up by name with `fn_800FD5FC(name, flag)` (`strlwr`, then a hashed lookup in the `.sbss` registry `lbl_8066BAE4`). `fn_800AC37C` applies one property `{int id +0x0; value +0x4}` (its compares suggest it handles ids 0-0xF and 0x63 itself; argument order unchecked), then defers to two more handlers: `fn_80097750` for the ids below, and `fn_80084498` for 0x2D-0x3B and 0x6F. The value at `+0x4` is a string, int or float depending on the id.
+- **An actor is built from a property list.** Entity templates are looked up by name with `fn_800FD5FC(name, flag)` (`strlwr`, then a hashed lookup in the `.sbss` registry `lbl_8066BAE4`). `fn_800AC37C(object, property, arg)` applies one property `{int id +0x0; value +0x4}` (`Game/fn_800AC37C.cpp`). It looks the id up in the 120-entry property table `lbl_8048E748` (0x28-byte entries `{char name[0x20]; int kind; int type}`, `.rodata`; `type` is the value type: 0 string, 2 float, 3 int, 4 vector) and dispatches on `kind`, the component that owns the property (table below). The names in the table are the `Global.not` property names (`MODEL`, `ACTOR_HEALTH`, `PHYSICS_MASS`, ...).
+
+  | Kind | Ids | Handler |
+  |---|---|---|
+  | 0 | 0-9, 0xF, 0x15, 0x17, 0x1A-0x22, 0x25, 0x26, 0x28-0x2C, 0x67, 0x74, 0x76 (common) | `fn_800AE534` |
+  | 2 | 0x10 `SCRIPT` | `fn_8007CA10` |
+  | 7 | 0x14 `CASTID` | `fn_800AC750` |
+  | 8 | 0x5A-0x63 `PHYSICS_*` | `fn_80067248` |
+  | 4, 10 | 0x2D-0x49 `ACTOR_*`/`ARMOR_*`, 0x6F | `fn_80084498`, if `fn_800B0C58(object)` |
+  | 9 | 0x23 `EXPLOSION`, 0x4A-0x4E `PROJECT_*` | `fn_8009E6AC`, if `fn_800B0DA0` |
+  | 11 | 0x68-0x6A, 0x77 `CONTAINER_*` | `fn_800A39F4(fn_800B1478(object), ..)`, if `fn_800B0CC0` |
+  | 13 | 0x64-0x66, 0x71-0x73 `PROP_*` | `fn_800A39F4(object, ..)`, if `fn_800B0CC0` |
+  | 14 | 0x6B `SENSOR_FLAGS` | `fn_800A9F90(fn_800B1518(object), ..)`, if `fn_800B0E18` |
+  | 15 | 0xA-0xE `MODEL*`, 0x11-0x13, 0x16, 0x18, 0x19, 0x24, 0x27, 0x6C-0x6E, 0x70, 0x75 | `fn_80097750(fn_800B1568(object), ..)`, if `fn_800B0F0C` |
+  | 3 (`WEAPON_*`), 1, 12 | 0x4F-0x59 | nothing here (returns 0) |
+  | 5, 6, 0x63 | no table entry uses them | `fn_800AEB90` |
+
+  A gated kind returns 0 when its gate fails, so a property of that kind is ignored on an object of another class.
+
 - **The templates are `Misc/Global.not`** (the only `.not` in `CLASH.BIG`), loaded by `fn_800FCF50` (`"global"`, `"NOT"`, `"Game:Templates"`; `fn_800FCE84` creates the registry; source file probably `gameTemplate`). Format, **little-endian**: magic `"NOT\x10"`, a u32, the template count (836) at `+0x8`, then index entries `{char name[0x20]; u32 offset}`. A record at `offset` (not aligned) is a u32 property count, then 0x24-byte properties `{u32 id; value[0x20]}`, the value a string, int or float. Property 0 names the parent template, so `plr_Wolverine` is just `{0: act_Wolverine, 5: 7, 0xB: 0, 0x1A: 2}`, and `act_Wolverine` (parent `_superhero`) holds the character. `plr_alt<Name>` has the same parent and overrides the models and 0x14, so the alt's property 0x70 is the base type (1 for Wolverine), not `type + 20`.
 
   | Id | `act_Wolverine` | Effect (`fn_80097750` unless noted) |
