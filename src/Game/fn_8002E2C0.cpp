@@ -55,6 +55,9 @@ void fn_8003EC38();
 void fn_8012557C(int v);
 void fn_801AA328();
 void fn_8002F95C();
+int fn_80432764(int a, int b);
+void fn_804325CC(void *g);
+void fn_8002F3A8(FrameCtx *self);
 }
 
 struct GameFlow {
@@ -78,7 +81,10 @@ struct FrameCtx {
     int f100; // +0x100
     char pad104[0x114];
     int f218; // +0x218
-    char pad21C[0x88];
+    char b21C; // +0x21C
+    char pad220[0x7C];
+    void *f29C; // +0x29C
+    int f2A0; // +0x2A0
     char b2a4[0x80]; // +0x2A4
     int f324; // +0x324
 };
@@ -89,6 +95,7 @@ extern char lbl_80593BE8[];
 extern char lbl_8052F060[];
 extern char lbl_8057E430[];
 extern int lbl_8066B6CC;
+extern int lbl_8066B6C0;
 
 extern "C" void fn_8002E2C0(register FrameCtx *self)
 {
@@ -156,7 +163,7 @@ extern "C" int fn_8002E4F8(register FrameCtx *self)
     return 1;
 }
 
-extern "C" int fn_8002E570(register FrameCtx *self, int v)
+extern "C" int fn_8002E570(register FrameCtx *self, const char *v)
 {
     int r = 1;
     r = 0;
@@ -280,4 +287,67 @@ extern "C" void fn_8002EA70(register FrameCtx *self)
 {
     register float a = fn_804325F4(lbl_8057E430);
     fn_80219DD8(a, fn_80432628(lbl_8057E430));
+}
+
+struct Pmf // a member-function pointer: delta, index, function
+{
+    short delta;
+    short index;
+    void *pfn;
+};
+
+struct Widget {
+    char pad[0x24];
+    char *f24; // +0x24
+};
+
+extern "C" void fn_8002EAD4(register FrameCtx *self)
+{
+    register Pmf *p;
+    register int held = 0;
+    int mode;
+    int any;
+    if (fn_80432764(1, 0) || fn_80432764(2, 0) || fn_80432764(3, 0) || fn_80432764(10, 0) ||
+        fn_80432764(15, 0) || fn_80432764(4, 0)) {
+        held = 1;
+    }
+    any = held;
+    if (any) {
+        mode = 6;
+    } else {
+        mode = 5;
+    }
+    switch (lbl_8066B6C0) {
+    case 1:
+        fn_8002E570(self, "Nihilistic_Logo");
+        lbl_8066B6C0 = 2;
+        break;
+    case 2:
+        fn_8002EA70(self);
+        lbl_8066B6C0 = 5;
+        fn_8002F3A8(self);
+        fn_8002F884(self, 2);
+        break;
+    case 3:
+        fn_8002EA70(self);
+        fn_804325CC(lbl_80593BE8);
+        lbl_8066B6C0 = 5;
+        fn_8002F884(self, 3);
+        break;
+    case 6:
+        fn_8002EA70(self);
+        fn_804325CC(lbl_80593BE8);
+        fn_8002F884(self, 3);
+        break;
+    default:
+        break;
+    }
+    if (self->f29C) {
+        p = (Pmf *)(((Widget *)((Widget *)self->f29C)->f24)->pad + 0x198);
+        ((void (*)(char *, int, int, int, float, float, float))p->pfn)(
+            (char *)self->f29C + p->delta, 0, mode, 0, 0.0f, 0.0f, 0.0f);
+    }
+    self->b21C = 0;
+    self->f29C = 0;
+    self->f2A0 = 0;
 }
