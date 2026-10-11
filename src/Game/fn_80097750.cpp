@@ -1,4 +1,6 @@
 // Actor-class template property handler (kind 15); property ids and effects are in docs/characters.md section 3.
+__asm__(".section .rodata\n\t.globl lbl_8048A748\nlbl_8048A748:\n\t.float 1.0\n\t.text"); // 8-aligns the claim: fn_800974B4's 1.0f, read through extern_pool
+
 struct Prop {
     unsigned int id;
     union {
@@ -327,7 +329,8 @@ extern "C" int fn_800980C4(register Actor *self, int a, float *out, int b)
 }
 
 extern "C" void fn_800B2600(void *self);
-extern "C" void fn_800981FC(void *self);
+// Starts up to 0x28 of the template group's clips on a motion player, then retimes each by its share of the total length (guess).
+extern "C" void fn_800981FC(register Actor *self);
 extern "C" void fn_80098B18(void *self);
 
 // Runs the three setup steps on the actor in order.
@@ -337,3 +340,136 @@ extern "C" void fn_800981B4(register Actor *self)
     fn_800981FC(self);
     fn_80098B18(self);
 }
+
+struct Rec5C {
+    char pad[0x5C];
+};
+
+struct Group {
+    char pad0[4];
+    unsigned char n; // +0x4
+    char pad1[0x13];
+    Rec5C *recs; // +0x18
+    char pad2[0x70];
+    char sub[1]; // +0x8C
+};
+
+struct Flags {
+    int f0;
+    int f4; // +0x4
+};
+
+struct Info {
+    char pad0[0x28];
+    int f28; // +0x28
+    int f2C;
+};
+
+extern "C" {
+int fn_800B21A4(void *self);
+int fn_800B2324(void *self);
+int fn_800B22C4(void *self);
+float fn_800B24D8(void *self);
+void *fn_8007766C(void *a, int b, int c, short d);
+int fn_80077D0C(void *a, int b);
+void *fn_800775B4(void *a, int b, unsigned short c);
+void fn_80077A2C(void *a, void *b, int c, int d, unsigned short e, float f, void *ext);
+void *fn_800FD7E4(int a, void *ext, int b, int c);
+Flags *fn_800FD698(int a, void *ext, void *b);
+void fn_80383F14(void *q, float f, void *ext);
+int fn_8043E690(void *self);
+Flags *fn_800649F4(void *g, unsigned char j);
+Flags *fn_80064670(void *g, unsigned char j, int f);
+unsigned short fn_80441628(void *self);
+void *fn_80441674(void *self, int i);
+int fn_804415C8(void *h);
+void fn_80078068(void *h, void *ext, float f);
+float fn_80444428(void *h);
+void *fn_8043D544(void *h);
+void fn_802E769C(void *p, int v);
+void ExtentCtor(void *self) __asm__("__6Extent");
+}
+
+__asm__(".section .rodata\n\t.float -1.0\n\t.float 30.0\n\t.text"); // pool words ahead of fn_800981FC's, which no code loads
+
+// Starts up to 0x28 of the template group's clips on a motion player, then retimes each by its share of the total length (guess).
+extern "C" void fn_800981FC(register Actor *self)
+{
+    Group *p;
+    void *obj;
+    int flag;
+    char ext[0x200];
+    void *h;
+    Flags *q;
+    unsigned short i;
+    unsigned short n;
+    float total;
+    unsigned short j;
+    float scale;
+    float v;
+    if (!fn_800B21A4(self))
+        return;
+    if (!self->f208)
+        return;
+    p = self->f20C ? *(Group **)self->f20C : *(Group **)self->model;
+    if (!p || p->n == 1)
+        return;
+    obj = fn_8007766C(p->sub, 0, 0, 0x40);
+    if (obj) {
+        if (fn_80077D0C(obj, 1))
+            return;
+    } else {
+        obj = fn_800775B4(p->sub, fn_800B2324(self), p->n);
+    }
+    flag = 0;
+    h = fn_800FD7E4(((Info *)self->f208)->f2C, ext, ((Info *)self->f208)->f28, 0);
+    if (h) {
+        q = fn_800FD698(0x5B, ext, h);
+        if (q)
+            flag = q->f4 & 1;
+        if (!flag) {
+            q = fn_800FD698(0x5A, ext, h);
+            if (q)
+                flag = q->f4 & 0x20000;
+        }
+    }
+    ExtentCtor(ext);
+    n = 0;
+    total = 0.0f;
+    for (j = 0; j <= 0xFF; j++) {
+        i = 0;
+        while (i < p->n) {
+            if ((unsigned short)fn_8043E690(&p->recs[i]) == j)
+                break;
+            i++;
+        }
+        if (i == p->n)
+            break;
+        if (fn_800B22C4(self))
+            q = fn_800649F4(p, (unsigned char)j);
+        else
+            q = fn_80064670(p, (unsigned char)j, flag == 0);
+        if (!q)
+            continue;
+        fn_80383F14(q, 1.0f, ext);
+        total += *(float *)ext;
+        fn_80077A2C(obj, q, 0, 1, (unsigned char)j, 0.0f, ext);
+        n++;
+        if (n > 0x27)
+            break;
+    }
+    scale = fn_800B24D8(self);
+    if (scale == 0.0f)
+        scale = (float)(int)n * 15.0f;
+    for (i = 0; i < fn_80441628(obj); i++) {
+        h = fn_80441674(obj, i);
+        if (fn_804415C8(h) != 1)
+            continue;
+        fn_80078068(h, ext, 1.0f);
+        v = fn_80444428(h) / total * scale;
+        v = v > 1.0f ? v : 1.0f;
+        fn_802E769C(fn_8043D544(h), *(int *)&v);
+    }
+}
+
+__asm__(".section .rodata\n\t.globl lbl_8048A784\nlbl_8048A784:\n\t.float 0.0\n\t.text"); // pads the claim to 8; the next function's first literal
