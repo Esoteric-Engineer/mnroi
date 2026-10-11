@@ -58,6 +58,11 @@ void fn_8002F95C();
 int fn_80432764(int a, int b);
 void fn_804325CC(void *g);
 void fn_8002F3A8(FrameCtx *self);
+int fn_80432708(int a);
+void fn_801AA548();
+void fn_8005304C(void *obj, int v);
+void fn_80219DA0(int a, int b, int c);
+void fn_80052A6C(void *obj);
 }
 
 struct GameFlow {
@@ -350,4 +355,22 @@ extern "C" void fn_8002EAD4(register FrameCtx *self)
     self->b21C = 0;
     self->f29C = 0;
     self->f2A0 = 0;
+}
+
+extern "C" void fn_8002ED14(register FrameCtx *self)
+{
+    register int held = 0;
+    int any;
+    if (fn_80432708(1) || fn_80432708(2) || fn_80432708(3) || fn_80432708(10) || fn_80432708(15) ||
+        fn_80432708(4)) {
+        held = 1;
+    }
+    any = held;
+    if (any) {
+        fn_801AA548();
+        fn_8005304C(fn_80052974(), 0);
+        return;
+    }
+    fn_80219DA0(0, 0, 0);
+    fn_80052A6C(fn_80052974());
 }
