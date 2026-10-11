@@ -102,7 +102,8 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
   | Id | `act_Wolverine` | Effect (`fn_80097750` unless noted) |
   |---|---|---|
   | 0x0A | `Wolverine.nod` | model: `fn_801A1FC4` / `fn_801A2894` / `fn_801A1A84`, result at `actor+0x1BC` |
-  | 0x0B | | int, ORed into the model's `+0x4` flags |
+  | 0x0B | | int, ORed into the model's `+0x4` flags; ignored with no model |
+  | 0x0C | | float, `fn_804442F0(model, v)`; ignored with no model |
   | 0x0D | | float, multiplies the `+0x30` float of `fn_8009AD80(actor)` (guess: scale) |
   | 0x0E | | vector, copied to `actor+0x1D0` |
   | 0x0F | `Wolverine_phys.nod` | not in `fn_80097750` (guess: physics model) |
