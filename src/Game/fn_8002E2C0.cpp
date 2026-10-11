@@ -43,6 +43,7 @@ void fn_8002EA24(void *p);
 void fn_8001B3F4();
 void fn_80132838();
 void fn_8003EC38();
+void fn_8012557C(int v);
 }
 
 struct GameFlow {
@@ -75,6 +76,7 @@ extern char lbl_80552110[];
 extern GameFlow lbl_80552920;
 extern char lbl_80593BE8[];
 extern char lbl_8052F060[];
+extern int lbl_8066B6CC;
 
 extern "C" void fn_8002E2C0(register FrameCtx *self)
 {
@@ -234,4 +236,9 @@ extern "C" void fn_8002E7F4(register FrameCtx *self)
 
 extern "C" void fn_8002E95C(register FrameCtx *self)
 {
+}
+
+extern "C" void fn_8002E97C(register FrameCtx *self)
+{
+    fn_8012557C(lbl_8066B6CC);
 }
