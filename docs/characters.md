@@ -108,7 +108,7 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
   | 0x0E | | vector, copied to `actor+0x1D0` |
   | 0x0F | `Wolverine_phys.nod` | not in `fn_80097750` (guess: physics model) |
   | 0x12 | 16 | `actor+0x1A8` |
-  | 0x13 | `wolverine.nms` | motion set: `fn_8019EA38(name, variant)`, the `-t<n>` variant taken from the player slot's name (`fn_800976C0`; slot index from `G+0x640`) when `fn_80444454(actor)`; then `fn_8008F470(name, 0, 1)` into `actor+0x1C0` |
+  | 0x13 | `wolverine.nms` | motion set: `fn_8019EA38(name, variant)`, the `-t<n>` variant taken from the player slot's name (`fn_800976C0`; slot index from `G+0x640`) when `fn_80444454(actor)`; then `fn_8008F470(name, 0, 1)` into `actor+0x1C0` (the set's `+0x24` is a count; `fn_80097C4C(actor, n)` stores a byte `n` <= that count at `actor+0x204`, called from 0x800C3BC4 and two more sites in the script-command file) |
   | 0x14 | `WOLVERINE` (`ALT_WOLVERINE` on the alt) | not in `fn_80097750` (guess: the name `fn_80020E60` reads, since `alt_` gives `type + 20` there) |
   | 0x15 | `WOLVERINE` | not in `fn_80097750` (guess: the NVB name, `PLAYER_WOLVERINE.nvb`) |
   | 0x19 | | float, `actor+0x214` |

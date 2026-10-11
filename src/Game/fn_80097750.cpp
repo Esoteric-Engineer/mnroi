@@ -8,6 +8,11 @@ struct Prop {
     } v;
 };
 
+struct MotionSet {
+    char pad0[0x24];
+    unsigned int count; // +0x24
+};
+
 struct Model {
     int unk0;
     int flags; // +0x4
@@ -22,12 +27,13 @@ struct Actor {
     int f1B0; // +0x1B0
     char pad1[8];
     Model *model; // +0x1BC
-    void *f1C0;
+    struct MotionSet *f1C0;
     char pad2[0xC];
     char vec[0x10]; // +0x1D0
     char pad3[0x20];
     int f200; // +0x200
-    char pad4[4];
+    char f204; // +0x204
+    char pad4[3];
     int f208;
     int f20C;
     int f210;
@@ -114,7 +120,7 @@ extern "C" int fn_80097750(register Actor *self, Prop *prop, int arg)
         m = fn_8008F470(prop->v.s, 0, 1);
         if (m == 0)
             return 0;
-        self->f1C0 = m;
+        self->f1C0 = (MotionSet *)m;
         if (fn_800B0C58(self))
             fn_80090F54(m);
         if (fn_8019DB94(self->model, 0) == 0)
@@ -179,4 +185,17 @@ extern "C" void fn_80097C04(register Actor *self)
 {
     fn_800B0504(self);
     self->f1B0 = 0;
+}
+
+// Selects variant n of the loaded motion set into +0x204; 0 if there is none, n is past its count or n is already set.
+extern "C" int fn_80097C4C(register Actor *self, unsigned short n)
+{
+    if (!self->f1C0)
+        return 0;
+    if (n > self->f1C0->count)
+        return 0;
+    if ((unsigned short)(unsigned char)self->f204 == n)
+        return 0;
+    self->f204 = n;
+    return 1;
 }
