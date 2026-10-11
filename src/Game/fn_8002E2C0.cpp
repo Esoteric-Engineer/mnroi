@@ -43,6 +43,9 @@ void fn_80018674();
 void fn_8021A1D4();
 struct FrameCtx;
 void fn_8002EA24(FrameCtx *self);
+float fn_804325F4(void *self);
+float fn_80432628(void *self);
+void fn_80219DD8(float a, float b);
 void fn_80018420();
 void fn_800184F0();
 void fn_800D9F74();
@@ -84,6 +87,7 @@ extern char lbl_80552110[];
 extern GameFlow lbl_80552920;
 extern char lbl_80593BE8[];
 extern char lbl_8052F060[];
+extern char lbl_8057E430[];
 extern int lbl_8066B6CC;
 
 extern "C" void fn_8002E2C0(register FrameCtx *self)
@@ -270,4 +274,10 @@ extern "C" void fn_8002EA24(register FrameCtx *self)
     }
     fn_800184F0();
     fn_800D9F74();
+}
+
+extern "C" void fn_8002EA70(register FrameCtx *self)
+{
+    register float a = fn_804325F4(lbl_8057E430);
+    fn_80219DD8(a, fn_80432628(lbl_8057E430));
 }
