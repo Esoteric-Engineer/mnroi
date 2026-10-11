@@ -331,7 +331,7 @@ extern "C" int fn_800980C4(register Actor *self, int a, float *out, int b)
 extern "C" void fn_800B2600(void *self);
 // Starts up to 0x28 of the template group's clips on a motion player, then retimes each by its share of the total length (guess).
 extern "C" void fn_800981FC(register Actor *self);
-extern "C" void fn_80098B18(void *self);
+extern "C" void fn_80098B18(register Actor *self);
 
 // Runs the three setup steps on the actor in order.
 extern "C" void fn_800981B4(register Actor *self)
@@ -342,7 +342,8 @@ extern "C" void fn_800981B4(register Actor *self)
 }
 
 struct Rec5C {
-    char pad[0x5C];
+    int kind;
+    char pad[0x58];
 };
 
 struct Group {
@@ -368,6 +369,7 @@ struct Info {
 extern "C" {
 int fn_800B21A4(void *self);
 int fn_800B2324(void *self);
+int fn_8009B160(void *self);
 int fn_800B22C4(void *self);
 float fn_800B24D8(void *self);
 void *fn_8007766C(void *a, int b, int c, short d);
@@ -557,4 +559,43 @@ extern "C" void fn_80098710(register Actor *self, Actor *other, float f, int a, 
     }
 }
 
-__asm__(".section .rodata\n\t.globl lbl_8048A78C\nlbl_8048A78C:\n\t.float 1.0\n\t.text"); // pads the claim to 8; the next function's first literal
+extern "C" {
+void *fn_8006AF90(void *rec, int a, int b);
+}
+
+// Starts one clip on the motion player for each of the template group's records whose kind is 12-21.
+extern "C" void fn_80098B18(register Actor *self)
+{
+    Group *p;
+    void *obj;
+    Rec5C *rec;
+    void *q;
+    char ext[0x50];
+    unsigned short i;
+    if (!fn_8009B160(self))
+        return;
+    if (!self->model)
+        return;
+    p = *(Group **)self->model;
+    obj = fn_8007766C(p->sub, 0, 0, 0x40);
+    if (obj) {
+        if (fn_80077D0C(obj, 5))
+            return;
+    } else {
+        obj = fn_800775B4(p->sub, fn_800B2324(self), p->n);
+    }
+    ExtentCtor(ext);
+    for (i = 0; i < p->n; i++) {
+        rec = &p->recs[i];
+        if (!((unsigned)fn_802365D8(rec->kind) > 11 && (unsigned)fn_802365D8(rec->kind) <= 21))
+            continue;
+        q = fn_8006AF90(rec, 0, 0);
+        if (!q)
+            continue;
+        fn_80383F14(q, 1.0f, ext);
+        fn_802E769C(q, i);
+        fn_80077A2C(obj, q, 0, 5, (unsigned char)i, 0.0f, ext);
+    }
+}
+
+__asm__(".section .rodata\n\t.globl lbl_8048A794\nlbl_8048A794:\n\t.float 1.0\n\t.text"); // pads the claim to 8; no code loads this word
