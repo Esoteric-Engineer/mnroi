@@ -79,3 +79,8 @@ Actor::Actor()
     f234 = 0;
     f230 = 1.0f;
 }
+
+// Empty virtual slot, shared by many vtables.
+extern "C" void fn_800975F4(register Actor *self)
+{
+}
