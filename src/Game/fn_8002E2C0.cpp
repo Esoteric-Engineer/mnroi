@@ -63,6 +63,10 @@ void fn_801AA548();
 void fn_8005304C(void *obj, int v);
 void fn_80219DA0(int a, int b, int c);
 void fn_80052A6C(void *obj);
+void fn_8042D7B0(void *self);
+void fn_8042E438(void *self, void *v);
+void fn_8042DCC0(void *self);
+char *fn_8043289C(void *g);
 }
 
 struct GameFlow {
@@ -101,6 +105,8 @@ extern char lbl_8052F060[];
 extern char lbl_8057E430[];
 extern int lbl_8066B6CC;
 extern int lbl_8066B6C0;
+extern int lbl_8066D594;
+extern char lbl_8052F020[];
 
 extern "C" void fn_8002E2C0(register FrameCtx *self)
 {
@@ -373,4 +379,17 @@ extern "C" void fn_8002ED14(register FrameCtx *self)
     }
     fn_80219DA0(0, 0, 0);
     fn_80052A6C(fn_80052974());
+}
+
+extern "C" void fn_8002EE1C(register FrameCtx *self)
+{
+    if (lbl_8066D594 == 0) {
+        fn_8042D7B0(lbl_8052F020);
+        lbl_8066D594 = 1;
+    }
+    if (fn_80432924(lbl_80552110)) {
+        fn_8042E438(lbl_8052F020, fn_8043289C(lbl_80552110) + 0x360);
+    } else {
+        fn_8042DCC0(lbl_8052F020);
+    }
 }
