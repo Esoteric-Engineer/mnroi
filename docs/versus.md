@@ -173,11 +173,11 @@ mod the community wants ([`characters.md`](characters.md)).
 | 9a | Match clock and the `lbl_8066B578` wrappers, 0x80131434-0x801317D8 | Done: `fn_80131434`, `fn_8013156C` and `Game/fn_80131654.c`. [Step 9](#step-9-readers-of-the-match-fields) covers rows 9a to 9d. |
 | 9b | Timer-mode readers `fn_8011A94C`, `fn_8011AB34` | Done: `Game/fn_8011A94C.cpp`, `Game/fn_8011AB34.cpp`. The rest of 0x801196F0-0x8011B768 is not needed for versus. |
 | 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | Done: `Game/fn_800288AC.cpp`, `Game/fn_80028BAC.cpp`, and the static initializer with its `_GLOBAL_` pair in `Game/fn_80029F74.cpp`. |
-| 9d | Main loop and frame body, 0x8002B9F0-0x8002C214, then the level loaders | **Current step.** |
+| 9d | Main loop and frame body, 0x8002B9F0-0x8002FD50 | Done: the whole file, `Game/fn_8002FB08.c` (static initializer, `fn_8002FC00`, the pair) last. |
 | 10 | Tail sweep from `fn_8045FA74` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FA74` (0x3C, same shape as `fn_8045FA38` before it, over `fn_80126B68`); 859 unclaimed functions (0x134C0 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-10-the-registrar-and-handle-class-run). |
 
-When rows 2 to 9d are all done this plan is spent: say so in the report instead of settling into
-row 10.
+Rows 2 to 9d are all done, so this plan is spent: a session that lands here needs a planning
+session (say so in the report) instead of settling into row 10.
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size,
 [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code
@@ -215,7 +215,7 @@ up to it. Then fill the range in the "Then" column, one function per run.
 | 9a | done | | static initializer `fn_80131E90`, `_GLOBAL_.I` 0x80132444, so the last-selection module is this file's tail; the nearest edge before it is the `_GLOBAL_.D` at 0x8012DA34 |
 | 9b | done | | 0x801196F0-0x8011B768, 37 functions: static initializer `fn_8011B5F0`, `_GLOBAL_.I`/`.D` 0x8011B6F0/0x8011B72C |
 | 9c | done | | 0x800288AC-0x8002A100, 14 functions: static initializer `fn_80029F74`, `_GLOBAL_.I`/`.D` 0x8002A078/0x8002A0BC |
-| 9d | done through 0x8002FB08 (every pinned function, and the whole range up to it); open: `fn_8002FB08` (the static initializer, `Game/fn_8002FA70.cpp` is the contiguous neighbour), `fn_8002FC00`, then the `_GLOBAL_` pair `fn_8002FCD8`/`fn_8002FD14` | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `fn_8002FB08`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
+| 9d | done | | 0x8002B9F0-0x8002FD50, 62 functions: static initializer `FrameCtxStaticInit`, `_GLOBAL_.I`/`.D` 0x8002FCD8/0x8002FD14 |
 
 - **9a.** Done. The `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) is still unidentified; `fn_800077C4(obj, flag)` takes 1 or 0 from the last two wrappers (guess: on/off).
 - **9b.** Done. `fn_8011A824` (0x94), which both readers call, is still unclaimed.

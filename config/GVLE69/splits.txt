@@ -119,6 +119,13 @@ Game/fn_8002FA70.cpp:
 	.text       start:0x8002FA70 end:0x8002FB08
 	.rodata     start:0x80485908 end:0x8048591C
 
+Game/fn_8002FB08.c:
+	.text       start:0x8002FB08 end:0x8002FD50
+	.ctors      start:0x804825DC end:0x804825E0
+	.dtors      start:0x8048286C end:0x80482870
+	.rodata     start:0x8048591C end:0x80485934
+	.sbss       start:0x8066D598 end:0x8066D5A8
+
 Game/fn_80088740.c:
 	.text       start:0x80088740 end:0x800887AC
 
