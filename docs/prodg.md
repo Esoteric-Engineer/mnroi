@@ -328,6 +328,12 @@ gives the hard register of each pseudo.
   three register copies / `bl __9NameTable`. All 329 of `fn_801ACED4`'s call sites in the DOL have
   that shape and no other callee in the DOL does, so every one of them is a `new` expression and the
   file holding it is C++. Both symbols are renamed in `symbols.txt`.
+- **`new T[n]` calls `__builtin_vec_new` (`fn_801ACF38`, the sibling of `__builtin_new`).** The tell is
+  the assignment `p->slot[i] = new char[strlen(s) + 1];` coming out with the destination address
+  (`slwi`, `addi` into saved registers) computed *before* the size call and the size kept in a saved
+  register (`mr r29, r3` / `addi r29, r29, 1` / `mr r3, r29`); a plain `(char *)f(n)` call computes
+  the address after the call, so it never matches (`Game/fn_8002F884.cpp`). The symbol is renamed;
+  `Game/fn_80449B80.cpp` reaches it through an `__asm__` label.
 - **A destructor mangles as `_._<len><Class>` and calls `__builtin_delete` (`fn_801ACF9C`).** GCC
   2.95 gives every destructor an implicit second parameter, `__in_chrg`, and appends
   `if (__in_chrg & 1) __builtin_delete(this);` after the body, so a two-argument call to a

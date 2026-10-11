@@ -1,5 +1,6 @@
 // FrameCtx::setMode (guessed name): stores the mode and its phase-flag mask; see docs/versus.md section 5, row 9d.
-// fn_8002F95C: tests bit 0x80 of the Config flags (lbl_8066D568) and discards the result. fn_8002F9A8 is an empty stub (the hook for pending state 11).
+// fn_8002F95C tests a Config flag and discards it; fn_8002F9A8 is an empty stub (pending state 11 hook).
+// fn_8002F9D0 appends a copy of the -addthing name to the list at +0x328 (16 entries max).
 
 class FrameCtx
 {
@@ -36,4 +37,24 @@ extern "C" void fn_8002F95C()
 
 extern "C" void fn_8002F9A8(register FrameCtx *self)
 {
+}
+
+extern "C" unsigned int strlen(const char *s);
+extern "C" char *strcpy(char *dst, const char *src);
+
+class ThingList
+{
+public:
+    char pad0[0x328];
+    unsigned int count; // +0x328
+    char *names[16];    // +0x32C
+};
+
+extern "C" void fn_8002F9D0(register ThingList *self, char *name)
+{
+    if (self->count <= 15) {
+        self->names[self->count] = new char[strlen(name) + 1];
+        strcpy(self->names[self->count], name);
+        self->count++;
+    }
 }

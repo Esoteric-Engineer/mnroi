@@ -4,7 +4,7 @@ extern void *memcpy(void *dst, const void *src, unsigned int n);
 extern void fn_8044A6AC(void *self);
 extern void fn_8044A5B4(void *self);
 
-extern char fn_801ACF38(char *p);
+extern char fn_801ACF38(char *p) __asm__("__builtin_vec_new");
 }
 
 struct Iter
