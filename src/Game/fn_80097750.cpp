@@ -297,4 +297,31 @@ extern "C" void fn_80098008(register Actor *self, float f)
     fn_80435578(fn_8009AF80(self), speed);
 }
 
-static const float k_unused __attribute__((section(".rodata"))) = -1.0f; // orphan pool word after fn_80097EC4's
+
+
+__asm__(".section .rodata\n\t.float -1.0\n\t.text"); // orphan pool word after fn_80097EC4's, which no code loads
+
+extern "C" {
+Clip *fn_8008FCEC(void *set, int a, int b, float f);
+void fn_8019A1BC(Clip *c, float *out);
+void fn_80435754(float *v, void *m);
+}
+
+// Looks up clip `a` (index `b`, or the actor's when negative), builds its pose into `out` and transforms it by the matrix at +0x78; returns 1 on success.
+extern "C" int fn_800980C4(register Actor *self, int a, float *out, int b)
+{
+    Clip *clip;
+    int idx;
+    if (!self->f1C0 || !self->model || !self->model->anim)
+        return 0;
+    if (b < 0)
+        idx = fn_8009B0D8(self);
+    else
+        idx = b;
+    clip = fn_8008FCEC(self->f1C0, a, idx, -1.0f);
+    if (clip == 0)
+        return 0;
+    fn_8019A1BC(clip, out);
+    fn_80435754(out, (char *)self + 0x78);
+    return 1;
+}
