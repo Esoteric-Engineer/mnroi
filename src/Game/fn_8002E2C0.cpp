@@ -38,6 +38,8 @@ void fn_8003FDE4(void *v);
 void fn_8021A1B8();
 void fn_8003CB08(void *v);
 void fn_8001B3C4();
+void fn_8001858C();
+void fn_80018674();
 void fn_8021A1D4();
 void fn_8002EA24(void *p);
 void fn_8001B3F4();
@@ -249,4 +251,10 @@ extern "C" void fn_8002E9B4(register FrameCtx *self)
 {
     fn_801AA328();
     fn_8002F95C();
+}
+
+extern "C" void fn_8002E9EC(register FrameCtx *self)
+{
+    fn_8001858C();
+    fn_80018674();
 }
