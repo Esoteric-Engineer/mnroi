@@ -472,4 +472,89 @@ extern "C" void fn_800981FC(register Actor *self)
     }
 }
 
-__asm__(".section .rodata\n\t.globl lbl_8048A784\nlbl_8048A784:\n\t.float 0.0\n\t.text"); // pads the claim to 8; the next function's first literal
+extern "C" {
+void fn_800B07DC(void *self, int v);
+void fn_800B1FA8(void *self, int v);
+int fn_804415C8(void *h);
+int fn_804415F8(void *h);
+int fn_800B0DA0(void *self);
+int *fn_801A36C4(void *group, unsigned char i);
+int fn_802365D8(int v);
+int fn_80444370(Model *m, int v);
+unsigned int fn_802E7694(void *p);
+void *fn_80064A68(int info, void *self, void *group, unsigned char i, void *p, int a, void *ext, int b, int c, int d, int e);
+void *fn_800B24AC(void *self);
+void fn_8043C18C(void *self, int flag);
+void *fn_80318EB4(void *p);
+void fn_80319074(void *a, void *q);
+int fn_8004B60C(void *a, int b, float *c, float d, int e);
+void fn_80434988(void *self);
+void fn_8043632C(void *dst, void *src);
+void fn_804363B8(void *self);
+void fn_804363F0(void *a, void *b);
+void *fn_804362D4(void *self, float *v);
+void fn_80436454(void *self, float s);
+}
+
+// Spawns the template group's clip players on the actor (guess): one per track that fn_804415C8 reports as 1, combining their poses.
+extern "C" void fn_80098710(register Actor *self, Actor *other, float f, int a, float *v)
+{
+    Group *p;
+    void *r;
+    char q[0x10];
+    unsigned short i;
+    float zero;
+    void *obj;
+    void *h;
+    char ext[0x50];
+    int t;
+    float speed;
+    int *e;
+    int flag;
+    char q2[0x10];
+    if (!self->f208)
+        return;
+    p = self->f20C ? *(Group **)self->f20C : *(Group **)self->model;
+    fn_80434988(q);
+    zero = 0.0f;
+    if (!p || p->n == 1)
+        return;
+    fn_800B07DC(self, 1);
+    fn_800B1FA8(self, 1);
+    obj = fn_8007766C(p->sub, 0, 0, 0x40);
+    ExtentCtor(ext);
+    for (i = 0; i < fn_80441628(obj); i++) {
+        h = fn_80441674(obj, i);
+        if (fn_804415C8(h) != 1)
+            continue;
+        e = fn_801A36C4(p, (unsigned char)fn_804415F8(h));
+        if (!fn_80444370(self->model, fn_802365D8(*e)))
+            continue;
+        flag = e != 0 ? fn_802365D8(*e) == 8 : 0;
+        t = fn_802E7694(fn_8043D544(h));
+        speed = *(float *)&t;
+        fn_80078068(h, ext, speed);
+        r = fn_80064A68(self->f208, self, p, (unsigned char)fn_804415F8(h), fn_8043D544(h), 0, ext, 0, flag, 2, 0);
+        fn_8043C18C(fn_800B24AC(r), 0);
+        if (!flag) {
+            if (fn_800B24AC(self))
+                fn_8043632C(q, fn_80318EB4(fn_800B24AC(self)));
+            else
+                fn_804363B8(q);
+            if (f > 0.0f && a && v) {
+                if (fn_8004B60C(fn_800B24AC(r), a, v, 20.0f, 0)) {
+                    if (other && fn_800B0DA0(other) && fn_800B24AC(other)) {
+                        fn_804363F0(q, fn_80318EB4(fn_800B24AC(other)));
+                    } else {
+                        fn_804362D4(q2, v);
+                        fn_80436454(q2, f);
+                        fn_804363F0(q, q2);
+                    }
+                }
+            }
+            fn_80319074(fn_800B24AC(r), q);
+        }
+    }
+}
+
+__asm__(".section .rodata\n\t.globl lbl_8048A78C\nlbl_8048A78C:\n\t.float 1.0\n\t.text"); // pads the claim to 8; the next function's first literal
