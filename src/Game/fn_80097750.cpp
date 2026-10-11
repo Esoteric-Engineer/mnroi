@@ -281,4 +281,20 @@ extern "C" int fn_80097EC4(register Actor *self, int a, float f)
     return ms;
 }
 
+extern "C" MotionSet *fn_8009AE00(Actor *self);
+extern "C" Anim *fn_8009AF80(Actor *self);
+extern "C" int fn_8009AFC8(Actor *self);
+extern "C" void fn_80435578(void *self, float v);
+
+// Retimes the model's animator for `f`: speed from the motion set's entry for the current clip (fn_8008FE88).
+extern "C" void fn_80098008(register Actor *self, float f)
+{
+    int z = 0;
+    float speed;
+    if (!fn_8009AE00(self) || !self->model || !self->model->anim)
+        return;
+    speed = fn_8008FE88(fn_8009AE00(self), fn_8009AFC8(self), f);
+    fn_80435578(fn_8009AF80(self), speed);
+}
+
 static const float k_unused __attribute__((section(".rodata"))) = -1.0f; // orphan pool word after fn_80097EC4's
