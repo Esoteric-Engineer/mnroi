@@ -44,6 +44,8 @@ void fn_8001B3F4();
 void fn_80132838();
 void fn_8003EC38();
 void fn_8012557C(int v);
+void fn_801AA328();
+void fn_8002F95C();
 }
 
 struct GameFlow {
@@ -241,4 +243,10 @@ extern "C" void fn_8002E95C(register FrameCtx *self)
 extern "C" void fn_8002E97C(register FrameCtx *self)
 {
     fn_8012557C(lbl_8066B6CC);
+}
+
+extern "C" void fn_8002E9B4(register FrameCtx *self)
+{
+    fn_801AA328();
+    fn_8002F95C();
 }
