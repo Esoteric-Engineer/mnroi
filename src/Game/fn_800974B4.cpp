@@ -2,6 +2,10 @@
 // Field meanings are in docs/characters.md sections 3 and 5.
 
 extern "C" void fn_800AC7F8(void *self);
+extern "C" void fn_8008F53C(void *p);
+extern "C" void fn_801A646C(void *p, int flag);
+extern "C" void fn_800AE1E8(void *self);
+extern "C" void *fn_800FD5FC(void *name, int flag);
 extern "C" void __6Vector(void *self);
 extern char lbl_804F4DA0[];
 
@@ -83,4 +87,45 @@ Actor::Actor()
 // Empty virtual slot, shared by many vtables.
 extern "C" void fn_800975F4(register Actor *self)
 {
+}
+
+// Releases the actor's owned objects, then the base.
+extern "C" void fn_80097614(register Actor *self)
+{
+    if (self->f1C0)
+        fn_8008F53C((void *)self->f1C0);
+    if (self->f1BC) {
+        fn_801A646C((void *)self->f1BC, 1);
+        self->f1BC = 0;
+    }
+    if (self->f22C) {
+        fn_801A646C((void *)self->f22C, 1);
+        self->f22C = 0;
+    }
+    if (self->f20C) {
+        fn_801A646C((void *)self->f20C, 1);
+        self->f20C = 0;
+    }
+    fn_800AE1E8(self);
+}
+
+struct Prop {
+    int id;
+    int value; // +0x4
+};
+
+extern "C" Prop *fn_800FD73C(void *tmpl, int id);
+
+// Value of property 0x27 in the template named `name`, or -1.
+extern "C" int fn_800976C0(void *name)
+{
+    void *tmpl;
+    Prop *prop;
+    tmpl = fn_800FD5FC(name, 1);
+    if (!tmpl)
+        return -1;
+    prop = fn_800FD73C(tmpl, 0x27);
+    if (!prop)
+        return -1;
+    return prop->value;
 }
