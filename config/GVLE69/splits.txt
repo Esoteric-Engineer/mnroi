@@ -105,6 +105,9 @@ Game/fn_8002F070.c:
 	.text       start:0x8002F070 end:0x8002F3A8
 	.rodata     start:0x804858C0 end:0x804858FC
 
+Game/fn_8002F3A8.c:
+	.text       start:0x8002F3A8 end:0x8002F4A8
+
 Game/fn_8002F884.cpp:
 	.text       start:0x8002F884 end:0x8002F95C
 
