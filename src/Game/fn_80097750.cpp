@@ -19,7 +19,8 @@ struct Actor {
     int f1A4;
     int f1A8;
     int f1AC;
-    char pad1[0xC];
+    int f1B0; // +0x1B0
+    char pad1[8];
     Model *model; // +0x1BC
     void *f1C0;
     char pad2[0xC];
@@ -169,4 +170,13 @@ extern "C" int fn_80097750(register Actor *self, Prop *prop, int arg)
         return 0;
     }
     return 1;
+}
+
+extern "C" void fn_800B0504(void *self);
+
+// Resets the base state, then clears +0x1B0.
+extern "C" void fn_80097C04(register Actor *self)
+{
+    fn_800B0504(self);
+    self->f1B0 = 0;
 }
