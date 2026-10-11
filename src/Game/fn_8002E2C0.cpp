@@ -41,7 +41,11 @@ void fn_8001B3C4();
 void fn_8001858C();
 void fn_80018674();
 void fn_8021A1D4();
-void fn_8002EA24(void *p);
+struct FrameCtx;
+void fn_8002EA24(FrameCtx *self);
+void fn_80018420();
+void fn_800184F0();
+void fn_800D9F74();
 void fn_8001B3F4();
 void fn_80132838();
 void fn_8003EC38();
@@ -230,7 +234,7 @@ extern "C" void fn_8002E7F4(register FrameCtx *self)
     fn_8021A1D4();
     fn_8021A1B8();
     if (self->f68 & 0x10) {
-        fn_8002EA24(lbl_8052F060);
+        fn_8002EA24((FrameCtx *)lbl_8052F060);
     }
     fn_8001B3F4();
     fn_80132838();
@@ -257,4 +261,13 @@ extern "C" void fn_8002E9EC(register FrameCtx *self)
 {
     fn_8001858C();
     fn_80018674();
+}
+
+extern "C" void fn_8002EA24(register FrameCtx *self)
+{
+    if (self->f68 & 2) {
+        fn_80018420();
+    }
+    fn_800184F0();
+    fn_800D9F74();
 }
