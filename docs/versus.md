@@ -174,7 +174,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 9b | Timer-mode readers `fn_8011A94C`, `fn_8011AB34` | Done: `Game/fn_8011A94C.cpp`, `Game/fn_8011AB34.cpp`. The rest of 0x801196F0-0x8011B768 is not needed for versus. |
 | 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | Done: `Game/fn_800288AC.cpp`, `Game/fn_80028BAC.cpp`, and the static initializer with its `_GLOBAL_` pair in `Game/fn_80029F74.cpp`. |
 | 9d | Main loop and frame body, 0x8002B9F0-0x8002FD50 | Done: the whole file, `Game/fn_8002FB08.c` (static initializer, `fn_8002FC00`, the pair) last. |
-| 10 | Template property handlers: `fn_800AC37C` and `fn_80097750` (done), then `fn_80084498` | Pinned. They say what each `Misc/Global.not` property does, which is what a character mod edits ([`characters.md`](characters.md) section 3). Notes: [Steps 10 to 12](#steps-10-to-12-entity-templates). |
+| 10 | Template property handlers: `fn_800AC37C`, `fn_80097750` and `fn_80084498` (all done) | Pinned; what is left is the "Then" fill of `fn_80097750` (the file from `fn_800974B4`). They say what each `Misc/Global.not` property does, which is what a character mod edits ([`characters.md`](characters.md) section 3). Notes: [Steps 10 to 12](#steps-10-to-12-entity-templates). |
 | 11 | Template registry and `Global.not` loader: `fn_800FCE84`, `fn_800FCF50`, `fn_800FD5FC` | Pinned. Shows whether templates can be added (registry capacity, name limits). Notes: [Steps 10 to 12](#steps-10-to-12-entity-templates). |
 | 12 | NVB loader: `fn_801B301C`, `fn_801B3638`, `fn_801B3C4C` (reads `Misc/nvblist.txt`) | Pinned, low priority: names the tuning fields, but a new character can start from a copied NVB. |
 | 13 | Tail sweep from `fn_8045FA74` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FA74` (0x3C, same shape as `fn_8045FA38` before it, over `fn_80126B68`); 859 unclaimed functions (0x134C0 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-13-the-registrar-and-handle-class-run). |
@@ -260,7 +260,7 @@ previous file and the one that ends this file).
 |---|---|---|---|
 | `fn_800AC37C` | 0x32C | done (`Game/fn_800AC37C.cpp`, a unit of its own). Its file is 0x8009E6AC to `_GLOBAL_.I` 0x800A90B0, 130 functions; also holds the attachment spawner `fn_800A22CC` | — |
 | `fn_80097750` | 0x4B4 | done (`Game/fn_80097750.cpp`, a unit of its own, pair-carrying). Its file is 0x800974B4 to `_GLOBAL_.I` 0x8009B2E0, 70 functions: the actor class (constructor `fn_800974B4`, accessors 0x8009AB94-0x8009ACC0) | the file from `fn_800974B4`, so the actor accessors become source |
-| `fn_80084498` | 0x29C | 0x80081E08 to `_GLOBAL_.I` 0x800898E4; `Game/fn_80088740.c` and `Game/fn_800887AC.cpp` are matched | — |
+| `fn_80084498` | 0x29C | done (`Game/fn_80084498.cpp`, a unit of its own, pair-carrying; its float pool is `extern_pool`). Its file is 0x80081E08 to `_GLOBAL_.I` 0x800898E4; `Game/fn_80088740.c` and `Game/fn_800887AC.cpp` are matched | — |
 | `fn_800FCE84`, `fn_800FCF50`, `fn_800FD5FC` | 0xCC, 0x55C, 0x9C | 0x800F9F88 to `_GLOBAL_.I` 0x80101A00, 93 functions (source probably `gameTemplate`, from its heap tags) | — |
 | `fn_801B301C`, `fn_801B3638`, `fn_801B3C4C` | 0x70, 0x614, 0x220 | no static initializer between 0x801A0000 and 0x801C0000; edges unknown | — |
 

@@ -115,6 +115,7 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
   | 0x24 | | string, template `fn_800FD5FC(name, 1)` into `+0x1A0`, else `fn_803A1AC4(lbl_8064AA80, name)` into `+0x1A4` |
   | 0x27, 0x28 | Storm: 1, `strmHair` | 0x27: `actor+0x200` |
   | 0x2E | `AI_WOLVERINE` | (`fn_80084498`) AI profile: index of the name in `lbl_804CF8E8` (`fn_80137CEC`, `stricmp`), stored as a short at `+0x384`; an unknown name gives 0, `AI_DEFAULT` |
+  | 0x2D-0x38, 0x3A, 0x3B, 0x6F | | (`fn_80084498`, object fields) 0x2D low halfword to short `+0x314`; 0x30 int `+0x300`; 0x31 int `+0x30C`; 0x32 int `+0x308`; 0x33 int as float to `+0x31C` and `+0x32C`; 0x34 int as float to `+0x320`; 0x35, 0x36 floats `+0x324`, `+0x328`; 0x37, 0x38 floats `+0x33C`, `+0x340`; 0x3A low byte to short `+0x316`; 0x3B template lookup into `+0x3B4`, else `fn_803A1AC4(lbl_8064AA80, name)` into `+0x3B0`; 0x6F that lookup into `+0x3C0`. Other ids (0x2F, 0x39, 0x3C-0x49) return 0 |
   | 0x6C | | string, `fn_801A1A84` into `+0x20C` |
   | 0x6D, 0x6E | | string, template lookup into `+0x208`, `+0x210` |
   | 0x70 | 1 (Storm: 7) | **type ID**, `actor+0x1AC` |
