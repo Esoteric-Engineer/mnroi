@@ -257,3 +257,28 @@ extern "C" int fn_80097CE8(register Actor *self, int a, int mode, float speed, v
     ms = (int)(clip->length / speed * 1000.0f);
     return ms;
 }
+
+extern "C" float fn_8008FE88(void *set, int a, float f);
+
+// Starts clip `a` of the loaded motion set on the model's animator in slot +0x18; returns its length in milliseconds, or -1.
+extern "C" int fn_80097EC4(register Actor *self, int a, float f)
+{
+    int ms;
+    Clip *clip;
+    int flags = 0;
+    float speed;
+    float scale;
+    void *set = self->f1C0;
+    if (!set || !self->model || !self->model->anim)
+        return -1;
+    clip = fn_8008FC18(set, a, &flags, &scale, 0, 0.0f);
+    if (clip == 0)
+        return -1;
+    speed = fn_8008FE88(set, a, f);
+    self->model->anim->f18 = a;
+    fn_8019A9E4(self->model->anim, clip, speed, flags, 7.5f);
+    ms = (int)(clip->length / speed * 1000.0f);
+    return ms;
+}
+
+static const float k_unused __attribute__((section(".rodata"))) = -1.0f; // orphan pool word after fn_80097EC4's
