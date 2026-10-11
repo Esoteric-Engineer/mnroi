@@ -1,5 +1,5 @@
 // FrameCtx::setMode (guessed name): stores the mode and its phase-flag mask; see docs/versus.md section 5, row 9d.
-// fn_8002F95C: tests bit 0x80 of the Config flags (lbl_8066D568) and discards the result.
+// fn_8002F95C: tests bit 0x80 of the Config flags (lbl_8066D568) and discards the result. fn_8002F9A8 is an empty stub (the hook for pending state 11).
 
 class FrameCtx
 {
@@ -32,4 +32,8 @@ extern "C" void fn_8002F95C()
     if (fn_80432968((unsigned int *)lbl_8066D568) == 0) {
         return;
     }
+}
+
+extern "C" void fn_8002F9A8(register FrameCtx *self)
+{
 }
