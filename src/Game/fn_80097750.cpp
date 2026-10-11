@@ -13,9 +13,23 @@ struct MotionSet {
     unsigned int count; // +0x24
 };
 
+struct Anim {
+    char pad0[0x18];
+    int f18; // +0x18
+    char pad1[0x28];
+    int f44; // +0x44
+};
+
 struct Model {
     int unk0;
     int flags; // +0x4
+    char pad8[0xA8];
+    struct Anim *anim; // +0xB0
+};
+
+struct Clip {
+    char pad0[0x28];
+    float length; // +0x28
 };
 
 struct Actor {
@@ -198,4 +212,48 @@ extern "C" int fn_80097C4C(register Actor *self, unsigned short n)
         return 0;
     self->f204 = n;
     return 1;
+}
+
+extern "C" {
+int fn_8009B0D8(void *self);
+Clip *fn_8008FC18(void *set, int a, int *flags, float *scale, int b, float f);
+void fn_8019AB64(Anim *a, Clip *c, float speed, int flags, float blend);
+void fn_8019A9E4(Anim *a, Clip *c, float speed, int flags, float blend);
+int fn_800419AC(void);
+void fn_8003FE44(void *self, int a, int b);
+}
+
+// Starts clip `a` on the model's animator (mode 0 or 1); returns its length in milliseconds, or -1.
+extern "C" int fn_80097CE8(register Actor *self, int a, int mode, float speed, void *set, float blend, float f)
+{
+    int ms;
+    Clip *clip;
+    int flags = 0;
+    int b;
+    float scale;
+    if (set == 0)
+        set = self->f1C0;
+    if (!set || !self->model || !self->model->anim)
+        return -1;
+    b = fn_8009B0D8(self);
+    clip = fn_8008FC18(set, a, &flags, &scale, b, f);
+    if (clip == 0)
+        return -1;
+    speed = speed * scale;
+    switch (mode) {
+    case 0:
+        self->model->anim->f44 = a;
+        fn_8019AB64(self->model->anim, clip, speed, flags, blend);
+        break;
+    case 1:
+        self->model->anim->f18 = a;
+        fn_8019A9E4(self->model->anim, clip, speed, flags, blend);
+        break;
+    default:
+        break;
+    }
+    if (mode == 0 && fn_800419AC())
+        fn_8003FE44(self, 0, 0);
+    ms = (int)(clip->length / speed * 1000.0f);
+    return ms;
 }
