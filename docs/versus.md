@@ -139,7 +139,7 @@ These are plain getters and setters around small-data globals. The setup handler
 |---|---|---|
 | `lbl_8066F178` match type | `fn_801317D8` / `fn_80131800` | `Control_SetMatchInfo` |
 | `lbl_8066F17C` timed | `fn_80131828` / `fn_80131850` | `Control_SetMatchInfo` |
-| `lbl_8066F180` | `fn_80131878` / `fn_801318A0` | `fn_80028BAC`, `fn_8011D4E4`, `fn_8011E1DC` |
+| `lbl_8066F180` difficulty (`nDiffLevel` in `clashCharSelect_GetPrevCharList`) | `fn_80131878` / `fn_801318A0` | `fn_80028BAC`, `fn_8011D4E4`, `fn_8011E1DC` |
 | `lbl_8066F184` seconds | `fn_801318C8` / `fn_801318F0` | `Control_SetMatchInfo` |
 | `lbl_8066F188`/`lbl_8066F194` | Per-player: `fn_80131918` / `fn_80131974` | `Control_SetSelectInfo` |
 | `lbl_8066F18C`/`lbl_8066F198` | Per-player: `fn_801319D4` / `fn_80131A34` | `Control_SetSelectInfo` |
@@ -175,9 +175,9 @@ mod the community wants ([`characters.md`](characters.md)).
 | 9c | Command-line parser `fn_80028BAC` and its file, 0x800288AC-0x8002A100 | Done: `Game/fn_800288AC.cpp`, `Game/fn_80028BAC.cpp`, and the static initializer with its `_GLOBAL_` pair in `Game/fn_80029F74.cpp`. |
 | 9d | Main loop and frame body, 0x8002B9F0-0x8002FD50 | Done: the whole file, `Game/fn_8002FB08.c` (static initializer, `fn_8002FC00`, the pair) last. |
 | 10 | Template property handlers: `fn_800AC37C`, `fn_80097750` and `fn_80084498` | Done. They say what each `Misc/Global.not` property does, which is what a character mod edits ([`characters.md`](characters.md) section 3). Notes: [Steps 10 to 12](#steps-10-to-12-entity-templates). |
-| 11 | Template registry and `Global.not` loader: `fn_800FCE84`, `fn_800FCF50`, `fn_800FD5FC` | Done. Shows whether templates can be added (registry capacity, name limits); the open questions are below. Notes: [Steps 10 to 12](#steps-10-to-12-entity-templates). |
+| 11 | Template registry and `Global.not` loader: `fn_800FCE84`, `fn_800FCF50`, `fn_800FD5FC` | Done. Templates can be added: [`characters.md`](characters.md) sections 3 and 6. Notes: [Steps 10 to 12](#steps-10-to-12-entity-templates). |
 | 12 | NVB loader: `fn_801B301C`, `fn_801B3638`, `fn_801B3C4C` | Done: `Game/fn_801B301C.c` and `Game/fn_801B3638.c` (also holds `fn_801B3C4C`, the `Misc/nvblist.txt` reader; claims `.rodata` 0x8049E53C-0x8049E540, its `char[0x200] = "\0"` source). `lbl_8066C6D0` is the NVB registry (guess; `fn_801B4628(registry, fn_804673B8(nvb), nvb)` adds, `fn_801B48AC` looks up). File format: [`characters.md`](characters.md) section 4. |
-| 13 | Registry capacity: `fn_801B4284`, `fn_801B4628`, `fn_801B48AC`, `fn_800FD9A0` | Open, pinned, in that order. Settles whether a new character's templates and NVB fit. Notes: [Steps 13 to 17](#steps-13-to-17-what-a-new-character-needs), as for rows 14 to 17. |
+| 13 | Registry capacity: `fn_801B4284`, `fn_801B4628`, `fn_801B48AC`, `fn_800FD9A0` | Open, pinned, in that order. The capacity question is answered from the disassembly: no fixed limit ([`characters.md`](characters.md) section 3). Matching confirms it. Notes: [Steps 13 to 17](#steps-13-to-17-what-a-new-character-needs), as for rows 14 to 17. |
 | 14 | Voice by type ID: `fn_801155A8`, `fn_801154D8`, `fn_80115154`, `fn_80115308`, `fn_8010CDCC`, `fn_8010D050` | Open, pinned, in that order. |
 | 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Open, pinned, in that order. |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Open, pinned, in that order. |
@@ -266,7 +266,7 @@ previous file and the one that ends this file).
 | `fn_800AC37C` | 0x32C | done (`Game/fn_800AC37C.cpp`, a unit of its own). Its file is 0x8009E6AC to `_GLOBAL_.I` 0x800A90B0, 130 functions; also holds the attachment spawner `fn_800A22CC` | — |
 | `fn_80097750` | 0x4B4 | done: the whole file, 0x800974B4 to its `_GLOBAL_.I` `fn_8009B2E0` (`Game/fn_800974B4.cpp`, then `Game/fn_80097750.cpp` to the end, pair-carrying). It is the actor class (constructor `fn_800974B4`). The float pool starts at 0x8048A74C; -1.0f at 0x8048A75C and 0.0f at 0x8048A798 are words no code loads, see [`matching_notes.md`](matching_notes.md) | — |
 | `fn_80084498` | 0x29C | done (`Game/fn_80084498.cpp`, a unit of its own, pair-carrying; its float pool is `extern_pool`). Its file is 0x80081E08 to `_GLOBAL_.I` 0x800898E4; `Game/fn_80088740.c` and `Game/fn_800887AC.cpp` are matched | — |
-| `fn_800FCE84`, `fn_800FCF50`, `fn_800FD5FC` | 0xCC, 0x55C, 0x9C (all done) | 0x800F9F88 to `_GLOBAL_.I` 0x80101A00, 93 functions (source probably `gameTemplate`, from its heap tags). `fn_800FCE84` is the init: it allocates the "gameTemplate - Files" (0x20 bytes) and "gameTemplate - Templates" (0x200 bytes) buffers, clears the 0x100-byte `.bss` `lbl_80565860`, then loads "global" through `fn_800FCF50`; `.sdata` `lbl_8066BAF4` (0x12C0 until the load starts, then the count of files loaded) and `lbl_8066BAEC` (set to 1 when done) are its state. `fn_800FCF50` (`Game/fn_800FCF50.cpp`, a `.cpp` unit: its labels carry the pair) loads `<name>.NOT` (big-endian: a skipped word, version 1, entry count, then 0x20-byte lowercased names each with a size word) and registers the file in `lbl_8066BAF0` and each entry in `lbl_8066BAE4`; the 64-slot `.bss` `lbl_80565860` is its list of loaded files. `fn_800FD9A0` (per-entry body, unmatched) runs after the name table. `fn_800FD5FC` (`Game/fn_800FD5FC.cpp`, a unit of its own) is the lookup by name: copy 0x20 bytes, lowercase, search the registry `lbl_8066BAE4`; its callers pass the second argument 1 (meaning unknown). | — |
+| `fn_800FCE84`, `fn_800FCF50`, `fn_800FD5FC` | 0xCC, 0x55C, 0x9C (all done) | 0x800F9F88 to `_GLOBAL_.I` 0x80101A00, 93 functions (source probably `gameTemplate`, from its heap tags). `fn_800FCE84` is the init: it allocates the "gameTemplate - Files" (0x20 bytes) and "gameTemplate - Templates" (0x200 bytes) buffers, clears the 0x100-byte `.bss` `lbl_80565860`, then loads "global" through `fn_800FCF50`; `.sdata` `lbl_8066BAF4` (0x12C0 until the load starts, then the count of files loaded) and `lbl_8066BAEC` (set to 1 when done) are its state. `fn_800FCF50` (`Game/fn_800FCF50.cpp`, a `.cpp` unit: its labels carry the pair) loads `<name>.NOT` (little-endian on disc, byte-swapped here: a skipped magic, version 1, entry count, then 0x20-byte names, lowercased on load, each with the file offset of its body; layout in [`characters.md`](characters.md) section 3) and registers the file in `lbl_8066BAF0` and each entry in `lbl_8066BAE4`; the 64-slot `.bss` `lbl_80565860` is its list of loaded files. `fn_800FD9A0` (per-entry body, unmatched) runs after the name table. `fn_800FD5FC` (`Game/fn_800FD5FC.cpp`, a unit of its own) is the lookup by name: copy 0x20 bytes, lowercase, search the registry `lbl_8066BAE4`; its callers pass the second argument 1 (meaning unknown). | — |
 | `fn_801B301C`, `fn_801B3638`, `fn_801B3C4C` | 0x70, 0x614, 0x220 (all done) | no static initializer between 0x801A0000 and 0x801C0000; edges unknown | — |
 
 Actor fields (`Game/fn_80097750.cpp` names them `fNNN`): `+0x198` vptr `lbl_804F4DA0`; `+0x1B0` handle that
@@ -275,9 +275,9 @@ timestamps (`fn_8042E96C`/`fn_8042EFF8` on the globals object); `+0x220` last ta
 timer (negative counts down, else a deadline 5000 ms ahead; guess). `fn_8009A324` constructs a derived class
 (guessed `__6ActorK`, kind 0xF, vptr `lbl_804F4CA8`) whose `+0x280` is a component handle.
 
-Open for these rows: what `fn_800FCF50`'s `0x3F` compare limits (guess: name length); and whether the registry
-`fn_800FCE84` creates through `fn_801B4284` has a fixed capacity. Which handler takes which property id is
-settled: the kind table in [`characters.md`](characters.md) section 3.
+Nothing is open for these rows. `fn_800FCF50`'s `0x3F` compare is its walk of the 64-slot file list, the
+registry has no fixed capacity, and the kind table says which handler takes which property id: all in
+[`characters.md`](characters.md) section 3.
 
 ### Steps 13 to 17: what a new character needs
 
@@ -288,9 +288,9 @@ delete the question it settles.
 
 | Row | Pinned | Size | Settles |
 |---|---|---|---|
-| 13 | `fn_801B4284` | 0x154 | Creates the registries (`fn_800FCE84` calls it for templates): is the capacity fixed? `Global.not` already holds 836 templates. |
-| 13 | `fn_801B4628`, `fn_801B48AC` | 0x13C, 0x8C | Registry add and lookup (the NVB registry `lbl_8066C6D0` uses both): what happens when it is full, and how a key is hashed. |
-| 13 | `fn_800FD9A0` | 0x608 | The per-entry body `fn_800FCF50` runs after the name table: per-template limits (property count, value size). |
+| 13 | `fn_801B4284` | 0x154 | Creates the registries (`fn_800FCE84` calls it for templates). Read from the disassembly as a chained hash table with no fixed capacity ([`characters.md`](characters.md) section 3); a match confirms the header layout and the bucket-count table. |
+| 13 | `fn_801B4628`, `fn_801B48AC` | 0x13C, 0x8C | Registry add and lookup (the NVB registry `lbl_8066C6D0` uses both). Read as never full (the node pool grows) and as dropping a duplicate key; a match confirms both, and the hash in `fn_801B4CA0`. |
+| 13 | `fn_800FD9A0` | 0x608 | The per-entry body `fn_800FCF50` runs after the name table. Read as a heap array of `count * 0x24` (no property limit), each value byte-swapped by its type; a match confirms it. |
 | 14 | `fn_801155A8`, `fn_801154D8`, `fn_80115154`, `fn_80115308` | 0xC4, 0xD0, 0x1B4, 0x1D0 | Sound-event lookups keyed `(bank << 9) \| event` ([`characters.md`](characters.md) section 5): what a type ID with no events gets, beyond `fn_801155A8`'s `0xFA001` fallback. |
 | 14 | `fn_8010CDCC`, `fn_8010D050` | 0x284, 0x1D0 | The caller that passes the type ID as the bank, and what the Biohazard (type 17) special case is. |
 | 15 | `fn_8009543C` | 0xC8 | `fn_8009543C(G, id, "plr_wolverine")`, the debug command that puts a character in a slot ([`characters.md`](characters.md) section 3). |
@@ -299,7 +299,7 @@ delete the question it settles.
 | 16 | `fn_800BFC60`, `fn_8009EA20` | 0x1BC, 0x358 | The two `fn_8009ABEC` callers that keep the type ID in a register ([`characters.md`](characters.md) section 5, "Coverage of this list"): do they treat characters differently? |
 | 17 | `fn_80137CEC` | 0xAC | AI profile name to index over `lbl_804CF8E8`; confirms an unlisted name gets `AI_DEFAULT`. |
 | 17 | `fn_800AC750` | 0xA8 | Property 0x14 `CASTID` (guess: the name `fn_80020E60` reads). |
-| 17 | `fn_800AE534` | 0x65C | The common properties (kind 0), which hold 0x0F, 0x15 and the undecoded 0x1A-0x1C and 0x20 of `act_Wolverine`. |
+| 17 | `fn_800AE534` | 0x65C | The common properties (kind 0), which hold 0x0F `PHYSMODEL`, 0x15 `DESCRIPTIONID`, 0x20 `RENDERFLAGS`, 0x28 `EFFECT1` and the editor's 0x1A-0x1C of `act_Wolverine`: named by the property table, but what the game does with each is not followed. |
 | 17 | `fn_800A22CC` | 0x6FC | The attachment spawner, which copies the parent's type ID to its children. |
 
 Not a match target, so no row: the audit of code that reads `actor+0x1AC` without the getter

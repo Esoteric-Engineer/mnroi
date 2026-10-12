@@ -6,8 +6,9 @@ typedef struct TemplateEntry
 {
     char name[0x20];
     int unk20;
-    unsigned int size; // +0x24, big-endian in the file
-    int unk28[2];
+    unsigned int offset; // +0x24, file offset of the entry's body; the file is little-endian
+    unsigned int propCount; // +0x28, set by fn_800FD9A0
+    void *props;            // +0x2C, propCount * 0x24 bytes
 } TemplateEntry;
 
 struct TemplateFile
@@ -107,10 +108,10 @@ extern "C" TemplateFile *fn_800FCF50(const char *name)
             goto err1;
         }
         strlwr(e->name);
-        if (fn_801A8B60(&e->size, 4, 1, file) != 1) {
+        if (fn_801A8B60(&e->offset, 4, 1, file) != 1) {
             goto err1;
         }
-        e->size = SWAP32(e->size);
+        e->offset = SWAP32(e->offset);
         fn_801B4628(lbl_8066BAE4, e, e);
     }
 
