@@ -182,6 +182,9 @@ Game/fn_800B7204.c:
 Game/fn_800FCE84.c:
 	.text       start:0x800FCE84 end:0x800FCF50
 
+Game/fn_800FCF50.cpp:
+	.text       start:0x800FCF50 end:0x800FD4AC
+
 Game/handlers/characterselect.cpp:
 	.text       start:0x801037B0 end:0x801040F4
 	.ctors      start:0x8048264C end:0x80482650
