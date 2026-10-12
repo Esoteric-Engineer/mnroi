@@ -35,7 +35,9 @@ struct Clip {
 };
 
 struct Actor {
-    char pad0[0x1A0];
+    char pad00[0x30];
+    unsigned int flags; // +0x30
+    char pad0[0x16C];
     int f1A0; // +0x1A0
     int f1A4;
     int f1A8;
@@ -1349,4 +1351,9 @@ extern "C" void fn_8009AA88(register Actor *self)
 
 extern "C" void fn_8009AAA8(register Actor *self)
 {
+}
+
+extern "C" int fn_8009AAC8(register Actor *self)
+{
+    return self->flags & 0x2000;
 }
