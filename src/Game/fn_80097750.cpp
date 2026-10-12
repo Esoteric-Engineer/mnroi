@@ -1082,3 +1082,31 @@ extern "C" int fn_8009A1D0(register void *self)
     }
     return 0;
 }
+
+extern "C" char lbl_804F4CA8[];
+
+extern "C" void fn_8042D7B0(void *self);
+
+class ActorBase
+{
+public:
+    char data[0x240];
+    ActorBase() __asm__("__5Actor");
+};
+
+// Constructor of the kind-15 actor class (guessed name): base, vptr, a Root at +0x240, kind 0xF.
+class ActorK : public ActorBase
+{
+public:
+    char r240[0x40]; // +0x240, built by fn_8042D7B0
+    int f280;
+    ActorK();
+};
+
+ActorK::ActorK()
+{
+    *(void **)(data + 0x198) = lbl_804F4CA8;
+    fn_8042D7B0(r240);
+    data[0] = 0xF;
+    f280 = 0;
+}
