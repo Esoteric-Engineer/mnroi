@@ -179,6 +179,9 @@ Game/fn_800B7204.c:
 	.rodata     start:0x8048BF44 end:0x8048BF64
 	.sbss       start:0x8066D6BC end:0x8066D6CC
 
+Game/fn_800FCE84.c:
+	.text       start:0x800FCE84 end:0x800FCF50
+
 Game/handlers/characterselect.cpp:
 	.text       start:0x801037B0 end:0x801040F4
 	.ctors      start:0x8048264C end:0x80482650
