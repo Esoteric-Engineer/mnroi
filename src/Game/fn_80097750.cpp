@@ -1342,3 +1342,7 @@ extern "C" void fn_8009AA40(register Actor *self)
         fn_80090034(self->f1C0, 0);
     }
 }
+
+extern "C" void fn_8009AA88(register Actor *self)
+{
+}
