@@ -1020,3 +1020,15 @@ extern "C" void fn_80099F7C(register Actor *self, int mode, int notify)
     if (notify)
         fn_8007FAE4(self, mode);
 }
+
+extern "C" void *fn_8043E450(void *self, int second);
+
+// Re-arms the target-lock timer of the entity picked from a pair (mode 2, notify).
+extern "C" void fn_8009A088(register void *self, void *pair, int second)
+{
+    if (!fn_8009B19C(self))
+        return;
+    void *c = fn_8043E450(pair, second);
+    if (c && fn_800B0F0C(c))
+        fn_80099F7C((Actor *)fn_800B1568(c), 2, 1);
+}
