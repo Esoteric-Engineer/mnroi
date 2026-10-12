@@ -1216,4 +1216,12 @@ extern "C" void *fn_8009A5F0(register void *self)
     return (char *)self + 0x1E0;
 }
 
-__asm__(".section .rodata\n\t.globl lbl_8048A80C\nlbl_8048A80C:\n\t.float 1.3\n\t.text"); // pads the claim to 8; fn_8009A6B4 loads it
+// Same as fn_8009A5F0 for the vector at +0x1F0 and effect kind 0xF.
+extern "C" void *fn_8009A6B4(register void *self)
+{
+    if (!fn_8009AD80(self) || !fn_801A5104(fn_8009AD80(self), 0xF, 0, (char *)self + 0x1F0, fn_800B1668(self))) {
+        fn_8042DC84((char *)self + 0x1F0, fn_800B1724(self));
+        *(float *)((char *)self + 0x1F8) += 1.3f;
+    }
+    return (char *)self + 0x1F0;
+}
