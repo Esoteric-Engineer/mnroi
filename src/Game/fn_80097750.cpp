@@ -1110,3 +1110,11 @@ ActorK::ActorK()
     data[0] = 0xF;
     f280 = 0;
 }
+
+extern "C" void fn_80097614(Actor *self);
+
+// Release method of the kind-15 actor class: forwards to the base release.
+extern "C" void fn_8009A38C(register Actor *self)
+{
+    fn_80097614(self);
+}
