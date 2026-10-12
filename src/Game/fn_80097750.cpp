@@ -1357,3 +1357,15 @@ extern "C" int fn_8009AAC8(register Actor *self)
 {
     return self->flags & 0x2000;
 }
+
+extern "C" void fn_800B16D8(void *, void *);
+extern "C" int fn_8009B108(void *);
+extern "C" void fn_8042D854(void *, int);
+
+extern "C" void fn_8009AAF8(register Actor *self, register void *p)
+{
+    fn_800B16D8(self, p);
+    if (fn_8009AAC8(self)) {
+        fn_8042D854(p, fn_8009B108(self));
+    }
+}
