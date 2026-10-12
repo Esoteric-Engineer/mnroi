@@ -1126,3 +1126,14 @@ extern "C" void fn_8009A3C4(register void *self)
 {
     fn_8042E438((char *)self + 0x240, (char *)self + 0x78);
 }
+
+extern "C" void *fn_8004DCA0(void *a, void *b);
+extern "C" void fn_800AFAB0(void *self, Scene *scene, void *found, void *r240, int flag);
+
+// Looks up the entity's +0x270 key and, when found, hands it to fn_800AFAB0 with the +0x240 Root.
+extern "C" void fn_8009A408(register void *self)
+{
+    void *found = fn_8004DCA0(fn_800B1CC8(self), (char *)self + 0x270);
+    if (found)
+        fn_800AFAB0(self, fn_800B1A98(self), found, (char *)self + 0x240, 1);
+}
