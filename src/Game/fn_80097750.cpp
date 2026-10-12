@@ -1346,3 +1346,7 @@ extern "C" void fn_8009AA40(register Actor *self)
 extern "C" void fn_8009AA88(register Actor *self)
 {
 }
+
+extern "C" void fn_8009AAA8(register Actor *self)
+{
+}
