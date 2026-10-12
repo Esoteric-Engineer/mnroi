@@ -1,4 +1,4 @@
-// NVB loader: reads "<a>_<b>.nvb" into a record table; docs/versus.md section 5, row 12.
+// NVB loader and the Misc/nvblist.txt reader; docs/versus.md section 5, row 12.
 
 #define SWAP32(x) (((unsigned)(x) >> 24) | (((unsigned)(x) >> 8) & 0xFF00) | (((x) & 0xFF00) << 8) | ((x) << 24))
 
@@ -37,6 +37,17 @@ extern void fn_801A875C(void *file);
 extern NvbEntry *fn_801B35CC(Nvb *nvb, int idx);
 extern unsigned int *fn_801B31E4(void *pool, int size);
 extern void fn_8042FC74(unsigned int *elem);
+extern char lbl_8049E540[]; // "nvblist.txt"
+extern char lbl_8049E54C[]; // "ra"
+extern char lbl_8049E550[]; // " \t\r\n/;"
+extern char lbl_8049E558[]; // "|"
+extern char *strtok(char *s, const char *delim);
+extern char *strcat(char *dst, const char *src);
+extern int fn_801A8C84(void *file);
+extern char *fn_801A8C08(char *dst, int size, void *file);
+extern void *fn_804673B8(Nvb *nvb);
+extern void fn_801B4628(void *registry, void *key, Nvb *nvb);
+extern void *lbl_8066C6D0;
 
 Nvb *fn_801B3638(char *a, char *b)
 {
@@ -138,4 +149,47 @@ Nvb *fn_801B3638(char *a, char *b)
     } else {
     }
     return nvb;
+}
+
+void fn_801B3C4C(void)
+{
+    Nvb *nvb;
+    char *a;
+    char *b;
+    char list[0x200] = "\0";
+    void *file;
+    char line[0x200];
+
+    file = fn_801A8368(lbl_8049E540, lbl_8049E54C, 9);
+    if (file) {
+        while (!fn_801A8C84(file)) {
+            if (fn_801A8C08(line, 0x200, file)) {
+                if (line[0] == ' ' || line[0] == '/') {
+                    continue;
+                }
+                a = strtok(line, lbl_8049E550);
+                if (!a) {
+                    continue;
+                }
+                b = strtok(0, lbl_8049E550);
+                if (!b) {
+                    continue;
+                }
+                strcat(list, a);
+                strcat(list, lbl_8049E558);
+                strcat(list, b);
+                strcat(list, lbl_8049E558);
+            }
+        }
+        fn_801A875C(file);
+    }
+    a = strtok(list, lbl_8049E558);
+    while (a) {
+        b = strtok(0, lbl_8049E558);
+        nvb = fn_801B3638(a, b);
+        if (nvb) {
+            fn_801B4628(lbl_8066C6D0, fn_804673B8(nvb), nvb);
+        }
+        a = strtok(0, lbl_8049E558);
+    }
 }
