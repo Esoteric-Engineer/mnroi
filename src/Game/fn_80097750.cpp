@@ -1046,3 +1046,39 @@ extern "C" void fn_8009A130(register void *self, int a, int *out)
         *out = 0;
     }
 }
+
+struct Roster {
+    char pad0[0x15C];
+    unsigned char *ids; // +0x15C
+    unsigned char count; // +0x160
+};
+
+struct Scene {
+    char pad0[0x12C];
+    char *records; // +0x12C, 0x1C0-byte records
+};
+
+extern "C" int fn_80430B30(void *f);
+extern "C" int fn_80430BFC(void *f);
+extern "C" void *fn_800B1CC8(void *self);
+extern "C" void *fn_800B11C8(void *self);
+extern "C" Scene *fn_800B1A98(void *self);
+
+// True when the entity's factors pass fn_80430B30 and it, or one of its listed scene records, passes fn_80430BFC.
+extern "C" int fn_8009A1D0(register void *self)
+{
+    if (!fn_8009AD80(self) || !fn_80430B30(fn_8009AD80(self)))
+        return 0;
+    if (fn_80430BFC(fn_800B1CC8(self)))
+        return 1;
+    if (fn_800B11C8(self)) {
+        char *rec;
+        unsigned short i;
+        for (i = 0; i < ((Roster *)self)->count; i++) {
+            rec = fn_800B1A98(self)->records + ((Roster *)self)->ids[i] * 0x1C0;
+            if (fn_80430BFC(rec))
+                return 1;
+        }
+    }
+    return 0;
+}
