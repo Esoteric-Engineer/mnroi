@@ -177,7 +177,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 10 | Template property handlers: `fn_800AC37C`, `fn_80097750` and `fn_80084498` | Done. They say what each `Misc/Global.not` property does, which is what a character mod edits ([`characters.md`](characters.md) section 3). Notes: [Steps 10 to 12](#steps-10-to-12-entity-templates). |
 | 11 | Template registry and `Global.not` loader: `fn_800FCE84`, `fn_800FCF50`, `fn_800FD5FC` | Done. Templates can be added: [`characters.md`](characters.md) sections 3 and 6. Notes: [Steps 10 to 12](#steps-10-to-12-entity-templates). |
 | 12 | NVB loader: `fn_801B301C`, `fn_801B3638`, `fn_801B3C4C` | Done: `Game/fn_801B301C.c` and `Game/fn_801B3638.c` (also holds `fn_801B3C4C`, the `Misc/nvblist.txt` reader; claims `.rodata` 0x8049E53C-0x8049E540, its `char[0x200] = "\0"` source). `lbl_8066C6D0` is the NVB registry (guess; `fn_801B4628(registry, fn_804673B8(nvb), nvb)` adds, `fn_801B48AC` looks up). File format: [`characters.md`](characters.md) section 4. |
-| 13 | Registry capacity: `fn_801B4628`, `fn_801B48AC`, `fn_800FD9A0` | Open, pinned, in that order (`fn_801B4284` is done). The capacity question is answered from the disassembly: no fixed limit ([`characters.md`](characters.md) section 3). Matching confirms it. Notes: [Steps 13 to 17](#steps-13-to-17-what-a-new-character-needs), as for rows 14 to 17. |
+| 13 | Registry capacity: `fn_800FD9A0` | Open, pinned (the registry add and lookup are done: `Game/fn_801B4628.c`, `Game/fn_801B48AC.c`). Notes: [Steps 13 to 17](#steps-13-to-17-what-a-new-character-needs), as for rows 14 to 17. |
 | 14 | Voice by type ID: `fn_801155A8`, `fn_801154D8`, `fn_80115154`, `fn_80115308`, `fn_8010CDCC`, `fn_8010D050` | Open, pinned, in that order. |
 | 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Open, pinned, in that order. |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Open, pinned, in that order. |
@@ -288,7 +288,6 @@ delete the question it settles.
 
 | Row | Pinned | Size | Settles |
 |---|---|---|---|
-| 13 | `fn_801B4628`, `fn_801B48AC` | 0x13C, 0x8C | Registry add and lookup (the NVB registry `lbl_8066C6D0` uses both). Read as never full (the node pool grows) and as dropping a duplicate key; a match confirms both, and the hash in `fn_801B4CA0`. |
 | 13 | `fn_800FD9A0` | 0x608 | The per-entry body `fn_800FCF50` runs after the name table. Read as a heap array of `count * 0x24` (no property limit), each value byte-swapped by its type; a match confirms it. |
 | 14 | `fn_801155A8`, `fn_801154D8`, `fn_80115154`, `fn_80115308` | 0xC4, 0xD0, 0x1B4, 0x1D0 | Sound-event lookups keyed `(bank << 9) \| event` ([`characters.md`](characters.md) section 5): what a type ID with no events gets, beyond `fn_801155A8`'s `0xFA001` fallback. |
 | 14 | `fn_8010CDCC`, `fn_8010D050` | 0x284, 0x1D0 | The caller that passes the type ID as the bank, and what the Biohazard (type 17) special case is. |

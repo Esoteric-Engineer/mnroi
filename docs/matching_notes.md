@@ -253,6 +253,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **`srwi r0, rX, N` / `xori r0, r0, 1` / `clrlwi r0, r0, 31` is `((x >> N) ^ 1) & 1` on an `unsigned int`.** `~(x >> N) & 1` gives `nor` and `((x >> N) & 1) ^ 1` swaps the last two instructions (`Game/fn_80434E0C.c`, `fn_80434F14`). A float read through a pointer field the DOL does as `lwz r11, off(r9)` / `lfs f0, N(r11)`, where a `char *` sum adds an `addi`, is a struct pointer with the float as a member.
 
+- **A member increment with a dead `lwz r0, off(r31)` of the object pointer ahead of its `lwz r9` / `lwz r11` / `lwz r10, N(r11)` / `addi` / `stw` is `p->n++;`**, not `p->n = p->n + 1;`, which omits the dead load (`Game/fn_801B4628.c`).
+
 - **A compound assignment whose stored register also feeds `mr r3` is one statement, `return x |= BIT;`.**
   Splitting it into `x |= BIT; return x;` reloads the field after the store, which shows up as an extra
   `lwz`; the returning form also adds one register copy before the store that the `void` setter beside
