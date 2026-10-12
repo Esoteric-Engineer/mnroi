@@ -1225,3 +1225,96 @@ extern "C" void *fn_8009A6B4(register void *self)
     }
     return (char *)self + 0x1F0;
 }
+
+extern "C" {
+int fn_800B0DDC(void *self);
+void *fn_800AD1FC(void *self, int a, int b, int c);
+void fn_801A5B1C(void *p, float a, float b);
+void *fn_803A20D8(char *tbl, int a, void *self, int b, int c, int d, int e, float f);
+void fn_80393938(void *self, void *c, int flag);
+}
+
+struct ActBase {
+    int pad;
+    int get() __asm__("fn_8009AC94");
+};
+
+struct ActDerived : ActBase {
+    int pad2;
+};
+
+extern "C" ActDerived *fn_800B14F0(void *self); // derived-class result: the conversion for get() is what puts it in r30
+
+// The effect object's vtable lives at +0xC8; slot 41 (+0x150) is the start method.
+class EffectV {
+public:
+    char data[0xC8];
+    virtual void v0(int);
+    virtual void v1(int);
+    virtual void v2(int);
+    virtual void v3(int);
+    virtual void v4(int);
+    virtual void v5(int);
+    virtual void v6(int);
+    virtual void v7(int);
+    virtual void v8(int);
+    virtual void v9(int);
+    virtual void v10(int);
+    virtual void v11(int);
+    virtual void v12(int);
+    virtual void v13(int);
+    virtual void v14(int);
+    virtual void v15(int);
+    virtual void v16(int);
+    virtual void v17(int);
+    virtual void v18(int);
+    virtual void v19(int);
+    virtual void v20(int);
+    virtual void v21(int);
+    virtual void v22(int);
+    virtual void v23(int);
+    virtual void v24(int);
+    virtual void v25(int);
+    virtual void v26(int);
+    virtual void v27(int);
+    virtual void v28(int);
+    virtual void v29(int);
+    virtual void v30(int);
+    virtual void v31(int);
+    virtual void v32(int);
+    virtual void v33(int);
+    virtual void v34(int);
+    virtual void v35(int);
+    virtual void v36(int);
+    virtual void v37(int);
+    virtual void v38(int);
+    virtual void v39(int);
+    virtual void v40(int);
+    virtual void v41(int);
+};
+
+// Starts the attached effect: from template slot +0x1A0 (an fn_800AD1FC object, then fn_801A5B1C on its factors) or else slot +0x1A4 (an fn_803A20D8 object, then its virtual slot 41).
+extern "C" void fn_8009A778(register Actor *self)
+{
+    int a;
+    void *c;
+    a = fn_800B13D8(self);
+    if (fn_800B0DA0(self)) {
+        a = fn_800B14F0(self)->get();
+    } else if (fn_8009AC94(self) && fn_800B0CC0(self)) {
+        a = fn_8009AC94(self);
+    }
+    if (self->f1A0) {
+        c = fn_800AD1FC(self, self->f1A0, 0, a);
+        if (fn_800B0DDC(self) && c && fn_800B0F0C(c) && fn_8009AD80(fn_800B1568(c))) {
+            fn_800B1FA8(c, 10000);
+            fn_801A5B1C(fn_8009AD80(fn_800B1568(c)), 0.0f, 9000.0f);
+        }
+    } else if (self->f1A4) {
+        c = fn_803A20D8(lbl_8064AA80, 0, self, 0, self->f1A4, 0, 0, 0.0f);
+        if (c) {
+            fn_80393938(self, c, 1);
+            ((EffectV *)c)->v41(a);
+        }
+    }
+}
