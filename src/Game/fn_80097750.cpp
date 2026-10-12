@@ -1188,3 +1188,16 @@ extern "C" void fn_8009A490(register ActorV *self)
         self->v28(0);
     }
 }
+
+extern "C" void fn_8004076C(void *a, void *b, int c, int d);
+
+// Stores the key of `c` at +0x280 (0 when `c` is null) and, when fn_800419AC allows, registers `self` with `c`.
+extern "C" void fn_8009A570(register void *self, void *c)
+{
+    if (c == 0)
+        *(int *)((char *)self + 0x280) = 0;
+    else
+        *(int *)((char *)self + 0x280) = fn_800B13D8(c);
+    if (fn_800419AC())
+        fn_8004076C(c, self, 0, 0);
+}
