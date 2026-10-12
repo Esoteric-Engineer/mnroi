@@ -1137,3 +1137,54 @@ extern "C" void fn_8009A408(register void *self)
     if (found)
         fn_800AFAB0(self, fn_800B1A98(self), found, (char *)self + 0x240, 1);
 }
+
+extern "C" int fn_8009B234(void *self);
+extern "C" ActD *fn_8009B270(void *self);
+extern "C" void fn_800F880C(void *reg, void *self, int a, int b);
+
+// Actor's vtable lives at +0x198; slot 28 (+0xE8) is called by fn_8009A490.
+class ActorV {
+public:
+    char data[0x198];
+    virtual void v0(int);
+    virtual void v1(int);
+    virtual void v2(int);
+    virtual void v3(int);
+    virtual void v4(int);
+    virtual void v5(int);
+    virtual void v6(int);
+    virtual void v7(int);
+    virtual void v8(int);
+    virtual void v9(int);
+    virtual void v10(int);
+    virtual void v11(int);
+    virtual void v12(int);
+    virtual void v13(int);
+    virtual void v14(int);
+    virtual void v15(int);
+    virtual void v16(int);
+    virtual void v17(int);
+    virtual void v18(int);
+    virtual void v19(int);
+    virtual void v20(int);
+    virtual void v21(int);
+    virtual void v22(int);
+    virtual void v23(int);
+    virtual void v24(int);
+    virtual void v25(int);
+    virtual void v26(int);
+    virtual void v27(int);
+    virtual void v28(int);
+};
+
+// Release method of the kind-15 actor class: base reset, detaches from the owner's registry, then the vtable +0xE8 slot.
+extern "C" void fn_8009A490(register ActorV *self)
+{
+    fn_80097C04((Actor *)self);
+    if (fn_8009B234(self)) {
+        ActB *owner = (ActB *)fn_8009B270(self);
+        if (owner && fn_800B0C58(owner) && fn_80085928(owner))
+            fn_800F880C(fn_80085928(owner), self, 0, 1);
+        self->v28(0);
+    }
+}
