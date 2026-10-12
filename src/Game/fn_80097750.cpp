@@ -54,7 +54,9 @@ struct Actor {
     int f20C;
     int f210;
     float f214;
-    char pad5[0xC];
+    unsigned int f218; // +0x218
+    unsigned int f21C;
+    int f220;
     unsigned int f224; // +0x224
     char pad6[4];
     int f22C;
@@ -609,6 +611,7 @@ struct Target {
     void *f10; // +0x10
     char pad1[4];
     float f18; // +0x18
+    int f1C;
 };
 
 class Vector {
@@ -712,4 +715,285 @@ extern "C" void fn_80098D30(register Actor *self, Target *t, int b, void *c, int
         }
     }
     self->f224 = fn_8042EFF8(lbl_80593BE8) + 0x258;
+}
+
+struct ActB {
+    int pad;
+};
+
+struct ActD : ActB {
+    int pad2;
+};
+
+struct CmpB {
+    int get() __asm__("fn_800CDD58");
+};
+
+struct CmpD : CmpB {
+    int pad;
+};
+
+struct EObj {
+    char d[0x3AC];
+    int ma() __asm__("fn_800CCA08");
+    int mb() __asm__("fn_800CC9D8");
+    int mc() __asm__("fn_800CCA88");
+};
+
+struct ESub : EObj {
+    virtual void s0();
+    virtual void s1();
+    virtual void s2();
+    virtual void s3();
+    virtual void s4();
+    virtual void s5();
+    virtual void s6();
+    virtual void s7();
+    virtual void s8();
+    virtual void s9();
+    virtual void s10();
+    virtual void s11();
+    virtual void s12();
+    virtual void s13();
+    virtual void s14();
+    virtual void s15();
+    virtual void s16();
+    virtual void s17();
+    virtual void s18();
+    virtual void s19();
+    virtual void s20();
+    virtual void s21();
+    virtual void s22();
+    virtual void s23();
+    virtual void s24();
+    virtual void s25();
+    virtual void s26();
+    virtual void s27();
+    virtual void s28();
+    virtual void s29();
+    virtual void s30();
+    virtual void s31();
+    virtual void s32();
+    virtual void s33();
+    virtual void s34();
+    virtual void s35();
+    virtual void s36();
+    virtual void play(int id, void *at, int flag, float speed, int a, int b, int c, int d);
+};
+
+class EmitObj {
+public:
+    char d[0x10];
+    virtual void s0();
+    virtual void s1();
+    virtual void s2();
+    virtual void s3();
+    virtual void s4();
+    virtual void emit(void *v, int a, int b);
+};
+
+extern int lbl_8066F060;
+
+extern "C" {
+int fn_800B0C1C(void *c);
+void *fn_800B14C8(void *c);
+void *fn_80085928(void *p);
+int fn_800CD85C(void *p);
+CmpD *fn_800CD834(void *p);
+int fn_800B13D8(void *c);
+int fn_800B0CC0(void *c);
+void *fn_800B1478(void *c);
+float fn_800A4620(void *p);
+int fn_800A464C(void *p);
+int fn_800B11F8(void *c);
+unsigned int fn_8042E96C(void *g);
+int fn_800B0BEC(void *c);
+void *fn_800B14A0(void *c);
+int fn_80085EEC(void *p);
+int fn_80085EBC(void *p);
+int fn_800E5B2C(void *obj, void *self, void *pos, void *dir, float f, int a, int b);
+ESub *fn_80085954(void *p);
+int fn_8008572C(void *a, void *b);
+int fn_800B18EC(void *a, int b);
+void *fn_800B1750(void *a);
+float fn_8042EBF4(void *a, void *b);
+void fn_800E8628(void *a, int b);
+int fn_800A3F14(void *p);
+int fn_800A3EE4(void *p);
+int fn_800A4568(void *p);
+int fn_8009AC94(void *self);
+ActD *fn_800ACFA8(int h);
+void fn_8002FD50(void *a, void *b, int c, int d, float f, void *g, void *h, int i, int j, float k, int l, int m, int n, int o);
+EmitObj *fn_800707CC(void *p);
+void fn_8042FDBC(void *out, void *v, float f);
+int fn_8003119C(void *p);
+void fn_80086A2C(void *p, float f);
+float fn_800B1884(void *p, int v);
+void *fn_80085AF0(void *p);
+void fn_80130F88(void *a, void *b);
+void fn_800D96A0(void *a, void *b, void *c, float f, int d, int e);
+void fn_800A2F94(void *a, void *b, int c, int d, float f, void *g, void *h, float k, int l);
+float fn_800A4054(void *p);
+int fn_800B247C(void *c);
+int fn_800B1078(void *c);
+int fn_8006C7C0(void *c);
+}
+
+// Scales a target's contact speed into a reaction strength and fires the reaction effects on the way (guess); sets lbl_8066F060 for the target's type.
+extern "C" float fn_80099228(register Actor *self, Target *t, int b, void *c)
+{
+    int i24 = 0;
+    float fa = t->f18 < 0.0f ? -t->f18 : t->f18;
+    float thr = 2.0f;
+    float f30;
+    float f34;
+    if (fa < thr)
+        return 0.0f;
+    if (c && fn_800B0C1C(c)) {
+        thr = 3.0f;
+        if (fa < thr)
+            return 0.0f;
+        if (fn_800CD85C(fn_80085928(fn_800B14C8(c)))) {
+            if (fn_800CD834(fn_80085928(fn_800B14C8(c)))->get() == fn_800B13D8(self))
+                return 0.0f;
+        }
+    }
+    if (fn_800B0CC0(self)) {
+        f30 = fn_800A4620(fn_800B1478(self));
+        f34 = fn_800A4620(fn_800B1478(self));
+        i24 = fn_800A464C(fn_800B1478(self));
+    } else {
+        f30 = 12.0f;
+        f30 = fa - thr < 20.0f ? (fa - thr) / 20.0f * 5.0f * f30 : f30 * 5.0f;
+        f30 = f30 * self->f214;
+        f34 = f30;
+        if (fn_800B24D8(c) != 0.0f)
+            f34 = f34 * (fn_800B24D8(self) / fn_800B24D8(c));
+    }
+    char &p1 = *(char *)fn_8043E2D4(t, b == 0);
+    char &p2 = *(char *)fn_8043E2D4(t, b);
+    float f40 = fn_8043BA58(fn_80318EB4(&p1));
+    int g44 = f40 > 4.0f && f40 > fn_8043BA58(fn_80318EB4(&p2));
+    int g48 = c && g44;
+    if (c && !fn_800B11F8(c)) {
+        g48 = g48 && (fn_8042E96C(lbl_80593BE8) > self->f218 + 1000 || self->f220 != fn_800B13D8(c));
+    } else {
+        g48 = 0;
+    }
+    if (g48) {
+        Vector v50;
+        Vector v60;
+        v50.set(fn_80436684(t->f10));
+        fn_8006C028(&v60, t, b, 0);
+        switch (fn_800B0BEC(c)) {
+        case 0:
+        case 7: {
+            void *e70 = fn_800B14A0(c);
+            int i74 = fn_80085EEC(e70);
+            int i78 = 1;
+            if (fn_800E5B2C(fn_80085954(e70), self, &v50, &v60, f34, 0, i24)) {
+                i78 = 0;
+            } else if (fn_80085954(e70)->ma()) {
+                i78 = 0;
+            } else if (fn_800B0CC0(self) && !fn_8008572C(e70, fn_800B1478(self))) {
+                i78 = 1;
+            } else if (fn_80085954(e70)->mb() && (float)fn_800B18EC(e70, 0x81) < f34) {
+                if (fn_8042EBF4(fn_800B1750(e70), &v60) < 0.5f) {
+                    fn_800E8628(fn_80085954(e70), 0x6F);
+                    i78 = 0;
+                }
+            } else {
+                if (fn_80085954(e70)->mb())
+                    i78 = 0;
+            }
+            lbl_8066F060 = 0;
+            ESub *p7c = fn_80085954(e70);
+            if (p7c->ma() && fn_8009ABEC(e70) != 0x11)
+                lbl_8066F060 = 3;
+            else if (p7c->mb())
+                lbl_8066F060 = 1;
+            else if (p7c->mc() && fn_8009ABEC(e70) != 0x11)
+                lbl_8066F060 = 2;
+            fn_8010CDCC(e70, 0xE, 0, 0, 500, 0, 0);
+            if (fn_800B0CC0(self)) {
+                int v;
+                if (fn_800A3F14(fn_800B1478(self)) || (!fn_800A3EE4(fn_800B1478(self)) && !fn_800A4568(fn_800B1478(self))))
+                    v = 0x88;
+                else
+                    v = 0x86;
+                fn_8010CDCC(self, v, 0, 0, 500, 0, 0);
+            }
+            if (i78) {
+                ActB *x80 = (ActB *)fn_800ACFA8(fn_8009AC94(self));
+                if (x80 && !fn_800B0C58(x80))
+                    x80 = 0;
+                int i84 = 0;
+                fn_8002FD50(e70, self, 7, 0, f34, &v50, &v60, i24, 1, 0.0f, 0, 0, 255, 255);
+                if (fn_80085EEC(e70) && fn_80085EBC(e70)) {
+                    EmitObj *o88 = fn_800707CC(e70);
+                    float f8c = fn_800B24D8(self) / fn_800B24D8(e70) * fa;
+                    Vector v90;
+                    f8c = f8c * 10.0f;
+                    fn_8042FDBC(&v90, &v60, f8c);
+                    o88->emit(&v90, 0, 0);
+                }
+                if (!fn_80085EEC(e70) && fn_8003119C(e70)) {
+                    if (f34 >= 40.0f)
+                        i84 = 0x7F;
+                    else
+                        i84 = 0x6F;
+                }
+                if (x80 && fn_80085954(x80)) {
+                    fn_80086A2C(x80, fn_800B1884(x80, 0xBE));
+                    fn_80130F88(fn_80085AF0(x80), e70);
+                }
+                fn_800D96A0(e70, x80, fn_800B1478(self), f34, i24, i84);
+                if (i84) {
+                    fn_80085954(e70)->play(i84, &v50, 1, 1.0f, 0, 0, 0, 0);
+                }
+            }
+            if (i74 == 0 && fn_80085EEC(fn_800B14A0(c)))
+                t->f1C = 1;
+            break;
+        }
+        case 2:
+        case 8: {
+            int i88;
+            int i84;
+            i88 = fn_800A4054(fn_800B1478(c)) <= 0.0f;
+            i84 = fn_800B247C(c);
+            fn_800A2F94(fn_800B1478(c), self, 7, 0, f34, &v50, &v60, 0.0f, 0);
+            if (!i88 && fn_800A4054(fn_800B1478(c)) <= 0.0f && (fn_800B1078(c) || fn_8006C7C0(c)))
+                t->f1C = 1;
+            else if (!i84 && fn_800B247C(c))
+                t->f1C = 1;
+            break;
+        }
+        default:
+            break;
+        }
+        self->f220 = fn_800B13D8(c);
+        self->f218 = fn_8042E96C(lbl_80593BE8);
+    }
+    if (c && fn_800B0C1C(c)) {
+        return 0.0f;
+    } else {
+        if (!g44) {
+            return 0.0f;
+        } else {
+            if (fn_8042EFF8(lbl_80593BE8) > self->f21C + 250) {
+                float f8c;
+                f30 = fn_800A4620(fn_800B1478(self));
+                f8c = (fa - 8.0f) * 0.5f;
+                f8c = f8c >= 0.0f ? (f8c <= 2.0f ? f8c : 2.0f) : 0.0f;
+                if (f40 < 64.0f)
+                    f8c = 0.0f;
+                if (f8c != 0.0f)
+                    self->f21C = fn_8042EFF8(lbl_80593BE8);
+                return f30 * f8c;
+            } else {
+                return 0.0f;
+            }
+        }
+    }
 }

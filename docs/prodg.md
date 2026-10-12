@@ -304,7 +304,8 @@ registers at `-O0`. GCC 2.95's `stupid.c` allocates them in one pass:
   counts the ones created after it: `fn_80437E50` has five (`r30`, `r29`, parameters, `r25`-`r23`).
 - **What makes one, and in which order:** a virtual call on a call result makes two, the vtable entry
   address first and the receiver second; a derived-to-base conversion of a call result used as `this` makes
-  one per conversion, the outer conversion first.
+  one per conversion, the outer conversion first; so does an explicit cast of a derived-class call result stored to a local
+  (`B *x = (B *)f();` is `mr r23, r3` / `stw r23, slot`, where `B *x = f();` makes none; `Game/fn_80097750.cpp`, `fn_80099228`).
 - **Other temporaries** live from their set to their last use and take whatever is free.
 
 `-dr -dg` (above) shows all of it: in the `.rtl` file the `(use (reg N))` insns after `NOTE_INSN_FUNCTION_BEG`
