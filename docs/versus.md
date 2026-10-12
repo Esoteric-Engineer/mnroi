@@ -178,7 +178,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 11 | Template registry and `Global.not` loader: `fn_800FCE84`, `fn_800FCF50`, `fn_800FD5FC` | Done. Templates can be added: [`characters.md`](characters.md) sections 3 and 6. Notes: [Steps 10 to 12](#steps-10-to-12-entity-templates). |
 | 12 | NVB loader: `fn_801B301C`, `fn_801B3638`, `fn_801B3C4C` | Done: `Game/fn_801B301C.c` and `Game/fn_801B3638.c` (also holds `fn_801B3C4C`, the `Misc/nvblist.txt` reader; claims `.rodata` 0x8049E53C-0x8049E540, its `char[0x200] = "\0"` source). `lbl_8066C6D0` is the NVB registry (guess; `fn_801B4628(registry, fn_804673B8(nvb), nvb)` adds, `fn_801B48AC` looks up). File format: [`characters.md`](characters.md) section 4. |
 | 13 | Registry capacity: `fn_800FD9A0` | Done: `Game/fn_800FD9A0.cpp`. |
-| 14 | Voice by type ID: `fn_801155A8`, `fn_801154D8`, `fn_80115154`, `fn_80115308`, `fn_8010CDCC`, `fn_8010D050` | Open, pinned, in that order. |
+| 14 | Voice by type ID: `fn_801154D8`, `fn_80115154`, `fn_80115308`, `fn_8010CDCC`, `fn_8010D050` | Open, pinned, in that order. |
 | 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Open, pinned, in that order. |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Open, pinned, in that order. |
 | 17 | Property handlers: `fn_80137CEC`, `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Open, pinned, in that order. |
@@ -288,7 +288,7 @@ delete the question it settles.
 
 | Row | Pinned | Size | Settles |
 |---|---|---|---|
-| 14 | `fn_801155A8`, `fn_801154D8`, `fn_80115154`, `fn_80115308` | 0xC4, 0xD0, 0x1B4, 0x1D0 | Sound-event lookups keyed `(bank << 9) \| event` ([`characters.md`](characters.md) section 5): what a type ID with no events gets, beyond `fn_801155A8`'s `0xFA001` fallback. |
+| 14 | `fn_801154D8`, `fn_80115154`, `fn_80115308` | 0xD0, 0x1B4, 0x1D0 | Sound-event lookups keyed `(bank << 9) \| event` ([`characters.md`](characters.md) section 5): what a type ID with no events gets. |
 | 14 | `fn_8010CDCC`, `fn_8010D050` | 0x284, 0x1D0 | The caller that passes the type ID as the bank, and what the Biohazard (type 17) special case is. |
 | 15 | `fn_8009543C` | 0xC8 | `fn_8009543C(G, id, "plr_wolverine")`, the debug command that puts a character in a slot ([`characters.md`](characters.md) section 3). |
 | 15 | `fn_80091174` | 0x170 | Holds the two `fn_80443B70` calls at 0x80091290 that default both slots to `plr_wolverine`. |
