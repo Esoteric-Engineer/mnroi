@@ -1201,3 +1201,19 @@ extern "C" void fn_8009A570(register void *self, void *c)
     if (fn_800419AC())
         fn_8004076C(c, self, 0, 0);
 }
+
+extern "C" int fn_801A5104(void *f, int kind, int a, void *vec, void *e);
+extern "C" void fn_8042DC84(void *dst, void *src);
+extern "C" void *fn_800B1724(void *self);
+
+// Returns the vector at +0x1E0; unless effect kind 0x16 starts on the factors object, refreshes it from fn_800B1724 and nudges +0x1E8 by 1.3f.
+extern "C" void *fn_8009A5F0(register void *self)
+{
+    if (!fn_8009AD80(self) || !fn_801A5104(fn_8009AD80(self), 0x16, 0, (char *)self + 0x1E0, fn_800B1668(self))) {
+        fn_8042DC84((char *)self + 0x1E0, fn_800B1724(self));
+        *(float *)((char *)self + 0x1E8) += 1.3f;
+    }
+    return (char *)self + 0x1E0;
+}
+
+__asm__(".section .rodata\n\t.globl lbl_8048A80C\nlbl_8048A80C:\n\t.float 1.3\n\t.text"); // pads the claim to 8; fn_8009A6B4 loads it
