@@ -1333,3 +1333,12 @@ extern "C" void fn_8009A974(void *self, int id)
     } else {
     }
 }
+
+extern "C" void fn_80090034(void *, int);
+
+extern "C" void fn_8009AA40(register Actor *self)
+{
+    if (self->f1C0) {
+        fn_80090034(self->f1C0, 0);
+    }
+}
