@@ -1380,3 +1380,33 @@ extern "C" void fn_8009AB94(register Actor *self, register int v)
 {
     self->f205 = v;
 }
+
+extern "C" unsigned int fn_8009ABC0(register void *self)
+{
+    return ((Actor *)self)->f1A8;
+}
+
+extern "C" unsigned int fn_8009ABEC(register void *self)
+{
+    return ((Actor *)self)->f1AC;
+}
+
+extern "C" void fn_8009AC18(register Actor *self, register int v)
+{
+    self->f1A8 = v;
+}
+
+extern "C" void fn_8009AC40(register Actor *self, register int v)
+{
+    self->f1AC = v;
+}
+
+extern "C" int fn_8009AC68(register Actor *self)
+{
+    return self->f200;
+}
+
+extern "C" int fn_8009AC94(register void *self)
+{
+    return ((Actor *)self)->f1B0;
+}
