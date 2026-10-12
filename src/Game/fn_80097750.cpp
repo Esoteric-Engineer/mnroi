@@ -1375,3 +1375,8 @@ extern "C" unsigned char fn_8009AB64(register Actor *self)
 {
     return self->f205;
 }
+
+extern "C" void fn_8009AB94(register Actor *self, register int v)
+{
+    self->f205 = v;
+}
