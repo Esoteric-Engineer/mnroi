@@ -43,7 +43,8 @@ struct Actor {
     int f1A8;
     int f1AC;
     int f1B0; // +0x1B0
-    char pad1[8];
+    int f1B4;
+    int f1B8;
     Model *model; // +0x1BC
     struct MotionSet *f1C0;
     char pad2[0xC];
@@ -1409,4 +1410,49 @@ extern "C" int fn_8009AC68(register Actor *self)
 extern "C" int fn_8009AC94(register void *self)
 {
     return ((Actor *)self)->f1B0;
+}
+
+extern "C" ActD *fn_8009ACC0(register Actor *self)
+{
+    return fn_800ACFA8(self->f1B0);
+}
+
+extern "C" void fn_8009AD04(register Actor *self, register int v)
+{
+    self->f1B0 = v;
+}
+
+extern "C" int fn_8009AD2C(register Actor *self)
+{
+    return self->f1B4;
+}
+
+extern "C" void fn_8009AD58(register Actor *self, register int v)
+{
+    self->f1B8 = v;
+}
+
+extern "C" Factors *fn_8009AD80(register void *self)
+{
+    return (Factors *)((Actor *)self)->model;
+}
+
+extern "C" void fn_8009ADAC(register Actor *self, register Model *v)
+{
+    self->model = v;
+}
+
+extern "C" int fn_8009ADD4(register Actor *self)
+{
+    return self->f22C;
+}
+
+extern "C" struct MotionSet *fn_8009AE00(register Actor *self)
+{
+    return self->f1C0;
+}
+
+extern "C" void fn_8009AE2C(register Actor *self, register struct MotionSet *v)
+{
+    self->f1C0 = v;
 }
