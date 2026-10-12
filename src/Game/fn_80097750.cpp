@@ -1318,3 +1318,18 @@ extern "C" void fn_8009A778(register Actor *self)
         }
     }
 }
+
+extern float lbl_8066B95C, lbl_8066B960;
+extern float lbl_8066D658, lbl_8066D65C, lbl_8066D660, lbl_8066D664;
+
+// Rewrites the four .sbss screen-edge floats from the two .sdata sizes when `id` is 0xFFFF; see docs/versus.md section 5.
+extern "C" void fn_8009A974(void *self, int id)
+{
+    if (id == 0xFFFF && self) {
+        lbl_8066D658 = 320.0f - lbl_8066B95C * 0.5f;
+        lbl_8066D65C = lbl_8066D658 + lbl_8066B95C * 0.5f;
+        lbl_8066D660 = 240.0f - lbl_8066B960 * 0.5f;
+        lbl_8066D664 = lbl_8066B960 * 0.5f + lbl_8066D660 - 12.0f;
+    } else {
+    }
+}
