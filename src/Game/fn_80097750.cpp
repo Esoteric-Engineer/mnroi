@@ -54,7 +54,9 @@ struct Actor {
     int f20C;
     int f210;
     float f214;
-    char pad5[0x14];
+    char pad5[0xC];
+    unsigned int f224; // +0x224
+    char pad6[4];
     int f22C;
 };
 
@@ -599,3 +601,115 @@ extern "C" void fn_80098B18(register Actor *self)
 }
 
 __asm__(".section .rodata\n\t.globl lbl_8048A794\nlbl_8048A794:\n\t.float 1.0\n\t.text"); // pads the claim to 8; no code loads this word
+
+__asm__(".section .rodata\n\t.float 0.0\n\t.text"); // orphan word ahead of fn_80098D30's pool, which no code loads
+
+struct Target {
+    char pad0[0x10];
+    void *f10; // +0x10
+    char pad1[4];
+    float f18; // +0x18
+};
+
+class Vector {
+public:
+    char d[0x10];
+    Vector();
+    void set(void *v) __asm__("fn_80434BA4");
+};
+
+class Placement {
+public:
+    char d[0x40];
+    Placement();
+};
+
+extern char lbl_80593BE8[];
+
+extern "C" {
+unsigned int fn_8042EFF8(void *g);
+void *fn_8043E2D4(void *t, int second);
+float fn_8043BA58(void *p);
+float fn_804365A0(void *p);
+void fn_8006C028(void *out, void *t, int b, int c);
+void *fn_80436684(void *p);
+void fn_8042FE08(void *a, void *b, float t);
+unsigned int fn_80048C14(void *pl, int v);
+int fn_800B0F0C(void *self);
+void *fn_800B1568(void *self);
+unsigned int fn_8009ABC0(void *p);
+unsigned int fn_8009ABEC(void *self);
+int fn_8009B19C(void *self);
+void fn_8010CDCC(void *self, int a, int b, int h, int c, int d, int e);
+}
+
+// Per-frame hook for a target: the clip-driven effect (ids 0x86/0x88) for the character types that have one.
+extern "C" void fn_80098D30(register Actor *self, Target *t, int b, void *c, int d, int e)
+{
+    if (d && e)
+        return;
+    if (fn_8042EFF8(lbl_80593BE8) < self->f224)
+        return;
+    if (t->f18 < 0.0f ? -t->f18 < 1.5f : t->f18 < 1.5f)
+        return;
+    char &p1 = *(char *)fn_8043E2D4(t, b == 0);
+    char &p2 = *(char *)fn_8043E2D4(t, b);
+    float f24;
+    float f28;
+    int h;
+    f24 = fn_8043BA58(fn_80318EB4(&p1));
+    if ((c && f24 < 4.0f) || f24 < fn_8043BA58(fn_80318EB4(&p2)))
+        return;
+    f28 = fn_804365A0(fn_80318EB4(&p1));
+    f28 = f28 * 0.05f >= 0.01f ? (f28 * 0.05f <= 1.0f ? f28 * 0.05f : 1.0f) : 0.01f;
+    if (!d) {
+        h = 0;
+        if (c) {
+            if (fn_800B0F0C(c))
+                h = fn_8009ABC0(fn_800B1568(c));
+        } else {
+            void *tmp = fn_8043E2D4(t, b);
+            Vector v1;
+            Vector v2;
+            fn_8006C028(&v2, t, b, 0);
+            v1.set(fn_80436684(t->f10));
+            fn_8042FE08(&v1, &v2, -0.1f);
+            Placement pl;
+            if (fn_8004B60C(tmp, (int)&v1, (float *)&v2, 0.2f, (int)&pl))
+                h = fn_80048C14(&pl, 0);
+        }
+        switch (fn_8009ABEC(self)) {
+        case 70:
+        case 71:
+        case 72:
+        case 73:
+        case 74:
+        case 75:
+        case 76:
+        case 100:
+        case 102:
+        case 104:
+        case 119:
+        case 157:
+        case 160:
+        case 173:
+        case 195:
+        case 506:
+        case 515:
+            fn_8010CDCC(self, 0x88, 0, h, (int)(f28 * 1000.0f), 0, 0);
+            break;
+        case 125:
+            fn_8010CDCC(self, 0x86, 0, h, (int)(f28 * 1000.0f), 0, 0);
+            break;
+        }
+    }
+    if (!e) {
+        if (fn_8009B19C(self)) {
+            Vector v3;
+            float dead;
+            v3.set(fn_80436684(t->f10));
+            dead = f28 * 12.0f + 2.0f;
+        }
+    }
+    self->f224 = fn_8042EFF8(lbl_80593BE8) + 0x258;
+}
