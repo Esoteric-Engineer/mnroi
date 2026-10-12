@@ -51,7 +51,8 @@ struct Actor {
     char pad3[0x20];
     int f200; // +0x200
     char f204; // +0x204
-    char pad4[3];
+    unsigned char f205; // +0x205
+    char pad4[2];
     int f208;
     int f20C;
     int f210;
@@ -1368,4 +1369,9 @@ extern "C" void fn_8009AAF8(register Actor *self, register void *p)
     if (fn_8009AAC8(self)) {
         fn_8042D854(p, fn_8009B108(self));
     }
+}
+
+extern "C" unsigned char fn_8009AB64(register Actor *self)
+{
+    return self->f205;
 }
