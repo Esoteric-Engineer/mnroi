@@ -64,6 +64,8 @@ struct Actor {
     unsigned int f224; // +0x224
     int f228; // +0x228
     int f22C;
+    char pad5[0x50];
+    int f280; // +0x280
 };
 
 struct State {
@@ -1456,3 +1458,116 @@ extern "C" void fn_8009AE2C(register Actor *self, register struct MotionSet *v)
 {
     self->f1C0 = v;
 }
+
+extern "C" void fn_801A4AB4(Factors *f, int a, int b);
+extern "C" void fn_8019A8C0(Anim *a, int v);
+extern "C" void fn_8019A988(Anim *a);
+extern "C" int fn_8043B1CC(void *p);
+
+extern "C" void fn_8009AE54(register Actor *self, register int v)
+{
+    if (fn_8009AD80(self)) {
+        fn_801A4AB4(fn_8009AD80(self), 0, v);
+    } else {
+        fn_8009AAF8(self, (void *)v);
+    }
+}
+
+extern "C" void fn_8009AEC8(register Actor *self, register int v)
+{
+    if (self->model && self->model->anim) {
+        fn_8019A8C0(self->model->anim, v);
+    }
+}
+
+extern "C" void fn_8009AF28(register Actor *self)
+{
+    if (self->model && self->model->anim) {
+        fn_8019A988(self->model->anim);
+    }
+}
+
+extern "C" Anim *fn_8009AF80(register Actor *self)
+{
+    if (self->model) {
+        return self->model->anim;
+    } else {
+        return 0;
+    }
+}
+
+extern "C" int fn_8009AFC8(register Actor *self)
+{
+    if (self->model && self->model->anim && fn_8043B1CC(self->model->anim)) {
+        return self->model->anim->f18;
+    } else {
+        return 0;
+    }
+}
+
+extern "C" int fn_8009B04C(register Actor *self)
+{
+    if (self->model && self->model->anim && fn_8043B1CC((char *)self->model->anim + 0x2C)) {
+        return self->model->anim->f44;
+    } else {
+        return 0;
+    }
+}
+
+int fn_8009B0D8(register void *self)
+{
+    return (unsigned char)((Actor *)self)->f204;
+}
+
+extern "C" int fn_8009B108(register void *self)
+{
+    return (int)((Actor *)self)->vec;
+}
+
+extern "C" int fn_8009B134(register void *self)
+{
+    return ((Actor *)self)->f20C;
+}
+
+int fn_8009B160(register void *self)
+{
+    register int r = 1;
+    if (((Actor *)self)->f210 == 0)
+        r = 0;
+    return r;
+}
+
+int fn_8009B19C(register void *self)
+{
+    return ((Actor *)self)->f228 >= 0 ? fn_8042EFF8(lbl_80593BE8) < ((Actor *)self)->f228 : 1;
+}
+
+extern "C" void fn_8009B208(register void *self, register int v, register int *out)
+{
+    *out = v;
+}
+
+extern "C" int fn_8009B234(register void *self)
+{
+    register int r = 1;
+    if (((Actor *)self)->f280 == 0)
+        r = 0;
+    return r;
+}
+
+extern "C" ActD *fn_8009B270(register void *self)
+{
+    return fn_800ACFA8(((Actor *)self)->f280);
+}
+
+extern "C" int fn_8009B2B4(register void *self)
+{
+    return ((Actor *)self)->f280;
+}
+
+extern "C" void fn_8009B2E0(void)
+{
+    fn_8009A974((void *)1, 65535);
+}
+
+static void (*const sCtorEntry)(void) __attribute__((section(".ctors"))) = fn_8009B2E0;
