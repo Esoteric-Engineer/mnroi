@@ -1118,3 +1118,11 @@ extern "C" void fn_8009A38C(register Actor *self)
 {
     fn_80097614(self);
 }
+
+extern "C" void fn_8042E438(void *self, void *v);
+
+// Copies the actor's +0x78 value into its +0x240 Root.
+extern "C" void fn_8009A3C4(register void *self)
+{
+    fn_8042E438((char *)self + 0x240, (char *)self + 0x78);
+}
