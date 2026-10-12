@@ -58,7 +58,7 @@ struct Actor {
     unsigned int f21C;
     int f220;
     unsigned int f224; // +0x224
-    char pad6[4];
+    int f228; // +0x228
     int f22C;
 };
 
@@ -996,4 +996,27 @@ extern "C" float fn_80099228(register Actor *self, Target *t, int b, void *c)
             }
         }
     }
+}
+
+extern "C" void fn_8007FAE4(void *self, int mode);
+
+// Target-lock timer step: mode 0 counts down, 1 and 2 re-arm it 5 s ahead.
+extern "C" void fn_80099F7C(register Actor *self, int mode, int notify)
+{
+    switch (mode) {
+    case 0:
+        self->f228 = self->f228 > 0 ? -1 : self->f228 - 1;
+        break;
+    case 1:
+        self->f228 = self->f228 >= -1 ? fn_8042EFF8(lbl_80593BE8) + 5000 : self->f228 + 1;
+        break;
+    case 2:
+        if (self->f228 >= 0)
+            self->f228 = fn_8042EFF8(lbl_80593BE8) + 5000;
+        break;
+    default:
+        break;
+    }
+    if (notify)
+        fn_8007FAE4(self, mode);
 }
