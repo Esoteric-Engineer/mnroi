@@ -185,6 +185,9 @@ Game/fn_800FCE84.c:
 Game/fn_800FCF50.cpp:
 	.text       start:0x800FCF50 end:0x800FD4AC
 
+Game/fn_800FD5FC.cpp:
+	.text       start:0x800FD5FC end:0x800FD698
+
 Game/handlers/characterselect.cpp:
 	.text       start:0x801037B0 end:0x801040F4
 	.ctors      start:0x8048264C end:0x80482650
