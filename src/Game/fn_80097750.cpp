@@ -1032,3 +1032,17 @@ extern "C" void fn_8009A088(register void *self, void *pair, int second)
     if (c && fn_800B0F0C(c))
         fn_80099F7C((Actor *)fn_800B1568(c), 2, 1);
 }
+
+extern "C" void *fn_800B1668(void *self);
+extern "C" void fn_801A57F4(void *f, int kind, int a, int *out, void *e, int p, int q, int r);
+
+// Starts effect kind 14 on the entity's factors object; clears *out when it has none.
+extern "C" void fn_8009A130(register void *self, int a, int *out)
+{
+    if (fn_8009AD80(self)) {
+        register void *f = fn_8009AD80(self);
+        fn_801A57F4(f, 0xE, a, out, fn_800B1668(self), 0, 0, 0);
+    } else {
+        *out = 0;
+    }
+}
