@@ -4773,6 +4773,9 @@ Game/fn_8045FAB0.c:
 Game/fn_8045FB10.c:
 	.text       start:0x8045FB10 end:0x8045FBB0
 
+Game/fn_8045FBB0.c:
+	.text       start:0x8045FBB0 end:0x8045FBF0
+
 Dolphin/os/fn_80003254.c:
 	.init       start:0x80003254 end:0x800032C0
 
