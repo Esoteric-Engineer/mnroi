@@ -71,7 +71,7 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
 
 ## 3. Selection to Spawn
 
-- A player slot in `G` (section 4.1 of [`versus.md`](versus.md#41-game-state-object-g-lbl_80552110-bss)) stores the chosen character by **entity name**. `fn_80443B70(slot, name, player)` copies the name into `slot+0x4` with `strncpy(.., 0x20)` and then writes `slot+0x23` itself, so the field is a `char[0x20]` that is always terminated; `player` goes to `slot+0x0` and is the **player index**, not a count (0x80091290 calls it with `(G+0x10, "plr_wolverine", 0)` and `(G+0xC0, "plr_wolverine", 1)`, which also confirms the 0xB0 stride). `fn_80443BC8(slot)` returns `slot+0x4` as `char *`, and `fn_80443BF4(slot)` returns bit 0 of the int at `slot+0x34`, which marks the slot as in use. All three are **matched** (`Game/fn_80443B70.c`). `fn_80443CCC(G, player, v)` is the `G`-level wrapper that forwards to `fn_804428E0(&G->slots[player], v)` and is **matched** in the same unit; `fn_804428E0(slot, v)` itself is **matched** (`Game/fn_804428E0.c`) and stores `min(v, 2)` at `slot+0x64` with `v` unsigned (so a negative `v` clamps to 2, not 0), which is probably the difficulty level (guess: `Control_SetMatchInfo` passes it `fn_801318A0()`, the value `clashCharSelect_GetPrevCharList` returns to the UI as `nDiffLevel`). It is not the `-t<n>` bundle variant, which comes from property 0x27 (below).
+- A player slot in `G` (section 4.1 of [`versus.md`](versus.md#41-game-state-object-g-lbl_80552110-bss)) stores the chosen character by **entity name**. `fn_80443B70(slot, name, player)` copies the name into `slot+0x4` with `strncpy(.., 0x20)` and then writes `slot+0x23` itself, so the field is a `char[0x20]` that is always terminated; `player` goes to `slot+0x0` and is the **player index**, not a count (0x80091290 calls it with `(G+0x10, "plr_wolverine", 0)` and `(G+0xC0, "plr_wolverine", 1)`, which also confirms the 0xB0 stride). `fn_80443BC8(slot)` returns `slot+0x4` as `char *`, and `fn_80443BF4(slot)` returns bit 0 of the int at `slot+0x34`, which marks the slot as in use. All three are **matched** (`Game/fn_80443B70.c`). `fn_80443CCC(G, player, v)` is the `G`-level wrapper that forwards to `fn_804428E0(&G->slots[player], v)` and is **matched** in the same unit; `fn_804428E0(slot, v)` itself is **matched** (`Game/fn_804428E0.c`) and stores `min(v, 2)` at `slot+0x64` with `v` unsigned (so a negative `v` clamps to 2, not 0), which is the CPU difficulty: `Control_SetMatchInfo` passes it `fn_801318A0()`, the value `clashCharSelect_GetPrevCharList` returns to the UI as `nDiffLevel`, and `fn_800ACB7C` turns it into the tuning slot (section 4, "Tuning records"). It is not the `-t<n>` bundle variant, which comes from property 0x27 (below).
 - `fn_80443D44(G, player)` is how gameplay code gets a player's actor, and is the most-called of these
   accessors (20+ callers): it returns `fn_8042FF2C(&G->slots[player])`, or NULL when
   `player < 0 || player >= G+0x590`. **Matched** (`Game/fn_80443B70.c`).
@@ -110,7 +110,7 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
   | 0x12 | `SOUNDTYPE` | 16 | `actor+0x1A8` |
   | 0x13 | `MOTIONSET` | `wolverine.nms` | motion set: `fn_8019EA38(name, variant)` when `fn_80444454(actor)`, where the `-t<n>` variant is property 0x27 of the template named in the *other* player's slot (`fn_800976C0`; this player's slot index is `G+0x640`), or -1 when `fn_80426AB0(G)`; then `fn_8008F470(name, 0, 1)` into `actor+0x1C0` (the set's `+0x24` is a count; `fn_80097C4C(actor, n)` stores a byte `n` <= that count at `actor+0x204`, called from 0x800C3BC4 and two more sites in the script-command file) |
   | 0x14 | `CASTID` | `WOLVERINE` (`ALT_WOLVERINE` on the alt) | not in `fn_80097750` (guess: the name `fn_80020E60` reads, since `alt_` gives `type + 20` there) |
-  | 0x15 | `DESCRIPTIONID` | `WOLVERINE` | `fn_800AE534`: `strncpy` into `+0xFC` (0x1F characters, `+0x11B` forced 0). Nothing in the handlers reads it (guess: the NVB name, `PLAYER_WOLVERINE.nvb`) |
+  | 0x15 | `DESCRIPTIONID` | `WOLVERINE` | `fn_800AE534`: `strncpy` into `+0xFC` (0x1F characters, `+0x11B` forced 0). It names the tuning record: `fn_800ACB7C` looks up `PLAYER_<value>` (section 4, "Tuning records") |
   | 0x19 | `DAMAGESCALE` | | float, `actor+0x214` |
   | 0x24 | `DESTROY_TEMPLATE` | | string, template `fn_800FD5FC(name, 1)` into `+0x1A0`, else `fn_803A1AC4(lbl_8064AA80, name)` into `+0x1A4` |
   | 0x27, 0x28 | `SKELETONID`, `EFFECT1` | Storm: 1, `strmHair` | 0x27: `actor+0x200`, a body class: 0 by default (`_actor`), 1 for Aftershock, DefCon, Elektra, Heatwave, Paradox and Storm, 2 for the Thing, Venom, Megalith, Roekel and the brutes. The opponent's value picks this character's `-t<n>` animation bundle (0x13). 0x28-0x2B `EFFECT1`-`EFFECT4` (`ddFX`, `strmHair`, `htBodyFire`...): `fn_800AE534` creates the named effect with `fn_803A20D8(lbl_8064AA80, name, actor, 0, 0, 0, 0, 0.0f)` and attaches it with `fn_8039CE18(fx, 1)` / `fn_80393938(actor, fx, 0)`. 0x2C `EFFECT5` is in kind 0 but returns 0 |
@@ -121,7 +121,7 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
   | 0x70 | `OBJECT_SOUNDID` | 1 (Storm: 7) | **type ID**, `actor+0x1AC` |
   | 0x75 | `SHADOWMODEL` | `Wolverine_shadow.nod` | `fn_801A1A84` into `+0x22C` (shadow model) |
 
-  Also in `act_Wolverine`, named by the table but not followed further: 0x30 `ACTOR_FLAGS` (0x108200), 0x32 `ACTOR_ABILITIES` (0x05400602; differs per character), 0x33/0x34 `ACTOR_HEALTH`/`ACTOR_MAXHEALTH` (100), 0x37/0x38 `ACTOR_WALKSPEED`/`ACTOR_RUNSPEED` (1.7, 6.0), and the editor's 0x1A `EDITORCATEGORY` (4; `plr_` sets 2) and 0x1B/0x1C `EDITORSIZEMINS`/`EDITORSIZEMAXS` (vectors), which `fn_800AE534` accepts and ignores (as it does 0x1D, 0x1E and 5). The rest of its (`Game/fn_800AE534.cpp`) kind-0 properties: 0x01 `ORIENTATION` and 0x02 `POSITION` (vectors into the entity's `+0x78` transform), 0x03 `SECTORID` (index into the scene's 0x1C0-byte records, bound by `fn_800AECF4`), 0x04 `TIMER` (`+0x28` = now + value, when non-zero), 0x06 `MOVETYPE` (0-4: `fn_800B1D20`, state byte `+0x1`, `fn_800AFCD0`, `fn_800AFCA0`), 0x07 `COLLIDETYPE` (0-11, `+0x40`), 0x08 `RADIUS` and 0x09 `HEIGHT` (floats >= 0, `+0x44`, `+0x4C`), 0x1F `THINGFLAGS` (`+0x2C`), 0x20 `RENDERFLAGS` (`+0x30`), 0x21 `MOVESPEED` (only checked: > 0 and state byte 1), 0x22 `DROPITEM` (template into `+0x34C`, or `+0x2B0` when `fn_800B0BEC` is 8), 0x25 `PROXRADIUS` (float, clamped at 0, `+0x48`), 0x26 `WALLMARK` (`fn_80234628` into `+0x2AC`, when `fn_800B0BEC` is 4), 0x74 `THING_FARZDIST` (`+0x164`), 0x67, 0x76 `REGION_FLAGS`, `REGION_SOUNDID` (`+0x240`, `+0x244`, when `fn_800B0BEC` is 3). 0x00 and 0x17 `ALARMGROUP` return 0 here. `act_Wolverine` and `act_Daredevil` differ only in 0x0A, 0x0F, 0x13, 0x14, 0x15, 0x2E, 0x32, 0x70, 0x75 and 0x28, which only Daredevil sets.
+  Also in `act_Wolverine`, named by the table but not followed further: 0x30 `ACTOR_FLAGS` (0x108200; bit 0x80, `fn_80085DCC`, is the alternate costume, `plr_altWolverine` has 0x108280; bit 0x200 is `fn_80085D3C`, meaning unknown), 0x32 `ACTOR_ABILITIES` (0x05400602; differs per character), 0x33/0x34 `ACTOR_HEALTH`/`ACTOR_MAXHEALTH` (100), 0x37/0x38 `ACTOR_WALKSPEED`/`ACTOR_RUNSPEED` (1.7, 6.0), and the editor's 0x1A `EDITORCATEGORY` (4; `plr_` sets 2) and 0x1B/0x1C `EDITORSIZEMINS`/`EDITORSIZEMAXS` (vectors), which `fn_800AE534` accepts and ignores (as it does 0x1D, 0x1E and 5). The rest of its (`Game/fn_800AE534.cpp`) kind-0 properties: 0x01 `ORIENTATION` and 0x02 `POSITION` (vectors into the entity's `+0x78` transform), 0x03 `SECTORID` (index into the scene's 0x1C0-byte records, bound by `fn_800AECF4`), 0x04 `TIMER` (`+0x28` = now + value, when non-zero), 0x06 `MOVETYPE` (0-4: `fn_800B1D20`, state byte `+0x1`, `fn_800AFCD0`, `fn_800AFCA0`), 0x07 `COLLIDETYPE` (0-11, `+0x40`), 0x08 `RADIUS` and 0x09 `HEIGHT` (floats >= 0, `+0x44`, `+0x4C`), 0x1F `THINGFLAGS` (`+0x2C`), 0x20 `RENDERFLAGS` (`+0x30`), 0x21 `MOVESPEED` (only checked: > 0 and state byte 1), 0x22 `DROPITEM` (template into `+0x34C`, or `+0x2B0` when `fn_800B0BEC` is 8), 0x25 `PROXRADIUS` (float, clamped at 0, `+0x48`), 0x26 `WALLMARK` (`fn_80234628` into `+0x2AC`, when `fn_800B0BEC` is 4), 0x74 `THING_FARZDIST` (`+0x164`), 0x67, 0x76 `REGION_FLAGS`, `REGION_SOUNDID` (`+0x240`, `+0x244`, when `fn_800B0BEC` is 3). 0x00 and 0x17 `ALARMGROUP` return 0 here. `act_Wolverine` and `act_Daredevil` differ only in 0x0A, 0x0F, 0x13, 0x14, 0x15, 0x2E, 0x32, 0x70, 0x75 and 0x28, which only Daredevil sets.
 
 - **The registries have no fixed capacity.** This is read from the disassembly: `fn_801B43D8`, `fn_801B4CA0` and `fn_801B4E84` are unmatched (`fn_801B4284`, the add `fn_801B4628` and the lookup `fn_801B48AC` are matched and confirm the header, the node layout and the duplicate drop). `fn_801B4284(hint, name)` builds a chained hash table: a 0x2C header (`name[0x20]`, `+0x20` count, `+0x24` bucket count, `+0x28` buckets) whose bucket count is the first prime of `lbl_8049E5A0` (23, 53, 79, ... 1999) above the hint, so 557 for the templates (hint 0x200) and 53 for the files (0x20). Nodes are 0x14 bytes (`+0x0` next, `+0x4` previous, `+0x8` key, `+0x10` value) from one free list shared by every registry (`lbl_8066C6E0` count, `lbl_8066C6E4` head), seeded with 0x2000 and grown by 0x200 whenever it is empty. `fn_801B4628` adds nothing and returns 0 when `fn_801B4E84` finds the key (`strnicmp`, 0x80), so a duplicate name is dropped. The hash is `sum((i + 1) * lower(c[i]))` over at most 127 characters, modulo the bucket count. Per template, `fn_800FD9A0` (matched) stores the property count at entry `+0x28` and a `count * 0x24` heap array at `+0x2C`, so there is no property limit either. Each property is `{id +0x0; value +0x4}` byte-swapped by its `lbl_8048E748` type (3 int, 2 float, 4 three words, anything else, strings included, untouched). The limits that do exist are the 64 loaded `.NOT` files of `lbl_80565860` and the note buffer above. 839 templates load and work (**tested**).
 
@@ -137,8 +137,9 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
 |---|---|---|
 | `Misc/Global.not` | Binary, little-endian, magic `NOT\x10` | Entity templates `act_Wolverine`, `plr_Wolverine`, `plr_altWolverine` (format in section 3). |
 | `Misc/nvblist.txt` | Text | One line per tuning file (`PLAYER WOLVERINE`). Read by `fn_801B3C4C` (the path is `nvblist.txt`, mode `ra`): lines starting with a space or `/` are skipped, the first two tokens (delimiters ` \t\r\n/;`) of every other line are the two `fn_801B3638` arguments, and a line with fewer than two tokens is ignored. The pairs are collected in one 0x200-byte buffer, so the whole list is limited to that size, and loaded afterwards. It also lists a `PLAYER Footballguy` with no file. |
-| `Misc/PLAYER_WOLVERINE.nvb` | Binary, magic `0xBEEFAD00` | Tuning fields loaded through `%s_%s.nvb` (`fn_801B301C`, `fn_801B3638`). Layout (`fn_801B3638`, big-endian): three 4-byte words (guess: the first is the magic), the two 0x40-byte name strings the caller passed (compared, result unused), a group count; each group is a field ID `x` (index into the 0x24-byte entry table at `nvb+0x24`), a record count `y`, then `y` records of slot index, type and value. Type `0xFFFFD888` has a 4-byte value, `0xFFFFD887` a 0x10-byte one (fixed up by `fn_8042FC74`), any other type is followed by a size word; only the first word of the value is byte-swapped (not for `0xFFFFD887`, `0xFFFFD884`/`D885`/`D889`). Slot 0 of the first record is copied to slots 1-5 of the entry (6 slots at entry `+0x8`). Values are floats such as 7.0, 15.0, 70.0, 0.3. It also holds effect names, victory and finisher cutscenes, and claw trails. The DOL contains no field names; they have to come from the code that reads each ID. |
-| `Motions/wolverine.nms` | Text | Motion set. Each line maps a fixed animation-state name (`Walk`, `Attack1`, `SuperAttackFar`, `WieldThrow`...) to a `.nad` file, with flags (`noloop`, `fps`, `move`, `endtag`...). `basedon male` inherits states from another set. Loaded by `fn_801A8FC4`. The header has an EA "security" line; check whether anything verifies it before editing these files. |
+| `Misc/PLAYER_WOLVERINE.nvb` | Binary, little-endian, magic `0xBEEFAD00` | The character's tuning: the fields that differ from the defaults, with per-slot values. See "Tuning records" below. |
+| `Misc/defaults.ndb` | Binary, little-endian, magic `0xD000D000` | One file for the game: the tuning schema, every field's type and default. |
+| `Motions/wolverine.nms` | Text | Motion set. Each line maps a fixed animation-state name (`Walk`, `Attack1`, `SuperAttackFar`, `WieldThrow`...) to a `.nad` file, with flags (`noloop`, `fps`, `move`, `endtag`...). `basedon male` inherits states from another set. The motion set is built through `fn_8008F470` ([`versus.md`](versus.md#5-target-order) row 23); `fn_801A8FC4` only registers the 20 search directories (`Misc`, `Levels`, ... `Motions`, `Bundles`). The header has an EA "security" line; check whether anything verifies it before editing these files. |
 | `Bundles/wolverine.ngb` | Binary | The 158 `.nad` animations. |
 | `Bundles/wolverine.ngm` | Binary | The model (`Wolverine.nod`). |
 | `Bundles/wolverine.ngt` | Text | Materials and effects the model uses (`WolverineHair`, `ge_charlight`, `GE_PAR_ElectricParticles`). |
@@ -151,7 +152,56 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
 
 `Misc/clashMP.nsc` is a text file listing the versus arenas, with their level, intro, win and lose cutscenes.
 
-The loaders are generic engine code that takes a name, with nothing character-specific in them: `fn_8019E9DC` (`Bundles/%s`), `fn_8019EA38`, `fn_8019EBF8` (`Animation:Bundles`), `fn_801A0814` (`Model bundle missed`), `fn_801A8FC4` (`Motions`), `fn_80232C4C` (`Texture bundle missed`) and the NVB functions above.
+The loaders are generic engine code that takes a name, with nothing character-specific in them: `fn_8019E9DC` (`Bundles/%s`), `fn_8019EA38`, `fn_8019EBF8` (`Animation:Bundles`), `fn_801A0814` (`Model bundle missed`), `fn_80232C4C` (`Texture bundle missed`) and the tuning functions below.
+
+### Tuning records
+
+`python3 tools/nvbtool.py` prints, compares and edits these files and holds their byte layouts
+(`check` rebuilds all 29 `.nvb` files and the `.ndb` byte for byte). Read from the disassembly unless
+a matched function is named; the plumbing is [`versus.md`](versus.md#5-target-order) row 19.
+
+- **Schema.** `Misc/defaults.ndb` has three classes: `AI` (6 fields, no tuning file uses it),
+  `GLOBALS` (82) and `PLAYER` (251). A field id is the field's index in its class, and the class
+  gives its type and default. `fn_801B26DC` loads it at boot, then the files `Misc/nvblist.txt`
+  names, and keeps the `GLOBALS_Globals` record in `.sdata` `lbl_8066C6C8`.
+
+  | Type | Tool name | Values |
+  |---|---|---|
+  | `0xFFFFD88A`, `0xFFFFD88B` | float, int | 169 and 21 of the `PLAYER` fields |
+  | `0xFFFFD889` | string | 10: cutscene names (`mp_wl_int_1`, `ro_male_1.cut`) |
+  | `0xFFFFD885` | effect | 43: effect names (`WolvClwsTrlL`, `wolvSuperBlock`) |
+  | `0xFFFFD884` | template | 8: projectile template names (`proj_bioHazBlob`) |
+  | `0xFFFFD886`, `0xFFFFD887`, `0xFFFFD888` | d886, vector, d888 | `AI` only |
+
+- **A file lists only what differs from the defaults**, as groups of `{slot, type, value}` records
+  per field. After a group's first record the loader (`fn_801B3638`, matched) copies slot 0 over
+  slots 1-5, whichever slot that record named. So a group that starts with slot 0 sets every slot
+  and then the exceptions; a group that starts with another slot loses its first record, which 138
+  groups in the shipped files do (Aftershock's field 156 lists slots 1 and 3, and only 3 survives).
+- **Slots.** `fn_800ACB7C` binds the record to the entity (`+0x16C`) by the entity's
+  `DESCRIPTIONID` and stores the slot at `+0x170`:
+
+  | Slot | Used for |
+  |---|---|
+  | 1, 2, 3 | In a versus match (`G+0x774` set), an actor whose player slot has the CPU bit (`slot+0x34` bit 2). `slot+0x64` picks: 0 gives slot 1, 2 gives slot 3, anything else slot 2 |
+  | 4 | Otherwise, an actor with no player slot pointer (`fn_80085AF0`, `+0x2FC`) and `ACTOR_FLAGS` bit 0x200 |
+  | 5 | Otherwise, `ACTOR_FLAGS` bit 0x80, the alternate costume |
+  | 0 | Everything else, a human player's character included |
+
+  The text getter `fn_800ACD20` ignores that slot for an alternate costume and always reads
+  slot 5, which is where the files keep its names (`altWolvSuperBlock`, `mp_a_wl_int_1`).
+- **Readers.** `fn_800B1884(entity, id)` returns a float field (386 call sites), `fn_800B18EC` an
+  int (33) and `fn_800ACD20` a pointer to an effect or string field's text (54; no template field
+  is read with a constant id). `GLOBALS` fields are read straight from `lbl_8066C6C8` with
+  `fn_80433D20`/`fn_80433D70(record, id, 0)` (103 call sites). Every constant id is inside its class, and each getter only ever reads fields of its own
+  type, which is what confirms the id-to-schema mapping. `python3 tools/nvbreaders.py CLASS` lists
+  the readers: 150 of the `PLAYER` fields and 62 of the `GLOBALS` ones are read with a constant id.
+- **Field names.** The DOL and the schema hold none. The exporter's text survives only as junk
+  after the NUL in the `.nvb` name buffers: a `DEFINE_FIELD(FID_PLAYER_EFFECT14, "... player effect slot 14",
+  FIDTYPE_EFFECTNAME, "", ...` table and a per-character text form (`// Rage points for
+  superattack (Type: FLOAT Default: 14.000 Minimum: 0.000 Maximum: 100.000)`, then
+  `FID_PLAYER_... = value`). Three names could be matched to an id by type, default and value (47,
+  170, 192). Names and meanings go in `FIELD_NAMES` in `tools/nvbtool.py`, which prints them.
 
 ### The Script Record in Memory
 
@@ -375,5 +425,5 @@ its own type ID and assets. Not tested: the new character winning a match, audio
 2. **Roster (DOL):** record 19 in both tables and entry 19 of the order table (section 2), the loop bound in `clashCharSelect_GetCharList`, and the clamp in `Control_SetSelectInfo` (section 5). All are same-size edits in matched source. Record 19 is the last one free, so a 20th character means growing the tables.
 3. **Select-screen UI:** the APT data in section 5 ("Select-screen UI"). An `.apt`'s pointers are file offsets, so these edits can be made by appending new arrays and records to the file and redirecting a count and pointer to them.
 4. **Type ID (untested):** add the name to `fn_80020E60` using the free ID 19 or 20, with the alt at `+20`, and set the same ID with property 0x70 in `act_<Name>` (section 3). The two are read by different code, so presumably they should agree for the base character. The existing alternates do not: their 0x70 is the base ID while `fn_80020E60` returns `+20`, so what reads which is not settled.
-5. **Per-character code and data (untested):** handle the new type in the aura and SFX code, give it voice events under its type ID's sound bank, and name an AI profile with property 0x2E (or get `AI_DEFAULT`). Its own model, motion set, animation bundle and textures go under new names, and its own tuning needs an NVB and a line in `Misc/nvblist.txt`. Recheck section 5's "Not checked yet" list. With a reused type ID the in-match HUD icon is the reused character's.
+5. **Per-character code and data (untested):** handle the new type in the aura and SFX code, give it voice events under its type ID's sound bank, and name an AI profile with property 0x2E (or get `AI_DEFAULT`). Its own model, motion set, animation bundle and textures go under new names, and its own tuning needs a `PLAYER_<DESCRIPTIONID>.nvb` and a line in `Misc/nvblist.txt` (section 4, "Tuning records"; the list's 0x200-byte buffer has 53 bytes free, a line costing its two names plus 2). Recheck section 5's "Not checked yet" list. With a reused type ID the in-match HUD icon is the reused character's.
 6. **Saves:** probably unaffected (section 2): the save code does not read the roster tables. The test ran without a memory card.

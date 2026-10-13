@@ -111,7 +111,7 @@ This is a C++ singleton that 211 functions reference, so it is the whole game st
 
 | Offset | Type | Meaning (guess) | Written by | Read by |
 |---|---|---|---|---|
-| +0x10 | `Slot[8]`, stride 0xB0 | Player slots (dtk's `lbl_80552120`). `fn_804317BC(G, i)` returns `&slot[i]`, and `fn_8042FF2C(slot)` returns the slot's actor. Known fields: `+0x0` int player index, `+0x4` `char[0x20]` entity name, `+0x30` int, `+0x34` int flags (bit 0 = in use, bit 1 = unknown, tested by `fn_8044272C` with a null check; bit 2 = CPU-controlled), `+0x38` int, `+0x3E` `unsigned short` the controller port the slot plays on (the pad hotplug handlers match it against the SI port), `+0x3C` int, `+0x40` float. The 0xB0 stride is now confirmed from the source side: `fn_80443CCC` only matches with `Slot` padded to 0xB0. | | |
+| +0x10 | `Slot[8]`, stride 0xB0 | Player slots (dtk's `lbl_80552120`). `fn_804317BC(G, i)` returns `&slot[i]`, and `fn_8042FF2C(slot)` returns the slot's actor. Known fields: `+0x0` int player index, `+0x4` `char[0x20]` entity name, `+0x30` int, `+0x34` int flags (bit 0 = in use, bit 1 = unknown, tested by `fn_8044272C` with a null check; bit 2 = CPU-controlled), `+0x38` int, `+0x3E` `unsigned short` the controller port the slot plays on (the pad hotplug handlers match it against the SI port), `+0x3C` int, `+0x40` float, `+0x64` int CPU difficulty 0-2 (`fn_804428E0` stores `min(v, 2)`; it picks the tuning slot, [`characters.md`](characters.md) section 4). The 0xB0 stride is now confirmed from the source side: `fn_80443CCC` only matches with `Slot` padded to 0xB0. | | |
 | +0x590 | int | Number of active player slots, not a role index: `fn_80023010` (matched) loops `p` from 0 while `p < G+0x590` and reads slot `p` each time, and `fn_80443D44` (matched) uses it as the bound on `slots` when looking a player up. `SetMatchInfo` setting it to 2 for match types 0 and 1 fits a 2-player match. | `fn_80431844` | `fn_80434900` (getter), `fn_80023010`, `fn_80114420`, `fn_80443D44`, `fn_80096B98`, `fn_80096D6C` |
 | +0x598 | int | Index into `slots`: `fn_80443DBC` uses it to set `+0x744`. A plain setter, no getter found. Both are **matched** (`Game/fn_80443B70.c`), which confirms the field is a plain `int` slot index. | `fn_80443D1C` | `fn_80443DBC` |
 | +0x59C, +0x5BC, +0x5DC, +0x5FC | `char[0x20]` x4 | Level/venue name buffers. `+0x59C` is dtk's `lbl_805526AC` (0x80552110 + 0x59C), which confirms the 0x20 size, and `GameFlow`'s command 0x14 (`fn_800B76C0`, section 6) is what loads the level it names. Writers store the terminator at `+0x5BB` and so on. | `Control_SetSelectInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel`, `clashVenue_ChooseOption`, `fn_80028BAC`, `fn_8008856C` | `fn_800B76C0`, `fn_80114420` (`strcmp` against `"0_Test_Arena"`, which confirms `+0x59C` holds the level name) |
@@ -158,7 +158,8 @@ this table gives the order and each row's next action, not a changelog. The deta
 `Step N` subsections below: **read the one for the row you land on, not the others.** Name a unit
 after its real source file when it is known (section 2); otherwise use decomp-next's
 `Game/fn_XXXXXXXX.cpp` naming. The character code comes first because adding characters is the first
-mod the community wants ([`characters.md`](characters.md)).
+mod the community wants ([`characters.md`](characters.md)). Rows are worked in table order, not
+number order: rows 19 to 23 (tuning, then the model and animation formats) come before row 18.
 
 | # | Target | Next action / blocker |
 |---|---|---|
@@ -182,6 +183,11 @@ mod the community wants ([`characters.md`](characters.md)).
 | 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Done: `fn_8009543C`, `fn_80091174` (`Game/fn_80091174.cpp`), `fn_800956D4` (`Game/fn_800956D4.cpp`). |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Done: `fn_800BFC60` (pair-less run B) and `fn_8009EA20`, which hands the type on to `fn_8009FF54` (0x534), the next place to look. |
 | 17 | Property handlers: `fn_80137CEC`, `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Done. |
+| 19 | Tuning plumbing: `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20`, `fn_800ACB7C`, `fn_801B308C`, `fn_801B26DC` | Open. Next: `fn_800B1884`. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
+| 20 | `PLAYER` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py PLAYER -m 0x800`. Done when it lists no function. |
+| 21 | `GLOBALS` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py GLOBALS -m 0x800`. Done when it lists no function. |
+| 22 | Model bundle (`.ngm`, `.nod`): `fn_801A1FC4`, `fn_801A2108`, `fn_801A0814`, then the model builders | Open. Next: `fn_801A1FC4`. Notes: [Steps 22 and 23](#steps-22-and-23-model-and-animation-bundles). |
+| 23 | Animation bundle (`.ngb`) and motion set: `fn_8019E9DC`, `fn_8019EA38`, `fn_8019EBF8`, `fn_8008F470`, `fn_8008FF48` | Open. Next: `fn_8019E9DC`. |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); 855 unclaimed functions (0x13344 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-18-the-registrar-and-handle-class-run). |
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size,
@@ -295,6 +301,55 @@ delete the question it settles.
 
 Not a match target, so no row: the audit of code that reads `actor+0x1AC` without the getter
 `fn_8009ABEC` ([`characters.md`](characters.md) section 5, "Not checked yet").
+
+### Steps 19 to 21: tuning
+
+A character's tuning is its `PLAYER_<name>.nvb` record, read one field at a time through getters
+([`characters.md`](characters.md) section 4, "Tuning records"). The schema has no field names, so a
+field means whatever its readers do with it. **These rows pin functions:** a unit of its own each,
+in the order given.
+
+| Row | Pinned | Size | What it is (from the disassembly) |
+|---|---|---|---|
+| 19 | `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20` | 0x68, 0x64, 0xC0 | The per-entity getters `(entity, id)`: float, int, and effect/template/string. They forward to `fn_80433D20`, `fn_80433D70` and `fn_80445C4C` (all matched, as anonymous accessors) with the record at `entity+0x16C` and the slot at `+0x170`. With no record they return 0, the float one the literal at `lbl_8048BA68`. |
+| 19 | `fn_800ACB7C` | 0x1A4 | Binds the record (`fn_801B308C(byte at entity+0x0, entity+0xFC)`) and picks the slot. |
+| 19 | `fn_801B308C` | 0xDC | Record lookup: a first argument of 0, 2 or 7 gets `PLAYER_<name>`, any other value no record. |
+| 19 | `fn_801B26DC` | 0x890 | The init, called once from `fn_8002F3A8`: reads `defaults.ndb`, creates the registry `lbl_8066C6D0` (`"externals"`), runs the list reader `fn_801B3C4C`, sets `lbl_8066C6C8` to the `GLOBALS` record. Then fill 0x801B2F6C-0x801B3638 around `Game/fn_801B301C.c`: the class lookup `fn_801B2F6C`, the pool `fn_801B3168`/`fn_801B31E4`, the class and field descriptors `fn_801B33EC`/`fn_801B346C`, `fn_801B34D8` (gives a new record its defaults; unread) and `fn_801B35CC`. |
+| 20, 21 | the tool's first line | | A reader of tuning fields. |
+
+Rows 20 and 21:
+
+- `tools/nvbreaders.py` ranks the unclaimed readers by new fields per byte and leaves out what
+  `splits.txt` claims, so its first line is always the target. `-m 0x800` keeps the row to the
+  small readers: 49 functions (0x9A5C bytes) for 104 of the 150 `PLAYER` fields that have a reader,
+  21 (0x3E70 bytes) for 52 of the 62 `GLOBALS` ones. The readers of 0x800 bytes and up are the
+  combat state machines and wait for a planning session.
+- After a match, add each field the function reads to `FIELD_NAMES` in `tools/nvbtool.py`: what the
+  code does with the value, in a few words. That table is the record, so don't list fields in the
+  docs. Check a meaning against the data first (`python3 tools/nvbtool.py field ID`).
+- `fn_801343B0` (0x310, the first `PLAYER` line) reads 22 fields whose values the files vary per
+  CPU difficulty (guess: AI behaviour weights).
+- 38 `PLAYER` call sites compute the id, which is presumably how the 101 fields with no
+  constant-id reader are read (the cutscene names 170-175 among them); `nvbreaders.py PLAYER -a`
+  marks those functions `+N computed`.
+
+### Steps 22 and 23: model and animation bundles
+
+`Bundles/<name>.ngm` (models) and `.ngb` (animations) are the two binary asset formats with no
+tool. **These rows pin functions**, a unit of its own each, in the order given. As a reader
+matches, write the layout it shows into [`characters.md`](characters.md) section 4 and into a
+`tools/` script that parses every file of that type in `CLASH.BIG` to its last byte, the test
+`tools/nvbtool.py check` applies.
+
+| Row | Pinned | Size | What it is (from its strings and callers) |
+|---|---|---|---|
+| 22 | `fn_801A1FC4` | 0x144 | `<name>.ngm` by name; property 0x0A `MODEL` calls it. |
+| 22 | `fn_801A2108` | 0x480 | The `.ngm` reader (`"Models:Bundle"`, `"Models:BundledInstanceTemp"`); the init calls it for `global`. |
+| 22 | `fn_801A0814` | 0x1DC | One `.nod` model (`"NOD"`). |
+| 22 | `fn_801A05CC`, `fn_801A3784`, `fn_801A0FA4`, `fn_801A1AF8` | 0x248, 0x508, 0x61C, 0x3F4 | The model builders: `"MOD:MODEL:NEW"`, the bone index tables (`"MOD:MODEL:BONEINDICES"`), `"Models:Planes"`, `"Models:Instance"`. |
+| 22 | `fn_80232C4C` | 0x270 | The texture bundle, `<name>.tpl`. |
+| 23 | `fn_8019E9DC`, `fn_8019EA38`, `fn_8019EBF8` | 0x5C, 0x1C0, 0x230 | `Bundles/<name>.ngb`; the `%s-t%d` variant; the `.ngb` reader (`"Animation:Bundles"`). |
+| 23 | `fn_8008F470`, `fn_8008FF48` | 0xCC, 0xEC | Motion set by name: `fn_801B48AC` lookup, else `fn_80091028` and `fn_8008FF48`, then `fn_801B4628` adds it. Which callee parses the `.nms` text is not traced. |
 
 ### Step 4: files and boundaries
 
