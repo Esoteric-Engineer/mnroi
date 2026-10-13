@@ -181,7 +181,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 14 | Voice by type ID: `fn_80115154`, `fn_80115308`, `fn_8010CDCC`, `fn_8010D050` | Done: `fn_8010CDCC` and `fn_8010D050` share `Game/fn_8010CDCC.c`. |
 | 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Done: `fn_8009543C`, `fn_80091174` (`Game/fn_80091174.cpp`), `fn_800956D4` (`Game/fn_800956D4.cpp`). |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Done: `fn_800BFC60` (pair-less run B) and `fn_8009EA20`, which hands the type on to `fn_8009FF54` (0x534), the next place to look. |
-| 17 | Property handlers: `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Open, pinned, in that order. `fn_80137CEC` is done: `Game/fn_80137CEC.c`. |
+| 17 | Property handlers: `fn_800AE534`, `fn_800A22CC` | Open, pinned, in that order. Done: `fn_80137CEC` (`Game/fn_80137CEC.c`), `fn_800AC750` (`Game/fn_800AC750.cpp`). |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FB10` (0xA0); 857 unclaimed functions (0x13424 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-18-the-registrar-and-handle-class-run). |
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size,
@@ -289,7 +289,7 @@ delete the question it settles.
 | Row | Pinned | Size | Settles |
 |---|---|---|---|
 | 16 | `fn_8009EA20` | 0x358 | The `fn_8009ABEC` caller that keeps the type ID in a register ([`characters.md`](characters.md) section 5, "Coverage of this list"): does it treat characters differently? |
-| 17 | `fn_800AC750` | 0xA8 | Property 0x14 `CASTID` (guess: the name `fn_80020E60` reads). |
+| 17 | `fn_800AC750` | 0xA8 | Done. Property 0x14 `CASTID` writes the lowercased name to entity `+0xDC` (0x20 bytes, `+0xFB` forced 0); `fn_80020E60` reads it (guess). |
 | 17 | `fn_800AE534` | 0x65C | The common properties (kind 0), which hold 0x0F `PHYSMODEL`, 0x15 `DESCRIPTIONID`, 0x20 `RENDERFLAGS`, 0x28 `EFFECT1` and the editor's 0x1A-0x1C of `act_Wolverine`: named by the property table, but what the game does with each is not followed. |
 | 17 | `fn_800A22CC` | 0x6FC | The attachment spawner, which copies the parent's type ID to its children. |
 
