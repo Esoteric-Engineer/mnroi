@@ -355,13 +355,13 @@ Every call site of `fn_80020E60` (3 callers) and `fn_8009ABEC` (21) was checked 
 feeds; the table above holds those that treat characters differently. The others pass the ID on (to
 the `Obj*` factories at 0x804580CC-0x80459A80, to `fn_8010D050`, or to `fn_80428EEC` on
 `lbl_805724F0`, a keyed registry), test it against 0, or switch on non-character values
-(`fn_80098D30`); `fn_8009EA20` and `fn_800BFC60` keep it in a register and were not followed. The game has only 20 jump tables, so a `switch` on the type is
+(`fn_80098D30`); `fn_800BFC60` hands it to `fn_80446F10` (a keyed fan-out over `lbl_80572538`, a list of vtable objects) without testing it; `fn_8009EA20` keeps it in a register and was not followed. The game has only 20 jump tables, so a `switch` on the type is
 a compare chain, not a table. `fn_8001C258` ignores the characters with no aura rather than having a
 default branch, so a new character needs an entry only if it should glow.
 
 Of the 84 data objects sized 0x48, 0x4C, 0x50 or 0x98 (18, 19, 20 or 38 words), only the aura
 table `lbl_805200A0` is read by a function that also reads a character ID or slot name. **Not checked
-yet:** code that reads `actor+0x1AC` without the getter, and the two callers above that were not followed.
+yet:** code that reads `actor+0x1AC` without the getter, and `fn_8009EA20`.
 
 ## 6. Adding a Character
 
