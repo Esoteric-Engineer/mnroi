@@ -129,7 +129,7 @@ This is a C++ singleton that 211 functions reference, so it is the whole game st
 
 `fn_80028BAC` is the command-line parser (`Game/fn_80028BAC.cpp`). Its `-mp` sets the role `+0x770` to 1, `-vs` the role `+0x774` to 1 (both then set `+0x590` to 2), and `-timed [seconds]` sets `+0x75C` to 1 and `+0x764` to `seconds * 1000` (60000 by default). `-level`, `-scene`, `-mission`, `-mpmission` and `-chron` fill the four name buffers and set `+0x61C`, `+0x620`, `+0x624`/`+0x628` (both on the third buffer) and `+0x62C`.
 
-`fn_80091174` is `G`'s constructor: it zeroes the fields above, sets `+0x75C = 3` and `+0x764 = 0x1993E0`, and seeds slots 0 and 1 with `plr_wolverine` through `fn_80443B70`. So `+0x75C = 3` is a third, pre-match value of the timer mode, not one of `SetMatchInfo`'s two.
+`G`'s constructor (`__9GameState`, `Game/fn_80091174.cpp`) sets `+0x75C = 3` and `+0x764 = 300000`, so `+0x75C = 3` is a third, pre-match value of the timer mode, not one of `SetMatchInfo`'s two. It also sets `+0x748 = +0x754 = +0x640 = -1`. The slot constructor `fn_80095BEC` (unmatched) puts a `Vector` at slot `+0x90` and sets `+0x64 = -1`, `+0x80 = 0`.
 
 ### 4.2 Last-selection module (0x801317D8-0x80131E90, `.sbss` `lbl_8066F178`-`lbl_8066F1A4`)
 
@@ -179,7 +179,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 12 | NVB loader: `fn_801B301C`, `fn_801B3638`, `fn_801B3C4C` | Done: `Game/fn_801B301C.c` and `Game/fn_801B3638.c` (also holds `fn_801B3C4C`, the `Misc/nvblist.txt` reader; claims `.rodata` 0x8049E53C-0x8049E540, its `char[0x200] = "\0"` source). `lbl_8066C6D0` is the NVB registry (guess; `fn_801B4628(registry, fn_804673B8(nvb), nvb)` adds, `fn_801B48AC` looks up). File format: [`characters.md`](characters.md) section 4. |
 | 13 | Registry capacity: `fn_800FD9A0` | Done: `Game/fn_800FD9A0.cpp`. |
 | 14 | Voice by type ID: `fn_80115154`, `fn_80115308`, `fn_8010CDCC`, `fn_8010D050` | Done: `fn_8010CDCC` and `fn_8010D050` share `Game/fn_8010CDCC.c`. |
-| 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Open, pinned, in that order. |
+| 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | `fn_8009543C` and `fn_80091174` (`Game/fn_80091174.cpp`) done. Next: `fn_800956D4`. |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Open, pinned, in that order. |
 | 17 | Property handlers: `fn_80137CEC`, `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Open, pinned, in that order. |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FB10` (0xA0); 857 unclaimed functions (0x13424 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-18-the-registrar-and-handle-class-run). |
@@ -288,7 +288,6 @@ delete the question it settles.
 
 | Row | Pinned | Size | Settles |
 |---|---|---|---|
-| 15 | `fn_80091174` | 0x170 | Holds the two `fn_80443B70` calls at 0x80091290 that default both slots to `plr_wolverine`. |
 | 15 | `fn_800956D4` | 0x3D0 | Fills a slot and sets `+0x3C = 1`, `+0x38 = 0`: the `Slot` fields of section 7's open question. |
 | 16 | `fn_800BFC60`, `fn_8009EA20` | 0x1BC, 0x358 | The two `fn_8009ABEC` callers that keep the type ID in a register ([`characters.md`](characters.md) section 5, "Coverage of this list"): do they treat characters differently? |
 | 17 | `fn_80137CEC` | 0xAC | AI profile name to index over `lbl_804CF8E8`; confirms an unlisted name gets `AI_DEFAULT`. |
