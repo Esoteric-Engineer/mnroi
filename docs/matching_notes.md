@@ -196,6 +196,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   (`Game/fn_800B46B0.c`, `fn_800B47C0`).
 - **A range guard whose first test (`blt`) lands on a label holding one `b` to the return block, while the second (`bgt`) lands on the block itself, plus a `b` over both to the body, is a ternary condition:** `if (id < 0 ? 1 : id > 4) return 0;`. `||`, `!(a && b)` and the goto forms all put both tests on the same label (`Game/fn_8009543C.c`).
 
+- **`fcmpu` / `cror un, eq, lt` / `bso` (or `cror un, eq, gt`) on a float guard is an ordered `<=` (`>=`) in the source,** where `> 0.0f` negated gives a plain `ble`. Write the guard as the return condition: `if (f <= 0.0f || x != 1) return 0;` (`Game/fn_800AE534.cpp`, MOVESPEED).
+
 - **A compare whose branch targets the instruction right after it is an `if` with an empty body, and
   a `b` to a label that itself only holds a `b` is an empty `else`.** The game's release build
   strips its diagnostics but keeps the test, so `if (x) { }` and `if (x) { ... } else { }` are
