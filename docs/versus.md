@@ -183,7 +183,7 @@ number order: rows 19 to 23 (tuning, then the model and animation formats) come 
 | 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Done: `fn_8009543C`, `fn_80091174` (`Game/fn_80091174.cpp`), `fn_800956D4` (`Game/fn_800956D4.cpp`). |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Done: `fn_800BFC60` (pair-less run B) and `fn_8009EA20`, which hands the type on to `fn_8009FF54` (0x534), the next place to look. |
 | 17 | Property handlers: `fn_80137CEC`, `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Done. |
-| 19 | Tuning plumbing: nine leaf accessors from `fn_800B14A0` (`Entity_GetActor` is done), then `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20`, `fn_800ACB7C`, `fn_801B308C`, `fn_801B26DC` | Open. Next: `fn_800B14A0`. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
+| 19 | Tuning plumbing: seven leaf accessors from `fn_800B13D8` (`Entity_GetActor` and `fn_800B14A0` are done), then `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20`, `fn_800ACB7C`, `fn_801B308C`, `fn_801B26DC` | Open. Next: `fn_800B13D8`. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
 | 20 | `PLAYER` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py PLAYER -m 0x800`. Done when it lists no function. |
 | 21 | `GLOBALS` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py GLOBALS -m 0x800`. Done when it lists no function. |
 | 22 | Model bundle (`.ngm`, `.nod`): `fn_801A1FC4`, `fn_801A2108`, `fn_801A0814`, then the model builders | Open. Next: `fn_801A1FC4`. Notes: [Steps 22 and 23](#steps-22-and-23-model-and-animation-bundles). |
@@ -311,7 +311,7 @@ in the order given.
 
 | Row | Pinned | Size | What it is (from the disassembly) |
 |---|---|---|---|
-| 19 | `fn_800B14A0`, `fn_800B13D8`, `fn_800B1724`, `fn_800B1750`, `fn_80085954`, `fn_800CD9B0`, `fn_8042FB28`, `fn_8042DC84` | 0x28 to 0x44 | The leaf accessors the readers call most: a quarter of the calls in rows 19 to 21, and 5,992 call sites in the DOL. In order: returns its argument (entity to actor); `+0x24`, or 0 for a null pointer; `&+0xA8`; `&+0x88`; `+0x3DC`; `fn_800ACFA8(+0xF0)`; returns its argument; copies three floats. Name each in `symbols.txt` as it matches, so the readers' disassembly reads by name. |
+| 19 | `fn_800B13D8`, `fn_800B1724`, `fn_800B1750`, `fn_80085954`, `fn_800CD9B0`, `fn_8042FB28`, `fn_8042DC84` | 0x28 to 0x44 | The leaf accessors the readers call most: a quarter of the calls in rows 19 to 21, and 5,992 call sites in the DOL. In order: `+0x24`, or 0 for a null pointer; `&+0xA8`; `&+0x88`; `+0x3DC`; `fn_800ACFA8(+0xF0)`; returns its argument; copies three floats. Leave the names as `fn_XXXXXXXX` for now; renaming will happen closer to the end of the project. |
 | 19 | `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20` | 0x68, 0x64, 0xC0 | The per-entity getters `(entity, id)`: float, int, and effect/template/string. They forward to `fn_80433D20`, `fn_80433D70` and `fn_80445C4C` (all matched, as anonymous accessors) with the record at `entity+0x16C` and the slot at `+0x170`. With no record they return 0, the float one the literal at `lbl_8048BA68`. |
 | 19 | `fn_800ACB7C` | 0x1A4 | Binds the record (`fn_801B308C(byte at entity+0x0, entity+0xFC)`) and picks the slot. |
 | 19 | `fn_801B308C` | 0xDC | Record lookup: a first argument of 0, 2 or 7 gets `PLAYER_<name>`, any other value no record. |

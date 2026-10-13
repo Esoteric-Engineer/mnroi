@@ -39,7 +39,8 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
   gives its name.
 - **Names:** the handler names in `symbols.txt` are the APT script names, not confirmed C++
   symbols. When the compiled name differs (GCC 2.95 mangling), rename the symbol to match what the
-  unit emits; see `docs/versus.md` section 1.
+  unit emits; see `docs/versus.md` section 1. Don't give leaf accessors (rows 19 to 21) guessed
+  names: keep `fn_XXXXXXXX` until the end, when they get renamed in one pass.
 
 ## Recording what you learn
 
