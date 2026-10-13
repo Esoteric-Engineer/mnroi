@@ -183,7 +183,7 @@ number order: rows 19 to 23 (tuning, then the model and animation formats) come 
 | 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Done: `fn_8009543C`, `fn_80091174` (`Game/fn_80091174.cpp`), `fn_800956D4` (`Game/fn_800956D4.cpp`). |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Done: `fn_800BFC60` (pair-less run B) and `fn_8009EA20`, which hands the type on to `fn_8009FF54` (0x534), the next place to look. |
 | 17 | Property handlers: `fn_80137CEC`, `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Done. |
-| 19 | Tuning plumbing: six leaf accessors from `fn_800B1724` (`Entity_GetActor`, `fn_800B14A0` and `fn_800B13D8` are done), then `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20`, `fn_800ACB7C`, `fn_801B308C`, `fn_801B26DC` | Open. Next: `fn_800B1724`. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
+| 19 | Tuning plumbing: five leaf accessors from `fn_800B1750` (`Entity_GetActor`, `fn_800B14A0`, `fn_800B13D8` and `fn_800B1724` are done), then `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20`, `fn_800ACB7C`, `fn_801B308C`, `fn_801B26DC` | Open. Next: `fn_800B1750`. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
 | 20 | `PLAYER` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py PLAYER -m 0x800`. Done when it lists no function. |
 | 21 | `GLOBALS` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py GLOBALS -m 0x800`. Done when it lists no function. |
 | 22 | Model bundle (`.ngm`, `.nod`): `fn_801A1FC4`, `fn_801A2108`, `fn_801A0814`, then the model builders | Open. Next: `fn_801A1FC4`. Notes: [Steps 22 and 23](#steps-22-and-23-model-and-animation-bundles). |
