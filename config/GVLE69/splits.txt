@@ -129,6 +129,9 @@ Game/fn_8002FB08.c:
 Game/fn_80084498.cpp:
 	.text       start:0x80084498 end:0x80084734
 
+Game/fn_80085954.cpp:
+	.text       start:0x80085954 end:0x80085980
+
 Game/fn_80088740.c:
 	.text       start:0x80088740 end:0x800887AC
 
@@ -219,6 +222,9 @@ Game/fn_800BFC60.cpp:
 
 Game/fn_800CC5E0.cpp:
 	.text       start:0x800CC5E0 end:0x800CC60C
+
+Game/fn_800CD9B0.cpp:
+	.text       start:0x800CD9B0 end:0x800CD9F4
 
 Game/fn_800FCE84.c:
 	.text       start:0x800FCE84 end:0x800FCF50
@@ -3425,6 +3431,12 @@ Dolphin/texPalette/TEXGet.c:
 	.text       start:0x80411408 end:0x804114EC
 	.data       start:0x804F2D80 end:0x804F2DBC
 	.sdata2     start:0x80670970 end:0x80670978
+
+Game/fn_8042DC84.c:
+	.text       start:0x8042DC84 end:0x8042DCC0
+
+Game/fn_8042FB28.cpp:
+	.text       start:0x8042FB28 end:0x8042FB58
 
 Game/fn_80431788.c:
 	.text       start:0x80431788 end:0x80431CCC
