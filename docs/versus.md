@@ -288,7 +288,6 @@ delete the question it settles.
 
 | Row | Pinned | Size | Settles |
 |---|---|---|---|
-| 15 | `fn_8009543C` | 0xC8 | `fn_8009543C(G, id, "plr_wolverine")`, the debug command that puts a character in a slot ([`characters.md`](characters.md) section 3). |
 | 15 | `fn_80091174` | 0x170 | Holds the two `fn_80443B70` calls at 0x80091290 that default both slots to `plr_wolverine`. |
 | 15 | `fn_800956D4` | 0x3D0 | Fills a slot and sets `+0x3C = 1`, `+0x38 = 0`: the `Slot` fields of section 7's open question. |
 | 16 | `fn_800BFC60`, `fn_8009EA20` | 0x1BC, 0x358 | The two `fn_8009ABEC` callers that keep the type ID in a register ([`characters.md`](characters.md) section 5, "Coverage of this list"): do they treat characters differently? |

@@ -194,6 +194,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   `if (a == 0 || b == 0 || c == 0)` swaps the two labels and does not match, and
   `if (a && b && c) { ... }` is three plain `beq`s to one label with no fourth branch
   (`Game/fn_800B46B0.c`, `fn_800B47C0`).
+- **A range guard whose first test (`blt`) lands on a label holding one `b` to the return block, while the second (`bgt`) lands on the block itself, plus a `b` over both to the body, is a ternary condition:** `if (id < 0 ? 1 : id > 4) return 0;`. `||`, `!(a && b)` and the goto forms all put both tests on the same label (`Game/fn_8009543C.c`).
 
 - **A compare whose branch targets the instruction right after it is an `if` with an empty body, and
   a `b` to a label that itself only holds a `b` is an empty `else`.** The game's release build
