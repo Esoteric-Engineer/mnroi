@@ -154,6 +154,10 @@ Game/fn_80097750.cpp:
 	.ctors      start:0x80482610 end:0x80482614
 	.rodata     start:0x8048A748 end:0x8048A828
 
+Game/fn_8009EA20.cpp:
+	.text       start:0x8009EA20 end:0x8009ED78
+	.rodata     start:0x8048AF14 end:0x8048AF18
+
 Game/fn_800AC37C.cpp:
 	.text       start:0x800AC37C end:0x800AC6A8
 
