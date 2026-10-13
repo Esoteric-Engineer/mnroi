@@ -179,7 +179,7 @@ Game/fn_800B14A0.cpp:
 	.text       start:0x800B14A0 end:0x800B14C8
 
 Game/fn_800B1724.cpp:
-	.text       start:0x800B1724 end:0x800B1750
+	.text       start:0x800B1724 end:0x800B177C
 
 Game/fn_800B43F0.cpp:
 	.text       start:0x800B43F0 end:0x800B46B0
