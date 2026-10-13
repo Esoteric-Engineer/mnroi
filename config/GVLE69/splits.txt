@@ -251,7 +251,7 @@ Game/fn_8010C338.cpp:
 	.sbss       start:0x8066D7F0 end:0x8066D808
 
 Game/fn_8010CDCC.c:
-	.text       start:0x8010CDCC end:0x8010D050
+	.text       start:0x8010CDCC end:0x8010D220
 
 Game/fn_80114420.cpp:
 	.text       start:0x80114420 end:0x801147D4
