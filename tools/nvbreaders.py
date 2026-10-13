@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""List the functions that read tuning fields by a constant id, best decompilation target first
+"""List the functions that read tuning fields, best decompilation target first
 (docs/versus.md section 5, rows 19 to 21; the fields are docs/characters.md section 4).
 
 Usage (from repo root, after a build: it reads build/GVLE69/asm):
@@ -8,9 +8,11 @@ Usage (from repo root, after a build: it reads build/GVLE69/asm):
   python3 tools/nvbreaders.py CLASS -a         Every reader, claimed ones too, in address order
   python3 tools/nvbreaders.py CLASS field ID   Every function that reads one field
 
-A reader is a call of one of the getters below with `li r4, <id>` ahead of it. The ranking is
-greedy: each line is the unclaimed function with the most not-yet-covered fields per byte, where a
-field is covered once a function in splits.txt, or a line above, reads it.
+A reader is a call of one of the getters below with the id in r4: `li r4, <id>`, or `<base> + i`
+(`addi r0, rN, <base>` then `mr r4, r0`), printed as `<base>+` and counted as the one field at the
+base, since the run's length is not in the call. The ranking is greedy: each line is the unclaimed
+function with the most not-yet-covered fields per byte, where a field is covered once a function
+in splits.txt, or a line above, reads it.
 
   PLAYER   fn_800B1884 (float), fn_800B18EC (int), fn_800ACD20 (name or string): (entity, id)
   GLOBALS  fn_80433D20 (float), fn_80433D70 (int): (record, id, slot), called on lbl_8066C6C8
@@ -60,16 +62,26 @@ def load_claims():
     return out
 
 
-def const_id(lines, addr):
-    """The id loaded into r4 ahead of the call at addr, or None when it is not a constant."""
+def site_id(lines, addr):
+    """(id, indexed) for the call at addr: the constant in r4, or the base of `base + i`.
+    (None, False) when r4 is neither."""
     for k in range(1, 12):
         text = lines.get(addr - 4 * k, "")
         m = re.match(r"li r4, (-?0x[0-9a-f]+|-?\d+)$", text)
         if m:
-            return int(m.group(1), 0)
+            return int(m.group(1), 0), False
+        if text == "mr r4, r0":
+            for j in range(k + 1, k + 8):
+                prev = lines.get(addr - 4 * j, "")
+                m = re.match(r"addi r0, r\d+, (0x[0-9a-f]+|\d+)$", prev)
+                if m:
+                    return int(m.group(1), 0), True
+                if re.match(r"(?!st|cmp)\w+\.? r0,", prev) or prev.startswith("bl "):
+                    break
+            return None, False
         if text.startswith("bl ") or re.match(r"(mr|addi|lwz|lbz|lhz) r4,", text):
-            return None
-    return None
+            return None, False
+    return None, False
 
 
 def main(argv):
@@ -89,29 +101,37 @@ def main(argv):
         i = bisect.bisect_right(claim_starts, addr) - 1
         return i >= 0 and claims[i][0] <= addr < claims[i][1]
 
-    readers = {}  # function -> set of ids
-    loose = {}    # function -> call sites whose id is not a constant
+    readers = {}  # function -> set of ids, the bases of indexed reads included
+    bases = {}    # function -> set of ids that are such bases
+    loose = {}    # function -> call sites whose id is neither
     for addr, text in lines.items():
         if not text.startswith("bl ") or text.split()[1] not in GETTERS[cls]:
             continue
         f = owner(addr)
         if f[2] in WRAPPERS:
             continue
-        fid = const_id(lines, addr)
+        fid, indexed = site_id(lines, addr)
         if fid is None:
             loose[f] = loose.get(f, 0) + 1
-        else:
-            readers.setdefault(f, set()).add(fid)
+            continue
+        readers.setdefault(f, set()).add(fid)
+        if indexed:
+            bases.setdefault(f, set()).add(fid)
+
+    def show(f, ids):
+        return " ".join("%d+" % i if i in bases.get(f, ()) else str(i) for i in sorted(ids))
 
     if argv[2:3] == ["field"]:
         fid = int(argv[3], 0)
-        for f in sorted(f for f, ids in readers.items() if fid in ids):
-            print("%s  0x%X%s" % (f[2], f[1], "  (claimed)" if claimed(f[0]) else ""))
+        for f in sorted(readers):
+            near = [b for b in bases.get(f, ()) if b < fid < b + 8]
+            if fid in readers[f] or near:
+                print("%s  0x%X%s%s" % (f[2], f[1], "" if fid in readers[f] else "  (may reach it: indexes from %d)" % near[0],
+                                        "  (claimed)" if claimed(f[0]) else ""))
         return
     if argv[2:3] == ["-a"]:
         for f in sorted(set(readers) | set(loose)):
-            ids = sorted(readers.get(f, ()))
-            print("%s  0x%-5X %s%s%s" % (f[2], f[1], " ".join(str(i) for i in ids),
+            print("%s  0x%-5X %s%s%s" % (f[2], f[1], show(f, readers.get(f, ())),
                                           "  +%d computed" % loose[f] if f in loose else "",
                                           "  (claimed)" if claimed(f[0]) else ""))
         return
@@ -132,7 +152,7 @@ def main(argv):
             break
         covered |= new
         print("%s  0x%-5X +%-2d (%d of %d)  %s"
-              % (best[2], best[1], len(new), len(covered), len(every), " ".join(str(i) for i in sorted(new))))
+              % (best[2], best[1], len(new), len(covered), len(every), show(best, new)))
     if todo:
         print("%d more unclaimed readers add no new field (list them with -a)" % (len(todo) + 1))
 

@@ -183,7 +183,7 @@ number order: rows 19 to 23 (tuning, then the model and animation formats) come 
 | 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Done: `fn_8009543C`, `fn_80091174` (`Game/fn_80091174.cpp`), `fn_800956D4` (`Game/fn_800956D4.cpp`). |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Done: `fn_800BFC60` (pair-less run B) and `fn_8009EA20`, which hands the type on to `fn_8009FF54` (0x534), the next place to look. |
 | 17 | Property handlers: `fn_80137CEC`, `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Done. |
-| 19 | Tuning plumbing: `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20`, `fn_800ACB7C`, `fn_801B308C`, `fn_801B26DC` | Open. Next: `fn_800B1884`. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
+| 19 | Tuning plumbing: nine leaf accessors from `fn_800CC5E0`, then `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20`, `fn_800ACB7C`, `fn_801B308C`, `fn_801B26DC` | Open. Next: `fn_800CC5E0`. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
 | 20 | `PLAYER` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py PLAYER -m 0x800`. Done when it lists no function. |
 | 21 | `GLOBALS` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py GLOBALS -m 0x800`. Done when it lists no function. |
 | 22 | Model bundle (`.ngm`, `.nod`): `fn_801A1FC4`, `fn_801A2108`, `fn_801A0814`, then the model builders | Open. Next: `fn_801A1FC4`. Notes: [Steps 22 and 23](#steps-22-and-23-model-and-animation-bundles). |
@@ -311,6 +311,7 @@ in the order given.
 
 | Row | Pinned | Size | What it is (from the disassembly) |
 |---|---|---|---|
+| 19 | `fn_800CC5E0`, `fn_800B14A0`, `fn_800B13D8`, `fn_800B1724`, `fn_800B1750`, `fn_80085954`, `fn_800CD9B0`, `fn_8042FB28`, `fn_8042DC84` | 0x28 to 0x44 | The leaf accessors the readers call most: a quarter of the calls in rows 19 to 21, and 5,992 call sites in the DOL. In order: returns `+0xE4`; returns its argument (entity to actor); `+0x24`, or 0 for a null pointer; `&+0xA8`; `&+0x88`; `+0x3DC`; `fn_800ACFA8(+0xF0)`; returns its argument; copies three floats. Name each in `symbols.txt` as it matches, so the readers' disassembly reads by name. |
 | 19 | `fn_800B1884`, `fn_800B18EC`, `fn_800ACD20` | 0x68, 0x64, 0xC0 | The per-entity getters `(entity, id)`: float, int, and effect/template/string. They forward to `fn_80433D20`, `fn_80433D70` and `fn_80445C4C` (all matched, as anonymous accessors) with the record at `entity+0x16C` and the slot at `+0x170`. With no record they return 0, the float one the literal at `lbl_8048BA68`. |
 | 19 | `fn_800ACB7C` | 0x1A4 | Binds the record (`fn_801B308C(byte at entity+0x0, entity+0xFC)`) and picks the slot. |
 | 19 | `fn_801B308C` | 0xDC | Record lookup: a first argument of 0, 2 or 7 gets `PLAYER_<name>`, any other value no record. |
@@ -321,17 +322,19 @@ Rows 20 and 21:
 
 - `tools/nvbreaders.py` ranks the unclaimed readers by new fields per byte and leaves out what
   `splits.txt` claims, so its first line is always the target. `-m 0x800` keeps the row to the
-  small readers: 49 functions (0x9A5C bytes) for 104 of the 150 `PLAYER` fields that have a reader,
-  21 (0x3E70 bytes) for 52 of the 62 `GLOBALS` ones. The readers of 0x800 bytes and up are the
-  combat state machines and wait for a planning session.
+  small readers: 56 functions (0xAFFC bytes) for `PLAYER` and 21 (0x3E70 bytes) for `GLOBALS` when
+  the rows were planned. The readers of 0x800 bytes and up are the combat state machines and wait
+  for a planning session.
 - After a match, add each field the function reads to `FIELD_NAMES` in `tools/nvbtool.py`: what the
   code does with the value, in a few words. That table is the record, so don't list fields in the
   docs. Check a meaning against the data first (`python3 tools/nvbtool.py field ID`).
 - `fn_801343B0` (0x310, the first `PLAYER` line) reads 22 fields whose values the files vary per
   CPU difficulty (guess: AI behaviour weights).
-- 38 `PLAYER` call sites compute the id, which is presumably how the 101 fields with no
-  constant-id reader are read (the cutscene names 170-175 among them); `nvbreaders.py PLAYER -a`
-  marks those functions `+N computed`.
+- An id the tool prints as `206+` is the base of an indexed read, `base + i`: 32 call sites over 18
+  bases, which is how most fields with no constant-id reader are read. In `fn_80096460` the index is
+  the other actor's body class (`fn_8009AC68`, property 0x27); the runs of three (46-48, 110-127)
+  suggest the same (guess). The tool counts a base as one field, so name the whole run when its
+  reader matches.
 
 ### Steps 22 and 23: model and animation bundles
 

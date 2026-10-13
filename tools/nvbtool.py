@@ -73,12 +73,16 @@ TEXT_TYPES = (T_STRING, T_EFFECT, T_TEMPLATE)
 # the text left in the .nvb name buffers; anything else is a description of what the reader does.
 FIELD_NAMES = {
     "PLAYER": {
+        46: "throw distance, class 1 (inferred from 47 and 48)",
         47: "FID_PLAYER_THROWDIST2",
         48: "throw distance, class 3",
         170: "FID_PLAYER_VICTORY1 (versus victory cutscene 1)",
         189: "rage points for superattack",
         192: "FID_PLAYER_RAGE_DURATION",
         193: "rage penalty, % of base points",
+        206: "fm_* cutscene against a male opponent (206 + the opponent's SKELETONID, fn_80096460)",
+        207: "fm_* cutscene against a female opponent",
+        208: "fm_* cutscene against a brute opponent",
     },
     "GLOBALS": {},
 }

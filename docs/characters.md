@@ -113,7 +113,7 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
   | 0x15 | `DESCRIPTIONID` | `WOLVERINE` | `fn_800AE534`: `strncpy` into `+0xFC` (0x1F characters, `+0x11B` forced 0). It names the tuning record: `fn_800ACB7C` looks up `PLAYER_<value>` (section 4, "Tuning records") |
   | 0x19 | `DAMAGESCALE` | | float, `actor+0x214` |
   | 0x24 | `DESTROY_TEMPLATE` | | string, template `fn_800FD5FC(name, 1)` into `+0x1A0`, else `fn_803A1AC4(lbl_8064AA80, name)` into `+0x1A4` |
-  | 0x27, 0x28 | `SKELETONID`, `EFFECT1` | Storm: 1, `strmHair` | 0x27: `actor+0x200`, a body class: 0 by default (`_actor`), 1 for Aftershock, DefCon, Elektra, Heatwave, Paradox and Storm, 2 for the Thing, Venom, Megalith, Roekel and the brutes. The opponent's value picks this character's `-t<n>` animation bundle (0x13). 0x28-0x2B `EFFECT1`-`EFFECT4` (`ddFX`, `strmHair`, `htBodyFire`...): `fn_800AE534` creates the named effect with `fn_803A20D8(lbl_8064AA80, name, actor, 0, 0, 0, 0, 0.0f)` and attaches it with `fn_8039CE18(fx, 1)` / `fn_80393938(actor, fx, 0)`. 0x2C `EFFECT5` is in kind 0 but returns 0 |
+  | 0x27, 0x28 | `SKELETONID`, `EFFECT1` | Storm: 1, `strmHair` | 0x27: `actor+0x200`, a body class: 0 by default (`_actor`), 1 for Aftershock, DefCon, Elektra, Heatwave, Paradox and Storm, 2 for the Thing, Venom, Megalith, Roekel and the brutes. The tuning files call them male, female and brute: `fn_80096460` reads the string field `206 + class`, whose values are `fm_wl_male_1`, `fm_wl_female_1` and `fm_wl_brute_1` (section 4). The opponent's value picks this character's `-t<n>` animation bundle (0x13). 0x28-0x2B `EFFECT1`-`EFFECT4` (`ddFX`, `strmHair`, `htBodyFire`...): `fn_800AE534` creates the named effect with `fn_803A20D8(lbl_8064AA80, name, actor, 0, 0, 0, 0, 0.0f)` and attaches it with `fn_8039CE18(fx, 1)` / `fn_80393938(actor, fx, 0)`. 0x2C `EFFECT5` is in kind 0 but returns 0 |
   | 0x2E | `ACTOR_AI` | `AI_WOLVERINE` | (`fn_80084498`) AI profile: index of the name in `lbl_804CF8E8` (`fn_80137CEC`, `stricmp`), stored as a short at `+0x384`; an unknown name gives 0, `AI_DEFAULT` |
   | 0x2D-0x38, 0x3A, 0x3B, 0x6F | `ACTOR_*`, `SUPERBLOCK_EFFECT` | | (`fn_80084498`, object fields) 0x2D low halfword to short `+0x314`; 0x30 int `+0x300`; 0x31 int `+0x30C`; 0x32 int `+0x308`; 0x33 int as float to `+0x31C` and `+0x32C`; 0x34 int as float to `+0x320`; 0x35, 0x36 floats `+0x324`, `+0x328`; 0x37, 0x38 floats `+0x33C`, `+0x340`; 0x3A low byte to short `+0x316`; 0x3B template lookup into `+0x3B4`, else `fn_803A1AC4(lbl_8064AA80, name)` into `+0x3B0`; 0x6F that lookup into `+0x3C0`. Other ids (0x2F, 0x39, 0x3C-0x49) return 0 |
   | 0x6C | `HAVOKBREAK_MODEL` | | string, `fn_801A1A84` into `+0x20C` |
@@ -195,7 +195,10 @@ a matched function is named; the plumbing is [`versus.md`](versus.md#5-target-or
   is read with a constant id). `GLOBALS` fields are read straight from `lbl_8066C6C8` with
   `fn_80433D20`/`fn_80433D70(record, id, 0)` (103 call sites). Every constant id is inside its class, and each getter only ever reads fields of its own
   type, which is what confirms the id-to-schema mapping. `python3 tools/nvbreaders.py CLASS` lists
-  the readers: 150 of the `PLAYER` fields and 62 of the `GLOBALS` ones are read with a constant id.
+  the readers: 150 of the `PLAYER` fields and 62 of the `GLOBALS` ones are read with a constant id,
+  and 32 more `PLAYER` call sites read `base + i` from 18 bases (46, 49, 79, 90, 94, 110-125 in
+  threes, 129, 134, 170, 173, 175, 206, 214). Of the 101 fields with no constant-id reader, 16 are
+  set by no shipped file (58, 62, 69-71, 176-182, 197, 198, 217, 245).
 - **Field names.** The DOL and the schema hold none. The exporter's text survives only as junk
   after the NUL in the `.nvb` name buffers: a `DEFINE_FIELD(FID_PLAYER_EFFECT14, "... player effect slot 14",
   FIDTYPE_EFFECTNAME, "", ...` table and a per-character text form (`// Rage points for
