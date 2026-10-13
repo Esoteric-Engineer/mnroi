@@ -231,6 +231,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   than a `break` (`Game/fn_800B5BC4.cpp`, 71 cases in scrambled order with two fall-throughs).
 
 - **A gap between two used frame slots is dead locals, not padding: `obey_regdecls` gives every
+- **A pointer loaded, stored to a frame slot, then re-read a few instructions later for `addi rX, rY, N` (`lwz r0, 0x13c(r9)` / `stw r0, 0x58(r31)` / `addi r0, r31, 0x18` / `lwz r11, 0x58(r31)`) is a plain local, not a conversion temp:** `Node *n = p->node; r.set(&n->pos);`, and a derived-to-base conversion or reference gives a call-saved register (`r30`) instead. A frame slot the DOL shares between two locals (`0x10(r31)` for `slot` in one branch and `scene` later) means the first sits in its own `{ }` block; at function scope the second moves to the next slot (`Game/fn_800956D4.cpp`).
   plain local a slot whether or not the body reads it.** So reproduce the gap by declaring locals of
   the right sizes in the right order rather than hunting for a compiler temp; temps are allocated
   after all the declarations, above the locals. `DrawFrameRate`'s 0x18-byte and 4-byte holes are

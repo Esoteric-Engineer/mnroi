@@ -179,7 +179,7 @@ mod the community wants ([`characters.md`](characters.md)).
 | 12 | NVB loader: `fn_801B301C`, `fn_801B3638`, `fn_801B3C4C` | Done: `Game/fn_801B301C.c` and `Game/fn_801B3638.c` (also holds `fn_801B3C4C`, the `Misc/nvblist.txt` reader; claims `.rodata` 0x8049E53C-0x8049E540, its `char[0x200] = "\0"` source). `lbl_8066C6D0` is the NVB registry (guess; `fn_801B4628(registry, fn_804673B8(nvb), nvb)` adds, `fn_801B48AC` looks up). File format: [`characters.md`](characters.md) section 4. |
 | 13 | Registry capacity: `fn_800FD9A0` | Done: `Game/fn_800FD9A0.cpp`. |
 | 14 | Voice by type ID: `fn_80115154`, `fn_80115308`, `fn_8010CDCC`, `fn_8010D050` | Done: `fn_8010CDCC` and `fn_8010D050` share `Game/fn_8010CDCC.c`. |
-| 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | `fn_8009543C` and `fn_80091174` (`Game/fn_80091174.cpp`) done. Next: `fn_800956D4`. |
+| 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Done: `fn_8009543C`, `fn_80091174` (`Game/fn_80091174.cpp`), `fn_800956D4` (`Game/fn_800956D4.cpp`). |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Open, pinned, in that order. |
 | 17 | Property handlers: `fn_80137CEC`, `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Open, pinned, in that order. |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FB10` (0xA0); 857 unclaimed functions (0x13424 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-18-the-registrar-and-handle-class-run). |
@@ -288,7 +288,6 @@ delete the question it settles.
 
 | Row | Pinned | Size | Settles |
 |---|---|---|---|
-| 15 | `fn_800956D4` | 0x3D0 | Fills a slot and sets `+0x3C = 1`, `+0x38 = 0`: the `Slot` fields of section 7's open question. |
 | 16 | `fn_800BFC60`, `fn_8009EA20` | 0x1BC, 0x358 | The two `fn_8009ABEC` callers that keep the type ID in a register ([`characters.md`](characters.md) section 5, "Coverage of this list"): do they treat characters differently? |
 | 17 | `fn_80137CEC` | 0xAC | AI profile name to index over `lbl_804CF8E8`; confirms an unlisted name gets `AI_DEFAULT`. |
 | 17 | `fn_800AC750` | 0xA8 | Property 0x14 `CASTID` (guess: the name `fn_80020E60` reads). |
@@ -553,8 +552,8 @@ registration takes their addresses and the relocation keeps them alive.
 - What do the role indices at `+0x770`/`+0x774` mean, and what are match types 0, 1 and 2? `fn_80114420` only gates on whether either is nonzero, so it narrows this to "nonzero means a versus match" without naming the values; the command line sets `+0x770` for `-mp` and `+0x774` for `-vs`. (`+0x590` is settled: the active slot count, section 4.1.)
 - What is the rest of the `Slot` layout? The 0xB0 size is confirmed (section 4.1), and `+0x0`,
   `+0x4`, `+0x34`, `+0x38` (int), `+0x3C` (int) and `+0x40` (float) are settled as *types*. The
-  meanings of the last three are not: `fn_800956D4` sets `+0x3C = 1` then `+0x38 = 0` on a slot it
-  has just filled, `fn_80431788` sets `+0x3C = 99` for the CPU slot in match type 1, and
+  meanings of the last three are not: `fn_800956D4` (creates the second player slot when `G+0x590` <= 1) sets `+0x3C = 1`
+  then `+0x38 = 0` on it through `fn_80443C4C`/`fn_80443C24`, `fn_80431788` sets `+0x3C = 99` for the CPU slot in match type 1, and
   `fn_800B5124` sets it from a `u16`, so `+0x3C` is a small number per slot rather than a flag.
   `+0x24`-`+0x33` and everything from `+0x44` on are still unknown.
 - What is `SetMatchInfo`'s unused third argument?
