@@ -90,6 +90,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   callee as returning `T &`).
   The same save-then-slot shape for an `int` result is `register int tmp = f(); int cap = tmp;` (`Game/fn_8043ED84.cpp`), and for a heap
   object whose virtual call reads the slot twice it is `Heap &heap = *f();` (`Game/fn_80440774.cpp`, `fn_804407E8`).
+  A reference takes its frame slot where it is declared, so the other locals declared after it follow it in the frame: write `Actor &owner = *f();` ahead of them, not at the top (`Game/fn_80148178.cpp`).
 
 - **A C++ unit comes out 8 bytes over size, with two extra unreachable branches to the epilogue
   (`b .L` / `b .L` / `.L:` / epilogue).** `cc1plus` emits them unless an earlier function in the same

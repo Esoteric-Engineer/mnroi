@@ -74,6 +74,7 @@ TEXT_TYPES = (T_STRING, T_EFFECT, T_TEMPLATE)
 # A guess goes in only with its basis stated ("inferred from 47 and 48"); otherwise name the reader.
 FIELD_NAMES = {
     "PLAYER": {
+        2: "second float argument of fn_800E89B0 for an entity fn_80148178 found near the owner; callers of that not yet decompiled",
         7: "distance below which fn_800F0AA0 adds no scatter to the direction; the scatter then grows with the excess over it",
         8: "distance cap and divisor in the scatter of fn_800F0AA0 (the excess over field 7 is divided by it)",
         9: "second float argument of fn_800E9AF8 (fn_800F0328)",
@@ -97,6 +98,7 @@ FIELD_NAMES = {
         134: "base of 134 + i, returned by fn_80086C80 as 1.0 minus the value; caller not yet decompiled",
         167: "returned by the getter fn_80086DE4; callers not yet decompiled",
         170: "FID_PLAYER_VICTORY1 (versus victory cutscene 1)",
+        183: "read from the target's entity; half of it is added to the clock as the time stamp stored in the AI object's target list (fn_80148178)",
         189: "rage points for superattack",
         192: "FID_PLAYER_RAGE_DURATION",
         193: "rage penalty, % of base points",
@@ -107,6 +109,7 @@ FIELD_NAMES = {
         211: "fn_8015F008 is true when the Vector-derived float fn_8015E64C is above it; callers not yet decompiled",
         212: "fn_8015F07C is true when that float is below it; callers not yet decompiled",
         220: "name passed to fn_80057894 with the flags word after a 0.33/0.66 random roll (fn_800965A4); caller fn_80092A84",
+        223: "first float argument of fn_800E89B0 for an entity fn_80148178 found near the owner; callers of that not yet decompiled",
     },
     "GLOBALS": {
         57: "multiplier on PLAYER 45, cached in the entity at +0x3D0 (fn_8009D71C)",
