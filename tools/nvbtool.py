@@ -87,6 +87,12 @@ FIELD_NAMES = {
     "GLOBALS": {},
 }
 
+# fn_801343B0 copies these 22 (ids in this order) to floats at +0x598 + 4*i of the object behind the
+# entity accessor, converting the two ints; the files vary them per CPU difficulty (guess: AI weights).
+for _i, _fid in enumerate((139, 140, 164, 141, 142, 143, 144, 145, 146, 159, 147, 148, 149, 150, 151,
+                           152, 153, 154, 155, 156, 247, 246)):
+    FIELD_NAMES["PLAYER"][_fid] = "copied to the object's float at +0x%X (guess: AI weight)" % (0x598 + 4 * _i)
+
 
 def read_value(d, p, typ):
     """The bytes of one value at p, and the offset after it."""
