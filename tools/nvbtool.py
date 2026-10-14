@@ -100,6 +100,7 @@ FIELD_NAMES = {
         189: "rage points for superattack",
         192: "FID_PLAYER_RAGE_DURATION",
         193: "rage penalty, % of base points",
+        195: "duration (ms is a guess) added to the game clock (fn_8042EFF8) to give the end time stored as a float at entity +0x334 (fn_8009E144)",
         206: "fm_* cutscene against a male opponent (206 + the opponent's SKELETONID, fn_80096460)",
         207: "fm_* cutscene against a female opponent",
         208: "fm_* cutscene against a brute opponent",
