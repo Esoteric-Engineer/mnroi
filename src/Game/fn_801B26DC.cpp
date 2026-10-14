@@ -1,4 +1,4 @@
-// Tuning init: loads Misc/defaults.ndb, the NVB registry and GLOBALS; docs/versus.md row 19, docs/characters.md section 4.
+// Tuning init (loads Misc/defaults.ndb, the NVB registry, GLOBALS) and the class lookup fn_801B2F6C; docs/versus.md row 19, docs/characters.md section 4.
 
 #define SWAP32(x) (((unsigned)(x) >> 24) | (((unsigned)(x) >> 8) & 0xFF00) | (((x) & 0xFF00) << 8) | ((x) << 24))
 
@@ -40,6 +40,8 @@ extern void fn_8042FC74(unsigned int *elem);
 extern void fn_801B3C4C(void);
 extern void *fn_801B4284(int size, char *tag);
 extern void *fn_801B301C(char *a, char *b);
+extern char *lbl_80593C70[]; // class table, lbl_8066C6CC entries
+extern int strcmp(const char *a, const char *b);
 }
 
 extern "C" int fn_801B26DC(void)
@@ -139,4 +141,19 @@ extern "C" int fn_801B26DC(void)
     fn_801B3C4C();
     lbl_8066C6C8 = fn_801B301C(lbl_8049E508, lbl_8049E510);
     return 1;
+}
+
+extern "C" char *fn_801B2F6C(char *name)
+{
+    char *found = 0;
+    int i;
+    char *cur;
+    for (i = 0; i < lbl_8066C6CC; i++) {
+        cur = lbl_80593C70[i];
+        if (strcmp(name, cur) == 0) {
+            found = cur;
+            break;
+        }
+    }
+    return found;
 }
