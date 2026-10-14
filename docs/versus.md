@@ -183,7 +183,7 @@ number order: rows 19 to 23 (tuning, then the model and animation formats) come 
 | 15 | Slot fill and spawn: `fn_8009543C`, `fn_80091174`, `fn_800956D4` | Done: `fn_8009543C`, `fn_80091174` (`Game/fn_80091174.cpp`), `fn_800956D4` (`Game/fn_800956D4.cpp`). |
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Done: `fn_800BFC60` (pair-less run B) and `fn_8009EA20`, which hands the type on to `fn_8009FF54` (0x534), the next place to look. |
 | 17 | Property handlers: `fn_80137CEC`, `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Done. |
-| 19 | Tuning plumbing: `fn_801B308C`, `fn_801B26DC` (the leaf accessors and `fn_801B308C` are done) | Open. Next: `fn_801B26DC`. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
+| 19 | Tuning plumbing: the leaf accessors, `fn_801B308C` and `fn_801B26DC` are done | Open. Next: the fill 0x801B2F6C-0x801B3638 (see the table below), from `fn_801B2F6C`. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
 | 20 | `PLAYER` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py PLAYER -m 0x800`. Done when it lists no function. |
 | 21 | `GLOBALS` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py GLOBALS -m 0x800`. Done when it lists no function. |
 | 22 | Model bundle (`.ngm`, `.nod`): `fn_801A1FC4`, `fn_801A2108`, `fn_801A0814`, then the model builders | Open. Next: `fn_801A1FC4`. Notes: [Steps 22 and 23](#steps-22-and-23-model-and-animation-bundles). |
@@ -311,7 +311,7 @@ in the order given.
 
 | Row | Pinned | Size | What it is (from the disassembly) |
 |---|---|---|---|
-| 19 | `fn_801B26DC` | 0x890 | The init, called once from `fn_8002F3A8`: reads `defaults.ndb`, creates the registry `lbl_8066C6D0` (`"externals"`), runs the list reader `fn_801B3C4C`, sets `lbl_8066C6C8` to the `GLOBALS` record. Then fill 0x801B2F6C-0x801B3638 around `Game/fn_801B301C.c`: the class lookup `fn_801B2F6C`, the pool `fn_801B3168`/`fn_801B31E4`, the class and field descriptors `fn_801B33EC`/`fn_801B346C`, `fn_801B34D8` (gives a new record its defaults; unread) and `fn_801B35CC`. |
+| 19 | the fill 0x801B2F6C-0x801B3638 around `Game/fn_801B301C.c` (`fn_801B26DC`, the init, is done) | 0xE8C | The class lookup `fn_801B2F6C`, the pool `fn_801B3168`/`fn_801B31E4`, the class and field descriptors `fn_801B33EC`/`fn_801B346C`, `fn_801B34D8` (gives a new record its defaults; unread) and `fn_801B35CC`. |
 | 20, 21 | the tool's first line | | A reader of tuning fields. |
 
 Rows 20 and 21:
