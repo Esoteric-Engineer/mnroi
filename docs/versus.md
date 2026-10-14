@@ -322,8 +322,9 @@ Rows 20 and 21:
   the rows were planned. The readers of 0x800 bytes and up are the combat state machines and wait
   for a planning session.
 - After a match, add each field the function reads to `FIELD_NAMES` in `tools/nvbtool.py`: what the
-  code does with the value, in a few words. That table is the record, so don't list fields in the
-  docs. Check a meaning against the data first (`python3 tools/nvbtool.py field ID`).
+  matched code does with the value, in a few words. A field whose callers are unmatched gets only its
+  getter's name; a guess goes in only with its basis stated. That table is the record, so don't list
+  fields in the docs. Check a meaning against the data first (`python3 tools/nvbtool.py field ID`).
 - An id the tool prints as `206+` is the base of an indexed read, `base + i`: 32 call sites over 18
   bases, which is how most fields with no constant-id reader are read. In `fn_80096460` the index is
   the other actor's body class (`fn_8009AC68`, property 0x27); the runs of three (46-48, 110-127)

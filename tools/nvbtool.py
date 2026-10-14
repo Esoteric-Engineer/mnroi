@@ -70,7 +70,8 @@ TEXT_TYPES = (T_STRING, T_EFFECT, T_TEMPLATE)
 
 # What each field is, by class and id; `schema`, `dump` and `field` print it. Add a line when a
 # reader is decompiled (tools/nvbreaders.py lists them). FID_* names are the exporter's own, from
-# the text left in the .nvb name buffers; anything else is a description of what the reader does.
+# the text left in the .nvb name buffers; anything else is what a matched reader does with the value.
+# A guess goes in only with its basis stated ("inferred from 47 and 48"); otherwise name the reader.
 FIELD_NAMES = {
     "PLAYER": {
         43: "cached in the entity at +0x3C4 (fn_8009D71C)",
@@ -79,6 +80,7 @@ FIELD_NAMES = {
         46: "throw distance, class 1 (inferred from 47 and 48)",
         47: "FID_PLAYER_THROWDIST2",
         48: "throw distance, class 3",
+        104: "returned by the getter fn_80086D54; callers not yet decompiled",
         170: "FID_PLAYER_VICTORY1 (versus victory cutscene 1)",
         189: "rage points for superattack",
         192: "FID_PLAYER_RAGE_DURATION",
