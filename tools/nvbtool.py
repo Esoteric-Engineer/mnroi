@@ -91,6 +91,8 @@ FIELD_NAMES = {
         206: "fm_* cutscene against a male opponent (206 + the opponent's SKELETONID, fn_80096460)",
         207: "fm_* cutscene against a female opponent",
         208: "fm_* cutscene against a brute opponent",
+        211: "fn_8015F008 is true when the Vector-derived float fn_8015E64C is above it; callers not yet decompiled",
+        212: "fn_8015F07C is true when that float is below it; callers not yet decompiled",
     },
     "GLOBALS": {
         57: "multiplier on PLAYER 45, cached in the entity at +0x3D0 (fn_8009D71C)",
