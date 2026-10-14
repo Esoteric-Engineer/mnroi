@@ -73,6 +73,9 @@ TEXT_TYPES = (T_STRING, T_EFFECT, T_TEMPLATE)
 # the text left in the .nvb name buffers; anything else is a description of what the reader does.
 FIELD_NAMES = {
     "PLAYER": {
+        43: "cached in the entity at +0x3C4 (fn_8009D71C)",
+        44: "cached in the entity at +0x3C8 (fn_8009D71C)",
+        45: "cached in the entity at +0x3CC; times GLOBALS 57 gives +0x3D0 (fn_8009D71C)",
         46: "throw distance, class 1 (inferred from 47 and 48)",
         47: "FID_PLAYER_THROWDIST2",
         48: "throw distance, class 3",
@@ -84,7 +87,9 @@ FIELD_NAMES = {
         207: "fm_* cutscene against a female opponent",
         208: "fm_* cutscene against a brute opponent",
     },
-    "GLOBALS": {},
+    "GLOBALS": {
+        57: "multiplier on PLAYER 45, cached in the entity at +0x3D0 (fn_8009D71C)",
+    },
 }
 
 # fn_801343B0 copies these 22 (ids in this order) to floats at +0x598 + 4*i of the object behind the
