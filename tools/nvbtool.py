@@ -82,6 +82,7 @@ FIELD_NAMES = {
         48: "throw distance, class 3",
         103: "returned by the getter fn_80086D9C; callers not yet decompiled",
         104: "returned by the getter fn_80086D54; callers not yet decompiled",
+        167: "returned by the getter fn_80086DE4; callers not yet decompiled",
         170: "FID_PLAYER_VICTORY1 (versus victory cutscene 1)",
         189: "rage points for superattack",
         192: "FID_PLAYER_RAGE_DURATION",
