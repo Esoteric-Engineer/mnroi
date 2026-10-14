@@ -100,6 +100,7 @@ FIELD_NAMES = {
         170: "FID_PLAYER_VICTORY1 (versus victory cutscene 1)",
         183: "read from the target's entity; half of it is added to the clock as the time stamp stored in the AI object's target list (fn_80148178)",
         189: "rage points for superattack",
+        184: "length of the timer fn_80161BDC starts (deadline = now + value, stored at +0x18/+0x14); the owner and the caller of fn_80161BDC (vtable slot) not yet decompiled",
         192: "FID_PLAYER_RAGE_DURATION",
         193: "rage penalty, % of base points",
         195: "duration (ms is a guess) added to the game clock (fn_8042EFF8) to give the end time stored as a float at entity +0x334 (fn_8009E144)",
