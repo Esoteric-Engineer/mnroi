@@ -57,7 +57,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   whatever objects fall inside it; a string literal belonging to a function further down the file is
   fine, as long as it goes **after** the last function in the source, since cc1 writes file-scope
   data where it is defined but dumps a function's pool ahead of that function's body
-  (`Game/fn_800B46B0.c` defines `fn_800B5124`'s format string for this reason).
+  (`Game/fn_800B46B0.c` defines `fn_800B5124`'s format string for this reason). A 4-byte pad that
+  another unclaimed function reads is `const float lbl_8048A474 __attribute__((section(".rodata"))) = 0.0f;`
+  (a plain `const float` lands in `.sdata2`; `Game/fn_800965A4.c`).
 
 - **A claimed literal pool shows up as unmatched data in the progress table.** The `Data:` line counts objdiff's `matched_data`, which pairs data by symbol name, and a compiler-generated pool is anonymous where dtk's extracted object has `lbl_<addr>` symbols. `report.json` still gives the unit `complete_data` 100% and `main.dol` is `OK`, so there is nothing to chase; naming the pool is not possible without breaking the function (previous entry).
 - **Linker-generated addresses (`_stack_addr`, `_stack_end`, `__ArenaLo`, `__ArenaHi`) are defined in [`ldscript.lcf`](../config/GVLE69/ldscript.lcf).** If `main.dol` differs only in `lis`/`addi` pairs near `0x8067xxxx`/`0x8068xxxx`, check these first.

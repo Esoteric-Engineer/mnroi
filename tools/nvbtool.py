@@ -99,6 +99,7 @@ FIELD_NAMES = {
         208: "fm_* cutscene against a brute opponent",
         211: "fn_8015F008 is true when the Vector-derived float fn_8015E64C is above it; callers not yet decompiled",
         212: "fn_8015F07C is true when that float is below it; callers not yet decompiled",
+        220: "name passed to fn_80057894 with the flags word after a 0.33/0.66 random roll (fn_800965A4); caller fn_80092A84",
     },
     "GLOBALS": {
         57: "multiplier on PLAYER 45, cached in the entity at +0x3D0 (fn_8009D71C)",
