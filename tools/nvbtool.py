@@ -74,6 +74,11 @@ TEXT_TYPES = (T_STRING, T_EFFECT, T_TEMPLATE)
 # A guess goes in only with its basis stated ("inferred from 47 and 48"); otherwise name the reader.
 FIELD_NAMES = {
     "PLAYER": {
+        9: "second float argument of fn_800E9AF8 (fn_800F0328)",
+        10: "first float argument of fn_800E9AF8 (fn_800F0328)",
+        16: "converted to unsigned and not used again (fn_800F0328)",
+        20: "third float argument of fn_800E9AF8 (fn_800F0328)",
+        32: "cached in the entity at +0x414; also the argument of fn_80084B68 in the first check (fn_800F0328)",
         41: "second argument of fn_80084B68 in fn_800D2CF8 (reached when fn_800861EC is false); callers not yet decompiled",
         43: "cached in the entity at +0x3C4 (fn_8009D71C)",
         44: "cached in the entity at +0x3C8 (fn_8009D71C)",
