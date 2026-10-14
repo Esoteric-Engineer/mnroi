@@ -57,3 +57,61 @@ extern "C" char *fn_801B31E4(register Pool *pool, int size)
     pool->cur += n;
     return p;
 }
+
+extern "C" {
+unsigned int strlen(const char *s);
+void *memcpy(void *d, const void *s, unsigned int n);
+}
+
+struct TuningSrc
+{
+    int type;    // +0x0
+    char pad[0x1C];
+    char *data;  // +0x20
+};
+
+struct TuningOwner
+{
+    char pad[0x2C];
+    Pool pool;   // +0x2C
+};
+
+struct TuningField
+{
+    int type;       // +0x0
+    char pad[4];
+    char *slot[6];  // +0x8
+    char *data;     // +0x20
+};
+
+extern "C" void fn_801B3264(register TuningField *self, TuningOwner *owner, TuningSrc *src)
+{
+    self->type = src->type;
+    int size = 4;
+    switch (self->type) {
+    case -0x2775:
+        size = 4;
+        break;
+    case -0x2776:
+        size = 4;
+        break;
+    case -0x2777:
+    case -0x277B:
+    case -0x277C:
+        size = strlen(src->data) + 1;
+        break;
+    case -0x2778:
+        size = 4;
+        break;
+    case -0x2779:
+        size = 0x10;
+        break;
+    case -0x277A:
+        size = 4;
+        break;
+    }
+    self->data = fn_801B31E4(&owner->pool, size);
+    memcpy(self->data, src->data, size);
+    for (unsigned int i = 0; i <= 5; i++)
+        self->slot[i] = self->data;
+}
