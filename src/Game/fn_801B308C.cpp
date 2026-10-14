@@ -1,11 +1,21 @@
-// Tuning record lookup for an entity kind and name; docs/versus.md section 5, row 19.
+// Tuning record lookup for an entity kind and name, and the record pool; docs/versus.md section 5, row 19.
 
 inline int sn_return_decl(int a) { return a; }
 
 extern "C" {
 int fn_801B301C(char *a, char *b);
 extern char lbl_8049E524[]; // "PLAYER"
+extern char lbl_8049E52C[];
+void *fn_801AC988(int size, char *tag, int line, int flags);
 }
+
+struct Pool
+{
+    int size;    // +0x0
+    char *base;  // +0x4
+    char *cur;   // +0x8
+    unsigned int left; // +0xC
+};
 
 extern "C" int fn_801B308C(unsigned int kind, char *name)
 {
@@ -24,4 +34,26 @@ extern "C" int fn_801B308C(unsigned int kind, char *name)
     if (name == 0 || *name == 0)
         return 0;
     return fn_801B301C(prefix, name);
+}
+
+inline int sn_return_decl2(int a) { return a; }
+
+extern "C" void fn_801B3168(register Pool *pool, int size)
+{
+    int n = (size + 3) & ~3;
+    pool->size = n;
+    pool->left = n;
+    pool->base = (char *)fn_801AC988(n, lbl_8049E52C, 0x1B8, 2);
+    pool->cur = pool->base;
+}
+
+extern "C" char *fn_801B31E4(register Pool *pool, int size)
+{
+    int n = (size + 3) & ~3;
+    if (pool->left < (unsigned int)n)
+        return 0;
+    pool->left -= n;
+    char *p = pool->cur;
+    pool->cur += n;
+    return p;
 }
