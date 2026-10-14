@@ -70,10 +70,15 @@ struct TuningSrc
     char *data;  // +0x20
 };
 
+struct TuningClass;
+
 struct TuningOwner
 {
-    char pad[0x2C];
-    Pool pool;   // +0x2C
+    char pad[0x20];
+    int count;            // +0x20
+    struct TuningField *fields; // +0x24
+    TuningClass *cls;     // +0x28
+    Pool pool;            // +0x2C
 };
 
 struct TuningField
@@ -114,4 +119,50 @@ extern "C" void fn_801B3264(register TuningField *self, TuningOwner *owner, Tuni
     memcpy(self->data, src->data, size);
     for (unsigned int i = 0; i <= 5; i++)
         self->slot[i] = self->data;
+}
+
+struct TuningClass
+{
+    char name[0x40];
+    int count;           // +0x40
+    int unk;             // +0x44
+    TuningSrc *fields;   // +0x48
+    int fileSize;        // +0x4C
+};
+
+extern "C" {
+char *strcpy(char *d, const char *s);
+extern Pool lbl_80593CF0;
+}
+
+extern "C" void fn_801B33EC(register TuningClass *self, char *name, int count, int unk)
+{
+    strcpy(self->name, name);
+    self->count = count;
+    self->fields = (TuningSrc *)fn_801B31E4(&lbl_80593CF0, count * 0x24);
+    self->unk = unk;
+}
+
+extern "C" TuningSrc *fn_801B346C(register TuningClass *self, int i)
+{
+    if (i < 0 || i >= self->count)
+        return 0;
+    return self->fields + i;
+}
+
+extern "C" void fn_801B34D8(register TuningOwner *self, TuningClass *cls)
+{
+    fn_801B3168(&self->pool, cls->fileSize * 3);
+    self->count = cls->count;
+    self->fields = (TuningField *)fn_801B31E4(&self->pool, self->count * 0x24);
+    for (int i = 0; i < self->count; i++)
+        fn_801B3264(&self->fields[i], self, &cls->fields[i]);
+    self->cls = cls;
+}
+
+extern "C" TuningField *fn_801B35CC(register TuningOwner *self, int i)
+{
+    if (i < 0 || i >= self->count)
+        return 0;
+    return self->fields + i;
 }
