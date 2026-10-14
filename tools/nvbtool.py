@@ -74,6 +74,8 @@ TEXT_TYPES = (T_STRING, T_EFFECT, T_TEMPLATE)
 # A guess goes in only with its basis stated ("inferred from 47 and 48"); otherwise name the reader.
 FIELD_NAMES = {
     "PLAYER": {
+        7: "distance below which fn_800F0AA0 adds no scatter to the direction; the scatter then grows with the excess over it",
+        8: "distance cap and divisor in the scatter of fn_800F0AA0 (the excess over field 7 is divided by it)",
         9: "second float argument of fn_800E9AF8 (fn_800F0328)",
         10: "first float argument of fn_800E9AF8 (fn_800F0328)",
         16: "converted to unsigned and not used again (fn_800F0328)",
