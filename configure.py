@@ -825,6 +825,7 @@ config.libs = [
             Object(Matching, "Game/fn_80148178.cpp", extern_pool=0x8049B20C),
             Object(Matching, "Game/fn_8015F008.c"),
             Object(Matching, "Game/fn_80161BDC.cpp"),
+            Object(Matching, "Game/fn_8016216C.cpp"),
             Object(Matching, "Game/fn_801B26DC.cpp"),
             Object(Matching, "Game/fn_801B301C.c"),
             Object(Matching, "Game/fn_801B308C.cpp"),
