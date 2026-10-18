@@ -290,6 +290,9 @@ Game/fn_800D80B4.cpp:
 Game/fn_800DA254.cpp:
 	.text       start:0x800DA254 end:0x800DA5F8
 
+Game/fn_800DBC90.cpp:
+	.text       start:0x800DBC90 end:0x800DBF1C
+
 Game/fn_800E339C.cpp:
 	.text       start:0x800E339C end:0x800E3720
 
