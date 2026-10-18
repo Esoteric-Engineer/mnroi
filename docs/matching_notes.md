@@ -401,6 +401,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **`fabs f13, f0` with no `frsp` on a `float` is `fabsf`, not `fabs`.** `extern float fabsf(float x);` expands inline to the bare `fabs`; `fabs`/`__builtin_fabs` widen to double and add a `frsp` (`Game/fn_8043B4A4.c`, `fn_8043B638`).
 
+- **`lfs f31, a` / `fcmpu a, 0` / `bge` / `fneg f31, f31`, then a sign test on `b` that branches to two compares of `f31` against `-b` and `b`, is `ABS(a) < ABS(b)` with `#define ABS(x) ((x) < 0.0f ? -(x) : (x))`.** fold distributes the compare over the right `?:` and evaluates the left one first into a saved temp (no `fabs`, no frame slot); `fabsf` would give the bare `fabs` instead (`Game/fn_80034DB0.cpp`).
+
 - **A chain of copies between register locals (`li r8, 8` / `mr r10, r8` / `ori r10` / `mr r0, r10`) is separate locals, and the allocator hands out volatiles in declaration order, so declare the last-used one first.** `register int n, m, t; t = c ? 8 : 0; m = t; ... n = m;` gives `t` r8, `m` r10, `n` r0; declaring `t` first hands them out the other way round (`Game/fn_8043B4A4.c`, `fn_8043B534`).
 
 - **A virtual `delete` in hand-written C: write the call directly, `((void (*)(void *, int))e->pfn)((char *)self + e->delta, 3);`.** Naming the function pointer in a local adds a second frame slot (`0x10` next to the call's own `0x8`). An `if (self) { ... } else { }` supplies the `b` after the `blrl` (`Game/fn_8043B4A4.c`, `fn_8043B878`).
