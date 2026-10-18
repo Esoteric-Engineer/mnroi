@@ -84,6 +84,7 @@ FIELD_NAMES = {
         23: "cached in the entity float at +0x3F8 (with +0x3FC = 0x6C) when fn_800CCA88 is 0 (fn_800E3720)",
         24: "as 23, when fn_800CCA88 is non-zero (+0x3FC = 0x6F, and flag 0x80 set in +0x10) (fn_800E3720)",
         32: "cached in the entity at +0x414; also the argument of fn_80084B68 in the first check (fn_800F0328)",
+        35: "second argument of fn_80084B68 when fn_800CCA88 is non-zero; picks clip 0x45 over 0x42 (fn_800E339C)",
         39: "target of the entity float at +0xDC when fn_800CC148 flag 0x10 is set inside the flag-9 branch (fn_800D80B4)",
         40: "negated: target of the float at +0xDC when the flag-9 branch is not taken (fn_800D80B4)",
         42: "read into a local and not used again (fn_800D80B4)",
@@ -99,6 +100,7 @@ FIELD_NAMES = {
         68: "effect name of the right trail, as 67",
         74: "effect name of the left trail, made with fn_80393D0C when fn_800DA254's flag is non-zero (the blade/claw trail)",
         75: "effect name of the right trail, as 74",
+        76: "second float argument of fn_800E89B0 (fn_800E339C)",
         81: "effect name made with fn_80393A60 (flag 0) when fn_800861BC is true (fn_800E592C)",
         103: "returned by the getter fn_80086D9C; callers not yet decompiled",
         104: "returned by the getter fn_80086D54; callers not yet decompiled",
@@ -120,6 +122,7 @@ FIELD_NAMES = {
         212: "fn_8015F07C is true when that float is below it; callers not yet decompiled",
         220: "name passed to fn_80057894 with the flags word after a 0.33/0.66 random roll (fn_800965A4); caller fn_80092A84",
         222: "window below the time gate (+0x324 minus the argument) inside which fn_80084B68 passes only on a 1-in-100 roll (fn_80084B68)",
+        236: "first float argument of fn_800E89B0 (fn_800E339C)",
         223: "first float argument of fn_800E89B0 for an entity fn_80148178 found near the owner; callers of that not yet decompiled",
     },
     "GLOBALS": {
