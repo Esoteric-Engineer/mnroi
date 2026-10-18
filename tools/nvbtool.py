@@ -87,6 +87,7 @@ FIELD_NAMES = {
         21: "third float argument of fn_800E9AF8 (fn_800F1644)",
         23: "cached in the entity float at +0x3F8 (with +0x3FC = 0x6C) when fn_800CCA88 is 0 (fn_800E3720)",
         24: "as 23, when fn_800CCA88 is non-zero (+0x3FC = 0x6F, and flag 0x80 set in +0x10) (fn_800E3720)",
+        30: "second argument of fn_80084B68 in the flag-9 branch; a hit enters state 0x1E (fn_800CFD2C)",
         32: "cached in the entity at +0x414; also the argument of fn_80084B68 in the first check (fn_800F0328)",
         34: "second argument of fn_80084A60 when fn_800CCA88 is set and fn_800CD9B0 is null; a hit sets the walk flag that picks clip 9 or 8 over 7 or 6 (fn_800C45B0)",
         35: "second argument of fn_80084B68 when fn_800CCA88 is non-zero; picks clip 0x45 over 0x42 (fn_800E339C)",
