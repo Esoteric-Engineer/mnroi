@@ -442,6 +442,10 @@ Game/fn_80142558.cpp:
 Game/fn_80148178.cpp:
 	.text       start:0x80148178 end:0x80148440
 
+Game/fn_8014E288.cpp:
+	.text       start:0x8014E288 end:0x8014E4FC
+	.rodata     start:0x8049B520 end:0x8049B52C
+
 Game/fn_8015F008.c:
 	.text       start:0x8015F008 end:0x8015F0F0
 

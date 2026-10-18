@@ -146,6 +146,7 @@ FIELD_NAMES = {
         211: "fn_8015F008 is true when the Vector-derived float fn_8015E64C is above it; callers not yet decompiled",
         212: "fn_8015F07C is true when that float is below it; callers not yet decompiled",
         214: "base of 214 + i, i the byte at +0x409 of the owner object when it is 4 or 5 (fields 218 and 219: template name for fn_800FD5FC,) (fn_800F1644)",
+        216: "when the distance fn_8015E8A8 gives to fn_80134870's entity exceeds it, the first float argument of fn_8015F7A4 is 20 instead of 4 (fn_8014E288)",
         220: "name passed to fn_80057894 with the flags word after a 0.33/0.66 random roll (fn_800965A4); caller fn_80092A84",
         221: "effect handle name started (fn_80393D0C) and stopped (fn_80393A60) around the level of 222 in fn_8009D818",
         222: "window below the time gate (+0x324 minus the argument) inside which fn_80084B68 passes only on a 1-in-100 roll (fn_80084B68); also the level of fn_80086730 below which fn_8009D818 starts the effect of 221 and above which it stops it",
