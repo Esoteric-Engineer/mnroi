@@ -303,6 +303,9 @@ Game/fn_800E339C.cpp:
 Game/fn_800E3720.cpp:
 	.text       start:0x800E3720 end:0x800E3934
 
+Game/fn_800E3934.cpp:
+	.text       start:0x800E3934 end:0x800E3FC8
+
 Game/fn_800E50AC.cpp:
 	.text       start:0x800E50AC end:0x800E5308
 

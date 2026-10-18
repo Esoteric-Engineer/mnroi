@@ -127,6 +127,8 @@ FIELD_NAMES = {
         125: "as 119, when fn_800CCA88 is non-zero (fn_800E6094)",
         134: "base of 134 + i, returned by fn_80086C80 as 1.0 minus the value; caller not yet decompiled",
         157: "stored to the entity float at +0x514 when fn_800CC6AC is 4 and fn_8009AFC8 is 3 (fn_800C45B0)",
+        160: "length the unit direction is scaled to by fn_80435530 before fn_80065CB0 moves the actor toward the target, when the clip type is not 0x45 (fn_800E3934)",
+        161: "as 160, when the clip type is 0x45; also the float argument of fn_80040CE0 in the 0x45 case (fn_800E3934)",
         167: "returned by the getter fn_80086DE4; callers not yet decompiled",
         168: "effect name made with fn_80393A60 (flag 0); fn_8039D3C0 true attaches it to the actor, then vtable slots 20 and 44 run, and slot 22 when fn_80067050 gives a position (fn_800D5514)",
         170: "FID_PLAYER_VICTORY1 (versus victory cutscene 1); base of 170 + G[+0x79C + 4*side], the cutscene name fn_80093C14 hands to fn_800578E4",
