@@ -290,6 +290,9 @@ Game/fn_800C45B0.cpp:
 	.text       start:0x800C45B0 end:0x800C4CA4
 	.rodata     start:0x8048CA74 end:0x8048CA84
 
+Game/fn_800C86B8.cpp:
+	.text       start:0x800C86B8 end:0x800C88E0
+
 Game/fn_800C94C8.cpp:
 	.text       start:0x800C94C8 end:0x800C98BC
 
