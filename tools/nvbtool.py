@@ -92,6 +92,7 @@ FIELD_NAMES = {
         32: "cached in the entity at +0x414; also the argument of fn_80084B68 in the first check (fn_800F0328)",
         34: "second argument of fn_80084A60 when fn_800CCA88 is set and fn_800CD9B0 is null; a hit sets the walk flag that picks clip 9 or 8 over 7 or 6 (fn_800C45B0)",
         35: "second argument of fn_80084B68 when fn_800CCA88 is non-zero; picks clip 0x45 over 0x42 (fn_800E339C)",
+        38: "per-second rate: times the frame time, the amount fn_80084A60 takes from the actor's float at +0x324 each update; 0 when fn_800861BC holds; a failed take ends the state (fn_800E5308)",
         39: "target of the entity float at +0xDC when fn_800CC148 flag 0x10 is set inside the flag-9 branch (fn_800D80B4)",
         40: "negated: target of the float at +0xDC when the flag-9 branch is not taken (fn_800D80B4)",
         42: "read into a local and not used again (fn_800D80B4)",
