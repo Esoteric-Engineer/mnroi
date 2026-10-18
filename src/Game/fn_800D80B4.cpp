@@ -1,4 +1,5 @@
-// fn_800D80B4 steers the entity's PLAYER effect handle and settles its drift value; fn_800D84BC moves the actor by the stick vector (tuning fields 0x27, 0x28, 0x2A, 0x40, 0x42, 0xC9); docs/versus.md row 20.
+// fn_800D875C is the per-frame step that picks the PLAYER clip and chases the target (fields 0xD2, 0xD4, 0xD, 0xE, 0x14);
+// fn_800D80B4 steers the effect handle and drift value, fn_800D84BC moves the actor by the stick vector; docs/versus.md row 20.
 
 class Vector
 {
@@ -38,14 +39,35 @@ struct Handle {
     virtual void s15();
     virtual void s16();
     virtual void s17(float a, float b);
+    virtual void s18(); virtual void s19(); virtual void s20(); virtual void s21(); virtual void s22(); virtual void s23();
+    virtual void s24(); virtual void s25(); virtual void s26(); virtual void s27(); virtual void s28(); virtual void s29();
+    virtual void s30(); virtual void s31(); virtual void s32(); virtual void s33(); virtual void s34(); virtual void s35();
+    virtual void s36(); virtual void s37(); virtual void s38(); virtual void s39(); virtual void s40(); virtual void s41();
+    virtual void s42(); virtual void s43(); virtual void s44(); virtual void s45(); virtual void s46(); virtual void s47();
+    virtual void s48(); virtual void s49(); virtual void s50(); virtual void s51(); virtual void s52(); virtual void s53();
+    virtual void s54();
+};
+
+struct Tgt : Ent {
+    char d[0x194];
+    virtual void s0(); virtual void s1(); virtual void s2(); virtual void s3(); virtual void s4();
+    virtual void s5(Vector *v, int z);
 };
 
 struct Obj {
-    char pad0[0xDC];
+    char pad0[0x10];
+    unsigned int flags; // +0x10
+    char pad14[0xDC - 0x14];
     float fDC;
     char padE0[0x3A0 - 0xE0];
     Handle *h; // +0x3A0
-    char pad3A4[0x534 - 0x3A4];
+    char pad3A4[0x409 - 0x3A4];
+    char b409;
+    char b40a;
+    char b40b;
+    char b40c;
+    int f410;
+    char pad414[0x534 - 0x414];
     void *p534;
     char pad538[0x950 - 0x538];
     float f950;
@@ -77,6 +99,24 @@ int fn_800CC338(void *self);
 Vector *fn_800B1750(Ent &actor);
 float fn_8042EBF4(Vector *a, Vector *b);
 void fn_800B9D64(void *self, Vector *v, float f, int z);
+void fn_800BEAC0(void *self, int v);
+void fn_800C7BEC(void *self);
+int fn_800CC76C(void *self);
+void fn_800C8098(void *self);
+Tgt *fn_800C9FD0(void *self);
+Tgt *fn_80134870(void *a);
+float fn_804290F8(void *a, void *b);
+void fn_8005A828(Ent &actor, void *p);
+void fn_800BE638(void *self);
+int fn_800CC0BC(void *self, int id);
+int fn_800E9AF8(void *self, float a, float b, float c, int d, int e);
+int fn_80097CE8(Ent &actor, int a, int mode, float speed, void *set, float blend, float f);
+void fn_800BD2D0(void *self, int handle);
+void fn_800BD3A8(void *self, int handle);
+void fn_800F1644(void *self);
+void fn_80066604(Ent &actor);
+void fn_800DDCB4(void *self, int a, int b);
+Vector *fn_800B17A8(Ent &actor);
 }
 
 extern "C" int fn_800D80B4(register Obj *self)
@@ -157,4 +197,84 @@ extern "C" int fn_800D84BC(register Obj *self)
     if (!fn_800664C0(*Entity_GetActor(self)))
         fn_80065CB0(*Entity_GetActor(self), &v40);
     return f30;
+}
+
+extern "C" void fn_800D875C(register Obj *self)
+{
+    int f8;
+    int fc = -1;
+    fn_800BEAC0(self, 0);
+    float f10 = fn_800B1884(*Entity_GetActor(self), 0x29) * fn_80426A84(lbl_80593BE8);
+    fn_800C7BEC(self);
+    if (fn_800CC76C(self)) {
+        fn_800C8098(self);
+        return;
+    }
+    f8 = fn_800D84BC(self);
+    Tgt *f14 = fn_800C9FD0(self);
+    if (!f14)
+        f14 = fn_80134870(fn_80085980(Entity_GetActor(self)));
+    float f18;
+    int f1c;
+    if (fn_800CC2E0(self)) {
+        if (f14) {
+            f18 = fn_804290F8(fn_800B1724(*f14), fn_800B1724(*Entity_GetActor(self)));
+            if (f18 >= fn_800B1884(*Entity_GetActor(self), 0xD2))
+                fn_8005A828(*Entity_GetActor(self), fn_800B1724(*f14));
+        }
+        fn_800BE638(self);
+        return;
+    }
+    if (fn_800CC0BC(self, 1)) {
+        f1c = fn_800E9AF8(self, fn_800B1884(*Entity_GetActor(self), 0xE), fn_800B1884(*Entity_GetActor(self), 0xD),
+                          fn_800B1884(*Entity_GetActor(self), 0x14), 0, 0);
+        fc = fn_80097CE8(*Entity_GetActor(self), 0x63, 0, 30.0f, 0, 7.5f, -1.0f);
+        self->b40a = 0;
+        self->b409 = 0;
+        self->b40b = 1;
+        self->b40c = 0x15;
+        self->f410 = 0xCA;
+        if (fc > 0) {
+            fn_800BD2D0(self, fc);
+            fn_800BD3A8(self, fc);
+            self->h = fn_80393B28(*Entity_GetActor(self), self->h);
+            if (self->h) {
+                self->h->s54();
+                self->h = 0;
+            }
+        } else {
+            fn_800F1644(self);
+        }
+        return;
+    }
+    if (fn_800CC0BC(self, 2)) {
+        Vector v20;
+        f1c = 0x27;
+        if (f14) {
+            f14->s5(&v20, 0);
+            fn_8005A828(*Entity_GetActor(self), &v20);
+        }
+        fn_80066604(*Entity_GetActor(self));
+        fn_800DDCB4(self, f1c, 0);
+    }
+    f18 = 3.4028235e38f;
+    if (f14)
+        f18 = fn_804290F8(fn_800B1724(*f14), fn_800B1724(*Entity_GetActor(self)));
+    if (f18 >= fn_800B1884(*Entity_GetActor(self), 0xD2)) {
+        if (f18 <= fn_800B1884(*Entity_GetActor(self), 0xD4)) {
+            if (fn_800CC148(self, 0xB)) {
+                f1c = 4;
+                Vector v20;
+                float f30 = fn_800CC1D4(self, 0, &v20);
+                float f34 = fn_8042EBF4(&v20, fn_800B17A8(*Entity_GetActor(self)));
+                if (f34 < 0.0f)
+                    f1c = 0x16;
+                else
+                    f1c = 0x17;
+                unsigned int f38 = fn_80097CE8(*Entity_GetActor(self), f1c, 0, 30.0f, 0, 7.5f, -1.0f);
+                fn_800BD2D0(self, f38);
+                self->flags |= 1;
+            }
+        }
+    }
 }

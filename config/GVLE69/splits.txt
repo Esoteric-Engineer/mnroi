@@ -285,7 +285,7 @@ Game/fn_800D579C.cpp:
 	.text       start:0x800D579C end:0x800D58B0
 
 Game/fn_800D80B4.cpp:
-	.text       start:0x800D80B4 end:0x800D875C
+	.text       start:0x800D80B4 end:0x800D8D00
 
 Game/fn_800DA254.cpp:
 	.text       start:0x800DA254 end:0x800DA5F8
