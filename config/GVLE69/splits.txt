@@ -168,6 +168,9 @@ Game/fn_800965A4.c:
 	.text       start:0x800965A4 end:0x80096688
 	.rodata     start:0x8048A460 end:0x8048A478
 
+Game/fn_8009701C.c:
+	.text       start:0x8009701C end:0x8009717C
+
 Game/fn_800974B4.cpp:
 	.text       start:0x800974B4 end:0x80097750
 

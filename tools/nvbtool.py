@@ -109,6 +109,7 @@ FIELD_NAMES = {
         134: "base of 134 + i, returned by fn_80086C80 as 1.0 minus the value; caller not yet decompiled",
         167: "returned by the getter fn_80086DE4; callers not yet decompiled",
         170: "FID_PLAYER_VICTORY1 (versus victory cutscene 1); base of 170 + G[+0x79C + 4*side], the cutscene name fn_80093C14 hands to fn_800578E4",
+        173: "base of 173 + v, v = random 0..2, the cutscene name fn_8009701C hands to fn_80057894 with 0x42022000 (guess: the mp_*_ext_* strings are an exit/extra cutscene)",
         183: "read from the target's entity; half of it is added to the clock as the time stamp stored in the AI object's target list (fn_80148178)",
         189: "rage points for superattack",
         184: "length of the timer fn_80161BDC starts (deadline = now + value, stored at +0x18/+0x14); the owner and the caller of fn_80161BDC (vtable slot) not yet decompiled",
