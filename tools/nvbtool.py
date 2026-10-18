@@ -182,7 +182,9 @@ FIELD_NAMES = {
     },
     "GLOBALS": {
         15: "least value fn_8007C830 accepts for the float lbl_8066D5C0",
-        16: "greatest value fn_8007C830 accepts for the float lbl_8066D5C0",
+        16: "greatest value fn_8007C830 accepts for the float lbl_8066D5C0; also the top of fn_800370D0's ramp",
+        17: "bottom of fn_800370D0's ramp: t = ([0] of fn_8042FB28(+0x180) - 17) / (16 - 17), clamped to 0..1; +0x19C = t * its float argument",
+        18: "+0x198 at the top of that ramp, lerped from 1.0 by t (fn_800370D0)",
         19: "target of fn_800393F4's float +0x144 (times +0x198, at least 0.001) unless a flag picks fn_804351DC or +0x170 (guess: speed)",
         20: "value fn_80033A6C stores in lbl_8066D5C0 (called from fn_8002F3A8)",
         22: "times fn_800BB078(actor) and the frame delta, set through fn_80446D88 (float [2] of the body's +0x80 subobject; fn_800C7AD4)",
@@ -202,6 +204,7 @@ FIELD_NAMES = {
         64: "percent, stored * 0.01 in lbl_8053F2CC[0][2] (fn_80044E5C)",
         65: "third argument of fn_80043000(2, 0, ...) in fn_80044E5C",
         66: "fourth argument of fn_80043000(2, 0, ...) in fn_80044E5C",
+        68: "18 instead when fn_800370D0's flags argument has 0x2000000",
         69: "that rate when +0x198 < 1.0 and the first flags argument has 0x2000000 (fn_800393F4)",
         70: "percent, stored * 0.01 in lbl_8053F284[2][1] (fn_80044E5C)",
         71: "percent, stored * 0.01 in lbl_8053F284[0][1] (fn_80044E5C)",
