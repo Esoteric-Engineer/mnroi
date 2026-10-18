@@ -261,6 +261,9 @@ Game/fn_800B7204.c:
 	.rodata     start:0x8048BF44 end:0x8048BF64
 	.sbss       start:0x8066D6BC end:0x8066D6CC
 
+Game/fn_800BED04.cpp:
+	.text       start:0x800BED04 end:0x800BF488
+
 Game/fn_800BFC60.cpp:
 	.text       start:0x800BFC60 end:0x800BFE1C
 	.rodata     start:0x8048C988 end:0x8048C994
