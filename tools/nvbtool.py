@@ -204,6 +204,8 @@ FIELD_NAMES = {
         55: "step, signed by that angle difference, that fn_80038618 hands to fn_800383D8 (then negated); also the limit's first factor",
         56: "int, times field 55: when |difference to +0xC0's heading| is over it, fn_80038618 sets +0x1C4 to that heading, else fn_801BDA3C(heading + 160)",
         57: "multiplier on PLAYER 45, cached in the entity at +0x3D0 (fn_8009D71C)",
+        58: "target fn_801A5F8C moves +0x58 toward, at 2.0 per second, on a frame whose +0x4 has 0x2000000 (else back toward 1.0)",
+        59: "target fn_801A5F8C moves +0x54 toward, at 2.0 per second, on a frame whose +0x4 has 0x800000 (else back toward 1.0)",
         60: "least value fn_8042EBF4(direction to the candidate, entity fn_800B1750) a candidate needs in fn_800ED448",
         61: "percent, stored * 0.01 in lbl_8053F284[2][2] (a {int, float}[3][3] reset to 0.0; fn_80044E5C)",
         62: "percent, stored * 0.01 in lbl_8053F284[0][2] (fn_80044E5C); fn_800439B0 returns 0 when fn_804358A4() exceeds lbl_8066B7B8 times it, for kind 2",

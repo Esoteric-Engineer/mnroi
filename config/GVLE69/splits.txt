@@ -2646,6 +2646,9 @@ Dolphin/OdemuExi2/DBGReadMailbox.c:
 Dolphin/OdemuExi2/DBGEXIImm.c:
 	.text       start:0x801965EC end:0x80196884
 
+Game/fn_801A5F8C.cpp:
+	.text       start:0x801A5F8C end:0x801A6390
+
 Game/fn_801B26DC.cpp:
 	.text       start:0x801B26DC end:0x801B301C
 
