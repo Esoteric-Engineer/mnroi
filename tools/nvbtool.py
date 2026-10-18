@@ -158,6 +158,7 @@ FIELD_NAMES = {
         210: "fn_80142558 gives up when the distance to fn_80134870's entity is at most this; callers not yet decompiled",
         211: "fn_8015F008 is true when the Vector-derived float fn_8015E64C is above it; also fn_8014A574's scale on that direction when fn_800B0C1C and fn_80095608 hold for the target and fn_80085D3C does not for the actor; other callers not yet decompiled",
         212: "fn_8015F07C is true when that float is below it; callers not yet decompiled",
+        213: "first float argument of fn_8015F7A4 (the other actor chosen by fn_80134870) when fn_800CD9B0 gives no entity (fn_80158844, which also reads field 210 and discards it for 5.0)",
         214: "base of 214 + i, i the byte at +0x409 of the owner object when it is 4 or 5 (fields 218 and 219: template name for fn_800FD5FC,) (fn_800F1644)",
         216: "when the distance fn_8015E8A8 gives to fn_80134870's entity exceeds it, the first float argument of fn_8015F7A4 is 20 instead of 4 (fn_8014E288)",
         220: "name passed to fn_80057894 with the flags word after a 0.33/0.66 random roll (fn_800965A4); caller fn_80092A84",
