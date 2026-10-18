@@ -185,6 +185,8 @@ FIELD_NAMES = {
         16: "greatest value fn_8007C830 accepts for the float lbl_8066D5C0",
         19: "target of fn_800393F4's float +0x144 (times +0x198, at least 0.001) unless a flag picks fn_804351DC or +0x170 (guess: speed)",
         20: "value fn_80033A6C stores in lbl_8066D5C0 (called from fn_8002F3A8)",
+        22: "times fn_800BB078(actor) and the frame delta, set through fn_80446D88 (float [2] of the body's +0x80 subobject; fn_800C7AD4)",
+        23: "times fn_800BB158(actor) and the frame delta, set through fn_80446D28 (float [0] of the body's +0x80 subobject; fn_800C7AD4)",
         29: "rate per second at which fn_800393F4 moves +0x144 toward its target",
         30: "that rate when +0x198 < 1.0 (fn_800393F4)",
         44: "time added to the fn_8042E96C clock for the type-3 entry fn_8003DBF0 queues, when fn_800C86B8's second argument is 0x6C-0x6E, 0x75 or 0x7D",
