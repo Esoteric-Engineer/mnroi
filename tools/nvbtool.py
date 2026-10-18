@@ -183,7 +183,10 @@ FIELD_NAMES = {
     "GLOBALS": {
         15: "least value fn_8007C830 accepts for the float lbl_8066D5C0",
         16: "greatest value fn_8007C830 accepts for the float lbl_8066D5C0",
+        19: "target of fn_800393F4's float +0x144 (times +0x198, at least 0.001) unless a flag picks fn_804351DC or +0x170 (guess: speed)",
         20: "value fn_80033A6C stores in lbl_8066D5C0 (called from fn_8002F3A8)",
+        29: "rate per second at which fn_800393F4 moves +0x144 toward its target",
+        30: "that rate when +0x198 < 1.0 (fn_800393F4)",
         44: "time added to the fn_8042E96C clock for the type-3 entry fn_8003DBF0 queues, when fn_800C86B8's second argument is 0x6C-0x6E, 0x75 or 0x7D",
         45: "float of that fn_8003DBF0 entry, same arguments (fn_800C86B8)",
         46: "time of the fn_8003DBF0 entry for the other cases of fn_800C86B8's switch; its default uses 100",
@@ -197,12 +200,14 @@ FIELD_NAMES = {
         64: "percent, stored * 0.01 in lbl_8053F2CC[0][2] (fn_80044E5C)",
         65: "third argument of fn_80043000(2, 0, ...) in fn_80044E5C",
         66: "fourth argument of fn_80043000(2, 0, ...) in fn_80044E5C",
+        69: "that rate when +0x198 < 1.0 and the first flags argument has 0x2000000 (fn_800393F4)",
         70: "percent, stored * 0.01 in lbl_8053F284[2][1] (fn_80044E5C)",
         71: "percent, stored * 0.01 in lbl_8053F284[0][1] (fn_80044E5C)",
         72: "percent, stored * 0.01 in lbl_8053F2CC[2][1] (fn_80044E5C)",
         73: "percent, stored * 0.01 in lbl_8053F2CC[0][1] (fn_80044E5C)",
         74: "third argument of fn_80043000(1, 0, ...) in fn_80044E5C",
         75: "fourth argument of fn_80043000(1, 0, ...) in fn_80044E5C",
+        81: "added to fn_800393F4's target unless the second flags argument has 0x1000000",
     },
 }
 
