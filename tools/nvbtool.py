@@ -95,6 +95,7 @@ FIELD_NAMES = {
         46: "throw distance, class 1 (inferred from 47 and 48)",
         47: "FID_PLAYER_THROWDIST2",
         48: "throw distance, class 3",
+        60: "added to the match clock fn_8042EFF8 and stored in the entity at +0xD4 (fn_800F3AE0)",
         64: "rate multiplier (times the frame step fn_80426A84) of the approach of the float at +0xDC to its target (fn_800D80B4)",
         67: "effect name of the left trail, made with fn_80393D0C when fn_800DA254's flag is 0",
         68: "effect name of the right trail, as 67",
