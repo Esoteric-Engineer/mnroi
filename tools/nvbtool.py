@@ -181,6 +181,8 @@ FIELD_NAMES = {
         231: "as 223, when the second argument of fn_800E906C is non-zero",
     },
     "GLOBALS": {
+        15: "least value fn_8007C830 accepts for the float lbl_8066D5C0",
+        16: "greatest value fn_8007C830 accepts for the float lbl_8066D5C0",
         52: "search radius of fn_8004E4B4 in fn_800ED448",
         57: "multiplier on PLAYER 45, cached in the entity at +0x3D0 (fn_8009D71C)",
         60: "least value fn_8042EBF4(direction to the candidate, entity fn_800B1750) a candidate needs in fn_800ED448",
