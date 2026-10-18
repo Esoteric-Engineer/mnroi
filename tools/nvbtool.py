@@ -187,6 +187,18 @@ FIELD_NAMES = {
         52: "search radius of fn_8004E4B4 in fn_800ED448",
         57: "multiplier on PLAYER 45, cached in the entity at +0x3D0 (fn_8009D71C)",
         60: "least value fn_8042EBF4(direction to the candidate, entity fn_800B1750) a candidate needs in fn_800ED448",
+        61: "percent, stored * 0.01 in lbl_8053F284[2][2] (a {int, float}[3][3] reset to 0.0; fn_80044E5C)",
+        62: "percent, stored * 0.01 in lbl_8053F284[0][2] (fn_80044E5C)",
+        63: "percent, stored * 0.01 in lbl_8053F2CC[2][2] (a {int, float}[3][3] reset to 1.0; fn_80044E5C)",
+        64: "percent, stored * 0.01 in lbl_8053F2CC[0][2] (fn_80044E5C)",
+        65: "third argument of fn_80043000(2, 0, ...) in fn_80044E5C",
+        66: "fourth argument of fn_80043000(2, 0, ...) in fn_80044E5C",
+        70: "percent, stored * 0.01 in lbl_8053F284[2][1] (fn_80044E5C)",
+        71: "percent, stored * 0.01 in lbl_8053F284[0][1] (fn_80044E5C)",
+        72: "percent, stored * 0.01 in lbl_8053F2CC[2][1] (fn_80044E5C)",
+        73: "percent, stored * 0.01 in lbl_8053F2CC[0][1] (fn_80044E5C)",
+        74: "third argument of fn_80043000(1, 0, ...) in fn_80044E5C",
+        75: "fourth argument of fn_80043000(1, 0, ...) in fn_80044E5C",
     },
 }
 
