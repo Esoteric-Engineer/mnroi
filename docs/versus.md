@@ -186,7 +186,7 @@ number order: rows 19 to 23 (tuning, then the model and animation formats) come 
 | 16 | Unfollowed type-ID readers: `fn_800BFC60`, `fn_8009EA20` | Done: `fn_800BFC60` (pair-less run B) and `fn_8009EA20`, which hands the type on to `fn_8009FF54` (0x534), the next place to look. |
 | 17 | Property handlers: `fn_80137CEC`, `fn_800AC750`, `fn_800AE534`, `fn_800A22CC` | Done. |
 | 19 | Tuning plumbing: the leaf accessors and `Game/fn_801B308C.cpp` (0x801B308C-0x801B3638) | Done. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
-| 20 | `PLAYER` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py PLAYER -m 0x800`. Done when it lists no function. |
+| 20 | `PLAYER` tuning readers | Done: no reader under 0x800 adds a field; the 56 left (`-a`) read only fields already named. |
 | 21 | `GLOBALS` tuning readers | Open. Next: the first line of `python3 tools/nvbreaders.py GLOBALS -m 0x800`. Done when it lists no function. |
 | 22 | Model bundle (`.ngm`, `.nod`): `fn_801A1FC4`, `fn_801A2108`, `fn_801A0814`, then the model builders | Open. Next: `fn_801A1FC4`. Notes: [Steps 22 and 23](#steps-22-and-23-model-and-animation-bundles). |
 | 23 | Animation bundle (`.ngb`) and motion set: `fn_8019E9DC`, `fn_8019EA38`, `fn_8019EBF8`, `fn_8008F470`, `fn_8008FF48` | Open. Next: `fn_8019E9DC`. |

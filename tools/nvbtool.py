@@ -156,6 +156,7 @@ FIELD_NAMES = {
         193: "rage penalty, % of base points; also the per-second rate the meter at fn_80086A00 drains at (times the frame time, negated) in fn_8009D818",
         195: "duration (ms is a guess) added to the game clock (fn_8042EFF8) to give the end time stored as a float at entity +0x334 (fn_8009E144)",
         196: "amount fn_80084A60 takes from the actor's float at +0x324 (it subtracts it if that float is not below it) when the move at clip 0x112 starts (fn_800D579C)",
+        200: "third argument of fn_80138738(9, 200, value), the pooled request it fills (fn_80462CA8 stores it), for the effect fn_8013E99C sends toward a target with a clear path; the second argument is the literal 200",
         201: "scale of the stick vector fn_800CC1D4 returns, times its length, in the velocity handed to fn_80065CB0 (fn_800D84BC)",
         202: "effect name made with fn_80393D0C (colour 0xFF, 0xFF) on every slot's actor in the round reset, handle not stored (fn_80092550); mpTeleport for all 18",
         203: "effect name made with fn_80393D0C (colour 0xFF, 0xFF) as the entity's first handle at +0x3A4 (fn_800E50AC); the values read as super-block effects",
