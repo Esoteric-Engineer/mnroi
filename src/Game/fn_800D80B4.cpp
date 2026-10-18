@@ -1,5 +1,5 @@
 // fn_800D875C is the per-frame step that picks the PLAYER clip and chases the target (fields 0xD2, 0xD4, 0xD, 0xE, 0x14);
-// fn_800D80B4 steers the effect handle and drift value, fn_800D84BC moves the actor by the stick vector; docs/versus.md row 20.
+// fn_800D7CDC enters the flight state (fields 0x65, 0x66, 0xC9); fn_800D80B4 steers the effect handle and drift value, fn_800D84BC moves the actor by the stick vector; docs/versus.md row 20.
 
 class Vector
 {
@@ -45,7 +45,8 @@ struct Handle {
     virtual void s36(); virtual void s37(); virtual void s38(); virtual void s39(); virtual void s40(); virtual void s41();
     virtual void s42(); virtual void s43(); virtual void s44(); virtual void s45(); virtual void s46(); virtual void s47();
     virtual void s48(); virtual void s49(); virtual void s50(); virtual void s51(); virtual void s52(); virtual void s53();
-    virtual void s54();
+    virtual void s54(); virtual void s55(); virtual void s56();
+    virtual void s57();
 };
 
 struct Tgt : Ent {
@@ -57,7 +58,9 @@ struct Tgt : Ent {
 struct Obj {
     char pad0[0x10];
     unsigned int flags; // +0x10
-    char pad14[0xDC - 0x14];
+    char pad14[0x18 - 0x14];
+    unsigned int f18;
+    char pad1C[0xDC - 0x1C];
     float fDC;
     char padE0[0x3A0 - 0xE0];
     Handle *h; // +0x3A0
@@ -67,10 +70,19 @@ struct Obj {
     char b40b;
     char b40c;
     int f410;
-    char pad414[0x534 - 0x414];
+    char pad414[0x488 - 0x414];
+    float f488;
+    char pad48C[0x514 - 0x48C];
+    float f514;
+    char pad518[0x534 - 0x518];
     void *p534;
     char pad538[0x950 - 0x538];
     float f950;
+};
+
+struct Mdl {
+    char pad0[0xB0];
+    char *p; // +0xB0
 };
 
 extern char lbl_80593BE8[];
@@ -117,6 +129,59 @@ void fn_800F1644(void *self);
 void fn_80066604(Ent &actor);
 void fn_800DDCB4(void *self, int a, int b);
 Vector *fn_800B17A8(Ent &actor);
+PEnt *fn_800CD9B0(void *self);
+void fn_800CD514(void *self, int v);
+void fn_800CD3F4(void *self, int v);
+void fn_80065AF8(Ent &actor, int a, int b);
+void fn_8009AEC8(Ent &actor, int v);
+void fn_8006645C(Ent &actor, int a);
+void fn_8006668C(Ent &actor, float v);
+Mdl *fn_8009AD80(Ent &actor);
+int fn_8044667C(void *axis, void *owner, float v, float w, int mode);
+int fn_800CE204(void *self);
+void fn_800C85C8(void *self, int a, int b);
+void fn_800C9208(void *self);
+int fn_800ACD20(Ent &actor, int id);
+Handle *fn_80393D0C(Ent &actor, int id, int a, int b);
+int fn_800B13D8(Ent &actor);
+void *fn_80114950(int a, int id);
+char *fn_8009AF80(Ent &actor);
+void *fn_8009AE00(Ent &actor);
+void *fn_8008FCEC(void *set, int a, int b, float f);
+int fn_804470BC(void *self, void *a, void *b, float v, float w, int mode);
+}
+
+extern "C" int fn_800D7CDC(register Obj *self, int unused)
+{
+    int f0c = 0x21;
+    PEnt &f10 = *fn_800CD9B0(self);
+    self->f18 &= ~0x1000000;
+    fn_800CD514(self, 1);
+    fn_800CD3F4(self, 1);
+    fn_80065AF8(*Entity_GetActor(self), 0, 0);
+    fn_8009AEC8(*Entity_GetActor(self), 0);
+    fn_8006645C(*Entity_GetActor(self), 0);
+    self->flags = 0;
+    fn_80097CE8(*Entity_GetActor(self), 4, 1, 30.0f, 0, 7.5f, -1.0f);
+    self->f514 = fn_800B1884(*Entity_GetActor(self), 0xC9);
+    fn_8006668C(*Entity_GetActor(self), 0.0f);
+    self->f488 = 0.0f;
+    fn_8044667C(fn_8009AD80(*Entity_GetActor(self))->p + 0x94, 0, 0.0f, 0.0f, 0);
+    Vector v18;
+    fn_80067050(*Entity_GetActor(self), &v18);
+    self->fDC = v18.z;
+    self->fDC = self->fDC >= -4.0f ? (self->fDC <= 16.0f ? self->fDC : 16.0f) : -4.0f;
+    if (fn_800CE204(self))
+        fn_800C85C8(self, 0, 0);
+    fn_800C9208(self);
+    self->h = fn_80393D0C(*Entity_GetActor(self), fn_800ACD20(*Entity_GetActor(self), 0x65), 0xFF, 0xFF);
+    if (self->h)
+        self->h->s56();
+    self->p534 = fn_80114950(fn_800B13D8(*Entity_GetActor(self)), 0x34);
+    fn_80393D0C(*Entity_GetActor(self), fn_800ACD20(*Entity_GetActor(self), 0x66), 0xFF, 0xFF);
+    fn_804470BC(fn_8009AF80(*Entity_GetActor(self)) + 0x104, fn_8008FCEC(fn_8009AE00(*Entity_GetActor(self)), 0x132, 0, -1.0f),
+                fn_8008FCEC(fn_8009AE00(*Entity_GetActor(self)), 0x133, 0, -1.0f), 0.0f, 0.0f, 0);
+    return 1;
 }
 
 extern "C" int fn_800D80B4(register Obj *self)

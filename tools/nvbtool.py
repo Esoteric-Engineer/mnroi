@@ -117,6 +117,8 @@ FIELD_NAMES = {
         94: "base of 94 + i, i the byte at +0x40A of the owner object; muzzle effect name made with fn_80393D0C, with colour bytes +0x40C and +0x40B (fn_800F1644)",
         98: "effect name made with fn_80393D0C (colour 0xFF, 0xFF) as the entity's handle at +0x390, started with virtual slot 56 (fn_800BED04); fn_800BED04 replaces it through fn_80393B28 and stops it with slot 54 on the way out",
         99: "effect name made with fn_80393D0C (colour 0xFF, 0xFF), second handle (fn_800BED04; the handle is not stored); stopped with fn_80393798 on the way out",
+        101: "effect name made with fn_80393D0C (colour 0xFF, 0xFF) as the entity's handle at +0x3A0, started with virtual slot 56 (fn_800D7CDC)",
+        102: "effect name made with fn_80393D0C (colour 0xFF, 0xFF), second handle (fn_800D7CDC; the handle is not stored)",
         103: "returned by the getter fn_80086D9C; callers not yet decompiled",
         104: "returned by the getter fn_80086D54; stored to the entity float at +0x514 on each call and, while the steering vector is shorter, its minimum length (fn_800C45B0)",
         105: "stored to the entity float at +0x514 with clip 0xCC or 0xCB, when fn_800A4130 is clear and fn_800A4468 is 0 (fn_800C45B0)",
