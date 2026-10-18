@@ -1,4 +1,4 @@
-// Steers the entity's PLAYER effect handle and settles its drift value (tuning fields 0x27, 0x28, 0x2A, 0x40); docs/versus.md row 20.
+// fn_800D80B4 steers the entity's PLAYER effect handle and settles its drift value; fn_800D84BC moves the actor by the stick vector (tuning fields 0x27, 0x28, 0x2A, 0x40, 0x42, 0xC9); docs/versus.md row 20.
 
 class Vector
 {
@@ -71,6 +71,12 @@ int fn_800664C0(Ent &actor);
 float fn_80426A84(void *p);
 float fn_800D9308(float a, float b, float c);
 void fn_80065CB0(Ent &actor, Vector *v);
+float fn_800CC1D4(void *self, int id, Vector *v);
+int fn_800CC2E0(void *self);
+int fn_800CC338(void *self);
+Vector *fn_800B1750(Ent &actor);
+float fn_8042EBF4(Vector *a, Vector *b);
+void fn_800B9D64(void *self, Vector *v, float f, int z);
 }
 
 extern "C" int fn_800D80B4(register Obj *self)
@@ -120,4 +126,35 @@ extern "C" int fn_800D80B4(register Obj *self)
     if (!fn_800664C0(*Entity_GetActor(self)))
         fn_80065CB0(*Entity_GetActor(self), &v20);
     return 0;
+}
+
+extern "C" int fn_800D84BC(register Obj *self)
+{
+    Vector v8;
+    float f18 = fn_800CC1D4(self, 0, &v8);
+    Vector v20;
+    int f30;
+    float f34 = fn_800B1884(*Entity_GetActor(self), 0xC9);
+    f30 = fn_800D80B4(self);
+    if (fn_800CC2E0(self))
+        return f30;
+    fn_80067050(*Entity_GetActor(self), &v20);
+    float f38 = v20.z;
+    Vector v40;
+    Vector v50;
+    if (fn_800CC338(self))
+        f18 = 0.0f;
+    if (f18 < 0.1f)
+        f18 = 0.0f;
+    f18 = f18 >= 0.0f ? (f18 <= 1.0f ? f18 : 1.0f) : 0.0f;
+    float f60 = fn_8042EBF4(&v8, fn_800B1750(*Entity_GetActor(self)));
+    f60 = f60 > 0.0f ? f60 : 0.0f;
+    v40.x = v8.x * f34 * f60 * f18;
+    v40.y = v8.y * f34 * f60 * f18;
+    v40.z = v20.z;
+    if (f60 < 1.0f)
+        fn_800B9D64(self, &v8, fn_800B1884(*Entity_GetActor(self), 0x42), 0);
+    if (!fn_800664C0(*Entity_GetActor(self)))
+        fn_80065CB0(*Entity_GetActor(self), &v40);
+    return f30;
 }
