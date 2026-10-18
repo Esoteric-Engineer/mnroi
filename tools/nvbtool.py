@@ -81,6 +81,8 @@ FIELD_NAMES = {
         10: "first float argument of fn_800E9AF8 (fn_800F0328)",
         16: "converted to unsigned and not used again (fn_800F0328)",
         20: "third float argument of fn_800E9AF8 (fn_800F0328)",
+        23: "cached in the entity float at +0x3F8 (with +0x3FC = 0x6C) when fn_800CCA88 is 0 (fn_800E3720)",
+        24: "as 23, when fn_800CCA88 is non-zero (+0x3FC = 0x6F, and flag 0x80 set in +0x10) (fn_800E3720)",
         32: "cached in the entity at +0x414; also the argument of fn_80084B68 in the first check (fn_800F0328)",
         39: "target of the entity float at +0xDC when fn_800CC148 flag 0x10 is set inside the flag-9 branch (fn_800D80B4)",
         40: "negated: target of the float at +0xDC when the flag-9 branch is not taken (fn_800D80B4)",
