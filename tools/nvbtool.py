@@ -112,6 +112,7 @@ FIELD_NAMES = {
         74: "effect name of the left trail, made with fn_80393D0C when fn_800DA254's flag is non-zero (the blade/claw trail)",
         75: "effect name of the right trail, as 74",
         76: "second float argument of fn_800E89B0 (fn_800E339C)",
+        79: "base of 79 + n, n = the byte at entity +0x408 (0 to skip); second argument of fn_8039F4D8 on the table lbl_8064AA80 when flag 8 of fn_800E673C's byte argument is clear (fn_800E673C)",
         81: "effect name made with fn_80393A60 (flag 0) when fn_800861BC is true (fn_800E592C)",
         90: "base of 90 + i, i the byte at +0x409 of the owner object when it is not 4 or 5; projectile template name for fn_800FD5FC (fn_800F1644)",
         94: "base of 94 + i, i the byte at +0x40A of the owner object; muzzle effect name made with fn_80393D0C, with colour bytes +0x40C and +0x40B (fn_800F1644)",

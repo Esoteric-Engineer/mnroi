@@ -1,4 +1,5 @@
 // A PLAYER state's steering step: finds a target and kicks the entity toward it (tuning fields 0x74-0x7D); docs/versus.md row 20.
+// fn_800E673C plays an effect from the table lbl_8064AA80, picked by its flag byte (PLAYER 79 + n).
 
 class Vector
 {
@@ -32,6 +33,18 @@ struct Other {
     char pad0[0x2D4];
     int f2D4;
     int f2D8;
+};
+
+struct Obj {
+    char pad0[0x18];
+    unsigned int f18;
+    char pad1C[0x408 - 0x1C];
+    unsigned char b408; // +0x408
+};
+
+struct Actor {
+    char pad0[0x3DC];
+    int f3DC; // +0x3DC
 };
 
 struct Target {
@@ -80,6 +93,16 @@ int fn_80171F8C(void);
 void fn_803190C4(void *a, Vector *v);
 int fn_800B13D8(void *self);
 void fn_800CDD84(void *self, int a, int b);
+void *fn_800B14A0E(Ent &actor) __asm__("fn_800B14A0");
+int fn_8009ABC0(Ent &actor);
+void fn_8042D80C(Vector *v, void *e);
+int fn_80086B6C(void *actor);
+int fn_800ACD20(Ent &actor, int id);
+void fn_8039F4D8(char *tbl, int a, void *n, int d, void *e, int one, float f1, float f2, int z1, int z2, float f3);
+void fn_803A0588(char *tbl, int a, int b, void *n1, void *n2, int d, void *e, unsigned char fl);
+void fn_803A0674(char *tbl, int a, int b, void *n1, void *n2, int d, void *e, unsigned char fl);
+void fn_803A07C4(char *tbl, int a, int b, void *n1, void *n2, int d, void *e, unsigned char fl);
+void fn_8039FF60(char *tbl, int a, int b, void *n, void *c, int d, void *e, unsigned char fl, unsigned char f2);
 }
 
 extern "C" int fn_800E6094(register void *self, Other *other)
@@ -156,4 +179,44 @@ extern "C" int fn_800E6094(register void *self, Other *other)
     }
     fn_800CDD84(self, fn_800B13D8(other), 1000);
     return ret;
+}
+
+extern "C" void fn_800E673C(register Obj *self, int a, int b, void *c, int d, void *e, unsigned char flags, unsigned char f2)
+{
+    unsigned char fl;
+    int x;
+    if (f2 && !(self->f18 & 0x1000))
+        return;
+    fl = 0;
+    x = fn_8009ABC0(*Entity_GetActor(self));
+    Vector v;
+    Vector *pv = 0;
+    if (e) {
+        fn_8042D80C(&v, e);
+        pv = &v;
+    }
+    if (c && fn_800B0C58(c)) {
+        PEnt *act = Entity_GetActor(self);
+        int g = ((Actor *)act)->f3DC;
+        if (g) {
+            if (fn_800CCA88(self))
+                fl |= 1;
+            if (fn_80086B6C(Entity_GetActor(self)))
+                fl |= 2;
+        }
+        if (self->b408 && !(flags & 8))
+            fn_8039F4D8(lbl_8064AA80, fn_800ACD20(*Entity_GetActor(self), self->b408 + 0x4F), fn_800B14A0(c), d, e, 1, 0.0f, -99999.0f, 0, 0, 0.0f);
+        if (flags & 0x10)
+            fn_803A0588(lbl_8064AA80, a, b, fn_800B14A0E(*Entity_GetActor(self)), fn_800B14A0(c), d, e, fl);
+        else if (flags & 0x20)
+            fn_803A0674(lbl_8064AA80, a, b, fn_800B14A0E(*Entity_GetActor(self)), fn_800B14A0(c), d, e, fl);
+        else if ((flags & 8) || (flags & 2))
+            fn_803A07C4(lbl_8064AA80, a, b, fn_800B14A0E(*Entity_GetActor(self)), fn_800B14A0(c), d, e, fl);
+    } else {
+        if (fn_800CCA88(self))
+            fl |= 1;
+        if (fn_80086B6C(Entity_GetActor(self)))
+            fl |= 2;
+        fn_8039FF60(lbl_8064AA80, a, b, fn_800B14A0E(*Entity_GetActor(self)), c, d, e, fl, f2);
+    }
 }
