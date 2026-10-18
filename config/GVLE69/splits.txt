@@ -126,6 +126,9 @@ Game/fn_8002FB08.c:
 	.rodata     start:0x8048591C end:0x80485934
 	.sbss       start:0x8066D598 end:0x8066D5A8
 
+Game/fn_80033A6C.c:
+	.text       start:0x80033A6C end:0x80033AB0
+
 Game/fn_8007C830.c:
 	.text       start:0x8007C830 end:0x8007C8B0
 
