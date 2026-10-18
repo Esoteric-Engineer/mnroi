@@ -111,6 +111,7 @@ FIELD_NAMES = {
         192: "FID_PLAYER_RAGE_DURATION",
         193: "rage penalty, % of base points",
         195: "duration (ms is a guess) added to the game clock (fn_8042EFF8) to give the end time stored as a float at entity +0x334 (fn_8009E144)",
+        196: "amount fn_80084A60 takes from the actor's float at +0x324 (it subtracts it if that float is not below it) when the move at clip 0x112 starts (fn_800D579C)",
         205: "effect name made with fn_80393D0C (colour 0xFF, 0xFF) after fn_80114D70 (fn_800E592C)",
         206: "fm_* cutscene against a male opponent (206 + the opponent's SKELETONID, fn_80096460)",
         207: "fm_* cutscene against a female opponent",
