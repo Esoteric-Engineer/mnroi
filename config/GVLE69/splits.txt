@@ -307,6 +307,9 @@ Game/fn_800F0328.cpp:
 Game/fn_800F0AA0.cpp:
 	.text       start:0x800F0AA0 end:0x800F0C70
 
+Game/fn_800F1644.cpp:
+	.text       start:0x800F1644 end:0x800F1D8C
+
 Game/fn_800F3AE0.cpp:
 	.text       start:0x800F3AE0 end:0x800F3C2C
 
