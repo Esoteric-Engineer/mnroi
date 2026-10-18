@@ -46,7 +46,7 @@ Vector *fn_800B1750(Ent &actor);
 float fn_800B1884(Ent &actor, int id);
 int fn_800CDA20(void *self);
 void fn_800CE158(void *self, int a);
-void *fn_80434C2CT(Slot *s) __asm__("fn_80434C2C");
+int fn_80434C2CT(Slot *s) __asm__("fn_80434C2C");
 int fn_800B0E54(void *c);
 void *fn_800B1590(void *c);
 int fn_800F5CC8(void *self, void *c, int a);
@@ -65,9 +65,8 @@ float fn_8042EBF4(Vector *a, Vector *b);
 
 extern "C" void *fn_800C94C8(register void *self)
 {
-    register void *tmp;
     Query q;
-    void *cand;
+    Ent *cand;
     void *best;
     fn_8004E9C8(&q);
     if (!Entity_GetActor(self) || !fn_800B1CC8(*Entity_GetActor(self)) || fn_800CDA20(self))
@@ -86,8 +85,7 @@ extern "C" void *fn_800C94C8(register void *self)
     unsigned int i;
     bestScore = 99999.9f;
     for (i = 0; i < q.count; i++) {
-        tmp = fn_80434C2CT(&q.slot[i]);
-        cand = tmp;
+        cand = (Ent *)(PEnt *)fn_80434C2CT(&q.slot[i]);
         if (!cand || !fn_800B0E54(cand) || !fn_800F5CC8(self, fn_800B1590(cand), 0))
             continue;
         score = q.slot[i].dist;
@@ -100,7 +98,7 @@ extern "C" void *fn_800C94C8(register void *self)
         if (fn_800B24AC(cand))
             fn_80434BA4(&v2, fn_80318E84(fn_800B24AC(cand)));
         else
-            fn_8042DC84(&v2, fn_800B1724(*(Ent *)cand));
+            fn_8042DC84(&v2, fn_800B1724(*cand));
         Vector v3;
         fn_80429038(&v3, &v2, fn_800B1724(*Entity_GetActor(self)));
         v3.z = 0.0f;

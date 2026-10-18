@@ -88,6 +88,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   the first reference's register is allocated ahead of the `register` parameters and the second
   one's after them, where `register` locals all come after (`Game/fn_804436D4.cpp`, declare the
   callee as returning `T &`).
+  When the slot sits ahead of locals a reference declared at the assignment would follow, keep a
+  plain local and assign through a derived-to-base cast, `x = (T *)(Sub *)f();` with `f` returning
+  `int` (entry 44); a `register` temp gets the right code but the lowest register (`Game/fn_800C94C8.cpp`).
   The same save-then-slot shape for an `int` result is `register int tmp = f(); int cap = tmp;` (`Game/fn_8043ED84.cpp`), and for a heap
   object whose virtual call reads the slot twice it is `Heap &heap = *f();` (`Game/fn_80440774.cpp`, `fn_804407E8`).
   A reference takes its frame slot where it is declared, so the other locals declared after it follow it in the frame: write `Actor &owner = *f();` ahead of them, not at the top (`Game/fn_80148178.cpp`).
