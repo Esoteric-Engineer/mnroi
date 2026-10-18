@@ -111,7 +111,7 @@ FIELD_NAMES = {
         189: "rage points for superattack",
         184: "length of the timer fn_80161BDC starts (deadline = now + value, stored at +0x18/+0x14); the owner and the caller of fn_80161BDC (vtable slot) not yet decompiled",
         185: "length of the timer fn_8016216C starts (same shape as 184; deadline stored at +0x18/+0x14), then it calls fn_800E9AF8 with 15, 4, 0.5; the owner and caller (vtable slot) not yet decompiled",
-        192: "FID_PLAYER_RAGE_DURATION",
+        192: "duration (ms is a guess) added to the game clock (fn_8042EFF8) to give the end time stored as a float at entity +0x334, as 195 (fn_8009DF60); named FID_PLAYER_RAGE_DURATION in the DOL",
         193: "rage penalty, % of base points",
         195: "duration (ms is a guess) added to the game clock (fn_8042EFF8) to give the end time stored as a float at entity +0x334 (fn_8009E144)",
         196: "amount fn_80084A60 takes from the actor's float at +0x324 (it subtracts it if that float is not below it) when the move at clip 0x112 starts (fn_800D579C)",
