@@ -5,7 +5,7 @@ inline int sn_return_decl(int a) { return a; }
 struct Ent {
     int pad;
 };
-struct PEnt : Ent { // the accessor returns the derived class; the conversion saves the pointer
+struct PEnt : Ent { // matching_notes 44
     int x;
 };
 

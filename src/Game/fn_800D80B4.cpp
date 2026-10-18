@@ -14,7 +14,7 @@ struct Ent {
     int pad;
 };
 
-struct PEnt : Ent { // the accessor returns the derived class; each conversion saves the pointer
+struct PEnt : Ent { // matching_notes 44
     int x;
 };
 

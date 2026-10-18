@@ -3,7 +3,7 @@
 struct Ent {
     int pad;
 };
-struct PlayerEnt : Ent { // the accessor returns the derived class; each conversion saves the pointer
+struct PlayerEnt : Ent { // matching_notes 44
     int x;
 };
 
