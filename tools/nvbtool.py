@@ -113,6 +113,7 @@ FIELD_NAMES = {
         134: "base of 134 + i, returned by fn_80086C80 as 1.0 minus the value; caller not yet decompiled",
         157: "stored to the entity float at +0x514 when fn_800CC6AC is 4 and fn_8009AFC8 is 3 (fn_800C45B0)",
         167: "returned by the getter fn_80086DE4; callers not yet decompiled",
+        168: "effect name made with fn_80393A60 (flag 0); fn_8039D3C0 true attaches it to the actor, then vtable slots 20 and 44 run, and slot 22 when fn_80067050 gives a position (fn_800D5514)",
         170: "FID_PLAYER_VICTORY1 (versus victory cutscene 1); base of 170 + G[+0x79C + 4*side], the cutscene name fn_80093C14 hands to fn_800578E4",
         173: "base of 173 + v, v = random 0..2, the cutscene name fn_8009701C hands to fn_80057894 with 0x42022000 (guess: the mp_*_ext_* strings are an exit/extra cutscene)",
         183: "read from the target's entity; half of it is added to the clock as the time stamp stored in the AI object's target list (fn_80148178)",
