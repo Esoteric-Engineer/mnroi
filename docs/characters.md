@@ -143,7 +143,7 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
 | `Bundles/wolverine.ngb` | Binary | The 158 `.nad` animations. |
 | `Bundles/wolverine.ngm` | Binary | The model (`Wolverine.nod`). |
 | `Bundles/wolverine.ngt` | Text | Materials and effects the model uses (`WolverineHair`, `ge_charlight`, `GE_PAR_ElectricParticles`). |
-| `Bundles/wolverine.tpl`, `Materials/Models/Wolverine*.tpl` | GameCube TPL | Textures. |
+| `Bundles/wolverine.tpl`, `Materials/Models/Wolverine*.tpl` | GameCube TPL | Textures. `fn_80232C4C` reads image 0 only and overrides its LOD (trilinear if mipmapped, else linear; LOD bias -0.5). |
 | `Bundles/wolverine-t0/t1/t2.ngb` | Binary | The variant for an opponent whose property 0x27 (`SKELETONID`, section 3) is 0, 1 or 2, loaded through `%s-t%d` (`fn_8019EA38`). |
 | `Bundles/wolverine_alt.*` | | The alternate costume. |
 | `Apt/clash/portraits/c1_p0.big` | APT | Select-screen portrait, named by select-screen id (section 5; Wolverine is 1). |
