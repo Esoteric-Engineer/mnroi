@@ -214,6 +214,7 @@ FIELD_NAMES = {
         64: "percent, stored * 0.01 in lbl_8053F2CC[0][2] (fn_80044E5C)",
         65: "third argument of fn_80043000(2, 0, ...) in fn_80044E5C",
         66: "fourth argument of fn_80043000(2, 0, ...) in fn_80044E5C",
+        67: "times field 19, stored in the body's +0x170 (fn_80446DE8) when fn_800CDA20(actor); fn_800C72B0 then also passes flags 0x2000200 to fn_800396A8",
         68: "18 instead when fn_800370D0's flags argument has 0x2000000",
         69: "that rate when +0x198 < 1.0 and the first flags argument has 0x2000000 (fn_800393F4)",
         70: "percent, stored * 0.01 in lbl_8053F284[2][1] (fn_80044E5C)",
