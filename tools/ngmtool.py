@@ -24,17 +24,38 @@ Big-endian on disc (the readers fn_801A2108 and fn_80221C08 do no byte swap):
         u32 flags                model +0x0
         u8  [0x20]               model +0xB0
         per stream:              model +0x1C, 0x18 each
-          u8 type; u32 n; n * 6 bytes; u16 m; m * STRIDE[type] bytes; type > 2: n * 6 more bytes
-        u16 n; n * 4 bytes       model +0x14
-        u32 n; n * u16           model +0x7C (n at +0x10); a short read fails the load
-        per part:  char[0x20]    a texture/material name, fn_80234628 (model +0x88)
-        per node:  Vector a, b (w forced to 1.0); s8 parent; u8   (0x30 each at model +0x80; skeleton
-                   nodes, guess; fn_801A3784 sums |a| along the nodes with parent > 0)
+          u32 n; n render vertices, three u16 each: a vertex of this stream, a normal (an index
+                                 into Misc/NormalTable.ngn) and a UV (into the UV list below)
+          u16 m; m vertices of STRIDE[type] bytes, in model space:
+                                 type 0: f32 position; rigid, bound to the mesh's one node
+                                 type 1: f32 position; u32 node
+                                 type 2: f32 position; f32 weight[3]; u8 node[3]; u8 0
+          type > 2 (no file has one): n * 6 more bytes
+        u16 n; n UVs             model +0x14; s16 u, v with 9 fraction bits (GXSetVtxAttrFmt in
+                                 fn_8021AD30; fn_80223E38 scales by 512.0)
+        u32 n; n * u16 indices   model +0x7C (n at +0x10); a short read fails the load. Each
+                                 mesh's strip span and then its list span, in mesh order; an
+                                 index is a render vertex of the mesh's stream, not mesh-relative
+        per part:  char[0x20]    a material name, fn_80234628 (model +0x88); its block in
+                                 Materials/Shaders/shaders.nsa names the shader and textures
+        per node:  Vector a, b (w forced to 1.0); s8 parent; u8   (0x30 each at model +0x80)
+                   a skeleton without rotations: a is the offset from the parent and -b the
+                   position in the model, so a node's -b is its parent's -b plus its a (all but
+                   42 of the 29,688 child nodes, those in helicopter.NOC); a parent comes before
+                   its child
         u16, u16                 model +0x158, +0x15A (first node of a second chain, guess)
-        per mesh:  s32 part index; u8 group; u16 a; u16 b; u16 c; u8, u8, u8; u8 n; n bytes
-                   (0x5C each at model +0x18; a and b are consecutive spans in one running
-                   offset, c sums per group)
+        per mesh:  s32 part index; u8 stream; u16 strip count; u16 list count; u16 render
+                   vertices; u8, u8, u8; u8 n; n nodes   (0x5C each at model +0x18)
+                   The render vertices are the next ones of the stream (they sum to its n).
+                   fn_80223E38 draws the list (GX_TRIANGLES, count at mesh +0x16) and then the
+                   strip (GX_TRIANGLESTRIP, +0x14). The strip joins its runs with repeated
+                   indices; its even triangles and every list triangle are counter-clockwise
+                   seen from outside (it agrees with the normals). The n nodes are every node
+                   the mesh's vertices name; a type-0 mesh has exactly one.
         per bone:  u8, u8, u16; four Vectors (a 4x4 matrix)   (0x50 each at model +0x150)
+
+Misc/NormalTable.ngn (fn_80224F30, "Graphics:Normals"): u16 count (2609), then that many unit
+f32 vectors; the renderer binds it as the normal array of every model (fn_802237AC).
 """
 
 import os
@@ -65,31 +86,53 @@ class Reader:
         self.off += n
 
 
+class Body:
+    """Where one model's arrays are in the file; ngmexport.py decodes them."""
+
+    def __init__(self):
+        self.streams = []  # (type, render vertex offset, count, vertex offset, count)
+        self.meshes = []   # (part, stream, strips, lists, render vertices, (u8, u8, u8), nodes)
+
+
 def parse_body(r, parts, nodes, meshes, bones):
-    name = r.take("32s").split(b"\0")[0].decode("latin-1")
+    b = Body()
+    b.name = r.take("32s").split(b"\0")[0].decode("latin-1")
     streams = r.take("B")
     if streams > 4:
-        raise ValueError("%s: %d streams" % (name, streams))
-    r.take("I")
+        raise ValueError("%s: %d streams" % (b.name, streams))
+    b.flags = r.take("I")
     r.skip(0x20)
     for _ in range(streams):
         kind = r.take("B")
         n = r.take("I")
+        refs = r.off
         r.skip(n * 6)
         m = r.take("H")
+        b.streams.append((kind, refs, n, r.off, m))
         r.skip(m * STRIDE[kind])
         if kind > 2:
             r.skip(n * 6)
-    r.skip(r.take("H") * 4)
-    r.skip(r.take("I") * 2)
-    r.skip(parts * 0x20)
+    b.uv_count = r.take("H")
+    b.uvs = r.off
+    r.skip(b.uv_count * 4)
+    b.index_count = r.take("I")
+    b.indices = r.off
+    r.skip(b.index_count * 2)
+    b.parts = [r.take("32s").split(b"\0")[0].decode("latin-1") for _ in range(parts)]
+    b.nodes = r.off
+    b.node_count = nodes
     r.skip(nodes * 0x22)
-    r.skip(4)
+    b.chains = r.take("HH")
     for _ in range(meshes):
-        r.skip(4 + 1 + 6 + 3)
-        r.skip(r.take("B"))
+        rec = r.take("iBHHH")
+        flags = r.take("BBB")
+        n = r.take("B")
+        b.meshes.append(rec + (flags, r.data[r.off:r.off + n]))
+        r.skip(n)
+    b.bones = r.off
+    b.bone_count = bones
     r.skip(bones * 0x44)
-    return name
+    return b
 
 
 def parse(data):
@@ -116,9 +159,9 @@ def cmd_list(index, sub):
         head, models, _ = parse(read_entry(index, name))
         print("%-36s %3d %8x %8x %6d %7d %8x" % (name, head[0], head[1], head[2], head[3],
                                                head[4], head[5]))
-        for rec, model in models:
+        for rec, body in models:
             print("    %-32s index %3d  parts %3d  nodes %3d  meshes %3d  bones %3d" %
-                  ((model,) + rec))
+                  ((body.name,) + rec))
 
 
 def cmd_check(index):

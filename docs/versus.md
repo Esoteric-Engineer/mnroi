@@ -335,7 +335,7 @@ Rows 20 and 21:
 
 ### Steps 22 and 23: model and animation bundles
 
-`Bundles/<name>.ngm` (models, `tools/ngmtool.py`) and `.ngb` (animations, `tools/ngbtool.py`) are
+`Bundles/<name>.ngm` (models, `tools/ngmtool.py`; glTF export `tools/ngmexport.py`) and `.ngb` (animations, `tools/ngbtool.py`) are
 the two binary bundle formats. **These rows pin functions**, a unit of its own each, in the order given. As a reader
 matches, write the layout it shows into [`characters.md`](characters.md) section 4 and into a
 `tools/` script that parses every file of that type in `CLASH.BIG` to its last byte, the test
