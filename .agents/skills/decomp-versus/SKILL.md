@@ -11,15 +11,15 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
 ## Changes to decomp-next
 
 - **Before step 1, read `docs/versus.md` section 5 (Target Order) only** — the status table plus
-  the `Step N` subsection for the row you land on, and no other subsection. That is enough to pick a
-  target and know its blocker. Read further sections *on demand*, once you know what you are
+  the notes for the row you land on (rows 25 to 28 share one subsection), and nothing else. That
+  is enough to pick a target and know its blocker. Read further sections *on demand*, once you know what you are
   working: section 2 for the file map, section 3 for the setup flow, section 4 for the game-state
   and slot fields, section 6 for `GameFlow`. Don't read the file end to end; it is a reference, and
   reading all of it costs more than it returns. Same for `docs/characters.md` in the character
   steps: go to the section the target needs.
 - **Step 1 (Choose):** if the user named a function or unit, work that one. Otherwise take the
   first row of `docs/versus.md` section 5 that is not done, and in it the first target still open.
-  Rows come in three kinds, and the row's subsection says which:
+  Rows come in four kinds, and the row or its notes say which:
   - **A file or run:** take the next function after the unit's current `.text` end, so that the
     unit grows as one contiguous range from the file's first function.
   - **Pinned functions:** work the named function itself, even with unclaimed functions between it
@@ -27,6 +27,9 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
     gives after them, contiguously from a matched neighbour.
   - **Data:** there is no function to choose. Follow the row's recipe; decomp-next's steps 3 to 6
     still apply to the unit (claim, register `NonMatching`, compare, flip, `main.dol: OK`).
+  - **No matching** (row 24): there is no unit. Follow the row's recipe, write the result where
+    the row says, and mark the row done. Skip decomp-next's steps 3 to 6, but still run `ninja`
+    and require `main.dol: OK` if you changed anything under `src/` or `config/`.
 
   Still skip anything in `docs/nonmatching.md`. If the target is stuck, record it there and take the
   next open target, then the next row, instead of leaving a gap in a unit. The tail-sweep row is the
@@ -39,8 +42,9 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
   gives its name.
 - **Names:** the handler names in `symbols.txt` are the APT script names, not confirmed C++
   symbols. When the compiled name differs (GCC 2.95 mangling), rename the symbol to match what the
-  unit emits; see `docs/versus.md` section 1. Don't give leaf accessors (rows 19 to 21) guessed
-  names: keep `fn_XXXXXXXX` until the end, when they get renamed in one pass.
+  unit emits; see `docs/versus.md` section 1. Don't give leaf accessors (the tuning
+  getters, the ability accessors of row 27) guessed names: keep `fn_XXXXXXXX` until the end, when they get renamed in
+  one pass.
 
 ## Recording what you learn
 

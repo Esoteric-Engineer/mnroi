@@ -1,23 +1,26 @@
 # Characters
 
-How the game defines, selects and loads playable characters, and what a new character would need. The decompilation order for this code is in [`versus.md`](versus.md#5-target-order).
+How the game defines, selects and loads playable characters, and what a new character needs. The decompilation order for this code is in [`versus.md`](versus.md#5-target-order).
 
-Everything here comes from reading the disassembly and `CLASH.BIG`. Names in the "Meaning" columns are guesses until a unit matches. Facts marked **tested** were seen running in Dolphin on 2026-10-12, in a modded build with a 19th versus character (section 6).
+Facts come from the disassembly and `CLASH.BIG` unless a unit is named. What a matched function does is in its source, so this file keeps only what a modder or the next decompilation needs. **Tested** marks what was seen running in Dolphin in modded builds: a 19th character built from existing assets (2026-10-12), and characters 19 and 20 with their own assets (2026-10-17).
 
 ---
 
 ## 1. Two Character IDs
 
-The code uses two separate numberings. Don't mix them up.
+Don't mix these up.
 
 | ID | Where | Values |
 |---|---|---|
-| **Roster index** | The roster table (section 2), the select screen, `G`'s player slots | 1-18 for playable characters. 0 and 19 are filler records (copies of Wolverine and the Thing). |
-| **Type ID** | `fn_80020E60(actor)` (from the name), and `fn_8009ABEC(actor)`, which returns `actor+0x1AC`, set separately from entity property 0x70, `OBJECT_SOUNDID` (section 3); effects, sound and other gameplay code switch on it | 1-18 playable (a different order from the roster), 21-38 for the alternate costumes (`type + 20`), 100-103 for NPCs (human, brute, flier, civilian). **19 and 20 are unused.** `actor+0x1AC` also holds non-character values (`fn_80098D30` tests 70-76, 100, 102, 104, 119, 125, 157, 160, 173, 195, 506, 515; meanings unknown). |
+| **Roster index** | The roster table (section 2), the select screen, `G`'s player slots | 1-18 playable. 0 and 19 are filler records (copies of Wolverine and the Thing). |
+| **Type ID** | Effects, sound and other gameplay code switch on it | 1-18 playable (in a different order from the roster), 21-38 the alternate costumes (`type + 20`), 100-103 NPCs (human, brute, flier, civilian). **19 and 20 are unused.** |
 
-### Type IDs (`fn_80020E60`)
+Two functions give a type ID, each from its own template property (section 3):
 
-**Matched** (`Game/fn_80020E60.c`, 0x80020E60-0x800219D4; plain C at `-O0`). `fn_80020E60(actor)` returns -1 for a null actor or one `fn_800B0C58` rejects. It then gets an info object with `fn_800B14A0(actor)` and returns the cached ID at `info+0x3D4` whenever that is nonzero, so 0 means "not looked up yet" and -1 means "not a character". On the first call it `strcpy`s the name at `info+0xDC` into a 32-byte stack buffer, lowercases it with `strlwr`, then runs an `else if` chain of 56 `strcmp`s and caches the result; an empty name or no match caches -1.
+- `fn_80020E60(actor)` (`Game/fn_80020E60.c`) turns the `CASTID` name (property 0x14, which `fn_800AC750` lowercases into `actor+0xDC`) into an ID with a `strcmp` chain, and caches it at `actor+0x3D4` (0 not looked up yet, -1 not a character). Its callers are the aura code `fn_8001C258` and `fn_80023010`, and `fn_8002623C`, which passes the ID on to `fn_8001DCE0`.
+- `fn_8009ABEC(actor)` returns `actor+0x1AC`, which `OBJECT_SOUNDID` (property 0x70) sets. The SFX banks (`fn_80114420`) and voices (`fn_8010CDCC`) read it. `actor+0x1AC` also holds values that are not characters (`fn_80098D30` tests 70-76, 100, 102, 104, 119, 125, 157, 160, 173, 195, 506 and 515; meanings unknown).
+
+The alternate costumes keep the base ID in 0x70 while their `CASTID` is `ALT_<name>`, so an alternate gets its own aura (`type + 20`) and the base character's sounds.
 
 | ID | Name | ID | Name | ID | Name |
 |---|---|---|---|---|---|
@@ -28,57 +31,40 @@ The code uses two separate numberings. Don't mix them up.
 | 5 | `magneto` | 11 | `roekel` | 17 | `biohazard` |
 | 6 | `elektra` | 12 | `megalith` | 18 | `heatwave` |
 
-`alt_<name>` maps to `id + 20`. `human1`-`3` map to 100, `brute1`-`3` to 101, `flier1`-`3` to 102, and eleven civilians to 103: `Human`, `businessmana`, `businessmanb`, `businesswomana`, `businesswomanb`, `securityguard`, `scientist`, `scientist1`, `scientist2`, `scientist3`, `cop`. The chain is compared in exactly that order, and `Human` is **dead**: the name is lowercased before the first `strcmp`, so an actor called `Human` falls through to -1. The internal names are codenames, so `roekel` is Van Roekel and `defcon`, `megalith`, `aftershock`, `biohazard` and `heatwave` are the Imperfects.
-
-Only three functions call it: `fn_8001C258` (**matched**, `Game/fn_8001C258.cpp`), `fn_80023010` (**matched**, `Game/fn_80023010.c`) and `fn_8002623C` (**matched**, `Game/fn_8002623C.cpp`). `fn_8002623C` only passes the type ID on to `fn_8001DCE0`, so it is not itself a place a new character needs an entry.
+`alt_<name>` maps to `id + 20`. `human1`-`3` map to 100, `brute1`-`3` to 101, `flier1`-`3` to 102, and eleven civilians (`businessmana` ... `cop`) to 103. The chain also has `Human`, which never matches because the name is lowercased first. The names are codenames: `roekel` is Van Roekel, and `defcon`, `megalith`, `aftershock`, `biohazard` and `heatwave` are the Imperfects.
 
 ---
 
 ## 2. Roster Table
 
-`fn_80431CCC(int index, int remap, int alt)` returns `&table[index]`, where the table is `lbl_804CA51C` (normal costumes) or, when `alt == 1`, `lbl_804CAB0C` (alternate costumes). If `remap` is set, `index` first goes through `lbl_804CB0FC`, an `int[20]` that maps select-screen order to roster index. Both tables are `Record[20]`, which is 0x5F0 bytes each (`Record` is 0x4C bytes). **Matched** (`Game/fn_80431CCC.c`); it's plain C, not a C++ method, despite sitting among C++ handler files (see [`prodg.md`](prodg.md#flags)).
+`Game/unlockables.c` is a data-only unit. It holds `lbl_804CA51C` (normal costumes) and `lbl_804CAB0C` (alternate costumes), each a `CharacterRecord[20]` of 0x4C-byte records, and `lbl_804CB0FC`, an `int[20]` from select-screen order to roster index. `fn_80431CCC(index, remap, alt)` returns `&table[index]`, going through the order table when `remap` is set and using the alternate table when `alt == 1`. Callers take `alt` from the `plr_alt` prefix of the entity name (`fn_801311C0`); it is not stored anywhere.
 
 | Offset | Type | Meaning | Wolverine |
 |---|---|---|---|
 | +0x00 | `char[0x20]` | Entity name | `plr_wolverine` (`plr_altWolverine` in the alt table) |
 | +0x20 | `char[0x20]` | Localisation key for the hero name. A plain string is shown as is (**tested**), so a new name needs no string-table entry | `~kT_WOLVERINE` |
-| +0x40 | `s8[6]` | Select-screen stats: intel, strength, speed, durability, energy, skill | 2, 4, 2, 4, 1, 7 |
+| +0x40 | `s8[6]` | Select-screen stats: intel, strength, speed, durability, energy, skill. Only shown: no gameplay code was found reading them | 2, 4, 2, 4, 1, 7 |
 | +0x46 | `s8[2]` | Always 0 | |
-| +0x48 | int | Unlocked at start | 1 |
+| +0x48 | int | Unlocked at start (Daredevil's is 0) | 1 |
 
-The tables are source now (`Game/unlockables.c`, a data-only unit): both `CharacterRecord[20]` arrays, the `int[20]` order table, and three more `Rec` arrays of 0x44 bytes (`char name[0x20]`, `char key[0x20]`, `int unlocked`) beside them:
+Rows 0 and 2 are both Wolverine, and 19 repeats the Thing; the order table starts and ends with 0. The alternate table repeats the normal one except for the entity name and, in rows 1, 6, 9, 11, 13, 14 and 16, some stats.
 
-| Address | Contents |
-|---|---|
-| 0x804CB14C | `Rec[7]` venues, `BrooklynBridge` to `RoekelFacility`; the first three start unlocked |
-| 0x804CB328 | `Rec[43]` cards, `~kT_CARDS<n>` / `~kT_CARDSDESC<n>`, all locked |
-| 0x804CBE94 | `int[9]`, all 0; meaning unknown |
-| 0x804CBEB8 | `Rec[25]` comics, `~kT_COMIC<n>` / `~kT_COMICDESC<n>`, all locked |
+Readers: the per-field accessors `fn_8044B1D4`-`fn_8044B48C` that `clashCharSelect_GetCharList` calls (`Game/fn_8044B1D4.c`), `fn_80443678` (the whole record), `fn_804436D4` (writes `+0x48` in *both* tables, so unlocking a character unlocks its alternate costume), `fn_80461288(name, alt)` (name to localisation key, or the name itself when there is no match), `fn_804316B0`, and `fn_8044F070` (`Game/fn_8044EEF4.c`), the inverse of the order table, which searches `i <= 0x13`.
 
-Rows 0 and 2 are both Wolverine, and 19 repeats Thing; the order table starts and ends with 0. The alternate table repeats the normal one except for the entity name and, in rows 1, 6, 9, 11, 13, 14 and 16, some stats.
+The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int unlocked}`: 0x804CB14C `Rec[7]` venues (`BrooklynBridge` to `RoekelFacility`, the first three unlocked), 0x804CB328 `Rec[43]` cards and 0x804CBEB8 `Rec[25]` comics, all locked. 0x804CBE94 is an `int[9]` of zeros (meaning unknown).
 
-The table is in `.data`, and `+0x48` probably changes at runtime as characters are unlocked. No `memcard.cpp` function calls a reader of the roster tables, and only `clashMemcard_ResetStoryMode` does so through one more call, so the save does not appear to store the roster records (guess: unlocks are rebuilt from story progress; access through a stored pointer is unchecked).
+**Saves.** No `memcard.cpp` function reads the roster tables, and only `clashMemcard_ResetStoryMode` reaches them through one more call, so the save does not appear to store the records (guess: unlocks are rebuilt from story progress; access through a stored pointer is unchecked).
 
-Accessors, one per field, called by `clashCharSelect_GetCharList`: `fn_8044B1D4` (name key), `fn_8044B234` (intel), `fn_8044B298` (strength), `fn_8044B2FC` (speed), `fn_8044B360` (durability), `fn_8044B3C4` (energy), `fn_8044B428` (skill), and `fn_8044B48C` (unlocked, 5 callers). Each takes `(index, remap, alt)`. The six stat accessors return `char`, not `int`: their caller only matches when they are declared that way, which confirms the stats are `s8`. `fn_8044B1D4` returns `char *` and `fn_8044B48C` returns `int`. Other readers of the table: `fn_804316B0`, `fn_80443678`, `fn_804436D4`, `fn_8044F070` and `fn_80461288`.
-
-Three of those are now known. `fn_80443678(index, remap, alt)` just returns the record (**matched**, `Game/fn_804428E0.c`). `fn_804436D4(index, unlocked, remap)` writes `+0x48` in *both* tables, so unlocking a character unlocks its alternate costume with it; it is **matched** as `Game/fn_804436D4.cpp`, a C++ unit because it binds both records to reference locals. `fn_80461288(name, alt)` is the reverse lookup: it walks all 20 records of one table comparing `name` against `+0x00` and returns that record's `+0x20` localisation key, or `name` itself when nothing matches, which confirms `+0x20` as the key field.
-
-**Confirmed** (`Game/fn_8044B1D4.c`, 0x8044B1D4-0x8044B4EC): each is `fn_80431CCC(index, remap, alt)` followed by one field read, which confirms the `+0x40`-`+0x45` stats order (intel, strength, speed, durability, energy, skill) and the `+0x48` unlocked field. They're plain C like `fn_80431CCC`, not registered as APT handlers themselves. `fn_8044B1D4`'s two callers (0x80103830 in the characterselect range, 0x8010B744 in the mission.cpp range) both call it directly. The surrounding 0x8044AF58-0x8044EE3C region is mostly unrelated: a chain of generic registration-constructor templates (`fn_8044AF58`, `fn_8044B11C`, `fn_8044BBC8`...) that are called from the six *handler* files (section 2), not from this one; this accessor block just happens to be link-adjacent to them. The unit is **matched**; the register shape it was stuck on is in [`matching_notes.md`](matching_notes.md) (a `register` local assigned to a plain one).
-
-**`clashCharSelect_GetCharList` loops `for (i = 1; i <= 18; i++)`**: the roster size is a literal in the code, not read from the data. Each iteration fills nine parallel script arrays, which are the names a UI mod would have to keep: `aHeroName`, `aIntel`, `aStr`, `aSpd`, `aDur`, `aEng`, `aSkl`, `aIsUnLocked1` (`fn_8044B48C(i, 1, 0)`, the normal costume's `+0x48`) and `aIsUnLocked2` (`fn_8044B48C(i, 1, 1)`, the same field in the alternate-costume table). The handler is matched as `Game/handlers/characterselect.cpp`.
+**`clashCharSelect_GetCharList` loops `for (i = 1; i <= 18; i++)`**: the roster size is a literal in the code. It fills nine script arrays, the names a UI mod has to keep: `aHeroName`, `aIntel`, `aStr`, `aSpd`, `aDur`, `aEng`, `aSkl`, `aIsUnLocked1` and `aIsUnLocked2` (`+0x48` of the normal and the alternate record).
 
 ---
 
 ## 3. Selection to Spawn
 
-- A player slot in `G` (section 4.1 of [`versus.md`](versus.md#41-game-state-object-g-lbl_80552110-bss)) stores the chosen character by **entity name**. `fn_80443B70(slot, name, player)` copies the name into `slot+0x4` with `strncpy(.., 0x20)` and then writes `slot+0x23` itself, so the field is a `char[0x20]` that is always terminated; `player` goes to `slot+0x0` and is the **player index**, not a count (0x80091290 calls it with `(G+0x10, "plr_wolverine", 0)` and `(G+0xC0, "plr_wolverine", 1)`, which also confirms the 0xB0 stride). `fn_80443BC8(slot)` returns `slot+0x4` as `char *`, and `fn_80443BF4(slot)` returns bit 0 of the int at `slot+0x34`, which marks the slot as in use. All three are **matched** (`Game/fn_80443B70.c`). `fn_80443CCC(G, player, v)` is the `G`-level wrapper that forwards to `fn_804428E0(&G->slots[player], v)` and is **matched** in the same unit; `fn_804428E0(slot, v)` itself is **matched** (`Game/fn_804428E0.c`) and stores `min(v, 2)` at `slot+0x64` with `v` unsigned (so a negative `v` clamps to 2, not 0), which is the CPU difficulty: `Control_SetMatchInfo` passes it `fn_801318A0()`, the value `clashCharSelect_GetPrevCharList` returns to the UI as `nDiffLevel`, and `fn_800ACB7C` turns it into the tuning slot (section 4, "Tuning records"). It is not the `-t<n>` bundle variant, which comes from property 0x27 (below).
-- `fn_80443D44(G, player)` is how gameplay code gets a player's actor, and is the most-called of these
-  accessors (20+ callers): it returns `fn_8042FF2C(&G->slots[player])`, or NULL when
-  `player < 0 || player >= G+0x590`. **Matched** (`Game/fn_80443B70.c`).
-- `fn_80131060(player)` returns that player's slot name, or `"plr_wolverine"` if the slot is empty. **Matched** (`Game/fn_80131060.c`), which fills in the rest: it returns `"plr_wolverine"` for any `player > 1`, and only consults the slot's own name (`fn_80443BC8`) while a match is running (`fn_80130718`). For an unused slot in a running match it falls back to the name at `+0x320` of the script record `fn_804326B4(lbl_8054ED80)` holds, which is the `boss` of the running mission (section 4), and to `"plr_wolverine"` if that is empty.
-- `fn_800887AC` is the `.nsc` script parser (section 4), and its `plr_%s` / `plr_alt%s` is how a `boss` line names a character. `fn_801311C0` and `fn_800061CC` handle the `plr_alt` prefix. `fn_801311C0(player)` is **matched** (`Game/fn_80131060.c`): it is the display name for a player, `fn_80461288(fn_80131060(player), strstr(name, "plr_alt") != 0)`, and when the key that comes back starts with `~` it is localised through `fn_8012F32C`. So the `alt` flag the roster lookup takes is decided by the `plr_alt` prefix in the entity name, not stored separately.
-- `fn_800B5BC4` is **matched** (`Game/fn_800B5BC4.cpp`) and is not the load driver it looked like: it is the debug-menu command dispatcher ([`versus.md`](versus.md#6-the-gameflow-command-dispatcher)). It does reach the load path, through `fn_8002D7A8(lbl_8052F060, level, 8, 0, 0, 0)` and `fn_8009543C(G, id, "plr_wolverine")` (**matched**, `Game/fn_8009543C.c`: `id` 0-4, looks the template up with `fn_800FD5FC(name, 0)`, which does not create one, so the name must already be registered; `fn_8009613C(&G->slots[id], template)` fills the slot and the slot's actor, `slot+0x28`, is returned), which are the two debug commands worth following for how a chosen character becomes a spawned one.
-- **An actor is built from a property list.** Entity templates are looked up by name with `fn_800FD5FC(name, flag)` (`strlwr`, then a hashed lookup in the `.sbss` registry `lbl_8066BAE4`). `fn_800AC37C(object, property, arg)` applies one property `{int id +0x0; value +0x4}` (`Game/fn_800AC37C.cpp`). It looks the id up in the 120-entry property table `lbl_8048E748` (0x28-byte entries `{char name[0x20]; int kind; int type}`, `.rodata`; `type` is the value type: 0 string, 2 float, 3 int, 4 vector) and dispatches on `kind`, the component that owns the property (table below). The names in the table are the `Global.not` property names (`MODEL`, `ACTOR_HEALTH`, `PHYSICS_MASS`, ...).
+- **Player slots.** A slot of `G` ([`versus.md`](versus.md#41-game-state-object-g-lbl_80552110-bss) section 4.1) stores the character by **entity name** at `slot+0x4` (`char[0x20]`, always terminated; `fn_80443B70(slot, name, player)` writes it, `fn_80443BC8` reads it). `slot+0x64` is the CPU difficulty: `min(v, 2)` with `v` unsigned, from `fn_801318A0()`, the value the UI gets as `nDiffLevel`. It picks the tuning slot (section 4, "Tuning records"). `fn_80443D44(G, player)` returns a player's actor, or NULL when `player` is out of range of `G+0x590`.
+- **Names for a player.** `fn_80131060(player)` returns the slot's name while a match runs (`fn_80130718`), and `"plr_wolverine"` otherwise or for `player > 1`. An empty slot in a running match falls back to the mission's `boss` (the script record's `+0x320`, section 4). `fn_801311C0(player)` is the display name: `fn_80461288(name, strstr(name, "plr_alt") != 0)`, localised when the key starts with `~`.
+- **The debug path to a spawn.** `GameFlow` commands 0x50 and 0x51 call `fn_8009543C(G, id, "plr_wolverine")`, which finds the template with `fn_800FD5FC(name, 0)` (no create, so the name must be registered) and fills the slot with `fn_8009613C` ([`versus.md`](versus.md#6-the-gameflow-command-dispatcher) section 6).
+- **An actor is built from a property list.** `fn_800FD5FC(name, flag)` finds a template by name (lowercased, in the hashed registry `lbl_8066BAE4`). `fn_800AC37C(object, property, arg)` applies one property `{int id; value}`: it looks the id up in the 120-entry table `lbl_8048E748` (`{char name[0x20]; int kind; int type}`, the `Global.not` property names; `type` 0 string, 2 float, 3 int, 4 vector) and dispatches on `kind`, the component that owns the property. A gated kind returns 0 when its gate fails, so the property is ignored on an object of another class.
 
   | Kind | Ids | Handler |
   |---|---|---|
@@ -92,95 +78,114 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
   | 13 | 0x64-0x66, 0x71-0x73 `PROP_*` | `fn_800A39F4(object, ..)`, if `fn_800B0CC0` |
   | 14 | 0x6B `SENSOR_FLAGS` | `fn_800A9F90(fn_800B1518(object), ..)`, if `fn_800B0E18` |
   | 15 | 0xA-0xE `MODEL*`, 0x11-0x13, 0x16, 0x18, 0x19, 0x24, 0x27, 0x6C-0x6E, 0x70, 0x75 | `fn_80097750(fn_800B1568(object), ..)`, if `fn_800B0F0C` |
-  | 3 (`WEAPON_*`), 1, 12 | 0x4F-0x59 | nothing here (returns 0) |
+  | 3 (`WEAPON_*`), 1, 12 | 0x4F-0x59 | nothing (returns 0) |
   | 5, 6, 0x63 | no table entry uses them | `fn_800AEB90` |
 
-  A gated kind returns 0 when its gate fails, so a property of that kind is ignored on an object of another class.
+- **The templates are `Misc/Global.not`**, the only `.not` in `CLASH.BIG`, loaded by `fn_800FCF50`. `tools/nottool.py` holds the format; `dump <name>` prints a template with its property names, and `parse()`/`build()` rewrite the file byte for byte. The loader reads the records sequentially, so they must stay in index order and back to back, and it reads each note into a 0x200-byte stack buffer without a check (the longest is 398 bytes). Property 0 names the parent: `plr_Wolverine` is just `{0: act_Wolverine, 5: 7, 0xB: 0, 0x1A: 2}`, and `act_Wolverine` (parent `_superhero`) holds the character. `plr_alt<Name>` has the same parent and overrides the models (0x0A, 0x0F, 0x75), 0x14, 0x30 and 0x1A. `act_Wolverine` and `act_Daredevil` differ only in 0x0A, 0x0F, 0x13, 0x14, 0x15, 0x2E, 0x32, 0x70, 0x75 and 0x28, which only Daredevil sets.
 
-- **The templates are `Misc/Global.not`** (the only `.not` in `CLASH.BIG`), loaded by `fn_800FCF50` (`"global"`, `"NOT"`, `"Game:Templates"`; `fn_800FCE84` creates the registry; source file probably `gameTemplate`). Format, **little-endian** (the loader byte-swaps): magic `"NOT\x10"`, a u32 version (1), the template count (836) at `+0x8`, then index entries `{char name[0x20]; u32 offset}`. A record at `offset` (not aligned) is a u32 property count, then 0x24-byte properties `{u32 id; value[0x20]}`, the value a string, int, float or three floats, then a note: a u32 length and that many bytes of NUL-terminated text (`"\0"` for 813 templates, a designer's comment for 23). The loader reads the records sequentially, so they must stay in index order and back to back, and it reads the note into a 0x200-byte stack buffer unchecked (the longest is 398 bytes). `python3 tools/nottool.py dump <name>` prints a template with its property names; its `parse()` and `build()` rewrite the file byte for byte. Property 0 names the parent template, so `plr_Wolverine` is just `{0: act_Wolverine, 5: 7, 0xB: 0, 0x1A: 2}`, and `act_Wolverine` (parent `_superhero`) holds the character. `plr_alt<Name>` has the same parent and overrides the models (0x0A, 0x0F, 0x75), 0x14, 0x30 and 0x1A, so the alt's property 0x70 is the base type (1 for Wolverine), not `type + 20`.
-
-  | Id | Name (`lbl_8048E748`) | `act_Wolverine` | Effect (`fn_80097750` unless noted) |
+  | Id | Name | `act_Wolverine` | Effect (`fn_80097750` unless noted) |
   |---|---|---|---|
-  | 0x0A | `MODEL` | `Wolverine.nod` | model: `fn_801A1FC4` / `fn_801A2894` / `fn_801A1A84`, result at `actor+0x1BC`. The bundle loaded is named after this value, not after the template: `Daredevil.nod` in a template of another name opens `Bundles/Daredevil.*` (**tested**) |
-  | 0x0B | `MODELFLAGS` | | int, ORed into the model's `+0x4` flags; ignored with no model |
-  | 0x0C | `MODELSCALE` | | float, `fn_804442F0(model, v)`; ignored with no model |
-  | 0x0D | `MODELLODSCALE` | | float, multiplies the `+0x30` float of `fn_8009AD80(actor)` (by name, the LOD scale) |
-  | 0x0E | `MODELOFFSET` | | vector, copied to `actor+0x1D0` |
-  | 0x0F | `PHYSMODEL` | `Wolverine_phys.nod` | `fn_800AE534` (kind 0): `fn_801A0814(name, 0x10)` into `+0x174` (guess: the physics model) |
+  | 0x0A | `MODEL` | `Wolverine.nod` | The model, at `actor+0x1BC`. The bundle loaded is named after this value, not the template: `Daredevil.nod` opens `Bundles/Daredevil.*` (**tested**) |
+  | 0x0B, 0x0C | `MODELFLAGS`, `MODELSCALE` | | ORed into the model's `+0x4` flags; the model scale. Both ignored with no model |
+  | 0x0E | `MODELOFFSET` | | Vector, `actor+0x1D0` |
+  | 0x0F | `PHYSMODEL` | `Wolverine_phys.nod` | (`fn_800AE534`) `+0x174`; hit regions and ragdoll parts (its materials are `hitRegion_*` and `ragdoll_*`) |
   | 0x12 | `SOUNDTYPE` | 16 | `actor+0x1A8` |
-  | 0x13 | `MOTIONSET` | `wolverine.nms` | motion set: `fn_8019EA38(name, variant)` when `fn_80444454(actor)`, where the `-t<n>` variant is property 0x27 of the template named in the *other* player's slot (`fn_800976C0`; this player's slot index is `G+0x640`), or -1 when `fn_80426AB0(G)`; then `fn_8008F470(name, 0, 1)` into `actor+0x1C0`, which on a registry miss makes the set empty and named, unparsed (`fn_8009AA40(actor)` parses it later; no direct `bl` caller) (`fn_80097C4C(actor, n)` stores a byte `n` <= the set's overlay count at `actor+0x204`, so the active overlay, guess; called from 0x800C3BC4 and two more sites in the script-command file) |
-  | 0x14 | `CASTID` | `WOLVERINE` (`ALT_WOLVERINE` on the alt) | not in `fn_80097750` (guess: the name `fn_80020E60` reads, since `alt_` gives `type + 20` there) |
-  | 0x15 | `DESCRIPTIONID` | `WOLVERINE` | `fn_800AE534`: `strncpy` into `+0xFC` (0x1F characters, `+0x11B` forced 0). It names the tuning record: `fn_800ACB7C` looks up `PLAYER_<value>` (section 4, "Tuning records") |
-  | 0x19 | `DAMAGESCALE` | | float, `actor+0x214` |
-  | 0x24 | `DESTROY_TEMPLATE` | | string, template `fn_800FD5FC(name, 1)` into `+0x1A0`, else `fn_803A1AC4(lbl_8064AA80, name)` into `+0x1A4` |
-  | 0x27, 0x28 | `SKELETONID`, `EFFECT1` | Storm: 1, `strmHair` | 0x27: `actor+0x200`, a body class: 0 by default (`_actor`), 1 for Aftershock, DefCon, Elektra, Heatwave, Paradox and Storm, 2 for the Thing, Venom, Megalith, Roekel and the brutes. The tuning files call them male, female and brute: `fn_80096460` reads the string field `206 + class`, whose values are `fm_wl_male_1`, `fm_wl_female_1` and `fm_wl_brute_1` (section 4). The opponent's value picks this character's `-t<n>` animation bundle (0x13). 0x28-0x2B `EFFECT1`-`EFFECT4` (`ddFX`, `strmHair`, `htBodyFire`...): `fn_800AE534` creates the named effect with `fn_803A20D8(lbl_8064AA80, name, actor, 0, 0, 0, 0, 0.0f)` and attaches it with `fn_8039CE18(fx, 1)` / `fn_80393938(actor, fx, 0)`. 0x2C `EFFECT5` is in kind 0 but returns 0 |
-  | 0x2E | `ACTOR_AI` | `AI_WOLVERINE` | (`fn_80084498`) AI profile: index of the name in `lbl_804CF8E8` (`fn_80137CEC`, `stricmp`), stored as a short at `+0x384`; an unknown name gives 0, `AI_DEFAULT` |
-  | 0x2D-0x38, 0x3A, 0x3B, 0x6F | `ACTOR_*`, `SUPERBLOCK_EFFECT` | | (`fn_80084498`, object fields) 0x2D low halfword to short `+0x314`; 0x30 int `+0x300`; 0x31 int `+0x30C`; 0x32 int `+0x308`; 0x33 int as float to `+0x31C` and `+0x32C`; 0x34 int as float to `+0x320`; 0x35, 0x36 floats `+0x324`, `+0x328`; 0x37, 0x38 floats `+0x33C`, `+0x340`; 0x3A low byte to short `+0x316`; 0x3B template lookup into `+0x3B4`, else `fn_803A1AC4(lbl_8064AA80, name)` into `+0x3B0`; 0x6F that lookup into `+0x3C0`. Other ids (0x2F, 0x39, 0x3C-0x49) return 0 |
-  | 0x6C | `HAVOKBREAK_MODEL` | | string, `fn_801A1A84` into `+0x20C` |
-  | 0x6D, 0x6E | `HAVOKBREAK_TEMPLATE`, `HAVOKCHUNK_TEMPLATE` | | string, template lookup into `+0x208`, `+0x210` |
-  | 0x70 | `OBJECT_SOUNDID` | 1 (Storm: 7) | **type ID**, `actor+0x1AC` |
-  | 0x75 | `SHADOWMODEL` | `Wolverine_shadow.nod` | `fn_801A1A84` into `+0x22C` (shadow model) |
+  | 0x13 | `MOTIONSET` | `wolverine.nms` | The motion set, `actor+0x1C0`. Loads `Bundles/<name>.ngb` and the `-t<n>` variant, where `n` is the other player's 0x27 (section 4) |
+  | 0x14 | `CASTID` | `WOLVERINE` (`ALT_WOLVERINE` on the alt) | (`fn_800AC750`) Lowercased into `+0xDC`: the name `fn_80020E60` turns into the type ID (section 1) |
+  | 0x15 | `DESCRIPTIONID` | `WOLVERINE` | (`fn_800AE534`) `+0xFC`. Names the tuning record `PLAYER_<value>` (section 4); otherwise only AI debug text and a story-mode lookup read it |
+  | 0x19 | `DAMAGESCALE` | | Float, `actor+0x214` |
+  | 0x24 | `DESTROY_TEMPLATE` | | Template into `+0x1A0`, else an effect into `+0x1A4` |
+  | 0x27 | `SKELETONID` | Storm: 1 | `actor+0x200`, the body class: 0 male (the default), 1 female (Aftershock, DefCon, Elektra, Heatwave, Paradox, Storm), 2 brute (the Thing, Venom, Megalith, Roekel, the brutes). The opponent's value picks this character's `-t<n>` animation bundle and the tuning fields 206 + class |
+  | 0x28-0x2B | `EFFECT1`-`EFFECT4` | Storm: `strmHair` | (`fn_800AE534`) An effect created and attached to the actor (`ddFX`, `htBodyFire`...). 0x2C `EFFECT5` does nothing |
+  | 0x2E | `ACTOR_AI` | `AI_WOLVERINE` | (`fn_80084498`) AI profile: the name's index in `lbl_804CF8E8`, a short at `+0x384`; an unknown name gives 0, `AI_DEFAULT` |
+  | 0x30 | `ACTOR_FLAGS` | 0x108200 | (`fn_80084498`) `+0x300`. Bit 0x80 (`fn_80085DCC`) is the alternate costume (`plr_altWolverine` has 0x108280) and picks tuning slot 5; bit 0x200 (`fn_80085D3C`, meaning unknown) can pick slot 4 |
+  | 0x32 | `ACTOR_ABILITIES` | 0x05400602 | (`fn_80084498`) `+0x308`, the bits below |
+  | 0x33, 0x34 | `ACTOR_HEALTH`, `ACTOR_MAXHEALTH` | 100, 100 | (`fn_80084498`) Floats `+0x31C`/`+0x32C` and `+0x320` |
+  | 0x35, 0x36 | `ACTOR_ENERGY`, `ACTOR_MAXENERGY` | | (`fn_80084498`) `+0x324`, `+0x328`. Moves cost energy (tuning fields 30, 31, 35, 225, 230) |
+  | 0x37, 0x38 | `ACTOR_WALKSPEED`, `ACTOR_RUNSPEED` | 1.7, 6.0 | (`fn_80084498`) `+0x33C`, `+0x340` |
+  | 0x6C-0x6E | `HAVOKBREAK_MODEL`, `HAVOKBREAK_TEMPLATE`, `HAVOKCHUNK_TEMPLATE` | | `+0x20C`, `+0x208`, `+0x210` |
+  | 0x70 | `OBJECT_SOUNDID` | 1 (Storm: 7) | **Type ID**, `actor+0x1AC` (section 1) |
+  | 0x75 | `SHADOWMODEL` | `Wolverine_shadow.nod` | `+0x22C` |
 
-  Also in `act_Wolverine`, named by the table but not followed further: 0x30 `ACTOR_FLAGS` (0x108200; bit 0x80, `fn_80085DCC`, is the alternate costume, `plr_altWolverine` has 0x108280; bit 0x200 is `fn_80085D3C`, meaning unknown), 0x32 `ACTOR_ABILITIES` (0x05400602; differs per character), 0x33/0x34 `ACTOR_HEALTH`/`ACTOR_MAXHEALTH` (100), 0x37/0x38 `ACTOR_WALKSPEED`/`ACTOR_RUNSPEED` (1.7, 6.0), and the editor's 0x1A `EDITORCATEGORY` (4; `plr_` sets 2) and 0x1B/0x1C `EDITORSIZEMINS`/`EDITORSIZEMAXS` (vectors), which `fn_800AE534` accepts and ignores (as it does 0x1D, 0x1E and 5). The rest of its (`Game/fn_800AE534.cpp`) kind-0 properties: 0x01 `ORIENTATION` and 0x02 `POSITION` (vectors into the entity's `+0x78` transform), 0x03 `SECTORID` (index into the scene's 0x1C0-byte records, bound by `fn_800AECF4`), 0x04 `TIMER` (`+0x28` = now + value, when non-zero), 0x06 `MOVETYPE` (0-4: `fn_800B1D20`, state byte `+0x1`, `fn_800AFCD0`, `fn_800AFCA0`), 0x07 `COLLIDETYPE` (0-11, `+0x40`), 0x08 `RADIUS` and 0x09 `HEIGHT` (floats >= 0, `+0x44`, `+0x4C`), 0x1F `THINGFLAGS` (`+0x2C`), 0x20 `RENDERFLAGS` (`+0x30`), 0x21 `MOVESPEED` (only checked: > 0 and state byte 1), 0x22 `DROPITEM` (template into `+0x34C`, or `+0x2B0` when `fn_800B0BEC` is 8), 0x25 `PROXRADIUS` (float, clamped at 0, `+0x48`), 0x26 `WALLMARK` (`fn_80234628` into `+0x2AC`, when `fn_800B0BEC` is 4), 0x74 `THING_FARZDIST` (`+0x164`), 0x67, 0x76 `REGION_FLAGS`, `REGION_SOUNDID` (`+0x240`, `+0x244`, when `fn_800B0BEC` is 3). 0x00 and 0x17 `ALARMGROUP` return 0 here. `act_Wolverine` and `act_Daredevil` differ only in 0x0A, 0x0F, 0x13, 0x14, 0x15, 0x2E, 0x32, 0x70, 0x75 and 0x28, which only Daredevil sets.
+  The other `ACTOR_*` properties and the kind-0 entity properties (`ORIENTATION`, `POSITION`, `SECTORID`, `TIMER`, `MOVETYPE`, `COLLIDETYPE`, `RADIUS`, `HEIGHT`, `THINGFLAGS`, `RENDERFLAGS`, `DROPITEM`, ...) are not character-specific; `Game/fn_80084498.cpp` and `Game/fn_800AE534.cpp` say where each goes. The editor's 5 and 0x1A-0x1E are accepted and ignored.
 
-- **The registries have no fixed capacity.** This is read from the disassembly: `fn_801B43D8`, `fn_801B4CA0` and `fn_801B4E84` are unmatched (`fn_801B4284`, the add `fn_801B4628` and the lookup `fn_801B48AC` are matched and confirm the header, the node layout and the duplicate drop). `fn_801B4284(hint, name)` builds a chained hash table: a 0x2C header (`name[0x20]`, `+0x20` count, `+0x24` bucket count, `+0x28` buckets) whose bucket count is the first prime of `lbl_8049E5A0` (23, 53, 79, ... 1999) above the hint, so 557 for the templates (hint 0x200) and 53 for the files (0x20). Nodes are 0x14 bytes (`+0x0` next, `+0x4` previous, `+0x8` key, `+0x10` value) from one free list shared by every registry (`lbl_8066C6E0` count, `lbl_8066C6E4` head), seeded with 0x2000 and grown by 0x200 whenever it is empty. `fn_801B4628` adds nothing and returns 0 when `fn_801B4E84` finds the key (`strnicmp`, 0x80), so a duplicate name is dropped. The hash is `sum((i + 1) * lower(c[i]))` over at most 127 characters, modulo the bucket count. Per template, `fn_800FD9A0` (matched) stores the property count at entry `+0x28` and a `count * 0x24` heap array at `+0x2C`, so there is no property limit either. Each property is `{id +0x0; value +0x4}` byte-swapped by its `lbl_8048E748` type (3 int, 2 float, 4 three words, anything else, strings included, untouched). The limits that do exist are the 64 loaded `.NOT` files of `lbl_80565860` and the note buffer above. 839 templates load and work (**tested**).
+- **`ACTOR_ABILITIES` bits** (`actor+0x308`). One accessor per bit at 0x80085FAC-0x80086374, all unmatched. The meanings come from reading their unmatched callers and from tests in modded builds; `nottool.py dump act_<Name>` gives each character's value.
 
-- **Attached entities inherit the type.** `fn_800A22CC` (`Game/fn_800A22CC.cpp`) spawns entities from an actor's 0x5C-byte attachment records (default template `prp_propbust`; record `+0x48` template, `+0x50` type, `+0x54`/`+0x55`/`+0x56` bytes, getters at 0x802365D8-0x80236804) and sets the child's `+0x1AC` (`fn_8009AC40`) to the record's type; when that is 400, the child takes the parent's only if its own type is still 400. That and property 0x70 are the only writers of `+0x1AC` besides the constructor `fn_800974B4`, which zeroes it.
+  | Bit | Read by | Meaning |
+  |---|---|---|
+  | 0x10, 0x20 | `fn_8008621C`, `fn_8008624C`, both only from `fn_8008572C(actor, object)` | Lifting: anyone lifts light objects, 0x10 or 0x20 medium ones, 0x20 heavy ones (`fn_800A43A0`/`fn_800A4408`/`fn_800A4438` classify the object) |
+  | 0x80 | `fn_8008606C`, from the air states `fn_800C509C`, `fn_800C5A84` and 22 more | The wire swing for Daredevil and Spider-Man: R held and jump pressed again in the air, if energy covers tuning field 30 (**tested**). Biohazard, DefCon, Paradox and Venom have the bit too |
+  | 0x4000 | `fn_800DDCB4`, reading `+0x308` itself | The super attack's far version (`SuperAttackFar`) with no target, straight ahead |
+  | 0x20000 | `fn_8008609C`, from the dodge state `fn_800F3384` and two more | Unknown |
+  | 0x20000000 | `fn_80086344`, only from `fn_800E7A4C` | A hit landed in motion 0x33 or 0x36 skips the animation ahead to its event 0x53: the thrown weapon comes back (Daredevil only) |
+
+  The other accessors, meanings unknown: 0x2 `fn_8008603C`, 0x8 `fn_8008615C`, 0x40 `fn_800860CC`, 0x100 `fn_800862AC`, 0x200 `fn_80085FDC`, 0x1000 `fn_800861BC`, 0x2000 `fn_800860FC`, 0x8000 `fn_8008618C`, 0x100000 `fn_80085FAC`, 0x400000 `fn_8008600C`, 0x1000000 `fn_8008627C`, 0x2000000 `fn_800861EC`, 0x4000000 `fn_8008612C` and 0x10000000 `fn_80086314`. `fn_800862DC` is true when 0x8000000 is *clear*, and `fn_80086374` tests the mask 0x810004.
+
+- **The registries have no fixed capacity** (read from the disassembly: `fn_801B43D8`, `fn_801B4CA0` and `fn_801B4E84` are unmatched). A registry is a chained hash table whose bucket count is the first prime of `lbl_8049E5A0` above a size hint, and every registry takes its 0x14-byte nodes from one shared free list that grows by 0x200 whenever it is empty. A duplicate name is dropped (`fn_801B4628` returns 0). There is no limit on properties per template either (`fn_800FD9A0`). The limits that exist are the 64 loaded `.NOT` files (`lbl_80565860`) and the 0x200-byte note buffer. 839 templates load and work (**tested**).
+
+- **Attached entities inherit the type.** `fn_800A22CC` spawns entities from an actor's 0x5C-byte attachment records (default template `prp_propbust`) and sets each child's `+0x1AC` to the record's type; a type of 400 means "take the parent's". Only that, property 0x70 and the constructor `fn_800974B4` (which zeroes it) write `+0x1AC`.
 
 ---
 
 ## 4. Per-Character Data in `CLASH.BIG`
 
-`CLASH.BIG` is an EA `BIG4` archive (3,511 entries; big-endian offset and size, then a NUL-terminated name) with the `CLASH.BH` index beside it. `CLASH.BH` has 16 bytes per entry in the same order: offset, size, unpacked size (0 unless the entry is RefPack-compressed, which only the 709 nested `.big` UI archives are) and a djb2 hash of the lowercased path. `python3 tools/bigtool.py` lists, extracts and repacks both files (layouts in its header), and the game accepts a repacked archive with entries moved and one added (**tested**). Each character has these files (Wolverine shown):
+`CLASH.BIG` is an EA `BIG4` archive with the `CLASH.BH` index beside it; `python3 tools/bigtool.py` lists, extracts and repacks both (layouts in its header). The game accepts a repacked archive with entries moved and one added (**tested**). Only the 709 nested `.big` UI archives are RefPack-compressed. Each character has these files (Wolverine shown):
 
 | File | Format | Contents |
 |---|---|---|
-| `Misc/Global.not` | Binary, little-endian, magic `NOT\x10` | Entity templates `act_Wolverine`, `plr_Wolverine`, `plr_altWolverine` (format in section 3). |
-| `Misc/nvblist.txt` | Text | One line per tuning file (`PLAYER WOLVERINE`). Read by `fn_801B3C4C` (the path is `nvblist.txt`, mode `ra`): lines starting with a space or `/` are skipped, the first two tokens (delimiters ` \t\r\n/;`) of every other line are the two `fn_801B3638` arguments, and a line with fewer than two tokens is ignored. The pairs are collected in one 0x200-byte buffer, so the whole list is limited to that size, and loaded afterwards. It also lists a `PLAYER Footballguy` with no file. |
-| `Misc/PLAYER_WOLVERINE.nvb` | Binary, little-endian, magic `0xBEEFAD00` | The character's tuning: the fields that differ from the defaults, with per-slot values. See "Tuning records" below. |
-| `Misc/defaults.ndb` | Binary, little-endian, magic `0xD000D000` | One file for the game: the tuning schema, every field's type and default. |
-| `Motions/wolverine.nms` | Text | Motion set: each line maps a fixed animation-state name (`Walk`, `Attack1`, `WieldThrow`...) to a `.nad`, with options; `basedon male` inherits the states it leaves out. Format and layout below; `tools/nmstool.py check` parses all 47. The EA "security" line in the header is a `;` comment, which the parser skips. `fn_801A8FC4` only registers the 20 search directories (`Misc`, `Levels`, ... `Motions`, `Bundles`). |
-| `Bundles/wolverine.ngb` | Binary, big-endian | The 158 `.nad` animations (layout below). |
-| `Bundles/wolverine.ngm` | Binary, big-endian | The models `Wolverine.nod`, `Wolverine_phys.nod` and `Wolverine_shadow.nod` (layout below). `tools/ngmexport.py` converts them to glTF. |
-| `Bundles/wolverine.ngt` | Text | The names of the images of `Bundles/wolverine.tpl`, in order (`Wolverine`, `GE_env_WinkOnyx`, `WolverineHair`, `ge_charlight`, `GE_PAR_ElectricParticles`); all 115 bundles have as many names as images. |
-| `Bundles/wolverine.tpl`, `Materials/Models/Wolverine*.tpl` | GameCube TPL | Textures. `fn_80232C4C` reads image 0 only and overrides its LOD (trilinear if mipmapped, else linear; LOD bias -0.5). The loose `WolverineHair.tpl` is 128x128 and the bundle's 64x256; which one the game draws is not traced (`tools/ngmexport.py` uses the bundle's, which renders correctly on the model). |
-| `Materials/Shaders/shaders.nsa` | Text | The material library, one for the game (with `definitions.nsa`, `editor.nsa` and `constraints.nsa`): a block per material name, which is a model's part name, giving its `shader` (`charlight`, `masked`, `envmap`...), `texture`, `texture2`, `envmap` and options. `{ps2` and `{xbox` sub-blocks override for those platforms. |
-| `Bundles/wolverine-t0/t1/t2.ngb` | Binary | The variant for an opponent whose property 0x27 (`SKELETONID`, section 3) is 0, 1 or 2, loaded through `%s-t%d` (`fn_8019EA38`). |
-| `Bundles/wolverine_alt.*` | | The alternate costume. |
+| `Misc/Global.not` | Binary, little-endian | Entity templates `act_Wolverine`, `plr_Wolverine`, `plr_altWolverine` (section 3). |
+| `Misc/nvblist.txt` | Text | One line per tuning file (`PLAYER WOLVERINE`). `fn_801B3C4C` skips lines starting with a space or `/`, takes the first two tokens (delimiters ` \t\r\n/;`) of each other line, and ignores a line with fewer. The pairs go into one 0x200-byte buffer as `a\|b\|`, 458 bytes for the shipped list, so the whole list is limited to that size. It also lists a `PLAYER Footballguy` with no file. |
+| `Misc/PLAYER_WOLVERINE.nvb` | Binary, little-endian | The character's tuning: the fields that differ from the defaults ("Tuning records" below). |
+| `Misc/defaults.ndb` | Binary, little-endian | One file for the game: the tuning schema, every field's type and default. |
+| `Motions/wolverine.nms` | Text | The motion set (below). |
+| `Bundles/wolverine.ngb` | Binary, big-endian | The 158 `.nad` animations (below). |
+| `Bundles/wolverine.ngm` | Binary, big-endian | The models `Wolverine.nod`, `Wolverine_phys.nod` and `Wolverine_shadow.nod` (below). |
+| `Bundles/wolverine.ngt` | Text | The names of the images of `Bundles/wolverine.tpl`, in order (`Wolverine`, `GE_env_WinkOnyx`, `WolverineHair`, `ge_charlight`, `GE_PAR_ElectricParticles`). |
+| `Bundles/wolverine.tpl`, `Materials/Models/Wolverine*.tpl` | GameCube TPL | Textures. `fn_80232C4C` reads image 0 only. The loose `WolverineHair.tpl` is 128x128 and the bundle's 64x256; which one the game draws is not traced (`tools/ngmexport.py` uses the bundle's). |
+| `Materials/Shaders/shaders.nsa` | Text | The material library, one for the game: a block per material name (a model's part name) giving its `shader` (`charlight`, `masked`, `envmap`...), `texture`, `texture2`, `envmap` and options. `{ps2` and `{xbox` sub-blocks override for those platforms. |
+| `Bundles/wolverine-t0/t1/t2.ngb` | Binary | The animations against an opponent of body class 0, 1 or 2 (`SKELETONID`, section 3): the throws and the victim's side of them. |
+| `Bundles/wolverine_alt.*` | | The alternate costume. A second bundle per costume works (**tested**). |
+| `HUD/hud<LANG>.1.gsh` (`eng`, `fra`, `ger`, `ita`) | Image bank | The in-match portraits, one bank for all characters (section 6, step 5). |
 | `Apt/clash/portraits/c1_p0.big` | APT | Select-screen portrait, named by select-screen id (section 5; Wolverine is 1). |
-| `Apt/clash/portraits/cvs1.big`, `cvs1_alt.big` | APT | Versus loading-screen portraits for the two costumes, by the same id. |
+| `Apt/clash/portraits/cvs1.big`, `cvs1_alt.big` | APT | Versus loading-screen portraits for the two costumes. |
 | `Apt/clash/portraits/wolverine_blue.big` | APT | Story-mode portrait: only `screens/clashStoryMode.big` loads it. |
 
-`Misc/clashMP.nsc` is a text file listing the versus arenas, with their level, intro, win and lose cutscenes.
+`Misc/clashMP.nsc` lists the versus arenas, with their level, intro, win and lose cutscenes ("The script record" below).
 
-The loaders are generic engine code that takes a name, with nothing character-specific in them: `fn_8019E9DC` (`Bundles/%s`), `fn_8019EA38`, `fn_8019EBF8` (`Animation:Bundles`), `fn_801A0814` (`Model bundle missed`), `fn_80232C4C` (`Texture bundle missed`) and the tuning functions below.
+The loaders take a name and have nothing character-specific in them: `fn_8019E9DC`, `fn_8019EA38`, `fn_8019EBF8` (animations), `fn_801A0814` and `fn_801A1FC4` (models), `fn_80232C4C` (textures) and the tuning functions below.
 
-Model bundles live in a 6-slot table, `lbl_8057E110`, 0x38 each: name +0, model data +0x20, its size +0x24, model count +0x28, an `entries * 8`-byte table +0x2C, its count +0x30, a zero +0x34. Slot 0 is `global`. `MODEL` (`fn_801A1FC4`) puts `<name>.ngm` in the first free slot from 2 to 5, skips a name already loaded, and loads nothing when all four are full, so at most four by-name model bundles are resident at once. Loading into an occupied slot frees it first (`fn_801A2588`); when else slots are freed is not traced.
+### Models (`.ngm`)
 
-The `.ngm` file is big-endian: a 0x18-byte header (version 5, two ignored words, model count, entry count, data size), then per model a 9-byte prefix (`s32` index, then the part, node and mesh counts as `u8` and the bone count as `u16`, which `fn_801A3ECC` sizes the model from) and a body that `fn_80221C08` reads: the name, up to four vertex streams, a UV list, an index buffer, part names (`fn_80234628`), 0x30-byte nodes, meshes and 0x50-byte bone records. A stream is a table of render vertices, each three `u16` indexes (a vertex of the stream, a normal in the 2609-entry `Misc/NormalTable.ngn` that `fn_80224F30` loads, a UV), then its vertices in model space: a position, then by type nothing (bound to the mesh's one node), a node, or three weights and three nodes (stride from `lbl_806707F8`). UVs are `s16` pairs with 9 fraction bits. Each mesh is a stitched triangle strip and a triangle list of its stream's render vertices, which `fn_80223E38` draws list first (`GX_TRIANGLES`, then `GX_TRIANGLESTRIP`). The nodes are a skeleton without rotations: an offset from the parent and the negated position. The bone records (`u8`, `u8`, `u16` and a 4x4 matrix) are not understood. The field list is in `tools/ngmtool.py`'s docstring. Each model is registered by its name at +0x8C in `lbl_8066C5CC`. `fn_801A3784` then builds runtime tables at model +0x15C to +0x180 (`MOD:MODEL:DIS`, `BONEINDICES`, `PARBONEINDICES`): for nodes 1 to `min(nodes, +0x15A) - 3`, and again from `+0x15A` to `nodes - 3` when it is set, every node whose `s8` at +0x20 (the parent index) is positive, plus node 1, gets the running sum of its vector `a`'s length, its index and its parent. So `+0x15A` splits the nodes into two chains and the last three nodes of each are left out (both guesses about what the data means). `python3 tools/ngmtool.py check` parses all 114 bundles in `CLASH.BIG` to their last byte; `list` prints each model's counts. `python3 tools/ngmexport.py export <name> <dir>` writes each model of a bundle as glTF, with its skeleton, skin weights, materials and textures. What it makes of each field, and the guesses in that, are in its docstring; its `check` builds all 3894 models.
+The layout is in `tools/ngmtool.py`'s docstring; `check` parses all 114 bundles to their last byte, and `tools/ngmexport.py` writes a bundle's models as glTF. What a new model needs to know:
 
-A model missing from every loaded bundle falls back to a loose `<name>.nod` (`fn_801A0814` adds the extension and searches the registered directories; `fn_801A09F0` parses it). No `.nod` ships in `CLASH.BIG`, so the fallback is untested. Big-endian header, 0x70 bytes: two 16-byte vectors (a bounding box, guess) +0, `u32` version +0x20 (must be 10), `u8` part (at most 0x40), node, stream and mesh counts +0x24 to +0x27, `u32` model flags +0x28 and index count +0x2C, four pairs of `u32` +0x30, four `u32` +0x50, 16 unswapped bytes +0x60. `fn_801A05CC` allocates the model from the header counts (0x190 bytes, then 0x30 per node, at least one, 0x5C per mesh and a pointer per part) and `fn_80220D54` reads the body; flags `0x800` skip the registry, `2` sets the reference count to 1. `fn_801A0FA4(file, flags)` (called from `fn_800A6F80`, which file it reads is not traced) reads the same header from an open stream with no version check, names the model `AUTO_%x` (its address), passes `flags | 0x200` to `fn_80220D54`, then reads a `u32` plane count (kept as a `u8` at model `+0xB`) and that many 16-byte planes (`Models:Planes`, model `+0x84`, swapped as vectors), and returns `fn_801A1AF8`'s instance with `+0x4` bit 0x100000 set. Such a model is never registered.
+- **Four by-name model bundles at most are resident** (`lbl_8057E110`, slots 2-5; slot 0 is `global`). `MODEL` skips a bundle already loaded and loads nothing when all four slots are full.
+- **The skeleton** ("nodes") has no rotations: each node is an offset from its parent and the negated bind position, so the inverse bind matrix is a translation. A type 2 stream is skinned on the CPU, three weights and three nodes per vertex. A mesh names at most 20 nodes. Normals are indices into the shared `Misc/NormalTable.ngn` (2609 vectors).
+- **Attachments** are `{u8 node, u8 kind, u16 index, 4x4 matrix}` (Wolverine's render model has 52, Johnny Ohm's 84). They are the points effects spawn at (a `Misc/game.nfx` effect's `markertype` is the kind and `marker_index` the index) and the ends of the attack volumes. `fn_800F43D4` (unmatched) sets up the 7 attack volumes, 0x80 bytes each at `ctrl+0x580`, each between two attachments:
 
-Animation bundles live in a slot table, `lbl_8057DCA0`, 0x2C each: name +0, data +0x20, its size +0x24, and a word +0x28 added to `lbl_8066C580` after a load (a count, guess). `fn_8019EA38(name, variant)` loads `<name>.ngb` into slot 2, or into slot 6 when slot 2 holds another bundle; it returns 1 without loading when either slot already holds the name, and loads nothing and returns 0 when both hold other names. So at most two by-name animation bundles are resident (the two fighters', guess). A `variant` above -1 also loads `<name>-t<variant>.ngb` (`fn_801B40EC` strips the directory and extension from `name`) into the next slot, 3 or 7, and the result is 1 only if both loads worked. `fn_8019EBF8(name, slot)` frees an occupied slot first (`fn_8019EE28`) and sets `lbl_8066C660` while slot 0 loads. The file has no header and no byte swap: a run of animations, each a 0x50-byte record (the `.nad` name +0, its key in the registry `lbl_8066C584`; track count +0x2C; two more counts +0x3C and +0x44) followed by its arrays, which `fn_8019E7D4` points into place. The field list is in `tools/ngbtool.py`'s docstring; `python3 tools/ngbtool.py check` parses all 139 bundles (12,742 animations) to their last byte.
+  | Volume | From (kind, index) | To (kind, index) |
+  |---|---|---|
+  | 0, 1 | 3, 1 / 3, 2 | 5, 1 / 5, 2 |
+  | 2, 3 | 21, 2 / 21, 1 | 23, 2 / 23, 1 |
+  | 4, 5 | 40, 1 / 40, 2 | 42, 1 / 42, 2 |
+  | 6 | 43, 0 | 44, 0 |
 
-Motion sets live in the registry `lbl_8066B8F4`, keyed by name. `fn_8008F470(name, flags, noParse)` returns a registered set or makes one (`fn_8008FF48`); the six base sets `male.nms` ... `brutepeon.nms` are made and parsed at boot (`lbl_8066B8F8`-`lbl_8066B90C`, the `basedon` targets). The text format is in `tools/nmstool.py`'s docstring; the parser is `fn_80090034`. Lines go into a 0x174-motion buffer, `lbl_8054FE10`, and `fn_8008F6A0` closes each overlay: it appends the base set's motions of the same overlay index whose state the file did not define, copies the buffer to the heap and counts the overlay. A state name the game does not know (`fn_8008F3B8` returns 0, unmatched) or a `.nad` not in a loaded bundle drops the line silently. A line read up to the end of the file is dropped too, so end a file with a newline (every shipped one ends in blank lines). `fn_80090A68(name, x)` reads the same sets pre-tokenised from `<name>.msres` (NUL-separated tokens, an empty token ending each line and each set, no `fps`/`dist`/`move`/`basedon`); its only caller passes `"global"`, and no `.msres` ships.
+  Animation events 0x56/0x57 switch volume 6 on and off; only `Daredevil_RangedAttack` and `Daredevil_SuperRiseAttack` use them, with kinds 43 and 44 on his club. A volume moving more than about a metre a frame passes targets between frames (**tested**).
+- A model missing from every loaded bundle falls back to a loose `<name>.nod` (`fn_801A0814`, `fn_801A09F0`; version 10). None ships, so the fallback is untested.
 
-| Struct | Size | Fields |
-|---|---|---|
-| set | 0x134 | refcount +0, name `char[0x20]` +4, overlay count +0x24 (6 at most), overlays +0x28, `x` from `fn_80090A68` +0x130 |
-| overlay | 0x2C | name `char[0x20]` +0, motion count +0x24, motions +0x28 |
-| motion | 0x18 | state index +0, animation +4 (`fn_80198DE4`), flags +8, speed +0xC (`fps / 30`), `dist` +0x10, `1 / move` +0x14 |
+### Animations (`.ngb`) and motion sets (`.nms`)
+
+The `.ngb` layout is in `tools/ngbtool.py`'s docstring; `check` parses all 139 bundles (12,742 animations) to their last byte. An animation is a run of tracks `{bone, channel, key count, keys}` with keys `{f32 frame; s16 a, b, c, d}`. Channel 0 is a rotation (`w = a / 16384`, `(x, y, z) = -(c, d, b) / 16384`, worked out from the data). Channel 1 is a translation, `(a, b, c) / d` with `d` unsigned (`unpack__6Packed`, `Game/fn_80447830.cpp`), added to the node's offset from its parent. Then come the events `{f32 frame; u16 type; u16 param; u32 value}` and the 0x50-byte extra records, which are not understood.
+
+- **Event types** that the animation event handler `fn_800E1788` (unmatched) handles, read from its disassembly: 0x04 spawns the projectile named by tuning field 90 (`fn_800F0C70`); 0x23 field 168's effect; 0x39/0x3A attack volumes (`fn_800E8768`, `fn_800E880C`); 0x56/0x57 attack volume 6; 0x63 sets actor flag 0x2000; 0x40 plays `IKClaws`; 0x53 is the frame a hit skips to (ability 0x20000000). An effect field's id also works as an event type: `daredevil_superThrow.nad` shows field 81's effect from event 0x51 at frame 20 to 71. Types above 0x72 fall to the default of the dispatcher `fn_80058C94`.
+- **A thrown weapon's flight is the animation.** Daredevil's club is node 39's translation keys in `Daredevil_RangedAttack.nad`, 8 m out and back; no code moves it. The game aims only by turning the actor at the target before the motion (`fn_800DDCB4`) (**tested**).
+- **Two by-name animation bundles at most are resident**, in slots 2 and 6 of `lbl_8057DCA0` (guess: the two fighters'), each with its `-t<n>` variant in the next slot (3 and 7). `fn_8019EA38` loads nothing and returns 0 when both slots hold other names.
+- **Motion sets** live in the registry `lbl_8066B8F4`. The six base sets `male.nms` ... `brutepeon.nms` are made at boot; they are the `basedon` targets, and a set inherits the states it leaves out. The text format is in `tools/nmstool.py`'s docstring (`check` parses all 47). A line maps a state name to a `.nad`; the state's index is its position in the DOL's name list at 0x80488A58 (`SuperAttack1` 0x2F, `SuperAttackFar` 0x33, `AirAttack` 0x3E). A set has at most 6 overlays. A state name the game does not know (`fn_8008F3B8`, unmatched), a `.nad` not in a loaded bundle, and a last line with no newline are all dropped silently. `dist -1` on `SuperThrow` is the long-range grab (Daredevil's cable, Spider-Man's web).
 
 ### Tuning records
 
-`python3 tools/nvbtool.py` prints, compares and edits these files and holds their byte layouts
-(`check` rebuilds all 29 `.nvb` files and the `.ndb` byte for byte). Read from the disassembly unless
-a matched function is named; the plumbing is [`versus.md`](versus.md#5-target-order) row 19.
+`python3 tools/nvbtool.py` prints, compares and edits these files and holds their layouts (`check` rebuilds all 29 `.nvb` files and the `.ndb` byte for byte). Field meanings are in its `FIELD_NAMES`, which it prints.
 
-- **Schema.** `Misc/defaults.ndb` has three classes: `AI` (6 fields, no tuning file uses it),
-  `GLOBALS` (82) and `PLAYER` (251). A field id is the field's index in its class, and the class
-  gives its type and default. `fn_801B26DC` loads it at boot, then the files `Misc/nvblist.txt`
-  names, and keeps the `GLOBALS_Globals` record in `.sdata` `lbl_8066C6C8`.
+- **Schema.** `Misc/defaults.ndb` has three classes: `AI` (6 fields, no tuning file uses it), `GLOBALS` (82) and `PLAYER` (251). A field id is the field's index in its class, and the class gives its type and default. `fn_801B26DC` loads it at boot, then the files `Misc/nvblist.txt` names, and keeps the `GLOBALS_Globals` record in `.sdata` `lbl_8066C6C8`.
 
   | Type | Tool name | Values |
   |---|---|---|
@@ -190,13 +195,8 @@ a matched function is named; the plumbing is [`versus.md`](versus.md#5-target-or
   | `0xFFFFD884` | template | 8: projectile template names (`proj_bioHazBlob`) |
   | `0xFFFFD886`, `0xFFFFD887`, `0xFFFFD888` | d886, vector, d888 | `AI` only |
 
-- **A file lists only what differs from the defaults**, as groups of `{slot, type, value}` records
-  per field. After a group's first record the loader (`fn_801B3638`, matched) copies slot 0 over
-  slots 1-5, whichever slot that record named. So a group that starts with slot 0 sets every slot
-  and then the exceptions; a group that starts with another slot loses its first record, which 138
-  groups in the shipped files do (Aftershock's field 156 lists slots 1 and 3, and only 3 survives).
-- **Slots.** `fn_800ACB7C` binds the record to the entity (`+0x16C`) by the entity's
-  `DESCRIPTIONID` and stores the slot at `+0x170`:
+- **A file lists only what differs from the defaults**, as groups of `{slot, type, value}` records per field. After a group's first record the loader (`fn_801B3638`) copies slot 0 over slots 1-5, whichever slot that record named. So a group that starts with slot 0 sets every slot and then the exceptions; a group that starts with another slot loses its first record, which 138 groups in the shipped files do.
+- **Slots.** `fn_800ACB7C` binds the record to the entity (`+0x16C`) by its `DESCRIPTIONID` and stores the slot at `+0x170`:
 
   | Slot | Used for |
   |---|---|
@@ -205,43 +205,18 @@ a matched function is named; the plumbing is [`versus.md`](versus.md#5-target-or
   | 5 | Otherwise, `ACTOR_FLAGS` bit 0x80, the alternate costume |
   | 0 | Everything else, a human player's character included |
 
-  The text getter `fn_800ACD20` ignores that slot for an alternate costume and always reads
-  slot 5, which is where the files keep its names (`altWolvSuperBlock`, `mp_a_wl_int_1`).
-- **Readers.** `fn_800B1884(entity, id)` returns a float field (386 call sites), `fn_800B18EC` an
-  int (33) and `fn_800ACD20` a pointer to an effect or string field's text (54; no template field
-  is read with a constant id). `GLOBALS` fields are read straight from `lbl_8066C6C8` with
-  `fn_80433D20`/`fn_80433D70(record, id, 0)` (103 call sites). Every constant id is inside its class, and each getter only ever reads fields of its own
-  type, which is what confirms the id-to-schema mapping. `python3 tools/nvbreaders.py CLASS` lists
-  the readers: 150 of the `PLAYER` fields and 62 of the `GLOBALS` ones are read with a constant id,
-  and 32 more `PLAYER` call sites read `base + i` from 18 bases (46, 49, 79, 90, 94, 110-125 in
-  threes, 129, 134, 170, 173, 175, 206, 214). Of the 101 fields with no constant-id reader, 16 are
-  set by no shipped file (58, 62, 69-71, 176-182, 197, 198, 217, 245).
-- **Field names.** The DOL and the schema hold none. The exporter's text survives only as junk
-  after the NUL in the `.nvb` name buffers: a `DEFINE_FIELD(FID_PLAYER_EFFECT14, "... player effect slot 14",
-  FIDTYPE_EFFECTNAME, "", ...` table and a per-character text form (`// Rage points for
-  superattack (Type: FLOAT Default: 14.000 Minimum: 0.000 Maximum: 100.000)`, then
-  `FID_PLAYER_... = value`). Three names could be matched to an id by type, default and value (47,
-  170, 192). Names and meanings go in `FIELD_NAMES` in `tools/nvbtool.py`, which prints them.
+  The text getter `fn_800ACD20` ignores that slot for an alternate costume and always reads slot 5, which is where the files keep its names (`altWolvSuperBlock`, `mp_a_wl_int_1`).
+- **Readers.** `fn_800B1884(entity, id)` returns a float field (386 call sites), `fn_800B18EC` an int (33) and `fn_800ACD20` an effect or string field's text (54). `GLOBALS` fields are read from `lbl_8066C6C8` with `fn_80433D20`/`fn_80433D70(record, id, 0)` (103 call sites). `python3 tools/nvbreaders.py CLASS` lists the readers. 150 of the `PLAYER` fields and 62 of the `GLOBALS` ones are read with a constant id, and 32 more `PLAYER` call sites read `base + i` from 18 bases (46, 49, 79, 90, 94, 110-125 in threes, 129, 134, 170, 173, 175, 206, 214). Of the 101 fields with no constant-id reader, 16 are set by no shipped file (58, 62, 69-71, 176-182, 197, 198, 217, 245).
+- **Field names.** The DOL and the schema hold none. Junk after the NUL in the `.nvb` name buffers keeps fragments of the exporter's text (`DEFINE_FIELD(FID_PLAYER_EFFECT14, ...`, `// Rage points for superattack (Type: FLOAT Default: 14.000 ...)`), which matched three ids (47, 170, 192).
 
-### The Script Record in Memory
+### The script record (`.nsc`)
 
-0x804428E0-0x80443678 is **matched** (`Game/fn_804428E0.c`): one long run of leaf setters and getters
-on a 0x5C8-byte record, plus a few on the object that owns those records. Every `char[0x20]` field is
-`strncpy`'d with 0x20 and then terminated by hand at its last byte, like `slot+0x4`
-([`versus.md`](versus.md#3-selection-to-spawn)).
-
-The record is **not** the `.nvb` tuning record, as earlier guessed: it is one entry of an `.nsc`
-mission/arena script, and the "Keyword" column below is the `.nsc` line that writes each field.
-`fn_800887AC` is the parser (0x800887AC-0x80089710, **matched**, `Game/fn_800887AC.cpp`), which reads a text file line by line, lowercases
-the first token and dispatches on it. A `mission` line opens a record (`new NameTable`) and an
-`endmission` line stamps its index and appends it, so every other keyword applies to the record
-opened last. `Misc/clashMP.nsc` is the versus arena list; the "clashmp.nsc" string sits in the same
-unit's string pool.
+`fn_800887AC` (`Game/fn_800887AC.cpp`) parses an `.nsc` mission or arena script (`Misc/clashMP.nsc` is the versus arena list) into 0x5C8-byte records, one per `mission` ... `endmission` block; the accessors are `Game/fn_804428E0.c`. Every `char[0x20]` field is `strncpy`'d with 0x20 and terminated by hand.
 
 | Offset | Type | Keyword | Accessors |
 |---|---|---|---|
-| +0x00 | `char[0x20]` | `mission` arg 1 — the record's name | `fn_80442918` |
-| +0x20 | `char[0x200]` | `description` | `fn_80442964`; the one long buffer in the record |
+| +0x00 | `char[0x20]` | `mission` arg 1, the record's name | `fn_80442918` |
+| +0x20 | `char[0x200]` | `description` | `fn_80442964` |
 | +0x240 | `char[0x20]` | `objective` arg 2 | `fn_80442C3C` |
 | +0x260 | `char[0x20]` | `mission` arg 2 | `fn_80442A04` |
 | +0x280 | `char[0x20]` | `mission` arg 3 | `fn_804429B4` |
@@ -250,200 +225,104 @@ unit's string pool.
 | +0x2E0 | `char[0x20]` | `loadscreen` arg 2, or arg 1 again when the line has only one | `fn_80442AD0` |
 | +0x300 | `char[0x20]` | `loadtext`, and `objective` arg 1 | `fn_80442B70` |
 | +0x320 | `char[0x20]` | `boss`, as `plr_<name>` or `plr_alt<name>` | `fn_804430AC` |
-| +0x340 | `char[3][0x20]` | `intro` | `fn_80442C8C` appends |
-| +0x3A0 | `char[3][0x20]` | `extro` | `fn_80442D24` appends |
-| +0x400 | `char[3][0x20]` | `fail` | `fn_80442DBC` appends; `fn_80443A2C`-`fn_80443B40` read one of the three lists at random |
-| +0x460 | int | none: `endmission` stamps the record's own index in `records[]` | `fn_80442EA8`, getter `fn_80442E7C` |
-| +0x464 | int | `flags`, taken as the low 16 bits (see below) | `fn_80442E54` |
-| +0x468 | float | `teleportdist` (`atof`) | `fn_80442ED0` |
+| +0x340, +0x3A0, +0x400 | `char[3][0x20]` each | `intro`, `extro`, `fail`; at most three each (counts at +0x47B-+0x47D) | `fn_80442C8C`, `fn_80442D24`, `fn_80442DBC` append; `fn_80443A2C`-`fn_80443B40` pick one at random |
+| +0x460 | int | none: the record's own index | `fn_80442EA8`, getter `fn_80442E7C` |
+| +0x464 | int | `flags`, low 16 bits (testers `fn_804432D8`-`fn_80443488`) | `fn_80442E54` |
+| +0x468 | float | `teleportdist` | `fn_80442ED0` |
 | +0x46C | int | `teleportdelay` | `fn_80442EF8` |
 | +0x470 | int | `replayfrequency` | `fn_80442F20` |
 | +0x474 | int | `replaydelay` | `fn_80442F48` |
-| +0x478 | `unsigned char` | `character`, rejected unless <= 19 — a roster index | `fn_80442F98`, getter `fn_80442FC4` |
-| +0x479 | `unsigned char` | `unlockchar`, rejected unless <= 18 — a playable roster index | `fn_80442FF4`, getter `fn_80443020` |
-| +0x47A | `unsigned char` | `sacrifice`, rejected unless <= 19 — a roster index | `fn_80443050`, getter `fn_8044307C` |
-| +0x47B-+0x47D | `unsigned char` | entry count for the list at +0x340, +0x3A0 and +0x400. Each append runs only `if (count <= 2)`, so the lists cap at three |  |
-| +0x480 | `int[4]` | `rewards`, four `%d` | `fn_80442BC0` writes all four, `fn_80442C00(record, i)` reads one |
-| +0x4A4-+0x5A4 | `char[0x20]` x9 | `soundbanks`, up to nine names; a missing one is `""` | `fn_804430FC`, one 10-argument function that writes all nine |
+| +0x478 | `unsigned char` | `character`, rejected unless <= 19 (a roster index) | `fn_80442F98`, getter `fn_80442FC4` |
+| +0x479 | `unsigned char` | `unlockchar`, rejected unless <= 18 | `fn_80442FF4`, getter `fn_80443020` |
+| +0x47A | `unsigned char` | `sacrifice`, rejected unless <= 19 | `fn_80443050`, getter `fn_8044307C` |
+| +0x480 | `int[4]` | `rewards` | `fn_80442BC0`, `fn_80442C00(record, i)` |
+| +0x4A4-+0x5A4 | `char[0x20]` x9 | `soundbanks`, up to nine | `fn_804430FC` |
 | +0x5C4 | int | `maxblessed` | `fn_80442F70` |
 
-Four more keywords parse and do nothing: `precutscene`, `postcutscene`, `unlocked` and `unlock`.
-`profileid` (clamped to 0-5) and `gametype` go on the owning table, not the record, so they are
-file-level settings. Lines starting with `;`, `#` or `//`, blank lines and whitespace-only lines are
-skipped.
+`precutscene`, `postcutscene`, `unlocked` and `unlock` parse and do nothing. `profileid` (clamped to 0-5) and `gametype` are file-level settings on the owning table. Lines starting with `;`, `#` or `//` are comments. The owning table is `{profileid +0x0, gametype +0x4, count +0x8, records +0xC, current index +0x1A4}`; its int flags at `+0x1AC` (`fn_80443518`-`fn_804435A4`) are not `actor+0x1AC`.
 
-Nothing in the run touches +0x220 or +0x490-+0x4A3. The flags at +0x464 have one tester each for 0x2,
-0x4, 0x8, 0x10, 0x20, 0x80, 0x100, 0x200, 0x800 and 0x4000 (`fn_804432D8`-`fn_80443488`, in no bit
-order), `fn_804432AC` sets 0x8000, and `fn_8044324C(record, enable)` sets or clears 0x4000 and returns
-the new word.
-
-**The owner object** is separate, and `fn_800876D4` is what tells the two apart: it walks `owner+0xC`
-as `ScriptRecord *[100]` and copies bits out of each record's +0x464 into the owner's own int flags at
-`+0x1AC` (`fn_80443518` ORs, `fn_80443548` clears, `fn_8044357C` assigns, `fn_804435A4` reads; the
-values seen are 1, 4, 8 and 0x200). That `+0x1AC` is **not** `actor+0x1AC`, the type ID `fn_8009ABEC`
-returns (section 5) — same offset, different object. `fn_800887AC` fills in the rest of its head:
-`+0x0` is `profileid` (`unsigned`, clamped to 0-5), `+0x4` is `gametype` (`unsigned`), `+0x8` is the
-number of records and `+0xC` the array of them, and `+0x1A4` is an int the parser zeroes before it
-starts reading. `fn_80088740(table, actor, flag)`, just before the parser, is **matched** (`Game/fn_80088740.c`): all that is left of it is the lookup of the record the table is on, `fn_804332C4(table, fn_80431DB0(table))`, whose result it drops, so `+0x1A4` is an index into `records[]` and `fn_80431DB0` its getter. What it did with the actor went out with the diagnostics, like its empty `if (!flag)`.
-
-Four `.data` tables are written by index from the same run: `lbl_804CBE94` as `int[]`
-(`fn_804435D0`), and `lbl_804CB14C`, `lbl_804CB328` and `lbl_804CBEB8` as arrays of 0x44-byte records
-with an int at `+0x40` (`fn_8044374C` in `Game/fn_8044374C.c`, then `fn_80443608` and `fn_80443640`).
-`lbl_804CB14C` is the **venue table**, `Record44[7]`, which `clashVenue_GetVenueList` walks: a name
-at `+0x20` (`fn_8044F19C(i)`, 0x20 bytes) and the unlocked flag at `+0x40` (`fn_8044D5C4(i)`). It ends exactly
-where `lbl_804CB328` starts, and dtk mis-types it as a 0xF-byte string because each record starts with text.
-What the other two tables hold is unknown.
-
-**Physics** is Havok (`hk*`, the `hkRagdollConstraintData` ragdolls, `RagdollRecover_*`). No character-specific physics code has turned up yet. Per-character physical tuning is most likely in the NVB fields.
+**Physics** is Havok (`hk*`, the `hkRagdollConstraintData` ragdolls, `RagdollRecover_*`). No character-specific physics code has turned up; per-character physical tuning is most likely in the tuning fields.
 
 ---
 
 ## 5. Code That Lists Characters
 
-These are every function that references four or more character-name strings, plus the one data table that does. A new character needs an entry in each one, or a check that the default branch is acceptable.
+Every function that references four or more character-name strings, plus the data tables and literals that bound the roster. A new character needs an entry in each, or a check that the default is acceptable.
 
 | Where | What |
 |---|---|
-| `clashCharSelect_GetCharList` | Loop bound 18, and nine script array names (section 2). |
-| `Control_SetSelectInfo` (`Game/fn_80104504.cpp`) | Clamps each selected id, `charId + 1 > 0x12 ? 0x12 : charId + 1`, once per player. A 19th entry turns into the 18th unless the 0x12 is raised everywhere it appears, which is twice per player, in the compare and in the result (**tested**). |
-| Select-screen UI data | Literal 18s and per-id file names in the APT scripts. See "Select-screen UI" below. |
-| Roster tables `lbl_804CA51C`, `lbl_804CAB0C`, remap `lbl_804CB0FC` | `Record[20]` and `int[20]`. Indices 0 and 19 are filler. |
-| `fn_80020E60` | Name → type ID chain, 56 `strcmp`s in a fixed order (section 1). **Matched**, so a new name is a source edit. |
-| `fn_8001C258` (0x2C0) | Turns the aura on or off, `fn_8001C258(actor, 1/0)`. **Matched** (`Game/fn_8001C258.cpp`), so a new character is a source edit. |
-| `fn_80023010` (0x638) | Looks up all 19 effect keys and spawns the two flame auras. **Matched** (`Game/fn_80023010.c`), so a new character is a source edit. It also reads `G+0x590`. |
-| `fn_80114420` (0x3B4) | Per-character SFX banks. **Matched** (`Game/fn_80114420.cpp`), so a new character is a source edit. See "SFX banks" below. |
-| `lbl_804CF8E8` | AI profile names, `char*[31]` with a NULL end: `AI_DEFAULT`, the 18 characters in alphabetical order, then NPCs. Read only by `fn_80137CEC` (name to index, for property 0x2E, section 3); an unlisted name gets `AI_DEFAULT`, so a new character works without an entry. |
-| `fn_80099228`, `fn_8010CDCC`, `fn_8010D050` | Special-case type 17 (Biohazard) only: `fn_80099228` sets `.sdata` `lbl_8066F060` to 3 or 2 only when the type is not 17 (1 comes from another test), `fn_8010CDCC` (matched, `Game/fn_8010CDCC.c`) sets the voice value it stores in `.sbss` `lbl_8066F050` to 4 when the actor is type 17 and the target is not, and clears `lbl_8066F060` when the target is type 17 and `fn_800CCA08` or `fn_800CCA88` holds, and `fn_8010D050` (matched, same file; takes the bank as a parameter, not the actor's type) sets `lbl_8066F060` to 3, 1 or 2 from `fn_800CCA08`, `fn_800CC9D8` and `fn_800CCA88` on the target's record, with 3 and 2 only when the target is not type 17. Meaning unknown (guess: voice handling). |
-| `fn_801155A8`, `fn_801154D8`, `fn_80115308`, `fn_80115154` | Sound-event lookups keyed `(bank << 9) \| event` through `fn_801B4938` on the registry `lbl_80568DB0`. `fn_8010CDCC` passes the **type ID as the bank** to the first three, so character voices are data keyed by type ID; `fn_801155A8(bank)` (matched) asks whether bank `bank` has event 1: it looks `(bank << 9) \| 1` up in the registry at `lbl_80568DB0+4`, then `0xFA001` (bank 2000, event 1) in the one at `+0`, and returns whether either hit; it returns 0 outright when `.sdata` `lbl_8066B63C` or `lbl_8066BD04` is 0. `fn_801154D8(bank, event)` (matched) is the same test with the event as a parameter, and both lookups go to the registry at `lbl_80568DB0+0`: `(bank << 9) \| event`, then `event \| 0xFA000` (bank 2000). `fn_80115154(bank, event)` and `fn_80115308(bank, event, arg)` (both matched) are the play calls, the second with one extra argument that it records at `lbl_80568DB0+0x10` and `.sbss` `lbl_8066F070` and passes on to `fn_80041074`: they record the pair at `lbl_80568DB0+0x8`/`+0xC`, look the key up as above, and call the hit as a function pointer; a type with no events plays nothing. A new type ID needs voice events under its own bank, or no voice. |
-| `fn_801BEE2C`, `fn_801F7C68` | Story mode boss and level lists. Not needed for versus. |
+| `clashCharSelect_GetCharList` | Loop bound 18, and the nine script array names (section 2). |
+| `Control_SetSelectInfo` (`Game/fn_80104504.cpp`) | Clamps each selected id: `charId + 1 > 0x12 ? 0x12 : charId + 1`, once per player. A 19th entry turns into the 18th unless both 0x12s are raised, in the compare and in the result (**tested**). |
+| `fn_8044F070` (`Game/fn_8044EEF4.c`) | The inverse order-table search, `i <= 0x13`: one less than the table's length. |
+| Roster tables `lbl_804CA51C`, `lbl_804CAB0C`, order table `lbl_804CB0FC` | `Record[20]` and `int[20]`; indices 0 and 19 are filler. |
+| Select-screen UI data | Literal 18s and per-id file names in the APT scripts ("Select-screen UI" below). |
+| `fn_80020E60` | Name to type ID (section 1). |
+| `fn_8001C258` (0x2C0) | Turns the aura on or off ("Auras" below). |
+| `fn_80023010` (0x638) | Looks up all 19 effect keys and spawns the two flame auras. |
+| `fn_80114420` (0x3B4) | Per-character SFX banks ("SFX banks" below). |
+| `lbl_804CF8E8` | AI profile names, `char*[31]` with a NULL end: `AI_DEFAULT`, the 18 characters alphabetically, then NPCs. An unlisted name gets `AI_DEFAULT`, so a new character works without an entry. |
+| `fn_80099228`, `fn_8010CDCC`, `fn_8010D050` | Special-case type 17 (Biohazard) only, around the voice value `fn_8010CDCC` stores in `.sbss` `lbl_8066F050` and the `.sdata` `lbl_8066F060` (guess: voice handling). |
+| `fn_801155A8`, `fn_801154D8`, `fn_80115308`, `fn_80115154` | Sound events, keyed `(bank << 9) \| event` in the registry `lbl_80568DB0`, with bank 2000 as the fallback. `fn_8010CDCC` passes the **type ID as the bank**, so a new type ID needs voice events under its own bank, or it has no voice. |
+| `fn_801BEE2C`, `fn_801F7C68` | Story-mode boss and level lists. Not needed for versus. |
+
+`fn_80020E60` has 3 callers and `fn_8009ABEC` 21; the table holds those that treat characters differently. The rest pass the ID on (the `Obj*` factories at 0x804580CC-0x80459A80, `fn_8010D050`, `fn_80428EEC`, `fn_80446F10`), test it against 0, or switch on values that are not characters (`fn_80098D30`). The game has only 20 jump tables, so a `switch` on the type is a compare chain, and a character with no `case` just takes the default. **Not checked yet:** code that reads `actor+0x1AC` without the getter, and what `fn_8009FF54` (0x534, unmatched) does with the type `fn_8009EA20` hands it.
 
 ### Select-screen UI
 
-The UI is ActionScript in EA's APT format (big-endian here), in the nested `.big` archives under
-`Apt/clash/`. Nothing in it reads the roster size from the game. A 19th entry (id 18) was added by
-changing the rows below (**tested**); `gamelib/bg_main.big` needed no change.
+The UI is ActionScript in EA's APT format (big-endian here), in the nested `.big` archives under `Apt/clash/`. Nothing in it reads the roster size from the game. A 19th entry (id 18) was added by changing the rows below (**tested**), and a 20th (id 19) the same way (**tested**).
 
 | Where | What |
 |---|---|
 | Select-screen id | 0-17, the order table's index minus one: Thing, Wolverine, Paradox, Elektra, Johnny Ohm, Spider-Man, Daredevil, Storm, Aftershock, Venom, Heatwave, Human Torch, Iron Man, Megalith, Magneto, Biohazard, DefCon, Van Roekel. Every row below is indexed by it. |
-| `main.big`, `mainBE.big` | `_global.kGlobal_Max_NumChar = 18`: `CDataHub.CS_SetCharacter` ignores an id at or above it, and the select screen then stays on READY with no error. Also `g_aTable_HeroName` (18 keys: the name on the versus loading screen, where a plain string also works) and `oGlobal_oColourList.aAtribCol` (18 name colours). `fn_800B7C98` loads `main` and `fn_800B7894` loads `mainBE`; from boot to the versus select screen `main`'s values are the ones in effect (patching `mainBE` alone changes nothing). When `mainBE` is used is unknown. |
-| `screens/clashCharSelect.big` | The frame-0 script's literal arrays: `g_oLayOutList.aObject` (clip names `thumb0`-`thumb17`), `aCharObject` (18 slots), `g_aCharacterOrder` (0-17) and `g_aCharacterAudio` (18 `FE_SFX_*` names; a missing entry only loses the "ready" voice). Its own name and stat arrays are placeholders that `Init()` replaces with the result of `clashCharSelect_GetCharList`. The grid is `new CMenu(aCharObject, players, ..., 9)`: 9 columns and `floor(length / 9)` rows with empty slots skipped, so 19 entries need a 27-slot array to be reachable. The cursor is drawn at the thumbnail clip's own position. |
+| `main.big`, `mainBE.big` | `_global.kGlobal_Max_NumChar = 18`: `CDataHub.CS_SetCharacter` ignores an id at or above it, and the select screen then stays on READY with no error. Also `g_aTable_HeroName` (18 keys: the name on the versus loading screen; a plain string works) and `oGlobal_oColourList.aAtribCol` (18 name colours). From boot to the versus select screen `main`'s values are the ones in effect (`fn_800B7C98` loads it); when `mainBE` (`fn_800B7894`) is used is unknown. |
+| `screens/clashCharSelect.big` | The frame-0 script's literal arrays: `g_oLayOutList.aObject` (clip names `thumb0`-`thumb17`), `aCharObject` (18 slots), `g_aCharacterOrder` (0-17) and `g_aCharacterAudio` (18 `FE_SFX_*` names; a missing entry only loses the "ready" voice). The grid is `new CMenu(aCharObject, players, ..., 9)`: 9 columns and `floor(length / 9)` rows with empty slots skipped, so 19 entries need a 27-slot array to be reachable. The cursor is drawn at the thumbnail clip's own position. |
 | `screens/clashCharSelect_thumbs.big` | The `thumb<n>` clip instances, and one exported sprite `char<id>` per thumbnail picture (`attachMovie('char' + id)`). |
-| `portraits/c<id>_p0.big` | Select-screen portrait. `c18_p0`, `cvs18` and `csm18` exist as placeholders; `cvs18_alt` does not. What loads `csm<id>` is not traced. |
+| `portraits/c<id>_p0.big` | Select-screen portrait. Its REST, READY and READYALT poses are placed separately, so a picture meant to stay put needs an offset per pose. `c18_p0`, `cvs18` and `csm18` exist as placeholders; `cvs18_alt` and everything for id 19 do not. What loads `csm<id>` is not traced. |
 | `portraits/cvs<id>.big`, `cvs<id>_alt.big` | Versus loading-screen portraits. The files inside a portrait archive are named after the archive. |
-| `gamelib/bg_main.big` | Background tint: `gotoAndStop(id + 2)` on a 23-frame clip, so id 18 lands on an existing frame. |
+| `gamelib/bg_main.big` | Background tint: `gotoAndStop(id + 2)` on a 23-frame clip, so ids 18 and 19 land on existing frames. |
 
-The nested archives are unpacked in place. A RefPack stream that is not smaller than its output
-still loads, but the game prints `Target buffer is not large enough for inplace decompression!`.
-The game's `OSReport` text (that line, `Opening file: Bundles/<x>.tpl`, `Texture bundle missed`)
-shows in Dolphin's log with the `OSREPORT` log type on.
+A RefPack stream that is not smaller than its output still loads, but the game prints `Target buffer is not large enough for inplace decompression!`. The game's `OSReport` text shows in Dolphin's log with the `OSREPORT` log type on.
 
 ### SFX banks
 
-`fn_80114420` (**matched**, `Game/fn_80114420.cpp`) preloads one sound bank per active player. It
-loops `p` over `G+0x590` (the active slot count), takes slot `p`'s actor (`slot+0x28`), switches on
-that actor's type ID and `strcpy`s the bank name into a 32-byte buffer, then calls
-`fn_8045777C(lbl_8066BD88, name, 1)` for any name it set. It runs only when `G+0x770` or `G+0x774` is
-nonzero, or the level name at `G+0x59C` is `0_Test_Arena`, and does nothing unless `lbl_8066B63C` is
-set and `lbl_8066BD10` is clear.
-
-The type ID here does **not** come from `fn_80020E60`: `fn_8009ABEC(actor)` just returns the int at
-`actor+0x1AC`. The 18 bank names line up with `fn_80020E60`'s numbering exactly, which is what shows
-the two are the same ID space; `actor+0x1AC` comes from entity property 0x70 (section 3), not from
-the `info+0x3D4` cache `fn_80020E60` fills. Three banks use a codename the roster doesn't: `SFX_Brigade`
-is Megalith, `SFX_Hazmat` Biohazard and `SFX_Wink` Paradox (`SFX_Solara` does not exist; Heatwave's
-bank is `SFX_Heatwave`).
+`fn_80114420` preloads one sound bank per active player, chosen by a `switch` on the actor's `actor+0x1AC` type ID, with no `default:`: an unlisted type loads no bank. It runs only in a match (`G+0x770` or `G+0x774` nonzero) or on the level `0_Test_Arena`. The banks line up with `fn_80020E60`'s numbering, which is what shows the two IDs share one space. A neighbouring function at 0x801140E8 uses `SFX_generic`, probably the NPCs' bank.
 
 | ID | Bank | ID | Bank | ID | Bank |
 |---|---|---|---|---|---|
 | 1 | `SFX_Wolv1` | 7 | `SFX_Storm` | 13 | `SFX_DefCon` |
-| 2 | `SFX_Iron2` | 8 | `SFX_Torch` | 14 | `SFX_Wink` |
+| 2 | `SFX_Iron2` | 8 | `SFX_Torch` | 14 | `SFX_Wink` (Paradox) |
 | 3 | `SFX_Spidey` | 9 | `SFX_Devil` | 15 | `SFX_AfterShk` |
 | 4 | `SFX_Venom` | 10 | `SFX_Thing` | 16 | `SFX_Ohm` |
-| 5 | `SFX_Magneto` | 11 | `SFX_Roekel` | 17 | `SFX_Hazmat` |
-| 6 | `SFX_Elektra` | 12 | `SFX_Brigade` | 18 | `SFX_Heatwave` |
-
-There is no `default:` case, so an unlisted type loads no bank. A neighbouring function at 0x801140E8
-uses `SFX_generic`, which is probably that fallback for NPCs.
+| 5 | `SFX_Magneto` | 11 | `SFX_Roekel` | 17 | `SFX_Hazmat` (Biohazard) |
+| 6 | `SFX_Elektra` | 12 | `SFX_Brigade` (Megalith) | 18 | `SFX_Heatwave` |
 
 ### Auras
 
-The aura functions key off a shared **aura index**, not the type ID. `fn_80023010`'s `switch`
-(**matched**, `Game/fn_80023010.c`) names all 19 of them, so the index space is complete: 0-2 are
-explosions, 3-10 are the eight base auras and 11-18 the alts, always base + 8.
+The aura code keys off an **aura index**, not the type ID. `fn_80023010`'s `switch` names all 19: 0-2 are explosions, 3-10 the eight base auras and 11-18 the alternates, always base + 8. `fn_8001C258` switches indices 3, 5, 6, 7 and 8 (and their alternates) on and off per actor; `fn_80023010` spawns 4 and 10 (and their alternates) for the players in the match; nothing found so far uses 9/17. A character with no `case` simply has no aura.
 
-| Index | Key | Character | Type ID | Alt index | Alt key |
-|---|---|---|---|---|---|
-| 0 | `KEY_SMALL_EXPLOSION` | | | | |
-| 1 | `KEY_MED_EXPLOSION` | | | | |
-| 2 | `KEY_LARGE_EXPLOSION` | | | | |
-| 3 | `KEY_JOHNNYOHM_AURA` | `johnnyohm` | 16 | 11 | `KEY_ALTJOHNNYOHM_AURA` |
-| 4 | `KEY_HUMANTORCH_AURA` | `humantorch` | 8 | 12 | `KEY_ALTHUMANTORCH_AURA` |
-| 5 | `KEY_IRONMAN_AURA` | `ironman` | 2 | 13 | `KEY_ALTIRONMAN_AURA` |
-| 6 | `KEY_STORM_AURA` | `storm` | 7 | 14 | `KEY_ALTSTORM_AURA` |
-| 7 | `KEY_BRIGADE_AURA` | `megalith` | 12 | 15 | `KEY_ALTBRIGADE_AURA` |
-| 8 | `KEY_ROEKEL_AURA` | `roekel` | 11 | 16 | `KEY_ALTROEKEL_AURA` |
-| 9 | `KEY_HAZMAT_AURA` | `biohazard` | 17 | 17 | `KEY_ALTHAZMAT_AURA` |
-| 10 | `KEY_SOLARA_AURA` | `heatwave` | 18 | 18 | `KEY_ALTSOLARA_AURA` |
+| Index | Key | Character | Type ID |
+|---|---|---|---|
+| 0, 1, 2 | `KEY_SMALL_EXPLOSION`, `KEY_MED_EXPLOSION`, `KEY_LARGE_EXPLOSION` | | |
+| 3 | `KEY_JOHNNYOHM_AURA` | `johnnyohm` | 16 |
+| 4 | `KEY_HUMANTORCH_AURA` | `humantorch` | 8 |
+| 5 | `KEY_IRONMAN_AURA` | `ironman` | 2 |
+| 6 | `KEY_STORM_AURA` | `storm` | 7 |
+| 7 | `KEY_BRIGADE_AURA` | `megalith` | 12 |
+| 8 | `KEY_ROEKEL_AURA` | `roekel` | 11 |
+| 9 | `KEY_HAZMAT_AURA` | `biohazard` | 17 |
+| 10 | `KEY_SOLARA_AURA` | `heatwave` | 18 |
 
-So three of the eight auras are named after a codename the roster doesn't use: Brigade is Megalith,
-Hazmat is Biohazard and Solara is Heatwave (guessed from the index order, which lines up with
-`fn_8001C258`'s `switch` for the five it handles). The two functions split the eight: `fn_8001C258`
-switches indices 3, 5, 6, 7, 8 (and their alts) on and off per actor, `fn_80023010` spawns 4 and 10
-(and their alts) for the players in the match, and nothing found so far uses 9/17.
+The alternate keys are `KEY_ALT<name>_AURA`. Brigade, Hazmat and Solara are codenames the roster doesn't use; the matching of those three to characters is a guess from the index order. Both functions look the keys up in the two effect managers' definition tables (`fn_80022EC8()` and `fn_80022F00()`, both in `.bss` `lbl_80515030`), caching which definition and which manager in `lbl_805200A0`/`lbl_805200EC` (-1: the key isn't loaded), and spawn the aura with `fn_8002298C`.
 
-### The effect managers
-
-`fn_8002623C` (`Game/fn_8002623C.cpp`) pins down the rest of the `EffectManager` layout that
-`fn_8001C258` started, and where the managers live:
-
-| Where | What |
-|---|---|
-| `lbl_80515030` | One `.bss` object, 0xB050: `EffectManager managers[6]`, 0xF0 of something at +0x9630, then one more `EffectManager` at +0x9720. `fn_8002623C` reaches the last one as an offset from the start of the object, which is what shows they are one global and not two. |
-| `lbl_8066B5EC` | int, which entry of `managers` is current. `fn_80022EC8()` returns `&lbl_80515030.managers[lbl_8066B5EC]`; `fn_80022F00()` returns `&lbl_80515030` + 0x9720 (dtk's `lbl_8051E750`). |
-| `EffectManager` | 0x1930 bytes. +0x00 int (0 means the manager is not set up), +0x2C `EffectDef *`, +0x30 count, +0x3C a pointer to 0x4C-byte records, +0x44 the name table, +0x390 `Effect effects[64]`, +0x1790 the live count. |
-| `Effect` | 0x50 bytes. +0x10 `Vector` (position), +0x28 int, +0x30 the type `fn_8001C258` matches on, +0x34 the owning actor, +0x40 float. |
-
-The index addresses two `.bss` tables, `lbl_805200A0` (0x4C, 19 ints) and `lbl_805200EC` (0x54).
-`fn_80023010` fills them: it clears each entry to -1/0, then walks the two effect managers'
-definition tables (`fn_80022EC8()` first, then `fn_80022F00()`, records of 0x30 at `+0x2C`, count at
-`+0x30`, a name table at `+0x44`) and `strcmp`s each record's name against the key, storing the
-record's index in `lbl_805200A0[i]` and which manager it came from (0 or 1) in `lbl_805200EC[i]`. So
--1 means the key isn't loaded, and the pair is "which effect definition, in which manager".
-
-Both functions then spawn the effect with
-`fn_8002298C(fn_80022EC8(), lbl_805200A0[i], lbl_805200EC[i], &color, n, actor, 0.0f, 0.0f)`, where
-`color` is four floats built by `fn_8042D768` from `fn_800B2620(actor) * 0.5f` as the blue channel,
-and `n` is 1 in `fn_80023010` against 2 in `fn_8001C258`. That `n` is the effect's `+0x30` field: to
-switch the aura off, `fn_8001C258` walks the effect manager's table (`fn_80022EC8()`, effects at
-`+0x390` on a 0x50 stride, count at `+0x1790`) and calls `fn_8002289C` on every entry whose `+0x30`
-is 2 and whose `+0x34` is this actor.
-
-### Coverage of this list
-
-Every call site of `fn_80020E60` (3 callers) and `fn_8009ABEC` (21) was checked for what the result
-feeds; the table above holds those that treat characters differently. The others pass the ID on (to
-the `Obj*` factories at 0x804580CC-0x80459A80, to `fn_8010D050`, or to `fn_80428EEC` on
-`lbl_805724F0`, a keyed registry), test it against 0, or switch on non-character values
-(`fn_80098D30`); `fn_800BFC60` hands it to `fn_80446F10` (a keyed fan-out over `lbl_80572538`, a list of vtable objects) without testing it; `fn_8009EA20` (`Game/fn_8009EA20.cpp`) passes it on as the third argument of `fn_8009FF54` (0x534 bytes, unmatched) and does not test it. The game has only 20 jump tables, so a `switch` on the type is
-a compare chain, not a table. `fn_8001C258` ignores the characters with no aura rather than having a
-default branch, so a new character needs an entry only if it should glow.
-
-Of the 84 data objects sized 0x48, 0x4C, 0x50 or 0x98 (18, 19, 20 or 38 words), only the aura
-table `lbl_805200A0` is read by a function that also reads a character ID or slot name. **Not checked
-yet:** code that reads `actor+0x1AC` without the getter, and `fn_8009FF54`'s use of the type it is handed.
+---
 
 ## 6. Adding a Character
 
-**Tested** on 2026-10-12 in Dolphin, versus mode only: a 19th character that reuses Daredevil's
-model and Wolverine's motion set, type ID, cast and tuning. It was picked from its own select-screen
-tile by player 1 and for the CPU (the second slot), and played, including a mirror match and the
-alternate costume. A human player 2 picking it was not tried. Steps 1 to 3 are what that took. Steps 4 to 6 are still a hypothesis, for a character with
-its own type ID and assets. Not tested: the new character winning a match, audio, story mode, saves.
+**Tested**, in versus mode only: on 2026-10-12, a 19th character that reused Daredevil's model and Wolverine's motion set, type ID, cast and tuning, picked from its own tile by player 1 and by the CPU, mirror match and alternate costume included; and on 2026-10-17, characters 19 and 20 with their own model, textures, motion set, animations, tuning and portraits. Not tested: a human player 2 picking a new character, a new type ID (both mod characters reuse one), new voices, story mode, saves.
 
-1. **Templates:** `act_<Name>`, `plr_<Name>` and `plr_alt<Name>` appended to `Misc/Global.not` (section 3; `tools/nottool.py`), then `CLASH.BIG` and `CLASH.BH` repacked (`tools/bigtool.py`). A character that reuses existing assets needs no other data: the bundles follow the `MODEL` and `MOTIONSET` values, and the tuning and sounds follow the reused `DESCRIPTIONID`, `CASTID` and type ID. One character's motion set drove another's model of the same body class (property 0x27) without distortion, but a prop that the model carries and the motion set does not animate (Daredevil's club) floats.
-2. **Roster (DOL):** record 19 in both tables and entry 19 of the order table (section 2), the loop bound in `clashCharSelect_GetCharList`, and the clamp in `Control_SetSelectInfo` (section 5). All are same-size edits in matched source. Record 19 is the last one free, so a 20th character means growing the tables.
+1. **Templates:** `act_<Name>`, `plr_<Name>` and `plr_alt<Name>` appended to `Misc/Global.not` (section 3; `tools/nottool.py`), then `CLASH.BIG` and `CLASH.BH` repacked (`tools/bigtool.py`). A character that reuses existing assets needs no other data: the bundles follow `MODEL` and `MOTIONSET`, and the tuning and sounds follow the reused `DESCRIPTIONID`, `CASTID` and type ID. One character's motion set drove another's model of the same body class without distortion, but a prop that the model carries and the motion set does not animate (Daredevil's club) floats.
+2. **Roster (DOL):** record 19 in both roster tables and entry 19 of the order table (section 2), the loop bound in `clashCharSelect_GetCharList`, and the clamp in `Control_SetSelectInfo` (section 5). These are same-size edits in matched source. Record 19 is the last free one. For a 20th character, grow all three tables in `Game/unlockables.c` to 21 entries, pad the unit's `.data` growth to 0x200 bytes (the audio fault under "Shifted Builds" in [`baseline.md`](baseline.md)), and raise `fn_8044F070`'s bound to 0x14, the loop bound to 20 and the clamp to 0x14 (**tested**).
 3. **Select-screen UI:** the APT data in section 5 ("Select-screen UI"). An `.apt`'s pointers are file offsets, so these edits can be made by appending new arrays and records to the file and redirecting a count and pointer to them.
-4. **Type ID (untested):** add the name to `fn_80020E60` using the free ID 19 or 20, with the alt at `+20`, and set the same ID with property 0x70 in `act_<Name>` (section 3). The two are read by different code, so presumably they should agree for the base character. The existing alternates do not: their 0x70 is the base ID while `fn_80020E60` returns `+20`, so what reads which is not settled.
-5. **Per-character code and data (untested):** handle the new type in the aura and SFX code, give it voice events under its type ID's sound bank, and name an AI profile with property 0x2E (or get `AI_DEFAULT`). Its own model, motion set, animation bundle and textures go under new names, and its own tuning needs a `PLAYER_<DESCRIPTIONID>.nvb` and a line in `Misc/nvblist.txt` (section 4, "Tuning records"; the list's 0x200-byte buffer has 53 bytes free, a line costing its two names plus 2). Recheck section 5's "Not checked yet" list. With a reused type ID the in-match HUD icon is the reused character's.
-6. **Saves:** probably unaffected (section 2): the save code does not read the roster tables. The test ran without a memory card.
+4. **Type ID (untested):** add the name to `fn_80020E60` with the free ID 19 or 20 (the alternate at `+20`), and set the same ID with property 0x70 in `act_<Name>`. `CASTID` gives the ID the auras use, and `OBJECT_SOUNDID` the one the SFX and voices use (section 1), so set both. In a test that swapped Johnny Ohm's `CASTID`, `EFFECT1` and `ACTOR_FLAGS` between the two costumes, the aura colours followed. In the code, `CASTID` picks the aura key, `ACTOR_FLAGS` bit 0x80 picks tuning slot 5 (the alternate's effect and cutscene names), and `EFFECT1` is an effect of the template's own.
+5. **Per-character code and data:** handle the new type in the aura and SFX code, give it voice events under its type ID's sound bank, and name an AI profile with property 0x2E (or get `AI_DEFAULT`). Put its own model, motion set, animation bundle and textures under new names. Its own tuning needs a `PLAYER_<DESCRIPTIONID>.nvb` and a line in `Misc/nvblist.txt` (section 4; the list's buffer has 53 bytes free, and a line costs its two names plus 2). Recheck section 5's "Not checked yet". **The in-match HUD portrait** is an image named after the player template, lowercased: `plr_<name>`, `plr_<name>_rage`, `plr_alt<name>` and `plr_alt<name>_rage`, in each `HUD/hud<LANG>.1.gsh`. `fn_8000394C` (unmatched) loads `hud%s.1` and looks the images up as `%s` and `%s_rage` of `fn_80131060(player)`, lowercased by `fn_801B738C`. A missing name shows the 8x8 image `x`, a white square with a grey X (**tested**).
+6. **Saves:** probably unaffected (section 2): the save code does not read the roster tables. The tests ran without a memory card.

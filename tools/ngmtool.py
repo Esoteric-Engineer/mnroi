@@ -17,7 +17,7 @@ Big-endian on disc (the readers fn_801A2108 and fn_80221C08 do no byte swap):
         u8  parts                model +0x8
         u8  nodes                model +0x9
         u8  meshes               model +0x4
-        u16 bones                model +0x154
+        u16 attachments          model +0x154
   and a body (fn_80221C08):
         char name[0x20]          model +0x8C, its registry name
         u8  streams              model +0x5, at most 4
@@ -52,7 +52,10 @@ Big-endian on disc (the readers fn_801A2108 and fn_80221C08 do no byte swap):
                    indices; its even triangles and every list triangle are counter-clockwise
                    seen from outside (it agrees with the normals). The n nodes are every node
                    the mesh's vertices name; a type-0 mesh has exactly one.
-        per bone:  u8, u8, u16; four Vectors (a 4x4 matrix)   (0x50 each at model +0x150)
+        per attachment: u8 node; u8 kind; u16 index; four Vectors (a 4x4 matrix)
+                   (0x50 each at model +0x150). Points effects (Misc/game.nfx markers) and
+                   attack volumes are placed at, found by kind and index (docs/characters.md
+                   section 4)
 
 Misc/NormalTable.ngn (fn_80224F30, "Graphics:Normals"): u16 count (2609), then that many unit
 f32 vectors; the renderer binds it as the normal array of every model (fn_802237AC).
@@ -94,7 +97,7 @@ class Body:
         self.meshes = []   # (part, stream, strips, lists, render vertices, (u8, u8, u8), nodes)
 
 
-def parse_body(r, parts, nodes, meshes, bones):
+def parse_body(r, parts, nodes, meshes, attachments):
     b = Body()
     b.name = r.take("32s").split(b"\0")[0].decode("latin-1")
     streams = r.take("B")
@@ -129,9 +132,9 @@ def parse_body(r, parts, nodes, meshes, bones):
         n = r.take("B")
         b.meshes.append(rec + (flags, r.data[r.off:r.off + n]))
         r.skip(n)
-    b.bones = r.off
-    b.bone_count = bones
-    r.skip(bones * 0x44)
+    b.attachments = r.off
+    b.attachment_count = attachments
+    r.skip(attachments * 0x44)
     return b
 
 
@@ -160,7 +163,7 @@ def cmd_list(index, sub):
         print("%-36s %3d %8x %8x %6d %7d %8x" % (name, head[0], head[1], head[2], head[3],
                                                head[4], head[5]))
         for rec, body in models:
-            print("    %-32s index %3d  parts %3d  nodes %3d  meshes %3d  bones %3d" %
+            print("    %-32s index %3d  parts %3d  nodes %3d  meshes %3d  attachments %3d" %
                   ((body.name,) + rec))
 
 

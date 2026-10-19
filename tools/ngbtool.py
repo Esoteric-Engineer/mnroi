@@ -11,20 +11,30 @@ in lbl_8066C584 by its name. Pointer fields hold stale exporter addresses on dis
   +0x0  char name[0x20]          "Wolverine_Walk.nad", the registry key
   +0x20 u32 flags                0x10000 on disc; the loader ORs in 0x110000
   +0x24 u32                      set to 1 by the loader
-  +0x28 f32                      16.0 in Wolverine_Walk (guess: frame rate or length)
+  +0x28 f32 length               the last key's frame (all but one of the 12,742 animations)
   +0x2C u32 track count
   +0x30 ptr tracks               -> track count * 0x10
   +0x34 u32
   +0x38 u32                      cleared by the loader
-  +0x3C u32 n3C
-  +0x40 ptr                      -> n3C * 0xC
-  +0x44 u32 n44
-  +0x48 ptr                      -> n44 * 0x50
+  +0x3C u32 event count
+  +0x40 ptr events               -> event count * 0xC
+  +0x44 u32 extra count
+  +0x48 ptr extra records        -> extra count * 0x50
   +0x4C u32
-  then the track array, each track 0x10:
-        +0x0 u32, +0x4 u32, +0x8 u32 key count, +0xC ptr keys
-  then each track's keys in track order, key count * 0xC each,
-  then the n3C array, then the n44 array.
+  then the tracks, 0x10 each:
+        u32 bone                 a node of the model's skeleton in the low halfword; the high
+                                 halfword is 1-6 in 19,104 of the 708,362 tracks (meaning unknown)
+        u32 channel              0 rotation, 1 translation
+        u32 key count
+        ptr keys
+  then each track's keys in track order, 0xC each: f32 frame; s16 a, b, c, d
+        channel 0: the quaternion w = a / 16384, (x, y, z) = -(c, d, b) / 16384 (worked out
+                   from the data, not from code)
+        channel 1: (a, b, c) / d with d unsigned (unpack__6Packed, Game/fn_80447830.cpp),
+                   added to the node's offset from its parent
+  then the events, 0xC each: f32 frame; u16 type; u16 param; u32 value. The handler is
+        fn_800E1788 (unmatched; types in docs/characters.md section 4)
+  then the extra records, 0x50 each: a 4x4 f32 matrix and three words (not understood).
 """
 
 import os
@@ -76,7 +86,7 @@ def cmd_list(index, sub):
         anims, _ = parse(read_entry(index, name))
         print("%s: %d animations" % (name, len(anims)))
         for anim, h, keys in anims:
-            print("    %-32s flags %8x  +0x28 %8g  tracks %3d  keys %5d  n3C %3d  n44 %3d" %
+            print("    %-32s flags %8x  length %8g  tracks %3d  keys %5d  events %3d  extra %3d" %
                   (anim, h[1], h[3], h[4], keys, h[8], h[10]))
 
 

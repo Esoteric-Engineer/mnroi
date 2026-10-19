@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """List the functions that read tuning fields, best decompilation target first
-(docs/versus.md section 5, rows 19 to 21; the fields are docs/characters.md section 4).
+(docs/versus.md section 5, rows 20, 21 and 28; the fields are docs/characters.md section 4).
 
 Usage (from repo root, after a build: it reads build/GVLE69/asm):
   python3 tools/nvbreaders.py CLASS [-m SIZE]  Unclaimed readers of PLAYER or GLOBALS fields, ranked;

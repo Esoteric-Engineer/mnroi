@@ -30,7 +30,8 @@ What the export makes of the file:
   Textures    By name: the image of the bundle's .tpl at the name's line in its .ngt (the two
               always have the same count), then Bundles/global.*, then a loose <name>.tpl
               anywhere in CLASH.BIG. Which one the game prefers is not traced. Image 0 only.
-  Not exported  The bone records (0x50 each) and the mesh records' three u8s: not understood.
+  Not exported  The attachment records (0x50 each), and the mesh records' three u8s, which
+              are not understood.
 
 check builds every model of every bundle without writing, verifies the indices, joints and
 weights, and lists the parts with no material block and the textures it cannot find.
