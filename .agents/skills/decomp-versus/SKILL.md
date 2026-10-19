@@ -11,7 +11,7 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
 ## Changes to decomp-next
 
 - **Before step 1, read `docs/versus.md` section 5 (Target Order) only** — the status table plus
-  the notes for the row you land on (rows 27 and 28 share one subsection), and nothing else. That
+  the notes for the row you land on, and nothing else. That
   is enough to pick a target and know its blocker. Read further sections *on demand*, once you know what you are
   working: section 2 for the file map, section 3 for the setup flow, section 4 for the game-state
   and slot fields, section 6 for `GameFlow`. Don't read the file end to end; it is a reference, and

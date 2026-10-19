@@ -202,24 +202,21 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 
 Work the rows in order and skip whatever is done. `configure.py` is the authority on unit status; this table gives the order and each row's next action, not a changelog. Read the notes for the row you land on, not the others. Name a unit after its real source file when it is known (section 2); otherwise use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-**Rows 1 to 26 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, and the HUD setup, section 4.4). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 27 on cover what a new character still depends on.
+**Rows 1 to 27 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, and the small pinned functions). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 28 on cover what a new character still depends on.
 
 | # | Target | Next action / blocker |
 |---|---|---|
-| 27 | Small pinned functions | Pinned, one unit each, in the order of the list under "Rows 27 and 28". |
-| 28 | Movesets: the combat state machines | Pinned, in the order of the list under "Rows 27 and 28". |
+| 28 | Movesets: the combat state machines | Pinned, in the order of the list under "Row 28". |
 | 29 | Character data formats: the code behind what [`characters.md`](characters.md) leaves not understood | Pinned. Each item ends with its format in a tool's docstring and a `check` command, as in ROADMAP section 2. Targets, in order: `fn_803A38DC`, `fn_8039E22C`, `fn_803944A4` (`Misc/game.nfx`: loader, type word to effect class, key lookup in the 140 names of `lbl_804DC2F0`; then `tools/nfxtool.py`); `fn_8010FE34`, `fn_8011063C`, `fn_8011574C` with the small users `fn_80110AA0`, `fn_80110B40`, `fn_80111134`, `fn_801111DC`, `fn_801114A0`, `fn_80114E2C`, `fn_80116C84` (sound banks and voice events, the `(bank << 9) \| event` registry `lbl_80568DB0`); `fn_80057AE8`, `fn_80057FF8` (`.cut` cutscenes, per-record calls of the streamer `fn_80439778`); `fn_8023401C` (the only code naming the `glossenvcharlight` shader); `fn_80223E38` (draws a model's meshes; read the matched loader `fn_80221C08` first for the mesh record's three unknown bytes). |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); about 850 unclaimed functions (0x13300 bytes) follow up to 0x80472F34, where Havok starts. |
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size, [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
 
-### Rows 27 and 28
+### Row 28
 
-**These rows pin functions.** Match each in a unit of its own (`Game/fn_XXXXXXXX.c` or `.cpp`, by its own trailing-branch count), without first filling the file up to it. When one closes the gap to a matched neighbour of the same language and pair state, extend that neighbour instead.
+**This row pins functions.** Match each in a unit of its own (`Game/fn_XXXXXXXX.c` or `.cpp`, by its own trailing-branch count), without first filling the file up to it. When one closes the gap to a matched neighbour of the same language and pair state, extend that neighbour instead.
 
-**Row 27:** `fn_8009FF54` (0x534) is the one left: the last type-ID consumer not yet checked ([`characters.md`](characters.md) section 5). It takes ten arguments plus a 16-byte structure by value on the stack, and calls `fn_800A0488`, `fn_800A0B48`, `fn_8009E998` and `fn_800A09C0`; match those signatures first.
-
-**Row 28**, then the tuning readers that `tools/nvbreaders.py PLAYER` ranks highest (`fn_800DA884`, 0x140C, adds 13 fields; `fn_800DF03C`, 0x141C, 7). A modded weapon throw went through most of these:
+The functions below, then the tuning readers that `tools/nvbreaders.py PLAYER` ranks highest (`fn_800DA884`, 0x140C, adds 13 fields; `fn_800DF03C`, 0x141C, 7). A modded weapon throw went through most of these:
 
 | Function | Size | What it is (from reading its disassembly and callers) |
 |---|---|---|

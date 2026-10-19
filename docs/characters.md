@@ -295,7 +295,7 @@ Every function that references four or more character-name strings, plus the dat
 | `fn_801155A8`, `fn_801154D8`, `fn_80115308`, `fn_80115154` | Sound events, keyed `(bank << 9) \| event` in the registry `lbl_80568DB0`, with bank 2000 as the fallback. `fn_8010CDCC` passes the **type ID as the bank**, so a new type ID needs voice events under its own bank, or it has no voice. |
 | `fn_801BEE2C`, `fn_801F7C68` | Story-mode boss and level lists. Not needed for versus. |
 
-`fn_80020E60` has 3 callers and `fn_8009ABEC` 21; the table holds those that treat characters differently. The rest pass the ID on (the `Obj*` factories at 0x804580CC-0x80459A80, `fn_8010D050`, `fn_80428EEC`, `fn_80446F10`), test it against 0, or switch on values that are not characters (`fn_80098D30`). The game has only 20 jump tables, so a `switch` on the type is a compare chain, and a character with no `case` just takes the default. **Not checked yet:** code that reads `actor+0x1AC` without the getter, and what `fn_8009FF54` (0x534, unmatched) does with the type `fn_8009EA20` hands it.
+`fn_80020E60` has 3 callers and `fn_8009ABEC` 21; the table holds those that treat characters differently. The rest pass the ID on (the `Obj*` factories at 0x804580CC-0x80459A80, `fn_8010D050`, `fn_80428EEC`, `fn_80446F10`; `fn_8009EA20` through `fn_8009FF54` to `fn_800A0488` and `fn_800A0B48`, which never read it), test it against 0, or switch on values that are not characters (`fn_80098D30`). The game has only 20 jump tables, so a `switch` on the type is a compare chain, and a character with no `case` just takes the default. **Not checked yet:** code that reads `actor+0x1AC` without the getter.
 
 ### Select-screen UI
 

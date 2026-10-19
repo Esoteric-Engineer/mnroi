@@ -43,6 +43,7 @@ int fn_8009ABEC(void *self);
 int fn_8009AC94(void *self);
 void *fn_800B1724(void *self);
 void *fn_800B1750(void *self);
+void fn_8009F010(void *self, void *v);
 int fn_8009FF54(void *self, void *p, int type, int b, void *a, void *c, void *d, float f1, int two, float f2, int e, int f, int g, int h, int i, int *out);
 int fn_800B0C58(void *a);
 void *fn_800B14A0(void *a);
@@ -52,6 +53,14 @@ void fn_8042DC84(void *dst, void *src);
 void fn_80429038(void *out, void *a, void *b);
 int fn_800B13D8(void *a);
 void fn_8009AD04(void *self, int v);
+}
+
+extern "C" void fn_8009E998(register Obj *self, void *p, int two, int e, float f1, void *c, void *d, float f2)
+{
+    if (self->flags & 0x10) {
+        fn_8009F010(self, d);
+        fn_8010CDCC(self, 9, 0, 0, 200, 0, 0);
+    }
 }
 
 extern "C" int fn_8009EA20(register Obj *self, Obj *a, int b, int c)
