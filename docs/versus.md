@@ -156,7 +156,8 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 
 | Reader | Versus | Neither set (story, menus) |
 |---|---|---|
-| `fn_8013086C`, `fn_801308C0` | Predicates `G+0x774 > 0` and `G+0x770 > 0`; the HUD setup `fn_8000394C` calls both | |
+| `fn_8013086C`, `fn_801308C0` | Predicates `G+0x774 > 0` and `G+0x770 > 0`; the HUD setup `fn_8000394C` stores "either one" in `Hud+0x418C` | |
+| `fn_8000394C`, `fn_80003808`, `fn_800061CC` (HUD setup, section 4.4) | 2 player HUDs; the clock at `text_time`; player 1's name is `fn_801311C0(1)`; overlay `overlay2` too; then `fn_80007624` | 3 player HUDs; the clock at `text_timeStory`; names `fn_80130EF8()` and `"Unknown Peon Name"`; then `fn_80007678` |
 | `fn_800916BC` (G method, match start) | Phase `G+0x760 = 0`, then `fn_80095304`; calls `fn_80133658` | Phase 0xE; calls `fn_8013367C` |
 | `fn_80095304` (G method) | `+0x774` only: both slots get the last-selected CPU difficulty (section 4.2) | |
 | `fn_800BFFC8`, `fn_800BA4D8`, `fn_800BF488` | Round end: `fn_80092550` resets the slots; `fn_800BFFC8` otherwise adds the match clock to `G+0x768` unless the phase is 0xD | |
@@ -174,25 +175,45 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 | `fn_80119D64`, `fn_80119E94` | | Pick the music record `lbl_80497D24[track]` (0x5C bytes, 11 cue pairs) for the level's track and start cue 0 |
 | `clashMission_StartLevel` | | On `BrooklynBridge`, spawns `plr_thing` for player 0 |
 
+### 4.4 HUD object (`lbl_8066B578`, `.sdata` pointer)
+
+0x4190 bytes, built by `fn_80018198` (`new`, the constructor `fn_800034A0`, then `fn_80003808`); destructor `fn_80003688`. Its file starts the game's `.text` at 0x800034A0. The layout is the `Hud` class in `Game/fn_80003808.cpp`; what the fields are for:
+
+| Offset | Type | Meaning |
+|---|---|---|
+| +0x0, +0x8 | pointer to member | Two `Hud` methods, chosen by mode in `fn_80003808` |
+| +0x10 | text `[3]` | Counter `00/00` at `text_counter` |
+| +0x190, +0x4010 | 0x170 bytes each | Counter bar and death bar, from `tex_counterBar`/`pos_counterBar` and `tex_deathBar`/`pos_deathBar` |
+| +0x340 | 0x10 bytes | The loaded image bank `HUD/hud<LANG>.N.gsh`: load `fn_80017E3C`, unload `fn_80017F34`, find `fn_80017FB0`, position `fn_8000C274` |
+| +0x350 | int | Player HUD count, 2 in versus and 3 otherwise; `+0x354` (0x8BB0 bytes each), `+0x358` and the two image arrays have this many entries |
+| +0x3C98 | image `[count * 32]` | Per player, the 32 images named in `lbl_804BF980` (`tex_<name>`; `tex_healthBar_<p/2+1>`; the portraits, [`characters.md`](characters.md) section 6, step 5) |
+| +0x3C9C | image `[count * 2]` | Per player, `tex_mainBarContainer_<p/2+1>` and `tex_mainBarBackground_<p/2+1>` |
+| +0x3CA0 | image `[13]` | The overlays named in `lbl_804BFA00`, from `hud<LANG>.2` |
+| +0x3E2C, +0x3E34 | `Vec2` | Clock and counter positions |
+| +0x3E44, +0x3EC4, +0x3F44 | text | The clock at `text_time`: two numbers (`44`) and a colon, laid out left to right as first, colon, second |
+| +0x4180, +0x4184 | float | Screen height and width (`lbl_8066F590` `+0x7A`, `+0x78`) |
+| +0x418C | int | Versus: either role index set (section 4.3) |
+
+`lbl_8050F820` (`.bss`) is the overlay table: 13 records of 0x78 bytes, `+0x4` a name, `+0x8` a buffer. `fn_800061CC` copies each name into its buffer and puts both players' template names, minus `plr_` or `plr_alt` and lowercased, in records 3 and 4. What reads them there is unmatched (`fn_80006450`).
+
 ---
 
 ## 5. Target Order
 
 Work the rows in order and skip whatever is done. `configure.py` is the authority on unit status; this table gives the order and each row's next action, not a changelog. Read the notes for the row you land on, not the others. Name a unit after its real source file when it is known (section 2); otherwise use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-**Rows 1 to 25 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, and the role-index readers, section 4.3). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 26 on cover what a new character still depends on.
+**Rows 1 to 26 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, and the HUD setup, section 4.4). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 27 on cover what a new character still depends on.
 
 | # | Target | Next action / blocker |
 |---|---|---|
-| 26 | HUD setup: `fn_8000394C` (0x1230), then its caller `fn_80003808` (0x144) and `fn_800061CC` (0x180) | Pinned. Every character's HUD portrait goes through it ([`characters.md`](characters.md) section 6, step 5). |
-| 27 | Small pinned functions | Pinned, one unit each, in the order of the list under "Rows 26 to 28". |
-| 28 | Movesets: the combat state machines | Pinned, in the order of the list under "Rows 26 to 28". |
+| 27 | Small pinned functions | Pinned, one unit each, in the order of the list under "Rows 27 and 28". |
+| 28 | Movesets: the combat state machines | Pinned, in the order of the list under "Rows 27 and 28". |
 | 29 | Character data formats: the code behind what [`characters.md`](characters.md) leaves not understood | Pinned. Each item ends with its format in a tool's docstring and a `check` command, as in ROADMAP section 2. Targets, in order: `fn_803A38DC`, `fn_8039E22C`, `fn_803944A4` (`Misc/game.nfx`: loader, type word to effect class, key lookup in the 140 names of `lbl_804DC2F0`; then `tools/nfxtool.py`); `fn_8010FE34`, `fn_8011063C`, `fn_8011574C` with the small users `fn_80110AA0`, `fn_80110B40`, `fn_80111134`, `fn_801111DC`, `fn_801114A0`, `fn_80114E2C`, `fn_80116C84` (sound banks and voice events, the `(bank << 9) \| event` registry `lbl_80568DB0`); `fn_80057AE8`, `fn_80057FF8` (`.cut` cutscenes, per-record calls of the streamer `fn_80439778`); `fn_8023401C` (the only code naming the `glossenvcharlight` shader); `fn_80223E38` (draws a model's meshes; read the matched loader `fn_80221C08` first for the mesh record's three unknown bytes). |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); about 850 unclaimed functions (0x13300 bytes) follow up to 0x80472F34, where Havok starts. |
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size, [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
 
-### Rows 26 to 28
+### Rows 27 and 28
 
 **These rows pin functions.** Match each in a unit of its own (`Game/fn_XXXXXXXX.c` or `.cpp`, by its own trailing-branch count), without first filling the file up to it. When one closes the gap to a matched neighbour of the same language and pair state, extend that neighbour instead.
 
@@ -221,7 +242,7 @@ Only what costs disassembly to re-derive: file boundaries, unclaimable data, and
 - **Row 4: 0x80442010-0x8044AE3C.** Not one source file: the language varies per function, so let each function's trailing-branch count pick it ([`matching_notes.md`](matching_notes.md)). Pair-carrying file starts at 0x80449B80, 0x8044A5B4 and 0x8044A980; 0x80443908-0x804439E8 carries the pair between two pair-less runs. The float pools at 0x8048B678-0x8048B688, 0x8048CD14-0x8048CD74 and 0x8048E498-0x8048E4C8 cannot be claimed (a link-order cycle), so units read them as `extern`s or through `extern_pool`.
 - **Row 4: `GameFlow` is four source files.** The branch pair's flag resets at each file edge, which fixes the boundaries to the instruction ([`nonmatching.md`](nonmatching.md)): 0x800B43F0-0x800B5BC4 pair-less (a confirmed file start: `fn_800B43AC` is the previous file's `_GLOBAL_.I`), 0x800B5BC4-0x800B7094 pair-carrying, 0x800B7094-0x800B7204 pair-less (globals only), 0x800B7204-0x800B869C pair-less. The nine floats at 0x8048BD44-0x8048BD68 belong to no function of the first file (one was dead-stripped), and `Game/fn_800B46B0.c` defines `fn_800B5124`'s format string at 0x8048BD9C to keep its claim 8-aligned.
 - **Row 8: 0x80431788-0x80442010.** Pair resets, so file starts, at 0x8043A16C, 0x8043A71C, 0x8043C1EC, 0x8043D65C, 0x8043F490, 0x80440148, 0x804408F8, 0x80441AD8 and 0x80441C54. The float pools in the range are not contiguous, so each pool is a unit of its own read through `extern_pool`. The class names in these units (`Link`, `Cue`, `ListEntry`, `Placement`, `Body`, `Shape`, `Streamer`, `Movie`, `Holder`...) are guesses. `Streamer` (`Game/fn_80438044.cpp` to `Game/fn_80439E94.c`) streams `Cutscenes/<name>.cut`: a 0x198-byte header whose `+0x0` is the magic 0x2715, then `a` words at `+0x18C` (each <= 0x4B001), `b` 0x90-byte records at `+0x190` and a second `a`-word table at `+0x194`; the format is otherwise not understood.
-- **Row 9: the match clock, timer readers, command line and main loop** are whole files. Still unknown: the `lbl_8066B578` object (methods at 0x800075EC-0x800077C4) that the clock's wrappers call; what reads the `-addthing` list (`lbl_8052F060+0x328` count, `+0x32C` names); the meaning of `FrameCtx+0x68`'s phase bits.
+- **Row 9: the match clock, timer readers, command line and main loop** are whole files. Still unknown: what the HUD methods (section 4.4) at 0x800075EC-0x800077C4 that the clock's wrappers call do; what reads the `-addthing` list (`lbl_8052F060+0x328` count, `+0x32C` names); the meaning of `FrameCtx+0x68`'s phase bits.
 - **Rows 10 to 12: templates.** File edges (from `.ctors`): `fn_800AC37C` is in 0x8009E6AC to `_GLOBAL_.I` 0x800A90B0 (130 functions, the attachment spawner `fn_800A22CC` among them); the actor class is 0x800974B4 to `fn_8009B2E0`, done; `fn_80084498`'s file is 0x80081E08 to 0x800898E4; the template registry file (source probably `gameTemplate`) is 0x800F9F88 to 0x80101A00 (93 functions). The tuning loaders at 0x801B301C-0x801B3C4C have no static initializer between 0x801A0000 and 0x801C0000, so their edges are unknown. Actor fields `Game/fn_80097750.cpp` leaves as `fNNN`: `+0x1B0` a handle `fn_800ACFA8` resolves to an actor, `+0x1BC` the model (whose `+0xB0` is the animation object), `+0x218`/`+0x21C` timestamps, `+0x220` the last target's handle, `+0x228` a lock timer (guess).
 
 ---

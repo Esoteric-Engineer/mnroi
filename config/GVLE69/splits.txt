@@ -13,6 +13,14 @@ Sections:
 Game/unlockables.c:
 	.data       start:0x804CA51C end:0x804CC55C
 
+Game/fn_80003808.cpp:
+	.text       start:0x80003808 end:0x80004B7C
+	.rodata     start:0x804829C8 end:0x80482B00
+
+Game/fn_800061CC.cpp:
+	.text       start:0x800061CC end:0x8000634C
+	.rodata     start:0x80482BC0 end:0x80482BE0
+
 Game/fn_800092CC.cpp:
 	.text       start:0x800092CC end:0x800098CC
 	.ctors      start:0x804825A4 end:0x804825A8

@@ -316,6 +316,8 @@ config.libs = [
         "cflags": cflags_prodg_game,
         "progress_category": "game",
         "objects": [
+            Object(Matching, "Game/fn_80003808.cpp"),
+            Object(Matching, "Game/fn_800061CC.cpp"),
             Object(Matching, "Game/fn_800092CC.cpp"),
             Object(Matching, "Game/fn_8001C258.cpp"),
             Object(Matching, "Game/fn_80020E60.c"),
