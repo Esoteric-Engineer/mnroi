@@ -1,8 +1,32 @@
-// Returns the .nod model <name> from the model registry, loading it on a miss; docs/versus.md row 22.
+// Returns the .nod model <name> from the model registry, loading it on a miss, and parses one .nod
+// file; docs/versus.md row 22, layout in docs/characters.md section 4.
+
+#define SWAP32(x) (((unsigned)(x) >> 24) | (((unsigned)(x) >> 8) & 0xFF00) | (((x) & 0xFF00) << 8) | ((x) << 24))
 
 struct Model {
-    char pad0[0x6];
-    unsigned short refs; // +0x6
+    unsigned int flags;     // +0x0
+    char pad4[0x2];
+    unsigned short refs;    // +0x6
+    unsigned char nParts;   // +0x8
+    char pad9[0x88 - 0x9];
+    void **parts;           // +0x88
+    char name[0x20];        // +0x8C
+    unsigned int memSize;   // +0xAC
+};
+
+struct NodHeader {
+    unsigned int bounds[8]; // +0x0, a Segment (two Vectors)
+    unsigned int version;   // +0x20
+    unsigned char count;    // +0x24
+    char pad25[0x3];
+    unsigned int u28;       // +0x28
+    unsigned int u2C;       // +0x2C
+    struct {
+        unsigned int a;
+        unsigned int b;
+    } pairs[4];             // +0x30
+    unsigned int u50[4];    // +0x50
+    char pad60[0x10];
 };
 
 extern "C" {
@@ -18,6 +42,15 @@ void fn_801A9334(void *file);
 void *fn_801A8368(const char *path, const char *mode, int flags);
 Model *fn_801A09F0(void *file, char *path, unsigned int flags);
 void fn_801A875C(void *file);
+void fn_80466054(NodHeader *hdr);
+void fn_801A953C(void *file);
+int fn_801A8B60(void *dst, int size, int count, void *file);
+void fn_8042FC74(void *v);
+Model *fn_801A05CC(NodHeader *hdr);
+int fn_80220D54(Model *model, void *file, NodHeader *hdr, unsigned int flags);
+int fn_802360C4(void *part);
+void fn_801B4628(void *registry, const char *name, void *item);
+void fn_801A15C0(Model *model);
 extern const char lbl_8049D420[];
 extern const char lbl_8049D424[];
 extern const char lbl_8049D440[];
@@ -25,6 +58,9 @@ extern const char lbl_8049D448[];
 extern const char lbl_8049D44C[];
 extern void *lbl_8066C5CC;
 extern void *lbl_8066C5D8;
+extern int lbl_8066C5C0;
+extern unsigned int lbl_8066C5BC;
+extern unsigned int lbl_8066C5D4;
 }
 
 extern "C" Model *fn_801A0814(const char *name, unsigned int flags)
@@ -61,4 +97,70 @@ extern "C" Model *fn_801A0814(const char *name, unsigned int flags)
     if (file)
         fn_801A875C(file);
     return model;
+}
+
+extern "C" Model *fn_801A09F0(void *file, char *path, unsigned int flags)
+{
+    NodHeader hdr;
+    Model *model;
+    int i;
+    unsigned char j;
+
+    fn_80466054(&hdr);
+    model = 0;
+    fn_801A953C(file);
+    if (!fn_801A8B60(&hdr, 0x70, 1, file))
+        goto bad;
+    hdr.version = SWAP32(hdr.version);
+    hdr.u2C = SWAP32(hdr.u2C);
+    hdr.u28 = SWAP32(hdr.u28);
+    fn_8042FC74(&hdr.bounds[0]);
+    fn_8042FC74(&hdr.bounds[4]);
+    for (i = 0; i <= 3; i++) {
+        hdr.pairs[i].b = SWAP32(hdr.pairs[i].b);
+        hdr.pairs[i].a = SWAP32(hdr.pairs[i].a);
+    }
+    for (i = 0; i <= 3; i++)
+        hdr.u50[i] = SWAP32(hdr.u50[i]);
+    if (hdr.version < 10)
+        goto old;
+    if (hdr.version != 10)
+        goto old;
+    if (hdr.count > 0x40)
+        goto bad;
+    model = fn_801A05CC(&hdr);
+    if (!model)
+        goto fail;
+    strncpy(model->name, path, 0x20);
+    model->name[0x1F] = 0;
+    if (!fn_80220D54(model, file, &hdr, flags))
+        goto fail;
+    lbl_8066C5C0++;
+    lbl_8066C5BC += model->memSize;
+    lbl_8066C5D4 = lbl_8066C5D4 > lbl_8066C5BC ? lbl_8066C5D4 : lbl_8066C5BC;
+    if (!(flags & 1)) {
+        for (j = 0; j < model->nParts; j++) {
+            if (model->parts[j] && fn_802360C4(model->parts[j])) {
+                model->flags |= 4;
+                break;
+            }
+        }
+    }
+    if (flags & 0x800)
+        model->flags |= 0x8000;
+    else
+        fn_801B4628(lbl_8066C5CC, model->name, model);
+    if (flags & 2)
+        model->refs = 1;
+    return model;
+bad:
+    goto fail;
+old:
+    goto fail;
+fail:
+    if (model) {
+        model->refs = 1;
+        fn_801A15C0(model);
+    }
+    return 0;
 }

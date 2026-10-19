@@ -158,6 +158,8 @@ Model bundles live in a 6-slot table, `lbl_8057E110`, 0x38 each: name +0, model 
 
 The `.ngm` file is big-endian: a 0x18-byte header (version 5, two ignored words, model count, entry count, data size), then per model a 9-byte prefix (`s32` index, three bytes, `u16`) and a body that `fn_80221C08` reads. Each model is registered by its name at +0x8C in `lbl_8066C5CC`. `python3 tools/ngmtool.py` lists the headers and checks them; it stops at the first body until `fn_80221C08` is matched.
 
+A model missing from every loaded bundle falls back to a loose `<name>.nod` (`fn_801A0814` adds the extension and searches the registered directories; `fn_801A09F0` parses it). No `.nod` ships in `CLASH.BIG`, so the fallback is untested. Big-endian header, 0x70 bytes: two 16-byte vectors (a bounding box, guess) +0, `u32` version +0x20 (must be 10), `u8` count +0x24 (at most 0x40), `u32` +0x28 and +0x2C, four pairs of `u32` +0x30, four `u32` +0x50, 16 unswapped bytes +0x60. `fn_801A05CC` builds the model from the header and `fn_80220D54` reads the body; flags `0x800` skip the registry, `2` sets the reference count to 1.
+
 ### Tuning records
 
 `python3 tools/nvbtool.py` prints, compares and edits these files and holds their byte layouts
