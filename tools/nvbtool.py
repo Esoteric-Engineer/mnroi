@@ -183,6 +183,7 @@ FIELD_NAMES = {
     "GLOBALS": {
         4: "added through fn_80086818 to the actor's float +0x324, clamped to 0..+0x328 (fn_800A0488)",
         6: "added the same way to the entity's actor in fn_800ECA34, after its calls on the actor behind +0xD0",
+        7: "added the same way in fn_800E5B2C, when its argument's fn_8009AC94 differs from fn_800B13D8 of the actor; that path then plays clip 0xE0/0xE1/0xE2",
         15: "least value fn_8007C830 accepts for the float lbl_8066D5C0; also the floor of the window fn_800372A8 clamps [0] of fn_8042FB28(+0x180) into",
         16: "greatest value fn_8007C830 accepts for the float lbl_8066D5C0; also the top of fn_800370D0's ramp and of fn_800372A8's window",
         17: "bottom of fn_800370D0's ramp: t = ([0] of fn_8042FB28(+0x180) - 17) / (16 - 17), clamped to 0..1; +0x19C = t * its float argument",
