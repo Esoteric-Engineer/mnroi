@@ -189,7 +189,7 @@ number order: rows 19 to 23 (tuning, then the model and animation formats) come 
 | 20 | `PLAYER` tuning readers | Done: no reader under 0x800 adds a field; the 56 left (`-a`) read only fields already named. |
 | 21 | `GLOBALS` tuning readers | Done: no reader under 0x800 adds a field; the 4 left read only fields already named. |
 | 22 | Model bundle (`.ngm`, `.nod`): `fn_801A1FC4`, `fn_801A2108`, `fn_801A0814`, then the model builders | Done, with the `.tpl` texture loader `fn_80232C4C` (`Game/fn_80232C4C.c`). |
-| 23 | Animation bundle (`.ngb`) and motion set: `fn_8019E9DC`, `fn_8019EA38`, `fn_8019EBF8`, `fn_8008F470`, `fn_8008FF48` | Open. Next: `fn_8019EA38`. |
+| 23 | Animation bundle (`.ngb`) and motion set: `fn_8019E9DC`, `fn_8019EA38`, `fn_8019EBF8`, `fn_8008F470`, `fn_8008FF48` | Open. The `.ngb` loader is done (`Game/fn_8019E7D4.cpp`, 0x8019E7D4-0x8019EE28, `tools/ngbtool.py`). Next: `fn_8008F470`. |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); 855 unclaimed functions (0x13344 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-18-the-registrar-and-handle-class-run). |
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size,
@@ -335,15 +335,14 @@ Rows 20 and 21:
 
 ### Steps 22 and 23: model and animation bundles
 
-`Bundles/<name>.ngm` (models) and `.ngb` (animations) are the two binary asset formats with no
-tool. **These rows pin functions**, a unit of its own each, in the order given. As a reader
+`Bundles/<name>.ngm` (models, `tools/ngmtool.py`) and `.ngb` (animations, `tools/ngbtool.py`) are
+the two binary bundle formats. **These rows pin functions**, a unit of its own each, in the order given. As a reader
 matches, write the layout it shows into [`characters.md`](characters.md) section 4 and into a
 `tools/` script that parses every file of that type in `CLASH.BIG` to its last byte, the test
 `tools/nvbtool.py check` applies.
 
 | Row | Pinned | Size | What it is (from its strings and callers) |
 |---|---|---|---|
-| 23 | `fn_8019E9DC`, `fn_8019EA38`, `fn_8019EBF8` | 0x5C, 0x1C0, 0x230 | `Bundles/<name>.ngb`; the `%s-t%d` variant; the `.ngb` reader (`"Animation:Bundles"`). |
 | 23 | `fn_8008F470`, `fn_8008FF48` | 0xCC, 0xEC | Motion set by name: `fn_801B48AC` lookup, else `fn_80091028` and `fn_8008FF48`, then `fn_801B4628` adds it. Which callee parses the `.nms` text is not traced. |
 
 ### Step 4: files and boundaries
