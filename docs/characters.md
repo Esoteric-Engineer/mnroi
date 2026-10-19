@@ -129,7 +129,7 @@ The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int 
 
 ## 4. Per-Character Data in `CLASH.BIG`
 
-`CLASH.BIG` is an EA `BIG4` archive with the `CLASH.BH` index beside it; `python3 tools/bigtool.py` lists, extracts and repacks both (layouts in its header). The game accepts a repacked archive with entries moved and one added (**tested**). Only the 709 nested `.big` UI archives are RefPack-compressed. Each character has these files (Wolverine shown):
+`CLASH.BIG` is an EA `BIG4` archive with the `CLASH.BH` index beside it; `python3 tools/bigtool.py` lists, extracts and repacks both (layouts in its header). The game accepts a repacked archive with entries moved and one added (**tested**). Only the 709 nested `.big` UI archives are RefPack-compressed (`tools/refpack.py`, `tools/nbig.py`; "UI archives" below). Each character has these files (Wolverine shown):
 
 | File | Format | Contents |
 |---|---|---|
@@ -141,7 +141,7 @@ The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int 
 | `Bundles/wolverine.ngb` | Binary, big-endian | The 158 `.nad` animations (below). |
 | `Bundles/wolverine.ngm` | Binary, big-endian | The models `Wolverine.nod`, `Wolverine_phys.nod` and `Wolverine_shadow.nod` (below). |
 | `Bundles/wolverine.ngt` | Text | The names of the images of `Bundles/wolverine.tpl`, in order (`Wolverine`, `GE_env_WinkOnyx`, `WolverineHair`, `ge_charlight`, `GE_PAR_ElectricParticles`). |
-| `Bundles/wolverine.tpl`, `Materials/Models/Wolverine*.tpl` | GameCube TPL | Textures. `fn_80232C4C` reads image 0 only. The loose `WolverineHair.tpl` is 128x128 and the bundle's 64x256; which one the game draws is not traced (`tools/ngmexport.py` uses the bundle's). |
+| `Bundles/wolverine.tpl`, `Materials/Models/Wolverine*.tpl` | GameCube TPL | Textures (`tools/gxtex.py` decodes, encodes and rebuilds them, and gives Dolphin's texture-pack name). `fn_80232C4C` reads image 0 only. The loose `WolverineHair.tpl` is 128x128 and the bundle's 64x256; which one the game draws is not traced (`tools/ngmexport.py` uses the bundle's). |
 | `Materials/Shaders/shaders.nsa` | Text | The material library, one for the game: a block per material name (a model's part name) giving its `shader` (`charlight`, `masked`, `envmap`...), `texture`, `texture2`, `envmap` and options. `{ps2` and `{xbox` sub-blocks override for those platforms. |
 | `Bundles/wolverine-t0/t1/t2.ngb` | Binary | The animations against an opponent of body class 0, 1 or 2 (`SKELETONID`, section 3): the throws and the victim's side of them. |
 | `Bundles/wolverine_alt.*` | | The alternate costume. A second bundle per costume works (**tested**). |
@@ -156,7 +156,7 @@ The loaders take a name and have nothing character-specific in them: `fn_8019E9D
 
 ### Models (`.ngm`)
 
-The layout is in `tools/ngmtool.py`'s docstring; `check` parses all 114 bundles to their last byte, and `tools/ngmexport.py` writes a bundle's models as glTF. What a new model needs to know:
+The layout is in `tools/ngmtool.py`'s docstring; `check` parses all 114 bundles to their last byte and rebuilds them byte for byte, and its `read()`/`build()` write a new one. `tools/ngmexport.py` writes a bundle's models as glTF and `tools/gltf.py` reads glTF back. What a new model needs to know:
 
 - **Four by-name model bundles at most are resident** (`lbl_8057E110`, slots 2-5; slot 0 is `global`). `MODEL` skips a bundle already loaded and loads nothing when all four slots are full.
 - **The skeleton** ("nodes") has no rotations: each node is an offset from its parent and the negated bind position, so the inverse bind matrix is a translation. A type 2 stream is skinned on the CPU, three weights and three nodes per vertex. A mesh names at most 20 nodes. Normals are indices into the shared `Misc/NormalTable.ngn` (2609 vectors).
@@ -170,16 +170,46 @@ The layout is in `tools/ngmtool.py`'s docstring; `check` parses all 114 bundles 
   | 6 | 43, 0 | 44, 0 |
 
   Animation events 0x56/0x57 switch volume 6 on and off; only `Daredevil_RangedAttack` and `Daredevil_SuperRiseAttack` use them, with kinds 43 and 44 on his club. A volume moving more than about a metre a frame passes targets between frames (**tested**).
+- **The header's data size** must cover what `fn_801A3ECC` carves for each model; every shipped bundle holds that sum plus 52 bytes per mesh plus 0 to 1,008 bytes, for something not traced. `ngmtool.data_size()` adds 0x200, which the two mod characters loaded with (**tested**).
 - A model missing from every loaded bundle falls back to a loose `<name>.nod` (`fn_801A0814`, `fn_801A09F0`; version 10). None ships, so the fallback is untested.
 
 ### Animations (`.ngb`) and motion sets (`.nms`)
 
-The `.ngb` layout is in `tools/ngbtool.py`'s docstring; `check` parses all 139 bundles (12,742 animations) to their last byte. An animation is a run of tracks `{bone, channel, key count, keys}` with keys `{f32 frame; s16 a, b, c, d}`. Channel 0 is a rotation (`w = a / 16384`, `(x, y, z) = -(c, d, b) / 16384`, worked out from the data). Channel 1 is a translation, `(a, b, c) / d` with `d` unsigned (`unpack__6Packed`, `Game/fn_80447830.cpp`), added to the node's offset from its parent. Then come the events `{f32 frame; u16 type; u16 param; u32 value}` and the 0x50-byte extra records, which are not understood.
+The `.ngb` layout is in `tools/ngbtool.py`'s docstring; `check` parses all 139 bundles (12,742 animations) to their last byte and rebuilds them byte for byte. It also decodes and encodes keys, and `pose` evaluates an animation on a model's skeleton. An animation is a run of tracks `{bone, channel, key count, keys}` with keys `{f32 frame; s16 a, b, c, d}`. Channel 0 is a rotation (`w = a / 16384`, `(x, y, z) = -(c, d, b) / 16384`, worked out from the data). Channel 1 is a translation, `(a, b, c) / d` with `d` unsigned (`unpack__6Packed`, `Game/fn_80447830.cpp`), added to the node's offset from its parent. Then come the events `{f32 frame; u16 type; u16 param; u32 value}` and the 0x50-byte extra records, which are not understood.
 
 - **Event types** that the animation event handler `fn_800E1788` (unmatched) handles, read from its disassembly: 0x04 spawns the projectile named by tuning field 90 (`fn_800F0C70`); 0x23 field 168's effect; 0x39/0x3A attack volumes (`fn_800E8768`, `fn_800E880C`); 0x56/0x57 attack volume 6; 0x63 sets actor flag 0x2000; 0x40 plays `IKClaws`; 0x53 is the frame a hit skips to (ability 0x20000000). An effect field's id also works as an event type: `daredevil_superThrow.nad` shows field 81's effect from event 0x51 at frame 20 to 71. Types above 0x72 fall to the default of the dispatcher `fn_80058C94`.
 - **A thrown weapon's flight is the animation.** Daredevil's club is node 39's translation keys in `Daredevil_RangedAttack.nad`, 8 m out and back; no code moves it. The game aims only by turning the actor at the target before the motion (`fn_800DDCB4`) (**tested**).
 - **Two by-name animation bundles at most are resident**, in slots 2 and 6 of `lbl_8057DCA0` (guess: the two fighters'), each with its `-t<n>` variant in the next slot (3 and 7). `fn_8019EA38` loads nothing and returns 0 when both slots hold other names.
 - **Motion sets** live in the registry `lbl_8066B8F4`. The six base sets `male.nms` ... `brutepeon.nms` are made at boot; they are the `basedon` targets, and a set inherits the states it leaves out. The text format is in `tools/nmstool.py`'s docstring (`check` parses all 47). A line maps a state name to a `.nad`; the state's index is its position in the DOL's name list at 0x80488A58 (`SuperAttack1` 0x2F, `SuperAttackFar` 0x33, `AirAttack` 0x3E). A set has at most 6 overlays. A state name the game does not know (`fn_8008F3B8`, unmatched), a `.nad` not in a loaded bundle, and a last line with no newline are all dropped silently. `dist -1` on `SuperThrow` is the long-range grab (Daredevil's cable, Spider-Man's web).
+
+### UI archives (APT, `.gsh`, `.geo`)
+
+The menus, the HUD overlays and the portraits are EA APT movies, Flash compiled to EA's format. Each is a nested archive `Apt/<path>.big`, a RefPack-compressed `BIGF` file (`tools/nbig.py`, `tools/refpack.py`) holding up to four files named after the archive:
+
+| File | Contents | Tool |
+|---|---|---|
+| `.apt` | The movie: its characters (sprites, shapes, images, text, buttons), frames and ActionScript bytecode. Every pointer is an absolute file offset. Version 7 (677 movies) or 6 (32). | `aptdump.py` disassembles, `aptdecomp.py` turns the bytecode into statements, `aptpatch.py` edits by appending |
+| `.const` | The constants the bytecode indexes, and the offset of the root movie in the `.apt`. | the same |
+| `.geo` | The SHAPE characters' geometry, one record per character id: fill styles (solid, line, or a `.gsh` image with a texture matrix), triangles and lines. | `gshtool.py geo` |
+| `.gsh` | The images (664 archives have a bank), C8 or C4 with an RGB5A3 or IA8 palette. An IMAGE character and a texture fill name one by its entry name (`"36"`). | `gshtool.py` |
+
+The loose banks `HUD/hud<LANG>.1.gsh`, `.2.gsh` and `HUD/splash.gsh` have the same format. Each tool's docstring holds its layout, and its `check` rebuilds every file of its kind in `CLASH.BIG` byte for byte (`aptdecomp.py check` decompiles all 709 movies). What the game needs from an edited movie (**tested**):
+
+- **Nothing reachable twice.** A copied sprite that shared the original's frame items and action blocks broke both copies, so a copy duplicates every frame item, action block and `PushData`/`ConstantPool` index array. Why is not traced (guess: the loader fixes up each pointer it reaches, so a shared record is fixed up twice).
+- An action block keeps its address modulo 4, since operand padding depends on it.
+- The archive is really compressed and its files renamed after it (`nbig.py pack` and `rename` do both; section 5, "Select-screen UI").
+
+### Effects (`Misc/game.nfx`)
+
+`fn_803A38DC` (unmatched) opens `game.nfx` and splits it with `strtok` on ` \r\t\n`. The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<key> <value>` per line, and `end`. No tool reads it yet.
+
+- **Types.** `fn_8039E22C` (unmatched) turns a type word into an effect class: `controller`, `trail`, `partsys`, `partsysdam`, `partsubfx`, `partmodel`, `glow`, `constraint`, `cloth`, `shockwave`, `psishield`, `billboard`, `billboardomni`, `volumefog`, `rain`, `partcylinder`, `actorglow`, `energybeam`, `lasertripwire`, `gibomatic2k`, `dyngeom`, `ctrldamage`, `radiuseffect`, `light`, `projectcube`, `boxproject`, `project`, `spawner`, `glass`, `meshtypeflash`, `damage`, `worldfx`. The file uses 26, most of all `partsys` (773 blocks) and `controller` (696).
+- **Keys.** `fn_803944A4` looks a key up, ignoring case, in the 140 names of `lbl_804DC2F0` (`invalid`, `end`, `material`, ... `childflag`) and returns its index. Every key in the file is in the list.
+- **Names.** A tuning field of type effect names a block (378 of the 382 names the `.nvb` files use exist), and so do animation events of an effect field's id (section 4, "Animations").
+- **Markers.** `markertype` and `marker_index` are the kind and index of a model attachment (see "Models" above). `endmarker` and `endmarker_id` give a second point, in `constraint`, `cloth`, `controller`, `trail`, `energybeam` and `partsys` blocks; for a grab line it is on the victim (from the mod tests).
+- **A controller** lists its child effects with `effectname`; the keys after each one (its own `markertype`, `marker_index`) belong to that child.
+- `Misc/defaults.nfx` has one block per type, named after the type, with default values. The DOL does not name that file, so whether the game reads it is not known.
+- Blocks appended to the file load, and a recoloured copy of a controller in tuning field 0x51 drew the grab line in the new colour (**tested**). A `partmodel` draws a model of a loaded bundle (Magneto's `MetalBall.nod` is a fourth model in `magneto.ngm`).
 
 ### Tuning records
 
@@ -281,7 +311,7 @@ The UI is ActionScript in EA's APT format (big-endian here), in the nested `.big
 | `portraits/cvs<id>.big`, `cvs<id>_alt.big` | Versus loading-screen portraits. The files inside a portrait archive are named after the archive. |
 | `gamelib/bg_main.big` | Background tint: `gotoAndStop(id + 2)` on a 23-frame clip, so ids 18 and 19 land on existing frames. |
 
-A RefPack stream that is not smaller than its output still loads, but the game prints `Target buffer is not large enough for inplace decompression!`. The game's `OSReport` text shows in Dolphin's log with the `OSREPORT` log type on.
+A RefPack stream that is not smaller than its output still loads, but the game prints `Target buffer is not large enough for inplace decompression!` (`tools/refpack.py` compresses properly). The game's `OSReport` text shows in Dolphin's log with the `OSREPORT` log type on.
 
 ### SFX banks
 
@@ -322,7 +352,7 @@ The alternate keys are `KEY_ALT<name>_AURA`. Brigade, Hazmat and Solara are code
 
 1. **Templates:** `act_<Name>`, `plr_<Name>` and `plr_alt<Name>` appended to `Misc/Global.not` (section 3; `tools/nottool.py`), then `CLASH.BIG` and `CLASH.BH` repacked (`tools/bigtool.py`). A character that reuses existing assets needs no other data: the bundles follow `MODEL` and `MOTIONSET`, and the tuning and sounds follow the reused `DESCRIPTIONID`, `CASTID` and type ID. One character's motion set drove another's model of the same body class without distortion, but a prop that the model carries and the motion set does not animate (Daredevil's club) floats.
 2. **Roster (DOL):** record 19 in both roster tables and entry 19 of the order table (section 2), the loop bound in `clashCharSelect_GetCharList`, and the clamp in `Control_SetSelectInfo` (section 5). These are same-size edits in matched source. Record 19 is the last free one. For a 20th character, grow all three tables in `Game/unlockables.c` to 21 entries, pad the unit's `.data` growth to 0x200 bytes (the audio fault under "Shifted Builds" in [`baseline.md`](baseline.md)), and raise `fn_8044F070`'s bound to 0x14, the loop bound to 20 and the clamp to 0x14 (**tested**).
-3. **Select-screen UI:** the APT data in section 5 ("Select-screen UI"). An `.apt`'s pointers are file offsets, so these edits can be made by appending new arrays and records to the file and redirecting a count and pointer to them.
+3. **Select-screen UI:** the APT data in section 5 ("Select-screen UI"). An `.apt`'s pointers are file offsets, so these edits can be made by appending new arrays and records to the file and redirecting a count and pointer to them (`tools/aptpatch.py`; section 4, "UI archives"). `tools/nbig.py rename` copies a portrait archive under a new id and `tools/gshtool.py set` redraws its images.
 4. **Type ID (untested):** add the name to `fn_80020E60` with the free ID 19 or 20 (the alternate at `+20`), and set the same ID with property 0x70 in `act_<Name>`. `CASTID` gives the ID the auras use, and `OBJECT_SOUNDID` the one the SFX and voices use (section 1), so set both. In a test that swapped Johnny Ohm's `CASTID`, `EFFECT1` and `ACTOR_FLAGS` between the two costumes, the aura colours followed. In the code, `CASTID` picks the aura key, `ACTOR_FLAGS` bit 0x80 picks tuning slot 5 (the alternate's effect and cutscene names), and `EFFECT1` is an effect of the template's own.
-5. **Per-character code and data:** handle the new type in the aura and SFX code, give it voice events under its type ID's sound bank, and name an AI profile with property 0x2E (or get `AI_DEFAULT`). Put its own model, motion set, animation bundle and textures under new names. Its own tuning needs a `PLAYER_<DESCRIPTIONID>.nvb` and a line in `Misc/nvblist.txt` (section 4; the list's buffer has 53 bytes free, and a line costs its two names plus 2). Recheck section 5's "Not checked yet". **The in-match HUD portrait** is an image named after the player template, lowercased: `plr_<name>`, `plr_<name>_rage`, `plr_alt<name>` and `plr_alt<name>_rage`, in each `HUD/hud<LANG>.1.gsh`. `fn_8000394C` (unmatched) loads `hud%s.1` and looks the images up as `%s` and `%s_rage` of `fn_80131060(player)`, lowercased by `fn_801B738C`. A missing name shows the 8x8 image `x`, a white square with a grey X (**tested**).
+5. **Per-character code and data:** handle the new type in the aura and SFX code, give it voice events under its type ID's sound bank, and name an AI profile with property 0x2E (or get `AI_DEFAULT`). Put its own model, motion set, animation bundle and textures under new names. Its own tuning needs a `PLAYER_<DESCRIPTIONID>.nvb` and a line in `Misc/nvblist.txt` (section 4; the list's buffer has 53 bytes free, and a line costs its two names plus 2). Recheck section 5's "Not checked yet". **The in-match HUD portrait** is an image named after the player template, lowercased: `plr_<name>`, `plr_<name>_rage`, `plr_alt<name>` and `plr_alt<name>_rage`, in each `HUD/hud<LANG>.1.gsh`. `fn_8000394C` (unmatched) loads `hud%s.1` and looks the images up as `%s` and `%s_rage` of `fn_80131060(player)`, lowercased by `fn_801B738C`. A missing name shows the 8x8 image `x`, a white square with a grey X (**tested**). `gshtool.add_images()` adds the four images to a bank, copying an existing record of the same size.
 6. **Saves:** probably unaffected (section 2): the save code does not read the roster tables. The tests ran without a memory card.

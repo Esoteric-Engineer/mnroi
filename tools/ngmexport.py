@@ -41,11 +41,11 @@ import json
 import os
 import struct
 import sys
-import zlib
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from nvbtool import read_big_index, read_entry  # noqa: E402
 from ngmtool import STRIDE, ngm_entries, parse  # noqa: E402
+from gxtex import decode, read_tpl, write_png  # noqa: E402
 
 NORMALS = "Misc/NormalTable.ngn"
 NSA = ["Materials/Shaders/%s.nsa" % n for n in ("shaders", "definitions", "editor", "constraints")]
@@ -98,101 +98,10 @@ def read_materials(index):
     return out
 
 
-# GX textures
-
-def rgb565(c):
-    r, g, b = c >> 11 & 31, c >> 5 & 63, c & 31
-    return (r << 3 | r >> 2, g << 2 | g >> 4, b << 3 | b >> 2, 255)
-
-
-def decode_cmpr(data, w, h, px):
-    p = 0
-    for ty in range(0, h, 8):
-        for tx in range(0, w, 8):
-            for sub in range(4):
-                c0, c1 = struct.unpack_from(">HH", data, p)
-                a, b = rgb565(c0), rgb565(c1)
-                if c0 > c1:
-                    pal = (a, b, tuple((2 * a[i] + b[i]) // 3 for i in range(4)),
-                           tuple((a[i] + 2 * b[i]) // 3 for i in range(4)))
-                else:
-                    pal = (a, b, tuple((a[i] + b[i]) // 2 for i in range(4)), (0, 0, 0, 0))
-                bx, by = tx + (sub & 1) * 4, ty + (sub >> 1) * 4
-                for row in range(4):
-                    bits = data[p + 4 + row]
-                    for col in range(4):
-                        x, y = bx + col, by + row
-                        if x < w and y < h:
-                            px[y * w + x] = pal[bits >> (6 - 2 * col) & 3]
-                p += 8
-
-
-def decode_4x4(data, w, h, px, size, pixel):
-    p = 0
-    for ty in range(0, h, 4):
-        for tx in range(0, w, 4):
-            for i in range(16):
-                x, y = tx + (i & 3), ty + (i >> 2)
-                if x < w and y < h:
-                    px[y * w + x] = pixel(data, p, i)
-            p += size
-
-
-def rgb5a3(data, p, i):
-    v = struct.unpack_from(">H", data, p + 2 * i)[0]
-    if v & 0x8000:
-        r, g, b = v >> 10 & 31, v >> 5 & 31, v & 31
-        return (r << 3 | r >> 2, g << 3 | g >> 2, b << 3 | b >> 2, 255)
-    a = v >> 12 & 7
-    return ((v >> 8 & 15) * 17, (v >> 4 & 15) * 17, (v & 15) * 17, a << 5 | a << 2 | a >> 1)
-
-
-def ia8(data, p, i):
-    a, v = data[p + 2 * i], data[p + 2 * i + 1]
-    return (v, v, v, a)
-
-
-def rgba8(data, p, i):
-    return (data[p + 2 * i + 1], data[p + 32 + 2 * i], data[p + 33 + 2 * i], data[p + 2 * i])
-
-
-def tpl_images(data):
-    """[(width, height, format, data offset, wrap s, wrap t)] of a TPL file."""
-    magic, count, table = struct.unpack_from(">III", data, 0)
-    if magic != 0x0020AF30:
-        raise ValueError("not a TPL file")
-    out = []
-    for i in range(count):
-        header = struct.unpack_from(">I", data, table + 8 * i)[0]
-        h, w, fmt, off, ws, wt = struct.unpack_from(">HHIIII", data, header)
-        out.append((w, h, fmt, off, ws, wt))
-    return out
-
-
 def decode_tpl(data, image):
     """(width, height, RGBA bytes, wrap s, wrap t) of one image of a TPL file."""
-    w, h, fmt, off, ws, wt = tpl_images(data)[image]
-    px = [(0, 0, 0, 0)] * (w * h)
-    blob = data[off:]
-    if fmt == 14:
-        decode_cmpr(blob, w, h, px)
-    elif fmt == 5:
-        decode_4x4(blob, w, h, px, 32, rgb5a3)
-    elif fmt == 3:
-        decode_4x4(blob, w, h, px, 32, ia8)
-    elif fmt == 6:
-        decode_4x4(blob, w, h, px, 64, rgba8)
-    else:
-        raise ValueError("TPL format %d is not supported" % fmt)
-    return w, h, bytes(c for p in px for c in p), ws, wt
-
-
-def png(w, h, rgba):
-    def chunk(kind, body):
-        return struct.pack(">I", len(body)) + kind + body + struct.pack(">I", zlib.crc32(kind + body))
-    rows = b"".join(b"\0" + rgba[y * w * 4:(y + 1) * w * 4] for y in range(h))
-    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0)) +
-            chunk(b"IDAT", zlib.compress(rows, 9)) + chunk(b"IEND", b""))
+    im = read_tpl(data)[0][image]
+    return im.width, im.height, decode(im.format, im.base(), im.width, im.height), im.header[4], im.header[5]
 
 
 class Textures:
@@ -336,7 +245,7 @@ class Model:
                 found = textures.find(texname)
                 if found:
                     w, h, rgba, ws, wt = decode_tpl(*found)
-                    blob = png(w, h, rgba)
+                    blob = write_png(w, h, rgba)
                     if separate:
                         image_files[texname + ".png"] = blob
                         images.append({"name": texname, "uri": texname + ".png"})
