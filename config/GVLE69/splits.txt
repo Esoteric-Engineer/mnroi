@@ -132,6 +132,9 @@ Game/fn_80033A6C.c:
 Game/fn_80033D2C.cpp:
 	.text       start:0x80033D2C end:0x80034048
 
+Game/fn_80034894.cpp:
+	.text       start:0x80034894 end:0x80034CE4
+
 Game/fn_80034DB0.cpp:
 	.text       start:0x80034DB0 end:0x800350F4
 

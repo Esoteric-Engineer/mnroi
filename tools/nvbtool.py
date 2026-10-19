@@ -231,6 +231,7 @@ FIELD_NAMES = {
         75: "fourth argument of fn_80043000(1, 0, ...) in fn_80044E5C",
         77: "mode for fn_80043190(lbl_8066B75C, mode) when fn_800439B0's fn_800466D8 kind is neither 0 nor 1; only modes 1 and 2 are passed on",
         79: "the same mode when that kind is 1 (fn_800439B0)",
+        80: "time added to the fn_8042EFF8 clock for the deadline +0x1C8: until it passes, fn_80034894 keeps returning flag 0x1000000 (the one field 81 tests) while its third argument's word has it",
         81: "added to fn_800393F4's target unless the second flags argument has 0x1000000",
     },
 }
