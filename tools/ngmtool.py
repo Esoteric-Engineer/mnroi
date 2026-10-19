@@ -28,8 +28,9 @@ Big-endian on disc (the readers fn_801A2108 and fn_80221C08 do no byte swap):
         u16 n; n * 4 bytes       model +0x14
         u32 n; n * u16           model +0x7C (n at +0x10); a short read fails the load
         per part:  char[0x20]    a texture/material name, fn_80234628 (model +0x88)
-        per node:  Vector a, b (w forced to 1.0); u8, u8   (0x30 each at model +0x80; skeleton nodes, guess)
-        u16, u16                 model +0x158, +0x15A
+        per node:  Vector a, b (w forced to 1.0); s8 parent; u8   (0x30 each at model +0x80; skeleton
+                   nodes, guess; fn_801A3784 sums |a| along the nodes with parent > 0)
+        u16, u16                 model +0x158, +0x15A (first node of a second chain, guess)
         per mesh:  s32 part index; u8 group; u16 a; u16 b; u16 c; u8, u8, u8; u8 n; n bytes
                    (0x5C each at model +0x18; a and b are consecutive spans in one running
                    offset, c sums per group)
