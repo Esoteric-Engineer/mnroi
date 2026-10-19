@@ -2668,6 +2668,9 @@ Dolphin/OdemuExi2/DBGEXIImm.c:
 Game/fn_801A0814.cpp:
 	.text       start:0x801A05CC end:0x801A0F54
 
+Game/fn_801A0FA4.cpp:
+	.text       start:0x801A0FA4 end:0x801A15C0
+
 Game/fn_801A1FC4.cpp:
 	.text       start:0x801A1FC4 end:0x801A2108
 
