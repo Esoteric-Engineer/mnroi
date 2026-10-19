@@ -2699,6 +2699,9 @@ Game/fn_801B4628.c:
 Game/fn_801B48AC.c:
 	.text       start:0x801B48AC end:0x801B4938
 
+Game/fn_80221C08.cpp:
+	.text       start:0x80221C08 end:0x8022262C
+
 RealCore/fn_8023DAA0.c:
 	.text       start:0x8023DAA0 end:0x8023DAE0
 
