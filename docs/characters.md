@@ -154,6 +154,8 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
 
 The loaders are generic engine code that takes a name, with nothing character-specific in them: `fn_8019E9DC` (`Bundles/%s`), `fn_8019EA38`, `fn_8019EBF8` (`Animation:Bundles`), `fn_801A0814` (`Model bundle missed`), `fn_80232C4C` (`Texture bundle missed`) and the tuning functions below.
 
+Model bundles live in a 6-slot table, `lbl_8057E110` (0x38 each: name at +0, loaded pointer at +0x20). `MODEL` (`fn_801A1FC4`) puts `<name>.ngm` in the first free slot from 2 to 5, skips a name already loaded, and loads nothing when all four are full, so at most four by-name model bundles are resident at once. When slots are freed is not traced.
+
 ### Tuning records
 
 `python3 tools/nvbtool.py` prints, compares and edits these files and holds their byte layouts
