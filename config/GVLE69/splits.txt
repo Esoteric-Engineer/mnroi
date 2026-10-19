@@ -138,6 +138,9 @@ Game/fn_800370D0.cpp:
 Game/fn_80038618.cpp:
 	.text       start:0x80038618 end:0x800389A8
 
+Game/fn_80038B70.cpp:
+	.text       start:0x80038B70 end:0x80038DC8
+
 Game/fn_800393F4.cpp:
 	.text       start:0x800393F4 end:0x800396A8
 
