@@ -8,7 +8,7 @@ Usage (from repo root):
   python3 tools/ngmexport.py check                                Convert every model in memory
 
 `export` writes each model of the bundle, or only the MODELs named (Wolverine.nod or Wolverine), to
-OUT_DIR/<model>.glb. With --gltf right after `export` it writes <model>.gltf, <model>.bin and the
+OUT_DIR/<model>.glb (a .NOC model keeps its extension: amdoor_static.NOC -> amdoor_static_NOC.glb). With --gltf right after `export` it writes <model>.gltf, <model>.bin and the
 textures as .png files instead. A bundle from -f takes its textures from the .ngt and .tpl next to
 it when they are there, else from CLASH.BIG. It never writes under orig/.
 
@@ -388,7 +388,10 @@ class Model:
 
 
 def model_stem(name):
-    return os.path.splitext(name)[0].replace("/", "_").replace("\\", "_")
+    stem, ext = os.path.splitext(name)
+    if ext.lower() != ".nod":
+        stem += ext.replace(".", "_")
+    return stem.replace("/", "_").replace("\\", "_")
 
 
 def glb(doc, blob):
