@@ -107,7 +107,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   the user label clears the flag, so the pair comes back even after a `return <local>;` earlier in the
   unit. Write them as `fail: x = 0; return 0;` after the final return (`fn_8019EBF8`).
 
-- **Definitions are emitted in source order, so one placed ahead of an earlier function shifts it.** The symptom is `main.dol` failing with single-byte diffs in the low byte of `bl` displacements at many call sites while every function still reads 100% in objdiff. Write the definitions in address order, a constructor's included (`Game/fn_8043C1EC.cpp`, `Byte1::Byte1`). A constructor *definition* carrying `__asm__("fn_XXXXXXXX")` fails in ngcas (`Unrecognised opcode ".l_f"`); rename the symbol to its mangled name instead (declarations may keep `__asm__`). A plain *method* can keep its `fn_XXXXXXXX` name with the top-level label trick of entry 105 (`.globl`/`.type` label before the definition, `.size` after it; `Game/fn_80085954.cpp`); give each such unit's class a distinct name, since the mangled `get__3Obj` is also emitted and a duplicate fails to link.
+- **Definitions are emitted in source order, so one placed ahead of an earlier function shifts it.** The symptom is `main.dol` failing with single-byte diffs in the low byte of `bl` displacements at many call sites while every function still reads 100% in objdiff. Write the definitions in address order, a constructor's included (`Game/fn_8043C1EC.cpp`, `Byte1::Byte1`). A constructor *definition* carrying `__asm__("fn_XXXXXXXX")` fails in ngcas (`Unrecognised opcode ".l_f"`); rename the symbol to its mangled name instead (declarations may keep `__asm__`). A plain *method* can keep its `fn_XXXXXXXX` name with the top-level label trick of entry 108 (`.globl`/`.type` label before the definition, `.size` after it; `Game/fn_80085954.cpp`); give each such unit's class a distinct name, since the mangled `get__3Obj` is also emitted and a duplicate fails to link.
 
 - **A C++ constructor has exactly *one* trailing branch to the epilogue, not the pair.** So the
   `.c`-vs-`.cpp` trailing-branch test below must exempt constructors: a one-branch tail on a function
@@ -261,6 +261,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   on the mask's result means the field is a plain `unsigned char`, not a bitfield: the shorten rule
   for bitwise operators does the `&` in QImode and zero-extends it back to int, which is why the bit
   stays in place instead of being shifted down (`Game/fn_800B5BC4.cpp`, `GameFlow+0x1C`).
+- **`clrlwi r9, r0, 29` / `addi r0, r9, 1` where yours adds in place (`addi r9, r9, 1`) is `x % 8 + 1` on an `unsigned`, not `(x & 7) + 1`.**
+  Both give the same `clrlwi`, but the `%` result is a fresh pseudo, so the add lands in another register
+  (`Game/fn_8011B768.cpp`, `fn_80435904() % 8 + 1`).
 
 - **`(1 << n) & field` compiles to `sraw` / `clrlwi 31` where the DOL has `slw` / `and`: the field is `unsigned int`.** `fold` turns a signed `(1 << n) & x` test into `(x >> n) & 1`, and an unsigned operand blocks it. Likewise an extra `mr rX, r0` copy of a `register` parameter at its use in a comparison means the parameter is `char` or `short` (promoted, so reading it copies), not `int` (`Game/fn_804441A0.c`, `fn_80444370`).
 

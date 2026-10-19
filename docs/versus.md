@@ -120,11 +120,14 @@ A C++ singleton (`GameState`, a guessed name; constructor `Game/fn_80091174.cpp`
 | +0x744 | `Slot *` | The current slot, `&slots[+0x598]` | `fn_80443DBC` | `fn_80095100`, `fn_800950E8` |
 | +0x750 | `Slot *` | Slot iteration cursor: `fn_804427FC` resets it, `fn_804427D0` reads it, `fn_80094A9C` advances it to the next slot `fn_8043B2C8` accepts and returns nonzero while slots remain | `fn_804427FC`, `fn_80094A9C` | `fn_804427D0` |
 | +0x75C | int | Timer mode: 1 timed, 2 untimed, 3 before the first match (the constructor's value) | `Control_SetMatchInfo`, `clashVenue_ChooseOption`, `fn_80028BAC` | `Control_SetSelectInfo`, `fn_8011A94C`, `fn_8011AB34`, `fn_8013156C` (is-timed test) |
-| +0x760 | int | Game phase, written by 14 functions. Values seen: `side + 2` (`fn_80093C14`, handover to `side`), 4 after the round reset `fn_80092550` (which runs only from 6 or 10), 0xF at level end (`fn_8002D90C`) | `fn_8002D90C`, `fn_80092550`, `fn_80093C14`... | `fn_80018290`, `fn_80092550`... |
+| +0x760 | int | Game phase, written by 14 functions. Values seen: `side + 2` (`fn_80093C14`, handover to `side`), 4 after the round reset `fn_80092550` (which runs only from 6 or 10), 0xF at level end (`fn_8002D90C`). `fn_80091C84` switches on it (unsigned) each frame until a phase finishes: 16 → 7, 14 → 4, 3 → 9 with `+0x788 = 2000`, then 9 → 4, 8 → 7 and 13 (`fn_8009717C` on slot `+0x758`) once `+0x788` runs out; 1 and 2 hand over to side 0 and 1 (`fn_80093C14`) | `fn_8002D90C`, `fn_80092550`, `fn_80093C14`, `fn_80091C84`... | `fn_80018290`, `fn_80092550`, `fn_80091C84`... |
 | +0x764 | int | Time limit in ms (300000 from the constructor) | `Control_SetMatchInfo`, `fn_80028BAC` | `fn_80131434` |
-| +0x768 | int | Added to the time limit in the match clock's total (guess: extra time or a start time). Read-modify-written at 0x80092128, 0x80094000 and 0x800C0088 | | `fn_80131434` |
-| +0x770, +0x774 | int | Role indices (section 3). "Either one nonzero" means a match is running for `fn_80114420`; the command line sets `+0x770` for `-mp` and `+0x774` for `-vs`. What the matched readers do with them is section 4.3; five large readers are left (row 25) | `fn_804317F4`, `fn_8043181C` | `fn_80432844` (`+0x770`), `fn_80432870` (`+0x774`), `fn_80114420` |
+| +0x768 | int | Added to the time limit in the match clock's total (guess: extra time or a start time). `fn_80091C84` adds `fn_8042F024(lbl_80593BE8)` to it on each frame of phases 8, 9 and 13; also read-modify-written at 0x80094000 and 0x800C0088 | `fn_80091C84` | `fn_80131434` |
+| +0x76C | int | Set once phase 0 has run `fn_80092B7C` and `fn_800939C4(G, 0/1)` | `fn_80091C84` | `fn_80091C84` |
+| +0x770, +0x774 | int | Role indices (section 3). "Either one nonzero" means a match is running for `fn_80114420`; the command line sets `+0x770` for `-mp` and `+0x774` for `-vs`. What the readers do with them is section 4.3 | `fn_804317F4`, `fn_8043181C` | `fn_80432844` (`+0x770`), `fn_80432870` (`+0x774`), `fn_80114420` |
+| +0x77C | int | Set once phase 7, 11 or 12 has started its cue (each runs once) | `fn_80091C84` | `fn_80091C84` |
 | +0x780 | int | Nonzero makes `fn_8002D9C4` load the frontend (`fn_8002DB78`) instead of walking the actor list | | `fn_8002D9C4` |
+| +0x788 | int | Phase countdown in ms: 2000 from phase 3; phases 8, 9 and 13 subtract `fn_8042F024(lbl_80593BE8)` and finish at 0 | `fn_80091C84` | `fn_80091C84` |
 | +0x79C, +0x7A0 | int[2] | Per player side: index added to tuning field 170 (versus cutscene name) by `fn_80093C14`. Written by unmatched code | | `fn_80093C14` |
 | +0x7B0, +0x7B4 | int[2] | Per player side: the `fn_800578E4` argument after the actor in `fn_80093C14` | | `fn_80093C14` |
 | +0x7BC | int | A flag; its only reader bumps a counter at `G+0x78` when it is 0 | `fn_80091174` | `fn_80443CA0`, `fn_80096884` |
@@ -149,7 +152,7 @@ The range also holds three per-player counter bumpers (`fn_80131C14`, `fn_80131C
 
 ### 4.3 What the role indices change
 
-Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Versus" means either one is nonzero. Only `fn_80095304` tells the two apart.
+Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Versus" means either one is nonzero. Only `fn_80095304` and `fn_80091C84` tell the two apart.
 
 | Reader | Versus | Neither set (story, menus) |
 |---|---|---|
@@ -162,6 +165,11 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 | `fn_800DEDB4` | Adds 0x2000 to the flags of the attack it starts | |
 | `fn_8003E10C`, `fn_8011406C` | Resource list `lbl_8054EF38` | Resource list `lbl_8054ED80` |
 | `fn_8011A94C` | The versus music cues | |
+| `fn_8020C508` (the `tripwireDamFX` object's event method) | Ignores the event if the other player's actor (`fn_80443D44(G, 1 - fn_8043B31C(...))`) passes `fn_80085EEC` or `fn_80085F1C` | |
+| `fn_8011B768` (for `fn_8011C008`'s `fn_801196F0` call) | Returns `fn_80435904() % 8 + 1` | Maps the level's track (`fn_80442E7C`, 0-61) to 1-8 through a `switch` |
+| `fn_8003F6C8` (steps a timed record) | When an expiring record brings `lbl_8066B78C` to 0 and `fn_8009404C(G)` is false, `fn_80092550(G, 0)` resets the slots | |
+| `fn_80091C84` (G method, the phase stepper) | Phase 3 also calls `fn_8007FF3C`; phase 4 calls `fn_8009404C(G)`; phase 6 resets the slots (`fn_80092550`) and moves to phase 4; `+0x774` only: phase 9 calls `fn_80132CDC`, `fn_8013367C`, `fn_80132B88` | Phase 6 ends the level, `fn_8002D90C(level, "NOW")` |
+| `fn_8011389C` (per frame) | Passes `fn_804304FC` the mean position of every active slot's actor and setting 0xCC / 32767 | Passes it `fn_80432924`'s actor position and setting 0xCB / 32767 (settings read with `fn_8010C7EC(lbl_8066D808, 1, id)`) |
 | `fn_8011AC88`, `fn_8011AD44`, `fn_8011AE10`, `fn_8011AE7C`, `fn_8011AEF4`, `fn_80112E88` | | The story/menu music cues (`lbl_8066BDF0` is the cue word, `lbl_8066BDF8` the current track, `lbl_8066BDFC`/`lbl_8066BE00` flags) and `fn_8010E1F4` |
 | `fn_80119D64`, `fn_80119E94` | | Pick the music record `lbl_80497D24[track]` (0x5C bytes, 11 cue pairs) for the level's track and start cue 0 |
 | `clashMission_StartLevel` | | On `BrooklynBridge`, spawns `plr_thing` for player 0 |
@@ -172,24 +180,21 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 
 Work the rows in order and skip whatever is done. `configure.py` is the authority on unit status; this table gives the order and each row's next action, not a changelog. Read the notes for the row you land on, not the others. Name a unit after its real source file when it is known (section 2); otherwise use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-**Rows 1 to 24 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, and the setup screens' arguments to `Control_SetMatchInfo`). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 25 on cover what versus mode changes in gameplay and what a new character still depends on.
+**Rows 1 to 25 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, and the role-index readers, section 4.3). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 26 on cover what a new character still depends on.
 
 | # | Target | Next action / blocker |
 |---|---|---|
-| 25 | Role-index readers: the callers of `fn_80432844` (`G+0x770`) and `fn_80432870` (`G+0x774`) | Pinned, in the order of the list under "Rows 25 to 28". This is where gameplay branches on versus mode. |
 | 26 | HUD setup: `fn_8000394C` (0x1230), then its caller `fn_80003808` (0x144) and `fn_800061CC` (0x180) | Pinned. Every character's HUD portrait goes through it ([`characters.md`](characters.md) section 6, step 5). |
-| 27 | Small pinned functions | Pinned, one unit each, in the order of the list under "Rows 25 to 28". |
-| 28 | Movesets: the combat state machines | Pinned, in the order of the list under "Rows 25 to 28". |
+| 27 | Small pinned functions | Pinned, one unit each, in the order of the list under "Rows 26 to 28". |
+| 28 | Movesets: the combat state machines | Pinned, in the order of the list under "Rows 26 to 28". |
 | 29 | Character data formats: the code behind what [`characters.md`](characters.md) leaves not understood | Pinned. Each item ends with its format in a tool's docstring and a `check` command, as in ROADMAP section 2. Targets, in order: `fn_803A38DC`, `fn_8039E22C`, `fn_803944A4` (`Misc/game.nfx`: loader, type word to effect class, key lookup in the 140 names of `lbl_804DC2F0`; then `tools/nfxtool.py`); `fn_8010FE34`, `fn_8011063C`, `fn_8011574C` with the small users `fn_80110AA0`, `fn_80110B40`, `fn_80111134`, `fn_801111DC`, `fn_801114A0`, `fn_80114E2C`, `fn_80116C84` (sound banks and voice events, the `(bank << 9) \| event` registry `lbl_80568DB0`); `fn_80057AE8`, `fn_80057FF8` (`.cut` cutscenes, per-record calls of the streamer `fn_80439778`); `fn_8023401C` (the only code naming the `glossenvcharlight` shader); `fn_80223E38` (draws a model's meshes; read the matched loader `fn_80221C08` first for the mesh record's three unknown bytes). |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); about 850 unclaimed functions (0x13300 bytes) follow up to 0x80472F34, where Havok starts. |
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size, [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
 
-### Rows 25 to 28
+### Rows 26 to 28
 
 **These rows pin functions.** Match each in a unit of its own (`Game/fn_XXXXXXXX.c` or `.cpp`, by its own trailing-branch count), without first filling the file up to it. When one closes the gap to a matched neighbour of the same language and pair state, extend that neighbour instead.
-
-**Row 25:** the readers that remain are the five large ones, `fn_8011389C`, `fn_8020C508`, `fn_8011B768`, `fn_8003F6C8` and `fn_80091C84` (0x458-0x74C bytes). When one matches, add what it does with the role to section 4.3 and drop it from this line.
 
 **Row 27:** `fn_8009FF54` (0x534) is the one left: the last type-ID consumer not yet checked ([`characters.md`](characters.md) section 5). It takes ten arguments plus a 16-byte structure by value on the stack, and calls `fn_800A0488`, `fn_800A0B48`, `fn_8009E998` and `fn_800A09C0`; match those signatures first.
 
@@ -271,7 +276,6 @@ Only what costs disassembly to re-derive: file boundaries, unclaimable data, and
 
 ## 7. Open Questions
 
-- What does gameplay do with the role indices `G+0x770` (set by match type 0, 1P VS 2P) and `G+0x774` (match type 1, 1P VS COM)? `fn_80114420` only treats "either one nonzero" as a running match; the command line sets `+0x770` for `-mp` and `+0x774` for `-vs`. Row 25.
 - What is the rest of the `Slot` layout? `+0x3C` is a small number per slot rather than a flag (`fn_800956D4` sets 1 on the second slot, `fn_80431788` 99 on the CPU slot, `fn_800B5124` copies a `u16` into it), and the meanings of `+0x38` and `+0x40` are unknown. `+0x24`-`+0x33` and everything from `+0x44` on, except `+0x64`, `+0x80` and `+0x90`, are unknown. 
 - What are the `GameFlow` command ids (section 6)? Commands 1, 2, 6 and 8 are special-cased, and the four wide ranges from 0x25E are index spaces, each subtracting its base into `+0x24` or `+0x1C4`.
 - What is in the unidentified files at 0x801070FC and 0x8010C528?
