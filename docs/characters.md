@@ -154,7 +154,9 @@ Three of those are now known. `fn_80443678(index, remap, alt)` just returns the 
 
 The loaders are generic engine code that takes a name, with nothing character-specific in them: `fn_8019E9DC` (`Bundles/%s`), `fn_8019EA38`, `fn_8019EBF8` (`Animation:Bundles`), `fn_801A0814` (`Model bundle missed`), `fn_80232C4C` (`Texture bundle missed`) and the tuning functions below.
 
-Model bundles live in a 6-slot table, `lbl_8057E110` (0x38 each: name at +0, loaded pointer at +0x20). `MODEL` (`fn_801A1FC4`) puts `<name>.ngm` in the first free slot from 2 to 5, skips a name already loaded, and loads nothing when all four are full, so at most four by-name model bundles are resident at once. When slots are freed is not traced.
+Model bundles live in a 6-slot table, `lbl_8057E110`, 0x38 each: name +0, model data +0x20, its size +0x24, model count +0x28, an `entries * 8`-byte table +0x2C, its count +0x30, a zero +0x34. Slot 0 is `global`. `MODEL` (`fn_801A1FC4`) puts `<name>.ngm` in the first free slot from 2 to 5, skips a name already loaded, and loads nothing when all four are full, so at most four by-name model bundles are resident at once. Loading into an occupied slot frees it first (`fn_801A2588`); when else slots are freed is not traced.
+
+The `.ngm` file is big-endian: a 0x18-byte header (version 5, two ignored words, model count, entry count, data size), then per model a 9-byte prefix (`s32` index, three bytes, `u16`) and a body that `fn_80221C08` reads. Each model is registered by its name at +0x8C in `lbl_8066C5CC`. `python3 tools/ngmtool.py` lists the headers and checks them; it stops at the first body until `fn_80221C08` is matched.
 
 ### Tuning records
 
