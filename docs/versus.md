@@ -188,7 +188,7 @@ number order: rows 19 to 23 (tuning, then the model and animation formats) come 
 | 19 | Tuning plumbing: the leaf accessors and `Game/fn_801B308C.cpp` (0x801B308C-0x801B3638) | Done. Notes: [Steps 19 to 21](#steps-19-to-21-tuning). |
 | 20 | `PLAYER` tuning readers | Done: no reader under 0x800 adds a field; the 56 left (`-a`) read only fields already named. |
 | 21 | `GLOBALS` tuning readers | Done: no reader under 0x800 adds a field; the 4 left read only fields already named. |
-| 22 | Model bundle (`.ngm`, `.nod`): `fn_801A1FC4`, `fn_801A2108`, `fn_801A0814`, then the model builders | Open. Next: `fn_801A1AF8`, a unit of its own. Notes: [Steps 22 and 23](#steps-22-and-23-model-and-animation-bundles). |
+| 22 | Model bundle (`.ngm`, `.nod`): `fn_801A1FC4`, `fn_801A2108`, `fn_801A0814`, then the model builders | Open. Next: `fn_80232C4C` (0x270, the `.tpl` texture bundle), a unit of its own. Notes: [Steps 22 and 23](#steps-22-and-23-model-and-animation-bundles). |
 | 23 | Animation bundle (`.ngb`) and motion set: `fn_8019E9DC`, `fn_8019EA38`, `fn_8019EBF8`, `fn_8008F470`, `fn_8008FF48` | Open. Next: `fn_8019E9DC`. |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); 855 unclaimed functions (0x13344 bytes) follow up to 0x80472F34, where Havok starts. Notes: [the registrar run](#rows-2-and-18-the-registrar-and-handle-class-run). |
 
