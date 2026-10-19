@@ -1,4 +1,5 @@
-// Starts or stops the PLAYER effect handles (tuning fields 0x62, 0x63) and clips 0x1B/0x1C/0x1D as the entity enters or leaves a state; docs/versus.md row 20.
+// fn_800BED04: starts or stops the PLAYER effect handles (tuning fields 0x62, 0x63) and clips 0x1B/0x1C/0x1D as the entity enters or leaves a state; docs/versus.md row 20.
+// fn_800BF488: the entity's per-frame update (row 25).
 
 struct Ent {
     int pad;
@@ -131,10 +132,37 @@ struct Target {
     virtual int s57(float a); // vtable +0x1D0
 };
 
+struct Owner {
+    char pad0[0x5BC];
+    virtual void s0();
+    virtual void s1();
+    virtual void s2();
+    virtual void s3();
+    virtual void s4();
+    virtual void s5();
+    virtual void s6();
+};
+
+struct Obj;
+typedef void (Obj::*ObjFn)();
+
+struct StateEntry {
+    char pad0[0x8];
+    ObjFn fn; // +0x8
+    char padC[0x44];
+};
+
 struct Obj {
-    char pad0[0x18];
+    char pad0[0x8];
+    unsigned char type; // +0x8
+    char pad9[0xF];
     unsigned int f18;
-    char pad1C[0x390 - 0x1C];
+    char pad1C[0xB0 - 0x1C];
+    unsigned int fB0;   // +0xB0
+    unsigned int fB4;   // +0xB4
+    char padB8[0x1A4 - 0xB8];
+    Owner *owner;       // +0x1A4
+    char pad1A8[0x390 - 0x1A8];
     Handle *h; // +0x390
     char pad394[0x3AC - 0x394];
     virtual void s0();
@@ -146,6 +174,9 @@ struct Obj {
 };
 
 extern char lbl_80572130[];
+extern StateEntry lbl_8066A160[];
+extern char lbl_80593BE8[];
+extern char lbl_80552110[]; // the game-state object G
 
 extern "C" {
 PEnt *Entity_GetActor(void *self);
@@ -184,6 +215,26 @@ void fn_8001C258(void *actor, int enable);
 Handle *fn_80393B28(Ent &actor, Handle *h);
 void fn_80393798(Ent &actor, int id);
 void fn_800C05BC(void *self);
+int fn_804439A4(void *x);
+unsigned int fn_8042EFF8(void *x);
+int fn_8044272C(void *slot);
+int fn_80091874(void *g);
+void fn_800FA7B4(void *owner);
+int fn_800BA628(void *self);
+int fn_800CD7D4(void *self);
+int fn_80432844(void *g);
+int fn_80432870(void *g);
+int fn_80085EEC(void *actor);
+void fn_80092550(void *g, int unused);
+int fn_8003FD60(int a, int b);
+unsigned int fn_8042F024(void *x);
+void fn_800C7F98(void *self, unsigned int t);
+int fn_800CA3AC(void *self, int type);
+void fn_800CA034(void *self, int v);
+void fn_800C949C(void *self);
+void fn_800C0784(void *self);
+void fn_8006337C(void *self);
+void fn_800BAB18(void *self);
 }
 
 extern "C" int fn_800BED04(register Obj *self, int a, int b)
@@ -256,4 +307,43 @@ extern "C" int fn_800BED04(register Obj *self, int a, int b)
     }
     fn_800C05BC(self);
     return ret;
+}
+
+extern "C" void fn_800BF488(register Obj *self)
+{
+    unsigned short v;
+
+    if (fn_804439A4(lbl_80593BE8) != 0)
+        return;
+    if (fn_8042EFF8(lbl_80593BE8) > self->fB4)
+        self->fB0 = 0;
+    if (!(fn_800CE5B0(self) != 0 && fn_8044272C(fn_800CE5B0(self)) != 0)) {
+        if (self->owner != 0)
+            self->owner->s6();
+    }
+    if (fn_80091874(lbl_80552110) != 0)
+        fn_800FA7B4(self->owner);
+    if (fn_800CC60C(self) == 0) {
+        v = fn_800BA628(self);
+        if (v != 0)
+            return;
+    } else if (fn_800CD7D4(self) != 0) {
+        if (fn_80432844(lbl_80552110) != 0 || fn_80432870(lbl_80552110) != 0) {
+            if (fn_80085EEC(Entity_GetActor(self)) != 0)
+                fn_80092550(lbl_80552110, 0);
+        }
+        fn_80066604(*Entity_GetActor(self));
+        return;
+    }
+    if (fn_8003FD60(fn_800B13D8(*Entity_GetActor(self)), 0) != 0) {
+        fn_800C7F98(self, fn_8042F024(lbl_80593BE8));
+    } else if (lbl_8066A160[self->type].fn != 0) {
+        (self->*(lbl_8066A160[self->type].fn))();
+    }
+    if (fn_800CA3AC(self, self->type) != 0)
+        fn_800CA034(self, 1);
+    fn_800C949C(self);
+    fn_800C0784(self);
+    fn_8006337C(self);
+    fn_800BAB18(self);
 }

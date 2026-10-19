@@ -82,13 +82,24 @@ The versus setup screens (`clashLoadscreenVersus.big` and the `VERSUS MODE SETUP
 
 **`Control_SetMatchInfo(int matchType, int timed, int unused, int seconds)`**, on the game-state object `G` (section 4.1), saves `matchType`, `timed` and `seconds` in the last-selection module, and then:
 
-| `matchType` | `G+0x770` | `G+0x774` | `G+0x590` | Also |
-|---|---|---|---|---|
-| 0 | 1 | 0 | 2 | |
-| 1 | 0 | 1 | 2 | Slot 1 is CPU-controlled: `fn_80431788` ORs `slot+0x34` with 4 and sets `slot+0x3C = 99` |
-| 2 | | 0 | | `G+0x61C = 1` |
+| `matchType` | `G+0x770` | `G+0x774` | `G+0x590` | Also | Menu choice |
+|---|---|---|---|---|---|
+| 0 | 1 | 0 | 2 | | "1P VS 2P" (`kGlobal_CombatType_Vs`) |
+| 1 | 0 | 1 | 2 | Slot 1 is CPU-controlled: `fn_80431788` ORs `slot+0x34` with 4 and sets `slot+0x3C = 99` | "1P VS COM" (`kGlobal_CombatType_Com`) |
+| 2 | | 0 | | `G+0x61C = 1` | `kGlobal_CombatType_Story`; no shipped screen passes it |
 
-`timed == 0` sets `G+0x75C = 2`; otherwise `G+0x75C = 1` and `G+0x764 = seconds * 1000`. For players 0 and 1 it then stores the CPU difficulty `fn_801318A0()` in the slot (`fn_80443CCC`). What the screens pass for each menu choice is row 24.
+`timed == 0` sets `G+0x75C = 2`; otherwise `G+0x75C = 1` and `G+0x764 = seconds * 1000`. For players 0 and 1 it then stores the CPU difficulty `fn_801318A0()` in the slot (`fn_80443CCC`).
+
+**What the screens pass.** Only `GAME_StartVsGame` (`CDataHub` in `main.apt`, run by `clashLoadscreenVersus` once its transition ends) calls it, as `Control_SetMatchInfo(eCombatType, eMatchType, eDiffLevel, nTimeLimit)`, followed by `Control_SetSelectInfo` and `Control_StartGame`. The `CDataHub` fields are set by two screens:
+
+| Argument | `CDataHub` field | Set by | Values |
+|---|---|---|---|
+| `matchType` | `m_MT_eCombatType` | `clashMatchType`: the first menu row (`"~kT_1PVSCOM"` or `"~kT_1PVS2P"`) | 0 = 1P VS 2P, 1 = 1P VS COM, 2 = story (never set). The menu's own index is 0 for COM, so `setMenuValues` inverts it. |
+| `timed` | `m_MT_eMatchType` | `clashMatchType`: the lives/timed menu (`m_lives`, `m_timed`) | 0 = lives match (`"~kT_LIVES_MATCH"`), 1 = timed. The constructor's default is 0. |
+| `unused` | `m_MT_eDiffLevel` | No screen. `clashCharSelect` restores it from `clashCharSelect_GetPrevCharList`, i.e. from `lbl_8066F180`, which only the command line (`-difficulty`) and `fn_8011D4E4`/`fn_8011E1DC` write | 0 = easy by default. The menu has a `"~kT_DIFFICULTY"` header (`kDiff = 2`) with no clip behind it (guess: difficulty selection was cut). The C++ ignores the argument and takes the CPU difficulty from `lbl_8066F180` instead, which is why it is "unused". |
+| `seconds` | `m_MT_nTimeLimit` | `clashMatchType`'s timer (`m_timer`): 1 to 99 minutes in steps of 60, starting at 180 | Only used when `timed` is 1. The lives count is not an argument: `clashCharSelect`'s slider feeds `CS_SetLives`, and `Control_SetSelectInfo`'s `live0`/`live1`. |
+
+`clashMatchType` is reached from `clashMainMenu` ("~kT_VERSUS") and from `clashCharSelect` (`PushScreen`). Demo builds (`gIsMagazineDemo`, `gIsE3Demo`) override the match type and time (240 s timed, or 3 lives).
 
 ---
 
@@ -100,19 +111,19 @@ A C++ singleton (`GameState`, a guessed name; constructor `Game/fn_80091174.cpp`
 
 | Offset | Type | Meaning (guess) | Written by | Read by |
 |---|---|---|---|---|
-| +0x10 | `Slot[8]`, stride 0xB0 | Player slots (dtk's `lbl_80552120`). `fn_804317BC(G, i)` returns `&slot[i]`, and `fn_8042FF2C(slot)` returns the slot's actor (`+0x28`). Fields: `+0x0` int player index, `+0x4` `char[0x20]` entity name, `+0x34` int flags (bit 0 in use; bit 1 unknown, tested by `fn_8044272C`; bit 2 CPU-controlled), `+0x38` int, `+0x3C` int (a small number per slot, section 7), `+0x3E` `unsigned short` the controller port, `+0x40` float, `+0x64` int CPU difficulty 0-2 (picks the tuning slot, [`characters.md`](characters.md) section 4), `+0x90` a `Vector`. The slot constructor `fn_80095BEC` (unmatched) sets `+0x64 = -1`, `+0x80 = 0`. | | |
+| +0x10 | `Slot[8]`, stride 0xB0 | Player slots (dtk's `lbl_80552120`). `fn_804317BC(G, i)` returns `&slot[i]`, and `fn_8042FF2C(slot)` returns the slot's actor (`+0x28`). Fields: `+0x0` int player index, `+0x4` `char[0x20]` entity name, `+0x34` int flags (bit 0 in use; bit 1 unknown, tested by `fn_8044272C`; bit 2 CPU-controlled), `+0x38` int, `+0x3C` int (a small number per slot, section 7), `+0x3E` `unsigned short` the controller port, `+0x40` float, `+0x64` int CPU difficulty 0-2 (picks the tuning slot, [`characters.md`](characters.md) section 4), `+0x90` a `Vector`. The slot constructor (`Game/fn_80095BEC.cpp`, `PlayerSlot::PlayerSlot`) constructs the `Vector` and sets `+0x64 = -1`, `+0x80 = 0`. | | |
 | +0x590 | int | Number of active player slots | `fn_80431844` | `fn_80434900` (getter), `fn_80023010`, `fn_80114420`, `fn_80443D44`, `fn_80096B98`, `fn_80096D6C` |
 | +0x598 | int | Index into `slots`; `fn_80443DBC` uses it to set `+0x744` | `fn_80443D1C` | `fn_80443DBC` |
 | +0x59C, +0x5BC, +0x5DC, +0x5FC | `char[0x20]` x4 | Level/venue name buffers. `+0x59C` (dtk's `lbl_805526AC`) is the level name that `GameFlow` command 0x14 loads (section 6) | `Control_SetSelectInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel`, `clashVenue_ChooseOption`, `fn_80028BAC`, `fn_8008856C` | `fn_800B76C0`, `fn_80114420` |
 | +0x61C | int | Set to 1 for match type 2 and by both `StartLevel` handlers | `Control_SetMatchInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel` | `fn_8002BD34`, `fn_8002F4A8` |
 | +0x620, +0x624, +0x628 | int x3 | Load requests `fn_8002F4A8` tests after `+0x61C`: `+0x620` adds the second name (`+0x5BC`); `+0x624`/`+0x628` load through the script records `lbl_8054ED80`/`lbl_8054EF38` (named by `+0x5DC`) | `fn_80028BAC` | `fn_8002F4A8`, `fn_8002DB78` (`+0x620`) |
 | +0x744 | `Slot *` | The current slot, `&slots[+0x598]` | `fn_80443DBC` | `fn_80095100`, `fn_800950E8` |
-| +0x750 | `Slot *` | Slot iteration cursor: `fn_804427FC` resets it, `fn_804427D0` reads it, `fn_80094A9C` (unmatched) advances it and returns nonzero while slots remain | `fn_804427FC`, `fn_80094A9C` | `fn_804427D0` |
+| +0x750 | `Slot *` | Slot iteration cursor: `fn_804427FC` resets it, `fn_804427D0` reads it, `fn_80094A9C` advances it to the next slot `fn_8043B2C8` accepts and returns nonzero while slots remain | `fn_804427FC`, `fn_80094A9C` | `fn_804427D0` |
 | +0x75C | int | Timer mode: 1 timed, 2 untimed, 3 before the first match (the constructor's value) | `Control_SetMatchInfo`, `clashVenue_ChooseOption`, `fn_80028BAC` | `Control_SetSelectInfo`, `fn_8011A94C`, `fn_8011AB34`, `fn_8013156C` (is-timed test) |
 | +0x760 | int | Game phase, written by 14 functions. Values seen: `side + 2` (`fn_80093C14`, handover to `side`), 4 after the round reset `fn_80092550` (which runs only from 6 or 10), 0xF at level end (`fn_8002D90C`) | `fn_8002D90C`, `fn_80092550`, `fn_80093C14`... | `fn_80018290`, `fn_80092550`... |
 | +0x764 | int | Time limit in ms (300000 from the constructor) | `Control_SetMatchInfo`, `fn_80028BAC` | `fn_80131434` |
 | +0x768 | int | Added to the time limit in the match clock's total (guess: extra time or a start time). Read-modify-written at 0x80092128, 0x80094000 and 0x800C0088 | | `fn_80131434` |
-| +0x770, +0x774 | int | Role indices (section 3). "Either one nonzero" means a match is running for `fn_80114420`; the command line sets `+0x770` for `-mp` and `+0x774` for `-vs`. Their 26 unclaimed readers are row 25 | `fn_804317F4`, `fn_8043181C` | `fn_80432844` (`+0x770`), `fn_80432870` (`+0x774`), `fn_80114420` |
+| +0x770, +0x774 | int | Role indices (section 3). "Either one nonzero" means a match is running for `fn_80114420`; the command line sets `+0x770` for `-mp` and `+0x774` for `-vs`. What the matched readers do with them is section 4.3; five large readers are left (row 25) | `fn_804317F4`, `fn_8043181C` | `fn_80432844` (`+0x770`), `fn_80432870` (`+0x774`), `fn_80114420` |
 | +0x780 | int | Nonzero makes `fn_8002D9C4` load the frontend (`fn_8002DB78`) instead of walking the actor list | | `fn_8002D9C4` |
 | +0x79C, +0x7A0 | int[2] | Per player side: index added to tuning field 170 (versus cutscene name) by `fn_80093C14`. Written by unmatched code | | `fn_80093C14` |
 | +0x7B0, +0x7B4 | int[2] | Per player side: the `fn_800578E4` argument after the actor in `fn_80093C14` | | `fn_80093C14` |
@@ -136,17 +147,35 @@ Getters and setters around small-data globals. The setup handlers write them and
 
 The range also holds three per-player counter bumpers (`fn_80131C14`, `fn_80131C9C`, `fn_80131D24`, with the shared running total `.sdata` `lbl_8066BF0C`) and two read-and-clear accessors (`fn_80131DAC`, `fn_80131DE4`: `lbl_8066BF10`, `lbl_8066BF14`). Their meaning is unknown.
 
+### 4.3 What the role indices change
+
+Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Versus" means either one is nonzero. Only `fn_80095304` tells the two apart.
+
+| Reader | Versus | Neither set (story, menus) |
+|---|---|---|
+| `fn_8013086C`, `fn_801308C0` | Predicates `G+0x774 > 0` and `G+0x770 > 0`; the HUD setup `fn_8000394C` calls both | |
+| `fn_800916BC` (G method, match start) | Phase `G+0x760 = 0`, then `fn_80095304`; calls `fn_80133658` | Phase 0xE; calls `fn_8013367C` |
+| `fn_80095304` (G method) | `+0x774` only: both slots get the last-selected CPU difficulty (section 4.2) | |
+| `fn_800BFFC8`, `fn_800BA4D8`, `fn_800BF488` | Round end: `fn_80092550` resets the slots; `fn_800BFFC8` otherwise adds the match clock to `G+0x768` unless the phase is 0xD | |
+| `fn_8009717C` | The other player's actor gets flag 0x2 | |
+| `fn_8020D104` | Calls `fn_800816A0` on the actor handle only if `fn_800817DC` says no | Always calls it |
+| `fn_800DEDB4` | Adds 0x2000 to the flags of the attack it starts | |
+| `fn_8003E10C`, `fn_8011406C` | Resource list `lbl_8054EF38` | Resource list `lbl_8054ED80` |
+| `fn_8011A94C` | The versus music cues | |
+| `fn_8011AC88`, `fn_8011AD44`, `fn_8011AE10`, `fn_8011AE7C`, `fn_8011AEF4`, `fn_80112E88` | | The story/menu music cues (`lbl_8066BDF0` is the cue word, `lbl_8066BDF8` the current track, `lbl_8066BDFC`/`lbl_8066BE00` flags) and `fn_8010E1F4` |
+| `fn_80119D64`, `fn_80119E94` | | Pick the music record `lbl_80497D24[track]` (0x5C bytes, 11 cue pairs) for the level's track and start cue 0 |
+| `clashMission_StartLevel` | | On `BrooklynBridge`, spawns `plr_thing` for player 0 |
+
 ---
 
 ## 5. Target Order
 
 Work the rows in order and skip whatever is done. `configure.py` is the authority on unit status; this table gives the order and each row's next action, not a changelog. Read the notes for the row you land on, not the others. Name a unit after its real source file when it is known (section 2); otherwise use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-**Rows 1 to 23 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, and the model and animation bundles). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 24 on cover what versus mode changes in gameplay and what a new character still depends on.
+**Rows 1 to 24 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, and the setup screens' arguments to `Control_SetMatchInfo`). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 25 on cover what versus mode changes in gameplay and what a new character still depends on.
 
 | # | Target | Next action / blocker |
 |---|---|---|
-| 24 | Match types: decompile the versus setup screens (`clashLoadscreenVersus.big` and `VERSUS MODE SETUP` in `CLASH.BIG`) | **No matching.** Record what each menu choice passes to `Control_SetMatchInfo(matchType, timed, unused, seconds)` in section 3, and settle or narrow the first and third questions of section 7. Needs an APT decompiler, which `tools/` does not have yet. |
 | 25 | Role-index readers: the callers of `fn_80432844` (`G+0x770`) and `fn_80432870` (`G+0x774`) | Pinned, in the order of the list under "Rows 25 to 28". This is where gameplay branches on versus mode. |
 | 26 | HUD setup: `fn_8000394C` (0x1230), then its caller `fn_80003808` (0x144) and `fn_800061CC` (0x180) | Pinned. Every character's HUD portrait goes through it ([`characters.md`](characters.md) section 6, step 5). |
 | 27 | Small pinned functions | Pinned, one unit each, in the order of the list under "Rows 25 to 28". |
@@ -159,37 +188,9 @@ Out of scope for versus: `memcard.cpp` (except whether saves depend on the roste
 
 **These rows pin functions.** Match each in a unit of its own (`Game/fn_XXXXXXXX.c` or `.cpp`, by its own trailing-branch count), without first filling the file up to it. When one closes the gap to a matched neighbour of the same language and pair state, extend that neighbour instead.
 
-**Row 25**, smallest first. When one matches, write what it does with the role in section 4.1 and drop it from the list.
+**Row 25:** the readers that remain are the five large ones, `fn_8011389C`, `fn_8020C508`, `fn_8011B768`, `fn_8003F6C8` and `fn_80091C84` (0x458-0x74C bytes). When one matches, add what it does with the role to section 4.3 and drop it from this line.
 
-| Function | Size | | Function | Size |
-|---|---|---|---|---|
-| `fn_801308C0` | 0x54 | | `fn_800918E0` | 0x110 |
-| `fn_8013086C` | 0x54 | | `fn_8020D104` | 0x124 |
-| `fn_80112E88` | 0x6C | | `fn_80095304` | 0x138 |
-| `fn_8011AE10` | 0x6C | | `fn_800BA4D8` | 0x150 |
-| `fn_8011AE7C` | 0x78 | | `fn_8009717C` | 0x168 |
-| `fn_8011AC88` | 0xBC | | `fn_800916BC` | 0x1B8 |
-| `fn_8011AEF4` | 0xBC | | `fn_800BF7FC` | 0x27C |
-| `fn_8011AD44` | 0xCC | | `fn_800DEDB4` | 0x288 |
-| `fn_80119E94` | 0xD4 | | `fn_8003E10C` | 0x2A0 |
-| `fn_800BFFC8` | 0xE4 | | `fn_800BF488` | 0x374 |
-| `fn_80119D64` | 0xF4 | | `fn_8011406C` | 0x3B4 |
-| `clashMission_StartLevel` | 0x10C | | `fn_8011389C`, `fn_8020C508`, `fn_8011B768`, `fn_8003F6C8`, `fn_80091C84` | 0x458-0x74C |
-
-`fn_8011AC88`-`fn_8011AEF4` sit in the file of the timer-mode readers (0x801196F0-0x8011B768, static initializer `fn_8011B5F0`), so a unit there may extend `Game/fn_8011A94C.cpp` or `Game/fn_8011AB34.cpp`.
-
-**Row 27:**
-
-| Function | Size | Why |
-|---|---|---|
-| `fn_8008F3B8` | 0xB8 | Turns a motion-state name into its index (the name list at 0x80488A58): what a new state name needs |
-| `fn_8019DB24` | 0x70 | Sets an animation channel's time. A mod that changes a thrown weapon's flight edits it, so matching it lets such a mod be an edit of matched source |
-| `fn_801B4454`, `fn_801B43D8`, `fn_801B4CA0`, `fn_801B4E84` | 0xD0, 0x7C, 0xDC, 0xBC | Registry seed, grow, hash and find. The "no fixed capacity" claim ([`characters.md`](characters.md) section 3) rests on reading their disassembly |
-| The `ACTOR_ABILITIES` accessors, 0x80085FAC-0x80086374 | 21 small | Puts the ability bits ([`characters.md`](characters.md) section 3) into source |
-| `fn_800F43D4` | 0x18C | Sets up the 7 attack volumes at `ctrl+0x580` ([`characters.md`](characters.md) section 4) |
-| `fn_80095BEC`, `fn_80094A9C` | 0x54, 0x134 | Slot constructor and iterator, for the `Slot` layout (section 7) |
-| `fn_8011A824` | 0x94 | Called by both timer-mode readers |
-| `fn_8009FF54` | 0x534 | The last type-ID consumer not yet checked ([`characters.md`](characters.md) section 5) |
+**Row 27:** `fn_8009FF54` (0x534) is the one left: the last type-ID consumer not yet checked ([`characters.md`](characters.md) section 5). It takes ten arguments plus a 16-byte structure by value on the stack, and calls `fn_800A0488`, `fn_800A0B48`, `fn_8009E998` and `fn_800A09C0`; match those signatures first.
 
 **Row 28**, then the tuning readers that `tools/nvbreaders.py PLAYER` ranks highest (`fn_800DA884`, 0x140C, adds 13 fields; `fn_800DF03C`, 0x141C, 7). A modded weapon throw went through most of these:
 
@@ -269,9 +270,8 @@ Only what costs disassembly to re-derive: file boundaries, unclaimable data, and
 
 ## 7. Open Questions
 
-- What are match types 0, 1 and 2, and the role indices `G+0x770`/`G+0x774` they set? `fn_80114420` only treats "either one nonzero" as a running match; the command line sets `+0x770` for `-mp` and `+0x774` for `-vs`. Rows 24 and 25.
-- What is `Control_SetMatchInfo`'s unused third argument? Row 24.
-- What is the rest of the `Slot` layout? `+0x3C` is a small number per slot rather than a flag (`fn_800956D4` sets 1 on the second slot, `fn_80431788` 99 on the CPU slot, `fn_800B5124` copies a `u16` into it), and the meanings of `+0x38` and `+0x40` are unknown. `+0x24`-`+0x33` and everything from `+0x44` on, except `+0x64`, `+0x80` and `+0x90`, are unknown. Row 27 (`fn_80095BEC`, `fn_80094A9C`).
+- What does gameplay do with the role indices `G+0x770` (set by match type 0, 1P VS 2P) and `G+0x774` (match type 1, 1P VS COM)? `fn_80114420` only treats "either one nonzero" as a running match; the command line sets `+0x770` for `-mp` and `+0x774` for `-vs`. Row 25.
+- What is the rest of the `Slot` layout? `+0x3C` is a small number per slot rather than a flag (`fn_800956D4` sets 1 on the second slot, `fn_80431788` 99 on the CPU slot, `fn_800B5124` copies a `u16` into it), and the meanings of `+0x38` and `+0x40` are unknown. `+0x24`-`+0x33` and everything from `+0x44` on, except `+0x64`, `+0x80` and `+0x90`, are unknown. 
 - What are the `GameFlow` command ids (section 6)? Commands 1, 2, 6 and 8 are special-cased, and the four wide ranges from 0x25E are index spaces, each subtracting its base into `+0x24` or `+0x1C4`.
 - What is in the unidentified files at 0x801070FC and 0x8010C528?
 - What are the rectangles at `.sbss` 0x8066D6AC and 0x8066D6BC? Both are built from the screen size at static init; only `fn_800B5124` reads the first and nothing reads the second (guess: debug-overlay bounds the release no longer draws).

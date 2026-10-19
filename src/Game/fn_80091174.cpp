@@ -8,7 +8,7 @@ class PlayerSlot
 {
 public:
     char unk0[0xB0];
-    PlayerSlot() __asm__("fn_80095BEC");
+    PlayerSlot();
 };
 
 class GameState
