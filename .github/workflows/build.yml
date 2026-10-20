@@ -1,0 +1,114 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  # The decomp-toolkit fork the build needs (see docs/baseline.md).
+  DTK_REPO: Esoteric-Engineer/mnroi-decomp-toolkit
+  DTK_REF: main
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  # Build the dtk fork as a static musl binary, so it runs in the Alpine build container.
+  # Cached by fork commit: it only recompiles when the fork changes.
+  dtk:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Resolve fork commit
+      id: ref
+      run: |
+        sha=$(git ls-remote "https://github.com/$DTK_REPO.git" "$DTK_REF" | head -n1 | cut -f1)
+        echo "sha=${sha:-$DTK_REF}" >> "$GITHUB_OUTPUT"
+
+    - name: Cache dtk
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: dtk
+        key: dtk-musl-${{ steps.ref.outputs.sha }}
+
+    - name: Checkout fork
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ env.DTK_REPO }}
+        ref: ${{ steps.ref.outputs.sha }}
+        path: dtk-src
+
+    - name: Build dtk
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        docker run --rm -v "$PWD/dtk-src:/src" -w /src rust:1-alpine \
+            sh -c 'apk add --no-cache git musl-dev &&
+                   git config --global --add safe.directory /src &&
+                   cargo build --release --bin dtk'
+        cp dtk-src/target/release/dtk dtk
+
+    - name: Upload dtk
+      uses: actions/upload-artifact@v4
+      with:
+        name: dtk
+        path: dtk
+        retention-days: 1
+
+  build:
+    needs: dtk
+    # Private build container holding main.dol. See docs/github_actions.md.
+    container:
+      image: ghcr.io/esoteric-engineer/mnroi-build:main
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [GVLE69]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Git config
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    - name: Prepare
+      run: cp -a /orig .
+
+    - name: Download dtk
+      uses: actions/download-artifact@v4
+      with:
+        name: dtk
+        path: build/tools
+
+    # wibo 1.0.3 occasionally deadlocks a compile (fixed in 1.2.0, which can't load sjiswrap),
+    # so a stalled ninja is killed and resumed. Other failures exit immediately.
+    - name: Build
+      run: |
+        mv build/tools/dtk build/tools/dtk-dev
+        chmod +x build/tools/dtk-dev
+        python3 configure.py --version ${{ matrix.version }} --dtk build/tools/dtk-dev \
+            --binutils /binutils --compilers /compilers
+        for attempt in 1 2 3; do
+          r=0
+          timeout 300 ninja all_source progress build/${{ matrix.version }}/report.json || r=$?
+          # BusyBox timeout passes on ninja's own status: 130 when stopped
+          case $r in 124|130) ;; *) exit $r ;; esac
+          echo "::warning::ninja stalled (attempt $attempt), resuming"
+        done
+        exit 1
+
+    # Progress report (the numbers ninja prints), downloadable from the run
+    - name: Upload report
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.version }}_report
+        path: build/${{ matrix.version }}/report.json

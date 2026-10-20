@@ -1,10 +1,11 @@
 # GitHub Actions
 
-This repository includes [.github.example/workflows/build.yml](/.github.example/workflows/build.yml) as an example CI workflow. To use it for your project, follow the setup instructions below.
+[`.github/workflows/build.yml`](/.github/workflows/build.yml) builds `GVLE69` on every push to main and pull request, fails if `main.dol` stops matching, and uploads the `report.json` progress report as an artifact. It needs a private build container holding the original `main.dol`, set up once as below.
+
+The workflow also builds the [decomp-toolkit fork](https://github.com/Esoteric-Engineer/mnroi-decomp-toolkit) from source (`DTK_REF` at the top of `build.yml`, `main` by default). The result is cached by fork commit, so it only recompiles after the fork changes.
 
 - [Build Repository](#build-repository)
 - [Workflow](#workflow)
-- [decomp.dev](#decompdev)
 
 ## Build Repository
 
@@ -13,10 +14,11 @@ This repository will be used to build and store the CI build container.
 > [!CAUTION]
 > This repository should be **private** to avoid exposing the game's assets.
 
-1. [Create a **private** repository from `encounter/dtk-template-build`](https://github.com/new?template_name=dtk-template-build&template_owner=encounter). A common name is your project's repository name with `-build` appended. For example, `tww-build`.
+1. [Create a **private** repository from `encounter/dtk-template-build`](https://github.com/new?template_name=dtk-template-build&template_owner=encounter) named `mnroi-build`.
 
-2. Once the repository is created, add your game's assets to the `orig/GAMEID` directory. (Replace `GAMEID` with your game's ID, matching the `orig` layout in your main repository.)  
-    **Only include game files necessary for the build**, such as `sys/main.dol` and any `.rel` or `.sel` files.
+2. Once the repository is created, add `orig/GVLE69/sys/main.dol`. **That is the only game file the build reads**; don't add anything else from the disc.
+
+    The image also bakes in the binutils and compilers versions pinned in `configure.py` (`binutils_tag`, `compilers_tag`), and CI uses those instead of downloading them. When you bump either tag, update `mnroi-build`'s `Dockerfile` to match.
 
 3. Once the build container action completes, visit the package settings:  
     ![GitHub repository packages](images/github_build_repo_packages.png)  
@@ -27,20 +29,6 @@ This repository will be used to build and store the CI build container.
 
 ## Workflow
 
-1. Rename `.github.example` to `.github`.
+Nothing to set up beyond the build container. Once the image exists and `mnroi` can read it, the next push runs the build and the README's Build Status badge turns green.
 
-2. In `build.yml`, update the `container:` to point to the new [build image](#build-repository).
-
-3. In `build.yml`, replace `GAMEID` with your game's ID. (Or list of IDs, for multi-version support.)
-
-4. Commit and push the changes to your repository.
-
-If everything is set up correctly, the workflow will build all versions on every push or pull request.
-
-## decomp.dev
-
-Once the build workflow is running on the main branch, you can add your game to <https://decomp.dev>.
-
-Visit <https://decomp.dev/manage/new>, select your GitHub repository and fill out the required fields.
-
-If you have questions or issues, try asking in the [GC/Wii Decompilation Discord](https://discord.gg/hKx3FJJgrV) #decomp.dev channel.
+To build against a particular fork commit or tag instead of the fork's `main`, change `DTK_REF` in `build.yml`.
