@@ -6,6 +6,7 @@
 # For a unit whose pool sits in another file's .rodata, so it cannot be claimed (see docs/prodg.md).
 # Checks each literal against the original from the given address on, retargets the pool's relocations to dtk's lbl_<address> symbols, and empties the section.
 # Literals loaded with lfs or lfd are supported, and string literals whose address is formed with addi (4-aligned in both copies).
+# A pool entry of the original that no code in the unit loads is written in the source as the word 0x6F727068 ("orph"), one per 4 bytes.
 #
 # Usage:
 #   python3 tools/extern_pool.py build/GVLE69/src/file.o orig/GVLE69/sys/main.dol 0x8048DEA8
@@ -25,6 +26,8 @@ R_PPC_ADDR16_LO = 4
 # Primary opcodes of the loads a pool literal is read with, and the literal's size: lfs, lfsu, lfd, lfdu
 LOAD_SIZES = {48: 4, 49: 4, 50: 8, 51: 8}
 ADDI = 14
+# A word the source emits (`.long 0x6F727068`) for a pool entry of the original that no code in the unit loads
+ORPHAN = b"orph"
 STRING_ALIGN = 4
 
 EHDR_SIZE = 0x34
@@ -81,11 +84,14 @@ def map_pool(
         size = sizes[offset]
         if offset < end:
             raise SystemExit(f"{path}: the literal at .rodata+0x{offset:X} overlaps the one before it")
-        if any(pool[end:offset]):
+        gap = pool[end:offset].lstrip(b"\0")
+        orphans, rest = len(gap) // len(ORPHAN), gap
+        if rest != ORPHAN * orphans:
             raise SystemExit(f"{path}: .rodata+0x{end:X} is neither a float literal nor padding")
         align = aligns.get(offset, size)
         if not mapping and address % align:
             raise SystemExit(f"{path}: 0x{address:08X} is not aligned for the first literal")
+        address += orphans * len(ORPHAN)
         address = (address + align - 1) & -align
         ours = pool[offset : offset + size]
         theirs = dol.read(address, size)
