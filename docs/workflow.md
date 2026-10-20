@@ -166,6 +166,7 @@ Most of the 17,161 functions are still `fn_XXXXXXXX`. Naming is a large part of 
 
 - **Work outward from a matched unit.** Pick the unclaimed function right before or after one you've matched, which keeps each unit's range contiguous. A `_GLOBAL_.I.<name>` function marks the end of a source file ([`prodg.md`](prodg.md#c)).
 - **Expect `-O0` first.** Game code has `-O0`'s shape: arguments spilled through `r31` and `this` kept in `r30`. A function with no frame pointer is middleware (RealCore, Apt, Havok, ...), built at `-O2`: [`prodg.md`](prodg.md#flags) has the ranges and `python3 tools/flavor_map.py <address>` classifies one. For a C++ unit that is 8 bytes over per function, see the function-end branch pair in [`prodg.md`](prodg.md#the-function-end-branch-pair) and `python3 tools/pair_map.py <address>`.
+- **Enemy AI next.** [`ai.md`](ai.md) maps the AI code and gives a target order (section 6). With no function named, take the first unfinished row there.
 - **Versus mode is mapped.** [`versus.md`](versus.md) maps the versus code, and [`characters.md`](characters.md) the character data it loads.
 - **Name as you go.** C++ symbols use GCC 2.95 mangling (`__5ColorUcUcUcUc`). Rename the `fn_` symbol in `symbols.txt` once you know what a function is.
 
