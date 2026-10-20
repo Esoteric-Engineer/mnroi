@@ -171,6 +171,8 @@ The layout is in `tools/ngmtool.py`'s docstring; `check` parses all 114 bundles 
 
   Animation events 0x56/0x57 switch volume 6 on and off; only `Daredevil_RangedAttack` and `Daredevil_SuperRiseAttack` use them, with kinds 43 and 44 on his club. A volume moving more than about a metre a frame passes targets between frames (**tested**).
 - **The header's data size** must cover what `fn_801A3ECC` carves for each model; every shipped bundle holds that sum plus 52 bytes per mesh plus 0 to 1,008 bytes, for something not traced. `ngmtool.data_size()` adds 0x200, which the two mod characters loaded with (**tested**).
+- **Shaders.** A part's material (`shaders.nsa`) names its `shader`. `fn_8023401C` (`Game/fn_8023401C.c`) registers the 29 shader names, each with a factory. The shader object keeps its textures at `+0x14 + 4n`. `glossenvmap`'s draw method binds textures 1 and 0. `glossenvcharlight` (`fn_80239258`, draw `fn_80238BDC`) binds 1, 0 and 2, and lights the third stage (`fn_8021C7E4`). The shipped materials match this: every `glossenvmap` gives `texture` and `envmap` (43), every `glossenvcharlight` adds `texture2 ge_charlight` (11), and `charlight` gives `texture` and `texture2` (`ge_charlight`, or a per-character `ge_charlight_elektra`, `_thing` or `_venom`). Which key fills which slot is inferred from that; the `.nsa` reader `fn_80234628` is not matched.
+- **The mesh record's three bytes** (mesh `+0x3E`-`+0x40`, `ngmtool.py`): copy them from a shipped character mesh. `+0x40` selects which meshes draw when the model instance has a group set (not traced for characters); the draw loop `fn_80223E38` reads none of the three.
 - A model missing from every loaded bundle falls back to a loose `<name>.nod` (`fn_801A0814`, `fn_801A09F0`; version 10). None ships, so the fallback is untested.
 
 ### Animations (`.ngb`) and motion sets (`.nms`)
@@ -201,15 +203,24 @@ The loose banks `HUD/hud<LANG>.1.gsh`, `.2.gsh` and `HUD/splash.gsh` have the sa
 
 ### Effects (`Misc/game.nfx`)
 
-`fn_803A38DC` (unmatched) opens `game.nfx` and splits it with `strtok` on ` \r\t\n`. The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<key> <value>` per line, and `end`. No tool reads it yet.
+The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<key> <value>` per line, and `end`. `python3 tools/nfxtool.py` lists and shows the blocks; its docstring holds the syntax, the value kinds and the loader's limits, and `check` rebuilds both `.nfx` files byte for byte and checks a file (`-f`) against those limits.
 
-- **Types.** `fn_8039E22C` (unmatched) turns a type word into an effect class: `controller`, `trail`, `partsys`, `partsysdam`, `partsubfx`, `partmodel`, `glow`, `constraint`, `cloth`, `shockwave`, `psishield`, `billboard`, `billboardomni`, `volumefog`, `rain`, `partcylinder`, `actorglow`, `energybeam`, `lasertripwire`, `gibomatic2k`, `dyngeom`, `ctrldamage`, `radiuseffect`, `light`, `projectcube`, `boxproject`, `project`, `spawner`, `glass`, `meshtypeflash`, `damage`, `worldfx`. The file uses 26, most of all `partsys` (773 blocks) and `controller` (696).
-- **Keys.** `fn_803944A4` looks a key up, ignoring case, in the 140 names of `lbl_804DC2F0` (`invalid`, `end`, `material`, ... `childflag`) and returns its index. Every key in the file is in the list.
+- **Limits that matter for a mod.** A block holds at most 28 records (an unchecked scratch table; the largest shipped block has 27). Everything shares a 300,000-byte cache, and `game.nfx` uses 290,971 bytes of it (computed from the allocator, not measured), so new blocks have about 9 KB. A block whose name is already used is loaded but never found: the first one wins. Names and type words ignore case.
+
+- **Types.** A type word's class index is its registration order in `fn_8039E22C`: `controller`, `trail`, `partsys`, `partsysdam`, `partsubfx`, `partmodel`, `glow`, `constraint`, `cloth`, `shockwave`, `psishield`, `billboard`, `billboardomni`, `volumefog`, `rain`, `partcylinder`, `actorglow`, `energybeam`, `lasertripwire`, `gibomatic2k`, `dyngeom`, `ctrldamage`, `radiuseffect`, `light`, `projectcube`, `boxproject`, `project`, `spawner`, `glass`, `meshtypeflash`, `damage`, `worldfx`. The file uses 26, most of all `partsys` (773 blocks) and `controller` (696).
+- **Keys.** `nfxtool.py keys` lists the 140 keys and their value kinds. Every key in the file is in the list.
 - **Names.** A tuning field of type effect names a block (378 of the 382 names the `.nvb` files use exist), and so do animation events of an effect field's id (section 4, "Animations").
 - **Markers.** `markertype` and `marker_index` are the kind and index of a model attachment (see "Models" above). `endmarker` and `endmarker_id` give a second point, in `constraint`, `cloth`, `controller`, `trail`, `energybeam` and `partsys` blocks; for a grab line it is on the victim (from the mod tests).
 - **A controller** lists its child effects with `effectname`; the keys after each one (its own `markertype`, `marker_index`) belong to that child.
 - `Misc/defaults.nfx` has one block per type, named after the type, with default values. The DOL does not name that file, so whether the game reads it is not known.
 - Blocks appended to the file load, and a recoloured copy of a controller in tuning field 0x51 drew the grab line in the new colour (**tested**). A `partmodel` draws a model of a loaded bundle (Magneto's `MetalBall.nod` is a fourth model in `magneto.ngm`).
+
+### Cutscenes (`.cut`)
+
+`python3 tools/cuttool.py` lists a cutscene; its docstring holds the format, and `check` rebuilds all 388 playable `.cut` files byte for byte. A cutscene is a header with its audio stream names (`.asf`), the actors (name and placement matrix), and chunks streamed one at a time. Each chunk holds one `.ngb`-format animation and event list per actor. `Game/fn_80057AE8.c` swaps and lays them out.
+
+- **Versus intros** are `mp_<xx>_int_1` and `_2` (`mp_a_<xx>_int_*` for the alternate), named by a string tuning field (section 4, "Tuning records"). Each has two cameras, `nis_camera` and `nis_camera2`, and one actor named after the character (`wolverine`), with the streams `MP_<XX>_INT_1.asf` and `_2`. How an actor name is bound to the spawned character is not traced.
+- **Limits.** The streamer queues a file only if its magic is 0x2715 and every chunk is at most 0x4B001 bytes. 17 shipped files fail the magic and 6 have a larger chunk (`check` lists them).
 
 ### Tuning records
 
@@ -292,7 +303,8 @@ Every function that references four or more character-name strings, plus the dat
 | `fn_80114420` (0x3B4) | Per-character SFX banks ("SFX banks" below). |
 | `lbl_804CF8E8` | AI profile names, `char*[31]` with a NULL end: `AI_DEFAULT`, the 18 characters alphabetically, then NPCs. An unlisted name gets `AI_DEFAULT`, so a new character works without an entry. |
 | `fn_80099228`, `fn_8010CDCC`, `fn_8010D050` | Special-case type 17 (Biohazard) only, around the voice value `fn_8010CDCC` stores in `.sbss` `lbl_8066F050` and the `.sdata` `lbl_8066F060` (guess: voice handling). |
-| `fn_801155A8`, `fn_801154D8`, `fn_80115308`, `fn_80115154` | Sound events, keyed `(bank << 9) \| event` in the registry `lbl_80568DB0`, with bank 2000 as the fallback. `fn_8010CDCC` passes the **type ID as the bank**, so a new type ID needs voice events under its own bank, or it has no voice. |
+| `fn_801155A8`, `fn_801154D8`, `fn_80115308`, `fn_80115154`, `fn_8011574C` | Sound events: `fn_8011574C` (`Game/fn_8011574C.cpp`) registers a callback per `(bank << 9) \| event` in `lbl_80568DB0+0x0` (134 keys) and `+0x4` (53 keys, event 1 of a record's bank, played by `fn_80114E2C`). Lookups in `+0x0` fall back to bank 2000, which has 31 events (`+0x4` has no bank 2000). `fn_8010CDCC` passes the **type ID as the bank**. Of banks 0-40 only 3, 4, 17 and 21-29 have their own `+0x0` callbacks, so a new type ID still finds bank 2000's. What plays without an SFX bank preloaded for the type (`fn_80114420`) is untested. |
+| `lbl_804CF638`, via `fn_80118CB4` and `fn_80118D0C` | The voice callbacks (`Game/fn_8010FE34.cpp`) pass the speaker's type ID, and the target's when there is one, through this table: 30 words, 0-18 remap the 19 characters, 19 and 20 are 0, 21-29 are 30-32. The lookups accept ids up to 40, past the table's end. **A new type ID 19 or 20 gets type 0's value.** Some callbacks also pick a variant from the bank (200-249) and the speaker's type ID (4, 14, 17, 21 and 24 in bank 200; 1, 6 and 13 in bank 201). |
 | `fn_801BEE2C`, `fn_801F7C68` | Story-mode boss and level lists. Not needed for versus. |
 
 `fn_80020E60` has 3 callers and `fn_8009ABEC` 21; the table holds those that treat characters differently. The rest pass the ID on (the `Obj*` factories at 0x804580CC-0x80459A80, `fn_8010D050`, `fn_80428EEC`, `fn_80446F10`; `fn_8009EA20` through `fn_8009FF54` to `fn_800A0488` and `fn_800A0B48`, which never read it), test it against 0, or switch on values that are not characters (`fn_80098D30`). The game has only 20 jump tables, so a `switch` on the type is a compare chain, and a character with no `case` just takes the default. **Not checked yet:** code that reads `actor+0x1AC` without the getter.

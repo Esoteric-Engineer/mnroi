@@ -175,6 +175,9 @@ Game/fn_80044E5C.c:
 	.text       start:0x80044E5C end:0x80045374
 	.rodata     start:0x80486538 end:0x8048654C
 
+Game/fn_80057AE8.c:
+	.text       start:0x80057AE8 end:0x80058A48
+
 Game/fn_80058C94.cpp:
 	.text       start:0x80058C94 end:0x8005A534
 
@@ -554,6 +557,9 @@ Game/fn_8010C338.cpp:
 Game/fn_8010CDCC.c:
 	.text       start:0x8010CDCC end:0x8010D220
 
+Game/fn_8010FE34.cpp:
+	.text       start:0x8010FE34 end:0x80111540
+
 Game/fn_80112E88.cpp:
 	.text       start:0x80112E88 end:0x80112EF4
 
@@ -562,6 +568,9 @@ Game/fn_8011389C.cpp:
 
 Game/fn_80114420.cpp:
 	.text       start:0x8011406C end:0x801147D4
+
+Game/fn_80114E2C.cpp:
+	.text       start:0x80114E2C end:0x80114EEC
 
 Game/fn_80115154.cpp:
 	.text       start:0x80115154 end:0x80115308
@@ -574,6 +583,9 @@ Game/fn_801154D8.cpp:
 
 Game/fn_801155A8.cpp:
 	.text       start:0x801155A8 end:0x8011566C
+
+Game/fn_8011574C.cpp:
+	.text       start:0x8011574C end:0x80116D1C
 
 Game/fn_80119D64.c:
 	.text       start:0x80119D64 end:0x80119F68
@@ -2830,6 +2842,9 @@ Game/fn_80221C08.cpp:
 Game/fn_80232C4C.c:
 	.text       start:0x80232C4C end:0x80232EBC
 
+Game/fn_8023401C.c:
+	.text       start:0x8023401C end:0x802342C4
+
 RealCore/fn_8023DAA0.c:
 	.text       start:0x8023DAA0 end:0x8023DAE0
 
@@ -2844,6 +2859,15 @@ Apt/fn_8026799C.c:
 
 Havok/fn_802E8348.c:
 	.text       start:0x802E8348 end:0x802E8378
+
+Game/fn_803944A4.cpp:
+	.text       start:0x803944A4 end:0x8039453C
+
+Game/fn_8039E22C.cpp:
+	.text       start:0x8039E22C end:0x8039E5D8
+
+Game/fn_803A38DC.cpp:
+	.text       start:0x803A38DC end:0x803A3AC0
 
 Runtime.PPCEABI.H/__ieee754_asin.c:
 	.text       start:0x803FF3B0 end:0x803FF60C

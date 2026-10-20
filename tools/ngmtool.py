@@ -54,6 +54,11 @@ Big-endian on disc (the readers fn_801A2108 and fn_80221C08 do no byte swap):
         u16, u16                 model +0x158, +0x15A (first node of a second chain, guess)
         per mesh:  s32 part index; u8 stream; u16 strip count; u16 list count; u16 render
                    vertices; u8, u8, u8; u8 n; n nodes   (0x5C each at model +0x18)
+                   The three u8 land at mesh +0x3E, +0x3F, +0x40. +0x3E is 194 in the meshes of
+                   AUTO_ (level) models and 0 elsewhere, +0x3F is always 0; neither has a reader
+                   in the renderer. +0x40 is a group: when fn_804662F8(instance) holds,
+                   fn_801A4290 passes the instance's +0xE4 byte to fn_80223088, which draws only
+                   the meshes of that group (what sets either is not traced).
                    The render vertices are the next ones of the stream (they sum to its n).
                    fn_80223E38 draws the list (GX_TRIANGLES, count at mesh +0x16) and then the
                    strip (GX_TRIANGLESTRIP, +0x14). The strip joins its runs with repeated
