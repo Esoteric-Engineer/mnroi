@@ -70,7 +70,7 @@ Reference: [`splits.md`](splits.md)
 
 ### Step 3: Register the object in `configure.py`
 
-Add it to the `Game` library's `objects` in `config.libs`, which compiles with ProDG:
+Add it to the `Game` library's `objects` in `config.libs`, which compiles with ProDG at `-O0`. A function in one of the middleware ranges (check with `python3 tools/flavor_map.py <address>`; they have no frame pointer) goes in the `Middleware` library instead, which compiles at `-O2`, and a function in the `-fno-strength-reduce -G0` block adds `cflags=cflags_prodg_middleware_g0` to its `Object`. Name middleware units `RealCore/`, `CSIS/`, `Apt/`, `Havok/` and so on, after the function, and write them as `.c` unless they need classes or `new` (at `-O2`, `cc1` and `cc1plus` agree for anything without classes). `RealCore/fn_8023DAA0.c`, `CSIS/fn_80246024.c`, `Apt/fn_8026799C.c` and `Havok/fn_802E8348.c` are the first matched examples.
 
 ```python
         "objects": [
@@ -78,6 +78,8 @@ Add it to the `Game` library's `objects` in `config.libs`, which compiles with P
             Object(NonMatching, "Game/fn_8000923C.cpp"),
         ],
 ```
+
+A function whose float literals the original keeps in another file's `.rodata` (anything in the tail of `.text` whose pool `dtk dol split` calls cyclic when claimed) takes `extern_pool=<address of its first literal>` on its `Object` instead of a `.rodata` line in `splits.txt`; [`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text) explains why.
 
 > **The `Object` name must be character-for-character identical to the `splits.txt` unit name:** If they differ, the build silently ignores your source. `configure.py` prints `Missing configuration for <name>` when a unit has no matching object.
 
@@ -158,12 +160,13 @@ When a function references a string or table you intend to reproduce, read the o
 
 ## 4. Choosing what to work on
 
-The SDK, libc, compiler runtime and SN debug stub are fully matched, so what remains is game code. Its `.text` ranges are in [`baseline.md`](baseline.md#memory-map). It is C++ built with SN ProDG (GCC 2.95), and its units go in the `Game` library in `configure.py`. [`prodg.md`](prodg.md) has the flags found so far, the C++ conventions and how static constructors link. `Game/fn_800092CC.cpp` is the first matched example.
+The SDK, libc, compiler runtime and SN debug stub are fully matched, so what remains is game code. Its `.text` ranges are in [`baseline.md`](baseline.md#memory-map). It is C++ built with SN ProDG (GCC 2.95), and its units go in the `Game` library in `configure.py` (middleware goes in `Middleware`, see step 3). [`prodg.md`](prodg.md) has the flags found so far, the C++ conventions and how static constructors link. `Game/fn_800092CC.cpp` is the first matched example.
 
 Most of the 17,161 functions are still `fn_XXXXXXXX`. Naming is a large part of the work ahead.
 
 - **Work outward from a matched unit.** Pick the unclaimed function right before or after one you've matched, which keeps each unit's range contiguous. A `_GLOBAL_.I.<name>` function marks the end of a source file ([`prodg.md`](prodg.md#c)).
-- **Expect `-O0` first.** Most game functions have `-O0`'s shape: arguments spilled through `r31` and `this` kept in `r30`. About half the functions in 0x80196884-0x803FF3B0 have no frame pointer, so those files need other flags.
+- **Expect `-O0` first.** Game code has `-O0`'s shape: arguments spilled through `r31` and `this` kept in `r30`. A function with no frame pointer is middleware (RealCore, Apt, Havok, ...), built at `-O2`: [`prodg.md`](prodg.md#flags) has the ranges and `python3 tools/flavor_map.py <address>` classifies one. For a C++ unit that is 8 bytes over per function, see the function-end branch pair in [`prodg.md`](prodg.md#the-function-end-branch-pair) and `python3 tools/pair_map.py <address>`.
+- **Versus mode is mapped.** [`versus.md`](versus.md) maps the versus code, and [`characters.md`](characters.md) the character data it loads.
 - **Name as you go.** C++ symbols use GCC 2.95 mangling (`__5ColorUcUcUcUc`). Rename the `fn_` symbol in `symbols.txt` once you know what a function is.
 
 ---

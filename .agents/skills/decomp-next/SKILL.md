@@ -10,8 +10,11 @@ Human-facing references (read the relevant one instead of guessing):
 - `docs/workflow.md`: the per-function loop, commands, and how to choose targets.
 - `docs/prodg.md`: the ProDG (GCC 2.95) compile path, flags found so far, C++ conventions and
   static constructors. Game code is built with it.
-- `docs/matching_notes.md`: reusable matching rules. **Read it before your first iteration on a
-  function**, and again whenever a function stalls short of 100%.
+- `docs/matching_notes.md`: reusable matching rules, 60+ KB. **Don't read it whole.** Run
+  `python3 tools/notes_index.py` for one symptom line per entry before your first iteration, and
+  again whenever a function stalls short of 100%. Pull the entries that match what you see in the
+  disassembly or diff with `python3 tools/notes_index.py <numbers>`, or search the full text with
+  `python3 tools/notes_index.py -g <text>`.
 - `docs/nonmatching.md`: functions stuck as `NonMatching`, with everything already tried. Check it
   before starting a function, and don't re-guess what it lists.
 - `docs/baseline.md`: why the build is set up the way it is (toolkit fork, r13 small data, memory map).
@@ -44,13 +47,16 @@ Human-facing references (read the relevant one instead of guessing):
    range to `splits.txt` (tab-indented) and rename `fn_XXXXXXXX` in `symbols.txt` if you know the
    real name (GCC 2.95-mangled for C++). Name a new unit after its first function,
    `Game/fn_XXXXXXXX.cpp`.
-4. **Register** as `Object(NonMatching, "<unit>")` in the `Game` library in `configure.py`. The name
-   must equal the `splits.txt` unit name exactly.
+4. **Register** as `Object(NonMatching, "<unit>")` in the `Game` library in `configure.py`, or in
+   `Middleware` if the function has no frame pointer (`python3 tools/flavor_map.py <address>` says
+   which flags; `docs/workflow.md` step 3 has the `-G0` block's override). The name must equal the
+   `splits.txt` unit name exactly.
 5. **Write** `src/<unit>` and run `ninja`. Inspect remaining differences with
    `python3 tools/objdiff_mismatches.py <unit-without-extension> <function>`; it shows relocation
-   types, which byte diffs don't. Form a hypothesis from `docs/matching_notes.md` and `prodg.md`
-   instead of random reshaping. If the function's shape doesn't fit `-O0`, suspect the flags before
-   the source.
+   types, which byte diffs don't. Form a hypothesis from the matching notes (`tools/notes_index.py`)
+   and `prodg.md` instead of random reshaping. If the function's shape doesn't fit `-O0`, suspect the flags before
+   the source (`tools/flavor_map.py`). A C++ unit that is 8 bytes over size per function is the
+   function-end branch pair, not the source (`tools/pair_map.py` and `prodg.md`).
 6. **Verify.** Flip to `Matching`, run `ninja`, and require **both** `main.dol: OK` and 100%
    linked. If `main.dol` breaks, run `python3 tools/diff_dol.py` to locate the bytes. Consider
    `force_active` only if the diff shows the function was dropped or shifted.
@@ -58,6 +64,9 @@ Human-facing references (read the relevant one instead of guessing):
 ## Rules
 
 - Leave the unit `NonMatching` if it isn't at 100%. Never flip a partial match.
+- Before giving up on a function or writing it into `docs/nonmatching.md`, re-scan
+  `tools/notes_index.py` against the current diff and run at least one `-g` search on its symptom.
+  A missed rule recorded as a dead end is skipped by every later run.
 - Prefer referencing existing (unclaimed) dtk symbols over declaring fresh data or claiming data
   ranges. Override `scope:local` to `scope:global` in `symbols.txt` when needed.
 - Don't `git add -f` anything ignored, and don't commit unless asked.
@@ -67,8 +76,8 @@ Human-facing references (read the relevant one instead of guessing):
 
 Decide which file, if any, before writing anything.
 
-**`docs/matching_notes.md`** is read in full before every function, so every line costs every
-future session. Add an entry only if it is:
+**`docs/matching_notes.md`** is scanned through its index before every function, so every
+entry's bold lead costs every future session; make it a recognisable symptom. Add an entry only if it is:
 
 - **Reusable:** a compiler/linker/dtk/objdiff behaviour or source-shape rule likely to apply to
   other functions, not a fact about this one.

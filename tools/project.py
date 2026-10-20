@@ -58,6 +58,7 @@ class Object:
             "asm_dir": None,
             "cflags": None,
             "extab_padding": None,
+            "extern_pool": None,
             "extra_asflags": [],
             "extra_cflags": [],
             "extra_clang_flags": [],
@@ -299,6 +300,18 @@ def is_windows() -> bool:
 CHAIN = "cmd /c " if is_windows() else ""
 # Native executable extension
 EXE = ".exe" if is_windows() else ""
+
+
+def original_dol_path(config: "ProjectConfig") -> Path:
+    """The original DOL, from `object_base` and `object` in config.yml."""
+    keys: Dict[str, str] = {}
+    if config.config_path is not None and config.config_path.is_file():
+        with open(config.config_path, "r", encoding="utf-8") as f:
+            for line in f:
+                key, _, value = line.partition(":")
+                if key in ("object_base", "object"):
+                    keys.setdefault(key, value.strip())
+    return Path(keys.get("object_base", "")) / keys.get("object", "main.dol")
 
 
 # `mw_version` names a folder under the compilers directory. A `ProDG/` folder holds SN Systems' ngccc (GCC 2.95) instead of mwcceppc.
@@ -703,6 +716,11 @@ def generate_build_ninja(
         prodg_env = f"SN_NGC_PATH={compiler_path} "
     prodg_cmd = f"{CHAIN}{prodg_env}{wrapper_cmd}{ngccc} $cflags -MD -c $in -o $out"
     prodg_implicit: List[Optional[Path]] = [compilers_implicit or ngccc, wrapper_implicit]
+    # Same, then tools/extern_pool.py points the object's .rodata literal pool at the original's copy (see docs/prodg.md)
+    extern_pool = config.tools_dir / "extern_pool.py"
+    orig_dol = original_dol_path(config)
+    prodg_pool_cmd = f"{prodg_cmd} && $python {extern_pool} $out {orig_dol} $extern_pool"
+    prodg_pool_implicit: List[Optional[Path]] = [*prodg_implicit, extern_pool, orig_dol]
 
     # MWLD
     mwld = compiler_path / "mwldeppc.exe"
@@ -759,12 +777,14 @@ def generate_build_ninja(
         mwcc_extab_cmd += sda_bake_cmd
         mwcc_sjis_extab_cmd += sda_bake_cmd
         prodg_cmd += sda_bake_cmd
+        prodg_pool_cmd += sda_bake_cmd
         for implicit in (
             mwcc_implicit,
             mwcc_sjis_implicit,
             mwcc_extab_implicit,
             mwcc_sjis_extab_implicit,
             prodg_implicit,
+            prodg_pool_implicit,
         ):
             implicit.extend([dtk, sda_bake_path])
         mwld_cmd += f" && {dtk} elf resolve-sda $out $out"
@@ -832,6 +852,16 @@ def generate_build_ninja(
     n.rule(
         name="prodg",
         command=prodg_cmd,
+        description="PRODG $out",
+        depfile="$basefile.d",
+        deps="gcc",
+    )
+    n.newline()
+
+    n.comment("SN ProDG build, literal pool left in the original's .rodata")
+    n.rule(
+        name="prodg_pool",
+        command=prodg_pool_cmd,
         description="PRODG $out",
         depfile="$basefile.d",
         deps="gcc",
@@ -1107,6 +1137,10 @@ def generate_build_ninja(
                     sys.exit(f"{obj.name}: extab_padding is MWCC-only")
                 build_rule = "prodg"
                 build_implcit = prodg_implicit
+                if obj.options["extern_pool"] is not None:
+                    build_rule = "prodg_pool"
+                    build_implcit = prodg_pool_implicit
+                    variables["extern_pool"] = f"0x{obj.options['extern_pool']:08X}"
             elif obj.options["shift_jis"] and obj.options["extab_padding"] is not None:
                 build_rule = "mwcc_sjis_extab"
                 build_implcit = mwcc_sjis_extab_implicit

@@ -86,8 +86,6 @@ skip_cfa_ranges:
   end: .text:0x80183100
 - start: .text:0x80401540   # MMU/cache/TLB (mtsr/tlbie)
   end: .text:0x80401E00
-- start: .text:0x800350F4   # real fn; inline FP epilogue mis-detected as _restfpr_14 @ 0x80036CD0
-  end: .text:0x80036D20
 
 # Fix a mis-paired HI16/LO16 relocation in crt0 (__start). dtk bound the LO16 at
 # .init:0x80003160 to `_stack_end`, but the original bytes (lis r5,0x8066 /
@@ -98,7 +96,77 @@ skip_cfa_ranges:
 # lbl_8066FB50 (ldscript.lcf defines it as the end of .sbss); the HI16 already targets it.
 block_relocations:
 - source: .init:0x80003160
+# Pixel data in the embedded SHPG texture bank lbl_804BFA80 that only looks like
+# pointers (docs/baseline.md, Shifted Builds).
+- source: .data:0x804C1F7C
+- source: .data:0x804C42E8
+- source: .data:0x804C5DA8
+- source: .data:0x804C64E4
+- source: .data:0x804C8B9C
+- source: .data:0x804CA364
+# Two ARGB colors the GameFlow constructor stores (0x8000E0E0 and 0x80008080); dtk read both
+# halves of each as an ADDR16_HI/LO pair against the function at that address.
+- source: .text:0x800B453C
+- source: .text:0x800B4540
+- source: .text:0x800B4548
+- source: .text:0x800B454C
 add_relocations:
 - source: .init:0x80003160
   type: PpcAddr16Lo
   target: lbl_8066FB50
+# dtk leaves a `lis` unrelocated when its low half sits after a branch join (the
+# other arm's `lis` gets the relocation) or when the high half is kept in a saved
+# register or CTR. These build fine, but the addresses go stale once code or data
+# shifts. Found by the shift test (docs/baseline.md, Shifted Builds); each target is the symbol
+# the paired low half uses.
+- source: .text:0x8025FCB4
+  type: PpcAddr16Ha
+  target: lbl_804A4790
+- source: .text:0x802680BC
+  type: PpcAddr16Ha
+  target: lbl_804D9C68
+- source: .text:0x8026F3FC
+  type: PpcAddr16Ha
+  target: lbl_80643CE8
+- source: .text:0x80271468
+  type: PpcAddr16Ha
+  target: lbl_80506F28
+- source: .text:0x80285828
+  type: PpcAddr16Ha
+  target: lbl_80643CE8
+- source: .text:0x8028B89C
+  type: PpcAddr16Ha
+  target: lbl_80506F28
+- source: .text:0x8028B9C0
+  type: PpcAddr16Ha
+  target: lbl_80506F28
+- source: .text:0x80291D60
+  type: PpcAddr16Ha
+  target: lbl_804B06D8
+- source: .text:0x80291E2C
+  type: PpcAddr16Ha
+  target: lbl_804B06D8
+- source: .text:0x80291F28
+  type: PpcAddr16Ha
+  target: lbl_804B06DC
+- source: .text:0x802C4C94
+  type: PpcAddr16Ha
+  target: lbl_806474F8
+- source: .text:0x802CB368
+  type: PpcAddr16Ha
+  target: lbl_80647864
+- source: .text:0x802D8130
+  type: PpcAddr16Ha
+  target: lbl_804B5EA4
+- source: .text:0x802D81E8
+  type: PpcAddr16Ha
+  target: lbl_804B5EA4
+- source: .text:0x802D8358
+  type: PpcAddr16Ha
+  target: lbl_804B5EA4
+- source: .text:0x8032B338
+  type: PpcAddr16Ha
+  target: lbl_804B8AB8
+- source: .text:0x803687F4
+  type: PpcAddr16Ha
+  target: lbl_804B9B4C
