@@ -31,4 +31,6 @@ This repository will be used to build and store the CI build container.
 
 Nothing to set up beyond the build container. Once the image exists and `mnroi` can read it, the next push runs the build and the README's Build Status badge turns green.
 
+On each push to main, the `progress` job turns `report.json` into three [shields.io endpoint](https://shields.io/badges/endpoint-badge) files (code, functions, data) via [`tools/progress_badges.py`](/tools/progress_badges.py) and force-pushes them to a single-commit `progress` branch. The README's progress badges read from there. Pull requests don't publish, and the branch needs no setup: the job creates it, using the workflow's `GITHUB_TOKEN`.
+
 To build against a particular fork commit or tag instead of the fork's `main`, change `DTK_REF` in `build.yml`.

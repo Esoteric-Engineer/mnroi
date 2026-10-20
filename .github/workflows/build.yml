@@ -112,3 +112,37 @@ jobs:
       with:
         name: ${{ matrix.version }}_report
         path: build/${{ matrix.version }}/report.json
+
+  # Publish the README's progress badges.
+  progress:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download reports
+      uses: actions/download-artifact@v4
+      with:
+        pattern: '*_report'
+        path: reports
+
+    - name: Generate badges
+      run: |
+        for report in reports/*_report/report.json; do
+          version=$(basename "$(dirname "$report")" _report)
+          python3 tools/progress_badges.py "$report" "$version" badges
+        done
+
+    - name: Publish badges
+      working-directory: badges
+      run: |
+        git init -b progress
+        git config user.name "Imperfects Progress Bot"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "Update progress badges for $GITHUB_SHA"
+        git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" progress
