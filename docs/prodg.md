@@ -252,7 +252,8 @@ game's shared classes are there, from `Color` and `Vector` (0x80426EC4, 0x80428F
   doubles, in the file that calls it from 0x800D3Dxx. This is where dtk's oversized `lbl_`s with one
   referenced word in front come from.
 - **The function-end pair is mostly absent there** ([above](#the-function-end-branch-pair)), which fits
-  functions written out at the end of a file, after its constructors have set the flag.
+  functions written out at the end of a file, after its constructors have set the flag. So a reset there need not
+  be a file start; the `.rodata` a function reads tells its file ([`versus.md`](versus.md), row 8's note).
 
 **Such a pool cannot be claimed.** A unit with `.text` at 0x80447830 and `.rodata` at 0x8048DEA8 has to link
 after `Game/fn_8010611C.cpp` by `.text` and before it by `.rodata`, and mwld has one link order. That is the
