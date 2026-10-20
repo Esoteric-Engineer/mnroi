@@ -423,7 +423,7 @@ struct Slot
     Slot() __asm__("__4Slot");
 };
 
-class Streamer
+class cCutPlayer
 {
 public:
     int pad0;       // +0x0
@@ -435,12 +435,12 @@ public:
     int f30;        // +0x30
     Slot slots[2];  // +0x34
     int f5C, f60, f64, f68, f6C, f70, f74;
-    Streamer();
+    cCutPlayer();
 };
 
-extern "C" void fn_80439DCC(Streamer *self);
+extern "C" void fn_80439DCC(cCutPlayer *self);
 
-Streamer::Streamer()
+cCutPlayer::cCutPlayer()
     : f4(0), f8(0), f28(0), f2C(0), f30(0), f5C(0), f60(0), f64(0), f68(0), f6C(1), f70(0), f74(0)
 {
     for (unsigned i = 0; i <= 1; i++)

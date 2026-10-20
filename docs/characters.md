@@ -220,7 +220,7 @@ The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<
 `python3 tools/cuttool.py` lists a cutscene; its docstring holds the format, and `check` rebuilds all 388 playable `.cut` files byte for byte. A cutscene is a header with its audio stream names (`.asf`), the actors (name and placement matrix), and chunks streamed one at a time. Each chunk holds one `.ngb`-format animation and event list per actor. `Game/fn_80057AE8.c` swaps and lays them out.
 
 - **Versus intros** are `mp_<xx>_int_1` and `_2` (`mp_a_<xx>_int_*` for the alternate), named by a string tuning field (section 4, "Tuning records"). Each has two cameras, `nis_camera` and `nis_camera2`, and one actor named after the character (`wolverine`), with the streams `MP_<XX>_INT_1.asf` and `_2`. How an actor name is bound to the spawned character is not traced.
-- **Limits.** The streamer queues a file only if its magic is 0x2715 and every chunk is at most 0x4B001 bytes. 17 shipped files fail the magic and 6 have a larger chunk (`check` lists them).
+- **Limits.** `cCutPlayer` queues a file only if its magic is 0x2715 and every chunk is at most 0x4B001 bytes. 17 shipped files fail the magic and 6 have a larger chunk (`check` lists them).
 
 ### Tuning records
 

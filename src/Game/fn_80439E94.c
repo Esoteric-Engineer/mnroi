@@ -1,4 +1,4 @@
-// Streamer: start (fn_80439E94), close (fn_80439F10) and teardown wait (fn_80439F7C); docs/versus.md, row 8.
+// cCutPlayer: start (fn_80439E94), close (fn_80439F10) and teardown wait (fn_80439F7C); docs/versus.md, row 8.
 extern void *fn_80241DD0(register char *path, int a, int b, void *arg);
 extern void fn_80241C58(void *h, void *cb);
 extern void fn_80051F04(void);

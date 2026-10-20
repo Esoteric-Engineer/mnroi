@@ -1,4 +1,4 @@
-// Streamer destructor, teardown, update method and cutscene-load helpers (hand-written C: the flag stays in a register); docs/versus.md, row 8.
+// cCutPlayer destructor, teardown, update method and cutscene-load helpers (hand-written C: the flag stays in a register); docs/versus.md, row 8.
 extern void fn_80439E3C(void *self);
 extern void fn_80439D88(void *self);
 extern void fn_80439C24(void *slot);

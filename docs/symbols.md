@@ -36,3 +36,13 @@ All attributes are optional, and are separated by spaces.
 - `noreloc` Prevents the _contents_ of the symbol from being interpreted as addresses. Used for objects containing data that look like pointers, but aren't.
 - `noexport` When `export_all` is enabled, this excludes the symbol from being exported. Used for symbols that are affected by linker `-code_merging`.
 - `stripped` Indicates a symbol that was stripped by the linker. Used for symbols that affect the [common BSS inflation bug](common_bss.md), despite not existing in the final binary.
+
+## Names from error strings
+
+These unmatched functions are named by their own error strings. They keep their `fn_` symbols until matching gives the signature the mangled name needs.
+
+| Function | Name | String |
+|---|---|---|
+| `fn_801498E8` | `cAIMessages::Enqueue` | 0x8049B2A0 |
+| `fn_801499A4` | `cAIMessages::Dequeue` | 0x8049B2E4 |
+| `fn_802C110C` | `GCInterface::ConvertUmsgToOption` | 0x804B3898 |

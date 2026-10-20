@@ -8,7 +8,7 @@ Usage (from repo root):
 NAME is a file in CLASH.BIG (am_4 or cutscenes/am_4.cut). As a module, read_cut()/build_cut() parse
 and rebuild a file; build_cut() recomputes every count and size from the parts.
 
-The streamer (Game/fn_80438044.cpp to Game/fn_80439E94.c) reads the header, then one chunk at a
+The streamer, cCutPlayer (Game/fn_80438044.cpp to Game/fn_80439E94.c), reads the header, then one chunk at a
 time; fn_80439778 swaps the header (fn_80057FF8) and records (fn_80057AE8) and drops a file whose
 magic is not 0x2715 or whose chunk sizes go over 0x4B001, and fn_80058284 lays out and swaps each
 chunk (all in Game/fn_80057AE8.c except the streamer). Little-endian:

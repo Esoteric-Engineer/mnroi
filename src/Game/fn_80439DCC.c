@@ -1,4 +1,4 @@
-// Streamer buffer allocate; docs/versus.md, row 8.
+// cCutPlayer buffer allocate; docs/versus.md, row 8.
 extern char lbl_80486C78[0x19];
 extern int lbl_8066B7FC;
 extern void *fn_801AC9EC(int size, char *file, int line, int a, int b, int c);

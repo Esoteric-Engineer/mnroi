@@ -1,4 +1,4 @@
-// Streamer buffer free; docs/versus.md, row 8.
+// cCutPlayer buffer free; docs/versus.md, row 8.
 extern int lbl_8066B7FC;
 extern void fn_801ACC0C(void *p);
 

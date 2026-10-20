@@ -1,4 +1,4 @@
-// Streamer load-complete step: waits for the read, byte-swaps the header tables and queues the result; docs/versus.md, row 8.
+// cCutPlayer load-complete step: waits for the read, byte-swaps the header tables and queues the result; docs/versus.md, row 8.
 struct StreamBuf {
     unsigned magic;     // +0x0
     char pad0[4];
