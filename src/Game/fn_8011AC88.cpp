@@ -1,4 +1,4 @@
-// Music/mode word while no versus role index is set (docs/versus.md section 5, row 25).
+// Music/mode word while no versus role index is set.
 
 struct State {
     char pad[0x75C];

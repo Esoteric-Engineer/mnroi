@@ -1,4 +1,4 @@
-// The player controller's animation event handler: one case per event type, which sets controller fields from the event's value. Returns 0 for a type it does not handle. docs/versus.md row 28.
+// The player controller's animation event handler: one case per event type, which sets controller fields from the event's value. Returns 0 for a type it does not handle.
 
 class Vector
 {

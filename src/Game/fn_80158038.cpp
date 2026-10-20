@@ -1,4 +1,4 @@
-// A PLAYER state's approach step: picks a target (fn_8015F7A4), sets state bit 0x13 within PLAYER field 210 (240 when fn_800860FC); docs/versus.md row 20.
+// A PLAYER state's approach step: picks a target (fn_8015F7A4), sets state bit 0x13 within PLAYER field 210 (240 when fn_800860FC).
 // Owns .rodata 0x8049B904-0x8049B910 (0.5f, 0.0f, 20.0f).
 
 class Vector

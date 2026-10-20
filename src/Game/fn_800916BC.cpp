@@ -1,4 +1,4 @@
-// G method: resets the match counters, picks the phase by role index, and spawns each slot's record; also looks up the script classes cRingOut and cCameraEvent. docs/versus.md section 5, row 25.
+// G method: resets the match counters, picks the phase by role index, and spawns each slot's record; also looks up the script classes cRingOut and cCameraEvent.
 
 class GameState
 {

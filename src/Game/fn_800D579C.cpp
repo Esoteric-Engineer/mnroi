@@ -1,4 +1,4 @@
-// Starts a PLAYER clip (tuning field 196) and plays voice event 0x77; docs/versus.md row 20.
+// Starts a PLAYER clip (tuning field 196) and plays voice event 0x77.
 
 struct Ent {
     int pad;

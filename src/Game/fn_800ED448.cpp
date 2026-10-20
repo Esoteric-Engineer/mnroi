@@ -1,4 +1,4 @@
-// Enters a PLAYER state: plays clip 4, then steers by the first facing candidate in range (GLOBALS 0x34, 0x3C; PLAYER 0x19); docs/versus.md row 20.
+// Enters a PLAYER state: plays clip 4, then steers by the first facing candidate in range (GLOBALS 0x34, 0x3C; PLAYER 0x19).
 
 class Vector
 {

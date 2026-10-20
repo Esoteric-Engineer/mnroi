@@ -1,4 +1,4 @@
-// Passes the handle at +0xF0 of an entity to fn_800ACFA8. Row 19 of docs/versus.md.
+// Passes the handle at +0xF0 of an entity to fn_800ACFA8.
 
 inline int sn_return_decl(int a) { return a; }
 

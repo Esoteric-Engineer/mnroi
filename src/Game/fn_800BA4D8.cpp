@@ -1,4 +1,4 @@
-// Virtual method on a slot-owning object: runs virtual slot 35 unless flag 0x10000 is set, then returns 1 after a round reset (fn_80092550) or after fn_8005736C / fn_801AA328. docs/versus.md section 5, row 25.
+// Virtual method on a slot-owning object: runs virtual slot 35 unless flag 0x10000 is set, then returns 1 after a round reset (fn_80092550) or after fn_8005736C / fn_801AA328.
 
 struct Obj {
     char pad0[0x18];

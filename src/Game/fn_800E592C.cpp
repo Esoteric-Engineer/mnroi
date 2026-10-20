@@ -1,4 +1,4 @@
-// Clears the entity's effect handles and starts the PLAYER effect handles (tuning fields 0x51, 0xCD); docs/versus.md row 20.
+// Clears the entity's effect handles and starts the PLAYER effect handles (tuning fields 0x51, 0xCD).
 
 struct Ent {
     int pad;

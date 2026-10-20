@@ -1,4 +1,4 @@
-// Starts a timed state on an actor from its tuning field 195 (PLAYER, int). Row 20 of docs/versus.md.
+// Starts a timed state on an actor from its tuning field 195 (PLAYER, int).
 
 inline int sn_return_decl(int a) { return a; }
 

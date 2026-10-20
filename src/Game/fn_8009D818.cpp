@@ -1,4 +1,4 @@
-// Per-frame update of a charge/hold state on an actor (PLAYER fields 31, 193, 221); docs/versus.md row 20.
+// Per-frame update of a charge/hold state on an actor (PLAYER fields 31, 193, 221).
 
 inline int sn_return_decl(int a) { return a; }
 

@@ -1,5 +1,5 @@
 // Sets +0x198/+0x19C from where +0x180's value falls between GLOBALS 17 and 16, then moves +0x180
-// toward a GLOBALS 15..16 window or a target (fn_800372A8); docs/versus.md row 21.
+// toward a GLOBALS 15..16 window or a target (fn_800372A8).
 // Owns the .rodata pools at 0x80486040 (extern_pool).
 
 inline int sn_return_decl(int a) { return a; }

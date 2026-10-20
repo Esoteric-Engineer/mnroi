@@ -1,4 +1,4 @@
-// Moves a speed-like value (+0x144) toward a GLOBALS-derived target; docs/versus.md row 21.
+// Moves a speed-like value (+0x144) toward a GLOBALS-derived target.
 
 inline int sn_return_decl(int a) { return a; }
 

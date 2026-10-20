@@ -1,4 +1,4 @@
-// Compares a float of the same object (fn_8015E64C) with PLAYER tuning fields 211 and 212; docs/versus.md row 20.
+// Compares a float of the same object (fn_8015E64C) with PLAYER tuning fields 211 and 212.
 
 extern float fn_8015E64C(void *self);
 extern void *fn_80442080(void *self);

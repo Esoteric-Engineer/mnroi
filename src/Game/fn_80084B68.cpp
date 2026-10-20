@@ -1,4 +1,4 @@
-// Actor test: true unless a timed gate (+0x324 against the argument and a PLAYER tuning value) rejects it; docs/versus.md row 20.
+// Actor test: true unless a timed gate (+0x324 against the argument and a PLAYER tuning value) rejects it.
 
 struct Actor {
     char pad0[0x324];

@@ -1,4 +1,4 @@
-// A PLAYER state's steering step: finds a target and kicks the entity toward it (tuning fields 0x74-0x7D); docs/versus.md row 20.
+// A PLAYER state's steering step: finds a target and kicks the entity toward it (tuning fields 0x74-0x7D).
 // fn_800E673C plays an effect from the table lbl_8064AA80, picked by its flag byte (PLAYER 79 + n).
 
 class Vector

@@ -1,4 +1,4 @@
-// Collects the entities near the owner into the AI object's target list; docs/versus.md row 20.
+// Collects the entities near the owner into the AI object's target list.
 
 inline int sn_return_decl(int a) { return a; }
 

@@ -1,5 +1,5 @@
-// fn_800BED04: starts or stops the PLAYER effect handles (tuning fields 0x62, 0x63) and clips 0x1B/0x1C/0x1D as the entity enters or leaves a state; docs/versus.md row 20.
-// fn_800BF488: the entity's per-frame update (row 25).
+// fn_800BED04: starts or stops the PLAYER effect handles (tuning fields 0x62, 0x63) and clips 0x1B/0x1C/0x1D as the entity enters or leaves a state.
+// fn_800BF488: the entity's per-frame update.
 
 struct Ent {
     int pad;

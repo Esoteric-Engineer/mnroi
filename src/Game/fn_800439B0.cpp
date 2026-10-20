@@ -1,4 +1,4 @@
-// Range and state checks before an action starts, then GLOBALS fields 0x4D/0x4F pick a mode; docs/versus.md row 21.
+// Range and state checks before an action starts, then GLOBALS fields 0x4D/0x4F pick a mode.
 
 struct Pair {
     int a;   // +0x0

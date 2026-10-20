@@ -1,5 +1,5 @@
 // fn_8008F3B8: the index of a motion-state name in the table lbl_8054F1F0 (0x174 entries), 0 if it is not there.
-// fn_8008F470: returns the motion set <name> from the motion-set registry, loading it on a miss; docs/versus.md row 23.
+// fn_8008F470: returns the motion set <name> from the motion-set registry, loading it on a miss.
 
 typedef struct MotionSet
 {

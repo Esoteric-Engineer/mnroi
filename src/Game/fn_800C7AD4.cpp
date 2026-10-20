@@ -1,4 +1,4 @@
-// Scales GLOBALS 22 and 23 by two getters and the frame delta into the actor's body; docs/versus.md row 21.
+// Scales GLOBALS 22 and 23 by two getters and the frame delta into the actor's body.
 
 extern "C" {
 extern void *lbl_8066C6C8;

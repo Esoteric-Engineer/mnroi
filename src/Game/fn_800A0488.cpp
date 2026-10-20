@@ -1,5 +1,5 @@
 // Hit on an actor (guess): fn_8009FF54 dispatches on the target's kind to fn_800A0488 (projectile: deflect, absorb or hand on to
-// fn_8002FD50, PLAYER 0x81 + n, 0xBD; docs/versus.md row 20), fn_800A0B48 or fn_8009E998. Type-ID use: docs/characters.md section 5.
+// fn_8002FD50, PLAYER 0x81 + n, 0xBD), fn_800A0B48 or fn_8009E998. Type-ID use: docs/characters.md section 5.
 // The unit owns .rodata 0x8048AF88-0x8048AFD8.
 
 inline int sn_return_decl(int a) { return a; }

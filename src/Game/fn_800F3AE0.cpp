@@ -1,4 +1,4 @@
-// State entry that arms a timer from tuning field 60 and clears two state bits; docs/versus.md row 20.
+// State entry that arms a timer from tuning field 60 and clears two state bits.
 
 struct Ent {
     int pad;

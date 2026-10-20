@@ -1,4 +1,4 @@
-// Queues an fn_8003DBF0 entry from GLOBALS 44-47 by the switch on its second argument; docs/versus.md row 21.
+// Queues an fn_8003DBF0 entry from GLOBALS 44-47 by the switch on its second argument.
 
 extern "C" {
 extern char lbl_80552110[0x10]; // the game-state object G

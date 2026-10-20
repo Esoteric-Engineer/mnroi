@@ -1,4 +1,4 @@
-// clashMission_StartLevel(String): story-mode level start. On BrooklynBridge with no versus role it spawns "plr_thing" for player 0 (docs/versus.md section 5, row 25).
+// clashMission_StartLevel(String): story-mode level start. On BrooklynBridge with no versus role it spawns "plr_thing" for player 0.
 class String {
 public:
     char data[0x4C];

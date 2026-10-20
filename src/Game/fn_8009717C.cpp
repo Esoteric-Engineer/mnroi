@@ -1,4 +1,4 @@
-// Slot method: ends a round for this slot's player (flag 0x10 on the slot, phase 5, effect 0xAD + slot+0x6C). docs/versus.md section 5, row 25.
+// Slot method: ends a round for this slot's player (flag 0x10 on the slot, phase 5, effect 0xAD + slot+0x6C).
 
 class Actor
 {

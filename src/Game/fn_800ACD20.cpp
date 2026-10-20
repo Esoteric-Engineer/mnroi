@@ -1,4 +1,4 @@
-// Per-entity tuning getter (entity, id): reads the record at +0x16C. Row 19 of docs/versus.md.
+// Per-entity tuning getter (entity, id): reads the record at +0x16C.
 
 extern "C" {
 int fn_800B0C58(void *self);

@@ -1,4 +1,4 @@
-// Reads 22 PLAYER tuning fields (ids 0x8B-0xA4, 0xF6, 0xF7) into the float block at +0x598; docs/versus.md rows 19-20.
+// Reads 22 PLAYER tuning fields (ids 0x8B-0xA4, 0xF6, 0xF7) into the float block at +0x598.
 
 struct Ent {
     int pad;

@@ -1,4 +1,4 @@
-// Resets the entity's state and reads its PLAYER tuning fields 0x17, 0x18; docs/versus.md row 20.
+// Resets the entity's state and reads its PLAYER tuning fields 0x17, 0x18.
 
 struct Ent {
     int pad;

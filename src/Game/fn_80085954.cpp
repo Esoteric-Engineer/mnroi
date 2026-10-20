@@ -1,4 +1,4 @@
-// Reads the pointer at +0x3DC of an entity. Row 19 of docs/versus.md.
+// Reads the pointer at +0x3DC of an entity.
 
 inline int sn_return_decl(int a) { return a; }
 

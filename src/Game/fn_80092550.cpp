@@ -1,4 +1,4 @@
-// Resets every slot's actor for a new round and plays PLAYER field 202 (the teleport effect) on it; docs/versus.md row 20.
+// Resets every slot's actor for a new round and plays PLAYER field 202 (the teleport effect) on it.
 // Owns the .rodata pool 0x8048A354-0x8048A368.
 
 class Player

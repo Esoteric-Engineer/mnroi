@@ -1,4 +1,4 @@
-// Picks a random cutscene variant (0..2) for `self`, queues PLAYER field 173 + variant and marks it started; docs/versus.md row 20.
+// Picks a random cutscene variant (0..2) for `self`, queues PLAYER field 173 + variant and marks it started.
 // Reads .rodata 0x8048A4C8 (its first literal) through extern_pool, the pool sits behind unclaimed code.
 
 typedef struct GState

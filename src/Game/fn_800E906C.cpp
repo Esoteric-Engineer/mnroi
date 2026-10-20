@@ -1,4 +1,4 @@
-// fn_800E89B0 and fn_800E906C pick the best target near the entity: within a radius, ahead of a facing (fn_800E89B0's arguments, fn_800E906C's tuning fields 1, 2, 0xDF, 0xE7), scored on distance and facing. docs/versus.md rows 20 and 28.
+// fn_800E89B0 and fn_800E906C pick the best target near the entity: within a radius, ahead of a facing (fn_800E89B0's arguments, fn_800E906C's tuning fields 1, 2, 0xDF, 0xE7), scored on distance and facing.
 
 inline int sn_return_decl(int a) { return a; }
 

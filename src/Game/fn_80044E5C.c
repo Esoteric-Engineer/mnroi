@@ -1,4 +1,4 @@
-// Resets four {int, float} tables, then loads GLOBALS fields 0x3D-0x4B into them; docs/versus.md row 21.
+// Resets four {int, float} tables, then loads GLOBALS fields 0x3D-0x4B into them.
 // Owns the .rodata pool 0x80486538-0x8048654C.
 
 typedef struct Pair

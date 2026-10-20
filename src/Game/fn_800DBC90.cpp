@@ -1,5 +1,5 @@
 // fn_800DA884 sets up the hit a motion deals (strength, reaction, energy costs: the PLAYER fields it reads are in tools/nvbtool.py);
-// fn_800DBC90 swaps the entity's PLAYER effect handle (tuning fields 0xAF+n) for the one its current animation kind picks. docs/versus.md rows 20 and 28.
+// fn_800DBC90 swaps the entity's PLAYER effect handle (tuning fields 0xAF+n) for the one its current animation kind picks.
 
 struct Ent {
     int pad;

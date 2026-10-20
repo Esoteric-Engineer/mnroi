@@ -1,4 +1,4 @@
-// Rolls a random 0..1 value and sets flag 0x80 (< 0.33) or 0x100 (< 0.66) on `self`, then hands PLAYER field 220 (a string) to fn_80057894 with the flags; docs/versus.md row 20.
+// Rolls a random 0..1 value and sets flag 0x80 (< 0.33) or 0x100 (< 0.66) on `self`, then hands PLAYER field 220 (a string) to fn_80057894 with the flags.
 // Owns .rodata 0x8048A460-0x8048A478; the trailing 0.0f is read by the unclaimed fn_800968EC.
 
 typedef struct GState

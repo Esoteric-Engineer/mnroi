@@ -1,4 +1,4 @@
-// A PLAYER state's throttled (3000 ticks) effect refresh; uses PLAYER field 216 (guess); docs/versus.md row 20.
+// A PLAYER state's throttled (3000 ticks) effect refresh; uses PLAYER field 216 (guess).
 
 inline int sn_return_decl(int a) { return a; }
 

@@ -1,4 +1,4 @@
-// Role-index tests: G+0x774 / G+0x770 greater than 0. See docs/versus.md (section 5, row 25).
+// Role-index tests: G+0x774 / G+0x770 greater than 0.
 
 extern char lbl_80552110[]; // the game-state object G
 

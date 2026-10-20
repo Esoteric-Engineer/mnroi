@@ -1,4 +1,4 @@
-// Per-frame update: slides +0x48 toward +0x4C, fades +0x54/+0x58/+0x5C (GLOBALS 0x3B, 0x3A); docs/versus.md row 21.
+// Per-frame update: slides +0x48 toward +0x4C, fades +0x54/+0x58/+0x5C (GLOBALS 0x3B, 0x3A).
 
 inline int sn_return_decl(int a) { return a; }
 

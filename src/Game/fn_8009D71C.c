@@ -1,4 +1,4 @@
-// Caches PLAYER tuning fields 43-45 and a GLOBALS value into the entity; docs/versus.md rows 20-21.
+// Caches PLAYER tuning fields 43-45 and a GLOBALS value into the entity.
 
 typedef struct Fighter {
     char pad[0x3C4];

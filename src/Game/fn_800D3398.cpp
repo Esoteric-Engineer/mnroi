@@ -1,4 +1,4 @@
-// Steers the float at +0xDC toward PLAYER field 0x27 or -0x28, sets the effect-handle value, then starts a clip (0x1E-0x20, 0xDB-0xF6); fields in tools/nvbtool.py, docs/versus.md row 20.
+// Steers the float at +0xDC toward PLAYER field 0x27 or -0x28, sets the effect-handle value, then starts a clip (0x1E-0x20, 0xDB-0xF6); fields in tools/nvbtool.py.
 
 class Vector
 {

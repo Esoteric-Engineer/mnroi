@@ -1,4 +1,4 @@
-// Identity: returns its argument. Row 19 of docs/versus.md.
+// Identity: returns its argument.
 
 struct Self {
     void *me();

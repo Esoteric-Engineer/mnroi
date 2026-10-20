@@ -1,4 +1,4 @@
-// Method of a class whose objects hold an actor handle at +0x48 and a value at +0x50; picks what to do with the handle by role index (docs/versus.md section 5, row 25).
+// Method of a class whose objects hold an actor handle at +0x48 and a value at +0x50; picks what to do with the handle by role index.
 
 struct Obj {
     char pad0[0x48];

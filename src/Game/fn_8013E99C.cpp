@@ -1,4 +1,4 @@
-// A PLAYER state's effect spawn toward the target, gated by a clear path and PLAYER field 200; docs/versus.md row 20.
+// A PLAYER state's effect spawn toward the target, gated by a clear path and PLAYER field 200.
 // Owns .rodata 0x8049AEA0-0x8049AEB0 (1.0f, 0.0f, 0.5f, 0.08f).
 
 inline int sn_return_decl(int a) { return a; }

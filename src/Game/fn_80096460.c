@@ -1,4 +1,4 @@
-// Fetches the fm_* cutscene name (PLAYER field 206 + `other`'s body class) of the actor in `slot` and hands it to fn_80057894 with `value`; docs/versus.md row 20.
+// Fetches the fm_* cutscene name (PLAYER field 206 + `other`'s body class) of the actor in `slot` and hands it to fn_80057894 with `value`.
 
 extern void *fn_8042FF2C(void *slot); // slot+0x28, the slot's actor
 extern int fn_8009AC68(void *actor);

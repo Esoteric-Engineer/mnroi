@@ -201,7 +201,7 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 
 ## 5. Decompilation Notes
 
-The versus work ran as numbered rows, 1 to 38, all done. Unit headers cite them (`docs/versus.md section 5, row N`), so the numbers are not reused. The notes below are what the rows left that costs disassembly to re-derive; a row with no note left nothing its matched source doesn't already say. `configure.py` is the authority on unit status.
+The versus work ran as numbered rows, 1 to 38, all done. The notes below are what the rows left that costs disassembly to re-derive, and unit headers cite them by row (`docs/versus.md section 5, row N`). `configure.py` is the authority on unit status.
 
 ### Tuning readers
 

@@ -1,4 +1,4 @@
-// Walks a node chain for the last kind-2 payload (default 4) and hands it to fn_801210F8 (docs/versus.md section 5, row 18).
+// Walks a node chain for the last kind-2 payload (default 4) and hands it to fn_801210F8.
 typedef struct Node
 {
     int kind; // +0x0

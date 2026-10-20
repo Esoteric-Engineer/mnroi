@@ -1,4 +1,4 @@
-// Tuning init (loads Misc/defaults.ndb, the NVB registry, GLOBALS) and the class lookup fn_801B2F6C; docs/versus.md row 19, docs/characters.md section 4.
+// Tuning init (loads Misc/defaults.ndb, the NVB registry, GLOBALS) and the class lookup fn_801B2F6C; docs/characters.md section 4.
 
 #define SWAP32(x) (((unsigned)(x) >> 24) | (((unsigned)(x) >> 8) & 0xFF00) | (((x) & 0xFF00) << 8) | ((x) << 24))
 

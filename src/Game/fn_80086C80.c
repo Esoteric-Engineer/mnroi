@@ -1,4 +1,4 @@
-// Reads PLAYER tuning field 0x86 + i; docs/versus.md rows 20-21.
+// Reads PLAYER tuning field 0x86 + i.
 
 extern float fn_800B1884(void *e, int id);
 

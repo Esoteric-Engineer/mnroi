@@ -1,4 +1,4 @@
-// G method: tears down every slot's actor when a match ends (docs/versus.md section 5, row 25).
+// G method: tears down every slot's actor when a match ends.
 
 struct State {
     char pad[0x590];

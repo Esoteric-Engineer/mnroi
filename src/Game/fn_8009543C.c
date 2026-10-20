@@ -1,4 +1,4 @@
-// fn_80095304: G method, pushes the CPU difficulty into slots 0 and 1 when G+0x774 is set (docs/versus.md section 5, row 25).
+// fn_80095304: G method, pushes the CPU difficulty into slots 0 and 1 when G+0x774 is set.
 // fn_8009543C: debug command, puts the named character in player slot `id` (0-4) and returns its actor, 0 on a bad id or name.
 // Slot and game-state fields: docs/versus.md section 4.
 

@@ -1,6 +1,6 @@
 // c:/Clash/mainline/Code/Game/handlers/control.cpp
 //
-// Built at -O0; the first twelve handlers (0x801040F4-0x801044B0), docs/versus.md section 5 row 5. Control_ChangeScreen, which takes a String by value, is Game/fn_801044B0.cpp, and the file continues in Game/fn_80104504.cpp.
+// Built at -O0; the first twelve handlers (0x801040F4-0x801044B0). Control_ChangeScreen, which takes a String by value, is Game/fn_801044B0.cpp, and the file continues in Game/fn_80104504.cpp.
 
 // 0x4C-byte string; String(const char *) (0x804493A0) builds one from a literal.
 class String {

@@ -1,4 +1,4 @@
-// Picks the nearest valid target in range (GLOBALS 3.0 radius, PLAYER 0xF4 facing floor); docs/versus.md row 20.
+// Picks the nearest valid target in range (GLOBALS 3.0 radius, PLAYER 0xF4 facing floor).
 
 class Vector
 {

@@ -1,4 +1,4 @@
-// Starts a PLAYER clip on the entity's actor (tuning fields 9, 10, 16, 20, 32); docs/versus.md row 20.
+// Starts a PLAYER clip on the entity's actor (tuning fields 9, 10, 16, 20, 32).
 
 class Vector
 {

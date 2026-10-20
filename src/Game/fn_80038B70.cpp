@@ -1,4 +1,4 @@
-// Probes heading, +90, -90 and +180 at GLOBALS 0x18 until fn_80038A2C passes; docs/versus.md row 21.
+// Probes heading, +90, -90 and +180 at GLOBALS 0x18 until fn_80038A2C passes.
 
 inline int sn_return_decl(int a) { return a; }
 

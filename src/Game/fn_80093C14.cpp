@@ -1,4 +1,4 @@
-// Hands the match over to player `side`: clears flag 2 on its actor, sets it on the other's, and plays PLAYER fields 170+side / 192+side; docs/versus.md row 20.
+// Hands the match over to player `side`: clears flag 2 on its actor, sets it on the other's, and plays PLAYER fields 170+side / 192+side.
 
 class Slot
 {

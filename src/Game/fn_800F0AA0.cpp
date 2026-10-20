@@ -1,4 +1,4 @@
-// fn_800F0AA0 offsets the z of a target-supplied vector by a random amount that grows with distance (tuning fields 7, 8); fn_800F0C70 fires the projectile named by PLAYER field 90 + b409 (214 + b409 for 4 and 5) toward the target. docs/versus.md rows 20 and 28.
+// fn_800F0AA0 offsets the z of a target-supplied vector by a random amount that grows with distance (tuning fields 7, 8); fn_800F0C70 fires the projectile named by PLAYER field 90 + b409 (214 + b409 for 4 and 5) toward the target.
 
 class Vector
 {

@@ -1,4 +1,4 @@
-// True if fn_800861EC or fn_80084B68 (with PLAYER tuning field 41) accepts the entity's actor; docs/versus.md row 20.
+// True if fn_800861EC or fn_80084B68 (with PLAYER tuning field 41) accepts the entity's actor.
 
 extern "C" {
 void *Entity_GetActor(void *self);

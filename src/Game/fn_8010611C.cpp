@@ -16,7 +16,7 @@ public:
     int unk4;
 };
 
-// Handlers, in the units listed in docs/versus.md section 5 (row 5).
+// Handlers, in other units.
 int gPALMode();
 int gWidescreenMode();
 int gDemoLaunchInto();

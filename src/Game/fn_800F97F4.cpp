@@ -1,4 +1,4 @@
-// A PLAYER state's lunge step: picks a target and steers the entity toward it (tuning fields 0x2E-0x31, 0x6E-0x71); docs/versus.md row 20.
+// A PLAYER state's lunge step: picks a target and steers the entity toward it (tuning fields 0x2E-0x31, 0x6E-0x71).
 
 class Vector
 {

@@ -1,4 +1,4 @@
-// Scales GLOBALS 22, 23, 19 and 67 into the actor's body and sets its flags by type; docs/versus.md row 21.
+// Scales GLOBALS 22, 23, 19 and 67 into the actor's body and sets its flags by type.
 // Owns the .rodata pool 0x8048CB40-0x8048CB48 (0.0f, 15.0f).
 
 extern "C" {

@@ -1,4 +1,4 @@
-// Starts or stops the entity's two PLAYER effect handles (tuning fields 0x43, 0x44, 0x4A, 0x4B); docs/versus.md row 20.
+// Starts or stops the entity's two PLAYER effect handles (tuning fields 0x43, 0x44, 0x4A, 0x4B).
 
 struct Ent {
     int pad;

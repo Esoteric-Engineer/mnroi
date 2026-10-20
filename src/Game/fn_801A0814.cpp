@@ -1,4 +1,4 @@
-// Builds a model from a .nod header, returns the .nod model <name> from the model registry (loading it on a miss), and parses one .nod file; docs/versus.md row 22, layout in docs/characters.md section 4.
+// Builds a model from a .nod header, returns the .nod model <name> from the model registry (loading it on a miss), and parses one .nod file; layout in docs/characters.md section 4.
 
 #define SWAP32(x) (((unsigned)(x) >> 24) | (((unsigned)(x) >> 8) & 0xFF00) | (((x) & 0xFF00) << 8) | ((x) << 24))
 

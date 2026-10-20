@@ -1,4 +1,4 @@
-// Sets an animation channel's time and clears its per-track state, when it has any (docs/versus.md section 5, row 27).
+// Sets an animation channel's time and clears its per-track state, when it has any.
 
 struct Channel {
     char pad0[0x4];

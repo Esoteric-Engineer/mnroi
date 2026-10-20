@@ -1,4 +1,4 @@
-// Tuning record lookup for an entity kind and name, and the record pool; docs/versus.md section 5, row 19.
+// Tuning record lookup for an entity kind and name, and the record pool.
 
 inline int sn_return_decl(int a) { return a; }
 

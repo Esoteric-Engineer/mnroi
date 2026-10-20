@@ -1,4 +1,4 @@
-// Resets the pools (free lists of 0x50- and 0xD0-byte nodes and three small tables) and the level's two records. docs/versus.md section 5, row 25.
+// Resets the pools (free lists of 0x50- and 0xD0-byte nodes and three small tables) and the level's two records.
 
 typedef struct {
     char pad0[0x10];

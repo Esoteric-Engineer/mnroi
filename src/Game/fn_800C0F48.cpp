@@ -1,4 +1,4 @@
-// The player controller's ground state: reads the actions (fn_800CC0BC), hands off to the jump, attack, grab and ranged states, otherwise picks the stand/walk/run clip and moves the actor; the tuning fields it reads are in tools/nvbtool.py. docs/versus.md row 28.
+// The player controller's ground state: reads the actions (fn_800CC0BC), hands off to the jump, attack, grab and ranged states, otherwise picks the stand/walk/run clip and moves the actor; the tuning fields it reads are in tools/nvbtool.py.
 
 class Vector
 {

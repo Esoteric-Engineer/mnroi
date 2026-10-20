@@ -1,4 +1,4 @@
-// Loads a texture's <name>.tpl bundle into its GXTexObj; docs/versus.md row 22.
+// Loads a texture's <name>.tpl bundle into its GXTexObj.
 // The float pool is dtk's lbl_804A2888-lbl_804A288C (extern_pool).
 
 typedef struct Texture {

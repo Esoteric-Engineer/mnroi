@@ -1,4 +1,4 @@
-// Resets the object fn_80034DB0 and its neighbours update (GLOBALS 21, 19); docs/versus.md row 21.
+// Resets the object fn_80034DB0 and its neighbours update (GLOBALS 21, 19).
 
 inline int sn_return_decl(int a) { return a; }
 

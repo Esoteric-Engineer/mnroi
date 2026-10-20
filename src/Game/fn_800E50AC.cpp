@@ -1,5 +1,5 @@
 // fn_800E50AC starts the entity's two PLAYER effect handles (tuning fields 0xCB, 0xCC).
-// fn_800E5308 is a PLAYER state update (tuning field 0x26) that scans nearby targets. docs/versus.md row 20.
+// fn_800E5308 is a PLAYER state update (tuning field 0x26) that scans nearby targets.
 
 struct Ent {
     int pad;

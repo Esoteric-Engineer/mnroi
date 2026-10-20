@@ -1,4 +1,4 @@
-// Eases +0x1C0 toward a 0..1 ratio (GLOBALS 0x30, rates 0x32/0x33) and pulls +0xB0 by GLOBALS 0x31; docs/versus.md row 21.
+// Eases +0x1C0 toward a 0..1 ratio (GLOBALS 0x30, rates 0x32/0x33) and pulls +0xB0 by GLOBALS 0x31.
 
 inline int sn_return_decl(int a) { return a; }
 

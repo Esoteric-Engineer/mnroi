@@ -1,4 +1,4 @@
-// Picks the PLAYER animation for the entity's current state and plays it (tuning fields 0x68, 0x22, 0x9D, 0x6D, 0x69, 0x6B); docs/versus.md row 20.
+// Picks the PLAYER animation for the entity's current state and plays it (tuning fields 0x68, 0x22, 0x9D, 0x6D, 0x69, 0x6B).
 
 class Vector
 {

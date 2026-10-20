@@ -1,4 +1,4 @@
-// Loads Bundles/<name>.ngm into a free model-bundle slot (2-5) unless already loaded; docs/versus.md row 22.
+// Loads Bundles/<name>.ngm into a free model-bundle slot (2-5) unless already loaded.
 
 struct ModelBundle {
     char name[0x20];

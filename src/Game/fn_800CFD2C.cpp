@@ -1,4 +1,4 @@
-// Chooses the next state of a PLAYER state machine from the entity's flags (tuning field 30); docs/versus.md row 20.
+// Chooses the next state of a PLAYER state machine from the entity's flags (tuning field 30).
 
 class Vector
 {

@@ -1,4 +1,4 @@
-// Starts a timed state on an actor, reading PLAYER tuning field 192 (int). Row 20 of docs/versus.md.
+// Starts a timed state on an actor, reading PLAYER tuning field 192 (int).
 
 typedef struct Actor {
     char pad0[0x2FC];

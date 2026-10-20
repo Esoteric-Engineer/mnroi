@@ -1,4 +1,4 @@
-// Aim vector from an actor to a target, offset by a PLAYER distance (fields 209/211); docs/versus.md row 20.
+// Aim vector from an actor to a target, offset by a PLAYER distance (fields 209/211).
 
 inline int sn_return_decl(int a) { return a; }
 

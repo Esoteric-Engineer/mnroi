@@ -1,4 +1,4 @@
-// Per-entity tuning getters (float, int): read slot +0x170 of the record at +0x16C. Row 19 of docs/versus.md.
+// Per-entity tuning getters (float, int): read slot +0x170 of the record at +0x16C.
 
 inline int sn_return_decl(int a) { return a; }
 

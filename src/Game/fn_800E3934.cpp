@@ -1,4 +1,4 @@
-// Per-frame step of a PLAYER state machine: picks the clip by the actor's type and ends the state (tuning fields 0xA0, 0xA1); docs/versus.md row 20.
+// Per-frame step of a PLAYER state machine: picks the clip by the actor's type and ends the state (tuning fields 0xA0, 0xA1).
 
 class Vector
 {

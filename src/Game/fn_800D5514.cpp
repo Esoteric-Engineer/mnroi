@@ -1,4 +1,4 @@
-// Starts the entity's PLAYER effect handle (tuning field 168) and plays its slots 20, 44 and, if the actor has a position, 22; docs/versus.md row 20.
+// Starts the entity's PLAYER effect handle (tuning field 168) and plays its slots 20, 44 and, if the actor has a position, 22.
 
 class Vector
 {

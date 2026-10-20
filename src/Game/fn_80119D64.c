@@ -1,4 +1,4 @@
-// Music cue setup outside a versus match (docs/versus.md section 5, row 25). The record table lbl_80497D24 has 0x5C-byte entries.
+// Music cue setup outside a versus match. The record table lbl_80497D24 has 0x5C-byte entries.
 
 typedef struct {
     char pad[0x75C];

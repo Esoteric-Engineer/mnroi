@@ -1,4 +1,4 @@
-// Calls fn_8010E1F4 while no versus role index is set (docs/versus.md section 5, row 25).
+// Calls fn_8010E1F4 while no versus role index is set.
 
 struct State {
     char pad[0x75C];

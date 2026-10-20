@@ -1,4 +1,4 @@
-// Copies three floats (a vector) from src to dst. Row 19 of docs/versus.md.
+// Copies three floats (a vector) from src to dst.
 
 void fn_8042DC84(register float *dst, register float *src)
 {

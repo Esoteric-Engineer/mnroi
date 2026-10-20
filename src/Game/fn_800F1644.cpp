@@ -1,4 +1,4 @@
-// Fires a projectile (template from PLAYER fields 90+/214+) with its muzzle effect (94+) toward the target; docs/versus.md row 20.
+// Fires a projectile (template from PLAYER fields 90+/214+) with its muzzle effect (94+) toward the target.
 
 class Vector
 {

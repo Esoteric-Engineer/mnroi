@@ -1,4 +1,4 @@
-// Entry state of a PLAYER state machine: steers the entity to its target and starts a clip (tuning fields 0x4C, 0x23, 0xEC); docs/versus.md row 20.
+// Entry state of a PLAYER state machine: steers the entity to its target and starts a clip (tuning fields 0x4C, 0x23, 0xEC).
 
 class Vector
 {

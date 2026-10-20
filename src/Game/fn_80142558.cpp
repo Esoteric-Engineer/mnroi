@@ -1,4 +1,4 @@
-// A handler that spawns an effect when no actor is closer than PLAYER field 210 (guess); docs/versus.md row 20.
+// A handler that spawns an effect when no actor is closer than PLAYER field 210 (guess).
 
 inline int sn_return_decl(int a) { return a; }
 

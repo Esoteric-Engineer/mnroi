@@ -1,4 +1,4 @@
-// A PLAYER state's chase step: picks a target by PLAYER field 213, then fires/clears state bits; docs/versus.md row 20.
+// A PLAYER state's chase step: picks a target by PLAYER field 213, then fires/clears state bits.
 
 class Vector
 {

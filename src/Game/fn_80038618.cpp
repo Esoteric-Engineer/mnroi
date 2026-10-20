@@ -1,4 +1,4 @@
-// Turns +0x1C4 toward the heading of +0xC0 (GLOBALS 0x36 to 0x38); docs/versus.md row 21.
+// Turns +0x1C4 toward the heading of +0xC0 (GLOBALS 0x36 to 0x38).
 
 inline int sn_return_decl(int a) { return a; }
 

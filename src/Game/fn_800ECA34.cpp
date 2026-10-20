@@ -1,4 +1,4 @@
-// Acts on the actor behind handle +0xD0 (virtual +0x130 with 0x5E, or 0x5F if its flags have 0x2000), adds GLOBALS field 6 to the entity's +0x324, then fn_800DDCB4(self, 0x4F or 0x50); docs/versus.md row 21.
+// Acts on the actor behind handle +0xD0 (virtual +0x130 with 0x5E, or 0x5F if its flags have 0x2000), adds GLOBALS field 6 to the entity's +0x324, then fn_800DDCB4(self, 0x4F or 0x50).
 
 class Vector
 {

@@ -1,4 +1,4 @@
-// Plays clip 0xE0-0xE2 on the actor against `other` when within 2.0 or in state 0x22 (GLOBALS 7); docs/versus.md row 21.
+// Plays clip 0xE0-0xE2 on the actor against `other` when within 2.0 or in state 0x22 (GLOBALS 7).
 // Float pool 0x8048DAB4-0x8048DAC8 via extern_pool.
 
 struct Ent {

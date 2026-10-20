@@ -1,4 +1,4 @@
-// The entity event dispatcher: passes an event from the target's controller (fn_800E1788, or its virtual handler), then handles the effect, sound, hit and weapon events itself. docs/versus.md row 28.
+// The entity event dispatcher: passes an event from the target's controller (fn_800E1788, or its virtual handler), then handles the effect, sound, hit and weapon events itself.
 
 class Vector
 {

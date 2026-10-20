@@ -1,4 +1,4 @@
-// Applies a hit to an actor: scales the damage by the difficulty tables and resistances, takes it from health (+0x31C) and armour (+0x32C), runs the hit reactions named by the flags, and returns the damage dealt (0 when the hit is blocked). docs/versus.md row 28.
+// Applies a hit to an actor: scales the damage by the difficulty tables and resistances, takes it from health (+0x31C) and armour (+0x32C), runs the hit reactions named by the flags, and returns the damage dealt (0 when the hit is blocked).
 
 inline int sn_return_decl(int a) { return a; }
 

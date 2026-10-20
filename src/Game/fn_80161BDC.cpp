@@ -1,4 +1,4 @@
-// A vtable method that resets one actor's state (guess) and starts a timer of PLAYER field 184. docs/versus.md row 20.
+// A vtable method that resets one actor's state (guess) and starts a timer of PLAYER field 184.
 
 inline int sn_return_decl(int a) { return a; }
 

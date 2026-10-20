@@ -1,4 +1,4 @@
-// Sets lbl_8066D5C0 to f when it lies within GLOBALS fields 15-16; docs/versus.md rows 20-21.
+// Sets lbl_8066D5C0 to f when it lies within GLOBALS fields 15-16.
 
 extern float fn_80433D20(void *record, int id, int slot);
 extern void *lbl_8066C6C8;

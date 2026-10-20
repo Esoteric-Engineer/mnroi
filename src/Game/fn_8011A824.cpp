@@ -1,4 +1,4 @@
-// Music: puts the music object lbl_8066BE10 into state 0x22 when it is in 0x16, then into 0x10 or 0xF by its field +0x2DC. Called by both timer-mode readers (docs/versus.md section 5, row 27).
+// Music: puts the music object lbl_8066BE10 into state 0x22 when it is in 0x16, then into 0x10 or 0xF by its field +0x2DC. Called by both timer-mode readers.
 
 extern void *lbl_8066BE10;
 

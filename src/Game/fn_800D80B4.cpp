@@ -1,5 +1,5 @@
 // fn_800D875C is the per-frame step that picks the PLAYER clip and chases the target (fields 0xD2, 0xD4, 0xD, 0xE, 0x14);
-// fn_800D7CDC enters the flight state (fields 0x65, 0x66, 0xC9); fn_800D80B4 steers the effect handle and drift value, fn_800D84BC moves the actor by the stick vector; docs/versus.md row 20.
+// fn_800D7CDC enters the flight state (fields 0x65, 0x66, 0xC9); fn_800D80B4 steers the effect handle and drift value, fn_800D84BC moves the actor by the stick vector.
 
 class Vector
 {

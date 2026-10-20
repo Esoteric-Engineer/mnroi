@@ -1,4 +1,4 @@
-// Per-frame tick of an entity class: runs its current state method, a pointer to member at +0x4EC, or else the state table entry for its type (docs/versus.md section 5, row 25).
+// Per-frame tick of an entity class: runs its current state method, a pointer to member at +0x4EC, or else the state table entry for its type.
 
 class Entity;
 typedef void (Entity::*State)();

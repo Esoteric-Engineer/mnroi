@@ -1,5 +1,5 @@
 // Builds a frame's input flags from the pad, the button word and the target handle; reads GLOBALS 0x50.
-// Float pool at 0x80485FB8 (extern_pool); docs/versus.md row 21.
+// Float pool at 0x80485FB8 (extern_pool).
 
 class Vector
 {

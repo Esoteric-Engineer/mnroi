@@ -1,4 +1,4 @@
-// Address of the field at +0xA8 (fn_800B1724) or +0x88 (fn_800B1750) of an entity. Row 19 of docs/versus.md.
+// Address of the field at +0xA8 (fn_800B1724) or +0x88 (fn_800B1750) of an entity.
 
 inline int sn_return_decl(int a) { return a; }
 

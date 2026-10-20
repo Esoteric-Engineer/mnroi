@@ -1,4 +1,4 @@
-// A vtable method like fn_80161BDC that sets an actor up and calls fn_800E9AF8 (PLAYER field 185). docs/versus.md row 20.
+// A vtable method like fn_80161BDC that sets an actor up and calls fn_800E9AF8 (PLAYER field 185).
 
 inline int sn_return_decl(int a) { return a; }
 

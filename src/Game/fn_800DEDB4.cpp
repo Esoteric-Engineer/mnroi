@@ -1,5 +1,5 @@
 // fn_800DDCB4 starts an attack: finds the target, splits near from far (PLAYER fields 1 and 2) and picks the motion.
-// fn_800DEDB4 tries the attack named by the target's PLAYER string 0xCE + fn_8009AC68(target), flags 0x2000 in a versus match; fn_800DF03C starts a grab or throw. docs/versus.md row 28.
+// fn_800DEDB4 tries the attack named by the target's PLAYER string 0xCE + fn_8009AC68(target), flags 0x2000 in a versus match; fn_800DF03C starts a grab or throw.
 
 class Vector
 {

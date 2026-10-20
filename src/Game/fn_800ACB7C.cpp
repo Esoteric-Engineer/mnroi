@@ -1,4 +1,4 @@
-// Binds the tuning record and picks the slot role. Row 19 of docs/versus.md.
+// Binds the tuning record and picks the slot role.
 
 extern "C" {
 void *fn_801B308C(int kind, void *name);

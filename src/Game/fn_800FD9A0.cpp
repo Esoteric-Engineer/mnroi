@@ -1,4 +1,4 @@
-// Template entry body loader: reads an entry's property list from a .NOT file; docs/versus.md section 5, row 13.
+// Template entry body loader: reads an entry's property list from a .NOT file.
 
 typedef struct Prop
 {
