@@ -1,13 +1,13 @@
 # Versus Mode Map
 
-Where the versus-mode code is, what it touches, and the order it was decompiled in (section 5).
+Where the versus-mode code is, what it touches, and the file boundaries found while decompiling it (section 5).
 
 See also:
 - The per-function loop: [`workflow.md`](workflow.md).
 - C++ naming, mangling and static initialization: [`prodg.md`](prodg.md#c).
 - Characters, their data files and what a new one needs: [`characters.md`](characters.md).
 
-**This is a reference, not a narrative: read the section you need, not the file.** Section 5 alone is enough to pick a target and know its blocker. What a matched function does is in its source file, and `configure.py` is the authority on which units are matched, so neither is repeated here. Names in the "Meaning" columns are guesses until a unit matches.
+**This is a reference, not a narrative: read the section you need, not the file.** What a matched function does is in its source file, and `configure.py` is the authority on which units are matched, so neither is repeated here. Names in the "Meaning" columns are guesses until a unit matches.
 
 ---
 
@@ -199,17 +199,9 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 
 ---
 
-## 5. Target Order
+## 5. Decompilation Notes
 
-The rows were worked in order. `configure.py` is the authority on unit status; this table gives the order and each row's next action, not a changelog. Read the notes for the row you land on, not the others. Name a unit after its real source file when it is known (section 2); otherwise use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
-
-**Rows 1 to 38 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, the small pinned functions, the movesets with their tuning readers, and the character data formats: `tools/nfxtool.py`, `tools/cuttool.py`, the sound-event registry and the shader and mesh notes in [`characters.md`](characters.md), `mainmenu.cpp`, the voice type-ID lookups, the material loader, the `.ngm` data size, the HUD overlay packer, the direct reads of `actor+0x1AC`, the `.ngb` cameras, the `.cut` actor binding and `Misc/defaults.nfx`). The versus targets are finished; row 18, the unclaimed run at the end of `.text`, is the only one left open. Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below.
-
-| # | Target | Kind | Next action / blocker |
-|---|---|---|---|
-| 18 | Tail sweep from `fn_8045FAB0` | Run | Next unclaimed function: `fn_8045FBF0` (0x38); about 850 unclaimed functions (0x13300 bytes) follow up to 0x80472F34, where Havok starts. |
-
-Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size, [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
+The versus work ran as numbered rows, 1 to 38, all done. Unit headers cite them (`docs/versus.md section 5, row N`), so the numbers are not reused. The notes below are what the rows left that costs disassembly to re-derive; a row with no note left nothing its matched source doesn't already say. `configure.py` is the authority on unit status.
 
 ### Tuning readers
 
@@ -220,7 +212,7 @@ After matching a tuning reader, add each field it reads to `FIELD_NAMES` in `too
 Only what costs disassembly to re-derive: file boundaries, unclaimable data, and what is still unknown.
 
 - **Row 2: `Game/unlockables.c`**, `.data` 0x804CA51C-0x804CC55C. Only tail-of-`.text` functions read it (linkonce inline functions, [`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)), so no unit that uses it can claim it ([`matching_notes.md`](matching_notes.md)). `.data` is in link order, and the block sits between `lbl_804CA504` (read from 0x8004F0BC-0x8004FBA8) and `lbl_804CC55C` (read from 0x800A1444), so its file is linked between those two; no function in that span reads it, so the file is not identified, and the unit sits after `Game/fn_800887AC.cpp` in `splits.txt`.
-- **Row 2: the registrar and handle-class run** (0x8044AE3C up to row 18's sweep point). The registrars come in groups of four per handler return type (call thunk, its forwarder, the thunk's table entry, the constructor, which appends `{name, thunk, handler}` to `lbl_805663A4`); the groups repeat per return type to 0x80457F54 and are pair-less. A group's converter may sit later in the run, so declare it with `__asm__` rather than waiting for it. Groups that look alike have their own callee sets: check each member's callees and field offsets, not its shape. The record table `lbl_80567760` is 48 records of 0x60 bytes (its `symbols.txt` size of 0x10 is wrong). `HandleA`-`HandleF`, `ImplA`-`ImplF`, `Obj*` and `Pair2` are placeholder class names.
+- **Row 2: the registrar and handle-class run** (from 0x8044AE3C). The registrars come in groups of four per handler return type (call thunk, its forwarder, the thunk's table entry, the constructor, which appends `{name, thunk, handler}` to `lbl_805663A4`); the groups repeat per return type to 0x80457F54 and are pair-less. A group's converter may sit later in the run, so declare it with `__asm__` rather than waiting for it. Groups that look alike have their own callee sets: check each member's callees and field offsets, not its shape. The record table `lbl_80567760` is 48 records of 0x60 bytes (its `symbols.txt` size of 0x10 is wrong). `HandleA`-`HandleF`, `ImplA`-`ImplF`, `Obj*` and `Pair2` are placeholder class names.
 - **Row 4: 0x80442010-0x8044AE3C.** Not one source file: the language varies per function, so let each function's trailing-branch count pick it ([`matching_notes.md`](matching_notes.md)). Pair-carrying file starts at 0x80449B80, 0x8044A5B4 and 0x8044A980; 0x80443908-0x804439E8 carries the pair between two pair-less runs. The float pools at 0x8048B678-0x8048B688, 0x8048CD14-0x8048CD74 and 0x8048E498-0x8048E4C8 cannot be claimed (a link-order cycle), so units read them as `extern`s or through `extern_pool`.
 - **Row 4: `GameFlow` is four source files.** The branch pair's flag resets at each file edge, which fixes the boundaries to the instruction ([`nonmatching.md`](nonmatching.md)): 0x800B43F0-0x800B5BC4 pair-less (a confirmed file start: `fn_800B43AC` is the previous file's `_GLOBAL_.I`), 0x800B5BC4-0x800B7094 pair-carrying, 0x800B7094-0x800B7204 pair-less (globals only), 0x800B7204-0x800B869C pair-less. The nine floats at 0x8048BD44-0x8048BD68 belong to no function of the first file (one was dead-stripped), and `Game/fn_800B46B0.c` defines `fn_800B5124`'s format string at 0x8048BD9C to keep its claim 8-aligned.
 - **Row 8: 0x80431788-0x80442010.** Linkonce code ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)), so the pair map does not find its files: a reset can fall inside a file, and a file can start inside a B run. The `.rodata` a function reads does, since each file writes its linkonce pools after the data of its ordinary functions. From 0x804362D4 the groups are (a file is named by the last ordinary function whose `.rodata` precedes the pools):

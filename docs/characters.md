@@ -1,6 +1,6 @@
 # Characters
 
-How the game defines, selects and loads playable characters, and what a new character needs. The decompilation order for this code is in [`versus.md`](versus.md#5-target-order).
+How the game defines, selects and loads playable characters, and what a new character needs.
 
 Facts come from the disassembly and `CLASH.BIG` unless a unit is named. What a matched function does is in its source, so this file keeps only what a modder or the next decompilation needs. **Tested** marks what was seen running in Dolphin in modded builds: a 19th character built from existing assets (2026-10-12), and characters 19 and 20 with their own assets (2026-10-17).
 
