@@ -23,7 +23,7 @@ r6 = __FILE__                  // "c:/Clash/mainline/Code/Game/handlers/control.
 r7 = __LINE__                  // 211
 ```
 
-That gives 172 handlers across seven files. In `symbols.txt` each handler is named after its script name, and each file's registering function is `__static_initialization_and_destruction_0` (`scope:local`). The exception is `Game/handlers/mainmenu.cpp`, whose one handler `clashMainMenu_MenuSelect` (`fn_801070FC`, line 47) and initializer `fn_8010718C` (registering through `fn_8044C35C`) keep their `fn_` names until row 30 matches them.
+That gives 172 handlers across seven files. In `symbols.txt` each handler is named after its script name, and each file's registering function is `__static_initialization_and_destruction_0` (`scope:local`).
 
 **The handler names are provisional.** They are the script-visible strings, not C++ symbols. A C++ unit emits GCC 2.95-mangled names (`Control_SetMatchInfo__Fiiii`), so when you match a handler, rename it in `symbols.txt` to the mangled name, or declare it `extern "C"` if that is what matches.
 
@@ -195,7 +195,7 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 | +0x4180, +0x4184 | float | Screen height and width (`lbl_8066F590` `+0x7A`, `+0x78`) |
 | +0x418C | int | Versus: either role index set (section 4.3) |
 
-`lbl_8050F820` (`.bss`) is the overlay table: 13 records of 0x78 bytes, `+0x4` a name, `+0x8` a buffer. `fn_800061CC` copies each name into its buffer and puts both players' template names, minus `plr_` or `plr_alt` and lowercased, in records 3 and 4. What reads them there is unmatched (`fn_80006450`).
+`lbl_8050F820` (`.bss`) is the overlay table: 13 records of 0x78 bytes, `+0x0` a mode byte, `+0x4` a name, `+0x8` a buffer, then the placement `fn_80006450` writes (`OverlayInfo` in `Game/fn_800061CC.cpp`). `fn_800061CC` copies each name into its buffer and puts both players' template names, minus `plr_` or `plr_alt` and lowercased, in records 3 and 4. `fn_80006450(hud, texture)` then packs the image `ovr_<buffer><LANG>` from `hud<LANG>.2` of every record whose `lbl_804BFA00` entry names that texture and whose mode byte has both mode bits: 1 outside versus, else 4 when `G+0x770 > 0` and 2 otherwise; and 8 when timed (`fn_8013156C`), 16 untimed, any outside versus. Records 1, 2, 8, 11 and 12 go in `overlay1`; 0, 3-7, 9 and 10 in `overlay2`, which only versus builds. A record whose image is missing is left out. What sets the mode bytes is not traced.
 
 ---
 
@@ -203,15 +203,10 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 
 Work the rows in order and skip whatever is done. `configure.py` is the authority on unit status; this table gives the order and each row's next action, not a changelog. Read the notes for the row you land on, not the others. Name a unit after its real source file when it is known (section 2); otherwise use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-**Rows 1 to 29 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, the small pinned functions, the movesets with their tuning readers, and the character data formats: `tools/nfxtool.py`, `tools/cuttool.py`, the sound-event registry and the shader and mesh notes in [`characters.md`](characters.md)). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. Rows 30 to 38 are open.
+**Rows 1 to 34 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, the small pinned functions, the movesets with their tuning readers, and the character data formats: `tools/nfxtool.py`, `tools/cuttool.py`, the sound-event registry and the shader and mesh notes in [`characters.md`](characters.md), `mainmenu.cpp`, the voice type-ID lookups, the material loader, the `.ngm` data size and the HUD overlay packer). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. Rows 35 to 38 are open.
 
 | # | Target | Kind | Next action / blocker |
 |---|---|---|---|
-| 30 | `Game/handlers/mainmenu.cpp`, 0x801070FC-0x80107244 | File | Match all three functions in a new unit. Name the handler per section 1 (mangled `clashMainMenu_MenuSelect__Fi`, or `extern "C"` if that matches). `fn_801070FC` calls `fn_80435238(lbl_80572330, 2)` for selection 0 and `(…, 1)` for 1. |
-| 31 | `fn_80118CB4`, `fn_80118D0C` (0x58 each) | Pinned | The voice type-ID remap through `lbl_804CF638` ([`characters.md`](characters.md) section 5). Record what a type ID of 19 or 20 gets. |
-| 32 | `fn_80234628` (0x290) | Pinned | The `shaders.nsa` reader. Settle which key (`texture`, `texture2`, `envmap`) fills which texture slot (`+0x14 + 4n`), and replace the "inferred" sentence in the Models section of [`characters.md`](characters.md). |
-| 33 | `fn_801A3ECC` (0x1EC) | Pinned | Carves each model's data from the `.ngm` header's data size. Account for the untraced 0 to 1,008 bytes, make `ngmtool.data_size()` compute the exact size instead of adding 0x200 (`check` must stay byte for byte), and update the data-size bullet. |
-| 34 | `fn_8000634C` (0x104), `fn_80006450` (0xA0C) | Run | Extend `Game/fn_800061CC.cpp` from 0x8000634C. `fn_80006450` reads the `hud<LANG>.2` overlay records (section 4.4); record what it does with the two template names and update step 5 of [`characters.md`](characters.md) section 6. |
 | 35 | Reads of `actor+0x1AC` without `fn_8009ABEC` | No matching | Scan for `lwz`/`lhz` at offset 0x1AC on an actor pointer outside the getter. Add any that treat characters differently to the [`characters.md`](characters.md) section 5 table, then delete its "Not checked yet" sentence. |
 | 36 | The `.ngb` 0x50-byte extra records | No matching | Find the code that reads them (from the bundle loaders `fn_8019E9DC`, `fn_8019EBF8`, or the animation sampler), document the fields in `tools/ngbtool.py`'s docstring (`check` stays byte for byte), and replace "which are not understood" in [`characters.md`](characters.md). |
 | 37 | `.cut` actor binding | No matching | Trace how a cutscene actor name (`wolverine`) resolves to the spawned character, starting from `cCutPlayer` (row 8's note) and the `.text` of `Game/Sim/simCutPlayer.cpp` (section 2). Replace "How an actor name is bound to the spawned character is not traced" in [`characters.md`](characters.md). |
@@ -224,13 +219,8 @@ Out of scope for versus: `memcard.cpp` (except whether saves depend on the roste
 
 After matching a tuning reader, add each field it reads to `FIELD_NAMES` in `tools/nvbtool.py`: what the matched code does with the value, in a few words. A field whose callers are unmatched gets only its getter's name; a guess goes in only with its basis stated. That table is the record, so don't list fields in the docs. Check a meaning against the data first (`python3 tools/nvbtool.py field ID`). An id the tool prints as `206+` is the base of an indexed read `base + i`; the tool counts a base as one field, so name the whole run when its reader matches.
 
-### Notes for rows 30 to 38
+### Notes for rows 35 to 38
 
-- **Row 30:** the static initializer registers through `lbl_8066D778`, with the name at 0x80490EF0 and the file at 0x80490F0C. The handler's `switch` also has empty arms up to 4 (a `cmpwi 4` before the default).
-- **Row 31:** [`characters.md`](characters.md) section 5 reads the table as giving 19 and 20 type 0's value; matching the two lookups confirms or corrects that.
-- **Row 32:** the current slot assignment comes only from the shipped materials (43 `glossenvmap`, 11 `glossenvcharlight`, the `charlight` set) and the draw methods' bind order.
-- **Row 33:** the mod characters loaded with the 0x200 margin, so keep it until the exact size is proven on the shipped bundles.
-- **Row 34:** `fn_800061CC` fills records 3 and 4 of the overlay table `lbl_8050F820` with the two names. The table is also read at 0x8000CCB8 and 0x8000D888, outside this row.
 - **Row 35:** the getter `fn_8009ABEC` has 21 callers, all checked; this row is about direct loads that bypass it.
 - **Row 36:** `tools/ngbtool.py` keeps the records as raw bytes; their shape is a 4x4 `f32` matrix and three words.
 - **Row 37:** `Game/Sim/simCutPlayer.cpp`'s own functions are unmatched; `fn_80050FD0` there reads the string `CutTable`. Each versus intro has one actor named after the character.

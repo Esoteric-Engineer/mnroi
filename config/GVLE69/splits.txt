@@ -18,8 +18,8 @@ Game/fn_80003808.cpp:
 	.rodata     start:0x804829C8 end:0x80482B00
 
 Game/fn_800061CC.cpp:
-	.text       start:0x800061CC end:0x8000634C
-	.rodata     start:0x80482BC0 end:0x80482BE0
+	.text       start:0x800061CC end:0x80006E5C
+	.rodata     start:0x80482BC0 end:0x80482C10
 
 Game/fn_800092CC.cpp:
 	.text       start:0x800092CC end:0x800098CC
@@ -536,6 +536,11 @@ Game/fn_8010611C.cpp:
 	.rodata     start:0x80490B28 end:0x80490B38
 	.sbss       start:0x8066D704 end:0x8066D754
 
+Game/handlers/mainmenu.cpp:
+	.text       start:0x801070FC end:0x80107244
+	.ctors      start:0x80482658 end:0x8048265C
+	.sbss       start:0x8066D778 end:0x8066D77C
+
 Game/fn_8010B7F8.cpp:
 	.text       start:0x8010B7F8 end:0x8010B904
 
@@ -586,6 +591,9 @@ Game/fn_801155A8.cpp:
 
 Game/fn_8011574C.cpp:
 	.text       start:0x8011574C end:0x80116D1C
+
+Game/fn_80118CB4.c:
+	.text       start:0x80118CB4 end:0x80118D64
 
 Game/fn_80119D64.c:
 	.text       start:0x80119D64 end:0x80119F68
@@ -2799,6 +2807,9 @@ Game/fn_801A2108.cpp:
 Game/fn_801A3784.cpp:
 	.text       start:0x801A3784 end:0x801A3C8C
 
+Game/fn_801A3ECC.c:
+	.text       start:0x801A3ECC end:0x801A40B8
+
 Game/fn_801A5F8C.cpp:
 	.text       start:0x801A5F8C end:0x801A6390
 
@@ -2844,6 +2855,9 @@ Game/fn_80232C4C.c:
 
 Game/fn_8023401C.c:
 	.text       start:0x8023401C end:0x802342C4
+
+Game/fn_80234628.c:
+	.text       start:0x80234628 end:0x802348B8
 
 RealCore/fn_8023DAA0.c:
 	.text       start:0x8023DAA0 end:0x8023DAE0

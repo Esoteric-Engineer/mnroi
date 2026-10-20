@@ -17,8 +17,10 @@ Big-endian on disc (the readers fn_801A2108 and fn_80221C08 do no byte swap):
   +0x10 u32 entry count          bundle +0x30; allocates entry count * 8 bytes at bundle +0x2C
   +0x14 u32 data size            bundle +0x24; 0 loads no model. fn_801A3ECC carves each model
                                  from it: 16-aligned, 0x190 for the model, attachments * 0x50,
-                                 nodes * 0x30 + meshes * 0x5C + parts * 4. Every shipped bundle
-                                 holds that sum plus 52 per mesh plus 0 to 1,008 bytes (not traced)
+                                 nodes * 0x30 + meshes * 0x5C + parts * 4. Nothing else uses
+                                 the buffer (the unload fn_801A2588 only tests whether a model
+                                 lies in it), so the 52 per mesh plus 0 to 1,008 bytes more that
+                                 every shipped bundle holds is unused
   then per model, a prefix (fn_801A2108; fn_801A3ECC sizes the model from the counts):
         s32 index                -1, or passed to fn_801A27D4 with the model
         u8  parts                model +0x8
@@ -248,14 +250,14 @@ def build(head, models):
 
 
 def data_size(models):
-    """A header data size for new models: what fn_801A3ECC carves, 52 per mesh, and 0x200 more
-    (the margin the Doctor Doom and Captain America bundles used, which loaded in the game)."""
+    """A header data size for new models: what fn_801A3ECC carves, plus 15 for the first
+    model's 16-alignment, since the heap block's alignment is not traced."""
     size, a16 = 0, lambda x: (x + 15) & ~15
     for m in models:
         size = a16(size) + 0x190
         size = a16(size) + len(m.attachments) * 0x50
         size = a16(size) + len(m.nodes) * 0x30 + len(m.meshes) * 0x5C + len(m.parts) * 4
-    return size + 52 * sum(len(m.meshes) for m in models) + 0x200
+    return size + 15
 
 
 def ngm_entries(index, sub=None):
