@@ -14,7 +14,12 @@ magic is not 0x2715 or whose chunk sizes go over 0x4B001, and fn_80058284 lays o
 chunk (all in Game/fn_80057AE8.c except the streamer). Little-endian:
   +0x0   u32 magic 0x2715 (10 shipped files have 0x2714 and 7 are something else; the streamer
          does not queue them)
-  +0x4   u32 flags (0, 16, 32, 48, 16384 or 32816; not traced)
+  +0x4   u32 flags (0, 16, 32, 48, 16384 or 32816 on disc). The starter fn_800578E4(name, ?, owner,
+         target, flags, ...) ORs in its flags: 0x80 or 0x100 picks the camera actor nis_camera2 or
+         nis_camera3 (else nis_camera); with 0x10000 or 0x20000 every actor but the cameras plays
+         on the target, with 0x100000 every actor but the cameras and victim on the owner. An
+         actor named victim gets the target, any other the entity whose lowercased CASTID
+         (+0xDC) is its name (fn_80048628); fn_800531D4 and fn_800568E4 bind them
   +0x8   u32 chunk count
   +0xC   u32 actor count
   +0x10  f32 frame rate (29.97)

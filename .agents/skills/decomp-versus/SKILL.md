@@ -27,7 +27,7 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
     gives after them, contiguously from a matched neighbour.
   - **Data:** there is no function to choose. Follow the row's recipe; decomp-next's steps 3 to 6
     still apply to the unit (claim, register `NonMatching`, compare, flip, `main.dol: OK`).
-  - **No matching** (row 24, done; rows 35-38 are open): there is no unit. Follow the row's recipe, write the result where
+  - **No matching** (rows 24 and 35-38, done; no open row is of this kind): there is no unit. Follow the row's recipe, write the result where
     the row says, and mark the row done. Skip decomp-next's steps 3 to 6, but still run `ninja`
     and require `main.dol: OK` if you changed anything under `src/` or `config/`.
 

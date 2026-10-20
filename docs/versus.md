@@ -129,8 +129,8 @@ A C++ singleton (`GameState`, a guessed name; constructor `Game/fn_80091174.cpp`
 | +0x77C | int | Set once phase 7, 11 or 12 has started its cue (each runs once) | `fn_80091C84` | `fn_80091C84` |
 | +0x780 | int | Nonzero makes `fn_8002D9C4` load the frontend (`fn_8002DB78`) instead of walking the actor list | | `fn_8002D9C4` |
 | +0x788 | int | Phase countdown in ms: 2000 from phase 3; phases 8, 9 and 13 subtract `fn_8042F024(lbl_80593BE8)` and finish at 0 | `fn_80091C84` | `fn_80091C84` |
-| +0x79C, +0x7A0 | int[2] | Per player side: index added to tuning field 170 (versus cutscene name) by `fn_80093C14`. Written by unmatched code | | `fn_80093C14` |
-| +0x7B0, +0x7B4 | int[2] | Per player side: the `fn_800578E4` argument after the actor in `fn_80093C14` | | `fn_80093C14` |
+| +0x79C, +0x7A0 | int[2] | Per player side: index added to tuning field 170 (versus cutscene name) by `fn_80093C14`; `fn_800939C4` picks it at random, 0-2 | `fn_800939C4` | `fn_80093C14`, `fn_800939C4` |
+| +0x7B0, +0x7B4 | int[2] | Per player side: the intro's cutscene flags (`tools/cuttool.py`, header `+0x4`), 0xC0012000, plus 0x20000080 for side 1 (camera `nis_camera2`) | `fn_800939C4` | `fn_80093C14`, `fn_800939C4` |
 | +0x7BC | int | A flag; its only reader bumps a counter at `G+0x78` when it is 0 | `fn_80091174` | `fn_80443CA0`, `fn_80096884` |
 
 The constructor also sets `+0x748 = +0x754 = +0x640 = -1` (`+0x640` is this player's slot index for the motion-set variant, [`characters.md`](characters.md) section 3). The command-line parser `fn_80028BAC` (`-mp`, `-vs`, `-timed [seconds]`, `-level`, `-scene`, `-mission`, `-mpmission`, `-chron`, `-addthing`) writes the fields above as the menus do.
@@ -203,14 +203,10 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 
 Work the rows in order and skip whatever is done. `configure.py` is the authority on unit status; this table gives the order and each row's next action, not a changelog. Read the notes for the row you land on, not the others. Name a unit after its real source file when it is known (section 2); otherwise use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-**Rows 1 to 34 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, the small pinned functions, the movesets with their tuning readers, and the character data formats: `tools/nfxtool.py`, `tools/cuttool.py`, the sound-event registry and the shader and mesh notes in [`characters.md`](characters.md), `mainmenu.cpp`, the voice type-ID lookups, the material loader, the `.ngm` data size and the HUD overlay packer). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. Rows 35 to 38 are open.
+**Rows 1 to 38 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, the small pinned functions, the movesets with their tuning readers, and the character data formats: `tools/nfxtool.py`, `tools/cuttool.py`, the sound-event registry and the shader and mesh notes in [`characters.md`](characters.md), `mainmenu.cpp`, the voice type-ID lookups, the material loader, the `.ngm` data size, the HUD overlay packer, the direct reads of `actor+0x1AC`, the `.ngb` cameras, the `.cut` actor binding and `Misc/defaults.nfx`). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below.
 
 | # | Target | Kind | Next action / blocker |
 |---|---|---|---|
-| 35 | Reads of `actor+0x1AC` without `fn_8009ABEC` | No matching | Scan for `lwz`/`lhz` at offset 0x1AC on an actor pointer outside the getter. Add any that treat characters differently to the [`characters.md`](characters.md) section 5 table, then delete its "Not checked yet" sentence. |
-| 36 | The `.ngb` 0x50-byte extra records | No matching | Find the code that reads them (from the bundle loaders `fn_8019E9DC`, `fn_8019EBF8`, or the animation sampler), document the fields in `tools/ngbtool.py`'s docstring (`check` stays byte for byte), and replace "which are not understood" in [`characters.md`](characters.md). |
-| 37 | `.cut` actor binding | No matching | Trace how a cutscene actor name (`wolverine`) resolves to the spawned character, starting from `cCutPlayer` (row 8's note) and the `.text` of `Game/Sim/simCutPlayer.cpp` (section 2). Replace "How an actor name is bound to the spawned character is not traced" in [`characters.md`](characters.md). |
-| 38 | `Misc/defaults.nfx` | No matching | Find where `game.nfx` is opened and whether any path builds the name `defaults.nfx`. If the code leaves it open, a Dolphin file-access log from boot to a versus match settles it. Update the `defaults.nfx` bullet either way. |
 | 18 | Tail sweep from `fn_8045FAB0` | Run | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); about 850 unclaimed functions (0x13300 bytes) follow up to 0x80472F34, where Havok starts. |
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size, [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
@@ -218,13 +214,6 @@ Out of scope for versus: `memcard.cpp` (except whether saves depend on the roste
 ### Tuning readers
 
 After matching a tuning reader, add each field it reads to `FIELD_NAMES` in `tools/nvbtool.py`: what the matched code does with the value, in a few words. A field whose callers are unmatched gets only its getter's name; a guess goes in only with its basis stated. That table is the record, so don't list fields in the docs. Check a meaning against the data first (`python3 tools/nvbtool.py field ID`). An id the tool prints as `206+` is the base of an indexed read `base + i`; the tool counts a base as one field, so name the whole run when its reader matches.
-
-### Notes for rows 35 to 38
-
-- **Row 35:** the getter `fn_8009ABEC` has 21 callers, all checked; this row is about direct loads that bypass it.
-- **Row 36:** `tools/ngbtool.py` keeps the records as raw bytes; their shape is a 4x4 `f32` matrix and three words.
-- **Row 37:** `Game/Sim/simCutPlayer.cpp`'s own functions are unmatched; `fn_80050FD0` there reads the string `CutTable`. Each versus intro has one actor named after the character.
-- **Row 38:** the bullet is under "Effects (`Misc/game.nfx`)" in [`characters.md`](characters.md) section 4.
 
 ### Notes for rows 1 to 23
 

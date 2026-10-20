@@ -27,8 +27,8 @@ in lbl_8066C584 by its name. Pointer fields hold stale exporter addresses on dis
   +0x38 u32                      cleared by the loader
   +0x3C u32 event count
   +0x40 ptr events               -> event count * 0xC
-  +0x44 u32 extra count
-  +0x48 ptr extra records        -> extra count * 0x50
+  +0x44 u32 camera count
+  +0x48 ptr cameras              -> camera count * 0x50 ("Animation:Cameras", fn_801991FC)
   +0x4C u32
   then the tracks, 0x10 each:
         u32 bone                 a node of the model's skeleton in the low halfword; the high
@@ -43,7 +43,18 @@ in lbl_8066C584 by its name. Pointer fields hold stale exporter addresses on dis
                    added to the node's offset from its parent
   then the events, 0xC each: f32 frame; u16 type; u16 param; u32 value. The handler is
         fn_800E1788 (unmatched; types in docs/characters.md section 4)
-  then the extra records, 0x50 each: a 4x4 f32 matrix and three words (not understood).
+  then the cameras, 0x50 each. Event 0x44 (fn_80042378, from fn_8003E3AC) picks one of those
+        whose mask and id fit its value and param, and puts the game camera there:
+        f32 matrix[16]           the camera's placement relative to the entity playing the
+                                 animation (fn_80043EA4)
+        u32 modes                bit n: the record serves an event whose value (the mode) is n, 0-2
+        u32 id                   equal to the event's param, or within 10 above a base: for mode 2,
+                                 a param of 40, 50, 60, 70 or 80 (lbl_80486748) is the base; any
+                                 other param reads the word before that table, so ids 4-13 also
+                                 match it. A param of 0xFFFF becomes the entity's id (fn_80042EBC)
+        f32 fov                  degrees, clamped to 0-360 (fn_8003C9B0)
+        u32                      0xCDCDCDCD in every record, unset by the exporter; the .nad reader
+                                 does not swap it
 
 pose() applies a node's rotation and then its offset from its parent plus its translation key,
 parent first, with keys interpolated linearly in their raw values. A node with no rotation track
@@ -95,7 +106,7 @@ class Anim:
         self.head = list(head)  # ANIM's fields after the name; the counts are set by build()
         self.tracks = tracks    # (bone word, channel, pointer, [(frame, (a, b, c, d))])
         self.events = events    # (frame, type, param, value)
-        self.extra = extra      # 0x50 bytes each
+        self.extra = extra      # cameras, 0x50 bytes each
 
 
 def read(data):

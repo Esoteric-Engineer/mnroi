@@ -10,7 +10,8 @@ Usage (from repo root):
 
 Without -f the file is Misc/game.nfx in CLASH.BIG. As a module, read_nfx()/build_nfx() parse and
 rebuild a file losslessly, Block.records() parses a block's values, and cache_use() runs the loader's
-allocations. Misc/defaults.nfx has the same syntax, but the DOL never names it.
+allocations. Misc/defaults.nfx has the same syntax, but the game never reads it (fn_803A38DC opens
+only game.nfx).
 
 The file, as fn_803A38DC (Game/fn_803A38DC.cpp) reads it: CRLF text, at most 0x1FF bytes a line,
 split on " \\r\\t\\n" with strtok. A line starting with ';' is a comment.
