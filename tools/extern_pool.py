@@ -5,7 +5,7 @@
 #
 # For a unit whose pool sits in another file's .rodata, so it cannot be claimed (see docs/prodg.md).
 # Checks each literal against the original from the given address on, retargets the pool's relocations to dtk's lbl_<address> symbols, and empties the section.
-# Only literals loaded with lfs or lfd are supported.
+# Literals loaded with lfs or lfd are supported, and string literals whose address is formed with addi (4-aligned in both copies).
 #
 # Usage:
 #   python3 tools/extern_pool.py build/GVLE69/src/file.o orig/GVLE69/sys/main.dol 0x8048DEA8
@@ -24,6 +24,8 @@ STB_GLOBAL = 1
 R_PPC_ADDR16_LO = 4
 # Primary opcodes of the loads a pool literal is read with, and the literal's size: lfs, lfsu, lfd, lfdu
 LOAD_SIZES = {48: 4, 49: 4, 50: 8, 51: 8}
+ADDI = 14
+STRING_ALIGN = 4
 
 EHDR_SIZE = 0x34
 SHDR = struct.Struct(">10I")
@@ -66,10 +68,13 @@ class Dol:
         return None
 
 
-def map_pool(path: str, pool: bytes, sizes: Dict[int, int], dol: Dol, address: int) -> Dict[int, int]:
+def map_pool(
+    path: str, pool: bytes, sizes: Dict[int, int], dol: Dol, address: int, aligns: Dict[int, int]
+) -> Dict[int, int]:
     """Map each literal's offset in `pool` to its address in the original, where the first one is at `address`.
 
-    `sizes` has every literal's offset and size. Floats are 4-aligned and doubles 8-aligned in both copies."""
+    `sizes` has every literal's offset and size. Floats are 4-aligned and doubles 8-aligned in both copies, and
+    `aligns` has the alignment of the strings (4)."""
     mapping: Dict[int, int] = {}
     end = 0
     for offset in sorted(sizes):
@@ -78,9 +83,10 @@ def map_pool(path: str, pool: bytes, sizes: Dict[int, int], dol: Dol, address: i
             raise SystemExit(f"{path}: the literal at .rodata+0x{offset:X} overlaps the one before it")
         if any(pool[end:offset]):
             raise SystemExit(f"{path}: .rodata+0x{end:X} is neither a float literal nor padding")
-        if not mapping and address % size:
+        align = aligns.get(offset, size)
+        if not mapping and address % align:
             raise SystemExit(f"{path}: 0x{address:08X} is not aligned for the first literal")
-        address = (address + size - 1) & -size
+        address = (address + align - 1) & -align
         ours = pool[offset : offset + size]
         theirs = dol.read(address, size)
         if ours != theirs:
@@ -154,6 +160,7 @@ def extern_pool(path: str, dol_path: str, address: int) -> None:
     # Every relocation against the pool, and the size of the literal each one loads
     references = []
     sizes: Dict[int, int] = {}
+    aligns: Dict[int, int] = {}
     for section in sections:
         if section.type == SHT_REL:
             raise SystemExit(f"{path}: REL relocations are not supported")
@@ -173,13 +180,16 @@ def extern_pool(path: str, dol_path: str, address: int) -> None:
                 continue
             (instruction,) = struct.unpack_from(">I", code, r_offset - 2)
             size = LOAD_SIZES.get(instruction >> 26)
-            if size is None:
-                raise SystemExit(f"{path}: 0x{r_offset - 2:X} reads .rodata with something other than lfs or lfd")
+            if instruction >> 26 == ADDI:
+                size = pool.data.index(b"\0", target) + 1 - target
+                aligns[target] = STRING_ALIGN
+            elif size is None:
+                raise SystemExit(f"{path}: 0x{r_offset - 2:X} reads .rodata with something other than lfs, lfd or addi")
             if sizes.setdefault(target, size) != size:
                 raise SystemExit(f"{path}: .rodata+0x{target:X} is loaded as both a float and a double")
 
     # The pool must be the original's before anything refers to the original's copy
-    mapping = map_pool(path, bytes(pool.data), sizes, Dol(dol_path), address)
+    mapping = map_pool(path, bytes(pool.data), sizes, Dol(dol_path), address, aligns)
 
     for section, i, target in references:
         r_offset, r_info, _ = RELA.unpack_from(section.data, i)
