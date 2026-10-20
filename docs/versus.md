@@ -23,7 +23,7 @@ r6 = __FILE__                  // "c:/Clash/mainline/Code/Game/handlers/control.
 r7 = __LINE__                  // 211
 ```
 
-That gives 171 handlers across six files. In `symbols.txt` each handler is named after its script name, and each file's registering function is `__static_initialization_and_destruction_0` (`scope:local`).
+That gives 172 handlers across seven files. In `symbols.txt` each handler is named after its script name, and each file's registering function is `__static_initialization_and_destruction_0` (`scope:local`). The exception is `Game/handlers/mainmenu.cpp`, whose one handler `clashMainMenu_MenuSelect` (`fn_801070FC`, line 47) and initializer `fn_8010718C` (registering through `fn_8044C35C`) keep their `fn_` names until row 30 matches them.
 
 **The handler names are provisional.** They are the script-visible strings, not C++ symbols. A C++ unit emits GCC 2.95-mangled names (`Control_SetMatchInfo__Fiiii`), so when you match a handler, rename it in `symbols.txt` to the mangled name, or declare it `extern "C"` if that is what matches.
 
@@ -40,11 +40,11 @@ A `_GLOBAL_.I` function in `.ctors` ends each file ([`prodg.md`](prodg.md#c)). I
 | `Game/handlers/characterselect.cpp` | 0x801037B0-0x801040F4 | 2 | 0x80103FF4 / 0x801040B8 | `GetCharList` is at line 41, so nothing precedes it. |
 | `Game/handlers/control.cpp` | 0x801040F4-0x80106B34 | 64 | 0x8010611C / 0x80106AF8 | Handlers only, lines 48-1057. |
 | `Game/handlers/feonline.cpp` | 0x80106B34-0x801070FC | 17 | 0x80106D80 / 0x801070C0 | Online only (`Online_*`). |
-| ? | 0x801070FC-0x80107244 | | 0x8010718C / 0x80107208 | Unidentified. |
+| `Game/handlers/mainmenu.cpp` | 0x801070FC-0x80107244 | 1 | 0x8010718C / 0x80107208 | `clashMainMenu_MenuSelect` only. |
 | `Game/handlers/memcard.cpp` | 0x80107244-0x8010A448 | 66 | 0x801099E8 / 0x8010A40C | Save/load. |
 | `Game/handlers/mission.cpp` | 0x8010A448-0x8010BED8 | 16 | 0x8010BB80 / 0x8010BE9C | Story mode. |
 | `Game/handlers/venuetable.cpp` | 0x8010BED8-0x8010C528 | 6 | 0x8010C338 / 0x8010C4EC | Handlers only, lines 45-140. |
-| ? | 0x8010C528-0x8010CA44 | | / 0x8010CA08 | |
+| ? (audio params) | 0x8010C528-0x8010CA44 | | 0x8010C99C / 0x8010CA08 | Builds the `.sbss` object `lbl_8066D808` (name string `"audio params"`, 0x80492088) and owns its reader `fn_8010C7EC(lbl_8066D808, 1, id)` (17 call sites). |
 
 Other source paths in the DOL (assert strings), for naming: `Game/HUD/glueAEMS.cpp` (`fn_80111BB8`), `Game/Sim/simCutPlayer.cpp` (`fn_80438FAC`), `Std/BufferAllocator.cpp` (`fn_801B0C90`), `Std/stdBigHashedVFS.cpp` (`fn_801B1270`, `fn_801B1D74`), `DirectGC/directTexture.cpp` (`fn_802338A8`), `ExternalGC/nsiAllocator.cpp` (`fn_8016840C`).
 
@@ -170,7 +170,7 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 | `fn_8011B768` (for `fn_8011C008`'s `fn_801196F0` call) | Returns `fn_80435904() % 8 + 1` | Maps the level's track (`fn_80442E7C`, 0-61) to 1-8 through a `switch` |
 | `fn_8003F6C8` (steps a timed record) | When an expiring record brings `lbl_8066B78C` to 0 and `fn_8009404C(G)` is false, `fn_80092550(G, 0)` resets the slots | |
 | `fn_80091C84` (G method, the phase stepper) | Phase 3 also calls `fn_8007FF3C`; phase 4 calls `fn_8009404C(G)`; phase 6 resets the slots (`fn_80092550`) and moves to phase 4; `+0x774` only: phase 9 calls `fn_80132CDC`, `fn_8013367C`, `fn_80132B88` | Phase 6 ends the level, `fn_8002D90C(level, "NOW")` |
-| `fn_8011389C` (per frame) | Passes `fn_804304FC` the mean position of every active slot's actor and setting 0xCC / 32767 | Passes it `fn_80432924`'s actor position and setting 0xCB / 32767 (settings read with `fn_8010C7EC(lbl_8066D808, 1, id)`) |
+| `fn_8011389C` (per frame) | Passes `fn_804304FC` the mean position of every active slot's actor and audio param 0xCC / 32767 | Passes it `fn_80432924`'s actor position and audio param 0xCB / 32767. Either way `fn_804304FC` puts `lbl_80567750` that fraction of the way from the focus's `+0x390` to the position (guess: the listener), with the params read by `fn_8010C7EC` (section 2) |
 | `fn_8011AC88`, `fn_8011AD44`, `fn_8011AE10`, `fn_8011AE7C`, `fn_8011AEF4`, `fn_80112E88` | | The story/menu music cues (`lbl_8066BDF0` is the cue word, `lbl_8066BDF8` the current track, `lbl_8066BDFC`/`lbl_8066BE00` flags) and `fn_8010E1F4` |
 | `fn_80119D64`, `fn_80119E94` | | Pick the music record `lbl_80497D24[track]` (0x5C bytes, 11 cue pairs) for the level's track and start cue 0 |
 | `clashMission_StartLevel` | | On `BrooklynBridge`, spawns `plr_thing` for player 0 |
@@ -202,17 +202,38 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 
 Work the rows in order and skip whatever is done. `configure.py` is the authority on unit status; this table gives the order and each row's next action, not a changelog. Read the notes for the row you land on, not the others. Name a unit after its real source file when it is known (section 2); otherwise use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-**Rows 1 to 29 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, the small pinned functions, the movesets with their tuning readers, and the character data formats: `tools/nfxtool.py`, `tools/cuttool.py`, the sound-event registry and the shader and mesh notes in [`characters.md`](characters.md)). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. Only the fallback row is left, so the next target needs a planning session (ROADMAP section 4 is names).
+**Rows 1 to 29 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, the small pinned functions, the movesets with their tuning readers, and the character data formats: `tools/nfxtool.py`, `tools/cuttool.py`, the sound-event registry and the shader and mesh notes in [`characters.md`](characters.md)). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. Rows 30 to 38 are open.
 
-| # | Target | Next action / blocker |
-|---|---|---|
-| 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); about 850 unclaimed functions (0x13300 bytes) follow up to 0x80472F34, where Havok starts. |
+| # | Target | Kind | Next action / blocker |
+|---|---|---|---|
+| 30 | `Game/handlers/mainmenu.cpp`, 0x801070FC-0x80107244 | File | Match all three functions in a new unit. Name the handler per section 1 (mangled `clashMainMenu_MenuSelect__Fi`, or `extern "C"` if that matches). `fn_801070FC` calls `fn_80435238(lbl_80572330, 2)` for selection 0 and `(…, 1)` for 1. |
+| 31 | `fn_80118CB4`, `fn_80118D0C` (0x58 each) | Pinned | The voice type-ID remap through `lbl_804CF638` ([`characters.md`](characters.md) section 5). Record what a type ID of 19 or 20 gets. |
+| 32 | `fn_80234628` (0x290) | Pinned | The `shaders.nsa` reader. Settle which key (`texture`, `texture2`, `envmap`) fills which texture slot (`+0x14 + 4n`), and replace the "inferred" sentence in the Models section of [`characters.md`](characters.md). |
+| 33 | `fn_801A3ECC` (0x1EC) | Pinned | Carves each model's data from the `.ngm` header's data size. Account for the untraced 0 to 1,008 bytes, make `ngmtool.data_size()` compute the exact size instead of adding 0x200 (`check` must stay byte for byte), and update the data-size bullet. |
+| 34 | `fn_8000634C` (0x104), `fn_80006450` (0xA0C) | Run | Extend `Game/fn_800061CC.cpp` from 0x8000634C. `fn_80006450` reads the `hud<LANG>.2` overlay records (section 4.4); record what it does with the two template names and update step 5 of [`characters.md`](characters.md) section 6. |
+| 35 | Reads of `actor+0x1AC` without `fn_8009ABEC` | No matching | Scan for `lwz`/`lhz` at offset 0x1AC on an actor pointer outside the getter. Add any that treat characters differently to the [`characters.md`](characters.md) section 5 table, then delete its "Not checked yet" sentence. |
+| 36 | The `.ngb` 0x50-byte extra records | No matching | Find the code that reads them (from the bundle loaders `fn_8019E9DC`, `fn_8019EBF8`, or the animation sampler), document the fields in `tools/ngbtool.py`'s docstring (`check` stays byte for byte), and replace "which are not understood" in [`characters.md`](characters.md). |
+| 37 | `.cut` actor binding | No matching | Trace how a cutscene actor name (`wolverine`) resolves to the spawned character, starting from the cutscene streamer (row 8's note). Replace "How an actor name is bound to the spawned character is not traced" in [`characters.md`](characters.md). |
+| 38 | `Misc/defaults.nfx` | No matching | Find where `game.nfx` is opened and whether any path builds the name `defaults.nfx`. If the code leaves it open, a Dolphin file-access log from boot to a versus match settles it. Update the `defaults.nfx` bullet either way. |
+| 18 | Tail sweep from `fn_8045FAB0` | Run | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); about 850 unclaimed functions (0x13300 bytes) follow up to 0x80472F34, where Havok starts. |
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size, [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
 
 ### Tuning readers
 
 After matching a tuning reader, add each field it reads to `FIELD_NAMES` in `tools/nvbtool.py`: what the matched code does with the value, in a few words. A field whose callers are unmatched gets only its getter's name; a guess goes in only with its basis stated. That table is the record, so don't list fields in the docs. Check a meaning against the data first (`python3 tools/nvbtool.py field ID`). An id the tool prints as `206+` is the base of an indexed read `base + i`; the tool counts a base as one field, so name the whole run when its reader matches.
+
+### Notes for rows 30 to 38
+
+- **Row 30:** the static initializer registers through `lbl_8066D778`, with the name at 0x80490EF0 and the file at 0x80490F0C. The handler's `switch` also has empty arms up to 4 (a `cmpwi 4` before the default).
+- **Row 31:** [`characters.md`](characters.md) section 5 reads the table as giving 19 and 20 type 0's value; matching the two lookups confirms or corrects that.
+- **Row 32:** the current slot assignment comes only from the shipped materials (43 `glossenvmap`, 11 `glossenvcharlight`, the `charlight` set) and the draw methods' bind order.
+- **Row 33:** the mod characters loaded with the 0x200 margin, so keep it until the exact size is proven on the shipped bundles.
+- **Row 34:** `fn_800061CC` fills records 3 and 4 of the overlay table `lbl_8050F820` with the two names. The table is also read at 0x8000CCB8 and 0x8000D888, outside this row.
+- **Row 35:** the getter `fn_8009ABEC` has 21 callers, all checked; this row is about direct loads that bypass it.
+- **Row 36:** `tools/ngbtool.py` keeps the records as raw bytes; their shape is a 4x4 `f32` matrix and three words.
+- **Row 37:** the streamer's assert names `Game/Sim/simCutPlayer.cpp`; each versus intro has one actor named after the character.
+- **Row 38:** the bullet is under "Effects (`Misc/game.nfx`)" in [`characters.md`](characters.md) section 4.
 
 ### Notes for rows 1 to 23
 
@@ -280,7 +301,6 @@ Only what costs disassembly to re-derive: file boundaries, unclaimable data, and
 
 - What is the rest of the `Slot` layout? `+0x3C` is a small number per slot rather than a flag (`fn_800956D4` sets 1 on the second slot, `fn_80431788` 99 on the CPU slot, `fn_800B5124` copies a `u16` into it), and the meanings of `+0x38` and `+0x40` are unknown. `+0x24`-`+0x33` and everything from `+0x44` on, except `+0x64`, `+0x80` and `+0x90`, are unknown. 
 - What are the `GameFlow` command ids (section 6)? Commands 1, 2, 6 and 8 are special-cased, and the four wide ranges from 0x25E are index spaces, each subtracting its base into `+0x24` or `+0x1C4`.
-- What is in the unidentified files at 0x801070FC and 0x8010C528?
 - What are the rectangles at `.sbss` 0x8066D6AC and 0x8066D6BC? Both are built from the screen size at static init; only `fn_800B5124` reads the first and nothing reads the second (guess: debug-overlay bounds the release no longer draws).
 - What are `lbl_8066B690`, `lbl_8066B694` and `lbl_8066B698` (section 6)? Nothing matched so far constructs them.
 - Which file holds the `AptObject`/`AptRef` methods at 0x801021A0-0x801037B0 and 0x8044B4EC-0x8044B81C, and what are the classes really called?
