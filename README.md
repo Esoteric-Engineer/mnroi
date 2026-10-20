@@ -4,8 +4,13 @@ Marvel Nemesis: Rise of the Imperfects
 
 [![Discord Badge]][discord]
 
+[![Code Progress]][actions] [![Function Progress]][actions] [![Data Progress]][actions]
+
 [Build Status]: https://github.com/Esoteric-Engineer/mnroi/actions/workflows/build.yml/badge.svg
 [actions]: https://github.com/Esoteric-Engineer/mnroi/actions/workflows/build.yml
+[Code Progress]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FEsoteric-Engineer%2Fmnroi%2Fprogress%2FGVLE69_code.json
+[Function Progress]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FEsoteric-Engineer%2Fmnroi%2Fprogress%2FGVLE69_functions.json
+[Data Progress]: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FEsoteric-Engineer%2Fmnroi%2Fprogress%2FGVLE69_data.json
 [Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
 [discord]: https://discord.gg/VhcevnY7cV
 
