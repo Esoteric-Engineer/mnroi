@@ -1,4 +1,4 @@
-// Picks the best target near the entity for a PLAYER state (tuning fields 1, 0xDF, 0xE7); docs/versus.md row 20.
+// fn_800E89B0 and fn_800E906C pick the best target near the entity: within a radius, ahead of a facing (fn_800E89B0's arguments, fn_800E906C's tuning fields 1, 2, 0xDF, 0xE7), scored on distance and facing. docs/versus.md rows 20 and 28.
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -73,6 +73,12 @@ Vector *fn_800B1750(Ent &actor);
 float fn_8042EBF4(Vector *a, Vector *b);
 int fn_800B0CC0(void *c);
 void *fn_800B1478(void *c);
+PEnt *fn_800B1478P(void *c) __asm__("fn_800B1478");
+int fn_800B11F8(Ent &e);
+int fn_800B1258(void *c);
+int fn_80085D3C(void *c);
+void fn_8042DC84(Vector *dst, Vector *src);
+void *fn_80434C2CV(Slot *s) __asm__("fn_80434C2C");
 void *fn_800B14A0(void *c);
 int fn_800B0FB8(void *c);
 int fn_800B0C58(void *c);
@@ -81,6 +87,94 @@ int fn_80085D9C(void *c);
 void *fn_80085928(void *c);
 int fn_800CCC28(void *c);
 void fn_800C98BC(void *self, void *node, int v);
+}
+
+extern "C" Target *fn_800E89B0(register void *self, float minDot, float radius, int useOwner, Vector *dir, int all)
+{
+    void *owner = 0;
+    Vector pos;
+    Vector fwd;
+    Query q;
+    Target *cand;
+    if (useOwner)
+        owner = fn_800C9FD0(self);
+    if (dir)
+        fn_8042DC84(&fwd, dir);
+    else
+        fn_8042DC84(&fwd, fn_800B1750(*Entity_GetActor(self)));
+    fn_8004E9C8(&q);
+    fn_80434C88(&q);
+    fn_80434CDC(&q, 0);
+    fn_80434CDC(&q, 7);
+    if (!all)
+        fn_80434CDC(&q, 2);
+    fn_80434CB0(&q);
+    fn_80447490(&q);
+    fn_80434D18(&q, Entity_GetActor(self));
+    fn_804474BC(&q, 1);
+    if (fn_8008582C(Entity_GetActor(self)))
+        fn_80446A2C(&q, 1);
+    Entity_GetActorT(self)->s5(&pos, 0);
+    fn_8004E4B4(&q, &pos, radius, fn_800B1CC8(*Entity_GetActor(self)));
+    Target *best = 0;
+    float bestScore = 99999.9f;
+    float score;
+    Vector v1;
+    Vector v2;
+    float dot;
+    float dist;
+    float dz = 0.0f;
+    for (unsigned int i = 0; i < q.count; i++) {
+        cand = (Target *)(TSub *)fn_80434C2CT(&q.slot[i]);
+        if (!cand || !fn_800B0F0C(cand))
+            continue;
+        if (fn_800CD9F4(self) == (void *)fn_800B13D8(cand))
+            continue;
+        if (fn_800B0CC0(cand) && fn_800B11F8(*fn_800B1478P(cand)))
+            continue;
+        cand->s5(&v2, 0);
+        fn_80429038(&v1, &v2, &pos);
+        dz = v1.z < 0.0f ? -v1.z : v1.z;
+        v1.z = 0.0f;
+        if (dz > 10.0f)
+            continue;
+        dist = fn_8042EC54(&v1) * 0.2f;
+        dot = fn_8042EBF4(&fwd, &v1);
+        if (dot < minDot)
+            continue;
+        score = dist * 10.0f;
+        score = score - dot * 100.0f;
+        if (dz > 2.0f)
+            score = score + 30.0f;
+        if ((void *)cand == owner) {
+            if (fn_800B0C58(cand) && !fn_80085D3C(fn_800B14A0(cand)))
+                score = score - 10.0f;
+            else
+                score = score - 20.0f;
+        }
+        void *node;
+        if (fn_800B0CC0(fn_80434C2CV(&q.slot[i]))) {
+            node = fn_800B1478(fn_80434C2CV(&q.slot[i]));
+            if (fn_8008582C(Entity_GetActor(self)) || !fn_800B1258(node))
+                continue;
+            if (!fn_800B0FB8(node) && (dot < 0.8f || dist > 1.0f)) {
+                score = score + 200.0f;
+            } else {
+            }
+        } else {
+            node = (Target *)(TSub *)fn_80434C2CT(&q.slot[i]);
+            if (!fn_800B0C58(node) || fn_80085EEC(node) || fn_80085D9C(node))
+                continue;
+            if (fn_8008582C(node) && fn_800CCC28(fn_80085928(node)))
+                score = score + 10.0f;
+        }
+        if (score < bestScore) {
+            best = cand;
+            bestScore = score;
+        }
+    }
+    fn_800C98BC(self, best, 0);
+    return best;
 }
 
 extern "C" void *fn_800E906C(register void *self, int a, int b)

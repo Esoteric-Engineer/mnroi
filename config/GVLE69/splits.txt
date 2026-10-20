@@ -134,6 +134,9 @@ Game/fn_8002FB08.c:
 	.rodata     start:0x8048591C end:0x80485934
 	.sbss       start:0x8066D598 end:0x8066D5A8
 
+Game/fn_8002FD50.cpp:
+	.text       start:0x8002FD50 end:0x80030894
+
 Game/fn_80033A6C.c:
 	.text       start:0x80033A6C end:0x80033AB0
 
@@ -171,6 +174,9 @@ Game/fn_800439B0.cpp:
 Game/fn_80044E5C.c:
 	.text       start:0x80044E5C end:0x80045374
 	.rodata     start:0x80486538 end:0x8048654C
+
+Game/fn_80058C94.cpp:
+	.text       start:0x80058C94 end:0x8005A534
 
 Game/fn_8007C830.c:
 	.text       start:0x8007C830 end:0x8007C8B0
@@ -365,6 +371,10 @@ Game/fn_800BFC60.cpp:
 Game/fn_800BFFC8.cpp:
 	.text       start:0x800BFFC8 end:0x800C00AC
 
+Game/fn_800C0F48.cpp:
+	.text       start:0x800C0F48 end:0x800C3658
+	.rodata     start:0x8048C9D0 end:0x8048CA20
+
 Game/fn_800C45B0.cpp:
 	.text       start:0x800C45B0 end:0x800C4CA4
 	.rodata     start:0x8048CA74 end:0x8048CA84
@@ -411,10 +421,13 @@ Game/fn_800DA254.cpp:
 	.text       start:0x800DA254 end:0x800DA5F8
 
 Game/fn_800DBC90.cpp:
-	.text       start:0x800DBC90 end:0x800DBF1C
+	.text       start:0x800DA884 end:0x800DBF1C
 
 Game/fn_800DEDB4.cpp:
-	.text       start:0x800DEDB4 end:0x800DF03C
+	.text       start:0x800DDCB4 end:0x800E0458
+
+Game/fn_800E1788.cpp:
+	.text       start:0x800E1788 end:0x800E2788
 
 Game/fn_800E339C.cpp:
 	.text       start:0x800E339C end:0x800E3720
@@ -438,7 +451,7 @@ Game/fn_800E6094.cpp:
 	.text       start:0x800E6094 end:0x800E6B44
 
 Game/fn_800E906C.cpp:
-	.text       start:0x800E906C end:0x800E9630
+	.text       start:0x800E89B0 end:0x800E9630
 
 Game/fn_800ECA34.cpp:
 	.text       start:0x800ECA34 end:0x800ECD1C
@@ -450,7 +463,7 @@ Game/fn_800F0328.cpp:
 	.text       start:0x800F0328 end:0x800F0780
 
 Game/fn_800F0AA0.cpp:
-	.text       start:0x800F0AA0 end:0x800F0C70
+	.text       start:0x800F0AA0 end:0x800F1644
 
 Game/fn_800F1644.cpp:
 	.text       start:0x800F1644 end:0x800F1D8C

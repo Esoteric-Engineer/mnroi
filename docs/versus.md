@@ -111,7 +111,7 @@ A C++ singleton (`GameState`, a guessed name; constructor `Game/fn_80091174.cpp`
 
 | Offset | Type | Meaning (guess) | Written by | Read by |
 |---|---|---|---|---|
-| +0x10 | `Slot[8]`, stride 0xB0 | Player slots (dtk's `lbl_80552120`). `fn_804317BC(G, i)` returns `&slot[i]`, and `fn_8042FF2C(slot)` returns the slot's actor (`+0x28`). Fields: `+0x0` int player index, `+0x4` `char[0x20]` entity name, `+0x34` int flags (bit 0 in use; bit 1 unknown, tested by `fn_8044272C`; bit 2 CPU-controlled), `+0x38` int, `+0x3C` int (a small number per slot, section 7), `+0x3E` `unsigned short` the controller port, `+0x40` float, `+0x64` int CPU difficulty 0-2 (picks the tuning slot, [`characters.md`](characters.md) section 4), `+0x90` a `Vector`. The slot constructor (`Game/fn_80095BEC.cpp`, `PlayerSlot::PlayerSlot`) constructs the `Vector` and sets `+0x64 = -1`, `+0x80 = 0`. | | |
+| +0x10 | `Slot[8]`, stride 0xB0 | Player slots (dtk's `lbl_80552120`). `fn_804317BC(G, i)` returns `&slot[i]`, and `fn_8042FF2C(slot)` returns the slot's actor (`+0x28`). Fields: `+0x0` int player index, `+0x4` `char[0x20]` entity name, `+0x34` int flags (bit 0 in use; bit 1 unknown, tested by `fn_8044272C`; bit 2 CPU-controlled), `+0x38` int, `+0x3C` int (a small number per slot, section 7), `+0x3E` `unsigned short` the controller port, `+0x40` float, `+0x64` int CPU difficulty 0-2 (picks the tuning slot, [`characters.md`](characters.md) section 4; it also scales damage, a hit on the slot's actor by {0.8, 1.0, 1.2} and a hit by it by {1.2, 1.0, 0.8}, indexed by `fn_80085A5C`, which reads it and gives 1 for an actor with no slot (`Game/fn_8002FD50.cpp`, tables `lbl_80485CDC` and `lbl_80485CE8`), `+0x90` a `Vector`. The slot constructor (`Game/fn_80095BEC.cpp`, `PlayerSlot::PlayerSlot`) constructs the `Vector` and sets `+0x64 = -1`, `+0x80 = 0`. | | |
 | +0x590 | int | Number of active player slots | `fn_80431844` | `fn_80434900` (getter), `fn_80023010`, `fn_80114420`, `fn_80443D44`, `fn_80096B98`, `fn_80096D6C` |
 | +0x598 | int | Index into `slots`; `fn_80443DBC` uses it to set `+0x744` | `fn_80443D1C` | `fn_80443DBC` |
 | +0x59C, +0x5BC, +0x5DC, +0x5FC | `char[0x20]` x4 | Level/venue name buffers. `+0x59C` (dtk's `lbl_805526AC`) is the level name that `GameFlow` command 0x14 loads (section 6) | `Control_SetSelectInfo`, `clashMission_StartLevel`, `clashVenue_StartLevel`, `clashVenue_ChooseOption`, `fn_80028BAC`, `fn_8008856C` | `fn_800B76C0`, `fn_80114420` |
@@ -202,31 +202,16 @@ Matched readers of `G+0x770` (`fn_80432844`) and `G+0x774` (`fn_80432870`). "Ver
 
 Work the rows in order and skip whatever is done. `configure.py` is the authority on unit status; this table gives the order and each row's next action, not a changelog. Read the notes for the row you land on, not the others. Name a unit after its real source file when it is known (section 2); otherwise use decomp-next's `Game/fn_XXXXXXXX.cpp` naming.
 
-**Rows 1 to 27 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, and the small pinned functions). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 28 on cover what a new character still depends on.
+**Rows 1 to 28 are done** (the character select, roster data, type IDs, selection to spawn, `control.cpp`, `venuetable.cpp`, the last-selection module, `G`'s methods, the match clock and timer readers, the command line and main loop, templates, tuning, the model and animation bundles, the setup screens' arguments to `Control_SetMatchInfo`, the role-index readers, section 4.3, the HUD setup, section 4.4, the small pinned functions, and the movesets with their tuning readers). Unit headers cite these numbers, so they are not reused; the notes still worth having are under "Notes for rows 1 to 23" below. The rows from 28 on cover what a new character still depends on.
 
 | # | Target | Next action / blocker |
 |---|---|---|
-| 28 | Movesets: the combat state machines | Pinned, in the order of the list under "Row 28". |
 | 29 | Character data formats: the code behind what [`characters.md`](characters.md) leaves not understood | Pinned. Each item ends with its format in a tool's docstring and a `check` command, as in ROADMAP section 2. Targets, in order: `fn_803A38DC`, `fn_8039E22C`, `fn_803944A4` (`Misc/game.nfx`: loader, type word to effect class, key lookup in the 140 names of `lbl_804DC2F0`; then `tools/nfxtool.py`); `fn_8010FE34`, `fn_8011063C`, `fn_8011574C` with the small users `fn_80110AA0`, `fn_80110B40`, `fn_80111134`, `fn_801111DC`, `fn_801114A0`, `fn_80114E2C`, `fn_80116C84` (sound banks and voice events, the `(bank << 9) \| event` registry `lbl_80568DB0`); `fn_80057AE8`, `fn_80057FF8` (`.cut` cutscenes, per-record calls of the streamer `fn_80439778`); `fn_8023401C` (the only code naming the `glossenvcharlight` shader); `fn_80223E38` (draws a model's meshes; read the matched loader `fn_80221C08` first for the mesh record's three unknown bytes). |
 | 18 | Tail sweep from `fn_8045FAB0` | **Fallback, not a goal:** take it only when every open row above is stuck. Next unclaimed function: `fn_8045FBF0` (0x38); about 850 unclaimed functions (0x13300 bytes) follow up to 0x80472F34, where Havok starts. |
 
 Out of scope for versus: `memcard.cpp` (except whether saves depend on the roster size, [`characters.md`](characters.md) section 2), `feonline.cpp`, `mission.cpp`, and third-party code (Havok `hk*`, RealCore, RealGraph).
 
-### Row 28
-
-**This row pins functions.** Match each in a unit of its own (`Game/fn_XXXXXXXX.c` or `.cpp`, by its own trailing-branch count), without first filling the file up to it. When one closes the gap to a matched neighbour of the same language and pair state, extend that neighbour instead.
-
-The functions below, then the tuning readers that `tools/nvbreaders.py PLAYER` ranks highest (`fn_800DA884`, 0x140C, adds 13 fields; `fn_800DF03C`, 0x141C, 7). A modded weapon throw went through most of these:
-
-| Function | Size | What it is (from reading its disassembly and callers) |
-|---|---|---|
-| `fn_800C0F48` | 0x2710 | Input handler; tests actions with `fn_800CC0BC(ctrl, n)`: 1 ranged (`fn_800F0328`), 2 attack (`fn_800DDCB4`), 5 jump (`fn_800C45B0`), 6 grab (`fn_800F8B90`) |
-| `fn_800DDCB4` | 0x1100 | Attack: picks the target, splits near from far, chooses `SuperAttackFar` |
-| `fn_800E1788` | 0x1000 | Animation event handler |
-| `fn_80058C94` | 0x18A0 | Event dispatcher |
-| `fn_8002FD50` | 0xB44 | Applies a hit's damage |
-| `fn_800F0C70` | 0x9D4 | Spawns the projectile named by tuning field 90 |
-| `fn_800E89B0` | 0x6BC | Target search |
+### Tuning readers
 
 After matching a tuning reader, add each field it reads to `FIELD_NAMES` in `tools/nvbtool.py`: what the matched code does with the value, in a few words. A field whose callers are unmatched gets only its getter's name; a guess goes in only with its basis stated. That table is the record, so don't list fields in the docs. Check a meaning against the data first (`python3 tools/nvbtool.py field ID`). An id the tool prints as `206+` is the base of an indexed read `base + i`; the tool counts a base as one field, so name the whole run when its reader matches.
 
