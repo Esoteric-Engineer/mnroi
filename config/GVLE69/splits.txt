@@ -640,6 +640,10 @@ Game/fn_801343B0.cpp:
 Game/fn_80137CEC.c:
 	.text       start:0x80137CEC end:0x80137D98
 
+Game/fn_80137F2C.cpp:
+	.text       start:0x80137F2C end:0x80138E10
+	.rodata     start:0x8049AB14 end:0x8049AD88
+
 Game/fn_8013E99C.cpp:
 	.text       start:0x8013E99C end:0x8013F08C
 	.rodata     start:0x8049AEA0 end:0x8049AEB0
