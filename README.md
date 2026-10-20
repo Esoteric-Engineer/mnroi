@@ -2,20 +2,12 @@ Marvel Nemesis: Rise of the Imperfects
 [![Build Status]][actions]
 =============
 
-<!--  [![Code Progress]][progress] [![Data Progress]][progress] [![Discord Badge]][discord] -->
+[![Discord Badge]][discord]
 
 [Build Status]: https://github.com/Esoteric-Engineer/mnroi/actions/workflows/build.yml/badge.svg
 [actions]: https://github.com/Esoteric-Engineer/mnroi/actions/workflows/build.yml
-<!--
-decomp.dev progress badges
-See https://decomp.dev/api for an API overview.
--->
-<!-- [Code Progress]: https://decomp.dev/Esoteric-Engineer/mnroi.svg?mode=shield&measure=code&label=Code
-[Data Progress]: https://decomp.dev/Esoteric-Engineer/mnroi.svg?mode=shield&measure=data&label=Data
-[progress]: https://decomp.dev/Esoteric-Engineer/mnroi -->
-
-<!-- [Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
-[discord]: https://discord.gg/ -->
+[Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
+[discord]: https://discord.gg/VhcevnY7cV
 
 A work-in-progress decompilation of Marvel Nemesis: Rise of the Imperfects for GameCube.
 
