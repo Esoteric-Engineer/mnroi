@@ -289,6 +289,10 @@ Game/fn_8009EA20.cpp:
 	.text       start:0x8009E998 end:0x8009ED78
 	.rodata     start:0x8048AF14 end:0x8048AF18
 
+Game/fn_8009F010.cpp:
+	.text       start:0x8009F010 end:0x8009F230
+	.rodata     start:0x8048AF28 end:0x8048AF2C
+
 Game/fn_800A0488.cpp:
 	.text       start:0x8009FF54 end:0x800A0D74
 	.rodata     start:0x8048AF88 end:0x8048AFD8
