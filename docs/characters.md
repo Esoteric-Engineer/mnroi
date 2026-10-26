@@ -109,17 +109,21 @@ The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int 
 
   The other `ACTOR_*` properties and the kind-0 entity properties (`ORIENTATION`, `POSITION`, `SECTORID`, `TIMER`, `MOVETYPE`, `COLLIDETYPE`, `RADIUS`, `HEIGHT`, `THINGFLAGS`, `RENDERFLAGS`, `DROPITEM`, ...) are not character-specific; `Game/fn_80084498.cpp` and `Game/fn_800AE534.cpp` say where each goes. The editor's 5 and 0x1A-0x1E are accepted and ignored.
 
-- **`ACTOR_ABILITIES` bits** (`actor+0x308`). One accessor per bit at 0x80085FAC-0x80086374 (`Game/fn_80085F7C.cpp`, each a one-line `abilities & mask`). The meanings come from reading their callers and from tests in modded builds; `nottool.py dump act_<Name>` gives each character's value.
+- **`ACTOR_ABILITIES` bits** (`actor+0x308`). One accessor per bit at 0x80085F7C-0x80086374 (`Game/fn_80085F7C.cpp`, each a one-line `abilities & mask`). The meanings come from reading their callers and from tests in modded builds; `nottool.py dump act_<Name>` gives each character's value.
 
   | Bit | Read by | Meaning |
   |---|---|---|
+  | 0x1 | `fn_80085F7C`, from `fn_800CBF20`, the AI (`0x80132480`-`0x80158BBC`) and about 20 more | A flyer: Johnny Ohm, Storm, Heatwave, Human Torch, Iron Man, Magneto and Roekel have it. Lets the actor take off (below) unless `fn_800CDA20` holds |
   | 0x10, 0x20 | `fn_8008621C`, `fn_8008624C`, both only from `fn_8008572C(actor, object)` | Lifting: anyone lifts light objects, 0x10 or 0x20 medium ones, 0x20 heavy ones (`fn_800A43A0`/`fn_800A4408`/`fn_800A4438` classify the object) |
   | 0x80 | `fn_8008606C`, from the air states `fn_800C509C`, `fn_800C5A84` and 22 more | The wire swing for Daredevil and Spider-Man: R held and jump pressed again in the air, if energy covers tuning field 30 (**tested**). Biohazard, DefCon, Paradox and Venom have the bit too |
   | 0x4000 | `fn_800DDCB4`, reading `+0x308` itself | The super attack's far version (`SuperAttackFar`) with no target, straight ahead |
   | 0x20000 | `fn_8008609C`, from the dodge state `fn_800F3384` and two more | Unknown |
+  | 0x100000 | `fn_80085FAC`, only from `fn_800CBF20` | Flight: the actor can take off. Every flyer but Johnny Ohm has it; clearing it and 0x1 grounds all seven (**tested** on Storm, Heatwave and Johnny Ohm) |
   | 0x20000000 | `fn_80086344`, only from `fn_800E7A4C` | A hit landed in motion 0x33 or 0x36 skips the animation ahead to its event 0x53: the thrown weapon comes back (Daredevil only) |
 
-  The other accessors, meanings unknown: 0x2 `fn_8008603C`, 0x8 `fn_8008615C`, 0x40 `fn_800860CC`, 0x100 `fn_800862AC`, 0x200 `fn_80085FDC`, 0x1000 `fn_800861BC`, 0x2000 `fn_800860FC`, 0x8000 `fn_8008618C`, 0x100000 `fn_80085FAC`, 0x400000 `fn_8008600C`, 0x1000000 `fn_8008627C`, 0x2000000 `fn_800861EC`, 0x4000000 `fn_8008612C` and 0x10000000 `fn_80086314`. `fn_800862DC` is true when 0x8000000 is *clear*, and `fn_80086374` tests the mask 0x810004.
+  The other accessors, meanings unknown: 0x2 `fn_8008603C`, 0x8 `fn_8008615C`, 0x40 `fn_800860CC`, 0x100 `fn_800862AC`, 0x200 `fn_80085FDC`, 0x1000 `fn_800861BC`, 0x2000 `fn_800860FC`, 0x8000 `fn_8008618C`, 0x400000 `fn_8008600C`, 0x1000000 `fn_8008627C`, 0x2000000 `fn_800861EC` (also lets the actor take off, as 0x1 does; no base has it), 0x4000000 `fn_8008612C` and 0x10000000 `fn_80086314`. `fn_800862DC` is true when 0x8000000 is *clear*, and `fn_80086374` tests the mask 0x810004.
+
+  **Taking off** (state 0x17, `Flying`, registered at `0x800BBB88`) needs `fn_800CBF20(controller)`: true when ability 0x100000 is set, or when `fn_800CDA20` does not hold and 0x1 or 0x2000000 is. Every way into the state checks it along with button 9 (`fn_800CC148`) and `fn_800D2CF8`: the air states at `0x800C5438` and `0x800C5BC0`, `fn_800C0F48` and `fn_800CFD2C`.
 
 - **The registries have no fixed capacity** (`Game/fn_801B4284.c` seeds and takes nodes, `Game/fn_801B4CA0.c` hashes, `Game/fn_801B4E84.c` scans a bucket). A registry is a chained hash table, hashed by the sum of `(i + 1) * tolower(key[i])` over the first 127 characters, whose bucket count is the first prime of `lbl_8049E5A0` above a size hint, and every registry takes its 0x14-byte nodes from one shared free list that grows by 0x200 whenever it is empty. A duplicate name is dropped (`fn_801B4628` returns 0). There is no limit on properties per template either (`fn_800FD9A0`). The limits that exist are the 64 loaded `.NOT` files (`lbl_80565860`) and the 0x200-byte note buffer. 839 templates load and work (**tested**).
 
