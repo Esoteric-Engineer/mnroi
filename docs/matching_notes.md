@@ -208,6 +208,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   `if (a && b && c) { ... }` is three plain `beq`s to one label with no fourth branch
   (`Game/fn_800B46B0.c`, `fn_800B47C0`).
 - **A range guard whose first test (`blt`) lands on a label holding one `b` to the return block, while the second (`bgt`) lands on the block itself, plus a `b` over both to the body, is a ternary condition:** `if (id < 0 ? 1 : id > 4) return 0;`. `||`, `!(a && b)` and the goto forms all put both tests on the same label (`Game/fn_8009543C.c`).
+- **A call evaluated into a call-saved register (`mr r18, r3`, no frame slot) *ahead of* a compare that the guard tests first, then `beq L` / `clrlwi r0, r18, 31` / `cmpwi` / `bne Lbody` / `b Lend` / `L: b Lend`, is a bitwise `&` of the compare and the call:** `if ((self->f3FC != 0x7E) & fn(tc)) ...;`. cc1plus evaluates both operands of a non-short-circuit `&` before testing, keeps the call result in a saved value and tests its low bit. A plain, `const` or `register` local takes a frame slot (the last two spill when the saved registers run out), and `?:` / `&&` call it after the compare (`Game/fn_800E6B44.cpp`, `fn_800E6D54`).
 
 - **`fcmpu` / `cror un, eq, lt` / `bso` (or `cror un, eq, gt`) on a float guard is an ordered `<=` (`>=`) in the source,** where `> 0.0f` negated gives a plain `ble`. Write the guard as the return condition: `if (f <= 0.0f || x != 1) return 0;` (`Game/fn_800AE534.cpp`, MOVESPEED).
 
