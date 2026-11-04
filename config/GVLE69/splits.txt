@@ -439,14 +439,26 @@ Game/fn_800D80B4.cpp:
 Game/fn_800DA254.cpp:
 	.text       start:0x800DA254 end:0x800DA5F8
 
+Game/fn_800DA5F8.cpp:
+	.text       start:0x800DA5F8 end:0x800DA884
+
 Game/fn_800DBC90.cpp:
 	.text       start:0x800DA884 end:0x800DBF1C
+
+Game/fn_800DBF1C.cpp:
+	.text       start:0x800DBF1C end:0x800DD3F8
 
 Game/fn_800DEDB4.cpp:
 	.text       start:0x800DDCB4 end:0x800E0458
 
+Game/fn_800E1570.cpp:
+	.text       start:0x800E1570 end:0x800E1788
+
 Game/fn_800E1788.cpp:
 	.text       start:0x800E1788 end:0x800E2788
+
+Game/fn_800E2788.cpp:
+	.text       start:0x800E2788 end:0x800E2970
 
 Game/fn_800E339C.cpp:
 	.text       start:0x800E339C end:0x800E3720
