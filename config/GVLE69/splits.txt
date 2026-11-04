@@ -181,6 +181,10 @@ Game/fn_80057AE8.c:
 Game/fn_80058C94.cpp:
 	.text       start:0x80058C94 end:0x8005A534
 
+Game/fn_80067050.cpp:
+	.text       start:0x80067050 end:0x80067148
+	.rodata     start:0x804874D4 end:0x804874E0
+
 Game/fn_8007C830.c:
 	.text       start:0x8007C830 end:0x8007C8B0
 
@@ -330,6 +334,9 @@ Game/fn_800B1884.cpp:
 	.text       start:0x800B1884 end:0x800B1950
 	.rodata     start:0x8048BA68 end:0x8048BA6C
 
+Game/fn_800B24AC.cpp:
+	.text       start:0x800B24AC end:0x800B24D8
+
 Game/fn_800B43F0.cpp:
 	.text       start:0x800B43F0 end:0x800B46B0
 	.rodata     start:0x8048BD3C end:0x8048BD44
@@ -386,6 +393,13 @@ Game/fn_800C45B0.cpp:
 	.text       start:0x800C45B0 end:0x800C4CA4
 	.rodata     start:0x8048CA74 end:0x8048CA84
 
+Game/fn_800C509C.cpp:
+	.text       start:0x800C509C end:0x800C5618
+	.rodata     start:0x8048CA98 end:0x8048CAA0
+
+Game/fn_800C5A84.cpp:
+	.text       start:0x800C5A84 end:0x800C5F18
+
 Game/fn_800C72B0.cpp:
 	.text       start:0x800C72B0 end:0x800C753C
 	.rodata     start:0x8048CB40 end:0x8048CB48
@@ -415,11 +429,19 @@ Game/fn_800D2CF8.cpp:
 Game/fn_800D3398.cpp:
 	.text       start:0x800D3398 end:0x800D39D0
 
+Game/fn_800D532C.cpp:
+	.text       start:0x800D532C end:0x800D5514
+	.rodata     start:0x8048D1D0 end:0x8048D1D8
+
 Game/fn_800D5514.cpp:
 	.text       start:0x800D5514 end:0x800D569C
 
 Game/fn_800D579C.cpp:
 	.text       start:0x800D579C end:0x800D58B0
+
+Game/fn_800D5DC8.cpp:
+	.text       start:0x800D5DC8 end:0x800D5FEC
+	.rodata     start:0x8048D1F4 end:0x8048D1FC
 
 Game/fn_800D5FEC.cpp:
 	.text       start:0x800D5FEC end:0x800D6974
@@ -2918,6 +2940,9 @@ Apt/fn_8026799C.c:
 
 Havok/fn_802E8348.c:
 	.text       start:0x802E8348 end:0x802E8378
+
+Havok/fn_80318E78.c:
+	.text       start:0x80318E78 end:0x80318ECC
 
 Game/fn_803944A4.cpp:
 	.text       start:0x803944A4 end:0x8039453C
