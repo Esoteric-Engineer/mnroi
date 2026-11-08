@@ -504,6 +504,9 @@ Game/fn_800DBF1C.cpp:
 Game/fn_800DEDB4.cpp:
 	.text       start:0x800DDCB4 end:0x800E0458
 
+Game/fn_800E0458.cpp:
+	.text       start:0x800E0458 end:0x800E1570
+
 Game/fn_800E1570.cpp:
 	.text       start:0x800E1570 end:0x800E1788
 
