@@ -171,6 +171,9 @@ Game/fn_8003F6C8.cpp:
 	.text       start:0x8003F6C8 end:0x8003FC9C
 	.rodata     start:0x8048649C end:0x804864A4
 
+Game/fn_80042378.cpp:
+	.text       start:0x80042378 end:0x80042984
+
 Game/fn_800439B0.cpp:
 	.text       start:0x800439B0 end:0x80043C5C
 
