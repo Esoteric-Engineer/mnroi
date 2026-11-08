@@ -216,8 +216,15 @@ Game/fn_800887AC.cpp:
 Game/fn_8008F470.c:
 	.text       start:0x8008F3B8 end:0x8008F53C
 
+Game/fn_8008F53C.c:
+	.text       start:0x8008F53C end:0x8008F6A0
+
 Game/fn_8008F6A0.cpp:
 	.text       start:0x8008F6A0 end:0x8008F8EC
+
+Game/fn_8008F8EC.cpp:
+	.text       start:0x8008F8EC end:0x8008FF48
+	.rodata     start:0x8048A180 end:0x8048A1B0
 
 Game/fn_8008FF48.cpp:
 	.text       start:0x8008FF48 end:0x80090F54
@@ -2849,6 +2856,10 @@ Dolphin/OdemuExi2/DBGReadMailbox.c:
 
 Dolphin/OdemuExi2/DBGEXIImm.c:
 	.text       start:0x801965EC end:0x80196884
+
+Game/fn_8019B2D4.cpp:
+	.text       start:0x8019B2D4 end:0x8019BA58
+	.rodata     start:0x8049D280 end:0x8049D288
 
 Game/fn_8019DB24.cpp:
 	.text       start:0x8019DB24 end:0x8019DB94

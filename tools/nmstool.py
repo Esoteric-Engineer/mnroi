@@ -20,6 +20,10 @@ Options, until the line ends or a token starts with ';':
   move <f>                stored as 1 / f, or 0 when f <= 0 (default 0)
   <flag>                  ORed in through the name table lbl_8054FD90 (fn_80090810); an unknown
                           name is ignored. The default flags come from lbl_8054F7C0[state].
+                          Names (filled by fn_8008A8A4): noloop 0x1, noframereset 0x2,
+                          resetmotion 0x4, opt 0x8, endpause 0x10, endtag 0x20, nofadein 0x40,
+                          nofadeout 0x80, variable 0x100, special 0x400, fidget 0x2000, add 0x4000,
+                          mix 0x8000, shockwave 0x1000000.
 A keyword with no value after it makes the game call atof(NULL); check reports that.
 """
 
