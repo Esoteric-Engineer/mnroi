@@ -202,7 +202,11 @@ The `.ngb` layout is in `tools/ngbtool.py`'s docstring; `check` parses all 139 b
     - `endpause` holds the last frame and sets channel flag 0x1000, which stops all later updates; with `endtag` it sends event 0x14 once.
     - `noloop` clamps to the last frame (sending 0x14 first with `endtag`); on the animator's second channel (`+0x2C`) it also calls `fn_8019C408`. With `resetmotion` or `fidget` (0x2004) it puts the first channel back to time 0 (`fn_8019DB24`). It returns 1.
     - Otherwise the clip loops: event 0x1E per wrap, the per-track state cleared, then the events from frame 0 up to the new time.
-    - The update moves nothing itself, and the generic dispatcher `fn_80058C94` ignores 0x14 and has no case for 0x1E. Root motion, if any, happens in the pose code (`fn_8019BA58` onward) or in a state's own event handler.
+    - The update moves nothing itself, and the generic dispatcher `fn_80058C94` ignores 0x14 and has no case for 0x1E.
+  - **The pose builder takes the root motion out** (`fn_8019BA58(animator, force, root, noTargets)`, `Game/fn_8019BA58.cpp`). Once per frame (frame stamp `+0x218`) it resets one rotation and one translation per node (`+0x84`, `+0x88`, count `+0x210`) and fills them from the channels: the second channel alone, or the first under it (flag 0x8000: both added by `fn_8019D128`; flag 0x4000: the second through `fn_8019CEA0`), or the first alone. A third channel (`+0x58`) with weight above 0 is evaluated into its own arrays (`+0x8C`, `+0x90`) with its node 0 cleared, then blended in by that weight (`fn_80465728` for rotations, `fn_804304FC` for translations). Unless `noTargets` is set, the six targets at `+0x94`-`+0x120` (0x1C bytes each, `fn_8019C75C`) bend the pose; `+0xCC` is skipped while animator flag `+0x220` 0x4 is set. Then the root:
+    - The root position is node 0's translation plus that of the node behind the model's attachment of kind 0x11 (`fn_801A4C58`, byte `+0x40`), which is also taken off node 1 and off the node of attachment kind 0x16.
+    - The animator keeps the change since last frame at `+0x1F0` (the position itself at `+0x1C0`) and node 0's yaw change in degrees at `+0x208` (yaw `fn_801BCF14`, kept at `+0x1D8`). Flag `+0x220` 0x1 zeroes both changes for one frame.
+    - Node 0's translation is then zeroed and, with more than one node, its rotation reset, so the skeleton is drawn at the entity's origin. Whatever moves the entity reads `+0x1F0` and `+0x208`; who reads them is not traced.
 
 ### UI archives (APT, `.gsh`, `.geo`)
 
