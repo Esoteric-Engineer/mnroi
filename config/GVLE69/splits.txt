@@ -379,6 +379,13 @@ Game/fn_800B7204.c:
 Game/fn_800BA4D8.cpp:
 	.text       start:0x800BA4D8 end:0x800BA628
 
+Game/fn_800BD86C.cpp:
+	.text       start:0x800BD86C end:0x800BD908
+
+Game/fn_800BDE44.cpp:
+	.text       start:0x800BDE44 end:0x800BED04
+	.rodata     start:0x8048C960 end:0x8048C974
+
 Game/fn_800BED04.cpp:
 	.text       start:0x800BED04 end:0x800BF7FC
 
@@ -403,6 +410,9 @@ Game/fn_800C45B0.cpp:
 Game/fn_800C509C.cpp:
 	.text       start:0x800C509C end:0x800C5618
 	.rodata     start:0x8048CA98 end:0x8048CAA0
+
+Game/fn_800C5618.cpp:
+	.text       start:0x800C5618 end:0x800C57B8
 
 Game/fn_800C5A84.cpp:
 	.text       start:0x800C5A84 end:0x800C5F18
@@ -430,11 +440,22 @@ Game/fn_800CFD2C.cpp:
 	.text       start:0x800CFD2C end:0x800D0020
 	.rodata     start:0x8048D028 end:0x8048D02C
 
+Game/fn_800D0020.cpp:
+	.text       start:0x800D0020 end:0x800D0084
+
+Game/fn_800D10D0.cpp:
+	.text       start:0x800D10D0 end:0x800D14F0
+	.rodata     start:0x8048D068 end:0x8048D088
+
 Game/fn_800D2CF8.cpp:
 	.text       start:0x800D2CF8 end:0x800D2DA8
 
 Game/fn_800D3398.cpp:
 	.text       start:0x800D3398 end:0x800D39D0
+
+Game/fn_800D4970.cpp:
+	.text       start:0x800D4970 end:0x800D4DCC
+	.rodata     start:0x8048D1A0 end:0x8048D1B0
 
 Game/fn_800D532C.cpp:
 	.text       start:0x800D532C end:0x800D5514
@@ -498,6 +519,9 @@ Game/fn_800E3720.cpp:
 Game/fn_800E3934.cpp:
 	.text       start:0x800E3934 end:0x800E3FC8
 
+Game/fn_800E4FCC.cpp:
+	.text       start:0x800E4FCC end:0x800E50AC
+
 Game/fn_800E50AC.cpp:
 	.text       start:0x800E50AC end:0x800E592C
 
@@ -526,6 +550,10 @@ Game/fn_800ECA34.cpp:
 Game/fn_800ED448.cpp:
 	.text       start:0x800ED448 end:0x800ED808
 
+Game/fn_800EE060.cpp:
+	.text       start:0x800EE060 end:0x800EE970
+	.rodata     start:0x8048DCCC end:0x8048DCD8
+
 Game/fn_800F0328.cpp:
 	.text       start:0x800F0328 end:0x800F0780
 
@@ -534,6 +562,12 @@ Game/fn_800F0AA0.cpp:
 
 Game/fn_800F1644.cpp:
 	.text       start:0x800F1644 end:0x800F1D8C
+
+Game/fn_800F257C.cpp:
+	.text       start:0x800F257C end:0x800F25D8
+
+Game/fn_800F31BC.cpp:
+	.text       start:0x800F31BC end:0x800F3254
 
 Game/fn_800F3AE0.cpp:
 	.text       start:0x800F3AE0 end:0x800F3C2C
