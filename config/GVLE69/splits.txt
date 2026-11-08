@@ -2865,6 +2865,9 @@ Game/fn_8019BA58.cpp:
 	.text       start:0x8019BA58 end:0x8019C3AC
 	.rodata     start:0x8049D288 end:0x8049D290
 
+Game/fn_8019C3AC.cpp:
+	.text       start:0x8019C3AC end:0x8019C514
+
 Game/fn_8019DB24.cpp:
 	.text       start:0x8019DB24 end:0x8019DB94
 
