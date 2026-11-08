@@ -195,6 +195,10 @@ Game/fn_80044E5C.c:
 	.text       start:0x80044E5C end:0x80045374
 	.rodata     start:0x80486538 end:0x8048654C
 
+Game/fn_80046B4C.cpp:
+	.text       start:0x80046B4C end:0x80047754
+	.rodata     start:0x80486560 end:0x80486588
+
 Game/fn_80048EBC.cpp:
 	.text       start:0x80048EBC end:0x800495F8
 
