@@ -181,14 +181,15 @@ def encode_translation(t):
     return tuple(int(round(x * d)) for x in t) + (d,)
 
 
-def sample(keys, t):
+def sample(keys, t, decode=tuple):
+    """The linear blend of the two keys around frame t, each key decoded first."""
     if t <= keys[0][0]:
-        return keys[0][1]
+        return decode(keys[0][1])
     for (t0, a), (t1, b) in zip(keys, keys[1:]):
         if t0 <= t <= t1:
             f = (t - t0) / (t1 - t0) if t1 > t0 else 0.0
-            return tuple(x + (y - x) * f for x, y in zip(a, b))
-    return keys[-1][1]
+            return tuple(x + (y - x) * f for x, y in zip(decode(a), decode(b)))
+    return decode(keys[-1][1])
 
 
 def matrix(q):
@@ -206,7 +207,7 @@ def pose(model, anim, t):
             if ch == 0:
                 rot[bone] = matrix(rotation(sample(keys, t)))
             else:
-                move[bone] = translation(sample(keys, t))
+                move[bone] = sample(keys, t, translation)
     ident = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     out = []
     for i, (a, _, parent, _) in enumerate(model.nodes):
