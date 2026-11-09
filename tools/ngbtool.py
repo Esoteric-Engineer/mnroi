@@ -32,7 +32,9 @@ in lbl_8066C584 by its name. Pointer fields hold stale exporter addresses on dis
   +0x4C u32
   then the tracks, 0x10 each:
         u32 bone                 a node of the model's skeleton in the low halfword; the high
-                                 halfword is 1-6 in 19,104 of the 708,362 tracks (meaning unknown)
+                                 halfword is 1-6 in 19,104 of the 708,362 tracks. fn_8019D128: 0 is
+                                 the low halfword as it is; equal to the model's +0x158 adds +0x15A
+                                 to it; above 0x100 ignores the high halfword; else no effect
         u32 channel              0 rotation, 1 translation
         u32 key count
         ptr keys

@@ -2961,6 +2961,9 @@ Game/fn_8019BA58.cpp:
 Game/fn_8019C3AC.cpp:
 	.text       start:0x8019C3AC end:0x8019C514
 
+Game/fn_8019C75C.cpp:
+	.text       start:0x8019C75C end:0x8019D890
+
 Game/fn_8019DB24.cpp:
 	.text       start:0x8019DB24 end:0x8019DB94
 
@@ -2987,6 +2990,12 @@ Game/fn_801A3784.cpp:
 
 Game/fn_801A3ECC.c:
 	.text       start:0x801A3ECC end:0x801A40B8
+
+Game/fn_801A4290.cpp:
+	.text       start:0x801A4290 end:0x801A46DC
+
+Game/fn_801A479C.cpp:
+	.text       start:0x801A479C end:0x801A4A4C
 
 Game/fn_801A5F8C.cpp:
 	.text       start:0x801A5F8C end:0x801A6390
@@ -3019,14 +3028,32 @@ Game/fn_801B4CA0.c:
 Game/fn_801B4E84.c:
 	.text       start:0x801B4E84 end:0x801B4F40
 
+Game/fn_801BCE6C.cpp:
+	.text       start:0x801BCE6C end:0x801BD38C
+
+Game/fn_801BD530.cpp:
+	.text       start:0x801BD530 end:0x801BD7B4
+
 Game/fn_8020C508.cpp:
 	.text       start:0x8020C508 end:0x8020CAD0
 
 Game/fn_8020D104.cpp:
 	.text       start:0x8020D104 end:0x8020D228
 
+Game/fn_80220980.cpp:
+	.text       start:0x80220980 end:0x80220BBC
+
 Game/fn_80221C08.cpp:
 	.text       start:0x80221C08 end:0x8022262C
+
+Game/fn_8022362C.cpp:
+	.text       start:0x8022362C end:0x802237AC
+
+Game/fn_80223B50.cpp:
+	.text       start:0x80223B50 end:0x80223E38
+
+Game/fn_802244BC.cpp:
+	.text       start:0x802244BC end:0x802249E8
 
 Game/fn_80232C4C.c:
 	.text       start:0x80232C4C end:0x80232EBC
@@ -4033,11 +4060,26 @@ Dolphin/texPalette/TEXGet.c:
 	.data       start:0x804F2D80 end:0x804F2DBC
 	.sdata2     start:0x80670970 end:0x80670978
 
+Game/fn_80428FE0.c:
+	.text       start:0x80428FE0 end:0x80429090
+
+Game/fn_8042D854.c:
+	.text       start:0x8042D854 end:0x8042D8A8
+
 Game/fn_8042DC84.c:
 	.text       start:0x8042DC84 end:0x8042DCC0
 
+Game/fn_8042DCC0.cpp:
+	.text       start:0x8042DCC0 end:0x8042DD30
+
+Game/fn_8042E438.cpp:
+	.text       start:0x8042E438 end:0x8042E4CC
+
 Game/fn_8042FB28.cpp:
 	.text       start:0x8042FB28 end:0x8042FB58
+
+Game/fn_8042FDBC.c:
+	.text       start:0x8042FDBC end:0x8042FE6C
 
 Game/fn_80431788.c:
 	.text       start:0x80431788 end:0x80431CCC
@@ -5400,6 +5442,27 @@ Game/fn_8045FB10.c:
 
 Game/fn_8045FBB0.c:
 	.text       start:0x8045FBB0 end:0x8045FBF0
+
+Game/fn_804602CC.cpp:
+	.text       start:0x804602CC end:0x80460334
+
+Game/fn_80465728.cpp:
+	.text       start:0x80465728 end:0x80465888
+
+Game/fn_80465960.cpp:
+	.text       start:0x80465960 end:0x804659AC
+
+Game/fn_80465C9C.cpp:
+	.text       start:0x80465C9C end:0x80465F68
+
+Game/fn_80466268.cpp:
+	.text       start:0x80466268 end:0x80466298
+
+Game/fn_80468888.cpp:
+	.text       start:0x80468888 end:0x80468934
+
+Game/fn_804708F8.c:
+	.text       start:0x804708F8 end:0x80470A80
 
 Dolphin/os/fn_80003254.c:
 	.init       start:0x80003254 end:0x800032C0

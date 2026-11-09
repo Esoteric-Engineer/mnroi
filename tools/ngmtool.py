@@ -53,7 +53,9 @@ Big-endian on disc (the readers fn_801A2108 and fn_80221C08 do no byte swap):
                    position in the model, so a node's -b is its parent's -b plus its a (all but
                    42 of the 29,688 child nodes, those in helicopter.NOC); a parent comes before
                    its child
-        u16, u16                 model +0x158, +0x15A (first node of a second chain, guess)
+        u16, u16                 model +0x158, +0x15A: an animation track whose bone word has
+                                 +0x158 as its high halfword drives node +0x15A + its low
+                                 halfword (fn_8019D128)
         per mesh:  s32 part index; u8 stream; u16 strip count; u16 list count; u16 render
                    vertices; u8, u8, u8; u8 n; n nodes   (0x5C each at model +0x18)
                    The three u8 land at mesh +0x3E, +0x3F, +0x40. +0x3E is 194 in the meshes of
