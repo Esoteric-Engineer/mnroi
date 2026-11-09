@@ -3040,6 +3040,13 @@ Game/fn_801BCE6C.cpp:
 Game/fn_801BD530.cpp:
 	.text       start:0x801BD530 end:0x801BD7B4
 
+Game/fn_801BD9C4.c:
+	.text       start:0x801BD9C4 end:0x801BDA3C
+
+Game/fn_801BE3C4.c:
+	.text       start:0x801BE3C4 end:0x801BE5A8
+	.rodata     start:0x8049EBA4 end:0x8049EBC4
+
 Game/fn_8020C508.cpp:
 	.text       start:0x8020C508 end:0x8020CAD0
 
