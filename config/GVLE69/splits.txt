@@ -496,6 +496,10 @@ Game/fn_800CFD2C.cpp:
 Game/fn_800D0020.cpp:
 	.text       start:0x800D0020 end:0x800D0084
 
+Game/fn_800D0084.cpp:
+	.text       start:0x800D0084 end:0x800D10D0
+	.rodata     start:0x8048D02C end:0x8048D068
+
 Game/fn_800D10D0.cpp:
 	.text       start:0x800D10D0 end:0x800D14F0
 	.rodata     start:0x8048D068 end:0x8048D088
