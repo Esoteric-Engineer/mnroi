@@ -222,7 +222,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   strips its diagnostics but keeps the test, so `if (x) { }` and `if (x) { ... } else { }` are
   normal source here; both are 1:1 reproducible. The empty body's branch polarity still gives the
   test's sense: `beq` to the next instruction is `if (x) { }`, `bne` is `if (!x) { }`
-  (`Game/fn_80088740.c`). In a long `else if` chain, the *last* arm having a
+  (`Game/fn_80088740.c`). `beq L` / `b L` / `L:`, a compare that skips a `b` to the same label, is
+  `if (x) { } else { }` (`fn_800F4B58`). In a long `else if` chain, the *last* arm having a
   jump over the rest of the chain means the chain ends in an empty `else` too
   (`Game/fn_800887AC.cpp`, 20 of them).
 
