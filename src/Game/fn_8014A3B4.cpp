@@ -1,5 +1,5 @@
 // The Mover (AIObject+0x210): init, destroy, update, aim points beside a target, height hold, volume probes ahead (docs/ai.md row 11).
-// .rodata 0x8049B3C0-0x8049B408. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 49).
+// .rodata 0x8049B3C0-0x8049B410. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 49).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -374,3 +374,25 @@ extern "C" void fn_8014ADB0(register Mover *self)
             self->f278 = 0.0f;
     }
 }
+
+extern "C" {
+Ent *fn_80085928(Ent *a);
+int fn_800CC9D8(Ent *a);
+}
+
+// Push a point into the 24-entry ring at +0xF0 that the update averages into the heading +0xE0.
+extern "C" void fn_8014B420(register Mover *self, Vector *v)
+{
+    if (!v)
+        return;
+    fn_8042DC84(&self->fF0[self->f270], v);
+    if (++self->f270 > 23)
+        self->f270 = 0;
+    if (self->f274 < 24)
+        self->f274++;
+    if (fn_800CC9D8(fn_80085928(fn_80442080(fn_804634CC(self)))) && fn_80434040(v) > 0.1f) {
+        int unused = 0;
+    }
+}
+
+__asm__(".section .rodata\n\t.globl lbl_8049B40C\nlbl_8049B40C:\n\t.float 0.0\n\t.text"); // fn_8014B900's 0.0f, 8-aligns the claim's end
