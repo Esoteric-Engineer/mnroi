@@ -1,5 +1,6 @@
-// The AIObject+0xD0 record's methods, the base AIBrain and its task stack, the AI_NONE brain and its null task (docs/ai.md row 3).
-// Its float pool (1.5f, 2.0f, 20.0f, seven orphan words, -99999.0f) stays in dtk's .rodata (extern_pool).
+// The AIObject+0xD0 record's methods, the base AIBrain and its task stack, the AI_NONE brain and its null task,
+// two steering helpers and the base task (docs/ai.md row 3, section 4.4).
+// Its float pool (0x8049B574-0x8049B604, orphan words where linkonce entries and lbl_8049B5D8 sit) stays in dtk's .rodata (extern_pool).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -198,8 +199,18 @@ struct BrainSelf {
     void *vtable; // +0x270
 };
 
-struct AITask {
-    char d[0x24];
+struct TaskData {
+    void *ai; // +0x0
+    void *brain; // +0x4, fn_80442104
+    int target; // +0x8, target handle while covered
+    char *name; // +0xC, lbl_804CFB58[id]
+    char timer[8]; // +0x10
+    int id; // +0x18
+    int f1C; // +0x1C
+    int f20; // +0x20
+};
+
+struct AITask : TaskData {
     virtual void v0();
     virtual void v1();
     virtual void update(); // +0x18, guess
@@ -514,8 +525,8 @@ extern "C" {
 int fn_80463AF4(AITask *t);
 void fn_80463B60(AITask *t);
 void fn_80463B20(AITask *t);
-void fn_80152A78(AITask *t);
-void fn_80152A10(AITask *t);
+void fn_80152A78(TaskData *t);
+void fn_80152A10(TaskData *t);
 void fn_801515C4(BrainSelf *self, AITask *t);
 void fn_80463C24(BrainSelf *self, AITask *t);
 void fn_801513D8(BrainSelf *self, int len);
@@ -763,16 +774,288 @@ extern "C" BrainSelf *fn_80151CB8(register BrainSelf *self, register void *ai)
     return self;
 }
 
-struct TaskSelf {
-    char d[0x24];
+struct TaskSelf : TaskData {
     void *vtable; // +0x24
 };
 extern char lbl_804F5C60[];
-extern "C" void fn_8015294C(TaskSelf *self, void *brain, int a);
+extern "C" TaskSelf *fn_8015294C(TaskSelf *self, void *ai, int id);
 
-extern "C" TaskSelf *fn_80151D0C(register TaskSelf *self, register void *brain)
+extern "C" TaskSelf *fn_80151D0C(register TaskSelf *self, register void *ai)
 {
-    fn_8015294C(self, brain, 1);
+    fn_8015294C(self, ai, 1);
     self->vtable = (void *)lbl_804F5C60;
     return self;
+}
+
+__asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.text"); // 0x8049B5A0-0x8049B5B8, pool entries no function in the unit loads
+
+extern "C" {
+void *fn_804420D8(void *ai);
+int fn_8014FCAC(void *a);
+Ent *fn_8014FCD8(void *a, int i);
+int fn_80085D3C(void *actor);
+void *fn_80085980(Ent *e);
+float fn_80426A84(void *p);
+void fn_80067050(Ent &actor, Vector *out);
+Vector *fn_80462574(void *a);
+void fn_80463F3C(void *a, int b);
+void fn_8042D8A8(Vector *v, Vector *b);
+void fn_8042F76C(Vector *v);
+float fn_8042EBF4(Vector *a, Vector *b);
+void fn_8042D854(Vector *v, Vector *b);
+float fn_804290F8(Vector *a, Vector *b);
+float *fn_8042FB28(Vector *v);
+void fn_801BEC2C(Vector *v, Vector *rot);
+float fn_8042CE28(int n);
+void fn_8042FDBC(Vector *out, Vector *v, float f);
+void fn_80463EF0(void *a, Vector *v);
+}
+
+inline void sn_label_decl() { clear:; } // clears the return flag fn_80151D0C set (prodg.md)
+
+extern "C" int fn_80151D64(void *ai, Vector *out, float *weight)
+{
+    int n = fn_8014FCAC(fn_804420D8(ai));
+    float radius = 1.2f;
+    if (!fn_80085D3C(fn_80442080(ai)))
+        radius = 2.0f;
+    int hits = 0;
+    fn_80447C38(out);
+    *weight = 0.0f;
+    PEnt *self = fn_80442080(ai);
+    if (!self)
+        return 0;
+    float dt = fn_80426A84(lbl_80593BE8);
+    Vector pos;
+    Vector fwd;
+    Vector vel;
+    fn_8042DC84(&pos, (Vector *)fn_800B1724(*self));
+    fn_80067050(*self, &fwd);
+    fn_8042DC84(&vel, fn_80462574(fn_804420AC(ai)));
+    Vector from;
+    Vector to;
+    for (int i = 0; i < n; i++) {
+        Ent *other = fn_8014FCD8(fn_804420D8(ai), i);
+        if (!other)
+            continue;
+        if (other == fn_80134870(ai))
+            continue;
+        if (other == self)
+            continue;
+        if (!fn_80085980(other))
+            continue;
+        Vector opos;
+        Vector ofwd;
+        Vector ovel;
+        fn_8042DC84(&opos, (Vector *)fn_800B1724(*other));
+        fn_80067050(*other, &ofwd);
+        fn_8042DC84(&ovel, fn_80462574(fn_804420AC(fn_80085980(other))));
+        Vector d;
+        fn_80429038(&d, &opos, &pos);
+        float dist = fn_8042EC54(&d);
+        dist = dist > 0.1f ? dist : 0.1f;
+        if (dist < 2.0f * radius) {
+            float s = 1.0f - dist / (2.0f * radius);
+            fn_80463F3C(fn_804420AC(ai), 1);
+            Vector push;
+            fn_8042DC84(&push, &pos);
+            fn_8042D8A8(&push, &opos);
+            fn_8042F76C(&push);
+            float w = s;
+            float dot = fn_8042EBF4(&push, &d);
+            if (dot < -0.5f)
+                w = 1.0f;
+            fn_8042DC84(&from, &opos);
+            fn_8042DC84(&to, &pos);
+            from.z += 0.06f;
+            to.z += 0.06f;
+            fn_8042D854(out, &push);
+            *weight += w;
+            hits++;
+        }
+        float vdist = fn_804290F8(&vel, &opos);
+        if (vdist < 2.0f * radius) {
+            fn_80463F3C(fn_804420AC(ai), 1);
+            Vector push;
+            fn_8042DC84(&push, &d);
+            fn_8042F76C(&push);
+            float w = 1.0f - vdist / (2.0f * radius);
+            Vector rot;
+            fn_8042FB28(&rot)[2] = w * 90.0f;
+            fn_8042FB28(&rot)[0] = 0.0f;
+            fn_8042FB28(&rot)[1] = 0.0f;
+            fn_801BEC2C(&push, &rot);
+            fn_8042D854(out, &push);
+            *weight += w;
+            hits++;
+            fn_8042DC84(&from, &opos);
+            fn_8042DC84(&to, &vel);
+            from.z += 0.06f;
+            to.z += 0.06f;
+        }
+    }
+    if (hits > 0) {
+        fn_80435530(out, 1.0f / fn_8042CE28(hits));
+        *weight /= fn_8042CE28(hits);
+        Vector target;
+        fn_8042FDBC(&target, out, *weight);
+        fn_8042D854(&target, (Vector *)fn_800B1724(*self));
+        fn_80463EF0(fn_804420AC(ai), &target);
+        return 1;
+    }
+    return 0;
+}
+
+__asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.text"); // 0x8049B5D8-0x8049B5F0, the angles fn_8015243C copies from lbl_8049B5D8
+
+struct Angles {
+    float a[6];
+};
+extern const Angles lbl_8049B5D8; // 0, 90, 270, 120, 240, 360
+
+struct Rec20 {
+    int w[8];
+};
+
+struct Obstacle : Ent {
+    char pad0[0x4C];
+    Rec20 box; // +0x50
+    char pad1[0x8];
+    char f78[4]; // +0x78
+};
+
+extern "C" {
+Vector *fn_800B1750(Ent &actor);
+float fn_800B2670(Ent &actor);
+int fn_801BA328(Vector *pos, Vector *dir, float range, void *a, Rec20 *box, float *t);
+void fn_80429090(Vector *out, Vector *a, Vector *b, float t);
+void fn_8042F838(Vector *out, Vector *v, float angle);
+}
+
+extern "C" int fn_8015243C(Ent *a, Obstacle *b, Vector *out)
+{
+    float dt = fn_80426A84(lbl_80593BE8);
+    Vector pos;
+    Vector v28;
+    Vector fwd;
+    fn_8042DC84(&pos, (Vector *)fn_800B1724(*a));
+    fn_8042DC84(&fwd, fn_800B1750(*a));
+    pos.z += 0.5f;
+    Vector bpos;
+    fn_8042DC84(&bpos, (Vector *)fn_800B1724(*b));
+    Rec20 box = b->box;
+    float size = fn_800B2670(*a);
+    float t;
+    fn_8042DC84(out, &fwd);
+    float range = 2.0f * size;
+    range = 3.0f;
+    Angles angles = lbl_8049B5D8;
+    int i = 0;
+    int found = 0;
+    while (fn_801BA328(&pos, out, range, b->f78, &box, &t)) {
+        float angle = angles.a[i++];
+        if (angle > 350.0f)
+            break;
+        found = 1;
+        Vector hit;
+        fn_80429090(&hit, &pos, out, t);
+        fn_8042F838(out, &fwd, angle);
+    }
+    return found;
+}
+
+extern "C" {
+void *fn_80463F64(void *ai);
+int fn_800B0CC0(Ent *e);
+int fn_80461C94(void *a);
+void fn_804628D8(void *ai, int a);
+}
+
+extern "C" Ent *fn_801526E4(void *ai, Vector *out, float *weight)
+{
+    int n = fn_801500C4((Finder *)fn_804420D8(ai));
+    int unused = 0;
+    fn_80447C38(out);
+    *weight = 0.0f;
+    PEnt *self = fn_80442080(ai);
+    if (!self)
+        return 0;
+    Ent *e;
+    if (fn_80463F64(ai)) {
+        e = fn_800ACFA8((int)fn_80463F64(ai));
+        if (e) {
+            Vector v;
+            int r = fn_8015243C(self, (Obstacle *)e, &v);
+            if (r) {
+                fn_8042DC84(out, &v);
+                *weight = 1.0f;
+                return e;
+            }
+        } else {
+            fn_804628D8(ai, 0);
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        e = (Ent *)fn_801500F0((Finder *)fn_804420D8(ai), i);
+        if (!e)
+            continue;
+        if (!fn_800B0CC0(e))
+            continue;
+        if (fn_800B13D8(e) == fn_80461C94(fn_804420AC(ai)))
+            continue;
+        if (e == fn_80134870(ai))
+            continue;
+        Vector v;
+        int r = fn_8015243C(self, (Obstacle *)e, &v);
+        if (r) {
+            fn_8042DC84(out, &v);
+            *weight = 1.0f;
+            return e;
+        }
+    }
+    return 0;
+}
+
+extern char lbl_804F5CC8[];
+extern char *lbl_804CFB58[]; // task names by id, "TASK_SLEEP"...
+extern "C" {
+void *fn_80442104(void *ai);
+void fn_80463AB4(TaskSelf *self);
+}
+
+extern "C" TaskSelf *fn_8015294C(register TaskSelf *self, void *ai, int id)
+{
+    self->vtable = (void *)lbl_804F5CC8;
+    fn_804617F0(self->timer);
+    if (!ai) {
+        goto done;
+        return self;
+    }
+    self->ai = ai;
+    self->brain = fn_80442104(self->ai);
+    self->id = id;
+    self->f1C = 0;
+    self->f20 = 0;
+    self->name = lbl_804CFB58[id];
+    fn_80463AB4(self);
+done:
+    return self;
+}
+
+extern "C" void fn_80152A10(register TaskData *self)
+{
+    Ent *t = fn_80134870(self->ai);
+    if (t)
+        self->target = fn_800B13D8(t);
+    else
+        self->target = 0;
+}
+
+extern "C" void fn_80152A78(register TaskData *self)
+{
+    if (self->target) {
+        Ent *t = fn_800ACFA8(self->target);
+        if (t)
+            fn_801501AC((Finder *)fn_804420D8(self->ai), t);
+    }
 }

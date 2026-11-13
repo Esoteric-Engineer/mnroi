@@ -192,7 +192,8 @@ to the next, including inline functions that emit no code:
   `return <global>;`, in an inline function too.
 - **Not set by:** a destructor, `return this->x;` or any other expression, a nested `return`, an enumerator,
   or a `static const` that folds.
-- **Cleared by:** a `switch` with `case`/`default` labels, or a user `label:`, in the function being compiled.
+- **Cleared by:** a `switch` with `case`/`default` labels, or a user `label:`, in the function being compiled
+  or in an unused inline function ahead of it (`inline void sn_label_decl() { clear:; }`).
 - A function with the flag set loses the pair and keeps one branch per `return`. A constructor never has
   the pair, because it sets the flag itself.
 
