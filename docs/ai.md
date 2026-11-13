@@ -88,7 +88,7 @@ From `Game/fn_80442010.c` (whose `Obj` is this class) and `Game/fn_80132480.cpp`
 | +0x500 | bit set | AI state bits, 42 of them: `fn_80442130` sets, `fn_80442174` clears |
 | +0x508 | bit set | 42 bits. `fn_80463994(ai, n)` tests one; bits 0-3, 5 and 6 switch on parts of `fn_8014E648` (range bands, the `+0xE8`/`+0xEC` searches, bit 15, target state, `fn_8014E044`) |
 | +0x52C | handle | The actor; `fn_8044203C` resolves it (`fn_800CD834`) |
-| +0x530 | entity | The owner entity whose PLAYER tuning fields are read (`fn_80442080`). Its `+0x304` bit 0x20000000 is set by a teleport and makes the next update play `peonTeleQuick` |
+| +0x530 | entity | The owner entity whose PLAYER tuning fields are read (`fn_80442080`). Its `+0x304` bit 0x20000000 is set by a teleport and makes the next update play `peonTeleQuick`; its `+0x308` bit 0x4000 makes SEARCH use tuning field 211 for 212 and 213 |
 | +0x524, +0x528, +0x590, +0x594 | `int` | Each with a getter and a setter; +0x520, +0x538, +0x560, +0x564 are `int`s too. `+0x520` counts down to 0; when `+0x524` runs out the update flips `+0x528` and reloads `+0x524` from `fn_800B18EC(actor, 0xB9)` (to 1) or `0xB8` (to 0) |
 | +0x53C | `unsigned` | Teleport cooldown end tick, 0 when not armed (`lbl_8066BF38` ticks) |
 | +0x550, +0x554 | `int` | Handles from `fn_80393D0C(actor, "peonTeleQuick", 0xFF, 0xFF)` (guess: a sound) |
@@ -227,7 +227,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 9 | Shared helpers | 0x8015E2FC-0x80160428, unit `Game/fn_8015E2FC.cpp` | Done |
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
-| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x80152F74. Next is SEARCH's update `fn_80152F74`; the 38 other methods of 0x80 bytes or less can go first as their own units. The largest are `fn_801549D0` (0x1E20), `fn_80152F74` (0x173C) and `fn_80156A88` (0x12D0) |
+| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x801546B0. Next is `fn_801546B0` (0x2F8); the 38 other methods of 0x80 bytes or less can go first as their own units. The largest are `fn_801549D0` (0x1E20) and `fn_80156A88` (0x12D0). The unit's `.rodata` claim ends at 0x8049B878, so it already holds `fn_801546B0`'s 0.0f |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | 41 unclaimed handler functions (0xC52C bytes), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D`. `APPROACH` (`fn_801399CC`, 0x1728) is the largest |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
