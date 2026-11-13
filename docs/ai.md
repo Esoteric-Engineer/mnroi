@@ -82,8 +82,9 @@ From `Game/fn_80442010.c` (whose `Obj` is this class) and `Game/fn_801343B0.cpp`
 | +0x508 | bit set | 42 bits |
 | +0x52C | handle | The actor; `fn_8044203C` resolves it (`fn_800CD834`) |
 | +0x530 | entity | The owner entity whose PLAYER tuning fields are read (`fn_80442080`) |
-| +0x524, +0x528, +0x594 | `int` | Each with a getter and a setter; +0x520, +0x538, +0x560, +0x564 are `int`s too |
+| +0x524, +0x528, +0x590, +0x594 | `int` | Each with a getter and a setter; +0x520, +0x538, +0x560, +0x564 are `int`s too |
 | +0x568, +0x570 | `int`, `Vector` | A flag and a point, set together by `fn_80461E58` |
+| +0x558, +0x55C | `unsigned` | End ticks of two timers on the clock `lbl_80593BE8` (`fn_8042EFF8` ticks); `fn_80464230`/`fn_804642B8` return 1 once reached. Guess: cooldowns |
 | +0x580 | `Vector` | |
 | +0x598 | `float[22]` | PLAYER fields 0x8B-0xA4, 0xF6, 0xF7 per CPU difficulty (`fn_801343B0`; `tools/nvbtool.py` names them "AI weight") |
 
@@ -176,7 +177,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 2 | Behavior registry | 0x80137F2C-0x80138E10, unit `Game/fn_80137F2C.cpp` | Done. The 42 handlers keep their `fn_` names until row 13 renames them (section 4.3) |
 | 3 | Brain and task bases | 0x801500C4-0x80152AE8, unit `Game/fn_801500C4.cpp`, then 0x8015D950-0x8015E2FC, unit `Game/fn_8015D950.cpp` | Done |
 | 4 | Per-profile brains | 0x80160428-0x80164460, unit `Game/fn_80160428.cpp` | Done, with the special tasks |
-| 5 | AI inline functions | 0x80461430-0x804644B4 | 195 tail functions, 185 of them 0x80 bytes or less: accessors on `AIObject`, brain and task. One small unit per run, like `Game/fn_80442010.c`; name each field in section 4.1 as it is confirmed. A unit grows while its pools stay consecutive: `Game/fn_80462B38.cpp` ends at 0x80464014, where `fn_80464014` starts the next unit (its pool is at 0x8049B9E0) |
+| 5 | AI inline functions | 0x80461430-0x804644B4 | Done. Units split where the `.rodata` pool changes (`extern_pool` in `configure.py`) |
 | 6 | Rest of the `AIObject` file | 0x80133C8C-0x80137F2C, extending row 1's unit | Constructor `fn_80133C8C`, creation `fn_80133E5C`, destruction `fn_80133FA0`, reset `fn_80134028`, `fn_80134280`, `fn_80134870` (seven outside callers), the brain switch `fn_80136AC8`, per-AI update `fn_8013589C`, the debug display `fn_80137494` (0x858), static init `fn_80137D98`, `_GLOBAL_.I`, `_GLOBAL_.D`. Merge in the two matched units (section 5) |
 | 7 | Actor-side AI component | 0x800FA34C-0x800FC1F8 | 39 functions, 20 small: the three classes, their constructors, and the create/destroy/update calls into the AI |
 | 8 | AI script API | 0x8007A35C-0x8007C034, unit `Game/fn_8007A35C.cpp` | 42 functions: the `fn_8007A3A0` resolver and the wrappers. Name each wrapper after what it forwards to. Stop at 0x8007C034; the rest of the file is general script code |
