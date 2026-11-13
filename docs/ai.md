@@ -34,7 +34,7 @@ Everything in the ranges below is `-O0` game code (`tools/flavor_map.py`).
 | 0x80131E90-0x80132480 | Not AI: a static initializer building `Color`s in `.sbss` 0x8066F0B4..., and `_GLOBAL_.I` 0x80132444. It probably closes the file that holds the last-selection module | `_GLOBAL_.I` 0x80132444 | |
 | 0x80132480-0x80137F2C | **AI manager and `AIObject`** (section 3) | Static init `fn_80137D98`, `_GLOBAL_.I` 0x80137EB4, `_GLOBAL_.D` 0x80137EF0 | `Game/fn_80132480.cpp` (manager, to 0x80133C8C), `Game/fn_801343B0.cpp` (tuning load), `Game/fn_80137CEC.c` (profile lookup) |
 | 0x80137F2C-0x80145CB0 | **Behaviors**: the registry (0x80137F2C-0x80138E10) and the 42 handlers (0x80138E10-0x80145B74, section 4.3) | Static init `fn_80145B74` (256 records of 0x70 at `lbl_8056A7F0`, the pool `lbl_805717F0`), `_GLOBAL_.I` 0x80145C38, `_GLOBAL_.D` 0x80145C74 | `Game/fn_80137F2C.cpp` (registry), `Game/fn_8013E99C.cpp` (`ATTACK_RANGED`), `Game/fn_80142558.cpp` (`AVOID_ACTORS`) |
-| 0x80145CB0-0x80164460 | **The rest of the AI**, at least one file. In order: an unidentified system on the container `lbl_80569890` (0x80145CB0-0x80148178), perception and messages (0x80148178-0x8014A3B4), an unidentified block (0x8014A3B4-0x80150000; guess: mover and pathing), brain and task base classes (0x801500C4-0x80152AE8; the first 0x6B0 bytes are the `+0xD0` record's methods and the AI_NONE brain's factory and task), the task classes (0x80152AE8-0x8015D950), their constructors (0x8015D950-0x8015E2FC), shared helpers (0x8015E2FC-0x80160428), the per-profile brains and their special tasks (0x80160428-0x80164460) | Edges unknown, except the brains' end: `fn_80164460` and `fn_801644EC` are called only from 0x80164930 and 0x80164EB4, so they open the file that `_GLOBAL_.I` 0x80164EF0 ends, 0x80164460-0x80164F2C, which is not AI (called from level load and the HUD). The brains' start is a guess: `fn_801600DC` and `fn_801603CC` are behavior helpers, so row 9 keeps them | `Game/fn_80148178.cpp`, `Game/fn_8014A574.cpp`, `Game/fn_8014E288.cpp`, `Game/fn_801500C4.cpp`, `Game/fn_80158038.cpp`, `Game/fn_80158844.cpp`, `Game/fn_8015D950.cpp`, `Game/fn_8015F008.c`, `Game/fn_80160428.cpp` |
+| 0x80145CB0-0x80164460 | **The rest of the AI**, at least one file. In order: an unidentified system on the container `lbl_80569890` (0x80145CB0-0x80148178; six lists of 0x24 bytes from `+0x4`, built by `fn_80461430`), perception and messages (0x80148178-0x8014A3B4), an unidentified block (0x8014A3B4-0x80150000; guess: mover and pathing), brain and task base classes (0x801500C4-0x80152AE8; the first 0x6B0 bytes are the `+0xD0` record's methods and the AI_NONE brain's factory and task), the task classes (0x80152AE8-0x8015D950), their constructors (0x8015D950-0x8015E2FC), shared helpers (0x8015E2FC-0x80160428), the per-profile brains and their special tasks (0x80160428-0x80164460) | Edges unknown, except the brains' end: `fn_80164460` and `fn_801644EC` are called only from 0x80164930 and 0x80164EB4, so they open the file that `_GLOBAL_.I` 0x80164EF0 ends, 0x80164460-0x80164F2C, which is not AI (called from level load and the HUD). The brains' start is a guess: `fn_801600DC` and `fn_801603CC` are behavior helpers, so row 9 keeps them | `Game/fn_80148178.cpp`, `Game/fn_8014A574.cpp`, `Game/fn_8014E288.cpp`, `Game/fn_801500C4.cpp`, `Game/fn_80158038.cpp`, `Game/fn_80158844.cpp`, `Game/fn_8015D950.cpp`, `Game/fn_8015F008.c`, `Game/fn_80160428.cpp` |
 | 0x80461430-0x804644B4 | **AI inline functions** in the linkonce tail ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)): about 190 functions, almost all 0x28-0x2C accessors, and nearly all called only from the ranges above. Includes the task base (`fn_80463A44`, `fn_80463AB4`, `fn_80463AD4`, `fn_80463DC4`, `fn_80463DEC`) and the task "done" setter `fn_804643C8` | Linkonce, so files are found by `.rodata` pools ([`versus.md`](versus.md) section 5, row 8) | |
 | 0x80442010-0x80442600 | `AIObject` accessors | | `Game/fn_80442010.c` (section 5) |
 
@@ -66,17 +66,23 @@ Script API (0x8007A35C) and actor component (0x800FA34C) call in from outside
 
 ### 4.1 `AIObject` (`actor+0x380`)
 
-From `Game/fn_80442010.c` (whose `Obj` is this class) and `Game/fn_801343B0.cpp`. Size and constructor not yet found.
+From `Game/fn_80442010.c` (whose `Obj` is this class) and `Game/fn_801343B0.cpp`. Constructor `fn_80133C8C` (row 6); size not yet found.
 
 | Offset | Type | Meaning (guess) |
 |---|---|---|
+| +0x8 | `float` | Set from `lbl_8049A8A8` by the constructor |
+| +0xC, +0x14 | bit sets | Of 0x41 and 0x20 bits (`fn_80461828` sizes them) |
 | +0x20 | subobject | `fn_80442010` |
-| +0xD0 | subobject | `fn_804420D8`; guess: the perception record `Game/fn_80148178.cpp` fills (target ids `+0x4`, time stamps `+0x24`, owner `+0xD0` of that record). Its methods, in `Game/fn_801500C4.cpp`: owner `AIObject *` `+0x0`, count `+0x48`, actor handles `[16]` `+0x4C`, target handle `+0xE4` (`fn_801501AC` sets, `fn_80150200` resolves, `fn_80150258` validates and clears; `fn_80134870` reads it) |
+| +0x44 | `int[26]` | Cleared by the constructor |
+| +0xAC | list | `fn_801B5BA8(4, 1.0f)`, then `fn_801B5E38(0x2B)` |
+| +0xD0 | subobject | Constructor `fn_80461904` (a bit set at its `+0xFC`); `fn_804420D8`; guess: the perception record `Game/fn_80148178.cpp` fills (target ids `+0x4`, time stamps `+0x24`, owner `+0xD0` of that record). Its methods, in `Game/fn_801500C4.cpp`: owner `AIObject *` `+0x0`, count `+0x48`, actor handles `[16]` `+0x4C`, target handle `+0xE4` (`fn_801501AC` sets, `fn_80150200` resolves, `fn_80150258` validates and clears; `fn_80134870` reads it) |
 | +0x204 | `AIBrain *` | `fn_80442104` |
-| +0x210 | subobject | `fn_804420AC`, passed to `fn_8014BB4C` |
-| +0x500 | bit set | AI state bits: `fn_80442130` sets, `fn_80442174` clears |
+| +0x210 | subobject | 0x2F0 bytes, constructor `fn_80461A68`: a subobject at its `+0x20`, `Vector[24]` at `+0xF0`, a flag `+0x27C` and point `+0x280` (`fn_80461BF8` sets). `fn_804420AC`, passed to `fn_8014BB4C` |
+| +0x500 | bit set | AI state bits, 42 of them: `fn_80442130` sets, `fn_80442174` clears |
+| +0x508 | bit set | 42 bits |
 | +0x52C | handle | The actor; `fn_8044203C` resolves it (`fn_800CD834`) |
 | +0x530 | entity | The owner entity whose PLAYER tuning fields are read (`fn_80442080`) |
+| +0x568, +0x570 | `int`, `Vector` | A flag and a point, set together by `fn_80461E58` |
 | +0x598 | `float[22]` | PLAYER fields 0x8B-0xA4, 0xF6, 0xF7 per CPU difficulty (`fn_801343B0`; `tools/nvbtool.py` names them "AI weight") |
 
 ### 4.2 Profiles and brain classes
@@ -166,8 +172,8 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 2 | Behavior registry | 0x80137F2C-0x80138E10, unit `Game/fn_80137F2C.cpp` | Done. The 42 handlers keep their `fn_` names until row 13 renames them (section 4.3) |
 | 3 | Brain and task bases | 0x801500C4-0x80152AE8, unit `Game/fn_801500C4.cpp`, then 0x8015D950-0x8015E2FC, unit `Game/fn_8015D950.cpp` | Done |
 | 4 | Per-profile brains | 0x80160428-0x80164460, unit `Game/fn_80160428.cpp` | Done, with the special tasks |
-| 5 | AI inline functions | 0x80461430-0x804644B4 | 195 tail functions, 185 of them 0x80 bytes or less: accessors on `AIObject`, brain and task. One small unit per run, like `Game/fn_80442010.c`; name each field in section 4.1 as it is confirmed |
-| 6 | Rest of the `AIObject` file | 0x80133C8C-0x80137F2C, extending row 1's unit | Creation `fn_80133E5C`, destruction `fn_80133FA0`, reset `fn_80134028`, `fn_80134280`, `fn_80134870` (seven outside callers), the brain switch `fn_80136AC8`, per-AI update `fn_8013589C`, the debug display `fn_80137494` (0x858), static init `fn_80137D98`, `_GLOBAL_.I`, `_GLOBAL_.D`. Merge in the two matched units (section 5) |
+| 5 | AI inline functions | 0x80461430-0x804644B4 | 195 tail functions, 185 of them 0x80 bytes or less: accessors on `AIObject`, brain and task. One small unit per run, like `Game/fn_80442010.c`; name each field in section 4.1 as it is confirmed. A unit grows while its pools stay consecutive: `Game/fn_80461430.cpp` ends at `fn_80462474`, and the next pool is `fn_80462B38`'s at 0x8049B054 |
+| 6 | Rest of the `AIObject` file | 0x80133C8C-0x80137F2C, extending row 1's unit | Constructor `fn_80133C8C`, creation `fn_80133E5C`, destruction `fn_80133FA0`, reset `fn_80134028`, `fn_80134280`, `fn_80134870` (seven outside callers), the brain switch `fn_80136AC8`, per-AI update `fn_8013589C`, the debug display `fn_80137494` (0x858), static init `fn_80137D98`, `_GLOBAL_.I`, `_GLOBAL_.D`. Merge in the two matched units (section 5) |
 | 7 | Actor-side AI component | 0x800FA34C-0x800FC1F8 | 39 functions, 20 small: the three classes, their constructors, and the create/destroy/update calls into the AI |
 | 8 | AI script API | 0x8007A35C-0x8007C034, unit `Game/fn_8007A35C.cpp` | 42 functions: the `fn_8007A3A0` resolver and the wrappers. Name each wrapper after what it forwards to. Stop at 0x8007C034; the rest of the file is general script code |
 | 9 | Shared helpers | 0x8015E2FC-0x80160428 | 28 functions called from over 200 functions in the behaviors and tasks (guesses from their use: target choice `fn_8015F7A4`, float measures `fn_8015E580`/`fn_8015E8A8`, `fn_8015F6CC` fills a `Vector`) |
