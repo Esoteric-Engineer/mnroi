@@ -109,6 +109,8 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   The source has unused labels there (error exits nothing jumps to); -O0 still emits the code, and
   the user label clears the flag, so the pair comes back even after a `return <local>;` earlier in the
   unit. Write them as `fail: x = 0; return 0;` after the final return (`fn_8019EBF8`).
+- **One `b` too many before the epilogue of a `li r3,1; b; li r3,0; b` tail** is `if (c) return 1;
+  else return 0;`. Drop the `else`: `if (c) return 1; return 0;` (`fn_8014AB90`).
 
 - **Definitions are emitted in source order, so one placed ahead of an earlier function shifts it.** The symptom is `main.dol` failing with single-byte diffs in the low byte of `bl` displacements at many call sites while every function still reads 100% in objdiff. Write the definitions in address order, a constructor's included (`Game/fn_8043C1EC.cpp`, `Byte1::Byte1`). A constructor or method *definition* carrying `__asm__("fn_XXXXXXXX")` fails in ngcas (`Unrecognised opcode ".l_f"`); rename the symbol to its mangled name instead (declarations may keep `__asm__`). A plain *method* can keep its `fn_XXXXXXXX` name with the top-level label trick (`.globl`/`.type` label before the definition, `.size` after it; `Game/fn_80085954.cpp`); give each such unit's class a distinct name, since the mangled `get__3Obj` is also emitted and a duplicate fails to link.
 

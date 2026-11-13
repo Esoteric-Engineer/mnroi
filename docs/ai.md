@@ -208,7 +208,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 8 | AI script API | 0x8007A3A0-0x8007C034, unit `Game/fn_8007A3A0.cpp` | Done |
 | 9 | Shared helpers | 0x8015E2FC-0x80160428, unit `Game/fn_8015E2FC.cpp` | Done |
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
-| 11 | Mover and target list | 0x8014A3B4-0x80150000, unit `Game/fn_8014A3B4.cpp` (section 2) | Done to 0x8014AB90. Grow the unit, merging `Game/fn_8014E288.cpp` when it reaches it. `fn_80442080` returns a derived `Sub *` (matching_notes 49). Largest: `fn_8014E648` (0x1168), `fn_8014C6D8` (0x95C), `fn_8014D034` (0x710) |
+| 11 | Mover and target list | 0x8014A3B4-0x80150000, unit `Game/fn_8014A3B4.cpp` (section 2) | Done to 0x8014ADB0; next is the update `fn_8014ADB0` (0x670). Grow the unit, merging `Game/fn_8014E288.cpp` when it reaches it. `fn_80442080` returns a derived `Sub *` (matching_notes 49). Largest: `fn_8014E648` (0x1168), `fn_8014C6D8` (0x95C), `fn_8014D034` (0x710) |
 | 12 | Task methods | 0x80152AE8-0x8015D950 | Enter and exit methods first (41 functions of 0x80 bytes or less), then the updates. The largest are `fn_801549D0` (0x1E20), `fn_80152F74` (0x173C) and `fn_80156A88` (0x12D0) |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | 41 unclaimed handler functions (0xC52C bytes), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D`. `APPROACH` (`fn_801399CC`, 0x1728) is the largest |
 

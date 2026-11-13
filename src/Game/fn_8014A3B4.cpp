@@ -1,5 +1,5 @@
-// The Mover (AIObject+0x210): init, destroy, aim points beside a target, height hold (docs/ai.md row 11).
-// .rodata 0x8049B3C4-0x8049B3D4. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 49).
+// The Mover (AIObject+0x210): init, destroy, aim points beside a target, height hold, volume probes ahead (docs/ai.md row 11).
+// .rodata 0x8049B3C4-0x8049B3EC. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 49).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -212,4 +212,47 @@ extern "C" void fn_8014A9B0(register Mover *self)
     } else {
         self->f2B8 = 0;
     }
+}
+
+extern "C" {
+Sub *fn_804633E4(Mover *self);
+int fn_80067050(Ent &actor, Vector *v);
+float fn_8042EC54(Vector *v);
+Vector *fn_800B1750(Ent &actor);
+void fn_80429090(Vector *out, Vector *a, Vector *b, float s);
+int fn_8013379C(void *ai, Vector *v);
+}
+
+// Is there a volume 5 units ahead along the flat velocity (or the facing when still)?
+extern "C" int fn_8014AB90(register Mover *self)
+{
+    Vector dir;
+
+    fn_80067050(*fn_80442080(self->f0), &dir);
+    dir.z = 0.0f;
+    float len = fn_8042EC54(&dir);
+    if (len < 0.01f)
+        fn_8042DC84(&dir, fn_800B1750(*fn_804633E4(self)));
+    Vector p;
+    fn_80429090(&p, fn_800B1724(*fn_804633E4(self)), &dir, 5.0f);
+    if (fn_8013379C(self->f0, &p))
+        return 1;
+    return 0;
+}
+
+// fn_8014AB90 at 15 units.
+extern "C" int fn_8014ACA0(register Mover *self)
+{
+    Vector dir;
+
+    fn_80067050(*fn_80442080(self->f0), &dir);
+    dir.z = 0.0f;
+    float len = fn_8042EC54(&dir);
+    if (len < 0.01f)
+        fn_8042DC84(&dir, fn_800B1750(*fn_804633E4(self)));
+    Vector p;
+    fn_80429090(&p, fn_800B1724(*fn_804633E4(self)), &dir, 15.0f);
+    if (fn_8013379C(self->f0, &p))
+        return 1;
+    return 0;
 }
