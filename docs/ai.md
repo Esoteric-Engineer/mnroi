@@ -204,7 +204,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 7 | Actor-side AI component | 0x800FA34C-0x800FC1F8, unit `Game/fn_800FA34C.cpp` | Done |
 | 8 | AI script API | 0x8007A3A0-0x8007C034, unit `Game/fn_8007A3A0.cpp` | Done |
 | 9 | Shared helpers | 0x8015E2FC-0x80160428, unit `Game/fn_8015E2FC.cpp` | Done |
-| 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done to 0x80148D30 (volume registry; encounter record, unit `Game/fn_80147DE4.cpp`). Next: `fn_80148D30` (0x540, a free function of 8 arguments doing vector math on `G`, called by `fn_80149270` and `fn_80149388`), extending that unit; then `cAIMessages` (init `fn_80149554`, `fn_801498E8`, `fn_80149A6C`) |
+| 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done to 0x80149554 (volume registry; encounter record and the spot search around a target, unit `Game/fn_80147DE4.cpp`). Next: `cAIMessages` (init `fn_80149554`, `fn_801498E8`, `fn_80149A6C`), extending that unit |
 | 11 | Unidentified block | 0x8014A3B4-0x80150000 | 47 functions called by tasks, the AI object and the script API (`fn_8014B63C`, `fn_8014D034`). Identify it first (guess: mover and pathing; check against the debug display's `Mover`, `Pathing`, `Conserve` and waypoint fields), then match small to large |
 | 12 | Task methods | 0x80152AE8-0x8015D950 | Enter and exit methods first (41 functions of 0x80 bytes or less), then the updates. The largest are `fn_801549D0` (0x1E20), `fn_80152F74` (0x173C) and `fn_80156A88` (0x12D0) |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | 41 unclaimed handler functions (0xC52C bytes), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D`. `APPROACH` (`fn_801399CC`, 0x1728) is the largest |

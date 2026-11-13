@@ -823,7 +823,7 @@ Game/fn_80145CB0.cpp:
 	.text       start:0x80145CB0 end:0x80147DE4
 
 Game/fn_80147DE4.cpp:
-	.text       start:0x80147DE4 end:0x80148D30
+	.text       start:0x80147DE4 end:0x80149554
 
 Game/fn_8014A574.cpp:
 	.text       start:0x8014A574 end:0x8014A860

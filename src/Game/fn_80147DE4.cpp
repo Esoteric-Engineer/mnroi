@@ -1,6 +1,6 @@
 // Methods of the 0xDC-byte encounter record (AiObj): reset, lookups, the nearby scan, the engaged-list
-// rotation (fn_80148B08) and its debug draw. docs/ai.md row 10.
-// Float and string pool 0x8049B204-0x8049B234 (extern_pool).
+// rotation (fn_80148B08), its debug draw, and the spot search around a target (fn_80148D30). docs/ai.md row 10.
+// Float and string pool 0x8049B204-0x8049B258 (extern_pool).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -13,6 +13,22 @@ struct PEnt : Ent { // matching_notes 44
 
 struct Actor {
     int pad;
+};
+
+class Vector
+{
+public:
+    float x;
+    float y;
+    float z;
+    float w;
+    Vector();
+} __attribute__((aligned(8)));
+
+struct Tgt : Ent {
+    char d[0x194];
+    virtual void s0(); virtual void s1(); virtual void s2(); virtual void s3(); virtual void s4();
+    virtual void s5(Vector *v, int z); // +0x30
 };
 
 struct CtlBase {
@@ -130,11 +146,37 @@ void fn_8042AC7C(void *text, unsigned int color);
 int fn_800B92DC(void **text, const char *s, float x, float y);
 void *fn_80134870(void *a);
 char *fn_800AFF88(void *thing);
+Vector *fn_800B1750(Ent &actor);
+Vector *fn_800B1724v(Ent &actor) __asm__("fn_800B1724");
+void fn_8042DC84(Vector *dst, Vector *src);
+void *fn_804304CC(void *p);
+void fn_804354B8(void *dst, void *src);
+void fn_80428FA8(Vector *v, float x, float y, float z);
+int fn_804427FC(char *g);
+void *fn_8046315C(char *g);
+float fn_804631B8(void *cam);
+float *fn_8042FB28(Vector *v);
+float fn_801BDA3C(float a);
+void fn_801BEC2C(Vector *v, Vector *rot);
+void fn_80435530(Vector *v, float s);
+void fn_8042D854(Vector *dst, Vector *src);
+void fn_80429038(Vector *out, Vector *a, Vector *b);
+float fn_8042EC54(Vector *v);
+float fn_8042FE6C(Vector *v);
+int fn_800B24AC(Ent &e);
+int fn_800B1CC8i(Ent &e) __asm__("fn_800B1CC8");
+Tgt *fn_80442080(void *ai);
+Tgt *fn_80134870t(void *ai) __asm__("fn_80134870");
+AiObj *fn_801332C0(Tgt *actor);
+int fn_800B13D8r(Ent &e) __asm__("fn_800B13D8");
+int fn_8004A9CC(Vector *from, Vector *dir, float len, unsigned int mask, void *hit, int a, int b, int c, int d);
 }
 
 extern char lbl_80593BE8[];
 extern int lbl_8066BF50;
 extern void *lbl_8066D6DC;
+extern char lbl_80552110[];
+extern char lbl_80593DD0[];
 
 extern "C" void fn_80147DE4(register AiObj *self)
 {
@@ -391,4 +433,105 @@ extern "C" void fn_80148B50(register AiObj *self, float x, float y)
             y += 13.0f;
         }
     }
+}
+
+// Finds a spot dist from center, in sight of it, at self's height: tries slots from start, by camera spread or evenly.
+extern "C" int fn_80148D30(Tgt *self, Tgt *center, float dist, int start, int count, Vector *out, int byCamera,
+                           int useFwd)
+{
+    float two = 2.0f;
+    Vector pos;
+    float d = dist;
+    Vector fwd;
+    fn_8042DC84(&fwd, fn_800B1750(*center));
+    if (useFwd)
+        fn_804354B8(&fwd, fn_804304CC(lbl_80593DD0));
+    Vector rot;
+    int done = 0;
+    int i = start;
+    while (!done) {
+        fn_80428FA8(&pos, 0.0f, 1.0f, 0.0f);
+        if (byCamera) {
+            void *cam = 0;
+            if (fn_804427FC(lbl_80552110))
+                cam = fn_8046315C(lbl_80552110);
+            if (cam) {
+                float spread = 30.0f;
+                float ang = fn_804631B8(cam) - spread / 2.0f - count * spread / 2.0f + (i + 1) * spread;
+                *fn_8042FB28(&rot) = 0.0f;
+                fn_8042FB28(&rot)[2] = fn_801BDA3C(ang);
+                fn_8042FB28(&rot)[1] = 0.0f;
+                fn_801BEC2C(&pos, &rot);
+            }
+        } else {
+            float step = 360.0f / count;
+            *fn_8042FB28(&rot) = 0.0f;
+            fn_8042FB28(&rot)[2] = fn_801BDA3C(i * step + fn_8042FE6C(&fwd));
+            fn_8042FB28(&rot)[1] = 0.0f;
+            fn_801BEC2C(&pos, &rot);
+        }
+        fn_80435530(&pos, d);
+        fn_8042D854(&pos, fn_800B1724v(*center));
+        pos.z = fn_800B1724v(*self)->z;
+        Vector from;
+        Vector dir;
+        center->s5(&from, 0);
+        fn_80429038(&dir, &pos, &from);
+        float len = fn_8042EC54(&dir);
+        int clear = !fn_8004A9CC(&from, &dir, len, 0x8000, 0, fn_800B24AC(*center), fn_800B1CC8i(*center), 0, 3);
+        if (clear)
+            done = 1;
+        if (++i > 7)
+            i = 0;
+        if (i == start) {
+            done = 1;
+            fn_8042DC84(&pos, fn_800B1724v(*center));
+        }
+    }
+    *out = pos;
+    return 1;
+}
+
+// Finds a spot dist from the AI's target for the AI's slot in its encounter record.
+extern "C" int fn_80149270(void *ai, float dist, Vector *out)
+{
+    if (!ai)
+        return 0;
+    Tgt &t = *fn_80134870t(ai);
+    if (!&t)
+        return 0;
+    AiObj *rec = fn_801332C0(fn_80442080(ai));
+    if (!rec)
+        return 0;
+    int n = fn_80148024(rec);
+    int slot = fn_80147F20(rec, fn_800B13D8r(*fn_80442080(ai)));
+    return fn_80148D30(fn_80442080(ai), &t, dist, slot, n, out, 0, 0);
+}
+
+// Same around the target's facing, 8 slots; out falls back to the target's position.
+extern "C" int fn_80149388(void *ai, float dist, Vector *out, int byCamera)
+{
+    if (!ai)
+        return 0;
+    Tgt &t = *fn_80134870t(ai);
+    if (!&t)
+        return 0;
+    AiObj *rec = fn_801332C0(fn_80442080(ai));
+    if (!rec)
+        return 0;
+    int n = 8;
+    int slot = fn_80147F20(rec, fn_800B13D8r(*fn_80442080(ai)));
+    Vector best;
+    float bestDist = 3.4028235e38f;
+    fn_8042DC84(&best, fn_800B1724v(t));
+    Vector spot;
+    if (fn_80148D30(fn_80442080(ai), &t, dist, slot, n, &spot, byCamera, 1)) {
+        float d = fn_804290F8(&spot, fn_800B1724v(*fn_80442080(ai)));
+        if (d < bestDist) {
+            bestDist = d;
+            fn_8042DC84(&best, &spot);
+        }
+    }
+    fn_8042DC84(out, &best);
+    return 1;
 }
