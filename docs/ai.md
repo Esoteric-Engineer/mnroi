@@ -75,14 +75,14 @@ From `Game/fn_80442010.c` (whose `Obj` is this class) and `Game/fn_801343B0.cpp`
 | +0x1C, +0x20, +0x24 | handles | Resolved through `fn_800ACFA8` by accessors the behavior handlers call; `fn_80442010` returns `&+0x20` |
 | +0x44 | `int[26]` | Cleared by the constructor |
 | +0xAC | list | `fn_801B5BA8(4, 1.0f)`, then `fn_801B5E38(0x2B)` |
-| +0xD0 | subobject | Constructor `fn_80461904` (a bit set at its `+0xFC`); `fn_804420D8`; guess: the perception record `Game/fn_80148178.cpp` fills (target ids `+0x4`, time stamps `+0x24`, owner `+0xD0` of that record). Its methods, in `Game/fn_801500C4.cpp`: owner `AIObject *` `+0x0`, count `+0x48`, actor handles `[16]` `+0x4C`, target handle `+0xE4` (`fn_801501AC` sets, `fn_80150200` resolves, `fn_80150258` validates and clears; `fn_80134870` reads it), more handles `+0xCC`, `+0xD8`, `+0xF0` |
+| +0xD0 | subobject | Constructor `fn_80461904` (a bit set at its `+0xFC`); `fn_804420D8`; guess: the perception record `Game/fn_80148178.cpp` fills (target ids `+0x4`, time stamps `+0x24`, owner `+0xD0` of that record). Its methods, in `Game/fn_801500C4.cpp`: owner `AIObject *` `+0x0`, count `+0x48`, actor handles `[16]` `+0x4C`, target handle `+0xE4` (`fn_801501AC` sets, `fn_80150200` resolves, `fn_80150258` validates and clears; `fn_80134870` reads it), more handles `+0xCC`, `+0xD8`, `+0xF0`, `int`s `+0xE8`, `+0xEC` |
 | +0x204 | `AIBrain *` | `fn_80442104` |
-| +0x210 | subobject | 0x2F0 bytes, constructor `fn_80461A68`: `int` `+0xD0`, a subobject at its `+0x20`, `Vector[24]` at `+0xF0`, a flag `+0x27C` and point `+0x280` (`fn_80461BF8` sets), `Vector`s `+0x2A0`, `+0x2D0`, `int`s `+0x2B8`, `+0x2C0`. `fn_804420AC`, passed to `fn_8014BB4C` |
+| +0x210 | subobject | 0x2F0 bytes, constructor `fn_80461A68`: `int` `+0xD0`, a subobject at its `+0x20`, `Vector[24]` at `+0xF0`, a flag `+0x27C` and point `+0x280` (`fn_80461BF8` sets), a flag `+0x294` and point `+0x2A0` (`fn_80463410` sets), `float` `+0x278`, `int`s `+0x290`, `+0x2B0`, `+0x2C4`, `Vector` `+0x2E0`, `Vector`s `+0x2A0`, `+0x2D0`, `int`s `+0x2B8`, `+0x2C0`. `fn_804420AC`, passed to `fn_8014BB4C` |
 | +0x500 | bit set | AI state bits, 42 of them: `fn_80442130` sets, `fn_80442174` clears |
 | +0x508 | bit set | 42 bits |
 | +0x52C | handle | The actor; `fn_8044203C` resolves it (`fn_800CD834`) |
 | +0x530 | entity | The owner entity whose PLAYER tuning fields are read (`fn_80442080`) |
-| +0x524, +0x528, +0x594 | `int` | Each with a getter and a setter; +0x538, +0x560, +0x564 are `int`s too |
+| +0x524, +0x528, +0x594 | `int` | Each with a getter and a setter; +0x520, +0x538, +0x560, +0x564 are `int`s too |
 | +0x568, +0x570 | `int`, `Vector` | A flag and a point, set together by `fn_80461E58` |
 | +0x580 | `Vector` | |
 | +0x598 | `float[22]` | PLAYER fields 0x8B-0xA4, 0xF6, 0xF7 per CPU difficulty (`fn_801343B0`; `tools/nvbtool.py` names them "AI weight") |
@@ -152,7 +152,9 @@ Rename the handlers when you match them (`AIBehavior_Approach` or similar, a gue
 
 Task names, from the `char *` table `lbl_804CFB58[id]` (`TASK_` prefix dropped): 0 SLEEP, 1 SEARCH, 2 MELEE, 3 RANGED, 4 FINDTHROWABLE, 5 FINDWIELDABLE, 6 POSSESS, 7 CARRYTHROWABLE, 8 WIELDING, 9 ATTACKTHING, 0xA BUZZPLAYER, 0xB MOVETO, 0xC FORCECONTROL, 0xD STOP, 0xE ENSLAVE, 0xF FORCEJUMP, 0x10 SWING, 0x11 GETANDTHROWAT, 0x12 WALLCLIMB, 0x13 PLAYANIM, 0x14 RANGEDONLY, 0x15 CLIMBATTACK, 0x16 FORCESUPERBLOCK, 0x17 FORCEPOWERSTAND, 0x18 HOVERANDFIRE, 0x19 POWERSTAND, 0x1A GOGETANDTHROWAT, 0x1B MOBILITYCHARGE. AI_NONE's id 1 is its null task, not SEARCH.
 
-Base task layout (0x28 bytes, `fn_8015294C`): `AIObject *` `+0x0`, its brain (`AIObject+0x204`) `+0x4`, saved target handle `+0x8` (`fn_80152A10` copies the AI's target in when the task becomes the top; `fn_80152A78` writes it back to the `+0xD0` record when the task is covered or popped), name `+0xC`, timer subobject `+0x10`, id `+0x18` (`fn_804423E8`), `+0x1C` and `+0x20` zeroed, vtable `+0x24`.
+Base task layout (0x28 bytes, `fn_8015294C`): `AIObject *` `+0x0`, its brain (`AIObject+0x204`) `+0x4`, saved target handle `+0x8` (`fn_80152A10` copies the AI's target in when the task becomes the top; `fn_80152A78` writes it back to the `+0xD0` record when the task is covered or popped), name `+0xC`, `BitSet` `+0x10` (the AI's state bits `+0x500`, saved by `fn_80463B20` and restored by `fn_80463B60`), id `+0x18` (`fn_804423E8`), `+0x1C` and `+0x20` zeroed, vtable `+0x24`.
+
+Deleting a task is deferred: `fn_80463C24` queues up to 16 in `lbl_80571DB0` (count `lbl_8066BF80`), and `fn_80463C9C` deletes them all.
 
 ---
 
@@ -174,7 +176,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 2 | Behavior registry | 0x80137F2C-0x80138E10, unit `Game/fn_80137F2C.cpp` | Done. The 42 handlers keep their `fn_` names until row 13 renames them (section 4.3) |
 | 3 | Brain and task bases | 0x801500C4-0x80152AE8, unit `Game/fn_801500C4.cpp`, then 0x8015D950-0x8015E2FC, unit `Game/fn_8015D950.cpp` | Done |
 | 4 | Per-profile brains | 0x80160428-0x80164460, unit `Game/fn_80160428.cpp` | Done, with the special tasks |
-| 5 | AI inline functions | 0x80461430-0x804644B4 | 195 tail functions, 185 of them 0x80 bytes or less: accessors on `AIObject`, brain and task. One small unit per run, like `Game/fn_80442010.c`; name each field in section 4.1 as it is confirmed. A unit grows while its pools stay consecutive: `Game/fn_80461430.cpp` ends at 0x80462B38, where `fn_80462B38` starts the next unit (its pool is at 0x8049B054) |
+| 5 | AI inline functions | 0x80461430-0x804644B4 | 195 tail functions, 185 of them 0x80 bytes or less: accessors on `AIObject`, brain and task. One small unit per run, like `Game/fn_80442010.c`; name each field in section 4.1 as it is confirmed. A unit grows while its pools stay consecutive: `Game/fn_80462B38.cpp` ends at 0x80464014, where `fn_80464014` starts the next unit (its pool is at 0x8049B9E0) |
 | 6 | Rest of the `AIObject` file | 0x80133C8C-0x80137F2C, extending row 1's unit | Constructor `fn_80133C8C`, creation `fn_80133E5C`, destruction `fn_80133FA0`, reset `fn_80134028`, `fn_80134280`, `fn_80134870` (seven outside callers), the brain switch `fn_80136AC8`, per-AI update `fn_8013589C`, the debug display `fn_80137494` (0x858), static init `fn_80137D98`, `_GLOBAL_.I`, `_GLOBAL_.D`. Merge in the two matched units (section 5) |
 | 7 | Actor-side AI component | 0x800FA34C-0x800FC1F8 | 39 functions, 20 small: the three classes, their constructors, and the create/destroy/update calls into the AI |
 | 8 | AI script API | 0x8007A35C-0x8007C034, unit `Game/fn_8007A35C.cpp` | 42 functions: the `fn_8007A3A0` resolver and the wrappers. Name each wrapper after what it forwards to. Stop at 0x8007C034; the rest of the file is general script code |
