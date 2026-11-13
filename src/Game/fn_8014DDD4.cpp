@@ -1,6 +1,6 @@
 // The AIObject+0xD0 target list: init, reset, timers, the throttled steps and the update (docs/ai.md row 11).
 // .rodata 0x8049B520-0x8049B534 is fn_8014E288's and fn_8014E4FC's pool, 0x8049B534-0x8049B548 fn_8014E648's,
-// 0x8049B548-0x8049B550 fn_8014F8BC's.
+// 0x8049B548-0x8049B550 fn_8014F8BC's, 0x8049B560-0x8049B568 fn_8014FAF4's.
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -24,8 +24,8 @@ struct PEnt : Ent { // matching_notes 44
 
 struct Self {
     void *f0;              // +0x0: AIObject
-    int f4;                // +0x4
-    char pad0[0x40];
+    int f4;                // +0x4: count of f8
+    int f8[16];            // +0x8: nearby actor handles
     int f48;               // +0x48: count
     char pad1[0x80];
     int fCC;               // +0xCC: best target handle
@@ -188,6 +188,9 @@ void fn_80434C88(Query *q);
 void fn_80434CDC(Query *q, int bit);
 void fn_80434D18(Query *q, void *ignore);
 void fn_8004E4B4(Query *q, void *pos, float r, void *world);
+void fn_8004E430(Query *q);
+void fn_800B16D8(Ent &actor, Vector *out);
+float fn_800B2620(Ent &actor);
 Ent *fn_80434C2C(Slot *s);
 void *fn_800B1CC8(Ent &actor);
 int fn_80085EEC(void *actor);
@@ -625,4 +628,41 @@ extern "C" Ent *fn_8014F8BC(register Self *self)
     if (!fn_800B0C58(*best))
         return 0;
     return (Ent *)fn_800B14A0(*best);
+}
+
+// 0x8049B550-0x8049B560: a dead-stripped function's pool.
+__asm__(".section .rodata\n\t.float 10.0\n\t.float 2.0\n\t.long 0x7F7FFFFF\n\t.float 0.0\n\t.text");
+inline Ent *sn_return_decl_e(Ent *e) { return e; } // sets the return flag: run B starts here
+
+extern "C" void fn_8014FAF4(register Self *self)
+{
+    self->f4 = 0;
+    Query q;
+    fn_8004E9C8(&q);
+    PEnt *a = fn_80442080(self->f0);
+    fn_80434C88(&q);
+    fn_80434CDC(&q, 0);
+    fn_80434CDC(&q, 7);
+    fn_80434D18(&q, a);
+    fn_8004E4B4(&q, fn_800B1724(*a), 10.0f, fn_800B1CC8(*a));
+    fn_8004E430(&q);
+    Slot *s;
+    Ent *e;
+    Vector v;
+    unsigned int i;
+    void *p;
+    fn_800B16D8(*a, &v);
+    v.z += fn_800B2620(*a) / 2.0f;
+    for (i = 0; i < q.count; i++) {
+        if (i <= 15) {
+            s = &q.slot[i];
+            e = fn_80434C2C(s);
+            if (e == 0)
+                continue;
+            if (fn_800B0C58(*e)) {
+                p = fn_800B14A0(*e);
+                self->f8[self->f4++] = fn_800B13D8(*(Ent *)p);
+            }
+        }
+    }
 }
