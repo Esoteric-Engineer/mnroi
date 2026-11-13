@@ -172,6 +172,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   switch expression is unsigned.** The equality tests are `cmpwi` either way, so the ordering ones are
   the only tell; declaring the callee that produces the index `unsigned int` is enough
   (`Game/fn_80114420.cpp`, `fn_8009ABEC`).
+- **A count that is `cmpw` against an `int` index in one function but `cmplwi` against a constant in
+  another is still `int`:** the constant is an array's capacity, `n < sizeof a / sizeof a[0]`, whose
+  `size_t` makes the test unsigned (`Game/fn_80147DE4.cpp`, `fn_80148178` against `fn_80147F20`).
 
 - **A field load off a global array that the DOL does as `add rX, <variable>, <base>` plus a load
   displacement, where ours folds the field offset into the symbol and uses `lwzx`/`lfsx`, means the
