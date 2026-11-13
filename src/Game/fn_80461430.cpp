@@ -1,4 +1,5 @@
-// AI inline functions: lbl_80569890 and AIObject subobject constructors, a screen projection, a bit set, accessors.
+// AI inline functions: lbl_80569890 and AIObject subobject constructors, a screen projection, a bit set,
+// accessors on AIObject, its +0x210 subobject and its +0xD0 record.
 // docs/ai.md row 5. Pools at 0x8049AA00 (extern_pool), in the behavior registry file's .rodata.
 
 inline int sn_return_decl(int a) { return a; }
@@ -180,6 +181,10 @@ struct Holder
     char pad[0xCC];
     int id;   // +0xCC
     int iD0; // +0xD0
+    char padD4[0x4];
+    int iD8; // +0xD8
+    char padDC[0x14];
+    int iF0; // +0xF0
 };
 
 extern "C" void *fn_80461948(register Holder *self)
@@ -261,11 +266,21 @@ extern "C" void *fn_80461A68(register char *self)
 
 struct Sub210
 {
-    char pad[0x27C];
+    char pad[0xD0];
+    int iD0; // +0xD0
+    char padD4[0x1A8];
     int hasPoint; // +0x27C
     Vector point; // +0x280
     char pad290[0x4];
     int i294; // +0x294
+    char pad298[0x8];
+    Vector v2A0; // +0x2A0
+    char pad2B0[0x8];
+    int i2B8; // +0x2B8
+    char pad2BC[0x4];
+    int i2C0; // +0x2C0
+    char pad2C4[0xC];
+    Vector v2D0; // +0x2D0
 };
 
 extern "C" char *fn_80461B2C(register char *self)
@@ -337,24 +352,26 @@ extern "C" void fn_80461D98(register Flagged *self)
 
 struct AIObject
 {
-    char pad[0x514];
+    char pad[0x500];
+    BitSet state; // +0x500
+    char pad508[0xC];
     int i514; // +0x514
-    char pad518[0x1C];
+    char pad518[0xC];
+    int i524; // +0x524
+    int i528; // +0x528
+    char pad52C[0x8];
     int i534; // +0x534
-    char pad538[0x30];
+    int i538; // +0x538
+    char pad53C[0x24];
+    int i560; // +0x560
+    int i564; // +0x564
     int hasPoint; // +0x568
     char pad56C[0x4];
     Vector point; // +0x570
-    char pad580[0x1C];
-    float f59C; // +0x59C
-    char pad5A0[0x1C];
-    float f5BC; // +0x5BC
-    char pad5C0[0x4];
-    float f5C4; // +0x5C4
-    float f5C8; // +0x5C8
-    char pad5CC[0x10];
-    float f5DC; // +0x5DC
-    float f5E0; // +0x5E0
+    Vector v580;  // +0x580
+    char pad590[0x4];
+    int i594;         // +0x594
+    float weight[22]; // +0x598, AI weights (docs/ai.md 4.1)
 };
 
 extern "C" char *fn_80461DD4(register char *self)
@@ -389,32 +406,32 @@ extern "C" int fn_80461EB8(register AIObject *self)
 
 extern "C" float fn_80461EE4(register AIObject *self)
 {
-    return self->f59C;
+    return self->weight[1];
 }
 
 extern "C" float fn_80461F10(register AIObject *self)
 {
-    return self->f5BC;
+    return self->weight[9];
 }
 
 extern "C" float fn_80461F3C(register AIObject *self)
 {
-    return self->f5C4;
+    return self->weight[11];
 }
 
 extern "C" float fn_80461F68(register AIObject *self)
 {
-    return self->f5C8;
+    return self->weight[12];
 }
 
 extern "C" float fn_80461F94(register AIObject *self)
 {
-    return self->f5DC;
+    return self->weight[17];
 }
 
 extern "C" float fn_80461FC0(register AIObject *self)
 {
-    return self->f5E0;
+    return self->weight[18];
 }
 
 struct Rec
@@ -572,4 +589,214 @@ extern "C" void fn_80462430(register Sub230 *self)
     self->s44 = 0;
     self->i50 = 0;
     self->f48 = 0.0f;
+}
+
+// A Vector at +0x30
+extern "C" void *fn_80462474(register char *self)
+{
+    __6Vector((Vector *)(self + 0x30));
+    return self;
+}
+
+inline void sn_label_decl() { clear:; } // the pair on fn_804624B8 (prodg.md)
+
+struct Overlay
+{
+    char pad[0x8];
+    int i8; // +0x8
+};
+
+extern "C" int fn_804624B8(register Overlay *self)
+{
+    return self->i8;
+}
+
+inline int sn_return_decl2(int a) { return a; }
+
+extern "C" void *fn_804624EC(register Holder *self)
+{
+    return fn_800ACFA8(self->iF0);
+}
+
+extern "C" void *fn_80462530(register Holder *self)
+{
+    return fn_800ACFA8(self->iD8);
+}
+
+extern "C" Vector *fn_80462574(register Sub210 *self)
+{
+    return &self->v2D0;
+}
+
+extern "C" int fn_804625A0(register Sub210 *self)
+{
+    return self->i2C0;
+}
+
+extern "C" Vector *fn_804625CC(register Sub210 *self)
+{
+    return &self->v2A0;
+}
+
+extern "C" Vector *fn_804625F8(register Sub210 *self)
+{
+    return &self->point;
+}
+
+extern "C" int fn_80462624(register Sub210 *self)
+{
+    return self->iD0;
+}
+
+extern "C" int fn_80462650(register Sub210 *self)
+{
+    return self->i2B8;
+}
+
+struct AIEnt
+{
+    int i0;
+};
+
+struct AIEntSub : AIEnt
+{
+    int pad;
+};
+
+struct AIIds
+{
+    char pad[0x1C];
+    int i1C; // +0x1C
+    int i20; // +0x20
+    int i24; // +0x24
+};
+
+extern "C" int fn_800ACFA8_i(int id) __asm__("fn_800ACFA8");
+extern "C" int fn_800B0CC0(void *p);
+
+extern "C" AIEnt *fn_8046267C(register AIIds *self)
+{
+    AIEnt *p = (AIEnt *)(AIEntSub *)fn_800ACFA8_i(self->i20);
+    return (p && fn_800B0CC0(p)) ? p : 0;
+}
+
+extern "C" void *fn_804626F0(register AIIds *self)
+{
+    return fn_800ACFA8(self->i1C);
+}
+
+extern "C" AIEnt *fn_80462734(register AIIds *self)
+{
+    AIEnt *p = (AIEnt *)(AIEntSub *)fn_800ACFA8_i(self->i24);
+    return p;
+}
+
+extern "C" BitSet *fn_80462780(register AIObject *self)
+{
+    return &self->state;
+}
+
+extern "C" void fn_804627AC(register AIObject *self, register int v)
+{
+    self->i524 = v;
+}
+
+extern "C" int fn_804627D4(register AIObject *self)
+{
+    return self->i524;
+}
+
+extern "C" void fn_80462800(register AIObject *self, register int v)
+{
+    self->i528 = v;
+}
+
+extern "C" int fn_80462828(register AIObject *self)
+{
+    return self->i528;
+}
+
+extern "C" Vector *fn_80462854(register AIObject *self)
+{
+    return &self->v580;
+}
+
+extern "C" int fn_80462880(register AIObject *self)
+{
+    return self->i538;
+}
+
+extern "C" int fn_804628AC(register AIObject *self)
+{
+    return self->i564;
+}
+
+extern "C" void fn_804628D8(register AIObject *self, register int v)
+{
+    self->i560 = v;
+}
+
+extern "C" void fn_80462900(register AIObject *self, register int v)
+{
+    self->i594 = v;
+}
+
+extern "C" int fn_80462928(register AIObject *self)
+{
+    return self->i594;
+}
+
+extern "C" float fn_80462954(register AIObject *self)
+{
+    return self->weight[2];
+}
+
+extern "C" float fn_80462980(register AIObject *self)
+{
+    return self->weight[3];
+}
+
+extern "C" float fn_804629AC(register AIObject *self)
+{
+    return self->weight[4];
+}
+
+extern "C" float fn_804629D8(register AIObject *self)
+{
+    return self->weight[5];
+}
+
+extern "C" float fn_80462A04(register AIObject *self)
+{
+    return self->weight[7];
+}
+
+extern "C" float fn_80462A30(register AIObject *self)
+{
+    return self->weight[8];
+}
+
+extern "C" float fn_80462A5C(register AIObject *self)
+{
+    return self->weight[13];
+}
+
+extern "C" float fn_80462A88(register AIObject *self)
+{
+    return self->weight[14];
+}
+
+extern "C" float fn_80462AB4(register AIObject *self)
+{
+    return self->weight[19];
+}
+
+extern "C" float fn_80462AE0(register AIObject *self)
+{
+    return self->weight[20];
+}
+
+extern "C" float fn_80462B0C(register AIObject *self)
+{
+    return self->weight[21];
 }
