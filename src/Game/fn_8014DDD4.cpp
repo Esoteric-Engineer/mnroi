@@ -1,5 +1,6 @@
 // The AIObject+0xD0 target list: init, reset, timers, the throttled steps and the update (docs/ai.md row 11).
-// .rodata 0x8049B520-0x8049B534 is fn_8014E288's and fn_8014E4FC's pool, 0x8049B534-0x8049B548 fn_8014E648's.
+// .rodata 0x8049B520-0x8049B534 is fn_8014E288's and fn_8014E4FC's pool, 0x8049B534-0x8049B548 fn_8014E648's,
+// 0x8049B548-0x8049B550 fn_8014F8BC's.
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -52,6 +53,17 @@ struct Self {
     unsigned int f128;     // +0x128
     unsigned int f12C;     // +0x12C
     unsigned int f130;     // +0x130
+};
+
+struct Slot {
+    char d[0x30];
+};
+
+struct Query { // as in Game/fn_800F43D4.cpp
+    char pad0[0x40];
+    Slot slot[0x80];    // +0x40
+    unsigned int count; // +0x1840
+    char pad1844[0xC];
 };
 
 struct Ctrl : Ent {
@@ -167,6 +179,19 @@ int fn_8014AB90(void *m);
 int fn_800860CC(void *e);
 int fn_8014ACA0(void *m);
 int fn_80463968(void *ai);
+Ent *fn_80462530(Self *self);
+Ent *fn_804638B4(Self *self);
+Ent *fn_804638F8(Self *self);
+void fn_801501AC(Self *self, Ent *actor);
+void fn_8004E9C8(Query *q);
+void fn_80434C88(Query *q);
+void fn_80434CDC(Query *q, int bit);
+void fn_80434D18(Query *q, void *ignore);
+void fn_8004E4B4(Query *q, void *pos, float r, void *world);
+Ent *fn_80434C2C(Slot *s);
+void *fn_800B1CC8(Ent &actor);
+int fn_80085EEC(void *actor);
+int fn_8015F278(void *a, Ent *e);
 }
 
 extern "C" void fn_8014DDD4(register Self *self, void *ai)
@@ -537,4 +562,67 @@ extern "C" void fn_8014E648(register Self *self)
         fn_80461CC0(self->f0, 0x3E);
     if (fn_80463968(self->f0))
         fn_80461CC0(self->f0, 0x3F);
+}
+
+extern "C" void fn_8014F7B0(register Self *self, int mode)
+{
+    Ent *e = 0;
+    switch (mode) {
+    case 0: {
+        Ent *best = fn_8014F8BC(self);
+        if (best)
+            self->fCC = fn_800B13D8(*best);
+        else
+            self->fCC = 0;
+        e = fn_80462530(self);
+        break;
+    }
+    case 1:
+        e = fn_804638B4(self);
+        break;
+    case 2:
+        e = fn_804638F8(self);
+        break;
+    case 3:
+        e = fn_80462530(self);
+        break;
+    }
+    fn_801501AC(self, e);
+}
+
+extern "C" Ent *fn_8014F8BC(register Self *self)
+{
+    Query q;
+    fn_8004E9C8(&q);
+    fn_80434C88(&q);
+    fn_80434CDC(&q, 7);
+    fn_80434D18(&q, fn_80442080(self->f0));
+    fn_8004E4B4(&q, fn_800B1724(*fn_80442080(self->f0)), 200.0f, fn_800B1CC8(*fn_80442080(self->f0)));
+    Slot *s;
+    Ent *e;
+    float bestDist = 3.4028235e38f;
+    Ent *best = 0;
+    unsigned int i;
+    for (i = 0; i < q.count; i++) {
+        s = &q.slot[i];
+        if (s == 0)
+            continue;
+        e = fn_80434C2C(s);
+        if (e == 0)
+            continue;
+        if (fn_800B0C58(*e) && fn_80085EEC(fn_800B14A0(*e)))
+            continue;
+        if (fn_8015F278(fn_80442080(self->f0), e))
+            continue;
+        float dist = fn_804290F8(fn_800B1724(*fn_80442080(self->f0)), fn_800B1724(*e));
+        if (dist < bestDist) {
+            bestDist = dist;
+            best = e;
+        }
+    }
+    if (best == 0)
+        return 0;
+    if (!fn_800B0C58(*best))
+        return 0;
+    return (Ent *)fn_800B14A0(*best);
 }
