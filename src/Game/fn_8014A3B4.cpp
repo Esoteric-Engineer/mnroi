@@ -1,5 +1,5 @@
-// The Mover (AIObject+0x210): init, destroy, update, aim points beside a target, height hold, volume probes ahead, set waypoint (docs/ai.md row 11).
-// .rodata 0x8049B3C0-0x8049B410. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 49).
+// The Mover (AIObject+0x210): init, destroy, update, aim points beside a target, height hold, volume probes, waypoint, chase, stop (docs/ai.md row 11).
+// .rodata 0x8049B3C0-0x8049B410. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 50).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -132,61 +132,61 @@ extern "C" void fn_8014A554(register Mover *self)
 {
 }
 
-extern "C" void fn_8014A574(Ent &self, Ent &target, Vector *out)
+extern "C" void fn_8014A574(Ent *self, Ent *target, Vector *out)
 {
     Vector a;
     Vector b;
     float d;
 
-    fn_8042DC84(&b, fn_800B1724(self));
-    fn_8042D8A8(&b, fn_800B1724(target));
+    fn_8042DC84(&b, fn_800B1724(*self));
+    fn_8042D8A8(&b, fn_800B1724(*target));
     b.z = 0.0f;
     fn_8042F76C(&b);
-    d = fn_800B2670(self) + fn_800B2670(target);
-    if (fn_800B0C1C(target) && fn_80095608(*fn_800B14C8(target)) && !fn_80085D3C(self))
-        d = fn_800B1884(self, 211);
+    d = fn_800B2670(*self) + fn_800B2670(*target);
+    if (fn_800B0C1C(*target) && fn_80095608(*fn_800B14C8(*target)) && !fn_80085D3C(*self))
+        d = fn_800B1884(*self, 211);
     else
-        d = fn_800B1884(self, 209);
-    fn_8042DC84(&a, fn_800B1724(target));
+        d = fn_800B1884(*self, 209);
+    fn_8042DC84(&a, fn_800B1724(*target));
     fn_8042FE08(&a, &b, d);
-    if (!fn_800B0C58(target)) {
-        if (fn_80134870(fn_80085980(self))) {
-            fn_8042DC84(&b, fn_800B1724(*fn_80134870(fn_80085980(self))));
-            fn_8042D8A8(&b, fn_800B1724(target));
+    if (!fn_800B0C58(*target)) {
+        if (fn_80134870(fn_80085980(*self))) {
+            fn_8042DC84(&b, fn_800B1724(*fn_80134870(fn_80085980(*self))));
+            fn_8042D8A8(&b, fn_800B1724(*target));
             fn_8042F76C(&b);
             fn_80433FFC(&b);
-            fn_8042DC84(&a, fn_800B1724(target));
+            fn_8042DC84(&a, fn_800B1724(*target));
             fn_8042FE08(&a, &b, d);
         }
     } else {
-        int t = fn_801332C0(self);
+        int t = fn_801332C0(*self);
         if (t)
-            fn_80149270(fn_80085980(self), d, &a);
-        if (fn_800CCA58(*fn_80085954(self)) || fn_800CCAE8(*fn_80085954(self)))
-            a.z = fn_800B1724(target)->z;
+            fn_80149270(fn_80085980(*self), d, &a);
+        if (fn_800CCA58(*fn_80085954(*self)) || fn_800CCAE8(*fn_80085954(*self)))
+            a.z = fn_800B1724(*target)->z;
     }
     fn_8042DC84(out, &a);
 }
 
 extern "C" int fn_80149388(void *ai, float dist, Vector *out, int byCamera);
 
-extern "C" void fn_8014A860(Ent &self, Ent &target, Vector *out)
+extern "C" void fn_8014A860(Ent *self, Ent *target, Vector *out)
 {
     Vector a;
     Vector b;
     float d;
 
-    fn_8042DC84(&b, fn_800B1724(self));
-    fn_8042D8A8(&b, fn_800B1724(target));
+    fn_8042DC84(&b, fn_800B1724(*self));
+    fn_8042D8A8(&b, fn_800B1724(*target));
     b.z = 0.0f;
     fn_8042F76C(&b);
-    d = fn_800B1884(self, 212);
-    fn_8042DC84(&a, fn_800B1724(target));
+    d = fn_800B1884(*self, 212);
+    fn_8042DC84(&a, fn_800B1724(*target));
     fn_8042FE08(&a, &b, d);
-    int t = fn_801332C0(self);
+    int t = fn_801332C0(*self);
     if (t)
-        fn_80149388(fn_80085980(self), d, &a, 0);
-    a.z = fn_800B1724(target)->z;
+        fn_80149388(fn_80085980(*self), d, &a, 0);
+    a.z = fn_800B1724(*target)->z;
     fn_8042DC84(out, &a);
 }
 
@@ -421,4 +421,84 @@ extern "C" int fn_8014B518(register Mover *self, Vector *dest, int index)
     return r;
 }
 
-__asm__(".section .rodata\n\t.globl lbl_8049B40C\nlbl_8049B40C:\n\t.float 0.0\n\t.text"); // fn_8014B900's 0.0f, 8-aligns the claim's end
+extern "C" int fn_804633B0(Nav *nav);
+
+// Chase actor `id`: aim beside it and repath, at most once per +0x10 ms unless forced.
+extern "C" int fn_8014B63C(register Mover *self, int id, int force)
+{
+    if (self->f8 == id && !force && fn_8042EFF8(lbl_80593BE8) < (unsigned int)(self->fC + self->f10))
+        return 1;
+    self->f8 = id;
+    Ent *t = fn_800ACFA8(id);
+    if (!t)
+        return 0;
+    Vector dest;
+    if (fn_800861EC(fn_80442080(self->f0)))
+        fn_8014A860(fn_80442080(self->f0), t, &dest);
+    else
+        fn_8014A574(fn_80442080(self->f0), t, &dest);
+    fn_80461BF8(self, &dest);
+    int r = 0;
+    self->fC = fn_8042EFF8(lbl_80593BE8);
+    if (fn_80462650(self) && !force)
+        return 0;
+    self->fD0 = 0;
+    r = fn_8014BE08(&self->f20, self->f0, &dest, 0, 1, 0);
+    if (!r || fn_804633B0(&self->f20))
+        fn_80463410(self, &dest);
+    return r;
+}
+
+extern "C" {
+int fn_80461BA0(Mover *self);
+int fn_80461BCC(Mover *self);
+}
+
+// Height to hold: the waypoint's, else the move destination's, else the target's, else our own.
+extern "C" float fn_8014B824(register Mover *self)
+{
+    register Sub *e = fn_804633E4(self);
+    float z = fn_800B1724(*e)->z;
+
+    if (fn_80461BA0(self))
+        return self->f2A0.z;
+    else if (fn_80461BCC(self))
+        return self->f280.z;
+    else if (fn_80134870(self->f0))
+        return fn_800B1724(*fn_80134870(self->f0))->z;
+    return z;
+}
+
+extern "C" {
+void fn_8014BA7C(Mover *self);
+void *fn_804634F8(void *ai);
+int fn_801B6A44(void *list);
+void *fn_801B5D3C(void *list, int i);
+int fn_80463524(int b);
+void fn_80138AE0(int h, int a, Vector *v, float f);
+}
+
+// Stop: drop the destination, clear the heading and the point ring, and zero every behavior's vector.
+extern "C" void fn_8014B900(register Mover *self)
+{
+    fn_8014BA7C(self);
+    fn_8042DC84(&self->f280, fn_800B1724(*fn_804633E4(self)));
+    self->f27C = 0;
+    self->f294 = 0;
+    self->f278 = 0.0f;
+    fn_80447C38(&self->fE0);
+    int i;
+    for (i = 0; i < 24; i++)
+        fn_80447C38(&self->fF0[i]);
+    void *list = fn_804634F8(fn_804634CC(self));
+    int n = fn_801B6A44(list);
+    int j;
+    for (j = 0; j < n; j++) {
+        int b = (int)fn_801B5D3C(list, j);
+        if (!fn_80463524(b)) {
+            Vector v;
+            fn_80447C38(&v);
+            fn_80138AE0(b, 0, &v, 0.0f);
+        }
+    }
+}
