@@ -18,7 +18,7 @@ extern char lbl_8052F060[]; // the level object
 extern int lbl_8066C710;
 }
 
-// lbl_80569890 (docs/ai.md row 10): six lists of 0x24 bytes from +0x4
+// lbl_80569890, the volume registry (docs/ai.md section 4.5): six lists of 0x24 bytes from +0x4
 extern "C" void *fn_80461430(register char *self)
 {
     fn_801B5BA8(self + 0x4, 4, 1.0f);

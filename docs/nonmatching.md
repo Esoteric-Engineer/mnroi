@@ -22,7 +22,7 @@ the assembly, and it was removed because it can't model a file where a `switch` 
 
 The end of `Game/fn_80132480.cpp`'s file (`docs/ai.md` row 6). Real globals reproduce the DOL's
 `__static_initialization_and_destruction_0` exactly in a scratch compile, pair-less after the unit's
-setter: `Perc lbl_80569890; Rec lbl_8056996C[16];` with constructors `__asm__("fn_80461430")` /
+setter: `Volumes lbl_80569890; Rec lbl_8056996C[16];` with constructors `__asm__("fn_80461430")` /
 `__asm__("fn_804619C8")`, plus `fn_801ACFD4` renamed `__builtin_vec_delete`. The destructors are the
 blocker: an `__asm__` label on a destructor makes cc1plus drop its calls (it emits only the
 `__builtin_delete` branch), and a destructor can't be redeclared outside its class, so the calls only appear
