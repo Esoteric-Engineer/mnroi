@@ -1,6 +1,6 @@
 // The AIObject+0xD0 target list: init, reset, timers, the throttled steps and the update (docs/ai.md row 11).
 // .rodata 0x8049B520-0x8049B534 is fn_8014E288's and fn_8014E4FC's pool, 0x8049B534-0x8049B548 fn_8014E648's,
-// 0x8049B548-0x8049B550 fn_8014F8BC's, 0x8049B560-0x8049B568 fn_8014FAF4's.
+// 0x8049B548-0x8049B550 fn_8014F8BC's, 0x8049B560-0x8049B568 fn_8014FAF4's, 0x8049B568-0x8049B570 fn_8014FD94's.
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -26,8 +26,9 @@ struct Self {
     void *f0;              // +0x0: AIObject
     int f4;                // +0x4: count of f8
     int f8[16];            // +0x8: nearby actor handles
-    int f48;               // +0x48: count
-    char pad1[0x80];
+    int f48;               // +0x48: count of f4C
+    int f4C[16];           // +0x4C: visible actor handles
+    float f8C[16];         // +0x8C: their query distances (guess)
     int fCC;               // +0xCC: best target handle
     unsigned int fD0;      // +0xD0
     unsigned int fD4;      // +0xD4
@@ -56,7 +57,9 @@ struct Self {
 };
 
 struct Slot {
-    char d[0x30];
+    char pad0[0x20];
+    float f20;             // +0x20: distance (guess)
+    char pad24[0xC];
 };
 
 struct Query { // as in Game/fn_800F43D4.cpp
@@ -64,6 +67,15 @@ struct Query { // as in Game/fn_800F43D4.cpp
     Slot slot[0x80];    // +0x40
     unsigned int count; // +0x1840
     char pad1844[0xC];
+};
+
+struct Act : Ent {
+    char pad4[0x28];
+    unsigned int f2C;      // +0x2C: bit 0x800 skips the actor
+    char pad30[0x20];
+    char f50[0x10];        // +0x50
+    char f60[0x18];        // +0x60
+    char f78[0x40];        // +0x78: transform
 };
 
 struct Ctrl : Ent {
@@ -192,9 +204,16 @@ void fn_8004E430(Query *q);
 void fn_800B16D8(Ent &actor, Vector *out);
 float fn_800B2620(Ent &actor);
 Ent *fn_80434C2C(Slot *s);
+Act *fn_80434C2C_A(Slot *s) __asm__("fn_80434C2C");
 void *fn_800B1CC8(Ent &actor);
 int fn_80085EEC(void *actor);
 int fn_8015F278(void *a, Ent *e);
+int fn_800B244C(Ent &e);
+int fn_800B11F8(Ent &e);
+int fn_800B1D48(Ent &e);
+int fn_800B1318(Ent &e);
+void fn_80436100(Vector *v, void *m);
+int fn_8015ED50(void *ai, void *pos);
 }
 
 extern "C" void fn_8014DDD4(register Self *self, void *ai)
@@ -663,6 +682,77 @@ extern "C" void fn_8014FAF4(register Self *self)
                 p = fn_800B14A0(*e);
                 self->f8[self->f4++] = fn_800B13D8(*(Ent *)p);
             }
+        }
+    }
+}
+
+extern "C" int fn_8014FCAC(register Self *self)
+{
+    return self->f4;
+}
+
+extern "C" void *fn_8014FCD8(register Self *self, int i)
+{
+    if (i < 0 && i >= self->f4)
+        return 0;
+    int h = self->f8[i];
+    if (h == 0)
+        return 0;
+    Ent *e = fn_800ACFA8(h);
+    if (e)
+        return fn_800B14A0(*e);
+    return 0;
+}
+
+extern "C" void fn_8014FD94(register Self *self)
+{
+    self->f48 = 0;
+    Query q;
+    fn_8004E9C8(&q);
+    PEnt *a = fn_80442080(self->f0);
+    fn_80434C88(&q);
+    fn_80434CDC(&q, 2);
+    fn_80434CDC(&q, 8);
+    fn_8004E4B4(&q, fn_800B1724(*a), 10.0f, fn_800B1CC8(*a));
+    fn_8004E430(&q);
+    Slot *s;
+    Act *e;
+    Vector v;
+    unsigned int i;
+    fn_800B16D8(*a, &v);
+    v.z += fn_800B2620(*a) / 2.0f;
+    for (i = 0; i < q.count; i++) {
+        if (i <= 15) {
+            s = &q.slot[i];
+            e = fn_80434C2C_A(s);
+            if (e == 0)
+                continue;
+            if (!fn_800B0CC0(*e))
+                continue;
+            if (fn_800B244C(*e))
+                continue;
+            if (fn_800B11F8(*e))
+                continue;
+            if (e->f2C & 0x800)
+                continue;
+            if (!fn_800B1D48(*e))
+                continue;
+            if (!fn_800B1318(*e))
+                continue;
+            Vector lo;
+            Vector hi;
+            Vector pos;
+            fn_8042DC84(&pos, fn_800B1724(*e));
+            fn_8042DC84(&lo, e->f50);
+            fn_8042DC84(&hi, e->f60);
+            fn_80436100(&lo, e->f78);
+            fn_80436100(&hi, e->f78);
+            if (!fn_8015ED50(self->f0, fn_800B1724(*e)) && !fn_8015ED50(self->f0, &lo)
+                && !fn_8015ED50(self->f0, &hi))
+                continue;
+            self->f4C[self->f48] = fn_800B13D8(*e);
+            self->f8C[self->f48] = s->f20;
+            self->f48++;
         }
     }
 }
