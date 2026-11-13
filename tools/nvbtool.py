@@ -164,7 +164,7 @@ FIELD_NAMES = {
         179: "as 176, idx 4: u16 0x21 or 0x3E",
         180: "as 176, idx 5: u16 0x22",
         182: "as 176, idx 7: u16 0x56",
-        183: "read from the target's entity; half of it is added to the clock as the time stamp stored in the AI object's target list (fn_80148178)",
+        183: "engagement length: an AI leaves its encounter's engaged list once this has passed since it joined (fn_80148644); half of it is added to the clock as the stamp stored when the AI is first seen (fn_80148178)",
         187: "energy cost (+0x414) of motion 0x34 (fn_800DA884, the motion's hit setup)",
         188: "rage points (+0x418) of a motion that is not an attack, when its case set none (fn_800DA884, the motion's hit setup)",
         189: "rage points for superattack; read from a projectile's owner and added to the owner's meter (fn_80086A2C) when the projectile hits (fn_800A0488); also the default +0x418 of an attack motion (fn_800DA884, the motion's hit setup)",
