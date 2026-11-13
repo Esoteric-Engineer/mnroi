@@ -1,4 +1,4 @@
-// The Mover (AIObject+0x210): init, destroy, update, aim points beside a target, height hold, volume probes ahead (docs/ai.md row 11).
+// The Mover (AIObject+0x210): init, destroy, update, aim points beside a target, height hold, volume probes ahead, set waypoint (docs/ai.md row 11).
 // .rodata 0x8049B3C0-0x8049B410. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 49).
 
 inline int sn_return_decl(int a) { return a; }
@@ -284,7 +284,7 @@ Ent *fn_800ACFA8(int h);
 int fn_80462650(Mover *self);
 int fn_801368B8(void *ai);
 NavFlags *fn_80442010(Mover *self);
-void fn_8014BE08(Nav *nav, void *ai, Vector *dest, int a, int b, int c);
+int fn_8014BE08(Nav *nav, void *ai, Vector *dest, int a, int b, int c);
 int fn_8014BC7C(Nav *nav, void *ai, Ent *dest, int a, int b, int c);
 int fn_804623BC(Nav *nav);
 int fn_8044734C(Mover *self);
@@ -393,6 +393,32 @@ extern "C" void fn_8014B420(register Mover *self, Vector *v)
     if (fn_800CC9D8(fn_80085928(fn_80442080(fn_804634CC(self)))) && fn_80434040(v) > 0.1f) {
         int unused = 0;
     }
+}
+
+extern "C" {
+Mover *fn_804420AC(void *ai);
+void fn_80463410(Mover *self, Vector *v);
+void fn_80461BF8(Mover *self, Vector *v);
+void fn_8014C660(Nav *nav);
+}
+
+// Set a waypoint and repath to it, at most once per +0x10 ms; index -1 keeps +0x290.
+extern "C" int fn_8014B518(register Mover *self, Vector *dest, int index)
+{
+    fn_80463410(fn_804420AC(self->f0), 0);
+    fn_80461BF8(self, dest);
+    if (index != -1)
+        self->f290 = index;
+    if (fn_8042EFF8(lbl_80593BE8) < (unsigned int)(self->fC + self->f10))
+        return 1;
+    int r = 0;
+    self->fC = fn_8042EFF8(lbl_80593BE8);
+    self->f8 = 0;
+    if (fn_804623BC(&self->f20))
+        fn_8014C660(&self->f20);
+    r = fn_8014BE08(&self->f20, self->f0, dest, 0, 1, 0);
+    self->fD0 = 0;
+    return r;
 }
 
 __asm__(".section .rodata\n\t.globl lbl_8049B40C\nlbl_8049B40C:\n\t.float 0.0\n\t.text"); // fn_8014B900's 0.0f, 8-aligns the claim's end
