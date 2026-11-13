@@ -1,7 +1,9 @@
-// The Mover (AIObject+0x210): init, destroy, aim points beside a target, height hold, volume probes ahead (docs/ai.md row 11).
-// .rodata 0x8049B3C4-0x8049B3EC. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 49).
+// The Mover (AIObject+0x210): init, destroy, update, aim points beside a target, height hold, volume probes ahead (docs/ai.md row 11).
+// .rodata 0x8049B3C0-0x8049B408. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 49).
 
 inline int sn_return_decl(int a) { return a; }
+
+__asm__(".section .rodata\n\t.globl lbl_8049B3C0\nlbl_8049B3C0:\n\t.4byte 0x6C696400\n\t.text"); // 8-aligns the claim: the end of the previous file's "invalid"
 
 class Vector
 {
@@ -44,13 +46,23 @@ int fn_800CCA58(Ent &a);
 int fn_800CCAE8(Ent &a);
 }
 
+struct Nav {
+    char d[0xB0];
+};
+
+struct NavFlags {
+    char pad[0x9C];
+    unsigned int f9C;
+};
+
 struct Mover {
     void *f0;              // +0x0: AIObject
     Ent *f4;               // +0x4: its entity
     int f8;                // +0x8: dest-thing handle
     int fC;
     int f10;
-    char pad0[0xBC];
+    char pad0[0xC];
+    Nav f20;               // +0x20
     int fD0;
     char pad1[0xC];
     Vector fE0;
@@ -255,4 +267,110 @@ extern "C" int fn_8014ACA0(register Mover *self)
     if (fn_8013379C(self->f0, &p))
         return 1;
     return 0;
+}
+
+class AIActor
+{
+public:
+    char d[0x5bc];
+    virtual void s0(); virtual void s1(); virtual void s2(); virtual void s3(); virtual void s4();
+    virtual void s5(); virtual void s6(); virtual void s7(); virtual void s8(); virtual void s9();
+    virtual void s10(); virtual void s11(); virtual void s12(); virtual void s13(); virtual void s14();
+    virtual void s15(int v); // +0x80
+};
+
+extern "C" {
+Ent *fn_800ACFA8(int h);
+int fn_80462650(Mover *self);
+int fn_801368B8(void *ai);
+NavFlags *fn_80442010(Mover *self);
+void fn_8014BE08(Nav *nav, void *ai, Vector *dest, int a, int b, int c);
+int fn_8014BC7C(Nav *nav, void *ai, Ent *dest, int a, int b, int c);
+int fn_804623BC(Nav *nav);
+int fn_8044734C(Mover *self);
+int fn_80444D04(int x);
+void fn_8014C31C(Nav *nav);
+int fn_8014D034(Nav *nav);
+unsigned int fn_8042EFF8(void *clock);
+void fn_80447C38(Vector *v);
+void fn_8042D854(Vector *dst, Vector *src);
+void fn_80435530(Vector *v, float s);
+float fn_80434040(Vector *v);
+float fn_80426A84(void *clock);
+void fn_8042FDBC(Vector *out, Vector *v, float s);
+void *fn_804634CC(Mover *self);
+Sub *fn_8044203C(void *ai);
+int fn_800CCC28(Ent &e);
+int fn_804421B8(void *ai, int bit);
+int fn_800CD0EC(Ent &e);
+int fn_800CD064(Ent &e);
+int fn_800CC6DC(Ent &e);
+void fn_8014B900(Mover *self);
+AIActor *fn_800CDA94(Ent &e);
+}
+
+// Per-frame update: refresh the path, then steer and track the stuck time at +0x278.
+extern "C" void fn_8014ADB0(register Mover *self)
+{
+    Ent *t = fn_800ACFA8(self->f8);
+
+    if (!t)
+        self->f8 = 0;
+    fn_8014A9B0(self);
+    if (!fn_80462650(self)) {
+        if (fn_801368B8(self->f0)) {
+            if (!(fn_80442010(self)->f9C & 0x200000) && t)
+                fn_8014BE08(&self->f20, self->f0, fn_800B1724(*t), 0, 1, 0);
+        } else {
+            if ((fn_80442010(self)->f9C & 0x200000) && t)
+                fn_8014BE08(&self->f20, self->f0, fn_800B1724(*t), 0, 1, 0);
+        }
+        if (fn_804623BC(&self->f20)) {
+            if (fn_8044734C(self) && fn_80444D04(fn_8044734C(self)) && !fn_801368B8(self->f0))
+                fn_8014C31C(&self->f20);
+            if (fn_8014D034(&self->f20)) {
+                self->fD0 = 0;
+                self->f2B0 = 0;
+            }
+        } else if (!fn_804623BC(&self->f20) && self->f8
+                   && fn_8042EFF8(lbl_80593BE8) > (unsigned int)(self->fC + self->f10)) {
+            int r = fn_8014BC7C(&self->f20, self->f0, t, 0, 0, 0);
+            self->fC = fn_8042EFF8(lbl_80593BE8);
+        }
+    }
+    if (self->f274) {
+        fn_80447C38(&self->fE0);
+        Vector c;
+        fn_8042DC84(&c, fn_800B1724(*fn_80442080(self->f0)));
+        c.z += 0.2f;
+        int i;
+        for (i = 0; i < self->f274; i++)
+            fn_8042D854(&self->fE0, &self->fF0[i]);
+        fn_80435530(&self->fE0, 1.0f / (float)self->f274);
+        float s = fn_80434040(&self->fE0);
+    }
+    Vector vel;
+    fn_80067050(*fn_804633E4(self), &vel);
+    float speed = fn_80434040(&vel);
+    fn_8042FDBC(&self->f2D0, &self->fE0, fn_80426A84(lbl_80593BE8) * 30.0f * speed);
+    fn_8042D854(&self->f2D0, fn_800B1724(*fn_804633E4(self)));
+    int a = fn_800CCC28(*fn_8044203C(fn_804634CC(self)));
+    int b = fn_804421B8(fn_804634CC(self), 7);
+    int c = fn_804421B8(fn_804634CC(self), 25);
+    int d = fn_800CD0EC(*fn_8044203C(fn_804634CC(self))) || fn_800CD064(*fn_8044203C(fn_804634CC(self)));
+    int e = fn_800CC6DC(*fn_8044203C(fn_804634CC(self))) == 21 || fn_800CC6DC(*fn_8044203C(fn_804634CC(self))) == 22;
+    float len = fn_80434040(&self->fE0);
+    if ((a || b || d || e) && len > 0.0f) {
+        fn_8014B900(self);
+        fn_800CDA94(*fn_8044203C(self->f0))->s15(0);
+        fn_80447C38(&self->fE0);
+        self->f278 = 0.0f;
+    } else {
+        vel.z = 0.0f;
+        float h = fn_80434040(&vel);
+        if (h < 1.5f && len >= 0.0f)
+            self->f278 += fn_80426A84(lbl_80593BE8);
+        else
+            self->f278 = 0.0f;
+    }
 }
