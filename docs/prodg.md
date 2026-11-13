@@ -39,7 +39,7 @@ The `prodg` rule in `tools/project.py`:
 
 `-d` options reach the compiler too: `ngccc -O0 -dr -dg -c file.cpp` leaves `<temp name>.rtl` (the RTL as generated) and `<temp name>.greg` (after register allocation) in the current directory, so run it outside the repository.
 
-`ngccc` ships without headers. `include/gcc` has freestanding `stddef.h` and `limits.h`, and the ProDG flags put it on the include path. There is no `stdarg.h` yet: this GCC has no `__builtin_va_list`, and the DOL calls a `__va_arg` function, so SN's header was not GCC's. Reconstruct it when the first varargs function is matched.
+`ngccc` ships without headers. `include/gcc` has freestanding `stddef.h` and `limits.h`, and the ProDG flags put it on the include path. `include/gcc/stdarg.h` is egcs's PowerPC V.4 `va-ppc.h` (this GCC has no `__builtin_va_list`) with SN's two changes: `va_start` copies the list by struct assignment, so it is an inline word copy and not a `memcpy` call, and `va_arg` dereferences inside its statement expression, so `__ptr` lands in `r9`. Each `va_arg` expands to the six-way register/overflow test, dead arms included (`Game/fn_80149554.cpp`, `fn_80149A6C`).
 
 Plain `char` is signed. `cc1` sign-extends it (`extsb`), even though `ngccc`'s preprocessor step defines `__CHAR_UNSIGNED__`; `include/gcc/limits.h` follows the code.
 
@@ -405,4 +405,3 @@ Most of the read-only data the SDK clusters own belongs to GCC-built runtime cod
 - Which file each tail function's pool belongs to, and so which inline functions each file used ([Inline functions](#inline-functions-and-the-tail-of-text)).
 - File boundaries: a `_GLOBAL_.I` function ends a file, but most files have none. `Game/fn_800092CC.cpp` may start before 0x800092CC.
 - Uninitialized C globals become COMMON symbols (`-fno-common` or the rules in [`common_bss.md`](common_bss.md)).
-- SN's `stdarg.h`.
