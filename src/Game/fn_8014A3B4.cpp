@@ -1,5 +1,5 @@
-// The Mover (AIObject+0x210): init, destroy, update, aim points beside a target, height hold, volume probes, waypoint, chase, stop (docs/ai.md row 11).
-// .rodata 0x8049B3C0-0x8049B410. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 50).
+// The Mover (AIObject+0x210): init, destroy, update, aim points beside a target, height hold, volume probes, waypoint, chase, stop, clear path, heading point (docs/ai.md row 11).
+// .rodata 0x8049B3C0-0x8049B468, the whole file's. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 50).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -502,3 +502,60 @@ extern "C" void fn_8014B900(register Mover *self)
         }
     }
 }
+
+extern "C" {
+void fn_80463470(Mover *self, int v);
+void fn_804634A4(Mover *self, int v);
+}
+
+// Clear the path: reset the path at +0x20 and zero +0x2B0 and +0xD0.
+extern "C" void fn_8014BA7C(register Mover *self)
+{
+    fn_8014C660(&self->f20);
+    fn_80463470(self, 0);
+    fn_804634A4(self, 0);
+}
+
+extern "C" int fn_801368B8(void *ai);
+
+extern "C" int fn_8014BAD0(register Mover *self)
+{
+    if (fn_800861EC(fn_80442080(self->f0)))
+        return 1;
+    if (!fn_801368B8(self->f0))
+        return 0;
+    return 0;
+}
+
+__asm__(".section .rodata\n\t.float 0.0\n\t.long 0x7F7FFFFF\n\t.float 5.0\n\t.text"); // 0x8049B410: linkonce pool words (matching_notes 23)
+
+extern "C" {
+Vector *fn_804625CC(Mover *self);
+Vector *fn_804625F8(Mover *self);
+}
+
+// Where to head: the waypoint, else the move destination, else where we stand.
+extern "C" void fn_8014BB4C(register Mover *self, Vector *out)
+{
+    float unused0 = 0.0f;
+    int waypoint = 0;
+    int dest = 0;
+    int unused1 = 0;
+    int found = 0;
+    Vector v;
+    fn_8042DC84(&v, fn_800B1724(*fn_80442080(self->f0)));
+    if (fn_80461BA0(self)) {
+        fn_8042DC84(&v, fn_804625CC(self));
+        found = 1;
+        waypoint = 1;
+    }
+    if (!found && fn_80461BCC(self)) {
+        fn_8042DC84(&v, fn_804625F8(self));
+        found = 1;
+        dest = 1;
+    }
+    fn_8042DC84(out, &v);
+}
+
+// 0x8049B420-0x8049B468: linkonce pool words, then the header's "invalid" that closes the file's .rodata (docs/ai.md section 2).
+__asm__(".section .rodata\n\t.float 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.2, 0.8, 2.0, 0.5, 0.8, 0.8, 1.0, 1.25, 0.75\n\t.long 2000\n\t.asciz \"invalid\"\n\t.text");
