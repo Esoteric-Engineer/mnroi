@@ -1,4 +1,5 @@
-// The AIObject+0xD0 record's methods, the AI_NONE brain's factory and task, the base AIBrain. Its float pool (1.5f, 2.0f, 20.0f) stays in dtk's .rodata (extern_pool).
+// The AIObject+0xD0 record's methods, the base AIBrain and its task stack, the AI_NONE brain and its null task (docs/ai.md row 3).
+// Its float pool (1.5f, 2.0f, 20.0f, seven orphan words, -99999.0f) stays in dtk's .rodata (extern_pool).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -40,6 +41,8 @@ struct Task28 {
     Task28(void *brain) __asm__("fn_80151D0C");
 };
 
+struct AITask;
+struct BrainSelf;
 extern "C" {
 Ent *fn_800ACFA8(int handle);
 void *fn_800B14A0(Ent *node);
@@ -64,7 +67,7 @@ void fn_804617F0(void *timer);
 void fn_80461828(void *timer, int a);
 void fn_804618B0(void *timer);
 int fn_80085954(PEnt *e);
-void fn_8015105C(void *brain, int id);
+AITask *fn_8015105C(struct BrainSelf *brain, int id);
 }
 extern char lbl_804F5CB0[];
 struct BrainSelf;
@@ -183,16 +186,30 @@ struct BrainSelf {
     PEnt *entity; // +0x4
     int f8; // +0x8
     void *task; // +0xC
-    int f10; // +0x10
-    int f14; // +0x14
-    char pad0[4];
+    struct AITask *cur; // +0x10
+    unsigned int f14; // +0x14, task timer end
+    int f18; // +0x18, task timer length
     char timer[8]; // +0x1C
     unsigned int count; // +0x24
     void *tasks[16]; // +0x28
-    int f68; // +0x68
-    int f6C; // +0x6C
+    int f68; // +0x68, slots used
+    int f6C; // +0x6C, next slot
     Slot slots[64]; // +0x70
     void *vtable; // +0x270
+};
+
+struct AITask {
+    char d[0x24];
+    virtual void v0();
+    virtual void v1();
+    virtual void update(); // +0x18, guess
+    virtual int enter(); // +0x20, guess
+    virtual void exit(); // +0x28, guess
+};
+
+struct BrainV {
+    char d[0x270];
+    virtual AITask *create(int id);
 };
 
 extern "C" void *fn_801506B4(register BrainSelf *self, int id)
@@ -237,7 +254,7 @@ extern "C" void fn_80150820(register BrainSelf *self, void *ai)
     self->ai = ai;
     self->entity = fn_80442080(self->ai);
     self->f8 = fn_80085954(self->entity);
-    self->f10 = 0;
+    self->cur = 0;
     self->count = 0;
     for (i = 0; i <= 15; i++)
         self->tasks[i] = 0;
@@ -491,4 +508,271 @@ extern "C" void fn_80150FFC(register BrainSelf *self, void *task)
         fn_80463A44(task, 3);
         return;
     }
+}
+
+extern "C" {
+int fn_80463AF4(AITask *t);
+void fn_80463B60(AITask *t);
+void fn_80463B20(AITask *t);
+void fn_80152A78(AITask *t);
+void fn_80152A10(AITask *t);
+void fn_801515C4(BrainSelf *self, AITask *t);
+void fn_80463C24(BrainSelf *self, AITask *t);
+void fn_801513D8(BrainSelf *self, int len);
+int fn_80133A08(void);
+void *fn_80133A30(void);
+int fn_8015123C(BrainSelf *self, int id);
+void *fn_80151BF8(BrainSelf *self);
+}
+
+extern "C" AITask *fn_8015105C(register BrainSelf *self, int id)
+{
+    while (self->cur && fn_80463AF4(self->cur))
+        fn_8015123C(self, -1);
+    if (self->count > 15)
+        return 0;
+    AITask *t = ((BrainV *)self)->create(id);
+    if (!t)
+        return 0;
+    if (self->cur) {
+        self->cur->exit();
+        fn_80463B60(self->cur);
+        fn_80152A78(self->cur);
+        fn_801515C4(self, self->cur);
+    }
+    self->tasks[self->count++] = t;
+    self->cur = t;
+    fn_80463B20(self->cur);
+    fn_80152A10(self->cur);
+    fn_801513D8(self, 0);
+    int r = self->cur->enter();
+    if (fn_80133A08()) {
+        if (fn_80133A30() == self->ai) {
+        }
+    }
+    return self->cur;
+}
+
+extern "C" int fn_8015123C(register BrainSelf *self, int id)
+{
+    if (self->count <= 1)
+        return 0;
+    AITask *t = (AITask *)self->tasks[self->count - 1];
+    if (!t)
+        return 0;
+    t->exit();
+    fn_80152A78(t);
+    fn_80463B60(t);
+    fn_801515C4(self, t);
+    fn_80463C24(self, t);
+    self->tasks[--self->count] = 0;
+    t = (AITask *)self->tasks[self->count - 1];
+    self->cur = t;
+    fn_80152A10(self->cur);
+    fn_80463B20(self->cur);
+    fn_801513D8(self, 0);
+    self->cur->enter();
+    if (fn_80133A08()) {
+        if (fn_80133A30() == self->ai) {
+        }
+    }
+    return 1;
+}
+
+extern char lbl_80593BE8[];
+extern "C" int fn_8042EFF8(void *p);
+extern "C" int fn_804423E8(AITask *t);
+
+extern "C" void fn_801513D8(register BrainSelf *self, int len)
+{
+    self->f18 = len;
+    self->f14 = fn_8042EFF8(lbl_80593BE8) + len;
+}
+
+extern "C" int fn_80151430(register BrainSelf *self)
+{
+    if (self->f14)
+        return 1;
+    else
+        return 0;
+}
+
+extern "C" int fn_80151470(register BrainSelf *self)
+{
+    return fn_8042EFF8(lbl_80593BE8) - self->f18;
+}
+
+extern "C" int fn_801514C0(register BrainSelf *self, int id)
+{
+    int i = self->f6C - 1;
+    if (i < 0)
+        i = self->f68 - 1;
+    for (int n = 0; n < self->f68; n++) {
+        if (self->slots[i].a == id)
+            return fn_8042EFF8(lbl_80593BE8) - self->slots[i].b;
+        if (--i < 0)
+            i = self->f68 - 1;
+    }
+    return 100000;
+}
+
+extern "C" void fn_801515C4(register BrainSelf *self, AITask *t)
+{
+    Slot *s = &self->slots[self->f6C];
+    s->a = fn_804423E8(t);
+    s->b = fn_8042EFF8(lbl_80593BE8);
+    if (++self->f6C >= sizeof(self->slots) / sizeof(Slot))
+        self->f6C = 0;
+    if (self->f68 < sizeof(self->slots) / sizeof(Slot))
+        self->f68++;
+}
+
+__asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.text"); // 0x8049B580-0x8049B598, pool entries no function in the unit loads
+
+extern "C" {
+void *fn_804634F8(void *ai);
+void fn_801B6A98(void *list, void *compare);
+void fn_801B67D8(void *list, int a);
+int fn_801B6A44(void *list);
+struct Goal *fn_801B5D3C(void *list, int i);
+int fn_80462158(void *e);
+float fn_80463BA0(void *e);
+Vector *fn_80462C04(void *e);
+unsigned int fn_804620C8(void *e);
+int fn_804620F4(void *e, unsigned int i);
+void fn_80463A0C(void *ai, int x);
+int fn_80463524(void *e);
+void fn_8042FE08(Vector *dst, Vector *src, float w);
+void fn_80447C38(Vector *v);
+void fn_80435530(Vector *v, float f);
+void *fn_804420AC(void *ai);
+void fn_8014B420(void *a, Vector *v);
+void fn_80463C9C(BrainSelf *self);
+}
+
+extern "C" int fn_80151674(register BrainSelf *self)
+{
+    void *list = fn_804634F8(fn_80151BF8(self));
+    fn_801B6A98(list, (void *)fn_80150590);
+    fn_801B67D8(list, 0);
+    Vector v;
+    fn_80447C38(&v);
+    float best = -99999.0f;
+    for (int i = 0; i < fn_801B6A44(list); i++) {
+        void *e = fn_801B5D3C(list, i);
+        if (!e)
+            continue;
+        if (!fn_80462158(e)) {
+            if (fn_80463BCC(e) == 5) {
+                best = fn_80463BA0(e);
+                fn_8042DC84(&v, fn_80462C04(e));
+                break;
+            }
+            continue;
+        }
+        if (fn_80463BA0(e) > best)
+            best = fn_80463BA0(e);
+        if (fn_804620C8(e)) {
+            for (unsigned int j = 0; j < fn_804620C8(e); j++) {
+                int x = fn_804620F4(e, j);
+                fn_80463A0C(fn_80151BF8(self), x);
+            }
+        }
+        if (!fn_80463524(e) || fn_80463524(e) == 7) {
+            float w = fn_80463BF8(e) + fn_80463BA0(e);
+            fn_8042FE08(&v, fn_80462C04(e), w);
+        }
+        if (fn_80463BCC(e) == 5) {
+            fn_8042DC84(&v, fn_80462C04(e));
+            break;
+        }
+    }
+    fn_80435530(&v, best);
+    fn_8014B420(fn_804420AC(fn_80151BF8(self)), &v);
+    return 1;
+}
+
+extern "C" void fn_80151934(register BrainSelf *self)
+{
+    if (self->cur)
+        self->cur->update();
+    for (int i = self->count - 2; i >= 0; i--)
+        ((AITask *)self->tasks[i])->update();
+    if (self->f14 && fn_8042EFF8(lbl_80593BE8) >= self->f14)
+        self->f14 = 0;
+    if (self->cur) {
+        while (fn_80463AF4(self->cur))
+            fn_8015123C(self, fn_804423E8(self->cur));
+    }
+    fn_80463C9C(self);
+}
+
+extern "C" int fn_80151A9C(register BrainSelf *self)
+{
+    if (!fn_80151674(self))
+        return 0;
+    fn_80151934(self);
+    return 1;
+}
+
+extern "C" int fn_80151AF8(register BrainSelf *self, int id)
+{
+    for (int i = self->count - 1; i >= 0; i--) {
+        if (fn_804423E8((AITask *)self->tasks[i]) == id)
+            return 1;
+    }
+    return 0;
+}
+
+extern "C" int fn_80151B90(register BrainSelf *self, register AITask *t)
+{
+    return self->cur == t;
+}
+
+extern "C" AITask *fn_80151BCC(register BrainSelf *self)
+{
+    return self->cur;
+}
+
+extern "C" void *fn_80151BF8(register BrainSelf *self)
+{
+    return self->ai;
+}
+
+extern "C" unsigned int fn_80151C24(register BrainSelf *self)
+{
+    return self->count;
+}
+
+extern "C" void *fn_80151C50(register BrainSelf *self, register int i)
+{
+    return self->tasks[i];
+}
+
+extern "C" void *fn_80151C8C(register BrainSelf *self)
+{
+    return self->timer;
+}
+
+extern char lbl_804F5C98[];
+
+extern "C" BrainSelf *fn_80151CB8(register BrainSelf *self, register void *ai)
+{
+    fn_801507C0(self, ai);
+    self->vtable = (void *)lbl_804F5C98;
+    return self;
+}
+
+struct TaskSelf {
+    char d[0x24];
+    void *vtable; // +0x24
+};
+extern char lbl_804F5C60[];
+extern "C" void fn_8015294C(TaskSelf *self, void *brain, int a);
+
+extern "C" TaskSelf *fn_80151D0C(register TaskSelf *self, register void *brain)
+{
+    fn_8015294C(self, brain, 1);
+    self->vtable = (void *)lbl_804F5C60;
+    return self;
 }
