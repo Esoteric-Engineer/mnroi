@@ -800,10 +800,7 @@ Game/fn_801317D8.cpp:
 	.text       start:0x801317D8 end:0x80131E90
 
 Game/fn_80132480.cpp:
-	.text       start:0x80132480 end:0x80133C8C
-
-Game/fn_801343B0.cpp:
-	.text       start:0x801343B0 end:0x801346C0
+	.text       start:0x80132480 end:0x80134940
 
 Game/fn_80137CEC.c:
 	.text       start:0x80137CEC end:0x80137D98
