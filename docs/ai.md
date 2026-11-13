@@ -29,7 +29,7 @@ Everything in the ranges below is `-O0` game code (`tools/flavor_map.py`).
 
 | Range | Contents | Edges | Already matched |
 |---|---|---|---|
-| 0x8007A35C-0x80081E08 | Script command file. 0x8007A35C-0x8007C034 holds the **AI script API**: 42 functions, most of them `-O0` wrappers that resolve a handle to an actor's `AIObject` (`fn_8007A3A0`: `fn_800ACFA8`, `fn_800B0C58`, `fn_800B14A0`, `fn_80085980`), null-check it and forward one call. Their callers are the script node classes at 0x801C5E0C-0x801DFED8. From `fn_8007C034` (another resolver) on, the file is other script code | Starts after `_GLOBAL_.I` 0x8007A318; `_GLOBAL_.I` 0x80081DCC | |
+| 0x8007A3A0-0x80081E08 | Script command file. 0x8007A3A0-0x8007C034 is the **AI script API**, 41 `-O0` functions called by the script node classes at 0x801C5E0C-0x801DFED8. From `fn_8007C034` (another resolver) on, the file is other script code | Starts after the previous file's `_GLOBAL_.D` `fn_8007A35C` (in `.dtors`); `_GLOBAL_.I` 0x80081DCC | `Game/fn_8007A3A0.cpp` |
 | 0x800FA34C-0x800FC1F8 | **Actor controller input**, three classes. Base (vtable `lbl_804F5708`, 0x5C0 bytes): 26 action states, this frame `+0x8` and last frame `+0xC`, and 10 analog axes of 0x30 bytes at `+0xE0`/`+0xE4`, all double-buffered. Pad subclass (`lbl_804F5678`, 0x8F0): sets the actions from the pad through the combo table `lbl_804CC810`. AI subclass (`lbl_804F55E8`, 0x5C4): `+0x5C0` is the actor's `AIObject`, and its update copies the AI's actions (`fn_8013741C`) and axes 0, 7 and 9 (`fn_80137298`) | Inside the template registry file 0x800F9F88-0x80101A00 ([`versus.md`](versus.md) section 5, rows 10-12) | `Game/fn_800FA34C.cpp` |
 | 0x80131E90-0x80132480 | Not AI: a static initializer building `Color`s in `.sbss` 0x8066F0B4..., and `_GLOBAL_.I` 0x80132444. It probably closes the file that holds the last-selection module | `_GLOBAL_.I` 0x80132444 | |
 | 0x80132480-0x80137F2C | **AI manager and `AIObject`** (section 3) | Static init `fn_80137D98`, `_GLOBAL_.I` 0x80137EB4, `_GLOBAL_.D` 0x80137EF0. The static init constructs `lbl_80569890` (0xDC bytes, ctor `fn_80461430`, dtor `fn_804614F8`) and `lbl_8056996C[16]` (ctor `fn_804619C8`, dtor `fn_804619F0`), so both are this file's globals | `Game/fn_80132480.cpp` |
@@ -51,7 +51,7 @@ AI manager (globals)          init / update / draw / shutdown, registry of up to
       AITask stack            vtable classes; the debug display prints the stack
         behaviors             function-pointer table by behavior id (IDLE ... POWER_STAND)
   shared helpers, perception, cAIMessages queue
-Script API (0x8007A35C) and actor component (0x800FA34C) call in from outside
+Script API (0x8007A3A0) and actor component (0x800FA34C) call in from outside
 ```
 
 - **Manager.** `fn_80132480` (init): shuts down a previous run if the initialised flag `lbl_8066BF4C` is set, clears the registry `lbl_8056A72C[0x30]` and its count `lbl_8066BF1C`, registers the behaviors (`fn_80137F2C`), inits `lbl_80569890` (`fn_80145D8C`) and the messages (`fn_80149554`), sets `lbl_8066BF20 = 1` (AI enabled; `fn_80133658`/`fn_8013367C` set and clear it), and reads settings from an entry of the resource list `lbl_8054ED80` (`fn_804326B4`). `fn_80132AAC` (shutdown) deletes each `AIObject` (`fn_80447DBC(ai, 3)`) and undoes the rest. `fn_80132B88` and `fn_80132CDC` run `fn_80134028` / `fn_80134280` on every AI. `fn_801336F0` is a pass from the main loop. The **encounter list** (`"Encounter:"` in the debug draw) is up to 16 records of 0xDC bytes at `lbl_8056996C`, count `lbl_8066F1A8`, one per actor id (`fn_80461A3C`); add `fn_80132FE4`, remove `fn_80133078`, find `fn_80132F00`. It lies directly after the `lbl_80569890` container's first 0xDC bytes (`fn_80133078` copies its last record from `lbl_80569890 + count * 0xDC`), so `lbl_80569890` is very likely this list's system (rows 10 and 11 hold its code). `fn_8013726C(ai)` returns it.
@@ -161,6 +161,8 @@ Task names, from the `char *` table `lbl_804CFB58[id]` (`TASK_` prefix dropped):
 
 Base task layout (0x28 bytes, `fn_8015294C`): `AIObject *` `+0x0`, its brain (`AIObject+0x204`) `+0x4`, saved target handle `+0x8` (`fn_80152A10` copies the AI's target in when the task becomes the top; `fn_80152A78` writes it back to the `+0xD0` record when the task is covered or popped), name `+0xC`, `BitSet` `+0x10` (the AI's state bits `+0x500`, saved by `fn_80463B20` and restored by `fn_80463B60`), id `+0x18` (`fn_804423E8`), `+0x1C` and `+0x20` zeroed, vtable `+0x24`.
 
+Task members the script API sets right after starting a task: RANGEDONLY `+0x28` (`int`, then it calls slot `+0x20`); GETANDTHROWAT and GOGETANDTHROWAT `+0x28` and `+0x2C` (script handles: the thing, the target); PLAYANIM `+0x28` (anim id) and `+0x2C`; HOVERANDFIRE `+0x28` (set to 1).
+
 Deleting a task is deferred: `fn_80463C24` queues up to 16 in `lbl_80571DB0` (count `lbl_8066BF80`), and `fn_80463C9C` deletes them all.
 
 ---
@@ -186,7 +188,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 5 | AI inline functions | 0x80461430-0x804644B4 | Done. Units split where the `.rodata` pool changes (`extern_pool` in `configure.py`) |
 | 6 | Rest of the `AIObject` file | 0x80133C8C-0x80137F2C, extending row 1's unit | Done to 0x80137D98. Static init `fn_80137D98`, `_GLOBAL_.I`, `_GLOBAL_.D` are blocked on class names ([`nonmatching.md`](nonmatching.md)) |
 | 7 | Actor-side AI component | 0x800FA34C-0x800FC1F8, unit `Game/fn_800FA34C.cpp` | Done |
-| 8 | AI script API | 0x8007A35C-0x8007C034, unit `Game/fn_8007A35C.cpp` | 42 functions: the `fn_8007A3A0` resolver and the wrappers. Name each wrapper after what it forwards to. Stop at 0x8007C034; the rest of the file is general script code |
+| 8 | AI script API | 0x8007A3A0-0x8007C034, unit `Game/fn_8007A3A0.cpp` | Done |
 | 9 | Shared helpers | 0x8015E2FC-0x80160428 | 28 functions called from over 200 functions in the behaviors and tasks (guesses from their use: target choice `fn_8015F7A4`, float measures `fn_8015E580`/`fn_8015E8A8`, `fn_8015F6CC` fills a `Vector`, `fn_8015EA18(n)` a random int below `n`, `fn_8015EA6C(n, w)` picks an index by the `n` float weights `w`) |
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | First identify `lbl_80569890`'s system (0x80145CB0-0x80148178); then the target list around the matched `fn_80148178`, its debug `fn_80148B50`, and `cAIMessages` (`fn_801498E8`, `fn_80149A6C`) |
 | 11 | Unidentified block | 0x8014A3B4-0x80150000 | 47 functions called by tasks, the AI object and the script API (`fn_8014B63C`, `fn_8014D034`). Identify it first (guess: mover and pathing; check against the debug display's `Mover`, `Pathing`, `Conserve` and waypoint fields), then match small to large |

@@ -230,6 +230,9 @@ Game/fn_80067050.cpp:
 	.text       start:0x80067050 end:0x80067148
 	.rodata     start:0x804874D4 end:0x804874E0
 
+Game/fn_8007A3A0.cpp:
+	.text       start:0x8007A3A0 end:0x8007C034
+
 Game/fn_8007C830.c:
 	.text       start:0x8007C830 end:0x8007C8B0
 
