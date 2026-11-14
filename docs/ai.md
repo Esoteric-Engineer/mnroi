@@ -26,7 +26,7 @@ All of it is `-O0` game code (`tools/flavor_map.py`). A file's `.rodata` ends wi
 | Range | Contents | Unit |
 |---|---|---|
 | 0x8007A3A0-0x8007C034 | **AI script API**, 41 functions called by the script node classes at 0x801C5E0C-0x801DFED8. The file goes on with other script code to its `_GLOBAL_.I` 0x80081DCC | `Game/fn_8007A3A0.cpp` |
-| 0x8009B31C-0x8009D584 | **Path-node graph** (section 4.7), one whole file | none yet (row 15) |
+| 0x8009B31C-0x8009D584 | **Path-node graph** (section 4.7), one whole file | `Game/fn_8009B31C.cpp` (row 15, in progress) |
 | 0x800FA34C-0x800FC1F8 | **Actor controller input**, three classes, inside the template registry file 0x800F9F88-0x80101A00 ([`versus.md`](versus.md) section 5, rows 10-12). Base (vtable `lbl_804F5708`, 0x5C0 bytes): 26 action states, this frame `+0x8` and last frame `+0xC`, and 10 analog axes of 0x30 bytes at `+0xE0`/`+0xE4`, all double-buffered. Pad subclass (`lbl_804F5678`, 0x8F0): sets the actions from the pad through the combo table `lbl_804CC810`. AI subclass (`lbl_804F55E8`, 0x5C4): `+0x5C0` is the actor's `AIObject`, and its update copies the AI's actions (`fn_8013741C`) and axes 0, 7 and 9 (`fn_80137298`) | `Game/fn_800FA34C.cpp` |
 | 0x80132480-0x80137F2C | **AI manager and `AIObject`** (sections 3, 4.1). Globals: the volume registry `lbl_80569890`, the encounter records `lbl_8056996C[16]` and the AI pointer table `lbl_8056A72C[49]` | `Game/fn_80132480.cpp` |
 | 0x80137F2C-0x80145CB0 | **Behaviors**: the registry, then the 42 handlers from 0x80138E10 (section 4.3). Its `.bss` holds the 256 action records `lbl_8056A7F0` and their pool `lbl_805717F0` | `Game/fn_80137F2C.cpp` |
@@ -229,7 +229,7 @@ Signatures below are as the matched AI callers declare them.
 | `fn_8009BD7C(path, fromSpot, to, toWorld, mask, range)` | path rebuild `fn_8014C31C` | Route query from a spot |
 | `fn_8009C004(query, from, to, fromSpot, toSpot, mask, range)` | the two route queries, the route length `fn_8014C0B8` | Spot-to-spot search; fills a 0x58-byte query (`Query` in `Game/fn_8014BC7C.cpp`, route length `+0x48`) and reads `fn_80132DC4` (section 4.6, `+0x4C`) |
 | `fn_8009B994(volume, on)` | damage-volume add (0) and remove (1), `fn_801477B0` / `fn_80147884` | Turns off and back on the graph inside a damage volume |
-| `fn_8009B83C` | script code `fn_80081208` | |
+| `fn_8009B83C(ent, on)` | script code `fn_80081208` | Sets (`on` 0) or clears the disabled bit of every node inside an entity's hull |
 
 ---
 

@@ -1,4 +1,4 @@
-// Path-node graph: unload step and the .npd loader (docs/ai.md row 15, section 4.7).
+// Path-node graph: unload step, the .npd loader and the hull enable script command (docs/ai.md row 15, section 4.7).
 
 #define SWAP16(x) ((((x) & 0xFF) << 8) | ((unsigned short)(x) >> 8))
 
@@ -21,6 +21,37 @@ struct Link
     char pad[0x30];
 };
 
+class Vector
+{
+public:
+    float x, y, z, w;
+    Vector();
+} __attribute__((aligned(8)));
+
+struct Mat4
+{
+    float m[4][4];
+};
+
+struct Hull
+{
+    char pad0[0xB];
+    unsigned char planeCount; // +0xB
+    char padC[0x78];
+    Vector *planes; // +0x84
+};
+
+struct Shape
+{
+    Hull *hull; // +0x0
+};
+
+struct Ent
+{
+    char pad[0x78];
+    Mat4 xform; // +0x78
+};
+
 struct Level
 {
     char pad0[0x28];
@@ -33,6 +64,15 @@ struct Level
 };
 
 extern "C" {
+void *fn_80430050(void *level);
+extern char lbl_8052F060[]; // the level object
+void fn_8042D7B0(Mat4 *m);
+void fn_80434420(Mat4 *dst, Mat4 *src);
+void fn_8042DA10(Vector *out, Vector *v, Mat4 *m);
+Shape *fn_8009AD80(Ent *e);
+Vector *fn_80444688(Node *node);
+int fn_8004D2D8(Vector *p, Vector *planes, int count);
+void fn_80444870(Node *node, int on);
 char *strncpy(char *dst, const char *src, unsigned n);
 void fn_8009CF44(void *graph);
 void fn_801B4094(char *path, const char *ext);
@@ -44,7 +84,6 @@ void *fn_801AC988(unsigned size, const char *tag, int line, int align);
 void SetLoadProgress__8GameFlowfi(void *self, float f, int a);
 void fn_8009CB38(Node *node, void *file, int version);
 void fn_8009CDE4(Link *link, Level *lv, void *file);
-void *fn_80444688(Node *node);
 Sector *fn_8004DD38(Level *lv, void *pos);
 void fn_804446B4(Node *node, Sector *s);
 void fn_8044256C(void *out, const char *fmt, ...);
@@ -115,5 +154,23 @@ int fn_8009B35C(Level *lv, char *h)
         fn_8044256C(lbl_8066B56C, "PATH WARNING!  %d nodes have no sector.\n", missing);
     fn_801A875C(file);
     return 1;
+}
+
+// Script command: with the nodes inside an entity's hull, `on` clears their disabled bit (+0x2C & 0x400) and 0 sets it
+void fn_8009B83C(Ent *e, int on)
+{
+    Level *lv = (Level *)fn_80430050(lbl_8052F060);
+    Mat4 inv;
+    Node *node;
+    fn_8042D7B0(&inv);
+    fn_80434420(&inv, &e->xform);
+    Vector p;
+    for (unsigned short i = 0; i < lv->nNodes; i++) {
+        node = lv->nodes + i;
+        fn_8042DA10(&p, fn_80444688(node), &inv);
+        if (!fn_8004D2D8(&p, fn_8009AD80(e)->hull->planes, fn_8009AD80(e)->hull->planeCount))
+            continue;
+        fn_80444870(node, on == 0);
+    }
 }
 }
