@@ -255,7 +255,7 @@ AIAction *fn_8013DA7C(void *ai, AIBehavior *rec);
 AIAction *fn_8013E0C4(void *ai, AIBehavior *rec);
 AIAction *fn_8013E99C(void *ai, AIBehavior *rec);
 AIAction *fn_8013F08C(void *ai, AIBehavior *rec);
-void fn_8013F438(void);
+AIAction *fn_8013F438(void *ai, AIBehavior *rec);
 void fn_8013F8D0(void);
 void fn_8013F9F0(void);
 void fn_801409D0(void);
@@ -473,6 +473,7 @@ unsigned int fn_800B18EC(Ent &e, int id);
 int fn_8004A9CC(Vector *from, Vector *dir, float len, unsigned int mask, Placement *hit, void *a, void *b, int c, int d);
 int fn_8015EEA0(void *ai);
 int fn_800862DC(void *e);
+float fn_8014B824(void *mover);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -2063,6 +2064,63 @@ extern "C" AIAction *fn_8013F08C(void *ai, AIBehavior *rec)
         Vector p;
         fn_8042DC84(&p, &v);
         fn_80138AE0(h, 0, &p, 1.0f);
+        return h;
+    }
+    return 0;
+}
+
+// FLY (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013F438(void *ai, AIBehavior *rec)
+{
+    int a = fn_8015F008(ai);
+    int b = fn_80461D48(ai, 0x27);
+    int c = fn_80461D48(ai, 0x2a);
+    int d = fn_80461D48(ai, 0x1c);
+    int e = fn_80461D48(ai, 0xc) || fn_80461D48(ai, 0xe);
+    if (!fn_801368B8(ai) && !fn_804628AC(ai)) {
+        return 0;
+    }
+    AIAction *h = fn_80138738(0xe, 0, 0);
+    if (h) {
+        float z = fn_800B1724(*fn_80442080(ai))->z;
+        float gz = fn_8014B824(fn_804420AC(ai));
+        float dz = gz - z;
+        if (fn_80461BA0(fn_804420AC(ai))) {
+            gz = fn_804625CC(fn_804420AC(ai))->z;
+        }
+        if (fn_804628AC(ai)) {
+            fn_80138A24(h, 9);
+        }
+        if (dz > -1.0f) {
+            fn_80138A24(h, 0x10);
+            fn_80138A24(h, 9);
+        }
+        if (fn_804628AC(ai) && z < gz + 2.5f &&
+            fn_8015E580(fn_800B1724(*fn_80442080(ai)), fn_804625F8(fn_804420AC(ai))) > 2.0f) {
+            fn_80138A24(h, 0x10);
+        }
+        Ent *t = fn_80134870(ai);
+        if (t) {
+            float dist = fn_8015E64C(ai);
+            float tdist = fn_8015E8A8(ai, fn_800B1724(*fn_80134870(ai)));
+            if (!fn_804628AC(ai) && fn_80085D3C(fn_80442080(ai)) && tdist > 0.0f && tdist < 5.0f &&
+                dist < fn_800B1884(*fn_80442080(ai), 0xd3) && !fn_80461D48(ai, 0x14)) {
+                fn_80138A24(h, 2);
+            } else if (tdist < 5.0f) {
+                fn_80138A24(h, 9);
+            }
+        } else {
+            fn_80138A24(h, 9);
+        }
+        if (!fn_804628AC(ai) && fn_80134870(ai) && fn_8015EC1C(fn_80462A88(ai)) && fn_8015EE34(ai, fn_80134870(ai))) {
+            Vector p;
+            fn_8015F6CC(ai, &p);
+            fn_80138AE0(h, 0, &p, 1.0f);
+            fn_80138A24(h, 0x12);
+            if (fn_801369B0(ai)) {
+                fn_80138A24(h, 7);
+            }
+        }
         return h;
     }
     return 0;
