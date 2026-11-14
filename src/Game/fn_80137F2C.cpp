@@ -301,7 +301,7 @@ AIAction *fn_80144CB4(void *ai, AIBehavior *rec);
 AIAction *fn_80144D3C(void *ai, AIBehavior *rec);
 AIAction *fn_80144DB8(void *ai, AIBehavior *rec);
 AIAction *fn_80145200(void *ai, AIBehavior *rec);
-void fn_80145AA8(void);
+AIAction *fn_80145AA8(void *ai, AIBehavior *rec);
 
 void fn_80137FBC(int id, const char *name, BehaviorFn update, BehaviorFn enter, BehaviorFn exit);
 void fn_80138C04(AIBehavior *self, int id, const char *name, BehaviorFn update, BehaviorFn enter, BehaviorFn exit);
@@ -547,6 +547,8 @@ void fn_80428FA8(Vector *v, float x, float y, float z);
 int fn_80462650(void *mover);
 void *fn_80151C8C(void *brain);
 int fn_80462828(void *ai);
+void *Entity_GetActor(Base &c);
+float fn_8008677C(void *e);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -3504,5 +3506,15 @@ extern "C" AIAction *fn_80145200(void *ai, AIBehavior *rec)
     return 0;
 }
 
-// The .rodata claim's 8-align pad, read by the unclaimed fn_80145AA8: becomes that handler's literal once it is matched.
-extern "C" const float lbl_8049B02C __attribute__((section(".rodata"))) = 0.0f;
+// POWER_STAND (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80145AA8(void *ai, AIBehavior *rec)
+{
+    void *actor = Entity_GetActor(*fn_8044203C(ai));
+    if (fn_80086730(actor) == fn_8008677C(actor)) {
+        return 0;
+    }
+    AIAction *h = fn_80138738(-1, 0, 0);
+    fn_80138A24(h, 7);
+    fn_80138AE0(h, 0, &lbl_80593E00, 0.0f);
+    return h;
+}
