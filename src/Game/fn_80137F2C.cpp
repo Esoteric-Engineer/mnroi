@@ -1,5 +1,5 @@
 // AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), then the handlers. docs/ai.md rows 2 and 13.
-// .rodata 0x8049AB10-0x8049AE08: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88, APPROACH_RANGED's from 0x8049AD94, TOO_CLOSE's from 0x8049AD9C, APPROACH's from 0x8049ADA4, PRONE's from 0x8049ADD4).
+// .rodata 0x8049AB10-0x8049AE08: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88, APPROACH_RANGED's from 0x8049AD94, TOO_CLOSE's from 0x8049AD9C, APPROACH's from 0x8049ADA4, PRONE's from 0x8049ADD4, MOVE_TO_WAYPOINT's from 0x8049AE04).
 __asm__(".section .rodata\n\t.globl lbl_8049AB10\nlbl_8049AB10:\n\t.4byte 0x6C696400\n\t.text"); // 8-aligns the claim: the tail of the "invalid" string ahead of it, which no code reads
 
 inline int sn_return_decl(int a) { return a; }
@@ -206,7 +206,7 @@ AIAction *fn_801399CC(void *ai, AIBehavior *rec);
 AIAction *fn_80139284(void *ai, AIBehavior *rec);
 AIAction *fn_801397C8(void *ai, AIBehavior *rec);
 AIAction *fn_8013B0F4(void *ai, AIBehavior *rec);
-void fn_8013BCE8(void);
+AIAction *fn_8013BCE8(void *ai, AIBehavior *rec);
 void fn_8013C1C8(void);
 void fn_8013C3A4(void);
 void fn_8013CD40(void);
@@ -392,6 +392,10 @@ void fn_80462800(void *ai, int v);
 void fn_80462900(void *ai, int v);
 unsigned int fn_804627D4(void *ai);
 VEnt *fn_80442080V(void *ai) __asm__("fn_80442080");
+Vector *fn_800CE230(SCtl &c);
+void fn_80435530(Vector *v, float s);
+int fn_800CCA58(Base &c);
+int fn_800CCAE8(Base &c);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -1245,4 +1249,78 @@ extern "C" AIAction *fn_8013B0F4(void *ai, AIBehavior *rec)
     }
     return 0;
 }
-__asm__(".section .rodata\n\t.globl lbl_8049AE04\nlbl_8049AE04:\n\t.float 0.0\n\t.text"); // pads the claim to 8: MOVE_TO_WAYPOINT's first literal, until fn_8013BCE8 is matched
+
+// MOVE_TO_WAYPOINT (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013BCE8(void *ai, AIBehavior *rec)
+{
+    Vector goal;
+    int found = 0;
+    if (fn_801369B0(ai) && fn_80462624(fn_804420AC(ai)) == 4) {
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            Vector v;
+            fn_80067050(*fn_80442080(ai), &v);
+            v.z = 0.0f;
+            fn_8042F76C(&v);
+            fn_8042D8A8(&v, fn_800CE230(*fn_8044203C(ai)));
+            fn_80435530(&v, 0.5f);
+            fn_80138AE0(h, 0, &v, 1.0f);
+            fn_80138A24(h, 8);
+            return h;
+        }
+    }
+    float dist = 3.40282347e+38f;
+    if (fn_80461BA0(fn_804420AC(ai))) {
+        fn_8042DC84(&goal, fn_804625CC(fn_804420AC(ai)));
+        found = 1;
+        dist = fn_8015E580(fn_800B1724(*fn_80442080(ai)), &goal);
+    }
+    if (!found && fn_80461BCC(fn_804420AC(ai))) {
+        fn_8042DC84(&goal, fn_804625F8(fn_804420AC(ai)));
+        found = 1;
+        dist = fn_8015E580(fn_800B1724(*fn_80442080(ai)), &goal);
+    }
+    float reach = 2.0f;
+    if (fn_800CCA58(*fn_8044203C(ai))) {
+        reach = 4.0f;
+    } else if (fn_800CCAE8(*fn_8044203C(ai))) {
+        reach = 8.0f;
+    }
+    if (dist < reach) {
+        return 0;
+    } else if (found) {
+        Vector v;
+        fn_8042DC84(&v, &goal);
+        fn_8042D8A8(&v, fn_800B1724(*fn_80442080(ai)));
+        float len = fn_8042EC54(&v);
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            fn_80138AE0(h, 0, &v, 1.0f);
+        }
+        switch (fn_80462624(fn_804420AC(ai))) {
+        case 1:
+            if (!fn_80461D48(ai, 0x3d)) {
+                fn_80138A24(h, 5);
+                if (goal.z - fn_800B1724(*fn_80442080(ai))->z > 2.0f && fn_801369B0(ai)) {
+                    fn_80138A24(h, 7);
+                }
+                if (!fn_80085D3C(fn_80442080(ai))) {
+                    fn_80138A24(h, 0x14);
+                }
+            }
+            break;
+        case 4:
+            if (fn_801369B0(ai)) {
+                fn_80138A24(h, 8);
+            }
+            break;
+        case 2:
+            if (fn_801369B0(ai)) {
+                fn_80138A24(h, 8);
+            }
+            break;
+        }
+        return h;
+    }
+    return 0;
+}
