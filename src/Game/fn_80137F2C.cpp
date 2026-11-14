@@ -233,6 +233,16 @@ struct Region { // a volume registry list 1 entry (docs/ai.md section 4.5)
     int owner; // +0x330, actor id
 };
 
+struct LvSub {
+    char pad0[0x30];
+    Vector pos; // +0x30
+};
+
+struct LvObj { // fn_800B3A74's result as EVADE reads it
+    char pad0[0x10];
+    LvSub sub; // +0x10
+};
+
 extern AIBehavior lbl_80571814[];
 extern AIAction lbl_8056A7F0[];
 extern char lbl_805717F0[]; // pool of free Actions
@@ -279,7 +289,7 @@ AIAction *fn_801420B4(void *ai, AIBehavior *rec);
 AIAction *fn_80142558(void *ai, AIBehavior *rec);
 AIAction *fn_80142B04(void *ai, AIBehavior *rec);
 AIAction *fn_801426A0(void *ai, AIBehavior *rec);
-void fn_80142F80(void);
+AIAction *fn_80142F80(void *ai, AIBehavior *rec);
 void fn_801435F0(void);
 void fn_8014379C(void);
 void fn_80144038(void);
@@ -514,6 +524,12 @@ int fn_800A4438(void *p);
 int fn_800A4408(void *p);
 void fn_804628D8(void *ai, int id);
 Vector *fn_80462574(void *mover);
+extern char lbl_8052F060[]; // the level object
+void *fn_80430050(void *level);
+LvObj *fn_800B3A74(void *scene, int v, int a, int b);
+unsigned int fn_801370B0(void *ai);
+void *fn_8009C55C(Vector *pos, void *world, unsigned int mask, float r, void *test, void *b, int c);
+PEnt *fn_801500F0P(void *list, int i) __asm__("fn_801500F0");
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -2838,3 +2854,89 @@ extern "C" AIAction *fn_80142B04(void *ai, AIBehavior *rec)
     }
     return 0;
 }
+
+// EVADE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80142F80(void *ai, AIBehavior *rec)
+{
+    for (int i = 0; i < fn_801500C4(fn_804420D8(ai)); i++) {
+        Ent *o = fn_801500F0P(fn_804420D8(ai), i);
+        int danger = o && fn_800B0CC0(o) && fn_800A3F44(fn_800B1478(o));
+        int targeted = 0;
+        if (fn_80134870(ai) && fn_80461D48(ai, 0x31)) {
+            targeted = 1;
+            o = fn_80134870(ai);
+        }
+        if (!danger && !targeted) {
+            continue;
+        }
+        Vector dir, at;
+        fn_8042DC84(&at, fn_800B1724(*fn_80442080(ai)));
+        LvObj *c = fn_800B3A74(fn_80430050(lbl_8052F060), 0, 0, 0);
+        if (c && fn_804290F8(&c->sub.pos, fn_800B1724(*o)) > 3.0f) {
+            LvSub *q = &c->sub;
+            fn_8042DC84(&at, &q->pos);
+        } else {
+            void *spot = fn_8009C55C(fn_800B1724(*fn_80442080(ai)), fn_800B1CC8(*fn_80442080(ai)), fn_801370B0(ai), 20.0f,
+                                     0, 0, -1);
+            if (spot) {
+                fn_8042DC84(&at, fn_80444688(spot));
+            } else {
+                fn_8042DC84(&at, &c->sub.pos);
+            }
+        }
+        fn_80429038(&dir, &at, fn_800B1724(*fn_80442080(ai)));
+        dir.z = 0.0f;
+        fn_8042F76C(&dir);
+        if (fn_804290F8(fn_800B1724(*fn_80442080(ai)), fn_800B1724(*o)) > 5.0f) {
+            return 0;
+        }
+        AIAction *h = fn_80138738(0x1d, 1500, 0);
+        if (!h) {
+            return 0;
+        }
+        fn_80138AE0(h, 0, &dir, 1.0f);
+        fn_80462BDC(h, 10.0f);
+        if (fn_8008606C(fn_80442080(ai)) && !fn_804628AC(ai) && !fn_80461D48(ai, 0x3c)) {
+            if (fn_80442080V(ai)->v57(0.15f) && !fn_80461D48(ai, 0x3d)) {
+                fn_80138A24(h, 5);
+                fn_80462C30(h, 100);
+                fn_80462CA8(h, 10);
+            } else {
+                fn_80138A24(h, 9);
+                fn_80462C30(h, 800);
+                fn_80462CA8(h, 200);
+                if (targeted) {
+                    fn_80462C30(h, 1500);
+                }
+            }
+        }
+        if (fn_80085F7C(fn_80442080(ai))) {
+            if (fn_80442080V(ai)->v57(0.15f) && !fn_80461D48(ai, 0x3d)) {
+                fn_80138A24(h, 5);
+                fn_80462C30(h, 100);
+                fn_80462CA8(h, 10);
+            } else {
+                fn_80138A24(h, 9);
+                fn_80462C30(h, 500);
+                fn_80462CA8(h, 200);
+                if (targeted) {
+                    fn_80462C30(h, 1500);
+                }
+            }
+        }
+        if (fn_80461D48(ai, 0x33) && !fn_80461D48(ai, 0x3d)) {
+            fn_80138A24(h, 5);
+            if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                fn_80138A24(h, 7);
+            }
+            if (!fn_80085D3C(fn_80442080(ai))) {
+                fn_80138A24(h, 0x14);
+            }
+        }
+        return h;
+    }
+    return 0;
+}
+
+// The .rodata claim's 8-align pad, read by the unclaimed fn_801435F0: becomes that handler's literal once it is matched.
+extern "C" const float lbl_8049AF94 __attribute__((section(".rodata"))) = 0.08f;
