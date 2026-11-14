@@ -275,8 +275,8 @@ AIAction *fn_801414C8(void *ai, AIBehavior *rec);
 AIAction *fn_80141D78(void *ai, AIBehavior *rec);
 void fn_8014470C(void);
 void fn_80144E30(void);
-void fn_801420B4(void);
-void fn_80142558(void);
+AIAction *fn_801420B4(void *ai, AIBehavior *rec);
+AIAction *fn_80142558(void *ai, AIBehavior *rec);
 void fn_80142B04(void);
 void fn_801426A0(void);
 void fn_80142F80(void);
@@ -508,6 +508,7 @@ void fn_8042D854(Vector *dst, Vector *src);
 int fn_8008606C(void *e);
 int fn_80462CD0(void *list);
 Region *fn_80462D18(void *list, int i);
+int fn_80151D64(void *ai, Vector *out, float *f);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -2615,5 +2616,101 @@ extern "C" AIAction *fn_80141D78(void *ai, AIBehavior *rec)
     return 0;
 }
 
-// The .rodata claim's 8-align pad, read by the unclaimed fn_801420B4: becomes that handler's literal once it is matched.
-extern "C" const float lbl_8049AF54 __attribute__((section(".rodata"))) = 3.0f;
+// DODGE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801420B4(void *ai, AIBehavior *rec)
+{
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    if (fn_8015E64C(ai) < fn_800B1884(*fn_80442080(ai), 0xd1)) {
+        fn_801363A4(ai, 0xc);
+        return 0;
+    }
+    int c = 50;
+    if (fn_8008609C(fn_80442080(ai))) {
+        c = 0;
+    }
+    AIAction *h = fn_80138738(0x19, 50, c);
+    if (!h) {
+        return 0;
+    }
+    float z = fn_800B1724(*fn_80442080(ai))->z;
+    float ground = fn_8014B824(fn_804420AC(ai));
+    float dz = ground - z;
+    fn_80138A24(h, 0xc);
+    Vector v;
+    float dist = fn_8015E64C(ai);
+    fn_8015F6CC(ai, &v);
+    float w[4];
+    w[0] = 3.0f;
+    w[1] = 1.0f;
+    w[2] = 3.0f;
+    w[3] = 1.0f;
+    if (dist < fn_800B1884(*fn_80442080(ai), 0xd3)) {
+        w[1] = 0.0f;
+    }
+    if (!fn_801603CC(ai, 1) || !fn_80461D48(ai, 0x35)) {
+        w[1] = 0.0f;
+    }
+    if (!fn_801603CC(ai, 0)) {
+        w[0] = 0.0f;
+    }
+    if (!fn_801603CC(ai, 2)) {
+        w[2] = 0.0f;
+    }
+    if (!fn_801603CC(ai, 3)) {
+        w[3] = 0.0f;
+    }
+    if (dist < fn_800B1884(*fn_80442080(ai), 0xd2)) {
+        w[3] *= 100.0f;
+    }
+    unsigned int side = fn_8015EA6C(4, w);
+    Vector d;
+    switch (side) {
+    case 0:
+        fn_8042D80C(&d, fn_800B17A8(*fn_80442080(ai)));
+        break;
+    case 1:
+        fn_8042DC84(&d, fn_800B1750(*fn_80442080(ai)));
+        break;
+    case 2:
+        fn_8042DC84(&d, fn_800B17A8(*fn_80442080(ai)));
+        break;
+    case 3:
+        fn_8042D80C(&d, fn_800B1750(*fn_80442080(ai)));
+        break;
+    }
+    fn_80138AE0(h, 0, &d, 1.0f);
+    fn_801363A4(ai, 0xb);
+    fn_801363A4(ai, 0);
+    fn_801363A4(ai, 0x17);
+    fn_80136214(ai, 1);
+    fn_80136214(ai, 0x24);
+    if (fn_8015EE34(ai, fn_80134870(ai)) && fn_8015E97C(3.0f) && !fn_8015F008(ai) && !fn_80461D48(ai, 0x29)) {
+        fn_80138A24(h, 2);
+    }
+    return h;
+}
+
+// AVOID_ACTORS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80142558(void *ai, AIBehavior *rec)
+{
+    if (fn_80134870(ai)) {
+        if (fn_804290F8(fn_800B1724(*fn_80442080(ai)), fn_800B1724(*fn_80134870(ai))) <= fn_800B1884(*fn_80442080(ai), 210))
+            return 0;
+    }
+    Vector v;
+    float f;
+    if (fn_80151D64(ai, &v, &f)) {
+        AIAction *h = fn_80138738(26, 250, 10);
+        if (!h)
+            return 0;
+        fn_80138AE0(h, 0, &v, f);
+        return h;
+    }
+    return 0;
+}
+
+// The .rodata claim's 8-align pad, read by the unclaimed fn_801426A0: becomes that handler's literal once it is matched.
+extern "C" const float lbl_8049AF64 __attribute__((section(".rodata"))) = 1.0f;
