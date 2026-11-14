@@ -666,3 +666,9 @@ void fn_8009D0F4(register Node *node)
     node->flags &= ~1;
     lbl_8066B98C--;
 }
+
+// Distance between two points.
+float fn_8009D184(register Vector *a, register Vector *b)
+{
+    return fn_804290F8(b, a);
+}
