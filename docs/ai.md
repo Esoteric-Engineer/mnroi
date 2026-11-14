@@ -179,7 +179,7 @@ Volumes the scripts register by entity handle, through the manager wrappers `fn_
 | 0 `+0x4` | `fn_801477B0` / `fn_80147884` | 0x340, owner `+0x330` | teleport spot test `fn_80134940` (rejects spots inside, `fn_801464E4`); `fn_801600DC` (a path crossing one, `fn_80146A88`, is blocked); `AVOID_HAZARDS` |
 | 1 `+0x28` | `fn_80147968` / `fn_80147A20` | 0x340, actor id `+0x330` | `fn_80147ACC(actor)` finds the actor's volume; `fn_80134BE0` keeps the AI inside it; `DEFEND_REGIONS` steers back into it when outside |
 | 2 `+0x4C` | `fn_80147B88` | 0x330 | `fn_801475D8`: a point inside any one's hull; `AVOID_HAZARDS`, only while `fn_800CE4D0` holds |
-| 3 `+0x70` | `fn_80147C40` | 0x330 | |
+| 3 `+0x70` | `fn_80147C40` | 0x330 | `ROOFTOP_REGIONS`: one holding both the AI and its target |
 | 4 `+0x94` | `fn_80147CF8` / `fn_80147D68` | bare handles | `AVOID_HAZARDS` steers away from those within 6 |
 | 5 `+0xB8` | `fn_8014601C` | path links that climb more than 1 | `fn_8014630C`, called by tasks `fn_801549D0` and CLIMBATTACK enter `fn_8015C8BC` |
 
@@ -229,7 +229,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
 | 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done. `.rodata` 0x8049B9C8-0x8049B9E0 (floats 1, 0, 176, -0, 0, 1) has no reader in `.text` and stays unclaimed |
-| 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | Unit reaches 0x8014470C, its `.rodata` 0x8049AFE8 (8-aligned, no pad needed). 8 unclaimed functions (0x1468 bytes) before the static init, next `ROOFTOP_REGIONS` `fn_8014470C` (0x264), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D` |
+| 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | Unit reaches 0x80144970, its `.rodata` 0x8049AFF0 (8-aligned, no pad needed). 7 unclaimed functions (0x1204 bytes) before the static init, next `APPROACH_MOBILITY` `fn_80144970` (0x344), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D` |
 | 14 | Rename pass | Task methods in row 12's unit; accessors in `Game/fn_80442010.c` and row 5's units | After row 13. One area per run, each one `symbols.txt` edit plus a rename across `src/`, checked by `main.dol: OK`. Task methods take their `TASK_` string: `Task_ClimbAttack_Enter`, `_Exit`, `_Update`. Accessors get a name (`AI_GetMover`, no class prefix) only where section 4 records what they return; the rest keep `fn_`. Symbols stay `extern "C"` |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.

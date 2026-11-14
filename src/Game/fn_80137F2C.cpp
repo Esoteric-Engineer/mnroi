@@ -284,7 +284,7 @@ AIAction *fn_80140E64(void *ai, AIBehavior *rec);
 AIAction *fn_80141394(void *ai, AIBehavior *rec);
 AIAction *fn_801414C8(void *ai, AIBehavior *rec);
 AIAction *fn_80141D78(void *ai, AIBehavior *rec);
-void fn_8014470C(void);
+AIAction *fn_8014470C(void *ai, AIBehavior *rec);
 void fn_80144E30(void);
 AIAction *fn_801420B4(void *ai, AIBehavior *rec);
 AIAction *fn_80142558(void *ai, AIBehavior *rec);
@@ -538,6 +538,9 @@ int fn_800CCB88(Base &c);
 int fn_800CCB38(Base &c);
 void fn_8042FE08(Vector *v, Vector *d, float s); // v += d * s
 int fn_80085300(void *actor, Vector *p, float a, float b, float *out);
+int fn_80462E00(void *list);
+Region *fn_80462E48(void *list, int i);
+float fn_801467AC(void *rec, Vector *pos);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -3200,4 +3203,43 @@ extern "C" AIAction *fn_80144628(void *ai, AIBehavior *rec)
     fn_80447C38(&v);
     fn_80138AE0(h, 7, &v, 1.0f);
     return h;
+}
+
+// ROOFTOP_REGIONS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8014470C(void *ai, AIBehavior *rec)
+{
+    if (fn_800CCC28(*fn_8044203C(ai))) {
+        return 0;
+    }
+    Vector pos;
+    fn_8042DC84(&pos, fn_800B1724(*fn_80442080(ai)));
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    Vector at;
+    fn_8042DC84(&at, fn_800B1724(*t));
+    for (int i = 0; i < fn_80462E00(fn_8013726C(ai)); i++) {
+        Region *r = fn_80462E48(fn_8013726C(ai), i);
+        if (!r) {
+            continue;
+        }
+        if (fn_801464E4(r, &pos) && fn_801464E4(r, &at)) {
+            Vector c;
+            fn_8042DC84(&c, &r->centre);
+            float d = fn_801467AC(r, &pos);
+            if (d > 2.0f) {
+                continue;
+            } else {
+                AIAction *h = fn_80138738(0x17, 500, 0);
+                if (h) {
+                    Vector a, b;
+                    fn_8015F538(ai, &r->centre, &b);
+                    fn_80138AE0(h, 0, &b, 1.0f);
+                    return h;
+                }
+            }
+        }
+    }
+    return 0;
 }
