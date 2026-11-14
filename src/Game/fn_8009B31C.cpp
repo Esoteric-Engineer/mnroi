@@ -40,6 +40,21 @@ struct Node
     Vector pos;           // +0x50
 };
 
+struct SectorSlot
+{
+    char pad[0x30];
+};
+
+struct SectorQuery // the sectors near a point (fn_8004E75C);
+{
+    char pad0[0x40];
+    SectorSlot slot[0x80]; // +0x40
+    unsigned int count;    // +0x1840
+    char pad1844[0xC];
+};
+
+typedef int (*SpotTest)(Node *, Vector *, unsigned short, void *);
+
 struct Query // the 0x58-byte base of the Mover's path (docs/ai.md section 4.6)
 {
     char pad0[0x44];
@@ -98,7 +113,15 @@ char *strncpy(char *dst, const char *src, unsigned n);
 void fn_8009CF44(void *graph);
 float *fn_8042FB28(void *v);
 int fn_80444710(Node *node);
-Node *fn_8009C55C(Vector *pos, void *world, unsigned mask, float radius, void *test, void *ctx, int n);
+Node *fn_8009C55C(Vector *pos, Sector *world, unsigned mask, float radius, SpotTest test, void *ctx, int region);
+void fn_8004E9C8(SectorQuery *q);
+void fn_8004E75C(SectorQuery *q, Vector *pos, float radius, Sector *world);
+Sector *fn_8042F1C4(SectorSlot *slot);
+void fn_80429090(Vector *out, Vector *a, Vector *b, float t);
+int fn_8004A758(Vector *from, Vector *dir, float len, int a, int b, int c, Sector *world, int d, int e);
+int fn_8044483C(Node *node);
+int fn_804447D4(Node *node);
+extern Vector lbl_80593DE0;
 float fn_8009D278(Node *a, Link *b, Vector *out);
 float fn_8009D184(Vector *a, Vector *b);
 int fn_804445D8(Link *link);
@@ -416,6 +439,65 @@ int fn_8009C004(register Query *path, Vector *from, Vector *to, Node *fromSpot, 
     return 0;
 }
 
-// 4-byte pad to the section alignment; fn_8009C55C reads it
-extern const float lbl_8048AA5C __attribute__((section(".rodata"))) = 1.0f;
+// Nearest spot to pos within radius. Retried once at 40 with a 10 minimum.
+Node *fn_8009C55C(Vector *pos, Sector *world, unsigned mask, float radius, SpotTest test, void *ctx, int region)
+{
+    if (!world)
+        return 0;
+    SectorQuery q;
+    fn_8004E9C8(&q);
+    Level *lv = (Level *)fn_80430050(lbl_8052F060);
+    Node *node;
+    Node *best = 0;
+    Sector *sec;
+    Vector d;
+    float dist;
+    float limit = radius + 1.0f;
+    float least = 0.0f;
+    unsigned int si;
+    int ni;
+    unsigned short m;
+    Vector from;
+    fn_80429090(&from, pos, &lbl_80593DE0, 0.05f);
+top:
+    fn_8004E75C(&q, pos, radius, world);
+    limit = radius + 1.0f;
+    for (si = 0; si < q.count; si++) {
+        sec = fn_8042F1C4(&q.slot[si]);
+        if (!sec->nNodes)
+            continue;
+        for (ni = sec->firstNode; ni < sec->firstNode + sec->nNodes; ni++) {
+            node = lv->nodes + ni;
+            if (region > -1 && fn_80444710(node) != region)
+                continue;
+            if ((mask & 0x40000000) && fn_8044483C(node))
+                continue;
+            if (fn_804447D4(node) && !(mask & 0x70))
+                continue;
+            m = mask;
+            if (m && !(node->flags & m))
+                continue;
+            fn_80429038(&d, fn_80444688(node), pos);
+            dist = fn_8042EC54(&d);
+            if (dist > limit || dist < least)
+                continue;
+            if (!(mask & 0x80000000)) {
+                if (fn_8004A758(&from, &d, dist, 1, 0, 0, world, 0, 2))
+                    continue;
+            }
+            if (test) {
+                if (!test(node, pos, (unsigned short)mask, ctx))
+                    continue;
+            }
+            best = node;
+            limit = dist;
+        }
+    }
+    if (!best && radius < 40.0f) {
+        radius = 40.0f;
+        least = 10.0f;
+        goto top;
+    }
+    return best;
+}
 }

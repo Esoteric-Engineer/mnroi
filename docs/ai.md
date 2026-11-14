@@ -224,7 +224,6 @@ Signatures below are as the matched AI callers declare them.
 
 | Function | Called by | Role (guess) |
 |---|---|---|
-| `fn_8009C55C(pos, world, mask, radius, test, ctx, n)` | the route length `fn_8014C0B8`, teleport (`fn_80134D64`, `fn_80135668`), `EVADE`, `fn_801504BC`, and the two route queries | Nearest spot to a point within `radius` that passes `test` (the teleport passes `fn_80134940` and the volume registry); `mask` from `fn_801370B0` |
 | `fn_8009C92C(query, last, from, to)` | the search `fn_8009C004` | Builds the route from the links the search reached `last` by (`Node+0x48`), sums its length into the query, fails past 255 spots |
 | `fn_8009CFDC`, `fn_8009D024`, `fn_8009D0F4`, `fn_8009D238`, `fn_8009D1D0` | the search | Start a search (bump the stamp `lbl_8066B984`, skipping 0), insert a node in the open list (head `lbl_8066B988`, ordered by f), unlink one, re-sort one, reset a node's search fields |
 
