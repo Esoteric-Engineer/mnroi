@@ -2558,4 +2558,38 @@ extern "C" int fn_8015CF54(register Self *self)
     return 1;
 }
 
-extern "C" const float lbl_8049B9B4 __attribute__((section(".rodata"))) = 0.25f; // pad: keeps .rodata 8-aligned; read by fn_8015D0A0
+struct HoverFire : Self {
+    char pad8[0x20];
+    int hover; // +0x28, set to 1 by the script API
+};
+
+// HOVERANDFIRE enter
+extern "C" int fn_8015CF84(register HoverFire *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    fn_8046412C(self->ai, 0);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 5);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 0x27);
+    fn_80442130(self->ai, 9);
+    fn_8014F7B0(fn_804420D8(self->ai), 1);
+    fn_801513D8(self->brain, fn_8015EA18(2000) + 1000);
+    self->hover = 0;
+    return 1;
+}
+
+// HOVERANDFIRE exit
+extern "C" int fn_8015D070(register HoverFire *self)
+{
+    return 1;
+}
+
+// HOVERANDFIRE update
+extern "C" int fn_8015D0A0(register HoverFire *self)
+{
+    if (!self->hover && (!fn_80151430(self->brain) || !fn_8015F410(self->ai, 0.25f)))
+        fn_804643C8(self, 1);
+    return 1;
+}
