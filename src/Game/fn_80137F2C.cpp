@@ -297,7 +297,7 @@ AIAction *fn_80144038(void *ai, AIBehavior *rec);
 AIAction *fn_80144544(void *ai, AIBehavior *rec);
 AIAction *fn_80144628(void *ai, AIBehavior *rec);
 AIAction *fn_80144970(void *ai, AIBehavior *rec);
-void fn_80144CB4(void);
+AIAction *fn_80144CB4(void *ai, AIBehavior *rec);
 void fn_80144D3C(void);
 void fn_80144DB8(void);
 void fn_80145200(void);
@@ -3295,6 +3295,18 @@ extern "C" AIAction *fn_80144970(void *ai, AIBehavior *rec)
             fn_80462BDC(h, 20.0f);
             return h;
         }
+    }
+    return 0;
+}
+
+// FORCE_SUPER_BLOCK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144CB4(void *ai, AIBehavior *rec)
+{
+    AIAction *h = fn_80138738(0x25, 60000, 0);
+    if (h) {
+        fn_80138A24(h, 0);
+        fn_80138A24(h, 0x17);
+        return h;
     }
     return 0;
 }
