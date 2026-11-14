@@ -235,7 +235,7 @@ void fn_80447EAC(void *p, int flags);
 int fn_801B6A44(void *list);
 int fn_801B5D3C(void *list, int index);
 void *fn_8046234C(register char *self);
-int fn_804623BC(register char *self);
+int AI_IsPathBuilt(register char *self);
 }
 
 // AIObject+0x210: a +0x20 subobject (fn_8046234C), Vectors at +0xE0, +0xF0 [24], +0x280, +0x2A0, +0x2D0, +0x2E0
@@ -294,7 +294,7 @@ extern "C" char *AI_GetMoverHeading(register char *self)
 
 extern "C" int AI_HasMoverPath(register char *self)
 {
-    return fn_804623BC(self + 0x20);
+    return AI_IsPathBuilt(self + 0x20);
 }
 
 extern "C" int AI_HasMoverWaypoint(register Sub210 *self)
@@ -572,7 +572,7 @@ extern "C" void *fn_8046234C(register char *self)
     return self;
 }
 
-extern "C" int fn_804623BC(register char *self)
+extern "C" int AI_IsPathBuilt(register char *self)
 {
     return (unsigned short)(((Sub230 *)self)->flags & 1);
 }

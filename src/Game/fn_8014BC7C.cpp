@@ -47,7 +47,7 @@ Vector *fn_800B1724(Ent &actor);
 void *fn_800B1CC8(Ent &actor);
 unsigned int fn_801370B0(void *ai);
 int fn_80463204(void *ai);
-int fn_804623BC(Nav *nav);
+int AI_IsPathBuilt(Nav *nav);
 int fn_8009BB7C(Nav *nav, Vector *from, Vector *to, void *fromWorld, void *toWorld, unsigned int mask, float range);
 void fn_8014BF9C(Nav *nav, void *ai, Ent *dest, void *world, Vector *pos, int b, int a, int c, int d);
 int fn_8014C5C4(Nav *nav);
@@ -78,7 +78,7 @@ Vector *fn_80444688(void *spot);
 float fn_804290F8(Vector *a, Vector *b);
 int fn_8009C004(Query *q, Vector *from, Vector *to, void *fromSpot, void *toSpot, unsigned int mask, float range);
 void fn_8014DD30(Nav *nav);
-Way *fn_80463714(Nav *nav);
+Way *AI_GetPathEntry(Nav *nav);
 Ent *fn_800ACFA8(int handle);
 void *fn_80444904(void *wp, int i);
 int fn_8009BD7C(Nav *nav, void *fromSpot, Vector *to, void *toWorld, unsigned int mask, float range);
@@ -127,8 +127,8 @@ void AI_SetMoverWaypoint(void *p, Vector *v);
 void fn_8014D928(Nav *nav, void *spot);
 int fn_8014D744(Nav *nav);
 int fn_80463678(Nav *nav);
-void fn_804637BC(Nav *nav, Vector *v, void *spot, int a);
-int fn_80463770(Nav *nav);
+void AI_SetPathGoal(Nav *nav, Vector *v, void *spot, int a);
+int AI_NextPathEntry(Nav *nav);
 int fn_80463584(Nav *nav);
 Vector *fn_80444A04(void *p, int i);
 Vector *fn_804635EC(void *spot, int i);
@@ -145,7 +145,7 @@ extern "C" int fn_8014BC7C(register Nav *self, void *ai, Ent *dest, int a, int b
 {
     int r;
 
-    if (fn_804623BC(self)) {
+    if (AI_IsPathBuilt(self)) {
         if (!fn_8014C5C4(self))
             return 0;
         fn_8014C660(self);
@@ -166,7 +166,7 @@ extern "C" int fn_8014BE08(register Nav *self, void *ai, Vector *to, int a, int 
 {
     int r;
 
-    if (fn_804623BC(self)) {
+    if (AI_IsPathBuilt(self)) {
         if (!fn_8014C5C4(self))
             return 0;
         fn_8014C660(self);
@@ -244,7 +244,7 @@ extern "C" float fn_8014C0B8(register Nav *self, void *ai, Vector *from, Vector 
 
 extern "C" int fn_8014C31C(register Nav *self)
 {
-    Way *way = fn_80463714(self);
+    Way *way = AI_GetPathEntry(self);
     int r;
     Ent *dest = self->f70 ? fn_800ACFA8(self->f70) : 0;
 
@@ -272,7 +272,7 @@ extern "C" int fn_8014C31C(register Nav *self)
 
 extern "C" int fn_8014C5C4(register Nav *self)
 {
-    if (!fn_804623BC(self))
+    if (!AI_IsPathBuilt(self))
         return 1;
     if (self->f58 && (fn_80463550(self->f58) || fn_80444CD0(self->f58)))
         return 0;
@@ -281,7 +281,7 @@ extern "C" int fn_8014C5C4(register Nav *self)
 
 extern "C" void fn_8014C660(register Nav *self)
 {
-    if (!fn_804623BC(self))
+    if (!AI_IsPathBuilt(self))
         return;
     AI_SetMoverSpotKind(AI_GetMover(self->f5C), 0);
     self->f54 &= ~1;
@@ -407,7 +407,7 @@ extern "C" int fn_8014D034(register Nav *self)
     void *x;
     int hit;
 
-    if (!fn_804623BC(self))
+    if (!AI_IsPathBuilt(self))
         return 0;
     fn_8014DD30(self);
     if (!fn_804636AC(self) && !fn_80463644(self) && !fn_804635B8(self) && fn_8014D8C0(self)
@@ -420,7 +420,7 @@ extern "C" int fn_8014D034(register Nav *self)
         }
         self->f94 = fn_8042EFF8(lbl_80593BE8) + 5000;
     }
-    way = fn_80463714(self);
+    way = AI_GetPathEntry(self);
     if (fn_80463644(self)) {
         x = fn_804635B8(self);
         hit = 0;
@@ -466,14 +466,14 @@ extern "C" int fn_8014D034(register Nav *self)
                 return 1;
             } else {
                 self->f54 |= 0x8000;
-                fn_804637BC(self, &self->f60, 0, 0);
+                AI_SetPathGoal(self, &self->f60, 0, 0);
                 return 0;
             }
         }
         if (!fn_804636E0(self))
             fn_8014D890(self);
         self->f58 = way->f0;
-        if (!fn_80463770(self) && fn_80463584(self)) {
+        if (!AI_NextPathEntry(self) && fn_80463584(self)) {
             if (fn_8014C31C(self))
                 fn_8014D034(self);
             else
@@ -482,11 +482,11 @@ extern "C" int fn_8014D034(register Nav *self)
         }
         self->f54 &= ~0xC0;
         if (fn_8014D744(self)) {
-            way = fn_80463714(self);
+            way = AI_GetPathEntry(self);
             if (way)
-                fn_804637BC(self, fn_80444A04(way->f0, 0), self->f58, 1);
+                AI_SetPathGoal(self, fn_80444A04(way->f0, 0), self->f58, 1);
             else
-                fn_804637BC(self, fn_804635EC(self->f58, 0), self->f58, 1);
+                AI_SetPathGoal(self, fn_804635EC(self->f58, 0), self->f58, 1);
             if (self->f58) {
                 if (fn_80444570(self->f58))
                     AI_SetMoverSpotKind(AI_GetMover(self->f5C), 1);
@@ -524,14 +524,14 @@ extern "C" int fn_8014D744(register Nav *self)
 
 extern "C" void fn_8014D7B0(register Nav *self)
 {
-    if (fn_80463714(self) && fn_80444D04(fn_80463714(self)->f0)) {
+    if (AI_GetPathEntry(self) && fn_80444D04(AI_GetPathEntry(self)->f0)) {
         if (!fn_801368B8(self->f5C)) {
             fn_8014C660(self);
             return;
         }
         fn_80461CC0(self->f5C, 0x1C);
     }
-    if (fn_80463714(self) && fn_80444570(fn_80463714(self)->f0))
+    if (AI_GetPathEntry(self) && fn_80444570(AI_GetPathEntry(self)->f0))
         fn_80461CC0(self->f5C, 0x1D);
     if (!self->f58)
         return;
@@ -558,7 +558,7 @@ extern "C" void fn_8014D928(register Nav *self, void *spot)
         && fn_80444A04(spot, 0)->x == fn_804635EC(fn_8044734C(AI_GetMover(self->f5C)), 0)->x
         && fn_80444A04(spot, 0)->y == fn_804635EC(fn_8044734C(AI_GetMover(self->f5C)), 0)->y
         && fn_80444A04(spot, 0)->z == fn_804635EC(fn_8044734C(AI_GetMover(self->f5C)), 0)->z) {
-        fn_804637BC(self, fn_804635EC(spot, 0), spot, 1);
+        AI_SetPathGoal(self, fn_804635EC(spot, 0), spot, 1);
         return;
     }
     if (!fn_80444D04(spot)) {
@@ -575,15 +575,15 @@ extern "C" void fn_8014D928(register Nav *self, void *spot)
                 if (AI_GetMoverWaypoint(AI_GetMover(self->f5C))->x == fn_80444688(fn_80444984(spot, 0))->x
                     && AI_GetMoverWaypoint(AI_GetMover(self->f5C))->y == fn_80444688(fn_80444984(spot, 0))->y
                     && AI_GetMoverWaypoint(AI_GetMover(self->f5C))->z == fn_80444688(fn_80444984(spot, 0))->z)
-                    fn_804637BC(self, fn_80444688(fn_80444984(spot, 0)), spot, 1);
+                    AI_SetPathGoal(self, fn_80444688(fn_80444984(spot, 0)), spot, 1);
                 else
-                    fn_804637BC(self, &a, spot, 0);
+                    AI_SetPathGoal(self, &a, spot, 0);
                 self->f58 = spot;
                 return;
             }
         }
     }
-    fn_804637BC(self, fn_80444A04(spot, 0), spot, 0);
+    AI_SetPathGoal(self, fn_80444A04(spot, 0), spot, 0);
 }
 
 extern "C" void fn_8014DD30(register Nav *self)

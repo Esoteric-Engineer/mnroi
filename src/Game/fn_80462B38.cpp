@@ -321,7 +321,7 @@ extern "C" int fn_804633B0(register Slots *self)
     return (unsigned short)(self->flags & 0x20);
 }
 
-extern "C" int fn_804633E4(register int *self)
+extern "C" int AI_GetMoverEntity(register int *self)
 {
     return self[1];
 }
@@ -367,7 +367,7 @@ extern "C" void AI_SetMoverSpotKind(register Sub210 *self, register int v)
     self->iD0 = v;
 }
 
-extern "C" int fn_804634CC(register int *self)
+extern "C" int AI_GetMoverAI(register int *self)
 {
     return self[0];
 }
@@ -422,17 +422,17 @@ extern "C" int fn_804636E0(register Slots *self)
     return (unsigned short)(self->flags & 0x80);
 }
 
-extern "C" void **fn_80463714(register Slots *self)
+extern "C" void **AI_GetPathEntry(register Slots *self)
 {
     return self->cursor < self->count ? &self->items[self->cursor] : 0;
 }
 
-extern "C" int fn_80463770(register Slots *self)
+extern "C" int AI_NextPathEntry(register Slots *self)
 {
     return ++self->cursor < self->count;
 }
 
-extern "C" void fn_804637BC(register Slots *self, register void *v, register int a, register int b)
+extern "C" void AI_SetPathGoal(register Slots *self, register void *v, register int a, register int b)
 {
     fn_8042DC84(&self->v80, v);
     self->i90 = a;
