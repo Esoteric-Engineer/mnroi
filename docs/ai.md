@@ -198,7 +198,7 @@ The registering classes are named by the type-registry string (`fn_801BEE2C`): `
 | Offset | Type | Meaning (guess) |
 |---|---|---|
 | +0x0, +0x4 | `unsigned`, `void *[16]` | Entry count and entries (each entry's `+0x0` is a spot) |
-| +0x44 | `unsigned short` | Base flags, set by the path-node graph and cleared by the route build `fn_8009C92C` (unmatched). Bit 1 (`fn_80463584`: at the last entry, rebuild rather than reset): the route has more than 16 spots. Bit 2 (`fn_804635B8`): the two ends are the same spot (`fn_8009C004`) |
+| +0x44 | `unsigned short` | Base flags, set by the path-node graph and cleared by the route build `fn_8009C92C`. Bit 1 (`fn_80463584`: at the last entry, rebuild rather than reset): the route has more than 16 spots, and the entries hold the first 16. Bit 2 (`fn_804635B8`): the two ends are the same spot (`fn_8009C004`) |
 | +0x48 | `float` | Route length, the sum of its legs (`fn_8009C004`, `fn_8009C92C`); cleared by the base reset |
 | +0x4C | `int` | `fn_80463204(ai)` at each build. The path-node search passes it to `fn_80132DC4`, which returns the float of that entry (0-30, else 0) of the 31 16-byte entries `lbl_804CF968` |
 | +0x50 | spot | Next spot |
@@ -224,7 +224,6 @@ Signatures below are as the matched AI callers declare them.
 
 | Function | Called by | Role (guess) |
 |---|---|---|
-| `fn_8009C92C(query, last, from, to)` | the search `fn_8009C004` | Builds the route from the links the search reached `last` by (`Node+0x48`), sums its length into the query, fails past 255 spots |
 | `fn_8009CFDC`, `fn_8009D024`, `fn_8009D0F4`, `fn_8009D238`, `fn_8009D1D0` | the search | Start a search (bump the stamp `lbl_8066B984`, skipping 0), insert a node in the open list (head `lbl_8066B988`, ordered by f), unlink one, re-sort one, reset a node's search fields |
 
 ---

@@ -57,7 +57,8 @@ typedef int (*SpotTest)(Node *, Vector *, unsigned short, void *);
 
 struct Query // the 0x58-byte base of the Mover's path (docs/ai.md section 4.6)
 {
-    char pad0[0x44];
+    unsigned count;       // +0x0
+    Link *entries[16];    // +0x4
     unsigned short flags; // +0x44
     float length;         // +0x48
     int kind;             // +0x4C
@@ -499,5 +500,43 @@ top:
         goto top;
     }
     return best;
+}
+
+// Builds the route: sums its legs into the query's length and keeps the last 16 links.
+int fn_8009C92C(register Query *q, Node *last, Vector *from, Vector *to)
+{
+    Node *cur;
+    Node *prev;
+    unsigned n;
+    n = 0;
+    prev = 0;
+    cur = last;
+    while (cur->via) {
+        if (prev)
+            q->length += fn_804290F8(fn_80444688(prev), fn_80444688(cur));
+        prev = cur;
+        n++;
+        if (n > 255)
+            return 0;
+        cur = fn_80444904(cur->via, 0);
+    }
+    q->length += fn_804290F8(to, fn_80444688(last)) + fn_804290F8(from, fn_80444688(cur));
+    q->flags = 0;
+    if (n > 16) {
+        q->flags |= 1;
+        while (n > 16) {
+            n--;
+            last = fn_80444904(last->via, 0);
+        }
+    }
+    q->count = n;
+    cur = last;
+    while (n) {
+        n--;
+        q->entries[n] = cur->via;
+        cur = fn_80444904(cur->via, 0);
+    }
+    lbl_8066B98C = 0;
+    return 1;
 }
 }
