@@ -25,7 +25,16 @@ struct Link
 
 struct Node
 {
-    char pad0[0x2C];
+    unsigned short id;     // +0x0 (file value)
+    char pad2[0xE];
+    Vector spot;           // +0x10
+    unsigned short sector; // +0x20 (the sector's index)
+    unsigned char region;  // +0x22
+    char pad23;
+    unsigned short link[2]; // +0x24 (the file's two link fields)
+    unsigned short firstLink; // +0x28 (index of its first link)
+    unsigned char nLinks;  // +0x2A
+    char pad2B;
     unsigned short flags; // +0x2C (bit 0: on the open list)
     char pad2E[2];
     Node *next;           // +0x30 open list, ordered by f
@@ -161,9 +170,11 @@ Node *fn_80444904(Link *link, int i);
 Node *fn_80444984(Link *link, int i);
 void fn_80444638(Link *link, int off);
 void fn_8042DC84(Vector *dst, Vector *src);
+void fn_8009CB38(Node *node, void *file, unsigned version);
+void fn_80428FA8(Vector *v, float x, float y, float z);
+void fn_8042FC74(Vector *v);
 int fn_801464E4(void *volume, Vector *p);
 int fn_80146918(void *volume, Vector *from, Vector *to, Vector *hit);
-void fn_8009CB38(Node *node, void *file, int version);
 void fn_8009CDE4(Link *link, Level *lv, void *file);
 Sector *fn_8004DD38(Level *lv, void *pos);
 void fn_804446B4(Node *node, Sector *s);
@@ -538,5 +549,36 @@ int fn_8009C92C(register Query *q, Node *last, Vector *from, Vector *to)
     }
     lbl_8066B98C = 0;
     return 1;
+}
+
+// Reads one node record of the .npd file (version 2 and below keeps its position as 3 floats).
+void fn_8009CB38(register Node *node, void *file, unsigned version)
+{
+    float v[3];
+    unsigned short i;
+    if (version > 1) {
+        fn_801A8B60(&node->id, 2, 1, file);
+        node->id = SWAP16(node->id);
+    } else {
+        node->id = lbl_8066B97C++;
+    }
+    if (version <= 2) {
+        fn_801A8B60(v, 12, 1, file);
+        fn_80428FA8(&node->spot, v[0], v[1], v[2]);
+    } else {
+        fn_801A8B60(&node->spot, 16, 1, file);
+    }
+    fn_8042FC74(&node->spot);
+    fn_801A8B60(&node->flags, 2, 1, file);
+    node->flags = SWAP16(node->flags);
+    fn_801A8B60(&node->region, 1, 1, file);
+    fn_801A8B60(node->link, 2, 2, file);
+    for (i = 0; i < 2; i++)
+        node->link[i] = SWAP16(node->link[i]);
+    fn_801A8B60(&node->sector, 2, 1, file);
+    node->sector = SWAP16(node->sector);
+    fn_801A8B60(&node->firstLink, 2, 1, file);
+    node->firstLink = SWAP16(node->firstLink);
+    fn_801A8B60(&node->nLinks, 1, 1, file);
 }
 }
