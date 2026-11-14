@@ -82,6 +82,12 @@ int fn_801A8B60(void *dst, int size, int count, void *file);
 void fn_801A875C(void *file);
 void *fn_801AC988(unsigned size, const char *tag, int line, int align);
 void SetLoadProgress__8GameFlowfi(void *self, float f, int a);
+Node *fn_80444904(Link *link, int i);
+Node *fn_80444984(Link *link, int i);
+void fn_80444638(Link *link, int off);
+void fn_8042DC84(Vector *dst, Vector *src);
+int fn_801464E4(void *volume, Vector *p);
+int fn_80146918(void *volume, Vector *from, Vector *to, Vector *hit);
 void fn_8009CB38(Node *node, void *file, int version);
 void fn_8009CDE4(Link *link, Level *lv, void *file);
 Sector *fn_8004DD38(Level *lv, void *pos);
@@ -173,4 +179,33 @@ void fn_8009B83C(Ent *e, int on)
         fn_80444870(node, on == 0);
     }
 }
+
+// Damage volume add (on 0) / remove (1): each link that touches the volume (an end or a crossing) is switched off / on
+void fn_8009B994(void *volume, int on)
+{
+    Level *lv = (Level *)fn_80430050(lbl_8052F060);
+    Link *link;
+    Vector p;
+    for (unsigned short i = 0; i < lv->nLinks; i++) {
+        link = lv->links + i;
+        Vector a, b, c;
+        int hit;
+        fn_8042DC84(&a, fn_80444688(fn_80444904(link, 0)));
+        fn_8042DC84(&b, fn_80444688(fn_80444984(link, 0)));
+        a.z = b.z = 0.0f;
+        hit = 0;
+        if (fn_801464E4(volume, &a)) {
+            hit = 1;
+        } else if (fn_801464E4(volume, &b)) {
+            hit = 1;
+        } else if (fn_80146918(volume, &a, &b, &c)) {
+            hit = 1;
+        }
+        if (hit)
+            fn_80444638(link, !on);
+    }
+}
+
+// 4-byte pad to the section alignment; fn_8009BB7C reads it
+extern const float lbl_8048AA34 __attribute__((section(".rodata"))) = 0.3f;
 }
