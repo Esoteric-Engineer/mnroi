@@ -232,6 +232,7 @@ extern char lbl_805717F0[]; // pool of free Actions
 extern char lbl_80593BE8[];
 extern Vector lbl_80593E00;
 extern Vector lbl_80593DD0;
+extern Vector lbl_80593DE0;
 extern void *lbl_8066BF5C;
 extern float lbl_8066BF60;
 extern void *lbl_8066D6DC; // the overlay text object (docs/versus.md section 6)
@@ -258,7 +259,7 @@ AIAction *fn_8013E99C(void *ai, AIBehavior *rec);
 AIAction *fn_8013F08C(void *ai, AIBehavior *rec);
 AIAction *fn_8013F438(void *ai, AIBehavior *rec);
 AIAction *fn_8013F8D0(void *ai, AIBehavior *rec);
-void fn_8013F9F0(void);
+AIAction *fn_8013F9F0(void *ai, AIBehavior *rec);
 void fn_801409D0(void);
 void fn_80140C10(void);
 void fn_80140E64(void);
@@ -475,6 +476,11 @@ int fn_8004A9CC(Vector *from, Vector *dir, float len, unsigned int mask, Placeme
 int fn_8015EEA0(void *ai);
 int fn_800862DC(void *e);
 float fn_8014B824(void *mover);
+int fn_8015F0F0(void *ai, Ent *t);
+int fn_80086B6C(void *e);
+Target *fn_800CD9B0T(Base &c) __asm__("fn_800CD9B0");
+void fn_8042F984(Vector *out, Vector *a, Vector *b);
+void fn_80429090(Vector *out, Vector *a, Vector *b, float s);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -2146,5 +2152,113 @@ extern "C" AIAction *fn_8013F8D0(void *ai, AIBehavior *rec)
     return 0;
 }
 
-// 8-aligns the .rodata claim: fn_8013F9F0's first literal; drop it when that handler joins the unit.
-extern "C" const float lbl_8049AEDC __attribute__((section(".rodata"))) = 1.0f;
+// THROW_OBJECT (docs/ai.md section 4.3): throws when the path to the target is clear down the centre and both edges.
+extern "C" AIAction *fn_8013F9F0(void *ai, AIBehavior *rec)
+{
+    if (fn_80461D48(ai, 0xc)) {
+        AIAction *h = fn_80138738(0x10, 100, 500);
+        if (h) {
+            Vector v;
+            if (fn_8015F6CC(ai, &v)) {
+                if (!fn_8015F384(ai) || !fn_80085D3C(fn_80442080(ai))) {
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                    fn_80462BDC(h, 10.0f);
+                }
+            } else {
+                fn_8042DC84(&v, fn_800B1750(*fn_80442080(ai)));
+                if (!fn_8015F384(ai) || !fn_80085D3C(fn_80442080(ai))) {
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                }
+            }
+            float facing = fn_8042EBF4(&v, fn_800B1750(*fn_80442080(ai)));
+            if (facing < 0.0f) {
+                return h;
+            }
+            int seen = 1;
+            if (fn_80134870(ai)) {
+                seen = fn_8015F0F0(ai, fn_80134870(ai));
+            }
+            if (fn_80086B1C(fn_80442080(ai)) || fn_80086B6C(fn_80442080(ai))) {
+                fn_80138A24(h, 6);
+            }
+            int clear = 1;
+            if (fn_80134870(ai)) {
+                Vector from, to, dir;
+                fn_80442080T(ai)->s5(&from, 0);
+                fn_80134870T(ai)->s5(&to, 0);
+                fn_80429038(&dir, &to, &from);
+                fn_8042F76C(&dir);
+                float len = fn_804290F8(&from, &to);
+                float size = MAX(ABS(fn_80134870T(ai)->maxX - fn_80134870T(ai)->minX),
+                                 ABS(fn_80134870T(ai)->maxY - fn_80134870T(ai)->minY));
+                len -= size;
+                if (len > 10.0f) {
+                    len = 10.0f;
+                }
+                Vector side;
+                fn_8042F984(&side, &dir, &lbl_80593DE0);
+                Vector left, right;
+                Target *b = fn_800CD9B0T(*fn_8044203C(ai));
+                float half = MAX(ABS(b->maxX - b->minX), ABS(b->maxY - b->minY));
+                half /= 2.0f;
+                fn_80429090(&left, &from, &side, half);
+                fn_80429090(&right, &from, &side, -half);
+                Placement hit;
+                clear = !fn_8004A9CC(&from, &dir, len, 0x8000, &hit, fn_800B24AC(*fn_80442080(ai)),
+                                     fn_800B1CC8(*fn_80442080(ai)), 0, 3);
+                int color = 0xffff0000;
+                if (clear) {
+                    color = 0xff00ff00;
+                }
+                if (clear) {
+                    fn_80429038(&dir, &to, &left);
+                    fn_8042F76C(&dir);
+                    len = fn_804290F8(&left, &to);
+                    float size = MAX(ABS(fn_80134870T(ai)->maxX - fn_80134870T(ai)->minX),
+                                     ABS(fn_80134870T(ai)->maxY - fn_80134870T(ai)->minY));
+                    len -= size;
+                    if (len > 10.0f) {
+                        len = 10.0f;
+                    }
+                    clear = !fn_8004A9CC(&left, &dir, len, 0x8000, &hit, fn_800B24AC(*fn_80442080(ai)),
+                                         fn_800B1CC8(*fn_80442080(ai)), 0, 3);
+                    color = 0xffff0000;
+                    if (clear) {
+                        color = 0xff00ff00;
+                    }
+                    if (clear) {
+                        fn_80429038(&dir, &to, &right);
+                        fn_8042F76C(&dir);
+                        len = fn_804290F8(&right, &to);
+                        float size = MAX(ABS(fn_80134870T(ai)->maxX - fn_80134870T(ai)->minX),
+                                         ABS(fn_80134870T(ai)->maxY - fn_80134870T(ai)->minY));
+                        len -= size;
+                        if (len > 10.0f) {
+                            len = 10.0f;
+                        }
+                        clear = !fn_8004A9CC(&right, &dir, len, 0x8000, &hit, fn_800B24AC(*fn_80442080(ai)),
+                                             fn_800B1CC8(*fn_80442080(ai)), 0, 3);
+                        color = 0xffff0000;
+                        if (clear) {
+                            color = 0xff00ff00;
+                        }
+                    }
+                }
+            }
+            if (fn_80134870(ai) && fn_8015E64C(ai) > 5.0f && fn_8015E8A8(ai, fn_800B1724(*fn_80134870(ai))) > 4.0f &&
+                fn_8015EEA0(ai)) {
+                clear = 1;
+            }
+            if (clear) {
+                fn_80138A24(h, 0xa);
+                fn_80462BB4(h, 5);
+                fn_80138B7C(h, 0x10, 500, 500);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// 8-aligns the .rodata claim: fn_801409D0's first literal; drop it when that handler joins the unit.
+extern "C" const float lbl_8049AEF4 __attribute__((section(".rodata"))) = 1.0f;
