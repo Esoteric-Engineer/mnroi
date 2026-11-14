@@ -1715,5 +1715,75 @@ extern "C" int fn_80159A40(register Self *self)
     return 1;
 }
 
-// 8-alignment pad for the .rodata claim (matching_notes 25); fn_8015A100 reads it.
-extern "C" const float lbl_8049B94C __attribute__((section(".rodata"))) = 0.1f;
+extern "C" {
+int fn_80461C94(char *mover);
+float fn_800A4054(void *e);
+float fn_80086614(void *e);
+}
+
+// ATTACKTHING enter: targets the thing the mover is aimed at.
+extern "C" int fn_80159FB4(register Self *self)
+{
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 1);
+    fn_80442130(self->ai, 0x1b);
+    fn_80442130(self->ai, 0x1d);
+    int h = fn_80461C94(fn_804420AC(self->ai));
+    if (h) {
+        Ent *t = fn_800ACFA8(h);
+        if (t)
+            fn_801501AC(fn_804420D8(self->ai), t);
+    }
+    fn_80442414((TaskBase *)self, 0);
+    fn_801513D8(self->brain, 1000);
+    return 1;
+}
+
+// ATTACKTHING exit
+extern "C" int fn_8015A0D0(register Self *self)
+{
+    return 1;
+}
+
+// ATTACKTHING update: done once the thing is destroyed; swings (bit 8) while within half its extent.
+extern "C" int fn_8015A100(register Self *self)
+{
+    if (!fn_80151B90(self->brain, self))
+        return 0;
+    Body *t = fn_80134870B(self->ai);
+    if (!t)
+        fn_804643C8(self, 1);
+    int gone = 0;
+    if (fn_800B0CC0(t))
+        gone = fn_800A4054(fn_800B1478(t)) < 0.1f;
+    else if (fn_800B0C58(t))
+        gone = fn_80086614(fn_800B14A0(*(Ent *)t)) < 0.1f;
+    if (gone) {
+        fn_804643C8(self, 1);
+        return 1;
+    }
+    if (!fn_80151430(fn_80442104(self->ai))) {
+        float d = fn_8015E64C(self->ai);
+        float reach = MAX(ABS(t->f60 - t->f50), ABS(t->f64 - t->f54)) / 2.0f;
+        if (d < reach) {
+            fn_80442130(self->ai, 8);
+            fn_80442174(self->ai, 1);
+            if (!fn_804643F0(self)) {
+                fn_80442414((TaskBase *)self, 1);
+                fn_801513D8(fn_80442104(self->ai), 500);
+            } else if (fn_804643F0(self) == 1) {
+                fn_80442174(self->ai, 8);
+                fn_80442414((TaskBase *)self, 0);
+                fn_801513D8(fn_80442104(self->ai), 500);
+            }
+        } else {
+            fn_80442174(self->ai, 8);
+            fn_80442130(self->ai, 1);
+        }
+    }
+    return 1;
+}

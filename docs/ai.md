@@ -227,7 +227,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 9 | Shared helpers | 0x8015E2FC-0x80160428, unit `Game/fn_8015E2FC.cpp` | Done |
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
-| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x80159FB4. Next is task 9's (ATTACKTHING, vtable `lbl_804F60F0`) enter `fn_80159FB4` (0x11C), exit `fn_8015A0D0` and update `fn_8015A100`. The unit defines `lbl_8049B94C` (0.1f, read by `fn_8015A100`) as a pad; `.rodata` must stay 8-aligned or `main.dol` shifts ([`matching_notes.md`](matching_notes.md) 25) |
+| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x8015A4BC. Next is the task with vtable `lbl_804F60B8`: enter `fn_8015A4BC` (0x54), exit `fn_8015A510`, update `fn_8015A540`. `.rodata` (now to 0x8049B958) must stay 8-aligned or `main.dol` shifts ([`matching_notes.md`](matching_notes.md) 25) |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | 41 unclaimed handler functions (0xC52C bytes), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D`. `APPROACH` (`fn_801399CC`, 0x1728) is the largest |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
