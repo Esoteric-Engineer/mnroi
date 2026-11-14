@@ -1166,6 +1166,7 @@ extern "C" int fn_80156A88(register RangedTask *self)
 
 extern "C" {
 int fn_80463F90(void *finder);
+int fn_80463FBC(void *finder);
 Ent *fn_800ACFA8(int handle);
 void fn_801501AC(void *finder, Ent *actor);
 }
@@ -1309,3 +1310,106 @@ extern "C" int fn_80158038(register Self *self)
     }
     return 1;
 }
+
+// FINDWIELDABLE enter: done at once when the held actor is beyond 3 units.
+extern "C" int fn_801585E4(register Self *self)
+{
+    if (fn_80134870(self->ai)) {
+        float d = fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)));
+        if (d > 3.0f) {
+            fn_804643C8(self, 1);
+            return 0;
+        }
+    }
+    fn_8046412C(self->ai, 2);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 1);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 0xf);
+    fn_80442130(self->ai, 0x12);
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 0x15);
+    fn_80442130(self->ai, 0x16);
+    fn_80442130(self->ai, 0x17);
+    if (fn_801368B8(self->ai))
+        fn_80442130(self->ai, 0xe);
+    if (fn_8008606C(fn_80442080(self->ai)))
+        fn_80442130(self->ai, 0x20);
+    Ent *t = fn_800ACFA8(fn_80463FBC(fn_804420D8(self->ai)));
+    if (t)
+        fn_801501AC(fn_804420D8(self->ai), t);
+    fn_801513D8(self->brain, 3000);
+    return 1;
+}
+
+// FINDWIELDABLE exit
+extern "C" int fn_801587C8(register Self *self)
+{
+    fn_80464170(self->ai, 2);
+    fn_80442174(self->ai, 0x13);
+    fn_80442174(self->ai, 5);
+    fn_801501AC(fn_804420D8(self->ai), 0);
+    return 1;
+}
+
+extern "C" {
+float fn_8015F608(void *ai, Vec *p, Vector *out);
+}
+
+// FINDWIELDABLE update: picks a wieldable (fn_8015F7A4 kind 1), walks to it and sets bit 0x13 within reach.
+extern "C" int fn_80158844(register Self *self)
+{
+    if (fn_80151B90(self->brain, self)) {
+        if (!fn_80151430(self->brain)) {
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
+            fn_80442130(self->ai, 0xe);
+        Ent *e = fn_800CD9B0F(*fn_8044203CF(self->ai));
+        if (!e) {
+            e = fn_80134870(self->ai);
+            if (!e)
+                return 0;
+            Vector v;
+            float a = fn_8015F608(self->ai, fn_800B1724(*e), &v);
+            float lo = fn_800B1884(*fn_80442080(self->ai), 213);
+            float hi = 0.5f;
+            Ent *t = fn_8015F7A4F(fn_80442080(self->ai), lo, 1, &v, hi);
+            if (t) {
+                fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8F(*t), 0);
+                fn_801501AC(fn_804420D8(self->ai), t);
+                float lim = fn_800B1884(*fn_80442080(self->ai), 210);
+                lim = 5.0f;
+                float d = fn_8015E580(fn_800B1724(*t), fn_800B1724(*fn_80442080(self->ai)));
+                if (d <= lim) {
+                    fn_80442130(self->ai, 0x13);
+                    if (fn_80085F7C(fn_80442080(self->ai)))
+                        fn_80442174(self->ai, 0xe);
+                    if (fn_8008606C(fn_80442080(self->ai)))
+                        fn_80442174(self->ai, 0x20);
+                    return 1;
+                }
+                if (fn_80461D48(self->ai, 0x33)) {
+                    fn_804643C8(self, 1);
+                    return 0;
+                }
+            }
+        } else {
+            fn_804643C8(self, 1);
+            fn_8015105C(self->brain, 8);
+            PEnt *t = fn_8014F8BC(fn_804420D8(self->ai));
+            if (t) {
+                fn_800C98BC(fn_8044203CF(self->ai), t, 1);
+                fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8F(*t), 0);
+            }
+        }
+    } else {
+    }
+    return 1;
+}
+
+// 8-alignment pad for the .rodata claim (matching_notes 25); CARRYTHROWABLE's fn_80158F20 reads it.
+extern "C" const float lbl_8049B91C __attribute__((section(".rodata"))) = 100.0f;
