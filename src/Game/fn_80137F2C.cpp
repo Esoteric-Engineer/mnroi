@@ -1,5 +1,5 @@
 // AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), then the handlers. docs/ai.md rows 2 and 13.
-// .rodata 0x8049AB10-0x8049AE28: the behavior names, the list title, then each handler's float pool in .text order; the last word is BLOCK's 0.0f (end of file).
+// .rodata 0x8049AB10-0x8049AE28: the behavior names, the list title, then each handler's float pool in .text order.
 __asm__(".section .rodata\n\t.globl lbl_8049AB10\nlbl_8049AB10:\n\t.4byte 0x6C696400\n\t.text"); // 8-aligns the claim: the tail of the "invalid" string ahead of it, which no code reads
 
 inline int sn_return_decl(int a) { return a; }
@@ -68,6 +68,11 @@ struct PEnt : Ent { // matching_notes 50
     int x;
     char pad8[0x300];
     unsigned int f308; // +0x308
+};
+
+struct FEnt { // fn_80462734's result
+    char pad[0x2A0];
+    unsigned int f2a0; // +0x2A0
 };
 
 struct Base {
@@ -209,7 +214,7 @@ AIAction *fn_801397C8(void *ai, AIBehavior *rec);
 AIAction *fn_8013B0F4(void *ai, AIBehavior *rec);
 AIAction *fn_8013BCE8(void *ai, AIBehavior *rec);
 AIAction *fn_8013C1C8(void *ai, AIBehavior *rec);
-void fn_8013C3A4(void);
+AIAction *fn_8013C3A4(void *ai, AIBehavior *rec);
 void fn_8013CD40(void);
 void fn_8013D464(void);
 void fn_8013DA7C(void);
@@ -398,6 +403,19 @@ void fn_80435530(Vector *v, float s);
 int fn_800CCA58(Base &c);
 int fn_800CCAE8(Base &c);
 void fn_80462BDC(AIAction *a, float v);
+void fn_8014F7B0(void *list, int mode);
+Ent *fn_8046267C(void *ai);
+int fn_8008572C(void *a, void *b);
+float fn_80462A04(void *ai);
+float fn_80462B0C(void *ai);
+int fn_80086908(void *e);
+float fn_80462A30(void *ai);
+Vector *fn_800B1668(Ent &e);
+int fn_8015EA18(unsigned int n);
+int fn_8015FFD4(void *ai);
+float fn_800867A8(void *e);
+float fn_8008666C(void *e);
+FEnt *fn_80462734(void *ai);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -1355,4 +1373,133 @@ extern "C" AIAction *fn_8013C1C8(void *ai, AIBehavior *rec)
     return 0;
 }
 
-extern "C" const float lbl_8049AE24 __attribute__((section(".rodata"))) = 0.0f; // the next handler fn_8013C3A4's 0.0f, which pads .rodata to 8
+// BLOCK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013C3A4(void *ai, AIBehavior *rec)
+{
+    fn_8014F7B0(fn_804420D8(ai), 0);
+    if (fn_80461D48(ai, 0x2c) || fn_80442508(fn_80461DD4(ai), 2)) {
+        Ent *t = fn_8046267C(ai);
+        float dist = t ? fn_804290F8(fn_800B1724(*t), fn_800B1724(*fn_80442080(ai))) : 0.0f;
+        int far = t && dist > 12.0f;
+        if (far) {
+            return 0;
+        }
+        int facing = t && fn_8008572C(fn_80442080(ai), t);
+        int near = t && dist < 9.0f;
+        int a = fn_8015EC1C(fn_80462A04(ai));
+        int b = fn_8015EC1C(fn_80462B0C(ai) * 0.7f + 30.0f);
+        if (fn_80462B0C(ai) <= 0.0f) {
+            b = 0;
+        }
+        if (facing && (a || b) && near) {
+            fn_80136214(ai, 0x11);
+            fn_80136214(ai, 0x13);
+            if (b) {
+                AIAction *h = fn_80138738(-1, 0, 0);
+                if (h) {
+                    fn_80138A24(h, 0x12);
+                    fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+                    return h;
+                }
+            }
+            if (a) {
+                AIAction *h = fn_80138738(7, 250, 10);
+                if (h) {
+                    fn_80138A24(h, 2);
+                    fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+                    return h;
+                }
+            }
+        } else {
+            int close = t && dist < 5.0f;
+            if ((fn_801369B0(ai) && !close) || fn_80086908(fn_80442080(ai))) {
+                AIAction *h = fn_80138738(7, 1500, 1500);
+                if (h) {
+                    fn_80138A24(h, 0);
+                    fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+                    fn_80138A24(h, 0x17);
+                    return h;
+                }
+            } else {
+                int c = fn_8015EC1C(fn_80462A30(ai));
+                int side = fn_80461D48(ai, 0x12) || fn_80461D48(ai, 0x13);
+                if (c && !side) {
+                    Vector v;
+                    fn_8042DC84(&v, fn_800B1668(*fn_80442080(ai)));
+                    int r = fn_8015EA18(2);
+                    if (r == 1) {
+                        fn_80433FFC(&v);
+                    }
+                    AIAction *h = fn_80138738(7, 1000, 1000);
+                    if (h) {
+                        fn_80138A24(h, 0xc);
+                        fn_80138AE0(h, 0, &v, 1.0f);
+                        fn_80462BDC(h, 5.0f);
+                        return h;
+                    }
+                } else {
+                    AIAction *h = fn_80138738(7, 1000, 1000);
+                    if (h) {
+                        fn_80138A24(h, 0x17);
+                        fn_80138A24(h, 0);
+                        fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+                        return h;
+                    }
+                }
+            }
+        }
+    }
+    if (!fn_80461D48(ai, 0x2d) && !fn_80442508(fn_80461DD4(ai), 1) && !fn_80461D48(ai, 0x35) && fn_8015E97C(5.0f) &&
+        !fn_80461D48(ai, 5) && !fn_80461D48(ai, 6)) {
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            fn_80138A24(h, 0x13);
+            return h;
+        }
+    }
+    AIAction *h = fn_80138738(7, 500, 10);
+    if (h) {
+        int x = fn_80442508(fn_80461DD4(ai), 1);
+        int y = fn_8015FFD4(ai);
+        if (x && !fn_801369B0(ai)) {
+            Vector v;
+            fn_8042DC84(&v, fn_800B1668(*fn_80442080(ai)));
+            int r = fn_8015EA18(2);
+            if (r == 1) {
+                fn_80433FFC(&v);
+            }
+            fn_80138B7C(h, 7, 1000, 1000);
+            fn_80138A24(h, 0xc);
+            fn_80138AE0(h, 0, &v, 1.0f);
+            fn_80462BDC(h, 5.0f);
+            return h;
+        } else {
+            if (y) {
+                fn_80138B7C(h, 7, 2000, 1000);
+                fn_80138A24(h, 0x17);
+            } else if (fn_80461D48(ai, 0x25)) {
+                fn_80136214(ai, 7);
+                fn_80138B7C(h, 7, 1500, 10);
+            } else {
+                fn_80138B7C(h, 7, 500, 1000);
+            }
+            fn_80138A24(h, 0);
+            fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+        }
+        int hi = fn_800867A8(fn_80442080(ai)) > 0.75f;
+        int lo = fn_8008666C(fn_80442080(ai)) < 0.4f;
+        int z = 0;
+        if (x) {
+            fn_80462C30(h, 1000);
+        }
+        if (fn_80442508(fn_80461DD4(ai), 6) && fn_80462734(ai) && (fn_80462734(ai)->f2a0 & 2)) {
+            z = 1;
+        }
+        int w = z;
+        if ((w && fn_801369B0(ai)) || fn_80086908(fn_80442080(ai))) {
+            fn_80138A24(h, 0x17);
+            fn_80462C30(h, 1500);
+        }
+    }
+    return h;
+}
