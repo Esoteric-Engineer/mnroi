@@ -1,5 +1,6 @@
-// AI manager (init, update, debug draw, the per-AI loops, the encounter list) and the AIObject, up to its static init. docs/ai.md rows 1 and 6.
+// AI manager (init, update, debug draw, the per-AI loops, the encounter list), the AIObject and the file's static init. docs/ai.md rows 1 and 6.
 // .rodata: pool from 0x8049A85C (floats and strings), extern_pool. Merges the former Game/fn_80137CEC.c.
+// Invented class names Volumes and AiObj give the static init its destructor calls (_._7Volumes, _._5AiObj in symbols.txt).
 
 struct Ent {
     int pad;
@@ -62,13 +63,26 @@ extern int lbl_8066BF50;
 extern int lbl_8066C7DC;
 extern void *lbl_8066D6DC; // the overlay text object (docs/versus.md section 6)
 extern int lbl_8066F1A8; // encounter record count
-extern void *lbl_8056A72C[];
-extern char lbl_80569890[];
 extern char lbl_8054ED80[];
 extern char lbl_80593BE8[];
 extern char lbl_80552110[];
-struct AIRec { char b[0xdc]; };
-extern AIRec lbl_8056996C[];
+class Volumes // the volume registry (docs/ai.md section 4.5); ctor and dtor in Game/fn_80461430.cpp
+{
+public:
+    char b[0xdc];
+    Volumes() __asm__("fn_80461430");
+    ~Volumes();
+};
+class AiObj // the encounter record, as in Game/fn_80147DE4.cpp
+{
+public:
+    char b[0xdc];
+    AiObj() __asm__("fn_804619C8");
+    ~AiObj();
+};
+Volumes lbl_80569890;
+AiObj lbl_8056996C[16];
+void *lbl_8056A72C[49];
 
 void fn_80137F2C(void);
 void fn_80145D8C(void *p);
@@ -162,7 +176,7 @@ extern "C" void fn_80132480(void)
     fn_80137F2C();
     lbl_8066BF2C = 0;
     lbl_8066BF28 = 0;
-    fn_80145D8C(lbl_80569890);
+    fn_80145D8C(&lbl_80569890);
     lbl_8066F1A8 = 0;
     lbl_8066BF4C = 1;
     lbl_8066BF20 = 1;
@@ -298,7 +312,7 @@ extern "C" void fn_80132AAC(void)
     }
     lbl_8066BF1C = 0;
     fn_80138584();
-    fn_80145DF8(lbl_80569890);
+    fn_80145DF8(&lbl_80569890);
     lbl_8066F1A8 = 0;
     fn_801498B0();
 }
@@ -316,8 +330,8 @@ extern "C" void fn_80132B88(void)
 extern "C" void fn_80132C04(void)
 {
     fn_8013866C();
-    fn_80145D8C(lbl_80569890);
-    fn_80145FE4(lbl_80569890);
+    fn_80145D8C(&lbl_80569890);
+    fn_80145FE4(&lbl_80569890);
     lbl_8066BF48 = 10;
 }
 
@@ -329,7 +343,7 @@ extern "C" void fn_80132C54(void)
         fn_80147DE4(&lbl_8056996C[i]);
     }
     lbl_8066F1A8 = 0;
-    fn_80145DF8(lbl_80569890);
+    fn_80145DF8(&lbl_80569890);
 }
 
 extern "C" void fn_80132CDC(void)
@@ -430,7 +444,7 @@ extern "C" int fn_80133078(void *p)
             } else if (i == 15) {
                 lbl_8066F1A8--;
             } else {
-                lbl_8056996C[i] = ((AIRec *)lbl_80569890)[lbl_8066F1A8];
+                lbl_8056996C[i] = ((AiObj *)&lbl_80569890)[lbl_8066F1A8];
                 lbl_8066F1A8--;
             }
             return 1;
@@ -567,47 +581,47 @@ extern "C" void fn_801336F0(void)
 
 extern "C" int fn_8013379C(int a, int b)
 {
-    return fn_801475D8(lbl_80569890, a, b);
+    return fn_801475D8(&lbl_80569890, a, b);
 }
 
 extern "C" void fn_801337F0(int a, int b)
 {
-    fn_801477B0(lbl_80569890, a, b);
+    fn_801477B0(&lbl_80569890, a, b);
 }
 
 extern "C" void fn_80133838(int a)
 {
-    fn_80147884(lbl_80569890, a);
+    fn_80147884(&lbl_80569890, a);
 }
 
 extern "C" void fn_80133878(int a, int b)
 {
-    fn_80147968(lbl_80569890, a, b);
+    fn_80147968(&lbl_80569890, a, b);
 }
 
 extern "C" void fn_801338C0(int a, int b)
 {
-    fn_80147A20(lbl_80569890, a, b);
+    fn_80147A20(&lbl_80569890, a, b);
 }
 
 extern "C" void fn_80133908(int a)
 {
-    fn_80147C40(lbl_80569890, a);
+    fn_80147C40(&lbl_80569890, a);
 }
 
 extern "C" void fn_80133948(int a)
 {
-    fn_80147B88(lbl_80569890, a);
+    fn_80147B88(&lbl_80569890, a);
 }
 
 extern "C" void fn_80133988(int a)
 {
-    fn_80147CF8(lbl_80569890, a);
+    fn_80147CF8(&lbl_80569890, a);
 }
 
 extern "C" void fn_801339C8(int a)
 {
-    fn_80147D68(lbl_80569890, a);
+    fn_80147D68(&lbl_80569890, a);
 }
 
 extern "C" int fn_80133A08(void)
@@ -1958,7 +1972,7 @@ extern "C" unsigned int fn_801370B0(register AIObject *self)
 
 extern "C" void *fn_8013726C(register AIObject *self)
 {
-    return lbl_80569890;
+    return &lbl_80569890;
 }
 
 struct AIMoveOut {

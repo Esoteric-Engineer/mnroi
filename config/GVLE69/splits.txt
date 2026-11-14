@@ -806,7 +806,10 @@ Game/fn_801317D8.cpp:
 	.text       start:0x801317D8 end:0x80131E90
 
 Game/fn_80132480.cpp:
-	.text       start:0x80132480 end:0x80137D98
+	.text       start:0x80132480 end:0x80137F2C
+	.ctors      start:0x80482680 end:0x80482684
+	.dtors      start:0x804828A0 end:0x804828A4
+	.bss        start:0x80569890 end:0x8056A7F0
 
 Game/fn_80137F2C.cpp:
 	.text       start:0x80137F2C end:0x80145B74

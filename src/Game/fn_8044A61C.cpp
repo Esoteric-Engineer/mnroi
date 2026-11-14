@@ -1,6 +1,6 @@
 // String iterator pair class, reverse copy and reserve; see docs/versus.md.
 extern "C" {
-extern void fn_801ACFD4(void *p);
+extern void fn_801ACFD4(void *p) __asm__("__builtin_vec_delete");
 extern void fn_80449378(void *self, int cap);
 extern char *fn_80449330(int n);
 extern void fn_80449CE8(void *p);

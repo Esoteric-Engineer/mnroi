@@ -8,7 +8,7 @@ extern "C" {
 void fn_801B5BA8(void *list, int capacity, float grow);
 void fn_801B5C74(void *list, int flags);
 void __builtin_delete(void *p);
-void fn_801ACFD4(void *p);
+void fn_801ACFD4(void *p) __asm__("__builtin_vec_delete");
 void *memset(void *p, int c, unsigned int n);
 void *fn_80430050(void *level);
 void *fn_800ACFA8(int id);
@@ -30,6 +30,7 @@ extern "C" void *fn_80461430(register char *self)
     return self;
 }
 
+__asm__(".text\n\t.globl _._7Volumes\n\t.type _._7Volumes,@function\n_._7Volumes:"); // ~Volumes, called by fn_80132480.cpp's static init
 extern "C" void fn_804614F8(register char *self, register int inChrg)
 {
     fn_801B5C74(self + 0xB8, 2);
@@ -43,6 +44,7 @@ extern "C" void fn_804614F8(register char *self, register int inChrg)
     } else {
     }
 }
+__asm__(".size _._7Volumes, 0xAC");
 
 __asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.text"); // 0x8049AA04-0x8049AA1C, linkonce pool entries
 
@@ -202,6 +204,7 @@ extern "C" int fn_804619C8(register int v)
     return v;
 }
 
+__asm__(".text\n\t.globl _._5AiObj\n\t.type _._5AiObj,@function\n_._5AiObj:"); // ~AiObj, likewise
 extern "C" void fn_804619F0(register void *self, register int inChrg)
 {
     if (inChrg & 1) {
@@ -209,6 +212,7 @@ extern "C" void fn_804619F0(register void *self, register int inChrg)
     } else {
     }
 }
+__asm__(".size _._5AiObj, 0x4C");
 
 extern "C" int fn_80461A3C(register Holder *self)
 {

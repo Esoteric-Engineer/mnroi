@@ -1,5 +1,5 @@
 // Destructors (second argument is the in-charge flag, bit 0 = delete) and one constructor of a family of buffer owners; hand-written in C because the DOL keeps the flag in a register. Names are guesses.
-extern void fn_801ACFD4(void *p);
+extern void fn_801ACFD4(void *p) __asm__("__builtin_vec_delete");
 extern void __builtin_delete(void *p);
 extern void __6Vector(void *v);
 extern void fn_801B5C74(void *list, int inChrg);

@@ -499,7 +499,7 @@ extern "C" {
 void fn_80463AD4(register void *self);
 void fn_80447EAC(void *set, int inChrg);
 void __builtin_delete(void *p);
-void fn_801ACFD4(void *p);
+void fn_801ACFD4(void *p) __asm__("__builtin_vec_delete");
 void *memcpy(void *dst, const void *src, unsigned int n);
 void fn_80150FFC(void *brain, void *task);
 extern char lbl_804F5CC8[]; // the base task vtable
