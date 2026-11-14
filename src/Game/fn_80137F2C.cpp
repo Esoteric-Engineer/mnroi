@@ -277,7 +277,7 @@ void fn_8014470C(void);
 void fn_80144E30(void);
 AIAction *fn_801420B4(void *ai, AIBehavior *rec);
 AIAction *fn_80142558(void *ai, AIBehavior *rec);
-void fn_80142B04(void);
+AIAction *fn_80142B04(void *ai, AIBehavior *rec);
 AIAction *fn_801426A0(void *ai, AIBehavior *rec);
 void fn_80142F80(void);
 void fn_801435F0(void);
@@ -513,6 +513,7 @@ Ent *fn_801526E4(void *ai, Vector *pos, float *f);
 int fn_800A4438(void *p);
 int fn_800A4408(void *p);
 void fn_804628D8(void *ai, int id);
+Vector *fn_80462574(void *mover);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -2780,5 +2781,60 @@ extern "C" AIAction *fn_801426A0(void *ai, AIBehavior *rec)
     return 0;
 }
 
-// The .rodata claim's 8-align pad, read by the unclaimed fn_80142B04: becomes that handler's literal once it is matched.
-extern "C" const float lbl_8049AF6C __attribute__((section(".rodata"))) = 1.0f;
+// JUMP (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80142B04(void *ai, AIBehavior *rec)
+{
+    if (!fn_804421B8(ai, 1) && !fn_804421B8(ai, 2) && !fn_804421B8(ai, 5) && !fn_800CE4D0(fn_8044203C(ai))) {
+        return 0;
+    }
+    PEnt *p = fn_80442080(ai);
+    if (!p) {
+        return 0;
+    }
+    Vector pos, goal;
+    fn_8042DC84(&pos, fn_800B1724(*p));
+    fn_8042DC84(&goal, fn_80462574(fn_804420AC(ai)));
+    Ent *t = fn_80134870(ai);
+    if (fn_80461BA0(fn_804420AC(ai))) {
+        fn_8042DC84(&goal, fn_804625CC(fn_804420AC(ai)));
+    } else if (fn_80461BCC(fn_804420AC(ai))) {
+        fn_8042DC84(&goal, fn_804625F8(fn_804420AC(ai)));
+    } else if (t) {
+        fn_8042DC84(&goal, fn_800B1724(*t));
+    }
+    if (t && fn_80461D48(ai, 0x14) && !fn_80461D48(ai, 0x18)) {
+        fn_8042DC84(&goal, fn_800B1724(*t));
+    }
+    float dz = pos.z - goal.z;
+    Vector fwd;
+    fn_80067050(*p, &fwd);
+    float speed = fn_8042EC54(&fwd);
+    if (speed > 1.0f && fn_80461D48(ai, 0x3d)) {
+        return 0;
+    }
+    if (((dz < -1.4f && fn_80461D48(ai, 0x33)) || (fn_80461D48(ai, 0x14) && !fn_80461D48(ai, 0x18))) &&
+        !fn_80461D48(ai, 0x3d)) {
+        AIAction *h = fn_80138738(0x1b, 50, 2000);
+        if (!h) {
+            return 0;
+        }
+        Vector d;
+        fn_80429038(&d, &goal, &pos);
+        fn_8042F76C(&d);
+        fn_80138AE0(h, 0, &d, 1.0f);
+        fn_80138A24(h, 5);
+        if (!fn_80085D3C(fn_80442080(ai))) {
+            int hit;
+            if (fn_8015E2FC(ai, fn_800B1750(*fn_80442080(ai)), 2.0f, &hit, 2.0f)) {
+                fn_80138A24(h, 0x14);
+            } else {
+                fn_80138A24(h, 5);
+            }
+        }
+        if (fn_801369B0(ai)) {
+            fn_80138A24(h, 7);
+        }
+        return h;
+    }
+    return 0;
+}
