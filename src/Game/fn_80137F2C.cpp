@@ -1,5 +1,5 @@
-// AI behavior registry: the 42-entry table, the action pool and the "Behaviors" debug list. docs/ai.md row 2.
-// .rodata 0x8049AB14-0x8049AD88: the behavior names, the list title and the unit's float pools.
+// AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), then the handlers. docs/ai.md rows 2 and 13.
+// .rodata 0x8049AB14-0x8049AD94: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -49,6 +49,24 @@ public:
     int add(int x);
 };
 
+class Vector
+{
+public:
+    float x;
+    float y;
+    float z;
+    float w;
+    Vector();
+} __attribute__((aligned(8)));
+
+struct Ent {
+    int pad;
+};
+
+struct PEnt : Ent { // matching_notes 50
+    int x;
+};
+
 extern AIBehavior lbl_80571814[];
 extern AIAction lbl_8056A7F0[];
 extern char lbl_805717F0[]; // pool of free Actions
@@ -60,9 +78,9 @@ extern "C" {
 int sprintf(char *buf, const char *fmt, ...);
 void fn_80138030(void);
 void fn_8013866C(void);
-void fn_80138E10(void);
-void fn_8013922C(void);
-void fn_80139258(void);
+AIAction *fn_80138E10(void *ai, AIBehavior *rec);
+AIAction *fn_8013922C(void *ai, AIBehavior *rec);
+AIAction *fn_80139258(void *ai, AIBehavior *rec);
 void fn_801399CC(void);
 void fn_80139284(void);
 void fn_801397C8(void);
@@ -129,6 +147,31 @@ void fn_80101188(void *text, float height);
 int fn_804624B8(void *text);
 void fn_8042AC7C(void *text, unsigned int color);
 const char *fn_80462288(AIBehavior *b);
+Ent *fn_80134870(void *ai);
+PEnt *fn_80442080(void *ai);
+int fn_800B0C58(Ent *e);
+void *fn_800B14A0(Ent *e);
+int fn_80085EEC(void *a);
+Vector *fn_800B1724(Ent &e);
+Vector &fn_800B1724R(Ent &e) __asm__("fn_800B1724");
+Vector *fn_800B1750(Ent &e);
+void fn_8042DC84(Vector *dst, Vector *src);
+void fn_8042D8A8(Vector *dst, Vector *src);
+void fn_8042F76C(Vector *v);
+float fn_8042EBF4(Vector *a, Vector *b);
+int fn_80138A24(AIAction *a, int bit);
+int fn_80138AE0(AIAction *a, int kind, Vector *pos, float f);
+void fn_80462BB4(AIAction *a, int v);
+int fn_80446E8C(void *ai);
+int fn_80086B1C(void *e);
+void fn_801362DC(void *ai, int a);
+void fn_80447C38(Vector *v);
+void *fn_8044203C(void *ai);
+int fn_800CE4D0(void *a);
+int fn_804421B8(void *ai, int bit);
+int fn_804628AC(void *ai);
+void *fn_80461DD4(void *ai);
+void fn_80442174(void *ai, int bit);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -388,3 +431,66 @@ void *AIBehavior::start(void *ai)
     return r;
 }
 __asm__(".size fn_80138D90, 0x80");
+
+// IDLE and its enter/exit (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80138E10(void *ai, AIBehavior *rec)
+{
+    Ent *t = fn_80134870(ai);
+    AIAction *h;
+
+    if (t) {
+        if (fn_80134870(ai) && fn_800B0C58(fn_80134870(ai)) && fn_80085EEC(fn_800B14A0(fn_80134870(ai)))) {
+            h = fn_80138738(0, 2000, 500);
+            if (h) {
+                Vector v;
+                float f = 0.08f;
+                fn_8042DC84(&v, fn_800B1724(*t));
+                v.z = fn_800B1724R(*fn_80442080(ai)).z;
+                fn_8042D8A8(&v, fn_800B1724(*fn_80442080(ai)));
+                fn_8042F76C(&v);
+                fn_80138AE0(h, 0, &v, f);
+                fn_80138A24(h, 0x13);
+                fn_80462BB4(h, 5);
+                return h;
+            }
+        } else if (fn_80446E8C(ai) && fn_80086B1C(fn_80442080(ai))) {
+            fn_801362DC(ai, 0);
+            h = fn_80138738(0, 100, 300);
+            if (h) {
+                Vector v;
+                fn_80447C38(&v);
+                fn_80138A24(h, 7);
+                fn_80138AE0(h, 0, &v, 1.0f);
+            }
+            return h;
+        } else if (fn_800CE4D0(fn_8044203C(ai)) && fn_804421B8(ai, 0xe) && !fn_804628AC(ai) &&
+                   (fn_80442508(fn_80461DD4(ai), 1) || fn_80442508(fn_80461DD4(ai), 2))) {
+            fn_80442174(ai, 0xe);
+        } else {
+            h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector v;
+                float f = 0.08f;
+                fn_8042DC84(&v, fn_800B1724(*t));
+                v.z = fn_800B1724R(*fn_80442080(ai)).z;
+                fn_8042D8A8(&v, fn_800B1724(*fn_80442080(ai)));
+                fn_8042F76C(&v);
+                float facing = fn_8042EBF4(fn_800B1750(*fn_80442080(ai)), &v);
+                if (facing < 0.66f)
+                    fn_80138AE0(h, 0, &v, f);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+extern "C" AIAction *fn_8013922C(void *ai, AIBehavior *rec)
+{
+    return 0;
+}
+
+extern "C" AIAction *fn_80139258(void *ai, AIBehavior *rec)
+{
+    return 0;
+}
