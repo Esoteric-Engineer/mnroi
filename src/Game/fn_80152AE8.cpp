@@ -2593,3 +2593,44 @@ extern "C" int fn_8015D0A0(register HoverFire *self)
         fn_804643C8(self, 1);
     return 1;
 }
+
+// MOBILITYCHARGE enter
+extern "C" int fn_8015D12C(register Self *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    fn_8046412C(self->ai, 0);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 5);
+    fn_8046412C(self->ai, 6);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    if (fn_80085F7C(fn_80442080(self->ai))) {
+        fn_80442130(self->ai, 0xe);
+        fn_80442130(self->ai, 1);
+    }
+    if (fn_8008606C(fn_80442080(self->ai))) {
+        fn_80442130(self->ai, 0x20);
+        fn_80442130(self->ai, 2);
+    }
+    fn_8014F7B0(fn_804420D8(self->ai), 0);
+    fn_801513D8(self->brain, 2000);
+    return 1;
+}
+
+// MOBILITYCHARGE exit
+extern "C" int fn_8015D27C(register Self *self)
+{
+    return 1;
+}
+
+// MOBILITYCHARGE update
+extern "C" int fn_8015D2AC(register Self *self)
+{
+    if (!fn_80151430(self->brain))
+        fn_804643C8(self, 1);
+    if (fn_800CE4D0(fn_8044203C(self->ai)) && fn_804421B8(self->ai, 0x1b))
+        fn_80442174(self->ai, 0x1b);
+    return 1;
+}

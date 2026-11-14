@@ -227,7 +227,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 9 | Shared helpers | 0x8015E2FC-0x80160428, unit `Game/fn_8015E2FC.cpp` | Done |
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
-| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x8015D12C. Next is MOBILITYCHARGE (0x1B, vtable `lbl_804F5D00`): enter `fn_8015D12C` (0x150), exit `fn_8015D27C`, update `fn_8015D2AC`; then POWERSTAND (0x19, `lbl_804F5D70`): `fn_8015D350`, `fn_8015D418`, update `fn_8015D474` (0x4DC). They read `.rodata` 0x8049B9B8-0x8049B9E0; the claim must end 8-aligned or `main.dol` shifts ([`matching_notes.md`](matching_notes.md) 25) |
+| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x8015D350. Last is POWERSTAND (0x19, vtable `lbl_804F5D70`): enter `fn_8015D350` (0xC8), exit `fn_8015D418`, update `fn_8015D474` (0x4DC). It reads `.rodata` 0x8049B9B8-0x8049B9E0; the claim must end 8-aligned or `main.dol` shifts ([`matching_notes.md`](matching_notes.md) 25) |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | 41 unclaimed handler functions (0xC52C bytes), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D`. `APPROACH` (`fn_801399CC`, 0x1728) is the largest |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
