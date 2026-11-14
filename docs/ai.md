@@ -1,47 +1,53 @@
 # Enemy AI Map
 
-Where the AI code is, how it is layered, and the order to decompile it in (section 6).
+Where the AI code is, how it is layered, what its data means, and the order to decompile it in (section 6).
 
 See also:
 - The per-function loop: [`workflow.md`](workflow.md).
 - The CPU slot, difficulty and match flow that hand an actor to the AI: [`versus.md`](versus.md) sections 3 and 4.1.
 - The AI profile property (0x2E) and the per-difficulty tuning slots: [`characters.md`](characters.md) sections 3 and 4.
 
-**This is a reference, not a narrative: read the section you need.** `configure.py` is the authority on which units are matched. **The class names below are this project's guesses** (`AIObject`, `AIBrain`, `AITask`). The only real AI class name in the DOL is `cAIMessages` (an `OSReport` string), so the real names probably follow `cAI*`. Renaming a class means redoing every mangled symbol that uses it.
+**This is a reference, not a narrative: read the section you need.** `configure.py` is the authority on which units are matched, and a matched function's source is the authority on what it does; this file records what the source can't say. **The class names below are this project's guesses** (`AIObject`, `AIBrain`, `AITask`). The only real AI class name in the DOL is `cAIMessages` (an `OSReport` string), so the real names probably follow `cAI*`. Renaming a class means redoing every mangled symbol that uses it, so AI symbols stay `extern "C"`.
 
 ---
 
-## 1. How the Code Was Found
+## 1. Entry Points
 
-There are no AI source paths or asserts, so no file is named. The code was found from:
-
-- **Strings.** The AI profile names `AI_DEFAULT`...`AI_FOOTBALLGUY` (0x8049A6D0, table `lbl_804CF8E8`), the behavior names `IDLE`...`POWER_STAND` (0x8049AB24-0x8049AD50), and a debug display (`"Task Stack (%d)"`, `"Mover:'%s'"`, `"Pathing: %s"`, `"Conserve: %s"`, `"Target:'%s' (%d) "`, 0x8049A91C-0x8049A9C0).
-- **Matched callers.** `fn_8002C824` (level load and unload) calls the AI init `fn_80132480` and shutdown `fn_80132AAC`. The per-frame `fn_8002E6DC` calls the AI update `fn_80132600`, and `fn_8002E7F4` calls the debug draw `fn_80132838` (`Game/fn_8002E2C0.cpp`). Versus match start calls `fn_80133658`/`fn_8013367C` ([`versus.md`](versus.md) section 4.3).
-- **The actor's AI pointer** is `actor+0x380` (`fn_80085980` returns it). The profile index is the short at `actor+0x384` ([`characters.md`](characters.md), property 0x2E).
-
-Everything in the ranges below is `-O0` game code (`tools/flavor_map.py`).
+- **Game loop.** Level load and unload (`fn_8002C824`) call the AI init `fn_80132480` and shutdown `fn_80132AAC`. Each frame `fn_8002E6DC` calls the update `fn_80132600`, and `fn_8002E7F4` calls the debug draw `fn_80132838` (`Game/fn_8002E2C0.cpp`). Versus match start calls `fn_80133658`/`fn_8013367C` ([`versus.md`](versus.md) section 4.3).
+- **Actor.** The actor's AI pointer is `actor+0x380` (`fn_80085980` returns it), and the profile index is the short at `actor+0x384` ([`characters.md`](characters.md), property 0x2E). The actor's controller reads the AI's actions (section 2, actor controller input).
+- **Names in the DOL.** The AI profile names `AI_DEFAULT`...`AI_FOOTBALLGUY` (0x8049A6D0, table `lbl_804CF8E8`), the behavior names `IDLE`...`POWER_STAND` (0x8049AB24-0x8049AD50), the task names (`lbl_804CFB58`, section 4.4) and the debug display (`"Task Stack (%d)"`, `"Mover:'%s'"`, `"Pathing: %s"`, `"Conserve: %s"`, `"Target:'%s' (%d) "`, 0x8049A91C-0x8049A9C0).
 
 ---
 
 ## 2. File Map
 
-`_GLOBAL_.I`/`_GLOBAL_.D` addresses come from `.ctors`/`.dtors`. "Edges unknown" means no static initializer marks the inner file boundaries.
+All of it is `-O0` game code (`tools/flavor_map.py`). A file's `.rodata` ends with the pool words of the linkonce functions it emits, then a header's font-name strings up to `"invalid"`, so that string marks a file end.
 
-| Range | Contents | Edges | Already matched |
-|---|---|---|---|
-| 0x8007A3A0-0x80081E08 | Script command file. 0x8007A3A0-0x8007C034 is the **AI script API**, 41 `-O0` functions called by the script node classes at 0x801C5E0C-0x801DFED8. From `fn_8007C034` (another resolver) on, the file is other script code | Starts after the previous file's `_GLOBAL_.D` `fn_8007A35C` (in `.dtors`); `_GLOBAL_.I` 0x80081DCC | `Game/fn_8007A3A0.cpp` |
-| 0x800FA34C-0x800FC1F8 | **Actor controller input**, three classes. Base (vtable `lbl_804F5708`, 0x5C0 bytes): 26 action states, this frame `+0x8` and last frame `+0xC`, and 10 analog axes of 0x30 bytes at `+0xE0`/`+0xE4`, all double-buffered. Pad subclass (`lbl_804F5678`, 0x8F0): sets the actions from the pad through the combo table `lbl_804CC810`. AI subclass (`lbl_804F55E8`, 0x5C4): `+0x5C0` is the actor's `AIObject`, and its update copies the AI's actions (`fn_8013741C`) and axes 0, 7 and 9 (`fn_80137298`) | Inside the template registry file 0x800F9F88-0x80101A00 ([`versus.md`](versus.md) section 5, rows 10-12) | `Game/fn_800FA34C.cpp` |
-| 0x80131E90-0x80132480 | Not AI: a static initializer building `Color`s in `.sbss` 0x8066F0B4..., and `_GLOBAL_.I` 0x80132444. It probably closes the file that holds the last-selection module | `_GLOBAL_.I` 0x80132444 | |
-| 0x80132480-0x80137F2C | **AI manager and `AIObject`** (section 3) | Static init 0x80137D98, `_GLOBAL_.I` 0x80137EB4, `_GLOBAL_.D` 0x80137EF0. Its globals: `Volumes lbl_80569890` (dtor `_._7Volumes`), `AiObj lbl_8056996C[16]` (dtor `_._5AiObj`) and the AI pointer table `lbl_8056A72C[49]`. The class names are invented; only the mangled destructor names reach the DOL check | `Game/fn_80132480.cpp` |
-| 0x80137F2C-0x80145CB0 | **Behaviors**: the registry (0x80137F2C-0x80138E10) and the 42 handlers (0x80138E10-0x80145B74, section 4.3) | Static init `fn_80145B74` (256 records of 0x70 at `lbl_8056A7F0`, the pool `lbl_805717F0`), `_GLOBAL_.I` 0x80145C38, `_GLOBAL_.D` 0x80145C74. `.bss` 0x8056A7F0-0x80571CB0 (the last 4 bytes are padding). `.rodata` ends at 0x8049B088: the static init's 1.0f at 0x8049B030, then the pools of the file's inline functions (0x8049B054 is `Game/fn_80462B38.cpp`'s `extern_pool`) and `"invalid"` | `Game/fn_80137F2C.cpp` (registry, then the handlers from `IDLE`) |
-| 0x80145CB0-0x80147DE4 | **Volume registry** `lbl_80569890` (section 4.5), one whole file | Its `.rodata` (0x8049B088-0x8049B204) ends like the behaviors file's, with linkonce pool words and a header's font-name strings up to `"invalid"`, so 0x8049B204 (`fn_80147DE4`'s 0.0) opens the next file | `Game/fn_80145CB0.cpp` |
-| 0x80147DE4-0x80149554 | **Encounter record** methods (the 0xDC-byte record, `AiObj` in the unit) and the spot search around a target, one whole file | `.rodata` 0x8049B204-0x8049B2A0 ends in linkonce pool words and the header strings up to `"invalid"` | `Game/fn_80147DE4.cpp` |
-| 0x80149554-0x8014A3B4 | **`cAIMessages`** (section 3), one whole file | `.rodata` 0x8049B2A0-0x8049B3C4: its two `OSReport` strings, then the header's font names up to `"invalid"`. `fn_8014A3B4`'s 0.0f at 0x8049B3C4 opens the next file | `Game/fn_80149554.cpp` |
-| 0x8014A3B4-0x80164460 | **The rest of the AI**, at least one file. In order: the **Mover** `AIObject+0x210` (0x8014A3B4-0x8014BC7C, one whole file: its `.rodata` 0x8049B3C0-0x8049B468 ends in linkonce pool words, 2000 and `"invalid"`, like the encounter file's), the **path** at Mover `+0x20` (section 4.6; 0x8014BC7C-0x8014DDD4, one whole file: `fn_8014D928` is the last function that reads its `.rodata` 0x8049B468-0x8049B520, which ends in linkonce pool words and `"invalid"`. 0x8014DDD4-0x8014E288 reads no `.rodata` and the pair map has no reset there, so the `.text` edge at 0x8014DDD4 is a guess; `fn_8014E288`'s pool opens the next file at 0x8049B520), the **`+0xD0` target list** (0x8014DDD4 on into 0x801500C4: `Game/fn_801500C4.cpp`'s `Finder` is the same class, so the file does not end at 0x801500C4; the two units stay separate until the edge between its methods and the brain bases is found), brain and task base classes (0x801500C4-0x80152AE8; the first 0x6B0 bytes are the `+0xD0` record's methods and the AI_NONE brain's factory and task), the task classes (0x80152AE8-0x8015D950), their constructors (0x8015D950-0x8015E2FC), shared helpers (0x8015E2FC-0x80160428), the per-profile brains and their special tasks (0x80160428-0x80164460) | Edges unknown, except the brains' end: `fn_80164460` and `fn_801644EC` are called only from 0x80164930 and 0x80164EB4, so they open the file that `_GLOBAL_.I` 0x80164EF0 ends, 0x80164460-0x80164F2C, which is not AI (called from level load and the HUD). The brains' start fits the return flag ([`prodg.md`](prodg.md#the-function-end-branch-pair)): `fn_801603CC` leaves it clear (it carries the pair) and `fn_80160428` has no pair, so a setter, most likely a new file's header, comes between them | `Game/fn_8014A3B4.cpp`, `Game/fn_8014BC7C.cpp`, `Game/fn_8014DDD4.cpp`, `Game/fn_801500C4.cpp`, `Game/fn_80152AE8.cpp`, `Game/fn_8015D950.cpp`, `Game/fn_8015E2FC.cpp`, `Game/fn_80160428.cpp` |
-| 0x80461430-0x804644B4 | **AI inline functions** in the linkonce tail ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)): about 190 functions, almost all 0x28-0x2C accessors, and nearly all called only from the ranges above. Includes the task base (`Task_Base_Destroy`, `fn_80463AB4`, `fn_80463AD4`, `Task_Base_Enter`, `Task_Base_Exit`) and the task "done" setter `AI_SetTaskDone` | Linkonce, so files are found by `.rodata` pools ([`versus.md`](versus.md) section 5, row 8) | |
-| 0x80442010-0x80442600 | `AIObject`, Mover and task accessors (`AI_Get*`), then the versus ones | | `Game/fn_80442010.c` |
+| Range | Contents | Unit |
+|---|---|---|
+| 0x8007A3A0-0x8007C034 | **AI script API**, 41 functions called by the script node classes at 0x801C5E0C-0x801DFED8. The file goes on with other script code to its `_GLOBAL_.I` 0x80081DCC | `Game/fn_8007A3A0.cpp` |
+| 0x8009B31C-0x8009D584 | **Path-node graph** (section 4.7), one whole file | none yet (row 15) |
+| 0x800FA34C-0x800FC1F8 | **Actor controller input**, three classes, inside the template registry file 0x800F9F88-0x80101A00 ([`versus.md`](versus.md) section 5, rows 10-12). Base (vtable `lbl_804F5708`, 0x5C0 bytes): 26 action states, this frame `+0x8` and last frame `+0xC`, and 10 analog axes of 0x30 bytes at `+0xE0`/`+0xE4`, all double-buffered. Pad subclass (`lbl_804F5678`, 0x8F0): sets the actions from the pad through the combo table `lbl_804CC810`. AI subclass (`lbl_804F55E8`, 0x5C4): `+0x5C0` is the actor's `AIObject`, and its update copies the AI's actions (`fn_8013741C`) and axes 0, 7 and 9 (`fn_80137298`) | `Game/fn_800FA34C.cpp` |
+| 0x80132480-0x80137F2C | **AI manager and `AIObject`** (sections 3, 4.1). Globals: the volume registry `lbl_80569890`, the encounter records `lbl_8056996C[16]` and the AI pointer table `lbl_8056A72C[49]` | `Game/fn_80132480.cpp` |
+| 0x80137F2C-0x80145CB0 | **Behaviors**: the registry, then the 42 handlers from 0x80138E10 (section 4.3). Its `.bss` holds the 256 action records `lbl_8056A7F0` and their pool `lbl_805717F0` | `Game/fn_80137F2C.cpp` |
+| 0x80145CB0-0x80147DE4 | **Volume registry** `lbl_80569890` (section 4.5) | `Game/fn_80145CB0.cpp` |
+| 0x80147DE4-0x80149554 | **Encounter record** methods (the 0xDC-byte record, `AiObj` in the unit) and the spot search around a target | `Game/fn_80147DE4.cpp` |
+| 0x80149554-0x8014A3B4 | **`cAIMessages`** (section 3) | `Game/fn_80149554.cpp` |
+| 0x8014A3B4-0x8014BC7C | **Mover** `AIObject+0x210` (section 4.1) | `Game/fn_8014A3B4.cpp` |
+| 0x8014BC7C-0x8014DDD4 | **Path** at Mover `+0x20` (section 4.6) | `Game/fn_8014BC7C.cpp` |
+| 0x8014DDD4-0x801500C4 | **`+0xD0` target list** methods (section 4.1) | `Game/fn_8014DDD4.cpp` |
+| 0x801500C4-0x80152AE8 | The last target-list methods and the AI_NONE brain's factory and task (the first 0x6B0 bytes), then the brain and task base classes (section 4.2) | `Game/fn_801500C4.cpp` |
+| 0x80152AE8-0x8015D950 | **Task methods** (section 4.4) | `Game/fn_80152AE8.cpp` |
+| 0x8015D950-0x8015E2FC | Task constructors | `Game/fn_8015D950.cpp` |
+| 0x8015E2FC-0x80160428 | Shared helpers | `Game/fn_8015E2FC.cpp` |
+| 0x80160428-0x80164460 | **Per-profile brains** and their special tasks (section 4.2) | `Game/fn_80160428.cpp` |
+| 0x80442010-0x80442600 | `AIObject`, Mover and task accessors (`AI_Get*`), then the versus ones | `Game/fn_80442010.c` |
+| 0x80461430-0x804644B4 | **AI inline functions** in the linkonce tail ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)): about 190, almost all 0x28-0x2C accessors, nearly all called only from the ranges above. Split where the `.rodata` pool changes | `Game/fn_80461430.cpp`, `Game/fn_80462B38.cpp`, `Game/fn_80464014.cpp`, `Game/fn_80464448.cpp` |
 
-Some matched units' header comments call their function a "PLAYER state" step. They are AI behaviors and tasks; fix the comment when you next touch one.
+Edges still open (units match, but don't yet follow the original files):
+- The Mover and path units are whole files. The `.text` edge at 0x8014DDD4 is a guess: 0x8014DDD4-0x8014E288 reads no `.rodata`, and the pair map has no reset there.
+- `Game/fn_8014DDD4.cpp` and `Game/fn_801500C4.cpp` share the target-list class (`Finder`), so they are one file; they stay separate until the edge between its methods and the brain bases is found. The edges from there to 0x80160428 are unknown.
+- 0x80160428 probably opens a file: `fn_801603CC` leaves the return flag clear and `fn_80160428` has no pair ([`prodg.md`](prodg.md#the-function-end-branch-pair)). The file 0x80164460-0x80164F2C after the brains is not AI (level load and the HUD call it), and neither is 0x80131E90-0x80132480 before the manager (a `Color` static initializer, `_GLOBAL_.I` 0x80132444).
 
 ---
 
@@ -55,13 +61,15 @@ AI manager (globals)          init / update / draw / shutdown, registry of up to
         behaviors             function-pointer table by behavior id (IDLE ... POWER_STAND)
   shared helpers, perception, cAIMessages queue
 Script API (0x8007A3A0) and actor component (0x800FA34C) call in from outside
+Mover and path -> path-node graph (0x8009B31C)
 ```
 
-- **Manager.** `fn_80132480` (init): shuts down a previous run if the initialised flag `lbl_8066BF4C` is set, clears the registry `lbl_8056A72C[0x30]` and its count `lbl_8066BF1C`, registers the behaviors (`fn_80137F2C`), inits `lbl_80569890` (`fn_80145D8C`) and the messages (`fn_80149554`), sets `lbl_8066BF20 = 1` (AI enabled; `fn_80133658`/`fn_8013367C` set and clear it), and reads settings from an entry of the resource list `lbl_8054ED80` (`fn_804326B4`). `fn_80132AAC` (shutdown) deletes each `AIObject` (`fn_80447DBC(ai, 3)`) and undoes the rest. `fn_80132B88` and `fn_80132CDC` run `fn_80134028` / `fn_80134280` on every AI. `fn_801336F0` is a pass from the main loop. The **encounter list** (`"Encounter:"` in the debug draw) is up to 16 records of 0xDC bytes at `lbl_8056996C`, count `lbl_8066F1A8`, one per actor id (`fn_80461A3C`; layout `AiObj` in `Game/fn_80147DE4.cpp`); add `fn_80132FE4`, remove `fn_80133078`, find `fn_80132F00`. A record lists the AIs near its owner and lets at most `lbl_8066BF50` of them (a setting, `fn_804616E8`) be engaged at once, rotating to the least recently engaged (`fn_80148B08`). `fn_80133078` reads its last record as `lbl_80569890 + count * 0xDC`, which works only because the 0xDC-byte volume registry `lbl_80569890` sits right before it; the two are unrelated. `fn_8013726C(ai)` returns the registry.
+- **Manager.** Init `fn_80132480`, update `fn_80132600`, debug draw `fn_80132838`, shutdown `fn_80132AAC` (deletes each `AIObject` with `fn_80447DBC(ai, 3)`). Init registers the behaviors (`fn_80137F2C`) and sets up the volume registry (`fn_80145D8C`) and the messages (`fn_80149554`). Registry `lbl_8056A72C[0x30]` and count `lbl_8066BF1C`, initialised flag `lbl_8066BF4C`, AI enabled `lbl_8066BF20` (`fn_80133658`/`fn_8013367C` set and clear it); the settings come from an entry of the resource list `lbl_8054ED80` (`fn_804326B4`). `fn_80132B88` and `fn_80132CDC` run `fn_80134028` / the reset `fn_80134280` on every AI. `fn_801336F0` is a pass from the main loop. `fn_8013726C(ai)` returns the volume registry.
+- **Encounter list** (`"Encounter:"` in the debug draw). Up to 16 records of 0xDC bytes at `lbl_8056996C`, count `lbl_8066F1A8`, one per actor id (`fn_80461A3C`; layout `AiObj` in `Game/fn_80147DE4.cpp`); add `fn_80132FE4`, remove `fn_80133078`, find `fn_80132F00`. A record lists the AIs near its owner and lets at most `lbl_8066BF50` of them (a setting, `fn_804616E8`) be engaged at once, rotating to the least recently engaged (`fn_80148B08`). `fn_80133078` reads its last record as `lbl_80569890 + count * 0xDC`, which works only because the 0xDC-byte volume registry `lbl_80569890` sits right before it; the two are unrelated.
 - **Creation.** `fn_80133E5C(ai, profile)` builds the brain (`fn_80136AC8`), loads the tuning (`fn_801343B0`) and registers the AI (`fn_80133444`). `fn_80133FA0` unregisters it (`fn_801334B0`).
 - **Brain.** `fn_80136AC8` switches on the profile (section 4.2) and `new`s a 0x274-byte brain. The base class (constructor `fn_801507C0`, vtable `lbl_804F5CB0`) has one virtual, the task factory `fn_80150AA8(id)`. Each profile's class overrides it with a 0x78-byte method that adds its own tasks and falls back to the base.
-- **Tasks.** `fn_8015105C(brain, id)` starts task `id` (callers: the script API, `fn_80134028`). `fn_80151BCC(brain)` returns the current task, and `AI_GetTaskId(task)` its id. Every task class derives from the base at vtable `lbl_804F5CC8` (constructor `fn_8015294C`, 0xC4) and overrides three virtuals: update (vtable `+0x1C`), enter (`+0x24`) and exit (`+0x2C`), defined in the order enter, exit, update. The update returns nonzero when done, after `AI_SetTaskDone(task, 1)`.
-- **Behaviors.** `fn_80137FBC(id, name, update, enter, exit)` fills the 0x1C-byte record `lbl_80571814[id]` (`fn_80138C04`: id `+0`, started flag `+4`, name `+0xC`, then the three functions); the table is `fn_80138030`. Only `IDLE` has enter and exit functions. A handler is `(ai, record)` and returns an *action* or 0: a 0x70-byte record from the pool `lbl_805717F0` over `lbl_8056A7F0[256]` (`fn_80138738(behavior, duration, cooldown)` takes one, `fn_8013880C` frees it after `AI_ResetAction`). Layout: `+0x0` (-1 on reset, otherwise unknown), behavior id `+0x4`, up to 8 controller actions (section 4.1 `+0x44`) count `+0x8` and ids `+0xC` (`fn_80138A24` adds one), move kind `+0x2C`, move vector `+0x30` and `float` `+0x40` (guess: speed; `fn_80138AE0` sets all three and flattens the vector unless the kind is 7), active flag `+0x44`, duration `+0x48` from start tick `+0x4C`, then cooldown `+0x54` from end tick `+0x50`, priority `+0x58` (2 on reset), weight `+0x5C` (1.0), next action `+0x60` (a behavior's start and update actions are chained). Accessors `AI_*Action*`. `fn_801385A0(ai)` runs every behavior in the AI's enabled set (`AI_GetBehaviorSet(ai)`) and passes each action to `fn_80135D64`; `fn_80138868` is the "Behaviors" debug list. `fn_80138584` is the empty shutdown.
+- **Tasks.** `fn_8015105C(brain, id)` starts task `id` (callers: the script API, `fn_80134028`). `fn_80151BCC(brain)` returns the current task, and `AI_GetTaskId(task)` its id. Every task class derives from the base at vtable `lbl_804F5CC8` (constructor `fn_8015294C`, 0xC4) and overrides update, enter and exit (section 4.4). The update returns nonzero when done, after `AI_SetTaskDone(task, 1)`.
+- **Behaviors.** `fn_80137FBC(id, name, update, enter, exit)` fills the 0x1C-byte record `lbl_80571814[id]` (`fn_80138C04`: id `+0`, started flag `+4`, name `+0xC`, then the three functions); the table is `fn_80138030`. A handler is `(ai, record)` and returns an *action* or 0: a 0x70-byte record from the pool `lbl_805717F0` over `lbl_8056A7F0[256]` (`fn_80138738(behavior, duration, cooldown)` takes one, `fn_8013880C` frees it after `AI_ResetAction`). Layout: `+0x0` (-1 on reset, otherwise unknown), behavior id `+0x4`, up to 8 controller actions (section 4.1 `+0x44`) count `+0x8` and ids `+0xC` (`fn_80138A24` adds one), move kind `+0x2C`, move vector `+0x30` and `float` `+0x40` (guess: speed; `fn_80138AE0` sets all three and flattens the vector unless the kind is 7), active flag `+0x44`, duration `+0x48` from start tick `+0x4C`, then cooldown `+0x54` from end tick `+0x50`, priority `+0x58` (2 on reset), weight `+0x5C` (1.0), next action `+0x60` (a behavior's start and update actions are chained). Accessors `AI_*Action*`. `fn_801385A0(ai)` runs every behavior in the AI's enabled set (`AI_GetBehaviorSet(ai)`) and passes each action to `fn_80135D64`; `fn_80138868` is the "Behaviors" debug list.
 - **Messages.** `cAIMessages` is a ring of 64 message pointers `lbl_80571CB0`, with count `lbl_8066F1AC`, write index `lbl_8066F1B0` and read index `lbl_8066F1B4`. Tasks (0x8015AB3C-0x8015BEA0) post with `fn_80149A6C(kind, fmt, target, ...)`, where `fmt` is a format string for the arguments (`"%udl %udl"` for kinds 0 and 1, `"%udl"` for kind 2) that is only tested for null. A message is kind `+0`, target actor id `+4` and, for kinds 0 and 1, a word `+8`. Delivery calls the unmatched script functions on the target actor: kind 0 `fn_8007EFE0(actor, word)`, kind 1 `fn_8007F184(actor, actor of word)`, kind 2 `fn_8007F2C4(actor, 0)`.
 
 ---
@@ -70,7 +78,7 @@ Script API (0x8007A3A0) and actor component (0x800FA34C) call in from outside
 
 ### 4.1 `AIObject` (`actor+0x380`)
 
-From `Game/fn_80442010.c` and `Game/fn_80132480.cpp`. Size 0x5F0: `fn_800FBA70` allocates it and stores it at its own `+0x5C0`. Constructor `fn_80133C8C(ai, entity)`, destructor `fn_80447DBC`. Its bit sets are `BitSet` `{unsigned *words; unsigned count}` (in bits), ops `BitSet_*`; `BitSet_Assign` copies `(count >> 5) + 4` bytes, not words: for the 42-bit `+0x500`, bytes 0-4, so the task base's save and restore leave behaviors 0x20-0x29 (bytes 6-7, big-endian) as the destination had them.
+Size 0x5F0: `fn_800FBA70` allocates it and stores it at its own `+0x5C0`. Constructor `fn_80133C8C(ai, entity)`, destructor `fn_80447DBC`. Its bit sets are `BitSet` `{unsigned *words; unsigned count}` (in bits), ops `BitSet_*`; `BitSet_Assign` copies `(count >> 5) + 4` bytes, not words: for the 42-bit `+0x500`, bytes 0-4, so the task base's save and restore leave behaviors 0x20-0x29 (bytes 6-7, big-endian) as the destination had them.
 
 | Offset | Type | Meaning (guess) |
 |---|---|---|
@@ -122,15 +130,13 @@ The profile is the index of the `ACTOR_AI` name in `lbl_804CF8E8`. `fn_80136AC8`
 | 14 | `AI_SPIDERMAN` | `fn_80163F44` | 30 | `AI_FOOTBALLGUY` | `fn_80162AD0` |
 | 15 | `AI_STORM` | `fn_80164010` | other | | `fn_801507C0` |
 
-Base `AIBrain` layout (0x274 bytes, `Game/fn_801500C4.cpp`): `AIObject *` `+0x0`, its `+0x530` entity `+0x4`, `fn_80085954(entity)` `+0x8`, `+0xC` (cleared on start, otherwise unknown), current task `+0x10` (top of the stack), task timer end tick `+0x14` (unsigned, `fn_8042EFF8` ticks; 0 when off) and length `+0x18`, a `BitSet` `+0x1C` (`fn_80151C8C`; the special tasks alternate bits 0 and 1 on the task timer), task stack count `+0x24` and tasks `[16]` `+0x28` (`fn_8015105C` pushes, `fn_8015123C` pops; index 0 is never popped), history ring of 64 `{task id, start tick}` pairs `+0x70` with used count `+0x68` and next index `+0x6C`, vtable `+0x270`. Task id is `AI_GetTaskId(task)`.
-
-A task's vtable is at `+0x24`. Slot `+0x18` runs every frame on every task in the stack, top first (update); `+0x20` runs on a task when it becomes the top, pushed or uncovered by a pop; `+0x28` runs on the top task when it is covered or popped. The names enter/exit for the last two are guesses. `AI_GetTaskDone(task)` nonzero means the task is finished and gets popped.
+Base `AIBrain` layout (0x274 bytes, `Game/fn_801500C4.cpp`): `AIObject *` `+0x0`, its `+0x530` entity `+0x4`, `fn_80085954(entity)` `+0x8`, `+0xC` (cleared on start, otherwise unknown), current task `+0x10` (top of the stack), task timer end tick `+0x14` (unsigned, `fn_8042EFF8` ticks; 0 when off) and length `+0x18`, a `BitSet` `+0x1C` (`fn_80151C8C`; the special tasks alternate bits 0 and 1 on the task timer), task stack count `+0x24` and tasks `[16]` `+0x28` (`fn_8015105C` pushes, `fn_8015123C` pops; index 0 is never popped), history ring of 64 `{task id, start tick}` pairs `+0x70` with used count `+0x68` and next index `+0x6C`, vtable `+0x270`.
 
 A brain's factory handles its own task ids and passes the rest to its base's factory. Most named-character profiles derive from an intermediate brain with no tasks of its own (ctor `fn_80164274`, vtable `lbl_804F66C0`, factory `fn_801641FC`); BRUTE1-3, HUMAN1-3, FLYER1 and PEON derive from the base, FLYER2/3 from FLYER1. Special tasks replace base ids: BRUTE3 and HUMAN3 id 3, FLYER1 ids 1, 3 and 9.
 
 ### 4.3 Behaviors
 
-Registered by `fn_80138030`; the handler is the `update` argument. Ids 0x1F and above 0x29 are unused.
+Registered by `fn_80138030`; the handler is the `update` argument, and only `IDLE` has enter and exit functions. Ids 0x1F and above 0x29 are unused.
 
 | Id | Name | Handler | Id | Name | Handler |
 |---|---|---|---|---|---|
@@ -156,11 +162,11 @@ Registered by `fn_80138030`; the handler is the `update` argument. Ids 0x1F and 
 | 0x13 | `PICKUP` | `fn_80140E64` | 0x29 | `POWER_STAND` | `fn_80145AA8` |
 | 0x14 | `SUPER_BLOCK_THROWN` | `fn_80141394` | | | |
 
-Rename the handlers when you match them (`AIBehavior_Approach` or similar, a guess); the names are free, since the DOL is stripped.
-
 ### 4.4 Tasks
 
 `fn_80150AA8(id)` constructs task `id` 0-0x1B with the constructors `fn_8015D950`...`fn_8015E2A4` in address order (`Game/fn_8015D950.cpp`). Task `id`'s vtable is `lbl_804F62E8 - 0x38 * id`, and only MOVETO (0xB) constructs a member, a `Vector` at `+0x30`. Each vtable is 14 words: the two base slots `fn_80463AB4`/`fn_80463AD4` (`+0x8`, `+0x10`; empty, called by the constructor and by `Task_Base_Destroy`), then the class's three methods in the order update, enter, exit. `symbols.txt` names the methods `Task_<Name>_Update`, `_Enter`, `_Exit`, after the task's string (below); the base's (`lbl_804F5CC8`) are `__pure_virtual`, `Task_Base_Enter` and `Task_Base_Exit` (both return 1).
+
+How the stack runs them: update (slot `+0x18`) runs every frame on every task in the stack, top first; enter (`+0x20`) runs on a task when it becomes the top, pushed or uncovered by a pop; exit (`+0x28`) runs on the top task when it is covered or popped. The names enter and exit are guesses. `AI_GetTaskDone(task)` nonzero means the task is finished and gets popped.
 
 Task names, from the `char *` table `lbl_804CFB58[id]` (`TASK_` prefix dropped): 0 SLEEP, 1 SEARCH, 2 MELEE, 3 RANGED, 4 FINDTHROWABLE, 5 FINDWIELDABLE, 6 POSSESS, 7 CARRYTHROWABLE, 8 WIELDING, 9 ATTACKTHING, 0xA BUZZPLAYER, 0xB MOVETO, 0xC FORCECONTROL, 0xD STOP, 0xE ENSLAVE, 0xF FORCEJUMP, 0x10 SWING, 0x11 GETANDTHROWAT, 0x12 WALLCLIMB, 0x13 PLAYANIM, 0x14 RANGEDONLY, 0x15 CLIMBATTACK, 0x16 FORCESUPERBLOCK, 0x17 FORCEPOWERSTAND, 0x18 HOVERANDFIRE, 0x19 POWERSTAND, 0x1A GOGETANDTHROWAT, 0x1B MOBILITYCHARGE. AI_NONE's id 1 is its null task, not SEARCH.
 
@@ -174,11 +180,11 @@ Deleting a task is deferred: `AI_DeferTaskDelete` queues up to 16 in `lbl_80571D
 
 Volumes the scripts register by entity handle, through the manager wrappers `fn_8013379C`-`fn_801339C8`. Six lists (`fn_801B6040` add, `fn_801B686C` find, `fn_801B6768` remove) at `+0x4 + 0x24 * n`. A volume is a 0x330-byte base (base constructor `fn_8046303C`): handle `+0x0`, centre `+0x10`, edge count `+0x20`, then 16 edge starts `+0x30`, ends `+0x130` and normals (a guess) `+0x230`. `fn_80146ED0` builds the edges from the entity's collision hull (`fn_8009AD80`), in world space.
 
-Who registers each list comes from the callers of the manager wrappers: the class whose vtable holds the caller, named by the type-registry string copied just before its constructor is called (`fn_801BEE2C`: `cRegionDamage` builds vtable `lbl_80502D10` in `fn_80468BA0`, `cBossRingOut` `lbl_804FCD70` in `fn_80469954`, `cCrystalDetonate` `lbl_804FE7D8` in `fn_80468ABC`).
+The registering classes are named by the type-registry string (`fn_801BEE2C`): `cRegionDamage` (vtable `lbl_80502D10`, built in `fn_80468BA0`), `cBossRingOut` (`lbl_804FCD70`, `fn_80469954`) and `cCrystalDetonate` (`lbl_804FE7D8`, `fn_80468ABC`).
 
 | List | Adds / removes | Kind | Registered by | Read by |
 |---|---|---|---|---|
-| 0 `+0x4` | `fn_801477B0` / `fn_80147884` | `DamageVolume` 0x340, owner `+0x330` | `cRegionDamage` (`fn_8020C380`, `fn_8020CC38`) and script node `fn_801CF86C`; `AI_GetDamageRegionCount`, `AI_GetDamageRegion` | teleport spot test `fn_80134940` (rejects spots inside, `fn_801464E4`); `fn_801600DC` (a path crossing one, `fn_80146A88`, is blocked); `AVOID_HAZARDS` |
+| 0 `+0x4` | `fn_801477B0` / `fn_80147884` | `DamageVolume` 0x340, owner `+0x330` | `cRegionDamage` (`fn_8020C380`, `fn_8020CC38`) and script node `fn_801CF86C`; `AI_GetDamageRegionCount`, `AI_GetDamageRegion` | teleport spot test `fn_80134940` (rejects spots inside, `fn_801464E4`); `fn_801600DC` (a path crossing one, `fn_80146A88`, is blocked); `AVOID_HAZARDS`; the path-node graph (`fn_8009B994`, section 4.7) |
 | 1 `+0x28` | `fn_80147968` / `fn_80147A20` | `DefendVolume` 0x340, actor id `+0x330` | script API; `AI_GetDefendRegionCount`, `AI_GetDefendRegion` | `fn_80147ACC(actor)` finds the actor's volume; `fn_80134BE0` keeps the AI inside it; `DEFEND_REGIONS` steers back into it when outside |
 | 2 `+0x4C` | `fn_80147B88` | `RingOutVolume` 0x330 | `cBossRingOut` (`fn_801F21DC`); `AI_GetRingOutCount`, `AI_GetRingOut` | `fn_801475D8`: a point inside any one's hull; `AVOID_HAZARDS`, only while `fn_800CE4D0` holds |
 | 3 `+0x70` | `fn_80147C40` | `RooftopVolume` 0x330 | script API; `AI_GetRooftopRegionCount`, `AI_GetRooftopRegion` | `ROOFTOP_REGIONS`: one holding both the AI and its target |
@@ -187,14 +193,14 @@ Who registers each list comes from the callers of the manager wrappers: the clas
 
 ### 4.6 Path (`Mover+0x20`)
 
-0xB0 bytes; methods 0x8014BC7C-0x8014DDD4. Constructor `fn_8046234C`, its base's constructor `fn_804623F0` and reset `fn_80462430` (clears `+0x0`, `+0x44`, `+0x48`, `+0x50`); linkonce accessors `AI_IsPathBuilt`, the flag tests below, `AI_GetPathEntry`/`AI_NextPathEntry` (the entry at the cursor, and advancing it) and `AI_SetPathGoal(path, point, waypoint, n)` (`+0x80`, `+0x90`, `+0x98`; it passes them on to the Mover's `+0x2B0`, waypoint and move dest). Build to an actor `fn_8014BC7C` or a point `fn_8014BE08`, rebuild `fn_8014C31C`, update `fn_8014D034`, reset `fn_8014C660`, waypoint arrival test `fn_8014C6D8`.
+0xB0 bytes; methods 0x8014BC7C-0x8014DDD4. Constructor `fn_8046234C`, its base's constructor `fn_804623F0` and reset `fn_80462430` (clears `+0x0`, `+0x44`, `+0x48`, `+0x50`); linkonce accessors `AI_IsPathBuilt`, the flag tests below, `AI_GetPathEntry`/`AI_NextPathEntry` (the entry at the cursor, and advancing it) and `AI_SetPathGoal(path, point, waypoint, n)` (`+0x80`, `+0x90`, `+0x98`; it passes them on to the Mover's `+0x2B0`, waypoint and move dest). Build to an actor `fn_8014BC7C` or a point `fn_8014BE08`, rebuild `fn_8014C31C`, update `fn_8014D034`, reset `fn_8014C660`, waypoint arrival test `fn_8014C6D8`. The builds fill it through the path-node graph's route queries (section 4.7).
 
 | Offset | Type | Meaning (guess) |
 |---|---|---|
 | +0x0, +0x4 | `unsigned`, `void *[16]` | Entry count and entries (each entry's `+0x0` is a spot) |
 | +0x44 | `unsigned short` | Base flags; bits 1 (`fn_80463584`: at the last entry, rebuild rather than reset) and 2 (`fn_804635B8`) are tested, set outside the AI (guess: the route query `fn_8009BB7C`) |
 | +0x48 | `float` | Cleared by the base reset |
-| +0x4C | `int` | `fn_80463204(ai)` at each build |
+| +0x4C | `int` | `fn_80463204(ai)` at each build. The path-node search passes it to `fn_80132DC4`, which returns the float of that entry (0-30, else 0) of the 31 16-byte entries `lbl_804CF968` |
 | +0x50 | spot | Next spot |
 | +0x54 | `unsigned short` | Flags: 3 on build, reset clears 1, reaching a spot clears 2, 8 from the build's flag argument, 0x20 when the route query returns 1; the update sets 0x80 and 0x8000 and clears 0xC0. Tests: 1 `AI_IsPathBuilt`, 2 `fn_80463644`, 8 `fn_804636AC`, 0x20 `fn_804633B0`, 0x80 `fn_804636E0`, 0x8000 `fn_80463678` |
 | +0x56 | `unsigned short` | Entry cursor, 0 on build |
@@ -206,12 +212,32 @@ Who registers each list comes from the callers of the manager wrappers: the clas
 | +0x98 | `int` | Selects the arrival test's waypoint branch |
 | +0x9C | `unsigned` | Spot search mask (`fn_801370B0`) |
 
+### 4.7 Path-node graph (0x8009B31C-0x8009D584)
+
+Unmatched. The graph of spots the paths are built on, loaded from a `.npd` file: its `.rodata` opens with `"npd"`, `"rb"`, `"Game:Pathing"` and `"PATH WARNING!  %d nodes have no sector.\n"`, and the loader is most likely `fn_8009B35C`, which level load (`Game/fn_8002CE78.cpp`) calls. One whole file:
+
+- **`.text`** starts right after `Game/fn_80097750.cpp` and ends with `_GLOBAL_.I` `fn_8009D548` (in `.ctors`), which calls the static initializer `fn_8009D454(1, 0xFFFF)`.
+- **`.rodata`** runs from 0x8048A9D8 through the `"invalid"` at 0x8048AC7C (its own constants, then linkonce pool words and header strings). The bytes before it, 0x8048A828-0x8048A9D8, end the previous file the same way and are unclaimed.
+- **`.bss`** is the static initializer's two `Vector`s, `lbl_805528D0` and `lbl_805528E0`. It also sets floats in `.sbss` 0x8066D668-0x8066D674.
+
+Signatures below are as the matched AI callers declare them.
+
+| Function | Called by | Role (guess) |
+|---|---|---|
+| `fn_8009C55C(pos, world, mask, radius, test, ctx, n)` | the route length `fn_8014C0B8`, teleport (`fn_80134D64`, `fn_80135668`), `EVADE`, `fn_801504BC`, and the two route queries | Nearest spot to a point within `radius` that passes `test` (the teleport passes `fn_80134940` and the volume registry); `mask` from `fn_801370B0` |
+| `fn_8009BB7C(path, from, to, fromWorld, toWorld, mask, range)` | path builds `fn_8014BC7C`, `fn_8014BE08`, rebuild `fn_8014C31C` | Route query between two points into a path (section 4.6) |
+| `fn_8009BD7C(path, fromSpot, to, toWorld, mask, range)` | path rebuild `fn_8014C31C` | Route query from a spot |
+| `fn_8009C004(query, from, to, fromSpot, toSpot, mask, range)` | the two route queries, the route length `fn_8014C0B8` | Spot-to-spot search; fills a 0x58-byte query (`Query` in `Game/fn_8014BC7C.cpp`, route length `+0x48`) and reads `fn_80132DC4` (section 4.6, `+0x4C`) |
+| `fn_8009B994(volume, on)` | damage-volume add (0) and remove (1), `fn_801477B0` / `fn_80147884` | Turns off and back on the graph inside a damage volume |
+| `fn_8009B83C` | script code `fn_80081208` | |
+| `fn_8009B31C` | `fn_800B3420` | |
+
 ---
 
 ## 5. Notes
 
 - **Teleport globals.** `lbl_8066BF54` is the actor being teleported while `fn_8009C55C` runs, read by the spot test `fn_80134940`; `lbl_8066BF3C` is the spot's minimum distance from the target point and `lbl_8066BF40` the chance to accept a spot that fails `fn_801B9324` (guess: a camera view test); an AI farther than `lbl_8066BF30` from its target point may teleport. `fn_801370B0` builds the spot search mask from the actor's movement flags.
-- **The float and string pools** of the AI files are in `.rodata` 0x8049A5xx-0x8049BAxx. Check `extern_pool` (used by `Game/fn_80147DE4.cpp`) before claiming one.
+- **Unclaimed `.rodata`.** 0x8049B9C8-0x8049B9E0 (floats 1, 0, 176, -0, 0, 1), next to the task methods' pool, has no reader in `.text`.
 
 ---
 
@@ -219,28 +245,29 @@ Who registers each list comes from the callers of the manager wrappers: the clas
 
 Work the rows in order and skip whatever is done; `configure.py` is the authority on unit status. Within a file, take the next function after the unit's current `.text` end, so that the unit grows as one contiguous range from the file's first function. If a function is stuck, record it in [`nonmatching.md`](nonmatching.md) and move on to the next row rather than leave a gap. Name a unit after its file's first function (`Game/fn_80132480.cpp`). Rows are numbered once; unit headers cite them (`docs/ai.md row N`), so don't renumber.
 
-| # | Target | Range | Next action |
-|---|---|---|---|
-| 1 | AI manager | 0x80132480-0x80133C8C, unit `Game/fn_80132480.cpp` | Done |
-| 2 | Behavior registry | 0x80137F2C-0x80138E10, unit `Game/fn_80137F2C.cpp` | Done. The 42 handlers keep their `fn_` names until row 13 renames them (section 4.3) |
-| 3 | Brain and task bases | 0x801500C4-0x80152AE8, unit `Game/fn_801500C4.cpp`, then 0x8015D950-0x8015E2FC, unit `Game/fn_8015D950.cpp` | Done |
-| 4 | Per-profile brains | 0x80160428-0x80164460, unit `Game/fn_80160428.cpp` | Done, with the special tasks |
-| 5 | AI inline functions | 0x80461430-0x804644B4 | Done. Units split where the `.rodata` pool changes (`extern_pool` in `configure.py`) |
-| 6 | Rest of the `AIObject` file | 0x80133C8C-0x80137F2C, extending row 1's unit | Done |
-| 7 | Actor-side AI component | 0x800FA34C-0x800FC1F8, unit `Game/fn_800FA34C.cpp` | Done |
-| 8 | AI script API | 0x8007A3A0-0x8007C034, unit `Game/fn_8007A3A0.cpp` | Done |
-| 9 | Shared helpers | 0x8015E2FC-0x80160428, unit `Game/fn_8015E2FC.cpp` | Done |
-| 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
-| 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
-| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done. `.rodata` 0x8049B9C8-0x8049B9E0 (floats 1, 0, 176, -0, 0, 1) has no reader in `.text` and stays unclaimed |
-| 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | Done |
-| 14 | Rename pass | Accessors in `Game/fn_80442010.c` and row 5's units | Done. Names (`AI_*`, `Task_Base_*`, `BitSet_*`) only where section 4 records what a function returns; the rest keep `fn_`: the `+0x598` setters and weight getters, the `+0x508` set, the `AIObject` timers and `+0x514`-`+0x594` fields, the Mover's `+0x2B0`-`+0x2E0` accessors, the path flag tests, the target list's `+0xD8`-`+0xF0` handles, the constructors, `fn_80442414`, `fn_80463AB4`, `fn_80463AD4`, `fn_804643F0`. Symbols stay `extern "C"`; a function that names a unit keeps its name in the unit name |
+| # | Target | Range | Unit | Status |
+|---|---|---|---|---|
+| 1 | AI manager | 0x80132480-0x80133C8C | `Game/fn_80132480.cpp` | Done |
+| 2 | Behavior registry | 0x80137F2C-0x80138E10 | `Game/fn_80137F2C.cpp` | Done |
+| 3 | Brain and task bases | 0x801500C4-0x80152AE8, 0x8015D950-0x8015E2FC | `Game/fn_801500C4.cpp`, `Game/fn_8015D950.cpp` | Done |
+| 4 | Per-profile brains | 0x80160428-0x80164460 | `Game/fn_80160428.cpp` | Done, with the special tasks |
+| 5 | AI inline functions | 0x80461430-0x804644B4 | four units (section 2) | Done |
+| 6 | Rest of the `AIObject` file | 0x80133C8C-0x80137F2C | row 1's unit | Done |
+| 7 | Actor-side AI component | 0x800FA34C-0x800FC1F8 | `Game/fn_800FA34C.cpp` | Done |
+| 8 | AI script API | 0x8007A3A0-0x8007C034 | `Game/fn_8007A3A0.cpp` | Done |
+| 9 | Shared helpers | 0x8015E2FC-0x80160428 | `Game/fn_8015E2FC.cpp` | Done |
+| 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | three units (section 2) | Done |
+| 11 | Mover, path and target list | 0x8014A3B4-0x801500C4 | three units (section 2) | Done |
+| 12 | Task methods | 0x80152AE8-0x8015D950 | `Game/fn_80152AE8.cpp` | Done |
+| 13 | Behavior handlers | 0x80138E10-0x80145CB0 | row 2's unit | Done |
+| 14 | Rename pass | accessors | `Game/fn_80442010.c` and row 5's units | Done. Names (`AI_*`, `Task_Base_*`, `BitSet_*`) only where section 4 records what a function returns; the rest keep `fn_` |
+| 15 | Path-node graph | 0x8009B31C-0x8009D584 | `Game/fn_8009B31C.cpp` | Open. One whole C++ file; claim its `.rodata` and `.bss` from section 4.7 with it. When the route queries match, settle the path flag guesses in section 4.6 (`+0x44`) |
 
-Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
+Out of scope for AI: the rest of the script command file (0x8007C034-0x80081E08) and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
 
 ---
 
 ## 7. Open Questions
 
-- How do tasks choose behaviors (`lbl_80571814`), and what reads the profile's tuning floats at `+0x598`?
+- What does each `+0x598` weight tune? The getters are in `Game/fn_80461430.cpp` and `Game/fn_80464014.cpp`; their callers would name PLAYER fields 0x8B-0xA4, 0xF6 and 0xF7 (`tools/nvbtool.py` `FIELD_NAMES`).
 - Which of the script node classes at 0x801C5E0C-0x801DFED8 are AI commands, and what are their script names (`cSpawnPeon`, `cAIEnemyVictoryScene`, `cGlobalPeonCounter` in `.rodata` 0x8049EDD0-0x8049EE90)?
