@@ -812,8 +812,11 @@ Game/fn_80132480.cpp:
 	.bss        start:0x80569890 end:0x8056A7F0
 
 Game/fn_80137F2C.cpp:
-	.text       start:0x80137F2C end:0x80145B74
-	.rodata     start:0x8049AB10 end:0x8049B030
+	.text       start:0x80137F2C end:0x80145CB0
+	.ctors      start:0x80482684 end:0x80482688
+	.dtors      start:0x804828A4 end:0x804828A8
+	.rodata     start:0x8049AB10 end:0x8049B088
+	.bss        start:0x8056A7F0 end:0x80571CB0
 
 Game/fn_80145CB0.cpp:
 	.text       start:0x80145CB0 end:0x80147DE4

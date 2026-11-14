@@ -1,5 +1,5 @@
-// AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), then the handlers. docs/ai.md rows 2 and 13.
-// .rodata 0x8049AB10-0x8049AE60: the behavior names, the list title, then each handler's float pool in .text order.
+// AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), the handlers and the static init. docs/ai.md rows 2 and 13.
+// .rodata 0x8049AB10-0x8049B088: the behavior names, the list title, each handler's float pool in .text order, then the static init's and the inline functions' pools.
 __asm__(".section .rodata\n\t.globl lbl_8049AB10\nlbl_8049AB10:\n\t.4byte 0x6C696400\n\t.text"); // 8-aligns the claim: the tail of the "invalid" string ahead of it, which no code reads
 
 inline int sn_return_decl(int a) { return a; }
@@ -244,9 +244,9 @@ struct LvObj { // fn_800B3A74's result as EVADE reads it
     LvSub sub; // +0x10
 };
 
-extern AIBehavior lbl_80571814[];
-extern AIAction lbl_8056A7F0[];
-extern char lbl_805717F0[]; // pool of free Actions
+AIAction lbl_8056A7F0[256];
+char lbl_805717F0[0x24]; // pool of free Actions, a list (fn_801B5BA8 builds it)
+AIBehavior lbl_80571814[42];
 extern char lbl_80593BE8[];
 extern Vector lbl_80593E00;
 extern Vector lbl_80593DD0;
@@ -3518,3 +3518,55 @@ extern "C" AIAction *fn_80145AA8(void *ai, AIBehavior *rec)
     fn_80138AE0(h, 0, &lbl_80593E00, 0.0f);
     return h;
 }
+
+extern "C" {
+void *fn_80462474(void *self); // AIAction constructor
+void fn_801B5BA8(void *list, int capacity, float grow);
+void fn_801B5C74(void *list, int inChrg);
+}
+
+// The file's static init, hand-written (matching_notes 82) so that the .rodata tail below follows its 1.0f.
+extern "C" void fn_80145B74(int initialize, int priority)
+{
+    if (priority == 65535) {
+        if (initialize) {
+            register AIAction *base;
+            register int n;
+            register AIAction *p;
+
+            base = lbl_8056A7F0;
+            p = lbl_8056A7F0;
+            n = 255;
+            if (n != -1) {
+                for (;;) {
+                    fn_80462474(p);
+                    p++;
+                    n--;
+                    if (n == -1) {
+                        break;
+                    }
+                }
+            }
+            fn_801B5BA8(lbl_805717F0, 256, 1.0f);
+        } else {
+            fn_801B5C74(lbl_805717F0, 2);
+        }
+    }
+}
+
+extern "C" void fn_80145C38(void)
+{
+    fn_80145B74(1, 65535);
+}
+
+extern "C" void fn_80145C74(void)
+{
+    fn_80145B74(0, 65535);
+}
+
+static void (*const sCtorEntry)(void) __attribute__((section(".ctors"))) = fn_80145C38;
+static void (*const sDtorEntry)(void) __attribute__((section(".dtors"))) = fn_80145C74;
+
+// 0x8049B034-0x8049B088: the pools of this file's inline functions (their code is in the linkonce tail), then the header's "invalid".
+__asm__(".section .rodata\n\t.long 0x3F800000\n\t.long 0x43300000\n\t.long 0x80000000\n\t.long 0x00000000\n\t.long 0x00000000\n\t.long 0x3F800000\n\t.long 0x00000000\n\t.long 0x3F800000\n"
+        "\t.globl lbl_8049B054\nlbl_8049B054:\n\t.long 0x3F800000\n\t.long 0x3F99999A\n\t.long 0x3F4CCCCD\n\t.long 0x40000000\n\t.long 0x3F000000\n\t.long 0x3F4CCCCD\n\t.long 0x3F4CCCCD\n\t.long 0x3F800000\n\t.long 0x3FA00000\n\t.long 0x3F400000\n\t.long 0x000007D0\n\t.long 0x696E7661\n\t.long 0x6C696400\n\t.text"); // lbl_8049B054 is Game/fn_80462B38.cpp's extern_pool

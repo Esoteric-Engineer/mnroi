@@ -351,7 +351,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   setter line, but `__sti` and `_GLOBAL_.I` must be non-`static` or mwld warns `FORCEACTIVE symbol ... not a global symbol` and `main.dol` comes out wrong, and `symbols.txt` names them with their C++ mangling (`..._0__Fii`, `fn_801040B8__Fv`) (`Game/handlers/characterselect.cpp`). A file with initializers but no
   destructors has only a `_GLOBAL_.I` and a `.ctors` word, and its `__sti` still ends the
   `if (initialize)` body with one branch over an empty `else`, so keep the `else { }`
-  (`Game/fn_800B7204.c`).
+  (`Game/fn_800B7204.c`). Hand-write it also when the file's `.rodata` goes on past the `__sti`'s literal: cc1plus emits a generated `__sti` after every top-level `__asm__`, so a tail written in source would come before its constant. Pass the literal, not an `extern` float, which moves the `lis` ahead of the other arguments. An array's constructor loop is `register` `base`, `n`, `p` declared in that order (r30, r29, r28), assigned `base`, `p`, `n = count - 1`, then `if (n != -1) for (;;) { ctor(p); p++; n--; if (n == -1) break; }` (`Game/fn_80137F2C.cpp`).
 - **mwld drops a whole object nothing outside references, `.ctors` word and all, so a static-init
   unit must define a symbol someone else uses.** The symptom is a link that succeeds while
   `.text` comes out short by exactly the unit's size and `.ctors`/`.dtors` by 4 bytes each; `.ctors`
