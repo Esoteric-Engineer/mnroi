@@ -300,7 +300,7 @@ AIAction *fn_80144970(void *ai, AIBehavior *rec);
 AIAction *fn_80144CB4(void *ai, AIBehavior *rec);
 AIAction *fn_80144D3C(void *ai, AIBehavior *rec);
 AIAction *fn_80144DB8(void *ai, AIBehavior *rec);
-void fn_80145200(void);
+AIAction *fn_80145200(void *ai, AIBehavior *rec);
 void fn_80145AA8(void);
 
 void fn_80137FBC(int id, const char *name, BehaviorFn update, BehaviorFn enter, BehaviorFn exit);
@@ -544,6 +544,9 @@ float fn_801467AC(void *rec, Vector *pos);
 int fn_8008612C(void *e);
 Vector *fn_80462854(void *ai);
 void fn_80428FA8(Vector *v, float x, float y, float z);
+int fn_80462650(void *mover);
+void *fn_80151C8C(void *brain);
+int fn_80462828(void *ai);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -3396,5 +3399,110 @@ extern "C" AIAction *fn_80144E30(void *ai, AIBehavior *rec)
     return h;
 }
 
-// The .rodata claim's 8-align pad, read by the unclaimed fn_80145200: becomes that handler's literal once it is matched.
-extern "C" const float lbl_8049B014 __attribute__((section(".rodata"))) = 0.0f;
+// FLYER_MOVE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80145200(void *ai, AIBehavior *rec)
+{
+    if (!fn_800861EC(fn_80442080(ai))) {
+        return 0;
+    }
+    if (fn_80461D48(ai, 4) || (fn_80461D48(ai, 0x2b) && !fn_800CDA20(*fn_8044203C(ai)))) {
+        return 0;
+    }
+    float dist = 0.0f;
+    int byA = 0;
+    int byB = 0;
+    int unused = 0;
+    int found = 0;
+    Vector goal;
+    if (fn_80461BA0(fn_804420AC(ai)) && !fn_80462650(fn_804420AC(ai))) {
+        fn_8042DC84(&goal, fn_804625CC(fn_804420AC(ai)));
+        found = 1;
+        byA = 1;
+    }
+    if (!found && fn_80461BCC(fn_804420AC(ai))) {
+        fn_8042DC84(&goal, fn_804625F8(fn_804420AC(ai)));
+        found = 1;
+        byB = 1;
+    }
+    dist = fn_8015E580(fn_800B1724(*fn_80442080(ai)), &goal);
+    if (dist >= fn_800B1884(*fn_80442080(ai), 0xd5)) {
+        return 0;
+    }
+    float dz = goal.z - fn_800B1724(*fn_80442080(ai))->z;
+    if (dist <= 2.0f && dz < fn_800B1884(*fn_80442080(ai), 0xd6)) {
+        return 0;
+    }
+    int stuck = 0;
+    if (fn_8015F07C(ai) &&
+        (!fn_80461D48(ai, 0x35) || (fn_80151AF8(fn_80442104(ai), 3) && !fn_80442508(fn_80151C8C(fn_80442104(ai)), 1)))) {
+        stuck = 1;
+    }
+    Vector hit, pos, to;
+    fn_8042DC84(&pos, fn_800B1724(*fn_80442080(ai)));
+    fn_8042DC84(&to, &goal);
+    for (int i = 0; i < fn_804622B4(fn_8013726C(ai)); i++) {
+        void *v = fn_804622FC(fn_8013726C(ai), i);
+        if (!v) {
+            continue;
+        }
+        if (fn_80146A88(v, &pos, &to, &hit)) {
+            hit.z = pos.z;
+            Vector away;
+            fn_80429038(&away, &hit, &pos);
+            away.z = 0.0f;
+            fn_8042F76C(&away);
+            fn_80433FFC(&away);
+            AIAction *h = fn_80138738(0x15, 1000, 10);
+            if (h) {
+                fn_80138AE0(h, 0, &away, 1.0f);
+                fn_80462BDC(h, 50.0f);
+                return h;
+            }
+        }
+    }
+    Vector d;
+    fn_8015F538(ai, &goal, &d);
+    if (found) {
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            float td = 9999.0f;
+            float ta = 9999.0f;
+            float reach = fn_800B1884(*fn_80442080(ai), 0xd4);
+            if (fn_80134870(ai)) {
+                td = fn_8015E580(fn_800B1724(*fn_80134870(ai)), &goal);
+                ta = fn_8015E580(fn_800B1724(*fn_80134870(ai)), fn_800B1724(*fn_80442080(ai)));
+            }
+            fn_80138AE0(h, 0, &d, 1.0f);
+            Ent *o = fn_804624EC(fn_804420D8(ai));
+            if (fn_80461D48(ai, 0x14) && fn_80461D48(ai, 0x18) && fn_8015EC1C(fn_80461EE4(ai))) {
+                if (o && fn_800B0CC0(o) && !fn_800A4538(fn_800B1478(o))) {
+                    fn_80138A24(h, 2);
+                }
+            } else if (fn_80461D48(ai, 0x35) && !fn_80462828(ai) && ta < fn_800B1884(*fn_80442080(ai), 0xd2)) {
+                fn_80138A24(h, 2);
+                fn_80138B7C(h, 8, 100, 10);
+            } else if (fn_80134870(ai) && td < reach && ta < reach && dist < 10.0f) {
+                fn_80138A24(h, 0xb);
+            } else if (stuck) {
+                int moved = 0;
+                int r = fn_8015EA18(2);
+                if (r == 0 && fn_801603CC(ai, 0)) {
+                    fn_8042D80C(&d, fn_800B17A8(*fn_80442080(ai)));
+                    moved = 1;
+                } else if (fn_801603CC(ai, 2)) {
+                    fn_8042DC84(&d, fn_800B17A8(*fn_80442080(ai)));
+                    moved = 1;
+                }
+                if (moved) {
+                    fn_80138A24(h, 0xb);
+                    fn_80138AE0(h, 0, &d, 1.0f);
+                }
+            }
+        }
+        return h;
+    }
+    return 0;
+}
+
+// The .rodata claim's 8-align pad, read by the unclaimed fn_80145AA8: becomes that handler's literal once it is matched.
+extern "C" const float lbl_8049B02C __attribute__((section(".rodata"))) = 0.0f;
