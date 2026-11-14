@@ -160,7 +160,7 @@ Rename the handlers when you match them (`AIBehavior_Approach` or similar, a gue
 
 ### 4.4 Tasks
 
-`fn_80150AA8(id)` constructs task `id` 0-0x1B with the constructors `fn_8015D950`...`fn_8015E2A4` in address order (`Game/fn_8015D950.cpp`). Task `id`'s vtable is `lbl_804F62E8 - 0x38 * id`, and only MOVETO (0xB) constructs a member, a `Vector` at `+0x30`. Each vtable is 14 words: the two base slots `fn_80463AB4`/`fn_80463AD4`, then the class's three methods in the order update, enter, exit. The methods are in id order, except that GOGETANDTHROWAT's follow GETANDTHROWAT's and MOBILITYCHARGE's (`fn_8015D12C`...) come before POWERSTAND's. List them with a script over `.data` 0x804F5D00-0x804F6320 rather than copying them here.
+`fn_80150AA8(id)` constructs task `id` 0-0x1B with the constructors `fn_8015D950`...`fn_8015E2A4` in address order (`Game/fn_8015D950.cpp`). Task `id`'s vtable is `lbl_804F62E8 - 0x38 * id`, and only MOVETO (0xB) constructs a member, a `Vector` at `+0x30`. Each vtable is 14 words: the two base slots `fn_80463AB4`/`fn_80463AD4`, then the class's three methods in the order update, enter, exit. `symbols.txt` names the methods `Task_<Name>_Update`, `_Enter`, `_Exit`, after the task's string (below).
 
 Task names, from the `char *` table `lbl_804CFB58[id]` (`TASK_` prefix dropped): 0 SLEEP, 1 SEARCH, 2 MELEE, 3 RANGED, 4 FINDTHROWABLE, 5 FINDWIELDABLE, 6 POSSESS, 7 CARRYTHROWABLE, 8 WIELDING, 9 ATTACKTHING, 0xA BUZZPLAYER, 0xB MOVETO, 0xC FORCECONTROL, 0xD STOP, 0xE ENSLAVE, 0xF FORCEJUMP, 0x10 SWING, 0x11 GETANDTHROWAT, 0x12 WALLCLIMB, 0x13 PLAYANIM, 0x14 RANGEDONLY, 0x15 CLIMBATTACK, 0x16 FORCESUPERBLOCK, 0x17 FORCEPOWERSTAND, 0x18 HOVERANDFIRE, 0x19 POWERSTAND, 0x1A GOGETANDTHROWAT, 0x1B MOBILITYCHARGE. AI_NONE's id 1 is its null task, not SEARCH.
 
@@ -181,7 +181,7 @@ Volumes the scripts register by entity handle, through the manager wrappers `fn_
 | 2 `+0x4C` | `fn_80147B88` | 0x330 | `fn_801475D8`: a point inside any one's hull; `AVOID_HAZARDS`, only while `fn_800CE4D0` holds |
 | 3 `+0x70` | `fn_80147C40` | 0x330 | `ROOFTOP_REGIONS`: one holding both the AI and its target |
 | 4 `+0x94` | `fn_80147CF8` / `fn_80147D68` | bare handles | `AVOID_HAZARDS` steers away from those within 6 |
-| 5 `+0xB8` | `fn_8014601C` | path links that climb more than 1 | `fn_8014630C`, called by tasks `fn_801549D0` and CLIMBATTACK enter `fn_8015C8BC` |
+| 5 `+0xB8` | `fn_8014601C` | path links that climb more than 1 | `fn_8014630C`, called by `Task_Melee_Update` and `Task_ClimbAttack_Enter` |
 
 ### 4.6 Path (`Mover+0x20`)
 
@@ -230,7 +230,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
 | 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done. `.rodata` 0x8049B9C8-0x8049B9E0 (floats 1, 0, 176, -0, 0, 1) has no reader in `.text` and stays unclaimed |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | Done |
-| 14 | Rename pass | Task methods in row 12's unit; accessors in `Game/fn_80442010.c` and row 5's units | After row 13. One area per run, each one `symbols.txt` edit plus a rename across `src/`, checked by `main.dol: OK`. Task methods take their `TASK_` string: `Task_ClimbAttack_Enter`, `_Exit`, `_Update`. Accessors get a name (`AI_GetMover`, no class prefix) only where section 4 records what they return; the rest keep `fn_`. Symbols stay `extern "C"` |
+| 14 | Rename pass | Accessors in `Game/fn_80442010.c` and row 5's units | Task methods done. Next the accessors, one area per run, each one `symbols.txt` edit plus a rename across `src/` and `docs/`, checked by `main.dol: OK`. Accessors get a name (`AI_GetMover`, no class prefix) only where section 4 records what they return; the rest keep `fn_`. Symbols stay `extern "C"` |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
 

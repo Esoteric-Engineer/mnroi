@@ -188,22 +188,19 @@ int fn_804421B8(void *ai, unsigned int bit);
 
 inline int sn_return_decl(int a) { return a; } // sets the flag: no function-end branch pair (prodg.md)
 
-// SLEEP enter
-extern "C" int fn_80152AE8(register Self *self)
+extern "C" int Task_Sleep_Enter(register Self *self)
 {
     fn_804618B0(fn_80464068(self->ai));
     fn_804618B0(fn_80462780(self->ai));
     return 1;
 }
 
-// SLEEP exit
-extern "C" int fn_80152B48(register Self *self)
+extern "C" int Task_Sleep_Exit(register Self *self)
 {
     return 1;
 }
 
-// SLEEP update
-extern "C" int fn_80152B70(register Self *self)
+extern "C" int Task_Sleep_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         fn_8015105C(self->brain, 1);
@@ -212,8 +209,7 @@ extern "C" int fn_80152B70(register Self *self)
     return 1;
 }
 
-// SEARCH enter
-extern "C" int fn_80152BD0(register Self *self)
+extern "C" int Task_Search_Enter(register Self *self)
 {
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 5);
@@ -254,8 +250,7 @@ extern "C" int fn_80152BD0(register Self *self)
     return 1;
 }
 
-// SEARCH exit
-extern "C" int fn_80152EB8(register Self *self)
+extern "C" int Task_Search_Exit(register Self *self)
 {
     fn_80464170(self->ai, 4);
     if (fn_80461F94(self->ai) > 0.0f)
@@ -267,8 +262,7 @@ extern "C" int fn_80152EB8(register Self *self)
     return 1;
 }
 
-// SEARCH update
-extern "C" int fn_80152F74(register Self *self)
+extern "C" int Task_Search_Update(register Self *self)
 {
     if (fn_80134870(self->ai) && fn_800B0C58(fn_80134870(self->ai))) {
         Ent *t = fn_80134870(self->ai);
@@ -494,8 +488,7 @@ extern "C" int fn_80152F74(register Self *self)
     return 1;
 }
 
-// MELEE enter
-extern "C" int fn_801546B0(register Self *self)
+extern "C" int Task_Melee_Enter(register Self *self)
 {
     fn_80442130(self->ai, 0);
     if (fn_80461F68(self->ai) > 0.0f)
@@ -532,14 +525,13 @@ extern "C" int fn_801546B0(register Self *self)
     return 1;
 }
 
-// MELEE exit
-extern "C" int fn_801549A8(register Self *self)
+extern "C" int Task_Melee_Exit(register Self *self)
 {
     return 1;
 }
 
-// MELEE update: weighs ten attack choices, picks one with fn_8015EA6C and sets the task length.
-extern "C" int fn_801549D0(register Self *self)
+// Weighs ten attack choices, picks one with fn_8015EA6C and sets the task length.
+extern "C" int Task_Melee_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80461D48(self->ai, 2)) {
@@ -931,8 +923,7 @@ struct RangedTask : Self {
     int f28; // +0x28, set by the script API for RANGEDONLY
 };
 
-// RANGED enter
-extern "C" int fn_801567F0(register RangedTask *self)
+extern "C" int Task_Ranged_Enter(register RangedTask *self)
 {
     register float d;
     register PEnt *e;
@@ -967,8 +958,7 @@ extern "C" int fn_801567F0(register RangedTask *self)
     return 1;
 }
 
-// RANGED exit
-extern "C" int fn_80156A50(register RangedTask *self)
+extern "C" int Task_Ranged_Exit(register RangedTask *self)
 {
     self->f28 = 0;
     return 1;
@@ -1004,8 +994,8 @@ int fn_8004A9CCV(Vector *from, Vector *dir, float len, int a, int b, int c, int 
 int fn_8008618C(void *actor);
 }
 
-// RANGED update: weighs eight ranged choices and checks the line of fire with a raycast.
-extern "C" int fn_80156A88(register RangedTask *self)
+// Weighs eight ranged choices and checks the line of fire with a raycast.
+extern "C" int Task_Ranged_Update(register RangedTask *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80461D48(self->ai, 2)) {
@@ -1171,8 +1161,8 @@ Ent *fn_800ACFA8(int handle);
 void fn_801501AC(void *finder, Ent *actor);
 }
 
-// FINDTHROWABLE enter: done at once when the held actor is far enough from its throw target.
-extern "C" int fn_80157D58(register Self *self)
+// Done at once when the held actor is far enough from its throw target.
+extern "C" int Task_FindThrowable_Enter(register Self *self)
 {
     register SCtl *c;
     if (fn_80134870(self->ai) && fn_800B0C58(fn_80134870(self->ai))) {
@@ -1207,8 +1197,7 @@ extern "C" int fn_80157D58(register Self *self)
     return 1;
 }
 
-// FINDTHROWABLE exit
-extern "C" int fn_80157F88(register Self *self)
+extern "C" int Task_FindThrowable_Exit(register Self *self)
 {
     fn_80464170(self->ai, 1);
     if (!fn_80134870(self->ai) || (fn_80134870(self->ai) && !fn_800B0C58(fn_80134870(self->ai))))
@@ -1230,8 +1219,8 @@ int fn_8015ED50(void *a, void *b);
 void fn_800C98BC(void *self, PEnt *node, int v);
 }
 
-// FINDTHROWABLE update: picks a throwable (fn_8015F7A4), walks to it and sets bit 0x13 within reach.
-extern "C" int fn_80158038(register Self *self)
+// Picks a throwable (fn_8015F7A4), walks to it and sets bit 0x13 within reach.
+extern "C" int Task_FindThrowable_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80151430(self->brain)) {
@@ -1311,8 +1300,8 @@ extern "C" int fn_80158038(register Self *self)
     return 1;
 }
 
-// FINDWIELDABLE enter: done at once when the held actor is beyond 3 units.
-extern "C" int fn_801585E4(register Self *self)
+// Done at once when the held actor is beyond 3 units.
+extern "C" int Task_FindWieldable_Enter(register Self *self)
 {
     if (fn_80134870(self->ai)) {
         float d = fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)));
@@ -1344,8 +1333,7 @@ extern "C" int fn_801585E4(register Self *self)
     return 1;
 }
 
-// FINDWIELDABLE exit
-extern "C" int fn_801587C8(register Self *self)
+extern "C" int Task_FindWieldable_Exit(register Self *self)
 {
     fn_80464170(self->ai, 2);
     fn_80442174(self->ai, 0x13);
@@ -1358,8 +1346,8 @@ extern "C" {
 float fn_8015F608(void *ai, Vec *p, Vector *out);
 }
 
-// FINDWIELDABLE update: picks a wieldable (fn_8015F7A4 kind 1), walks to it and sets bit 0x13 within reach.
-extern "C" int fn_80158844(register Self *self)
+// Picks a wieldable (fn_8015F7A4 kind 1), walks to it and sets bit 0x13 within reach.
+extern "C" int Task_FindWieldable_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80151430(self->brain)) {
@@ -1419,8 +1407,7 @@ void fn_8014DEB8(void *list);
 void fn_8014DE58(void *list);
 }
 
-// POSSESS enter
-extern "C" int fn_80158BBC(register Self *self)
+extern "C" int Task_Possess_Enter(register Self *self)
 {
     fn_80463B20(self);
     fn_804618B0(fn_80462780(self->ai));
@@ -1429,8 +1416,7 @@ extern "C" int fn_80158BBC(register Self *self)
     return 1;
 }
 
-// POSSESS exit
-extern "C" int fn_80158C38(register Self *self)
+extern "C" int Task_Possess_Exit(register Self *self)
 {
     fn_80463B60(self);
     fn_80464014(fn_804420AC(self->ai));
@@ -1439,8 +1425,7 @@ extern "C" int fn_80158C38(register Self *self)
     return 1;
 }
 
-// POSSESS update
-extern "C" int fn_80158CBC(register Self *self)
+extern "C" int Task_Possess_Update(register Self *self)
 {
     return 1;
 }
@@ -1450,8 +1435,8 @@ int fn_801504BC(void *finder, Vector *out);
 void fn_8014B518(char *mover, Vector *pos, int index);
 }
 
-// CARRYTHROWABLE enter: walks to the finder's point.
-extern "C" int fn_80158CEC(register Self *self)
+// Walks to the finder's point.
+extern "C" int Task_CarryThrowable_Enter(register Self *self)
 {
     fn_804618B0(fn_80462780(self->ai));
     fn_80442130(self->ai, 0x1a);
@@ -1494,8 +1479,8 @@ void fn_80464040(char *mover, int v);
 void fn_800F8B90(SCtl *c);
 }
 
-// CARRYTHROWABLE exit: rearms the ranged and melee timers.
-extern "C" int fn_80158F20(register Self *self)
+// Rearms the ranged and melee timers.
+extern "C" int Task_CarryThrowable_Exit(register Self *self)
 {
     fn_80442174(self->ai, 0x10);
     int wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_8046439C(self->ai)) + 10000;
@@ -1513,8 +1498,8 @@ void fn_80461BF8(char *mover, Vector *v);
 void fn_80463410(char *mover, Vector *v);
 }
 
-// CARRYTHROWABLE update: carries the throwable toward the held actor and sets bit 0x10 to throw.
-extern "C" int fn_80159088(register Self *self)
+// Carries the throwable toward the held actor and sets bit 0x10 to throw.
+extern "C" int Task_CarryThrowable_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80151430(self->brain)) {
@@ -1585,8 +1570,8 @@ extern "C" {
 Ent *fn_800E89B0(void *self, float a, float b, int c, Vector *dir, int d);
 }
 
-// WIELDING enter: done at once when the held actor is beyond 3 units.
-extern "C" int fn_801596B0(register Self *self)
+// Done at once when the held actor is beyond 3 units.
+extern "C" int Task_Wielding_Enter(register Self *self)
 {
     if (fn_80134870(self->ai)) {
         float d = fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)));
@@ -1622,8 +1607,8 @@ extern "C" int fn_801596B0(register Self *self)
     return 1;
 }
 
-// WIELDING exit: rearms the ranged and melee timers.
-extern "C" int fn_8015990C(register Self *self)
+// Rearms the ranged and melee timers.
+extern "C" int Task_Wielding_Exit(register Self *self)
 {
     fn_80442174(self->ai, 1);
     fn_80442174(self->ai, 0x10);
@@ -1635,8 +1620,8 @@ extern "C" int fn_8015990C(register Self *self)
     return 1;
 }
 
-// WIELDING update: keeps the wielded thing ready while in reach and picks a swing (0x10), 0xA or 8.
-extern "C" int fn_80159A40(register Self *self)
+// Keeps the wielded thing ready while in reach and picks a swing (0x10), 0xA or 8.
+extern "C" int Task_Wielding_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80151430(self->brain))
@@ -1721,8 +1706,8 @@ float fn_800A4054(void *e);
 float fn_80086614(void *e);
 }
 
-// ATTACKTHING enter: targets the thing the mover is aimed at.
-extern "C" int fn_80159FB4(register Self *self)
+// Targets the thing the mover is aimed at.
+extern "C" int Task_AttackThing_Enter(register Self *self)
 {
     fn_804618B0(fn_80462780(self->ai));
     fn_80442130(self->ai, 0x1a);
@@ -1743,14 +1728,13 @@ extern "C" int fn_80159FB4(register Self *self)
     return 1;
 }
 
-// ATTACKTHING exit
-extern "C" int fn_8015A0D0(register Self *self)
+extern "C" int Task_AttackThing_Exit(register Self *self)
 {
     return 1;
 }
 
-// ATTACKTHING update: done once the thing is destroyed; swings (bit 8) while within half its extent.
-extern "C" int fn_8015A100(register Self *self)
+// Done once the thing is destroyed; swings (bit 8) while within half its extent.
+extern "C" int Task_AttackThing_Update(register Self *self)
 {
     if (!fn_80151B90(self->brain, self))
         return 0;
@@ -1788,21 +1772,18 @@ extern "C" int fn_8015A100(register Self *self)
     return 1;
 }
 
-// BUZZPLAYER enter
-extern "C" int fn_8015A4BC(register Self *self)
+extern "C" int Task_BuzzPlayer_Enter(register Self *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     return 1;
 }
 
-// BUZZPLAYER exit
-extern "C" int fn_8015A510(register Self *self)
+extern "C" int Task_BuzzPlayer_Exit(register Self *self)
 {
     return 1;
 }
 
-// BUZZPLAYER update
-extern "C" int fn_8015A540(register Self *self)
+extern "C" int Task_BuzzPlayer_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
     } else {
@@ -1824,8 +1805,8 @@ void fn_80149A6C(int kind, const char *fmt, ...);
 int fn_800861EC(void *actor);
 }
 
-// MOVETO enter: walks to dest.
-extern "C" int fn_8015A59C(register MoveTo *self)
+// Walks to dest.
+extern "C" int Task_MoveTo_Enter(register MoveTo *self)
 {
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 5);
@@ -1870,15 +1851,14 @@ extern "C" int fn_8015A59C(register MoveTo *self)
     return 1;
 }
 
-// MOVETO exit
-extern "C" int fn_8015A8B4(register MoveTo *self)
+extern "C" int Task_MoveTo_Exit(register MoveTo *self)
 {
     fn_80135668(self->ai, 0);
     return 1;
 }
 
-// MOVETO update: done within 2 of dest, and tells the actor it arrived.
-extern "C" int fn_8015A900(register MoveTo *self)
+// Done within 2 of dest, and tells the actor it arrived.
+extern "C" int Task_MoveTo_Update(register MoveTo *self)
 {
     if (fn_80151B90(self->brain, self)) {
         fn_8014B518(fn_804420AC(self->ai), &self->dest, -1);
@@ -1911,20 +1891,18 @@ extern "C" int fn_8015A900(register MoveTo *self)
     return 1;
 }
 
-// FORCECONTROL enter
-extern "C" int fn_8015AB70(register Self *self)
+extern "C" int Task_ForceControl_Enter(register Self *self)
 {
     return 1;
 }
 
-// FORCECONTROL exit
-extern "C" int fn_8015ABA0(register Self *self)
+extern "C" int Task_ForceControl_Exit(register Self *self)
 {
     return 1;
 }
 
-// FORCECONTROL update: done once state bit 0x33 is set.
-extern "C" int fn_8015ABD0(register Self *self)
+// Done once state bit 0x33 is set.
+extern "C" int Task_ForceControl_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (fn_80461D48(self->ai, 0x33))
@@ -1934,21 +1912,19 @@ extern "C" int fn_8015ABD0(register Self *self)
     return 1;
 }
 
-// STOP enter
-extern "C" int fn_8015AC50(register Self *self)
+extern "C" int Task_Stop_Enter(register Self *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     return 1;
 }
 
-// STOP exit
-extern "C" int fn_8015ACA4(register Self *self)
+extern "C" int Task_Stop_Exit(register Self *self)
 {
     return 1;
 }
 
-// STOP update: done once state bit 0x33 is set.
-extern "C" int fn_8015ACD4(register Self *self)
+// Done once state bit 0x33 is set.
+extern "C" int Task_Stop_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
         fn_804643C8(self, 1);
@@ -1957,8 +1933,7 @@ extern "C" int fn_8015ACD4(register Self *self)
     return 1;
 }
 
-// ENSLAVE enter
-extern "C" int fn_8015AD54(register Self *self)
+extern "C" int Task_Enslave_Enter(register Self *self)
 {
     fn_80463B20(self);
     fn_804618B0(fn_80462780(self->ai));
@@ -1967,8 +1942,7 @@ extern "C" int fn_8015AD54(register Self *self)
     return 1;
 }
 
-// ENSLAVE exit
-extern "C" int fn_8015ADD0(register Self *self)
+extern "C" int Task_Enslave_Exit(register Self *self)
 {
     fn_80463B60(self);
     return 1;
@@ -1980,8 +1954,8 @@ void *fn_8014FCD8(void *list, int i);
 int fn_8015F2D0(void *a, void *b);
 }
 
-// ENSLAVE update: done once any actor in the list holds this one, and tells the actor.
-extern "C" int fn_8015AE18(register Self *self)
+// Done once any actor in the list holds this one, and tells the actor.
+extern "C" int Task_Enslave_Update(register Self *self)
 {
     if (!fn_804420D8(self->ai))
         return 0;
@@ -1996,21 +1970,19 @@ extern "C" int fn_8015AE18(register Self *self)
     return 1;
 }
 
-// FORCEJUMP enter
-extern "C" int fn_8015AF3C(register Self *self)
+extern "C" int Task_ForceJump_Enter(register Self *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     return 1;
 }
 
-// FORCEJUMP exit
-extern "C" int fn_8015AF90(register Self *self)
+extern "C" int Task_ForceJump_Exit(register Self *self)
 {
     return 1;
 }
 
-// FORCEJUMP update: done once state bit 0x33 is set.
-extern "C" int fn_8015AFC0(register Self *self)
+// Done once state bit 0x33 is set.
+extern "C" int Task_ForceJump_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
         fn_804643C8(self, 1);
@@ -2019,21 +1991,19 @@ extern "C" int fn_8015AFC0(register Self *self)
     return 1;
 }
 
-// SWING enter
-extern "C" int fn_8015B040(register Self *self)
+extern "C" int Task_Swing_Enter(register Self *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     return 1;
 }
 
-// SWING exit
-extern "C" int fn_8015B094(register Self *self)
+extern "C" int Task_Swing_Exit(register Self *self)
 {
     return 1;
 }
 
-// SWING update: done once state bit 0x33 is set.
-extern "C" int fn_8015B0C4(register Self *self)
+// Done once state bit 0x33 is set.
+extern "C" int Task_Swing_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
         fn_804643C8(self, 1);
@@ -2042,14 +2012,12 @@ extern "C" int fn_8015B0C4(register Self *self)
     return 1;
 }
 
-// GETANDTHROWAT enter
-extern "C" int fn_8015B144(register Self *self)
+extern "C" int Task_GetAndThrowAt_Enter(register Self *self)
 {
     return 1;
 }
 
-// GETANDTHROWAT exit
-extern "C" int fn_8015B174(register Self *self)
+extern "C" int Task_GetAndThrowAt_Exit(register Self *self)
 {
     return 1;
 }
@@ -2067,8 +2035,8 @@ int fn_804423E8(void *task);
 void fn_800F63DC(SCtl *c, int handle, int on);
 }
 
-// GETANDTHROWAT update: picks the thing up (steps 0-2), then throws it at the target (3-4).
-extern "C" int fn_8015B1A4(register GetThrow *self)
+// Picks the thing up (steps 0-2), then throws it at the target (3-4).
+extern "C" int Task_GetAndThrowAt_Update(register GetThrow *self)
 {
     if (!fn_80151B90(self->brain, self))
         return 0;
@@ -2132,8 +2100,7 @@ extern "C" int fn_8015B1A4(register GetThrow *self)
     return 1;
 }
 
-// GOGETANDTHROWAT enter
-extern "C" int fn_8015B648(register Self *self)
+extern "C" int Task_GoGetAndThrowAt_Enter(register Self *self)
 {
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 5);
@@ -2153,8 +2120,7 @@ extern "C" int fn_8015B648(register Self *self)
     return 1;
 }
 
-// GOGETANDTHROWAT exit
-extern "C" int fn_8015B744(register Self *self)
+extern "C" int Task_GoGetAndThrowAt_Exit(register Self *self)
 {
     return 1;
 }
@@ -2164,9 +2130,9 @@ Body *fn_800ACFA8B(int handle) __asm__("fn_800ACFA8");
 float fn_804290F8E(Vec *a, Vec *b) __asm__("fn_804290F8");
 }
 
-// GOGETANDTHROWAT update: walks to the thing (steps 0-1) and picks it up within half its extent (2),
+// Walks to the thing (steps 0-1) and picks it up within half its extent (2),
 // then throws it at the target (3-4).
-extern "C" int fn_8015B774(register GetThrow *self)
+extern "C" int Task_GoGetAndThrowAt_Update(register GetThrow *self)
 {
     if (!fn_80151B90(self->brain, self))
         return 0;
@@ -2230,8 +2196,7 @@ extern "C" int fn_8015B774(register GetThrow *self)
 
 extern "C" int fn_801362DC(void *ai, int id);
 
-// WALLCLIMB enter
-extern "C" int fn_8015BED8(register Self *self)
+extern "C" int Task_WallClimb_Enter(register Self *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     fn_804618B0(fn_80462780(self->ai));
@@ -2241,14 +2206,13 @@ extern "C" int fn_8015BED8(register Self *self)
     return 1;
 }
 
-// WALLCLIMB exit
-extern "C" int fn_8015BF98(register Self *self)
+extern "C" int Task_WallClimb_Exit(register Self *self)
 {
     return 1;
 }
 
-// WALLCLIMB update: done once the climb ends or the actor's regenerating meter is under 5%.
-extern "C" int fn_8015BFC8(register Self *self)
+// Done once the climb ends or the actor's regenerating meter is under 5%.
+extern "C" int Task_WallClimb_Update(register Self *self)
 {
     if (!fn_80151B90(self->brain, self))
         return 0;
@@ -2294,21 +2258,19 @@ unsigned int fn_80097CE8(Ent &actor, int anim, int mode, float speed, int set, f
 void fn_800BD2D0(void *actor, int clip);
 }
 
-// PLAYANIM enter
-extern "C" int fn_8015C128(register Self *self)
+extern "C" int Task_PlayAnim_Enter(register Self *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     return 1;
 }
 
-// PLAYANIM exit
-extern "C" int fn_8015C17C(register Self *self)
+extern "C" int Task_PlayAnim_Exit(register Self *self)
 {
     return 1;
 }
 
-// PLAYANIM update: puts the controller in state 0x24 and plays the animation, once or looped.
-extern "C" int fn_8015C1AC(register PlayAnim *self)
+// Puts the controller in state 0x24 and plays the animation, once or looped.
+extern "C" int Task_PlayAnim_Update(register PlayAnim *self)
 {
     if (!fn_80151B90(self->brain, self))
         return 0;
@@ -2345,8 +2307,7 @@ void fn_80429038V(Vector *out, Vec *a, Vector *b) __asm__("fn_80429038");
 float fn_800B2670(Ent &e);
 }
 
-// RANGEDONLY enter
-extern "C" int fn_8015C39C(register RangedOnly *self)
+extern "C" int Task_RangedOnly_Enter(register RangedOnly *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     fn_8046412C(self->ai, 0);
@@ -2369,15 +2330,14 @@ extern "C" int fn_8015C39C(register RangedOnly *self)
     return 1;
 }
 
-// RANGEDONLY exit
-extern "C" int fn_8015C508(register RangedOnly *self)
+extern "C" int Task_RangedOnly_Exit(register RangedOnly *self)
 {
     fn_800CD6C4(*fn_8044203C(self->ai), 0);
     return 1;
 }
 
-// RANGEDONLY update: alternates two brain phases, firing (bit 9) only while the line of fire is clear.
-extern "C" int fn_8015C560(register RangedOnly *self)
+// Alternates two brain phases, firing (bit 9) only while the line of fire is clear.
+extern "C" int Task_RangedOnly_Update(register RangedOnly *self)
 {
     if (!fn_80151B90(self->brain, self))
         return 0;
@@ -2435,8 +2395,7 @@ Vector *fn_80462854(void *ai);
 unsigned int fn_80151470(void *brain);
 }
 
-// CLIMBATTACK enter
-extern "C" int fn_8015C8BC(register Self *self)
+extern "C" int Task_ClimbAttack_Enter(register Self *self)
 {
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
@@ -2465,8 +2424,7 @@ extern "C" int fn_8015C8BC(register Self *self)
     return 1;
 }
 
-// CLIMBATTACK exit
-extern "C" int fn_8015CAA0(register Self *self)
+extern "C" int Task_ClimbAttack_Exit(register Self *self)
 {
     fn_80136214(self->ai, 0x24);
     if (fn_80134870(self->ai))
@@ -2474,8 +2432,7 @@ extern "C" int fn_8015CAA0(register Self *self)
     return 1;
 }
 
-// CLIMBATTACK update
-extern "C" int fn_8015CB34(register Self *self)
+extern "C" int Task_ClimbAttack_Update(register Self *self)
 {
     if (!fn_80151B90(self->brain, self))
         return 0;
@@ -2506,8 +2463,7 @@ extern "C" int fn_8015CB34(register Self *self)
     return 1;
 }
 
-// FORCESUPERBLOCK enter
-extern "C" int fn_8015CD44(register Self *self)
+extern "C" int Task_ForceSuperBlock_Enter(register Self *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     fn_8046412C(self->ai, 3);
@@ -2518,22 +2474,19 @@ extern "C" int fn_8015CD44(register Self *self)
     return 1;
 }
 
-// FORCESUPERBLOCK exit
-extern "C" int fn_8015CDDC(register Self *self)
+extern "C" int Task_ForceSuperBlock_Exit(register Self *self)
 {
     fn_80442174(self->ai, 0x25);
     fn_80136214(self->ai, 0x25);
     return 1;
 }
 
-// FORCESUPERBLOCK update
-extern "C" int fn_8015CE34(register Self *self)
+extern "C" int Task_ForceSuperBlock_Update(register Self *self)
 {
     return 1;
 }
 
-// FORCEPOWERSTAND enter
-extern "C" int fn_8015CE64(register Self *self)
+extern "C" int Task_ForcePowerStand_Enter(register Self *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     fn_8046412C(self->ai, 3);
@@ -2544,16 +2497,14 @@ extern "C" int fn_8015CE64(register Self *self)
     return 1;
 }
 
-// FORCEPOWERSTAND exit
-extern "C" int fn_8015CEFC(register Self *self)
+extern "C" int Task_ForcePowerStand_Exit(register Self *self)
 {
     fn_80442174(self->ai, 0x26);
     fn_80136214(self->ai, 0x26);
     return 1;
 }
 
-// FORCEPOWERSTAND update
-extern "C" int fn_8015CF54(register Self *self)
+extern "C" int Task_ForcePowerStand_Update(register Self *self)
 {
     return 1;
 }
@@ -2563,8 +2514,7 @@ struct HoverFire : Self {
     int hover; // +0x28, set to 1 by the script API
 };
 
-// HOVERANDFIRE enter
-extern "C" int fn_8015CF84(register HoverFire *self)
+extern "C" int Task_HoverAndFire_Enter(register HoverFire *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     fn_8046412C(self->ai, 0);
@@ -2580,22 +2530,19 @@ extern "C" int fn_8015CF84(register HoverFire *self)
     return 1;
 }
 
-// HOVERANDFIRE exit
-extern "C" int fn_8015D070(register HoverFire *self)
+extern "C" int Task_HoverAndFire_Exit(register HoverFire *self)
 {
     return 1;
 }
 
-// HOVERANDFIRE update
-extern "C" int fn_8015D0A0(register HoverFire *self)
+extern "C" int Task_HoverAndFire_Update(register HoverFire *self)
 {
     if (!self->hover && (!fn_80151430(self->brain) || !fn_8015F410(self->ai, 0.25f)))
         fn_804643C8(self, 1);
     return 1;
 }
 
-// MOBILITYCHARGE enter
-extern "C" int fn_8015D12C(register Self *self)
+extern "C" int Task_MobilityCharge_Enter(register Self *self)
 {
     fn_8014B900(fn_804420AC(self->ai));
     fn_8046412C(self->ai, 0);
@@ -2619,14 +2566,12 @@ extern "C" int fn_8015D12C(register Self *self)
     return 1;
 }
 
-// MOBILITYCHARGE exit
-extern "C" int fn_8015D27C(register Self *self)
+extern "C" int Task_MobilityCharge_Exit(register Self *self)
 {
     return 1;
 }
 
-// MOBILITYCHARGE update
-extern "C" int fn_8015D2AC(register Self *self)
+extern "C" int Task_MobilityCharge_Update(register Self *self)
 {
     if (!fn_80151430(self->brain))
         fn_804643C8(self, 1);
@@ -2637,8 +2582,7 @@ extern "C" int fn_8015D2AC(register Self *self)
 
 extern "C" void fn_804640C0(void *ai, int t);
 
-// POWERSTAND enter
-extern "C" int fn_8015D350(register Self *self)
+extern "C" int Task_PowerStand_Enter(register Self *self)
 {
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
@@ -2653,15 +2597,13 @@ extern "C" int fn_8015D350(register Self *self)
     return 1;
 }
 
-// POWERSTAND exit
-extern "C" int fn_8015D418(register Self *self)
+extern "C" int Task_PowerStand_Exit(register Self *self)
 {
     fn_804640C0(self->ai, fn_8015EA18(1000) + 1000);
     return 1;
 }
 
-// POWERSTAND update
-extern "C" int fn_8015D474(register Self *self)
+extern "C" int Task_PowerStand_Update(register Self *self)
 {
     if (fn_800CDA20(*fn_8044203C(self->ai))) {
         fn_804643C8(self, 1);
