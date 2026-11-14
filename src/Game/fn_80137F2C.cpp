@@ -285,7 +285,7 @@ AIAction *fn_80141394(void *ai, AIBehavior *rec);
 AIAction *fn_801414C8(void *ai, AIBehavior *rec);
 AIAction *fn_80141D78(void *ai, AIBehavior *rec);
 AIAction *fn_8014470C(void *ai, AIBehavior *rec);
-void fn_80144E30(void);
+AIAction *fn_80144E30(void *ai, AIBehavior *rec);
 AIAction *fn_801420B4(void *ai, AIBehavior *rec);
 AIAction *fn_80142558(void *ai, AIBehavior *rec);
 AIAction *fn_80142B04(void *ai, AIBehavior *rec);
@@ -3333,5 +3333,68 @@ extern "C" AIAction *fn_80144DB8(void *ai, AIBehavior *rec)
     return 0;
 }
 
-// The .rodata claim's 8-align pad, read by the unclaimed fn_80144E30: becomes that handler's literal once it is matched.
-extern "C" const float lbl_8049B004 __attribute__((section(".rodata"))) = 0.0f;
+// HOVER (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144E30(void *ai, AIBehavior *rec)
+{
+    AIAction *h = fn_80138738(-1, 0, 0);
+    float hover = fn_800B1884(*fn_80442080(ai), 0xd6);
+    float tz = 0.0f;
+    if (fn_80134870(ai)) {
+        tz = fn_800B1724R(*fn_80134870(ai)).z;
+    }
+    Vector p;
+    fn_8042DC84(&p, fn_800B1724(*fn_80442080(ai)));
+    p.z += 1.0f;
+    float ground = 0.0f;
+    int hit = fn_80085300(fn_80442080(ai), &p, 0.7f, 10.0f, &ground);
+    float z = fn_800B1724(*fn_80442080(ai))->z;
+    float above = z - ground;
+    float want = z;
+    if (hit) {
+        want = above + hover;
+    } else if (fn_80461D48(ai, 2)) {
+        want = tz + hover;
+    } else {
+        want = z;
+    }
+    Vector goal;
+    int found = 0;
+    fn_8042DC84(&goal, fn_800B1724(*fn_80442080(ai)));
+    if (fn_80461BA0(fn_804420AC(ai))) {
+        fn_8042DC84(&goal, fn_804625CC(fn_804420AC(ai)));
+        found = 1;
+    }
+    if (!found && fn_80461BCC(fn_804420AC(ai))) {
+        fn_8042DC84(&goal, fn_804625F8(fn_804420AC(ai)));
+        found = 1;
+    }
+    if (found) {
+        float top = goal.z + hover;
+        if (goal.z > z + hover) {
+            top = z + hover;
+        }
+        if (z < top - 1.0f) {
+            fn_80138A24(h, 9);
+            fn_80138A24(h, 0x10);
+        } else if (z > top) {
+            fn_8013880C(h);
+            h = 0;
+        } else {
+            fn_80138A24(h, 9);
+        }
+        return h;
+    }
+    if (z < want) {
+        fn_80138A24(h, 9);
+        fn_80138A24(h, 0x10);
+    } else if (z > want) {
+        fn_8013880C(h);
+        h = 0;
+    } else {
+        fn_80138A24(h, 9);
+    }
+    return h;
+}
+
+// The .rodata claim's 8-align pad, read by the unclaimed fn_80145200: becomes that handler's literal once it is matched.
+extern "C" const float lbl_8049B014 __attribute__((section(".rodata"))) = 0.0f;
