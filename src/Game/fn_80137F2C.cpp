@@ -295,7 +295,7 @@ AIAction *fn_801435F0(void *ai, AIBehavior *rec);
 AIAction *fn_8014379C(void *ai, AIBehavior *rec);
 AIAction *fn_80144038(void *ai, AIBehavior *rec);
 AIAction *fn_80144544(void *ai, AIBehavior *rec);
-void fn_80144628(void);
+AIAction *fn_80144628(void *ai, AIBehavior *rec);
 void fn_80144970(void);
 void fn_80144CB4(void);
 void fn_80144D3C(void);
@@ -3184,5 +3184,20 @@ extern "C" AIAction *fn_80144544(void *ai, AIBehavior *rec)
     return h;
 }
 
-// The .rodata claim's 8-align pad, read by the unclaimed fn_80144628: becomes that handler's literal once it is matched.
-extern "C" const float lbl_8049AFE4 __attribute__((section(".rodata"))) = 1.0f;
+// WALL_CLIMB_RANGED_ATTACK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144628(void *ai, AIBehavior *rec)
+{
+    if (fn_80461D48(ai, 0x29)) {
+        return 0;
+    }
+    AIAction *h = fn_80138738(0x21, 0, 0);
+    fn_80138A24(h, 8);
+    if (fn_801369B0(ai)) {
+        fn_80138A24(h, 7);
+    }
+    fn_80138A24(h, 2);
+    Vector v;
+    fn_80447C38(&v);
+    fn_80138AE0(h, 7, &v, 1.0f);
+    return h;
+}
