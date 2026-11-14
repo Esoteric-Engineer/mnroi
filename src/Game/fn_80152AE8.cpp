@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B9B8.
+// Owns .rodata 0x8049B838-0x8049B9C8.
 
 struct Ent {
     int pad;
@@ -2632,5 +2632,79 @@ extern "C" int fn_8015D2AC(register Self *self)
         fn_804643C8(self, 1);
     if (fn_800CE4D0(fn_8044203C(self->ai)) && fn_804421B8(self->ai, 0x1b))
         fn_80442174(self->ai, 0x1b);
+    return 1;
+}
+
+extern "C" void fn_804640C0(void *ai, int t);
+
+// POWERSTAND enter
+extern "C" int fn_8015D350(register Self *self)
+{
+    fn_8046412C(self->ai, 0);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 5);
+    fn_8046412C(self->ai, 6);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 0xf);
+    fn_80442130(self->ai, 0x29);
+    fn_8014B900(fn_804420AC(self->ai));
+    return 1;
+}
+
+// POWERSTAND exit
+extern "C" int fn_8015D418(register Self *self)
+{
+    fn_804640C0(self->ai, fn_8015EA18(1000) + 1000);
+    return 1;
+}
+
+// POWERSTAND update
+extern "C" int fn_8015D474(register Self *self)
+{
+    if (fn_800CDA20(*fn_8044203C(self->ai))) {
+        fn_804643C8(self, 1);
+        return 1;
+    }
+    if (fn_8015F384(self->ai)) {
+        fn_804643C8(self, 1);
+        return 1;
+    }
+    if (fn_80085D3C(fn_80442080(self->ai)) && fn_80151AF8(fn_80442104(self->ai), 0xb)) {
+        fn_804643C8(self, 1);
+        return 1;
+    }
+    void *actor = Entity_GetActor(*fn_8044203C(self->ai));
+    if (fn_80086B1C(actor)) {
+        fn_804643C8(self, 1);
+        return 1;
+    }
+    if (fn_800CC6DC(*fn_8044203C(self->ai)) != 2) {
+        fn_804643C8(self, 1);
+        return 1;
+    }
+    float reach = fn_800B1884(*fn_80442080(self->ai), 0xd2);
+    Ent *t = fn_80134870(self->ai);
+    if (t && fn_800B0C58(t)) {
+        float dist = fn_8015E580(fn_800B1724(*fn_80442080(self->ai)), fn_800B1724(*t));
+        if (!fn_800CCF90(*fn_80085954(fn_800B14A0(*t)))
+            && ((dist < reach * 2.0f && fn_800CC6DC(*fn_80085954(fn_800B14A0(*t))) != 0xd)
+                || fn_80086730(actor) > fn_8008677C(actor) * 0.5f))
+            fn_804643C8(self, 1);
+        else if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+                 || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+                 || fn_8015FFD4(self->ai))
+            fn_80442130(self->ai, 7);
+        else
+            fn_80442174(self->ai, 7);
+    } else if (fn_80086730(actor) > fn_8008677C(actor) * 0.5f)
+        fn_804643C8(self, 1);
+    else if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+             || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+             || fn_8015FFD4(self->ai))
+        fn_80442130(self->ai, 7);
+    else
+        fn_80442174(self->ai, 7);
     return 1;
 }

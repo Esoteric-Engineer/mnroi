@@ -844,8 +844,8 @@ Game/fn_801500C4.cpp:
 	.text       start:0x801500C4 end:0x80152AE8
 
 Game/fn_80152AE8.cpp:
-	.text       start:0x80152AE8 end:0x8015D350
-	.rodata     start:0x8049B838 end:0x8049B9B8
+	.text       start:0x80152AE8 end:0x8015D950
+	.rodata     start:0x8049B838 end:0x8049B9C8
 
 Game/fn_8015D950.cpp:
 	.text       start:0x8015D950 end:0x8015E2FC
