@@ -129,6 +129,10 @@ void fn_8014B900(char *mover);
 float fn_8014B824(char *mover);
 int fn_8015F07C(void *ai);
 int fn_80085300(void *actor, Vec *node, float a, float b, float *out);
+int fn_800CE4D0(void *ctl);
+float fn_8042CE28(unsigned int n);
+float fn_80464094(void *ai);
+void fn_801513D8(void *brain, int len);
 }
 
 inline int sn_return_decl(int a) { return a; } // sets the flag: no function-end branch pair (prodg.md)
@@ -439,5 +443,49 @@ extern "C" int fn_80152F74(register Self *self)
     return 1;
 }
 
-// Pads .rodata to 8: fn_801546B0's 0.0f.
-extern "C" const float lbl_8049B874 __attribute__((section(".rodata"))) = 0.0f;
+// MELEE enter
+extern "C" int fn_801546B0(register Self *self)
+{
+    fn_80442130(self->ai, 0);
+    if (fn_80461F68(self->ai) > 0.0f)
+        fn_8046412C(self->ai, 0);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 5);
+    fn_8046412C(self->ai, 6);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 1);
+    fn_80442130(self->ai, 0x1b);
+    fn_80442130(self->ai, 0x1d);
+    if (fn_801368B8(self->ai) && fn_800CE4D0(fn_8044203C(self->ai)))
+        fn_80442130(self->ai, 0xe);
+    fn_80442130(self->ai, 0x15);
+    fn_80442130(self->ai, 0x16);
+    fn_80442130(self->ai, 0x17);
+    fn_80442130(self->ai, 8);
+    unsigned int n = 1500;
+    n += fn_8015EA18(1500);
+    float len = fn_8042CE28(n);
+    len = 1.0f - fn_80461EE4(self->ai) / 100.0f >= 0.25f
+        ? (1.0f - fn_80461EE4(self->ai) / 100.0f <= 1.0f ? (1.0f - fn_80461EE4(self->ai) / 100.0f) * len : len)
+        : len * 0.25f;
+    len = len / fn_80464094(self->ai);
+    fn_801513D8(self->brain, (int)len);
+    fn_80442414((TaskBase *)self, 0);
+    fn_8014F7B0(fn_804420D8(self->ai), 0);
+    if (fn_80134870(self->ai))
+        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(fn_80134870(self->ai)), 1);
+    return 1;
+}
+
+// MELEE exit
+extern "C" int fn_801549A8(register Self *self)
+{
+    return 1;
+}
+
+// Pads .rodata to 8: MELEE update fn_801549D0's 0.33f.
+extern "C" const float lbl_8049B884 __attribute__((section(".rodata"))) = 0.33f;

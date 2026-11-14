@@ -227,7 +227,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 9 | Shared helpers | 0x8015E2FC-0x80160428, unit `Game/fn_8015E2FC.cpp` | Done |
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
-| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x801546B0. Next is `fn_801546B0` (0x2F8); the 38 other methods of 0x80 bytes or less can go first as their own units. The largest are `fn_801549D0` (0x1E20) and `fn_80156A88` (0x12D0). The unit's `.rodata` claim ends at 0x8049B878, so it already holds `fn_801546B0`'s 0.0f |
+| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x801549D0. Next is MELEE update `fn_801549D0` (0x1E20, the largest); the 37 other methods of 0x80 bytes or less can go first as their own units. Then `fn_80156A88` (0x12D0). The unit's `.rodata` claim ends at 0x8049B888, so it already holds `fn_801549D0`'s 0.33f |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | 41 unclaimed handler functions (0xC52C bytes), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D`. `APPROACH` (`fn_801399CC`, 0x1728) is the largest |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
