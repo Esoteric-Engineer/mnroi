@@ -143,7 +143,7 @@ int fn_800CE4D0(void *ctl);
 float fn_8042CE28(unsigned int n);
 float fn_80464094(void *ai);
 void fn_801513D8(void *brain, int len);
-void fn_804643C8(Self *task, int done);
+void AI_SetTaskDone(Self *task, int done);
 int fn_804643F0(Self *task);
 void *fn_800CD9B0(Ctl &c);
 int fn_800B0CC0(void *e);
@@ -535,7 +535,7 @@ extern "C" int Task_Melee_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80461D48(self->ai, 2)) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         if (fn_800CCB38(*AI_GetActor(self->ai))) {
@@ -550,30 +550,30 @@ extern "C" int Task_Melee_Update(register Self *self)
                 else
                     fn_8015105C(AI_GetBrain(self->ai), 7);
             }
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         if (fn_80461D48(self->ai, 0x14)) {
             fn_80136214(self->ai, 8);
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         if (fn_80462624(AI_GetMover(self->ai)) == 1) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         if (fn_80461D48(self->ai, 3)) {
             if (fn_80461D48(self->ai, 4)) {
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
                 return 1;
             } else if (fn_80461D48(self->ai, 0x2b) && fn_8015F008(self->ai)) {
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
                 return 1;
             }
         }
         if (fn_80134870(self->ai)
             && fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai))) > fn_800B1884(*AI_GetEntity(self->ai), 0xd8)) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         if (fn_801368B8(self->ai) && fn_80461D48(self->ai, 0x1c)) {
@@ -832,7 +832,7 @@ extern "C" int Task_Melee_Update(register Self *self)
                     AI_SetStateBit(self->ai, 1);
                     break;
                 case 7:
-                    fn_804643C8(self, 1);
+                    AI_SetTaskDone(self, 1);
                     return 1;
                     break;
                 case 8:
@@ -845,7 +845,7 @@ extern "C" int Task_Melee_Update(register Self *self)
                     break;
                 case 9:
                     fn_8015105C(AI_GetBrain(self->ai), 4);
-                    fn_804643C8(self, 1);
+                    AI_SetTaskDone(self, 1);
                     return 1;
                     break;
                 }
@@ -857,7 +857,7 @@ extern "C" int Task_Melee_Update(register Self *self)
                 t = t / fn_80464094(self->ai);
                 fn_801513D8(self->brain, (int)t);
             } else {
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
             }
         }
         if (fn_804628AC(self->ai)) {
@@ -999,18 +999,18 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80461D48(self->ai, 2)) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         int ready = !fn_80151430(self->brain);
         if (!fn_801369B0(self->ai) && fn_80085D3C(AI_GetEntity(self->ai))) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 0;
         }
         if (!fn_8015F008(self->ai) && fn_80134870(self->ai) && fn_8015EE34(self->ai, fn_80134870(self->ai))) {
             if (!fn_80461D48(self->ai, 4) && fn_80461D48(self->ai, 0x2b)) {
             } else {
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
             }
         } else if (ready) {
             register unsigned int base = 1500;
@@ -1097,7 +1097,7 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
                 n /= 4;
                 break;
             case 5:
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
                 break;
             case 6:
                 fn_8015105C(AI_GetBrain(self->ai), 4);
@@ -1143,7 +1143,7 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
             int hit = fn_8004A9CCV(&from, &dir, len, 0x8000, 0, fn_800B24AC(*AI_GetEntity(self->ai)),
                                    fn_800B1CC8(*AI_GetEntity(self->ai)), 0, 3);
             if (hit)
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
         }
         if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
             || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
@@ -1170,7 +1170,7 @@ extern "C" int Task_FindThrowable_Enter(register Self *self)
         if (!fn_800CCF90(*c)) {
             float d = fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)));
             if (d > 3.0f) {
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
                 return 0;
             }
         }
@@ -1224,11 +1224,11 @@ extern "C" int Task_FindThrowable_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80151430(self->brain)) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         if (fn_800CD21CF(*fn_8044203CF(self->ai))) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
@@ -1262,22 +1262,22 @@ extern "C" int Task_FindThrowable_Update(register Self *self)
                     } else {
                         AI_SetStateBit(self->ai, 0x12);
                         if (fn_80461D48(self->ai, 0x34)) {
-                            fn_804643C8(self, 1);
+                            AI_SetTaskDone(self, 1);
                             return 1;
                         }
                     }
                 } else {
-                    fn_804643C8(self, 1);
+                    AI_SetTaskDone(self, 1);
                     return 1;
                 }
             } else {
                 if (fn_80461D48(self->ai, 0x33)) {
-                    fn_804643C8(self, 1);
+                    AI_SetTaskDone(self, 1);
                     return 1;
                 }
             }
         } else {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             if (!fn_8015F384(self->ai)) {
                 if (fn_800B0CC0F(*e) && fn_800A4130(fn_800B1478F(*e)) && fn_8046439C(self->ai) > 0.0f) {
                     if (fn_80134870(self->ai) && fn_8015ED50(self->ai, fn_800B1724(*fn_80134870(self->ai))))
@@ -1285,7 +1285,7 @@ extern "C" int Task_FindThrowable_Update(register Self *self)
                     else
                         AI_SetStateBit(self->ai, 0x10);
                 } else {
-                    fn_804643C8(self, 1);
+                    AI_SetTaskDone(self, 1);
                     fn_8015105C(self->brain, 7);
                 }
                 PEnt *t = fn_8014F8BC(AI_GetTargetList(self->ai));
@@ -1306,7 +1306,7 @@ extern "C" int Task_FindWieldable_Enter(register Self *self)
     if (fn_80134870(self->ai)) {
         float d = fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)));
         if (d > 3.0f) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 0;
         }
     }
@@ -1351,7 +1351,7 @@ extern "C" int Task_FindWieldable_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80151430(self->brain)) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
@@ -1381,12 +1381,12 @@ extern "C" int Task_FindWieldable_Update(register Self *self)
                     return 1;
                 }
                 if (fn_80461D48(self->ai, 0x33)) {
-                    fn_804643C8(self, 1);
+                    AI_SetTaskDone(self, 1);
                     return 0;
                 }
             }
         } else {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             fn_8015105C(self->brain, 8);
             PEnt *t = fn_8014F8BC(AI_GetTargetList(self->ai));
             if (t) {
@@ -1400,8 +1400,8 @@ extern "C" int Task_FindWieldable_Update(register Self *self)
 }
 
 extern "C" {
-void fn_80463B20(void *task);
-void fn_80463B60(void *task);
+void AI_SaveTaskStateBits(void *task);
+void AI_RestoreTaskStateBits(void *task);
 void fn_80464014(char *mover);
 void fn_8014DEB8(void *list);
 void fn_8014DE58(void *list);
@@ -1409,7 +1409,7 @@ void fn_8014DE58(void *list);
 
 extern "C" int Task_Possess_Enter(register Self *self)
 {
-    fn_80463B20(self);
+    AI_SaveTaskStateBits(self);
     fn_804618B0(fn_80462780(self->ai));
     AI_SetStateBit(self->ai, 0);
     fn_8014B900(AI_GetMover(self->ai));
@@ -1418,7 +1418,7 @@ extern "C" int Task_Possess_Enter(register Self *self)
 
 extern "C" int Task_Possess_Exit(register Self *self)
 {
-    fn_80463B60(self);
+    AI_RestoreTaskStateBits(self);
     fn_80464014(AI_GetMover(self->ai));
     fn_8014DEB8(AI_GetTargetList(self->ai));
     fn_8014DE58(AI_GetTargetList(self->ai));
@@ -1506,7 +1506,7 @@ extern "C" int Task_CarryThrowable_Update(register Self *self)
             if (!fn_804643F0(self)) {
                 if (fn_80134870(self->ai) && fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai))) < 3.0f
                     && fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 211)) {
-                    fn_804643C8(self, 1);
+                    AI_SetTaskDone(self, 1);
                     return 1;
                 } else {
                     if (fn_801368B8(self->ai) && fn_8015F008(self->ai))
@@ -1517,7 +1517,7 @@ extern "C" int Task_CarryThrowable_Update(register Self *self)
                     fn_801513D8(self->brain, 2000);
                 }
             } else {
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
                 return 1;
             }
         }
@@ -1560,7 +1560,7 @@ extern "C" int Task_CarryThrowable_Update(register Self *self)
                 AI_SetStateBit(self->ai, 0x10);
             }
         } else {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
         }
     }
     return 1;
@@ -1576,7 +1576,7 @@ extern "C" int Task_Wielding_Enter(register Self *self)
     if (fn_80134870(self->ai)) {
         float d = fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)));
         if (d > 3.0f) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 0;
         }
     }
@@ -1627,12 +1627,12 @@ extern "C" int Task_Wielding_Update(register Self *self)
         if (!fn_80151430(self->brain))
             AI_ClearStateBit(self->ai, 8);
         if (!fn_800CDA20(*AI_GetActor(self->ai))) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         void *grab = fn_800CD9B0(*AI_GetActor(self->ai));
         if (grab && fn_800B0CC0(grab) && !fn_800A4130(fn_800B1478(grab))) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             return 1;
         }
         float h = fn_8014B824(AI_GetMover(self->ai));
@@ -1643,7 +1643,7 @@ extern "C" int Task_Wielding_Update(register Self *self)
             if (fn_801368B8(self->ai)) {
                 AI_SetStateBit(self->ai, 0xe);
             } else {
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
                 if (fn_8015F008(self->ai) || dh > 6.0f)
                     AI_SetStateBit(self->ai, 0x10);
                 else
@@ -1740,14 +1740,14 @@ extern "C" int Task_AttackThing_Update(register Self *self)
         return 0;
     Body *t = fn_80134870B(self->ai);
     if (!t)
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     int gone = 0;
     if (fn_800B0CC0(t))
         gone = fn_800A4054(fn_800B1478(t)) < 0.1f;
     else if (fn_800B0C58(t))
         gone = fn_80086614(fn_800B14A0(*(Ent *)t)) < 0.1f;
     if (gone) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 1;
     }
     if (!fn_80151430(AI_GetBrain(self->ai))) {
@@ -1882,7 +1882,7 @@ extern "C" int Task_MoveTo_Update(register MoveTo *self)
         if (!fn_800861EC(AI_GetEntity(self->ai)))
             d = fn_804290F8(fn_800B1724(*AI_GetEntity(self->ai)), &self->dest);
         if (d < 2.0f) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             int at = fn_80463FE8(AI_GetMover(self->ai));
             fn_80149A6C(0, "%udl %udl", fn_800B13D8F(*AI_GetEntity(self->ai)), at);
         }
@@ -1906,7 +1906,7 @@ extern "C" int Task_ForceControl_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (fn_80461D48(self->ai, 0x33))
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
     } else {
     }
     return 1;
@@ -1927,7 +1927,7 @@ extern "C" int Task_Stop_Exit(register Self *self)
 extern "C" int Task_Stop_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     } else {
     }
     return 1;
@@ -1935,7 +1935,7 @@ extern "C" int Task_Stop_Update(register Self *self)
 
 extern "C" int Task_Enslave_Enter(register Self *self)
 {
-    fn_80463B20(self);
+    AI_SaveTaskStateBits(self);
     fn_804618B0(fn_80462780(self->ai));
     AI_SetStateBit(self->ai, 0);
     fn_8014B900(AI_GetMover(self->ai));
@@ -1944,7 +1944,7 @@ extern "C" int Task_Enslave_Enter(register Self *self)
 
 extern "C" int Task_Enslave_Exit(register Self *self)
 {
-    fn_80463B60(self);
+    AI_RestoreTaskStateBits(self);
     return 1;
 }
 
@@ -1963,7 +1963,7 @@ extern "C" int Task_Enslave_Update(register Self *self)
     for (int i = 0; i < n; i++) {
         void *e = fn_8014FCD8(AI_GetTargetList(self->ai), i);
         if (fn_8015F2D0(e, AI_GetEntity(self->ai))) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             fn_80149A6C(2, "%udl", fn_800B13D8F(*AI_GetEntity(self->ai)));
         }
     }
@@ -1985,7 +1985,7 @@ extern "C" int Task_ForceJump_Exit(register Self *self)
 extern "C" int Task_ForceJump_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     } else {
     }
     return 1;
@@ -2006,7 +2006,7 @@ extern "C" int Task_Swing_Exit(register Self *self)
 extern "C" int Task_Swing_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     } else {
     }
     return 1;
@@ -2044,7 +2044,7 @@ extern "C" int Task_GetAndThrowAt_Update(register GetThrow *self)
     Ent *target = fn_800ACFA8(self->target);
     if (!thing || !target) {
         fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*AI_GetEntity(self->ai)), self->thing);
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 0;
     }
     switch ((unsigned int)fn_804643F0(self)) {
@@ -2072,7 +2072,7 @@ extern "C" int Task_GetAndThrowAt_Update(register GetThrow *self)
         } else if (AI_GetTaskId(fn_80151BCC(AI_GetBrain(self->ai))) != 4) {
             if (fn_8015E580(fn_800B1724(*thing), fn_800B1724(*AI_GetEntity(self->ai))) > 4.0f) {
                 fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*AI_GetEntity(self->ai)), self->thing);
-                fn_804643C8(self, 1);
+                AI_SetTaskDone(self, 1);
                 return 0;
             } else {
                 fn_800F63DC(AI_GetActor(self->ai), self->thing, 1);
@@ -2092,7 +2092,7 @@ extern "C" int Task_GetAndThrowAt_Update(register GetThrow *self)
         break;
     case 4:
         if (!fn_800CD9B0(*AI_GetActor(self->ai))) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*AI_GetEntity(self->ai)), self->thing);
         }
         break;
@@ -2140,7 +2140,7 @@ extern "C" int Task_GoGetAndThrowAt_Update(register GetThrow *self)
     Ent *target = fn_800ACFA8(self->target);
     if (!thing || !target) {
         fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*AI_GetEntity(self->ai)), self->thing);
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 0;
     }
     switch ((unsigned int)fn_804643F0(self)) {
@@ -2186,7 +2186,7 @@ extern "C" int Task_GoGetAndThrowAt_Update(register GetThrow *self)
         break;
     case 4:
         if (!fn_800CD9B0(*AI_GetActor(self->ai))) {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
             fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*AI_GetEntity(self->ai)), self->thing);
         }
         break;
@@ -2217,9 +2217,9 @@ extern "C" int Task_WallClimb_Update(register Self *self)
     if (!fn_80151B90(self->brain, self))
         return 0;
     if (!fn_800CCB38(*AI_GetActor(self->ai)))
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     if (!fn_8015F410(self->ai, 0.05f)) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 0;
     }
     if (fn_80151430(AI_GetBrain(self->ai)))
@@ -2286,7 +2286,7 @@ extern "C" int Task_PlayAnim_Update(register PlayAnim *self)
             int clip = fn_80097CE8(*AI_GetEntity(self->ai), self->anim, 1, 30.0f, 0, 7.5f, -1.0f);
             fn_800BD2D0(AI_GetActor(self->ai), clip);
         } else {
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
         }
     }
     return 1;
@@ -2418,7 +2418,7 @@ extern "C" int Task_ClimbAttack_Enter(register Self *self)
         fn_80461BF8(AI_GetMover(self->ai), &mid);
         fn_80135F94(self->ai);
     } else {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     }
     fn_801513D8(AI_GetBrain(self->ai), 3000);
     return 1;
@@ -2438,13 +2438,13 @@ extern "C" int Task_ClimbAttack_Update(register Self *self)
         return 0;
     fn_8014B518(AI_GetMover(self->ai), fn_80462854(self->ai), -1);
     if (fn_804643F0(self) != 1)
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     if (!fn_80151430(self->brain)) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 0;
     }
     if (fn_80461D48(self->ai, 0x28)) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 0;
     }
     AI_ClearStateBit(self->ai, 7);
@@ -2453,7 +2453,7 @@ extern "C" int Task_ClimbAttack_Update(register Self *self)
         fn_8014F7B0(AI_GetTargetList(self->ai), 3);
     if (fn_800CCB38(*AI_GetActor(self->ai))) {
         fn_8015105C(AI_GetBrain(self->ai), 0x12);
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     } else if (fn_800CC96C(*AI_GetActor(self->ai)) && fn_80151470(self->brain) > 2000) {
         if (fn_8015EC1C(fn_80461F10(self->ai)))
             AI_SetStateBit(self->ai, 8);
@@ -2538,7 +2538,7 @@ extern "C" int Task_HoverAndFire_Exit(register HoverFire *self)
 extern "C" int Task_HoverAndFire_Update(register HoverFire *self)
 {
     if (!self->hover && (!fn_80151430(self->brain) || !fn_8015F410(self->ai, 0.25f)))
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     return 1;
 }
 
@@ -2574,7 +2574,7 @@ extern "C" int Task_MobilityCharge_Exit(register Self *self)
 extern "C" int Task_MobilityCharge_Update(register Self *self)
 {
     if (!fn_80151430(self->brain))
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     if (fn_800CE4D0(AI_GetActor(self->ai)) && AI_TestStateBit(self->ai, 0x1b))
         AI_ClearStateBit(self->ai, 0x1b);
     return 1;
@@ -2606,24 +2606,24 @@ extern "C" int Task_PowerStand_Exit(register Self *self)
 extern "C" int Task_PowerStand_Update(register Self *self)
 {
     if (fn_800CDA20(*AI_GetActor(self->ai))) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 1;
     }
     if (fn_8015F384(self->ai)) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 1;
     }
     if (fn_80085D3C(AI_GetEntity(self->ai)) && fn_80151AF8(AI_GetBrain(self->ai), 0xb)) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 1;
     }
     void *actor = Entity_GetActor(*AI_GetActor(self->ai));
     if (fn_80086B1C(actor)) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 1;
     }
     if (fn_800CC6DC(*AI_GetActor(self->ai)) != 2) {
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
         return 1;
     }
     float reach = fn_800B1884(*AI_GetEntity(self->ai), 0xd2);
@@ -2633,7 +2633,7 @@ extern "C" int Task_PowerStand_Update(register Self *self)
         if (!fn_800CCF90(*fn_80085954(fn_800B14A0(*t)))
             && ((dist < reach * 2.0f && fn_800CC6DC(*fn_80085954(fn_800B14A0(*t))) != 0xd)
                 || fn_80086730(actor) > fn_8008677C(actor) * 0.5f))
-            fn_804643C8(self, 1);
+            AI_SetTaskDone(self, 1);
         else if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
                  || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
                  || fn_8015FFD4(self->ai))
@@ -2641,7 +2641,7 @@ extern "C" int Task_PowerStand_Update(register Self *self)
         else
             AI_ClearStateBit(self->ai, 7);
     } else if (fn_80086730(actor) > fn_8008677C(actor) * 0.5f)
-        fn_804643C8(self, 1);
+        AI_SetTaskDone(self, 1);
     else if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
              || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
              || fn_8015FFD4(self->ai))

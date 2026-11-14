@@ -63,7 +63,7 @@ int fn_801370B0(void *a);
 void *fn_8009C55C(void *a, int b, int c, float range, void *callback, void *user, int e);
 int fn_80463BCC(void *a);
 float fn_80463BF8(void *a);
-void fn_80463A44(void *task, int flags);
+void Task_Base_Destroy(void *task, int flags);
 void fn_804617F0(void *timer);
 void fn_80461828(void *timer, int a);
 void fn_804618B0(void *timer);
@@ -516,19 +516,19 @@ extern "C" void fn_80150FFC(register BrainSelf *self, void *task)
     if (!task)
         return;
     if (task) {
-        fn_80463A44(task, 3);
+        Task_Base_Destroy(task, 3);
         return;
     }
 }
 
 extern "C" {
-int fn_80463AF4(AITask *t);
-void fn_80463B60(AITask *t);
-void fn_80463B20(AITask *t);
+int AI_GetTaskDone(AITask *t);
+void AI_RestoreTaskStateBits(AITask *t);
+void AI_SaveTaskStateBits(AITask *t);
 void fn_80152A78(TaskData *t);
 void fn_80152A10(TaskData *t);
 void fn_801515C4(BrainSelf *self, AITask *t);
-void fn_80463C24(BrainSelf *self, AITask *t);
+void AI_DeferTaskDelete(BrainSelf *self, AITask *t);
 void fn_801513D8(BrainSelf *self, int len);
 int fn_80133A08(void);
 void *fn_80133A30(void);
@@ -538,7 +538,7 @@ void *fn_80151BF8(BrainSelf *self);
 
 extern "C" AITask *fn_8015105C(register BrainSelf *self, int id)
 {
-    while (self->cur && fn_80463AF4(self->cur))
+    while (self->cur && AI_GetTaskDone(self->cur))
         fn_8015123C(self, -1);
     if (self->count > 15)
         return 0;
@@ -547,13 +547,13 @@ extern "C" AITask *fn_8015105C(register BrainSelf *self, int id)
         return 0;
     if (self->cur) {
         self->cur->exit();
-        fn_80463B60(self->cur);
+        AI_RestoreTaskStateBits(self->cur);
         fn_80152A78(self->cur);
         fn_801515C4(self, self->cur);
     }
     self->tasks[self->count++] = t;
     self->cur = t;
-    fn_80463B20(self->cur);
+    AI_SaveTaskStateBits(self->cur);
     fn_80152A10(self->cur);
     fn_801513D8(self, 0);
     int r = self->cur->enter();
@@ -573,14 +573,14 @@ extern "C" int fn_8015123C(register BrainSelf *self, int id)
         return 0;
     t->exit();
     fn_80152A78(t);
-    fn_80463B60(t);
+    AI_RestoreTaskStateBits(t);
     fn_801515C4(self, t);
-    fn_80463C24(self, t);
+    AI_DeferTaskDelete(self, t);
     self->tasks[--self->count] = 0;
     t = (AITask *)self->tasks[self->count - 1];
     self->cur = t;
     fn_80152A10(self->cur);
-    fn_80463B20(self->cur);
+    AI_SaveTaskStateBits(self->cur);
     fn_801513D8(self, 0);
     self->cur->enter();
     if (fn_80133A08()) {
@@ -658,7 +658,7 @@ void fn_80447C38(Vector *v);
 void fn_80435530(Vector *v, float f);
 void *AI_GetMover(void *ai);
 void fn_8014B420(void *a, Vector *v);
-void fn_80463C9C(BrainSelf *self);
+void AI_FlushTaskDeletes(BrainSelf *self);
 }
 
 extern "C" int fn_80151674(register BrainSelf *self)
@@ -712,10 +712,10 @@ extern "C" void fn_80151934(register BrainSelf *self)
     if (self->f14 && fn_8042EFF8(lbl_80593BE8) >= self->f14)
         self->f14 = 0;
     if (self->cur) {
-        while (fn_80463AF4(self->cur))
+        while (AI_GetTaskDone(self->cur))
             fn_8015123C(self, AI_GetTaskId(self->cur));
     }
-    fn_80463C9C(self);
+    AI_FlushTaskDeletes(self);
 }
 
 extern "C" int fn_80151A9C(register BrainSelf *self)

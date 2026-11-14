@@ -527,7 +527,7 @@ struct AITask
     void *vtbl; // +0x24
 };
 
-extern "C" void fn_80463A44(register AITask *self, register int inChrg)
+extern "C" void Task_Base_Destroy(register AITask *self, register int inChrg)
 {
     self->vtbl = lbl_804F5CC8;
     fn_80463AD4(self);
@@ -546,22 +546,22 @@ extern "C" void fn_80463AD4(register void *self)
 {
 }
 
-extern "C" int fn_80463AF4(register AITask *self)
+extern "C" int AI_GetTaskDone(register AITask *self)
 {
     return self->i1C;
 }
 
-extern "C" void fn_80463D80(register AIObject *self, register BitSet *dst);
-extern "C" void fn_80463D3C(register AIObject *self, register BitSet *src);
+extern "C" void AI_GetStateBits(register AIObject *self, register BitSet *dst);
+extern "C" void AI_SetStateBits(register AIObject *self, register BitSet *src);
 
-extern "C" void fn_80463B20(register AITask *self)
+extern "C" void AI_SaveTaskStateBits(register AITask *self)
 {
-    fn_80463D80(self->ai, &self->state);
+    AI_GetStateBits(self->ai, &self->state);
 }
 
-extern "C" void fn_80463B60(register AITask *self)
+extern "C" void AI_RestoreTaskStateBits(register AITask *self)
 {
-    fn_80463D3C(self->ai, &self->state);
+    AI_SetStateBits(self->ai, &self->state);
 }
 
 extern "C" float fn_80463BA0(register AIAction *self)
@@ -580,7 +580,7 @@ extern "C" float fn_80463BF8(register AIAction *self)
 }
 
 // Deletes a task, or defers its deletion while there is room in lbl_80571DB0
-extern "C" void fn_80463C24(register void *brain, register void *task)
+extern "C" void AI_DeferTaskDelete(register void *brain, register void *task)
 {
     if (lbl_8066BF80 > 15) {
         fn_80150FFC(brain, task);
@@ -589,7 +589,7 @@ extern "C" void fn_80463C24(register void *brain, register void *task)
     }
 }
 
-extern "C" void fn_80463C9C(register void *brain)
+extern "C" void AI_FlushTaskDeletes(register void *brain)
 {
     for (unsigned int i = 0; i < lbl_8066BF80; i++) {
         fn_80150FFC(brain, lbl_80571DB0[i]);
@@ -598,22 +598,22 @@ extern "C" void fn_80463C9C(register void *brain)
     lbl_8066BF80 = 0;
 }
 
-extern "C" void fn_80463D3C(register AIObject *self, register BitSet *src)
+extern "C" void AI_SetStateBits(register AIObject *self, register BitSet *src)
 {
     fn_80463E14((BitSet *)((char *)self + 0x500), src);
 }
 
-extern "C" void fn_80463D80(register AIObject *self, register BitSet *dst)
+extern "C" void AI_GetStateBits(register AIObject *self, register BitSet *dst)
 {
     fn_80463E14(dst, (BitSet *)((char *)self + 0x500));
 }
 
-extern "C" int fn_80463DC4(register void *self)
+extern "C" int Task_Base_Enter(register void *self)
 {
     return 1;
 }
 
-extern "C" int fn_80463DEC(register void *self)
+extern "C" int Task_Base_Exit(register void *self)
 {
     return 1;
 }

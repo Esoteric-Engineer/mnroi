@@ -146,7 +146,7 @@ extern "C" float fn_8046439C(register AIObject *self)
     return self->weights[16];
 }
 
-extern "C" void fn_804643C8(register AITask *self, register int v)
+extern "C" void AI_SetTaskDone(register AITask *self, register int v)
 {
     self->done = v;
 }
