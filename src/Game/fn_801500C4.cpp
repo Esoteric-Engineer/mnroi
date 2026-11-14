@@ -965,7 +965,7 @@ extern "C" int fn_8015243C(Ent *a, Obstacle *b, Vector *out)
 }
 
 extern "C" {
-void *fn_80463F64(void *ai);
+void *AI_GetAvoidObject(void *ai);
 int fn_800B0CC0(Ent *e);
 int AI_GetMoverDestThing(void *a);
 void AI_SetAvoidObject(void *ai, int a);
@@ -981,8 +981,8 @@ extern "C" Ent *fn_801526E4(void *ai, Vector *out, float *weight)
     if (!self)
         return 0;
     Ent *e;
-    if (fn_80463F64(ai)) {
-        e = fn_800ACFA8((int)fn_80463F64(ai));
+    if (AI_GetAvoidObject(ai)) {
+        e = fn_800ACFA8((int)AI_GetAvoidObject(ai));
         if (e) {
             Vector v;
             int r = fn_8015243C(self, (Obstacle *)e, &v);

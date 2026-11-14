@@ -637,11 +637,12 @@ extern "C" BitSet *fn_80463E14(register BitSet *self, register BitSet *src)
 }
 
 // AIObject+0xD0 (docs/ai.md 4.1)
-struct Record
+// AIObject+0xD0 (docs/ai.md 4.1)
+struct TargetList
 {
     char pad[0xE8];
-    int iE8; // +0xE8
-    int iEC; // +0xEC
+    int throwable; // +0xE8
+    int wieldable; // +0xEC
 };
 
 extern "C" void fn_80463EF0(register Sub210 *self, register void *v)
@@ -656,19 +657,19 @@ extern "C" void fn_80463F3C(register Sub210 *self, register int v)
     self->i2C4 = v;
 }
 
-extern "C" int fn_80463F64(register char *self)
+extern "C" int AI_GetAvoidObject(register char *self)
 {
     return *(int *)(self + 0x560);
 }
 
-extern "C" int fn_80463F90(register Record *self)
+extern "C" int AI_GetNearbyThrowable(register TargetList *self)
 {
-    return self->iE8;
+    return self->throwable;
 }
 
-extern "C" int fn_80463FBC(register Record *self)
+extern "C" int AI_GetNearbyWieldable(register TargetList *self)
 {
-    return self->iEC;
+    return self->wieldable;
 }
 
 extern "C" int AI_GetMoverWaypointIndex(register Sub210 *self)

@@ -178,20 +178,20 @@ extern "C" void *fn_80461904(register char *self)
     return self;
 }
 
-struct Holder
+// AIObject+0xD0 (docs/ai.md 4.1)
+struct TargetList
 {
     char pad[0xCC];
-    int id;   // +0xCC
-    int iD0; // +0xD0
-    char padD4[0x4];
+    int best; // +0xCC
+    char padD0[0x8];
     int iD8; // +0xD8
     char padDC[0x14];
     int iF0; // +0xF0
 };
 
-extern "C" void *fn_80461948(register Holder *self)
+extern "C" void *AI_GetBestTarget(register TargetList *self)
 {
-    void *p = fn_800ACFA8(self->id);
+    void *p = fn_800ACFA8(self->best);
     if (p && fn_800B0C58(p)) {
         return fn_800B14A0(p);
     } else {
@@ -214,9 +214,16 @@ extern "C" void fn_804619F0(register void *self, register int inChrg)
 }
 __asm__(".size _._5AiObj, 0x4C");
 
-extern "C" int fn_80461A3C(register Holder *self)
+// The encounter record (AiObj in Game/fn_80147DE4.cpp): its owner's actor id
+struct EncounterRec
 {
-    return self->iD0;
+    char pad[0xD0];
+    int owner; // +0xD0
+};
+
+extern "C" int fn_80461A3C(register EncounterRec *self)
+{
+    return self->owner;
 }
 
 class Vector
@@ -618,12 +625,12 @@ extern "C" int fn_804624B8(register Overlay *self)
 
 inline int sn_return_decl2(int a) { return a; }
 
-extern "C" void *fn_804624EC(register Holder *self)
+extern "C" void *fn_804624EC(register TargetList *self)
 {
     return fn_800ACFA8(self->iF0);
 }
 
-extern "C" void *fn_80462530(register Holder *self)
+extern "C" void *fn_80462530(register TargetList *self)
 {
     return fn_800ACFA8(self->iD8);
 }

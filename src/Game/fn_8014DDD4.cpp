@@ -36,8 +36,8 @@ struct Self {
     int fDC;               // +0xDC
     int fE0;               // +0xE0
     int fE4;               // +0xE4: target handle
-    int fE8;               // +0xE8: effect handle
-    int fEC;               // +0xEC
+    int fE8;               // +0xE8, nearest throwable
+    int fEC;               // +0xEC, nearest wieldable
     int fF0;               // +0xF0
     int fF4;               // +0xF4
     int fF8;               // +0xF8

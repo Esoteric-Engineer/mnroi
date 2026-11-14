@@ -943,7 +943,7 @@ AIActor *fn_800CDA94(Ent &e);
 void fn_8008656C(void *e, int v);
 int fn_80150258(void *p);
 Ent *fn_80150200(void *p);
-Ent *fn_80461948(void *p);
+Ent *AI_GetBestTarget(void *p);
 }
 
 extern "C" void fn_801346C0(register AIObject *self)
@@ -976,8 +976,8 @@ extern "C" Ent *fn_80134870(register AIObject *self)
     if (fn_80150258(AI_GetTargetList(self))) {
         return fn_80150200(AI_GetTargetList(self));
     } else {
-        if (fn_80461948(AI_GetTargetList(self))) {
-            return fn_80461948(AI_GetTargetList(self));
+        if (AI_GetBestTarget(AI_GetTargetList(self))) {
+            return AI_GetBestTarget(AI_GetTargetList(self));
         } else {
             return 0;
         }
@@ -1267,7 +1267,7 @@ extern "C" int fn_801352EC(register AIObject *self, Vector *pos, int *n)
         *n = fn_8004DD38(fn_80430050(lbl_8052F060), pos);
         return 1;
     }
-    Ent *target = fn_80461948(self->fD0);
+    Ent *target = AI_GetBestTarget(self->fD0);
     if (target) {
         fn_8042DC84V(pos, fn_800B1724(*target));
         *n = fn_800B1CC8(*target);

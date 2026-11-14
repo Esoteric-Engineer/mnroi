@@ -1155,8 +1155,8 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
 }
 
 extern "C" {
-int fn_80463F90(void *finder);
-int fn_80463FBC(void *finder);
+int AI_GetNearbyThrowable(void *finder);
+int AI_GetNearbyWieldable(void *finder);
 Ent *fn_800ACFA8(int handle);
 void fn_801501AC(void *finder, Ent *actor);
 }
@@ -1190,7 +1190,7 @@ extern "C" int Task_FindThrowable_Enter(register Self *self)
         AI_EnableBehavior(self->ai, 0xe);
     if (fn_8008606C(AI_GetEntity(self->ai)))
         AI_EnableBehavior(self->ai, 0x20);
-    Ent *t = fn_800ACFA8(fn_80463F90(AI_GetTargetList(self->ai)));
+    Ent *t = fn_800ACFA8(AI_GetNearbyThrowable(AI_GetTargetList(self->ai)));
     if (t)
         fn_801501AC(AI_GetTargetList(self->ai), t);
     fn_801513D8(self->brain, 5000);
@@ -1326,7 +1326,7 @@ extern "C" int Task_FindWieldable_Enter(register Self *self)
         AI_EnableBehavior(self->ai, 0xe);
     if (fn_8008606C(AI_GetEntity(self->ai)))
         AI_EnableBehavior(self->ai, 0x20);
-    Ent *t = fn_800ACFA8(fn_80463FBC(AI_GetTargetList(self->ai)));
+    Ent *t = fn_800ACFA8(AI_GetNearbyWieldable(AI_GetTargetList(self->ai)));
     if (t)
         fn_801501AC(AI_GetTargetList(self->ai), t);
     fn_801513D8(self->brain, 3000);
