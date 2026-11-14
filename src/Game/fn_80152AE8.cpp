@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B9A0.
+// Owns .rodata 0x8049B838-0x8049B9B0.
 
 struct Ent {
     int pad;
@@ -2268,3 +2268,66 @@ extern "C" int fn_8015BFC8(register Self *self)
         fn_801513D8(fn_80442104(self->ai), (int)(fn_80464318(self->ai) * 20.0f));
     return 1;
 }
+
+struct PlayAnim : Self {
+    char pad8[0x20];
+    int anim; // +0x28, animation id
+    int loop; // +0x2C, nonzero restarts the animation when it ends
+};
+
+class Puppet
+{
+public:
+    char d[0x3ac];
+    virtual void s0(); virtual void s1(); virtual void s2(); virtual void s3(); virtual void s4();
+    virtual void s5(int state); // vtable +0x30
+};
+struct PuppetD : Puppet { // matching_notes 50
+    int x;
+};
+
+extern "C" {
+PuppetD *fn_8044203CP(void *ai) __asm__("fn_8044203C");
+int fn_800CC6AC(Ctl &c);
+int fn_800CC2E0(Ctl &c);
+unsigned int fn_80097CE8(Ent &actor, int anim, int mode, float speed, int set, float blend, float f);
+void fn_800BD2D0(void *actor, int clip);
+}
+
+// PLAYANIM enter
+extern "C" int fn_8015C128(register Self *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    return 1;
+}
+
+// PLAYANIM exit
+extern "C" int fn_8015C17C(register Self *self)
+{
+    return 1;
+}
+
+// PLAYANIM update: puts the controller in state 0x24 and plays the animation, once or looped.
+extern "C" int fn_8015C1AC(register PlayAnim *self)
+{
+    if (!fn_80151B90(self->brain, self))
+        return 0;
+    if (fn_800CC6AC(*fn_8044203C(self->ai)) != 0x24) {
+        fn_8044203CP(self->ai)->s5(0x24);
+        int clip = fn_80097CE8(*fn_80442080(self->ai), self->anim, 1, 30.0f, 0, 7.5f, -1.0f);
+        fn_800BD2D0(fn_8044203C(self->ai), clip);
+    }
+    if (fn_800CC2E0(*fn_8044203C(self->ai))) {
+    } else {
+        if (self->loop) {
+            fn_8044203CP(self->ai)->s5(0x24);
+            int clip = fn_80097CE8(*fn_80442080(self->ai), self->anim, 1, 30.0f, 0, 7.5f, -1.0f);
+            fn_800BD2D0(fn_8044203C(self->ai), clip);
+        } else {
+            fn_804643C8(self, 1);
+        }
+    }
+    return 1;
+}
+
+extern "C" const float lbl_8049B9AC __attribute__((section(".rodata"))) = 1.0f; // .rodata pad to 8; RANGEDONLY update fn_8015C560 reads it

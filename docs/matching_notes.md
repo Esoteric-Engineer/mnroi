@@ -61,7 +61,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   data where it is defined but dumps a function's pool ahead of that function's body
   (`Game/fn_800B46B0.c` defines `fn_800B5124`'s format string for this reason). A 4-byte pad that
   another unclaimed function reads is `const float lbl_8048A474 __attribute__((section(".rodata"))) = 0.0f;`
-  (a plain `const float` lands in `.sdata2`; `Game/fn_800965A4.c`).
+  (a plain `const float` lands in `.sdata2`; `Game/fn_800965A4.c`). In a C++ unit write `extern "C" const float ...`: a file-scope `const` has internal linkage there, and the link fails with `undefined: 'lbl_...'` from the unclaimed reader (`Game/fn_80152AE8.cpp`).
 
 - **A claimed literal pool shows up as unmatched data in the progress table.** The `Data:` line counts objdiff's `matched_data`, which pairs data by symbol name, and a compiler-generated pool is anonymous where dtk's extracted object has `lbl_<addr>` symbols. `report.json` still gives the unit `complete_data` 100% and `main.dol` is `OK`, so there is nothing to chase; naming the pool is not possible without breaking the function (previous entry).
 - **`main.dol: FAILED` with a few bytes differing in `data1` at a unit's claimed `.rodata` pool, while objdiff shows the function at 100%: a literal has the wrong value or two literals are swapped.** objdiff compares a pool load's relocation (symbol and offset), not the value stored there, so writing `3.0f` where the DOL has `10.0f` passes every instruction check. Read the values at the loaded `lbl_`s in the `.rodata` asm, not those of a similar-looking sibling (`Game/fn_800D5DC8.cpp` and `Game/fn_800D532C.cpp` swap 3 and 10).
