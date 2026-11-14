@@ -13,7 +13,9 @@ struct Sector // a level sector, found by position (fn_8004DD38)
 
 struct Node
 {
-    char pad[0x60];
+    char pad0[0x40];
+    float cost; // +0x40
+    char pad44[0x1C];
 };
 
 struct Link
@@ -78,6 +80,11 @@ void fn_8009CF44(void *graph);
 float *fn_8042FB28(void *v);
 int fn_80444710(Node *node);
 Node *fn_8009C55C(Vector *pos, void *world, unsigned mask, float radius, void *test, void *ctx, int n);
+float fn_8009D278(Node *a, Node *b, Vector *out);
+float fn_8009D184(Vector *v, unsigned n);
+int fn_804445D8(Node *node);
+int fn_804445A4(Node *node);
+int fn_80444570(Node *node);
 int fn_8009C004(void *query, Vector *from, Vector *to, Node *fromSpot, Node *toSpot, unsigned mask, float range);
 void fn_801B4094(char *path, const char *ext);
 void *fn_801A8368(const char *path, const char *mode, int flags);
@@ -248,6 +255,26 @@ int fn_8009BD7C(register void *path, Node *fromSpot, Vector *to, Sector *toWorld
     return fn_8009C004(path, fn_80444688(fromSpot), to, fromSpot, toSpot, mask, range);
 }
 
-// 4-byte pad to the section alignment; fn_8009BEC4 reads it
-extern const float lbl_8048AA44 __attribute__((section(".rodata"))) = 0.3f;
+// 0.3f and 20.0f with no reader in .text, between the two functions' pools
+__asm__(".section .rodata\n\t.long 0x3E99999A\n\t.long 0x41A00000\n\t.text");
+
+// Cost of the step between two spots
+void fn_8009BEC4(register void *path, Node *from, Node *to, unsigned n, float *total, float *base)
+{
+    Vector v;
+    float d = fn_8009D278(from, to, &v);
+    if (fn_804445D8(to))
+        d *= 0.9f;
+    else if (fn_804445A4(to))
+        d *= 0.7f;
+    if (fn_80444570(to))
+        d *= 1.1f;
+    else {
+    }
+    float b = from->cost + d;
+    float extra = fn_8009D184(&v, n);
+    float t = b + extra;
+    *total = t;
+    *base = b;
+}
 }
