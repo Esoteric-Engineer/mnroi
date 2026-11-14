@@ -156,11 +156,11 @@ extern "C" AIMessage *fn_801499A4(void)
 }
 
 // Posts a message of the given kind to the actor `target`: kind 0 (target, arg), 1 (target, other), 2 (target).
-extern "C" void fn_80149A6C(int kind, int sender, ...)
+extern "C" void fn_80149A6C(int kind, const char *fmt, ...)
 {
-    if (sender) {
+    if (fmt) {
         va_list ap;
-        va_start(ap, sender);
+        va_start(ap, fmt);
         int a;
         int b;
         switch (kind) {

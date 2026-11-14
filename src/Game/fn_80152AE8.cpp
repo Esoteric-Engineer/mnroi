@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B950.
+// Owns .rodata 0x8049B838-0x8049B988; exports lbl_8049B960 for GOGETANDTHROWAT.
 
 struct Ent {
     int pad;
@@ -1784,6 +1784,353 @@ extern "C" int fn_8015A100(register Self *self)
             fn_80442174(self->ai, 8);
             fn_80442130(self->ai, 1);
         }
+    }
+    return 1;
+}
+
+// BUZZPLAYER enter
+extern "C" int fn_8015A4BC(register Self *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    return 1;
+}
+
+// BUZZPLAYER exit
+extern "C" int fn_8015A510(register Self *self)
+{
+    return 1;
+}
+
+// BUZZPLAYER update
+extern "C" int fn_8015A540(register Self *self)
+{
+    if (fn_80151B90(self->brain, self)) {
+    } else {
+    }
+    return 1;
+}
+
+struct MoveTo : Self {
+    char pad8[0x28];
+    Vector dest; // +0x30
+};
+
+extern "C" {
+float fn_8015E580V(Vec *a, Vector *b) __asm__("fn_8015E580");
+float fn_804290F8(Vec *a, Vector *b);
+void fn_80135668(void *ai, int on);
+int fn_80463FE8(char *mover);
+void fn_80149A6C(int kind, const char *fmt, ...);
+int fn_800861EC(void *actor);
+}
+
+// MOVETO enter: walks to dest.
+extern "C" int fn_8015A59C(register MoveTo *self)
+{
+    fn_8046412C(self->ai, 0);
+    fn_8046412C(self->ai, 5);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 6);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 0xf);
+    fn_80442130(self->ai, 0x15);
+    fn_80442130(self->ai, 0x16);
+    fn_80442130(self->ai, 0x17);
+    fn_80442130(self->ai, 0x1b);
+    fn_80442130(self->ai, 5);
+    fn_8014B518(fn_804420AC(self->ai), &self->dest, -1);
+    if (!fn_80134870(self->ai) || (fn_80134870(self->ai) && !fn_800B0C58(fn_80134870(self->ai))))
+        fn_8014F7B0(fn_804420D8(self->ai), 0);
+    float d = fn_8015E580V(fn_800B1724(*fn_80442080(self->ai)), &self->dest);
+    if (d < 4.0f) {
+        if (fn_800CCAE8(*fn_8044203C(self->ai)))
+            fn_80442174(self->ai, 0x20);
+    }
+    if (fn_801368B8(self->ai)) {
+        if (fn_800861EC(fn_80442080(self->ai))) {
+            fn_80442130(self->ai, 0x18);
+            fn_80442174(self->ai, 5);
+            fn_80442130(self->ai, 0x28);
+        } else if (d > 2.0f) {
+            fn_80442130(self->ai, 0xe);
+        }
+    }
+    if (fn_8008606C(fn_80442080(self->ai)) && d > 4.0f)
+        fn_80442130(self->ai, 0x20);
+    if (fn_804628AC(self->ai)) {
+        if (fn_80085F7C(fn_80442080(self->ai)))
+            fn_80442130(self->ai, 0xe);
+        if (fn_8008606C(fn_80442080(self->ai)))
+            fn_80442130(self->ai, 0x20);
+    }
+    return 1;
+}
+
+// MOVETO exit
+extern "C" int fn_8015A8B4(register MoveTo *self)
+{
+    fn_80135668(self->ai, 0);
+    return 1;
+}
+
+// "%udl %udl" is pooled once per file and GOGETANDTHROWAT update reads it too (matching_notes 129).
+__asm__(".section .rodata\n\t.globl lbl_8049B960\nlbl_8049B960:\n\t.text");
+
+// MOVETO update: done within 2 of dest, and tells the actor it arrived.
+extern "C" int fn_8015A900(register MoveTo *self)
+{
+    if (fn_80151B90(self->brain, self)) {
+        fn_8014B518(fn_804420AC(self->ai), &self->dest, -1);
+        float d = 3.40282347e+38f;
+        Vector v;
+        if (fn_804628AC(self->ai)) {
+            if (fn_80085F7C(fn_80442080(self->ai)))
+                fn_80442130(self->ai, 0xe);
+            if (fn_8008606C(fn_80442080(self->ai)))
+                fn_80442130(self->ai, 0x20);
+        }
+        d = fn_8015E580V(fn_800B1724(*fn_80442080(self->ai)), &self->dest);
+        if (d < 4.0f) {
+            if (fn_800CCA58(*fn_8044203C(self->ai)))
+                fn_80442174(self->ai, 0xe);
+        }
+        if (d < 8.0f) {
+            if (fn_800CCAE8(*fn_8044203C(self->ai)))
+                fn_80442174(self->ai, 0x20);
+        }
+        if (!fn_800861EC(fn_80442080(self->ai)))
+            d = fn_804290F8(fn_800B1724(*fn_80442080(self->ai)), &self->dest);
+        if (d < 2.0f) {
+            fn_804643C8(self, 1);
+            int at = fn_80463FE8(fn_804420AC(self->ai));
+            fn_80149A6C(0, "%udl %udl", fn_800B13D8F(*fn_80442080(self->ai)), at);
+        }
+    } else {
+    }
+    return 1;
+}
+
+// FORCECONTROL enter
+extern "C" int fn_8015AB70(register Self *self)
+{
+    return 1;
+}
+
+// FORCECONTROL exit
+extern "C" int fn_8015ABA0(register Self *self)
+{
+    return 1;
+}
+
+// FORCECONTROL update: done once state bit 0x33 is set.
+extern "C" int fn_8015ABD0(register Self *self)
+{
+    if (fn_80151B90(self->brain, self)) {
+        if (fn_80461D48(self->ai, 0x33))
+            fn_804643C8(self, 1);
+    } else {
+    }
+    return 1;
+}
+
+// STOP enter
+extern "C" int fn_8015AC50(register Self *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    return 1;
+}
+
+// STOP exit
+extern "C" int fn_8015ACA4(register Self *self)
+{
+    return 1;
+}
+
+// STOP update: done once state bit 0x33 is set.
+extern "C" int fn_8015ACD4(register Self *self)
+{
+    if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
+        fn_804643C8(self, 1);
+    } else {
+    }
+    return 1;
+}
+
+// ENSLAVE enter
+extern "C" int fn_8015AD54(register Self *self)
+{
+    fn_80463B20(self);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_8014B900(fn_804420AC(self->ai));
+    return 1;
+}
+
+// ENSLAVE exit
+extern "C" int fn_8015ADD0(register Self *self)
+{
+    fn_80463B60(self);
+    return 1;
+}
+
+extern "C" {
+int fn_8014FCAC(void *list);
+void *fn_8014FCD8(void *list, int i);
+int fn_8015F2D0(void *a, void *b);
+}
+
+// ENSLAVE update: done once any actor in the list holds this one, and tells the actor.
+extern "C" int fn_8015AE18(register Self *self)
+{
+    if (!fn_804420D8(self->ai))
+        return 0;
+    int n = fn_8014FCAC(fn_804420D8(self->ai));
+    for (int i = 0; i < n; i++) {
+        void *e = fn_8014FCD8(fn_804420D8(self->ai), i);
+        if (fn_8015F2D0(e, fn_80442080(self->ai))) {
+            fn_804643C8(self, 1);
+            fn_80149A6C(2, "%udl", fn_800B13D8F(*fn_80442080(self->ai)));
+        }
+    }
+    return 1;
+}
+
+// FORCEJUMP enter
+extern "C" int fn_8015AF3C(register Self *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    return 1;
+}
+
+// FORCEJUMP exit
+extern "C" int fn_8015AF90(register Self *self)
+{
+    return 1;
+}
+
+// FORCEJUMP update: done once state bit 0x33 is set.
+extern "C" int fn_8015AFC0(register Self *self)
+{
+    if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
+        fn_804643C8(self, 1);
+    } else {
+    }
+    return 1;
+}
+
+// SWING enter
+extern "C" int fn_8015B040(register Self *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    return 1;
+}
+
+// SWING exit
+extern "C" int fn_8015B094(register Self *self)
+{
+    return 1;
+}
+
+// SWING update: done once state bit 0x33 is set.
+extern "C" int fn_8015B0C4(register Self *self)
+{
+    if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
+        fn_804643C8(self, 1);
+    } else {
+    }
+    return 1;
+}
+
+// GETANDTHROWAT enter
+extern "C" int fn_8015B144(register Self *self)
+{
+    return 1;
+}
+
+// GETANDTHROWAT exit
+extern "C" int fn_8015B174(register Self *self)
+{
+    return 1;
+}
+
+struct GetThrow : Self {
+    char pad8[0x20];
+    int thing;  // +0x28, script handle of the thing to throw
+    int target; // +0x2C, script handle of the target
+};
+
+extern "C" {
+int fn_800CD9F4(Ctl &c);
+void *fn_80151BCC(void *brain);
+int fn_804423E8(void *task);
+void fn_800F63DC(SCtl *c, int handle, int on);
+}
+
+// GETANDTHROWAT update: picks the thing up (steps 0-2), then throws it at the target (3-4).
+extern "C" int fn_8015B1A4(register GetThrow *self)
+{
+    if (!fn_80151B90(self->brain, self))
+        return 0;
+    Ent *thing = fn_800ACFA8(self->thing);
+    Ent *target = fn_800ACFA8(self->target);
+    if (!thing || !target) {
+        fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*fn_80442080(self->ai)), self->thing);
+        fn_804643C8(self, 1);
+        return 0;
+    }
+    switch ((unsigned int)fn_804643F0(self)) {
+    case 0:
+        if (fn_800CD9F4(*fn_8044203C(self->ai)) == self->thing) {
+            fn_80442414((TaskBase *)self, 3);
+        } else {
+            fn_8015105C(fn_80442104(self->ai), 4);
+            fn_801501AC(fn_804420D8(self->ai), thing);
+            fn_80442414((TaskBase *)self, 1);
+        }
+        break;
+    case 1:
+        if (fn_800CD9B0(*fn_8044203C(self->ai))) {
+            fn_80442414((TaskBase *)self, 3);
+        } else if (fn_804423E8(fn_80151BCC(fn_80442104(self->ai))) != 4) {
+            fn_8015105C(fn_80442104(self->ai), 4);
+            fn_801501AC(fn_804420D8(self->ai), thing);
+            fn_80442414((TaskBase *)self, 2);
+        }
+        break;
+    case 2:
+        if (fn_800CD9B0(*fn_8044203C(self->ai))) {
+            fn_80442414((TaskBase *)self, 3);
+        } else if (fn_804423E8(fn_80151BCC(fn_80442104(self->ai))) != 4) {
+            if (fn_8015E580(fn_800B1724(*thing), fn_800B1724(*fn_80442080(self->ai))) > 4.0f) {
+                fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*fn_80442080(self->ai)), self->thing);
+                fn_804643C8(self, 1);
+                return 0;
+            } else {
+                fn_800F63DC(fn_8044203C(self->ai), self->thing, 1);
+            }
+        }
+        break;
+    case 3:
+        if (fn_800CCE00(*fn_8044203C(self->ai))) {
+            fn_80442414((TaskBase *)self, 4);
+        } else if (fn_800CDA20(*fn_8044203C(self->ai)) && !fn_80151AF8(fn_80442104(self->ai), 7)) {
+            fn_8015105C(fn_80442104(self->ai), 7);
+            fn_801501AC(fn_804420D8(self->ai), target);
+            fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(target), 0);
+        }
+        if (!fn_800CDA20(*fn_8044203C(self->ai)))
+            fn_80442414((TaskBase *)self, 4);
+        break;
+    case 4:
+        if (!fn_800CD9B0(*fn_8044203C(self->ai))) {
+            fn_804643C8(self, 1);
+            fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*fn_80442080(self->ai)), self->thing);
+        }
+        break;
     }
     return 1;
 }
