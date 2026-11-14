@@ -1,4 +1,4 @@
-// Path-node graph: unload step, the .npd loader and the hull enable script command (docs/ai.md row 15, section 4.7).
+// Path-node graph: unload step, the .npd loader, the hull and damage-volume link switches and the point-to-point route query (docs/ai.md row 15, section 4.7).
 
 #define SWAP16(x) ((((x) & 0xFF) << 8) | ((unsigned short)(x) >> 8))
 
@@ -75,6 +75,10 @@ int fn_8004D2D8(Vector *p, Vector *planes, int count);
 void fn_80444870(Node *node, int on);
 char *strncpy(char *dst, const char *src, unsigned n);
 void fn_8009CF44(void *graph);
+float *fn_8042FB28(void *v);
+int fn_80444710(Node *node);
+Node *fn_8009C55C(Vector *pos, void *world, unsigned mask, float radius, void *test, void *ctx, int n);
+int fn_8009C004(void *query, Vector *from, Vector *to, Node *fromSpot, Node *toSpot, unsigned mask, float range);
 void fn_801B4094(char *path, const char *ext);
 void *fn_801A8368(const char *path, const char *mode, int flags);
 void fn_801A953C(void *file);
@@ -206,6 +210,29 @@ void fn_8009B994(void *volume, int on)
     }
 }
 
-// 4-byte pad to the section alignment; fn_8009BB7C reads it
-extern const float lbl_8048AA34 __attribute__((section(".rodata"))) = 0.3f;
+// Route query between two points: snap each end to the nearest spot (within 20, the far end first), then search between them
+int fn_8009BB7C(register void *path, Vector *from, Vector *to, Sector *fromWorld, Sector *toWorld, unsigned mask, float range)
+{
+    if (!fromWorld)
+        fromWorld = fn_8004DD38((Level *)fn_80430050(lbl_8052F060), from);
+    if (!toWorld)
+        toWorld = fn_8004DD38((Level *)fn_80430050(lbl_8052F060), to);
+    Vector a, b;
+    Node *toSpot;
+    Node *fromSpot;
+    fn_8042DC84(&a, from);
+    fn_8042FB28(&a)[2] += 0.3f;
+    fn_8042DC84(&b, to);
+    fn_8042FB28(&b)[2] += 0.3f;
+    toSpot = fn_8009C55C(&b, toWorld, mask | 0x40000000, 20.0f, 0, 0, -1);
+    if (!toSpot)
+        return 0;
+    fromSpot = fn_8009C55C(&a, fromWorld, mask & 0x80000000, 20.0f, 0, 0, fn_80444710(toSpot));
+    if (!fromSpot)
+        return 0;
+    return fn_8009C004(path, from, to, fromSpot, toSpot, mask, range);
+}
+
+// 4-byte pad to the section alignment; fn_8009BD7C reads it
+extern const float lbl_8048AA3C __attribute__((section(".rodata"))) = 0.3f;
 }

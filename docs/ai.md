@@ -225,11 +225,8 @@ Signatures below are as the matched AI callers declare them.
 | Function | Called by | Role (guess) |
 |---|---|---|
 | `fn_8009C55C(pos, world, mask, radius, test, ctx, n)` | the route length `fn_8014C0B8`, teleport (`fn_80134D64`, `fn_80135668`), `EVADE`, `fn_801504BC`, and the two route queries | Nearest spot to a point within `radius` that passes `test` (the teleport passes `fn_80134940` and the volume registry); `mask` from `fn_801370B0` |
-| `fn_8009BB7C(path, from, to, fromWorld, toWorld, mask, range)` | path builds `fn_8014BC7C`, `fn_8014BE08`, rebuild `fn_8014C31C` | Route query between two points into a path (section 4.6) |
 | `fn_8009BD7C(path, fromSpot, to, toWorld, mask, range)` | path rebuild `fn_8014C31C` | Route query from a spot |
 | `fn_8009C004(query, from, to, fromSpot, toSpot, mask, range)` | the two route queries, the route length `fn_8014C0B8` | Spot-to-spot search; fills a 0x58-byte query (`Query` in `Game/fn_8014BC7C.cpp`, route length `+0x48`) and reads `fn_80132DC4` (section 4.6, `+0x4C`) |
-| `fn_8009B994(volume, on)` | damage-volume add (0) and remove (1), `fn_801477B0` / `fn_80147884` | Sets (`on` 0) or clears the disabled flag of every link with an end inside the volume or crossing it (`fn_801464E4`, `fn_80146918`; `fn_80444638`) |
-| `fn_8009B83C(ent, on)` | script code `fn_80081208` | Sets (`on` 0) or clears the disabled bit of every node inside an entity's hull |
 
 ---
 
