@@ -160,6 +160,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   `-O0`, so GCC 2.95 honours the `register` keyword there and only there: `register` gives the local a
   pseudo that register allocation puts in a call-saved register, while a plain local always gets a
   frame slot. Add `register` to the local (`Game/fn_80114420.cpp`, the actor in the player loop).
+  If your `register` locals are already right but a later value reuses the register of one declared
+  in a closed `{ }` block, move that declaration to function scope so its register stays reserved
+  (`Game/fn_80152AE8.cpp`, `fn_801567F0`).
 
 - **Two register copies before a byte store (`mr r0, r4` / `mr r11, r0` / `stb r11`) mean the
   parameter is `int` and the field `char`.** The second copy is the QImode conversion; an `int` field

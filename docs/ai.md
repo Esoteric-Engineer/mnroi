@@ -165,7 +165,7 @@ Task names, from the `char *` table `lbl_804CFB58[id]` (`TASK_` prefix dropped):
 
 Base task layout (0x28 bytes, `fn_8015294C`): `AIObject *` `+0x0`, its brain (`AIObject+0x204`) `+0x4`, saved target handle `+0x8` (`fn_80152A10` copies the AI's target in when the task becomes the top; `fn_80152A78` writes it back to the `+0xD0` record when the task is covered or popped), name `+0xC`, `BitSet` `+0x10` (the AI's state bits `+0x500`, saved by `fn_80463B20` and restored by `fn_80463B60`), id `+0x18` (`fn_804423E8`), done flag `+0x1C` (`fn_804643C8`), `int` `+0x20` (`fn_80442414` writes, `fn_804643F0` reads: SEARCH sets it on a MELEE it starts under state bit 0x2E, and MELEE update clears it and reweighs its choices), both zeroed, vtable `+0x24`.
 
-Task members the script API sets right after starting a task: RANGEDONLY `+0x28` (`int`, then it calls slot `+0x20`); GETANDTHROWAT and GOGETANDTHROWAT `+0x28` and `+0x2C` (script handles: the thing, the target); PLAYANIM `+0x28` (anim id) and `+0x2C`; HOVERANDFIRE `+0x28` (set to 1).
+RANGED's enter and exit clear its `int` `+0x28`. Task members the script API sets right after starting a task: RANGEDONLY `+0x28` (`int`, then it calls slot `+0x20`); GETANDTHROWAT and GOGETANDTHROWAT `+0x28` and `+0x2C` (script handles: the thing, the target); PLAYANIM `+0x28` (anim id) and `+0x2C`; HOVERANDFIRE `+0x28` (set to 1).
 
 Deleting a task is deferred: `fn_80463C24` queues up to 16 in `lbl_80571DB0` (count `lbl_8066BF80`), and `fn_80463C9C` deletes them all.
 
@@ -227,7 +227,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 9 | Shared helpers | 0x8015E2FC-0x80160428, unit `Game/fn_8015E2FC.cpp` | Done |
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
-| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x801567F0. Next is RANGED enter `fn_801567F0` (0x260), exit `fn_80156A50`, then update `fn_80156A88` (0x12D0). Both carry the function-end pair (MELEE update's `switch` clears the flag), so they need no setter. The unit's `.rodata` claim ends at 0x8049B8C8 |
+| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x80156A88. Next is RANGED update `fn_80156A88` (0x12D0), which carries the function-end pair, so it needs no setter. Its pool is probably 0x8049B8E0-0x8049B904; the unit's `.rodata` claim ends at 0x8049B8E0 |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | 41 unclaimed handler functions (0xC52C bytes), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D`. `APPROACH` (`fn_801399CC`, 0x1728) is the largest |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.

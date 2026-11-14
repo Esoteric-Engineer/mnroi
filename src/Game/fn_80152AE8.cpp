@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B8C8.
+// Owns .rodata 0x8049B838-0x8049B8E0.
 
 struct Ent {
     int pad;
@@ -923,5 +923,53 @@ extern "C" int fn_801549D0(register Self *self)
         }
     } else {
     }
+    return 1;
+}
+
+struct RangedTask : Self {
+    char pad8[0x20];
+    int f28; // +0x28, set by the script API for RANGEDONLY
+};
+
+// RANGED enter
+extern "C" int fn_801567F0(register RangedTask *self)
+{
+    register float d;
+    register PEnt *e;
+    self->f28 = 0;
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    if (fn_80461F68(self->ai) > 0.0f)
+        fn_8046412C(self->ai, 0);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 5);
+    fn_80442174(self->ai, 1);
+    fn_80442130(self->ai, 2);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 9);
+    fn_80442174(self->ai, 8);
+    fn_8046412C(self->ai, 6);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    if (fn_801368B8(self->ai)) {
+        d = fn_8015E64C(self->ai);
+        e = fn_80442080(self->ai);
+        if (d >= fn_800B1884(*e, 0xd4))
+            fn_80442130(self->ai, 0xe);
+    }
+    float t = fn_80461F68(self->ai) * 2000.0f + 1000.0f;
+    fn_801513D8(self->brain, (unsigned int)(fn_80464094(self->ai) * 1500.0f));
+    fn_80442130(self->ai, 0x15);
+    fn_80442130(self->ai, 0x16);
+    fn_80442130(self->ai, 0x17);
+    if (fn_80134870(self->ai))
+        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(fn_80134870(self->ai)), 1);
+    return 1;
+}
+
+// RANGED exit
+extern "C" int fn_80156A50(register RangedTask *self)
+{
+    self->f28 = 0;
     return 1;
 }
