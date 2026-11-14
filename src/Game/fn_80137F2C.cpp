@@ -1,5 +1,6 @@
 // AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), then the handlers. docs/ai.md rows 2 and 13.
-// .rodata 0x8049AB14-0x8049ADD4: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88, APPROACH_RANGED's from 0x8049AD94, TOO_CLOSE's from 0x8049AD9C, APPROACH's from 0x8049ADA4).
+// .rodata 0x8049AB10-0x8049AE08: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88, APPROACH_RANGED's from 0x8049AD94, TOO_CLOSE's from 0x8049AD9C, APPROACH's from 0x8049ADA4, PRONE's from 0x8049ADD4).
+__asm__(".section .rodata\n\t.globl lbl_8049AB10\nlbl_8049AB10:\n\t.4byte 0x6C696400\n\t.text"); // 8-aligns the claim: the tail of the "invalid" string ahead of it, which no code reads
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -124,10 +125,73 @@ struct Body : Base { // fn_80085954's result, vptr +0x3AC
     virtual int v42(); // +0x158
 };
 
+struct VEnt { // fn_80442080's result with its vptr, +0x198
+    char d[0x198];
+    virtual void v0();
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual void v6();
+    virtual void v7();
+    virtual void v8();
+    virtual void v9();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25();
+    virtual void v26();
+    virtual void v27();
+    virtual void v28();
+    virtual void v29();
+    virtual void v30();
+    virtual void v31();
+    virtual void v32();
+    virtual void v33();
+    virtual void v34();
+    virtual void v35();
+    virtual void v36();
+    virtual void v37();
+    virtual void v38();
+    virtual void v39();
+    virtual void v40();
+    virtual void v41();
+    virtual void v42();
+    virtual void v43();
+    virtual void v44();
+    virtual void v45();
+    virtual void v46();
+    virtual void v47();
+    virtual void v48();
+    virtual void v49();
+    virtual void v50();
+    virtual void v51();
+    virtual void v52();
+    virtual void v53();
+    virtual void v54();
+    virtual void v55();
+    virtual void v56();
+    virtual int v57(float f); // +0x1D0
+};
+
 extern AIBehavior lbl_80571814[];
 extern AIAction lbl_8056A7F0[];
 extern char lbl_805717F0[]; // pool of free Actions
 extern char lbl_80593BE8[];
+extern Vector lbl_80593E00;
 extern void *lbl_8066BF5C;
 extern void *lbl_8066D6DC; // the overlay text object (docs/versus.md section 6)
 
@@ -141,7 +205,7 @@ AIAction *fn_80139258(void *ai, AIBehavior *rec);
 AIAction *fn_801399CC(void *ai, AIBehavior *rec);
 AIAction *fn_80139284(void *ai, AIBehavior *rec);
 AIAction *fn_801397C8(void *ai, AIBehavior *rec);
-void fn_8013B0F4(void);
+AIAction *fn_8013B0F4(void *ai, AIBehavior *rec);
 void fn_8013BCE8(void);
 void fn_8013C1C8(void);
 void fn_8013C3A4(void);
@@ -300,6 +364,34 @@ int fn_801368B8(void *ai);
 int fn_80461C94(char *mover);
 int fn_800CCC28(Base &c);
 int fn_80462624(char *mover);
+int fn_8015F008(void *ai);
+int fn_80462880(void *ai);
+float fn_80462954(void *ai);
+float fn_80462980(void *ai);
+float fn_80462AB4(void *ai);
+float fn_804629AC(void *ai);
+float fn_804629D8(void *ai);
+float fn_80462AE0(void *ai);
+int fn_8015E97C(float f);
+void fn_80136214(void *ai, int a);
+Ent *fn_804626F0(void *ai);
+SCtl *fn_800B14A0S(Ent *e) __asm__("fn_800B14A0");
+int fn_8009B04C(Base &b);
+int fn_801603CC(void *ai, int axis);
+Vector *fn_800B17A8(Ent &e);
+void fn_8042D80C(Vector *dst, Vector *src);
+unsigned int fn_8015EA6C(int a, float *d);
+int fn_8008618C(void *e);
+float fn_80086730(void *e);
+int fn_800CD0EC(Base &c);
+int fn_800CD174(Base &c);
+int fn_800CD21C(Base &c);
+int fn_80462928(void *ai);
+void fn_804627AC(void *ai, int v);
+void fn_80462800(void *ai, int v);
+void fn_80462900(void *ai, int v);
+unsigned int fn_804627D4(void *ai);
+VEnt *fn_80442080V(void *ai) __asm__("fn_80442080");
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -985,3 +1077,172 @@ extern "C" AIAction *fn_801399CC(void *ai, AIBehavior *rec)
     }
     return 0;
 }
+
+// PRONE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013B0F4(void *ai, AIBehavior *rec)
+{
+    if (fn_800CCC28(*fn_8044203C(ai))) {
+        unsigned int dt = fn_8042EFF8(lbl_80593BE8) - fn_80462880(ai);
+        if ((float)dt <= fn_80462954(ai)) {
+            fn_8014B900(fn_804420AC(ai));
+            AIAction *h = fn_80138738(4, 250, 100);
+            if (h) {
+                Vector v;
+                fn_80447C38(&v);
+                fn_80138AE0(h, 0, &v, 1.0f);
+                fn_80136214(ai, 4);
+                fn_80136214(ai, 8);
+                fn_80136214(ai, 10);
+                return h;
+            }
+            return 0;
+        }
+        int targeted = fn_80134870(ai) && !fn_8015F008(ai);
+        int flag25 = fn_80461D48(ai, 0x25);
+        if (!targeted || !flag25) {
+            if (!fn_8015E97C(fn_80462980(ai) / 1000.0f) && (float)dt < fn_80462980(ai)) {
+                fn_8014B900(fn_804420AC(ai));
+                AIAction *h = fn_80138738(4, 250, 100);
+                if (h) {
+                    Vector v;
+                    fn_80447C38(&v);
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                    return h;
+                }
+                return 0;
+            }
+        }
+        float percent = fn_80462AB4(ai);
+        if (targeted) {
+        } else {
+            percent = 0.0f;
+        }
+        if (fn_80461D48(ai, 0x29)) {
+            percent = 0.0f;
+        }
+        if (!fn_80461D48(ai, 0x35)) {
+            percent = 0.0f;
+        }
+        int positive = percent > 0.0f;
+        int roll = fn_8015EC80(percent, 6.0f) || targeted;
+        if (positive && roll) {
+            AIAction *h = fn_80138738(4, 100, 100);
+            if (h) {
+                fn_80138A24(h, 2);
+                if (fn_801369B0(ai)) {
+                    fn_80138A24(h, 7);
+                }
+                fn_80462BB4(h, 5);
+                return h;
+            }
+        } else {
+            AIAction *h = fn_80138738(4, 100, 100);
+            if (h) {
+                fn_80138A24(h, 5);
+                return h;
+            }
+        }
+    } else {
+        if (fn_80442508(fn_80461DD4(ai), 9)) {
+            AIAction *h = fn_80138738(4, 1500, 0);
+            fn_80138A24(h, 5);
+            fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+            fn_80462BB4(h, 5);
+            return h;
+        }
+        if (fn_80442508(fn_80461DD4(ai), 4)) {
+            Ent *e = fn_804626F0(ai);
+            if (e && fn_800B0C58(e) && fn_8009B04C(*fn_800B14A0S(e)) == 0x2e) {
+                float axes[3] = {1.0f, 1.0f, 1.0f};
+                if (!fn_801603CC(ai, 0)) {
+                    axes[0] = 0.0f;
+                }
+                if (!fn_801603CC(ai, 2)) {
+                    axes[1] = 0.0f;
+                }
+                if (!fn_801603CC(ai, 3)) {
+                    axes[2] = 0.0f;
+                }
+                Vector dir;
+                fn_8042D80C(&dir, fn_800B1750(*fn_80442080(ai)));
+                unsigned int side = fn_8015EA6C(3, axes);
+                switch (side) {
+                case 0:
+                    fn_8042D80C(&dir, fn_800B17A8(*fn_80442080(ai)));
+                    break;
+                case 1:
+                    fn_8042DC84(&dir, fn_800B17A8(*fn_80442080(ai)));
+                    break;
+                case 2:
+                    fn_8042D80C(&dir, fn_800B1750(*fn_80442080(ai)));
+                    break;
+                }
+                AIAction *h = fn_80138738(4, 200, 0);
+                fn_80138A24(h, 0xc);
+                fn_80138AE0(h, 0, &dir, 1.0f);
+                fn_80462BB4(h, 5);
+                return h;
+            }
+        }
+    }
+    if (fn_80085D3C(fn_80442080(ai)) && (fn_80461D48(ai, 0x1e) || fn_80461D48(ai, 0x1f))) {
+        if (fn_801369B0(ai) && fn_80461D48(ai, 0x1e) && fn_8015EC80(fn_804629AC(ai), 8.0f)) {
+            AIAction *h = fn_80138738(4, 500, 10);
+            if (h) {
+                fn_80138A24(h, 7);
+                fn_80138A24(h, 8);
+                fn_80138A24(h, 9);
+                return h;
+            }
+        } else if (fn_801369B0(ai) && fn_80461D48(ai, 0x1f) && fn_801369B0(ai) && fn_8008603C(fn_80442080(ai))) {
+            AIAction *h = fn_80138738(4, 3000, 10);
+            if (h) {
+                fn_80138A24(h, 7);
+                fn_80138A24(h, 8);
+                return h;
+            }
+        }
+    }
+    if (fn_8008618C(fn_80442080(ai)) && fn_80086730(fn_80442080(ai)) < fn_800B1884(*fn_80442080(ai), 0xde)) {
+    } else if (fn_800CD0EC(*fn_8044203C(ai)) && !fn_800861EC(fn_80442080(ai)) && !fn_8015F384(ai)) {
+        if (!fn_80462928(ai)) {
+            fn_804627AC(ai, 200);
+            if (fn_800CD174(*fn_8044203C(ai))) {
+                fn_804627AC(ai, 400);
+            }
+            fn_80462800(ai, 0);
+            fn_80462900(ai, 1);
+        } else if (fn_804627D4(ai) < 50 && fn_8015EC80(fn_80462AE0(ai), 35.0f)) {
+            fn_80136214(ai, 7);
+            AIAction *h = fn_80138738(0x11, 0x23, 1);
+            fn_80138A24(h, 0x12);
+            return h;
+        }
+    } else {
+        fn_80462900(ai, 0);
+    }
+    if (fn_800CD21C(*fn_8044203C(ai))) {
+        int go = 0;
+        if (fn_80442080V(ai)->v57(0.15f)) {
+            if (fn_801369B0(ai) && fn_8015EC80(fn_804629AC(ai), 8.0f)) {
+                go = 1;
+            }
+        } else if (fn_801369B0(ai) && fn_8015EC80(fn_804629D8(ai), 8.0f)) {
+            go = 1;
+        }
+        if (fn_804628AC(ai) || fn_80461D48(ai, 0x3c)) {
+            go = 1;
+        }
+        if (go) {
+            AIAction *h = fn_80138738(4, 500, 0);
+            if (h) {
+                fn_80138A24(h, 7);
+                fn_80138A24(h, 8);
+                fn_80138A24(h, 9);
+                return h;
+            }
+        }
+    }
+    return 0;
+}
+__asm__(".section .rodata\n\t.globl lbl_8049AE04\nlbl_8049AE04:\n\t.float 0.0\n\t.text"); // pads the claim to 8: MOVE_TO_WAYPOINT's first literal, until fn_8013BCE8 is matched
