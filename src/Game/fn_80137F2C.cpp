@@ -262,7 +262,7 @@ AIAction *fn_8013F8D0(void *ai, AIBehavior *rec);
 AIAction *fn_8013F9F0(void *ai, AIBehavior *rec);
 AIAction *fn_801409D0(void *ai, AIBehavior *rec);
 AIAction *fn_80140C10(void *ai, AIBehavior *rec);
-void fn_80140E64(void);
+AIAction *fn_80140E64(void *ai, AIBehavior *rec);
 void fn_80141394(void);
 void fn_801414C8(void);
 void fn_80141D78(void);
@@ -427,6 +427,10 @@ int fn_8008618C(void *e);
 float fn_80086730(void *e);
 int fn_800CD0EC(Base &c);
 void *fn_800ACFA8(int handle);
+int fn_800860FC(void *e);
+Ent *fn_80462530(void *brain);
+int fn_8008615C(void *e);
+float fn_80461F94(void *ai);
 int fn_800CD174(Base &c);
 int fn_800CD21C(Base &c);
 int fn_80462928(void *ai);
@@ -2316,6 +2320,65 @@ extern "C" AIAction *fn_80140C10(void *ai, AIBehavior *rec)
                             fn_80138A24(h, 0x14);
                         }
                     }
+                }
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// PICKUP (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80140E64(void *ai, AIBehavior *rec)
+{
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    float dist = fn_804290F8(fn_800B1724(*fn_80442080(ai)), fn_800B1724(*t));
+    if ((fn_800860FC(fn_80442080(ai)) && !fn_80461D48(ai, 0x3c) && dist < 10.0f) || dist < 3.0f) {
+        AIAction *h = fn_80138738(0x13, 50, 500);
+        if (h) {
+            Vector d;
+            fn_8042DC84(&d, fn_800B1724(*t));
+            fn_8042D8A8(&d, fn_800B1724(*fn_80442080(ai)));
+            d.z = 0.0f;
+            float len = fn_8042EC54(&d);
+            if (len > 1.0f) {
+                fn_80138AE0(h, 0, &d, 0.25f);
+            }
+            int both = 0;
+            Ent *o = fn_80462530(fn_804420D8(ai));
+            if (o && o != t) {
+                Vector a, b;
+                float da = fn_8015F538(ai, fn_800B1724(*o), &a);
+                float db = fn_8015F538(ai, fn_800B1724(*t), &b);
+                int ahead = fn_8042EBF4(&a, &b) > 0.25f;
+                int near = da > 2.0f && db > 0.1f && db < 2.0f;
+                if (ahead && near) {
+                    both = 1;
+                }
+            }
+            if (o && fn_8008615C(fn_80442080(ai)) && fn_800CC6DC(*fn_8044203C(ai)) == 0x22) {
+                Vector b, a;
+                float db, da;
+                db = fn_8015F538(ai, fn_800B1724(*t), &b);
+                da = fn_8015F538(ai, fn_800B1724(*o), &a);
+                if (db < da && db < fn_800B1884(*fn_80442080(ai), 0xd3) && fn_8042EBF4(&b, &a) > 0.0f) {
+                    fn_80138A24(h, 2);
+                    fn_80138B7C(h, 0x13, 100, 100);
+                    return h;
+                }
+            }
+            if (both || fn_80461F94(ai) == 0.0f) {
+                fn_80138A24(h, 2);
+                fn_80138A24(h, 0x19);
+                fn_80138B7C(h, 0x12, 100, 100);
+            } else {
+                fn_80138A24(h, 4);
+                if (fn_800860FC(fn_80442080(ai)) &&
+                    fn_8015E580(fn_800B1724(*fn_80442080(ai)), fn_800B1724(*t)) > 2.5f) {
+                    fn_80138A24(h, 7);
                 }
             }
             return h;
