@@ -1,5 +1,5 @@
 // AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), then the handlers. docs/ai.md rows 2 and 13.
-// .rodata 0x8049AB14-0x8049AD94: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88).
+// .rodata 0x8049AB14-0x8049AD9C: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88, APPROACH_RANGED's from 0x8049AD94).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -65,6 +65,59 @@ struct Ent {
 
 struct PEnt : Ent { // matching_notes 50
     int x;
+    char pad8[0x300];
+    unsigned int f308; // +0x308
+};
+
+struct Base {
+    int pad;
+};
+
+struct Body : Base { // fn_80085954's result, vptr +0x3AC
+    char d[0x3A8];
+    virtual void v0();
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual void v6();
+    virtual void v7();
+    virtual void v8();
+    virtual void v9();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25();
+    virtual void v26();
+    virtual void v27();
+    virtual void v28();
+    virtual void v29();
+    virtual void v30();
+    virtual void v31();
+    virtual void v32();
+    virtual void v33();
+    virtual void v34();
+    virtual void v35();
+    virtual void v36();
+    virtual void v37();
+    virtual void v38();
+    virtual void v39();
+    virtual void v40();
+    virtual void v41();
+    virtual int v42(); // +0x158
 };
 
 extern AIBehavior lbl_80571814[];
@@ -82,7 +135,7 @@ AIAction *fn_80138E10(void *ai, AIBehavior *rec);
 AIAction *fn_8013922C(void *ai, AIBehavior *rec);
 AIAction *fn_80139258(void *ai, AIBehavior *rec);
 void fn_801399CC(void);
-void fn_80139284(void);
+AIAction *fn_80139284(void *ai, AIBehavior *rec);
 void fn_801397C8(void);
 void fn_8013B0F4(void);
 void fn_8013BCE8(void);
@@ -172,6 +225,19 @@ int fn_804421B8(void *ai, int bit);
 int fn_804628AC(void *ai);
 void *fn_80461DD4(void *ai);
 void fn_80442174(void *ai, int bit);
+int fn_80461D48(void *ai, int bit);
+int fn_80133208(void *e);
+char *fn_804420AC(void *ai);
+int fn_80461BA0(void *p);
+int fn_80461BCC(void *p);
+Vector *fn_804625CC(void *p);
+Vector *fn_804625F8(void *p);
+float fn_8015E580(Vector *a, Vector *b);
+float fn_800B1884(Ent &e, int id);
+int fn_800861EC(void *e);
+Body *fn_80085954(void *p);
+int fn_800CCBD8(Base &b);
+void fn_80433FFC(Vector *v);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -492,5 +558,81 @@ extern "C" AIAction *fn_8013922C(void *ai, AIBehavior *rec)
 
 extern "C" AIAction *fn_80139258(void *ai, AIBehavior *rec)
 {
+    return 0;
+}
+
+// APPROACH_RANGED (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80139284(void *ai, AIBehavior *rec)
+{
+    if (fn_80461D48(ai, 2)) {
+        Ent *t = fn_80134870(ai);
+        if (!t) {
+            return 0;
+        }
+        if (!fn_80133208(fn_80442080(ai))) {
+            return 0;
+        }
+        Vector *me = fn_800B1724(*fn_80442080(ai));
+        Vector goal;
+        int found = 0;
+        fn_8042DC84(&goal, me);
+        if (fn_80461BA0(fn_804420AC(ai))) {
+            fn_8042DC84(&goal, fn_804625CC(fn_804420AC(ai)));
+            found = 1;
+        }
+        if (!found && fn_80461BCC(fn_804420AC(ai))) {
+            fn_8042DC84(&goal, fn_804625F8(fn_804420AC(ai)));
+            found = 1;
+        }
+        if (!found && fn_80134870(ai)) {
+            fn_8042DC84(&goal, fn_800B1724(*fn_80134870(ai)));
+            found = 1;
+        }
+        float toGoal = fn_8015E580(me, &goal);
+        float toTarget = fn_8015E580(me, fn_800B1724(*t));
+        float far = fn_800B1884(*fn_80442080(ai), 0xd4);
+        float near = fn_800B1884(*fn_80442080(ai), 0xd3);
+        if (fn_800861EC(fn_80442080(ai)) && fn_800B0C58(t)) {
+            if (!fn_80085954(fn_800B14A0(t))->v42() && !fn_800CCBD8(*fn_80085954(fn_800B14A0(t)))) {
+            } else {
+                toTarget = near + 1.0f;
+            }
+        }
+        if (fn_80442080(ai)->f308 & 0x4000) {
+            far = near;
+        }
+        if (toGoal > far) {
+            AIAction *h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector v;
+                fn_8042DC84(&v, fn_800B1724(*t));
+                fn_8042D8A8(&v, fn_800B1724(*fn_80442080(ai)));
+                v.z = 0.0f;
+                fn_8042F76C(&v);
+                float f = 1.0f;
+                fn_80138AE0(h, 0, &v, f);
+                return h;
+            }
+        } else if (toTarget < near) {
+            if (fn_80461D48(ai, 0x34)) {
+                return 0;
+            }
+            if (!fn_80461D48(ai, 4) && fn_80461D48(ai, 0x2b)) {
+                return 0;
+            }
+            AIAction *h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector v;
+                fn_8042DC84(&v, fn_800B1724(*t));
+                fn_8042D8A8(&v, fn_800B1724(*fn_80442080(ai)));
+                v.z = 0.0f;
+                fn_8042F76C(&v);
+                fn_80433FFC(&v);
+                float f = 1.0f;
+                fn_80138AE0(h, 0, &v, f);
+                return h;
+            }
+        }
+    }
     return 0;
 }
