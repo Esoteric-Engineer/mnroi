@@ -2330,4 +2330,95 @@ extern "C" int fn_8015C1AC(register PlayAnim *self)
     return 1;
 }
 
-extern "C" const float lbl_8049B9AC __attribute__((section(".rodata"))) = 1.0f; // .rodata pad to 8; RANGEDONLY update fn_8015C560 reads it
+struct RangedOnly : Self {
+    char pad8[0x20];
+    int target; // +0x28, script handle of the target; 0 shoots at the current enemy
+};
+
+extern "C" {
+void *fn_80151C8C(void *brain);
+void fn_8044243C(void *set, int v);
+void fn_804424A0(void *set, int v);
+void fn_800CD6C4(Ctl &c, int on);
+void fn_800BD3A8(void *ctl, int v);
+void fn_80429038V(Vector *out, Vec *a, Vector *b) __asm__("fn_80429038");
+float fn_800B2670(Ent &e);
+}
+
+// RANGEDONLY enter
+extern "C" int fn_8015C39C(register RangedOnly *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    fn_8046412C(self->ai, 0);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 5);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 9);
+    fn_80442130(self->ai, 4);
+    if (self->target) {
+        Ent *t = fn_800ACFA8(self->target);
+        fn_801501AC(fn_804420D8(self->ai), t);
+    } else {
+        fn_8014F7B0(fn_804420D8(self->ai), 1);
+    }
+    fn_804618B0(fn_80151C8C(self->brain));
+    fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xb8));
+    fn_8044243C(fn_80151C8C(self->brain), 1);
+    fn_800CD6C4(*fn_8044203C(self->ai), 1);
+    return 1;
+}
+
+// RANGEDONLY exit
+extern "C" int fn_8015C508(register RangedOnly *self)
+{
+    fn_800CD6C4(*fn_8044203C(self->ai), 0);
+    return 1;
+}
+
+// RANGEDONLY update: alternates two brain phases, firing (bit 9) only while the line of fire is clear.
+extern "C" int fn_8015C560(register RangedOnly *self)
+{
+    if (!fn_80151B90(self->brain, self))
+        return 0;
+    Ent *t = 0;
+    if (self->target) {
+        t = fn_800ACFA8(self->target);
+        if (!t)
+            self->target = 0;
+    } else {
+        t = fn_80134870(self->ai);
+        if (!t)
+            fn_8014F7B0(fn_804420D8(self->ai), 1);
+    }
+    if (fn_80442508(fn_80151C8C(self->brain), 1)) {
+        if (!fn_80151430(self->brain)) {
+            fn_80442174(self->ai, 9);
+            fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xb9));
+            fn_804424A0(fn_80151C8C(self->brain), 1);
+            fn_8044243C(fn_80151C8C(self->brain), 0);
+            fn_800BD3A8(fn_8044203C(self->ai), fn_800B18EC(*fn_80442080(self->ai), 0xb9));
+        }
+    } else if (fn_80442508(fn_80151C8C(self->brain), 0)) {
+        if (!fn_80151430(self->brain)) {
+            if (t) {
+                Vector from;
+                Vector dir;
+                fn_8042DC84(&from, fn_800B1724(*fn_80442080(self->ai)));
+                from.z += 1.0f;
+                fn_80429038V(&dir, fn_800B1724(*t), &from);
+                float len = fn_8042EC54(&dir);
+                len -= fn_800B2670(*t);
+                if (!fn_8004A9CCV(&from, &dir, len, 0x8000, 0, fn_800B24AC(*fn_80442080(self->ai)),
+                                  fn_800B1CC8(*fn_80442080(self->ai)), 0, 3))
+                    fn_80442130(self->ai, 9);
+                else
+                    fn_80442174(self->ai, 9);
+            }
+            fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xb8));
+            fn_8044243C(fn_80151C8C(self->brain), 1);
+        }
+    } else {
+    }
+    return 1;
+}
