@@ -231,6 +231,7 @@ extern AIAction lbl_8056A7F0[];
 extern char lbl_805717F0[]; // pool of free Actions
 extern char lbl_80593BE8[];
 extern Vector lbl_80593E00;
+extern Vector lbl_80593DD0;
 extern void *lbl_8066BF5C;
 extern float lbl_8066BF60;
 extern void *lbl_8066D6DC; // the overlay text object (docs/versus.md section 6)
@@ -256,7 +257,7 @@ AIAction *fn_8013E0C4(void *ai, AIBehavior *rec);
 AIAction *fn_8013E99C(void *ai, AIBehavior *rec);
 AIAction *fn_8013F08C(void *ai, AIBehavior *rec);
 AIAction *fn_8013F438(void *ai, AIBehavior *rec);
-void fn_8013F8D0(void);
+AIAction *fn_8013F8D0(void *ai, AIBehavior *rec);
 void fn_8013F9F0(void);
 void fn_801409D0(void);
 void fn_80140C10(void);
@@ -2125,3 +2126,25 @@ extern "C" AIAction *fn_8013F438(void *ai, AIBehavior *rec)
     }
     return 0;
 }
+
+// SUSPENDED (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013F8D0(void *ai, AIBehavior *rec)
+{
+    if (fn_80461D48(ai, 0x32)) {
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            if (fn_800B1724(*fn_80442080(ai))->z < fn_8014B824(fn_804420AC(ai)) - 1.0f) {
+                Vector v;
+                fn_8042DC84(&v, &lbl_80593DD0);
+                fn_80138AE0(h, 0, &v, 1.0f);
+            } else {
+                fn_80138A24(h, 5);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// 8-aligns the .rodata claim: fn_8013F9F0's first literal; drop it when that handler joins the unit.
+extern "C" const float lbl_8049AEDC __attribute__((section(".rodata"))) = 1.0f;
