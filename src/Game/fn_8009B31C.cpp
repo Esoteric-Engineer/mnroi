@@ -651,3 +651,18 @@ void fn_8009D024(register Node *node)
     lbl_8066B98C++;
 }
 }
+
+// Takes a node out of the open list.
+void fn_8009D0F4(register Node *node)
+{
+    if (node->prev)
+        node->prev->next = node->next;
+    if (node->next)
+        node->next->prev = node->prev;
+    if (node == lbl_8066B988)
+        lbl_8066B988 = node->next;
+    node->prev = 0;
+    node->next = 0;
+    node->flags &= ~1;
+    lbl_8066B98C--;
+}
