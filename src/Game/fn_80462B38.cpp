@@ -26,74 +26,74 @@ void AI_SetMoverMoveDest(void *p, void *v);
 int fn_80442508(void *set, int bit);
 }
 
-// AIAction (Game/fn_80137F2C.cpp), 0x70 bytes
+// AIAction (docs/ai.md section 3, Behaviors), 0x70 bytes
 struct AIAction
 {
     int i0; // +0x0
-    char pad4[0x4];
-    int i8; // +0x8
+    int behavior; // +0x4
+    int controlCount; // +0x8
     char padC[0x20];
-    int kind; // +0x2C
-    Vector pos; // +0x30
-    float f; // +0x40
-    int i44; // +0x44
-    int i48; // +0x48
-    int i4C; // +0x4C
-    int i50; // +0x50
-    int i54; // +0x54
-    int i58; // +0x58
-    float f5C; // +0x5C
-    int i60; // +0x60
+    int moveKind; // +0x2C
+    Vector move; // +0x30
+    float speed; // +0x40
+    int active; // +0x44
+    int duration; // +0x48
+    int start; // +0x4C
+    int end; // +0x50
+    int cooldown; // +0x54
+    int priority; // +0x58
+    float weight; // +0x5C
+    int next; // +0x60
 };
 
-extern "C" void fn_80462B38(register AIAction *self)
+extern "C" void AI_ResetAction(register AIAction *self)
 {
-    self->i8 = 0;
-    self->kind = -1;
-    self->i60 = 0;
+    self->controlCount = 0;
+    self->moveKind = -1;
+    self->next = 0;
     self->i0 = -1;
-    self->i58 = 2;
-    self->f5C = 1.0f;
-    self->i48 = 0;
-    self->i4C = 0;
-    self->i54 = 0;
-    self->i50 = 0;
-    self->i44 = 1;
+    self->priority = 2;
+    self->weight = 1.0f;
+    self->duration = 0;
+    self->start = 0;
+    self->cooldown = 0;
+    self->end = 0;
+    self->active = 1;
 }
 
-extern "C" void fn_80462BB4(register AIAction *self, register int v)
+extern "C" void AI_SetActionPriority(register AIAction *self, register int v)
 {
-    self->i58 = v;
+    self->priority = v;
 }
 
-extern "C" void fn_80462BDC(register AIAction *self, register float v)
+extern "C" void AI_SetActionWeight(register AIAction *self, register float v)
 {
-    self->f5C = v;
+    self->weight = v;
 }
 
-extern "C" Vector *fn_80462C04(register AIAction *self)
+extern "C" Vector *AI_GetActionMove(register AIAction *self)
 {
-    return &self->pos;
+    return &self->move;
 }
 
-extern "C" void fn_80462C30(register AIAction *self, register int v)
+extern "C" void AI_SetActionDuration(register AIAction *self, register int v)
 {
-    self->i48 = v;
+    self->duration = v;
 }
 
-extern "C" void fn_80462C58(register AIAction *self, register int v)
+extern "C" void AI_SetActionStart(register AIAction *self, register int v)
 {
-    self->i4C = v;
+    self->start = v;
 }
 
-extern "C" void fn_80462C80(register AIAction *self, register int v)
+extern "C" void AI_SetActionBehavior(register AIAction *self, register int v)
 {
-    *(int *)((char *)self + 0x4) = v;
+    self->behavior = v;
 }
 
-extern "C" void fn_80462CA8(register AIAction *self, register int v)
+extern "C" void AI_SetActionCooldown(register AIAction *self, register int v)
 {
-    self->i54 = v;
+    self->cooldown = v;
 }
 
 // lbl_80569890 (docs/ai.md row 10): count and entry of its lists at +0x28, +0x4C, +0x70, +0x94
@@ -372,14 +372,14 @@ extern "C" int AI_GetMoverAI(register int *self)
     return self[0];
 }
 
-extern "C" char *fn_804634F8(register char *self)
+extern "C" char *AI_GetActionQueue(register char *self)
 {
     return self + 0xAC;
 }
 
-extern "C" int fn_80463524(register char *self)
+extern "C" int AI_GetActionMoveKind(register AIAction *self)
 {
-    return *(int *)(self + 0x2C);
+    return self->moveKind;
 }
 
 extern "C" int fn_80463550(register char *self)
@@ -564,19 +564,19 @@ extern "C" void AI_RestoreTaskBehaviors(register AITask *self)
     AI_SetBehaviors(self->ai, &self->state);
 }
 
-extern "C" float fn_80463BA0(register AIAction *self)
+extern "C" float AI_GetActionSpeed(register AIAction *self)
 {
-    return self->f;
+    return self->speed;
 }
 
-extern "C" int fn_80463BCC(register AIAction *self)
+extern "C" int AI_GetActionPriority(register AIAction *self)
 {
-    return self->i58;
+    return self->priority;
 }
 
-extern "C" float fn_80463BF8(register AIAction *self)
+extern "C" float AI_GetActionWeight(register AIAction *self)
 {
-    return self->f5C;
+    return self->weight;
 }
 
 // Deletes a task, or defers its deletion while there is room in lbl_80571DB0

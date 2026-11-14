@@ -61,8 +61,8 @@ int fn_80461714(void *a, int b);
 int fn_8004A9CC(Vector *from, Vector *dir, float len, unsigned int mask, Placement *hit, int a, int b, int c, int d);
 int fn_801370B0(void *a);
 void *fn_8009C55C(void *a, int b, int c, float range, void *callback, void *user, int e);
-int fn_80463BCC(void *a);
-float fn_80463BF8(void *a);
+int AI_GetActionPriority(void *a);
+float AI_GetActionWeight(void *a);
 void Task_Base_Destroy(void *task, int flags);
 void fn_804617F0(void *timer);
 void fn_80461828(void *timer, int a);
@@ -163,14 +163,14 @@ extern "C" int fn_80150590(void *a, void *b)
         return 0;
     void *x = a;
     void *y = b;
-    if (fn_80463BCC(x) < fn_80463BCC(y)) {
+    if (AI_GetActionPriority(x) < AI_GetActionPriority(y)) {
         return 1;
-    } else if (fn_80463BCC(x) > fn_80463BCC(y)) {
+    } else if (AI_GetActionPriority(x) > AI_GetActionPriority(y)) {
         return -1;
     } else {
-        if (fn_80463BF8(x) < fn_80463BF8(y)) {
+        if (AI_GetActionWeight(x) < AI_GetActionWeight(y)) {
             return 1;
-        } else if (fn_80463BF8(x) > fn_80463BF8(y)) {
+        } else if (AI_GetActionWeight(x) > AI_GetActionWeight(y)) {
             return -1;
         }
         return 0;
@@ -641,18 +641,18 @@ extern "C" void fn_801515C4(register BrainSelf *self, AITask *t)
 __asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.text"); // 0x8049B580-0x8049B598, pool entries no function in the unit loads
 
 extern "C" {
-void *fn_804634F8(void *ai);
+void *AI_GetActionQueue(void *ai);
 void fn_801B6A98(void *list, void *compare);
 void fn_801B67D8(void *list, int a);
 int fn_801B6A44(void *list);
 struct Goal *fn_801B5D3C(void *list, int i);
-int fn_80462158(void *e);
-float fn_80463BA0(void *e);
-Vector *fn_80462C04(void *e);
-unsigned int fn_804620C8(void *e);
-int fn_804620F4(void *e, unsigned int i);
+int AI_IsActionActive(void *e);
+float AI_GetActionSpeed(void *e);
+Vector *AI_GetActionMove(void *e);
+unsigned int AI_GetActionControlCount(void *e);
+int AI_GetActionControl(void *e, unsigned int i);
 void AI_SetControllerAction(void *ai, int x);
-int fn_80463524(void *e);
+int AI_GetActionMoveKind(void *e);
 void fn_8042FE08(Vector *dst, Vector *src, float w);
 void fn_80447C38(Vector *v);
 void fn_80435530(Vector *v, float f);
@@ -663,7 +663,7 @@ void AI_FlushTaskDeletes(BrainSelf *self);
 
 extern "C" int fn_80151674(register BrainSelf *self)
 {
-    void *list = fn_804634F8(fn_80151BF8(self));
+    void *list = AI_GetActionQueue(fn_80151BF8(self));
     fn_801B6A98(list, (void *)fn_80150590);
     fn_801B67D8(list, 0);
     Vector v;
@@ -673,28 +673,28 @@ extern "C" int fn_80151674(register BrainSelf *self)
         void *e = fn_801B5D3C(list, i);
         if (!e)
             continue;
-        if (!fn_80462158(e)) {
-            if (fn_80463BCC(e) == 5) {
-                best = fn_80463BA0(e);
-                fn_8042DC84(&v, fn_80462C04(e));
+        if (!AI_IsActionActive(e)) {
+            if (AI_GetActionPriority(e) == 5) {
+                best = AI_GetActionSpeed(e);
+                fn_8042DC84(&v, AI_GetActionMove(e));
                 break;
             }
             continue;
         }
-        if (fn_80463BA0(e) > best)
-            best = fn_80463BA0(e);
-        if (fn_804620C8(e)) {
-            for (unsigned int j = 0; j < fn_804620C8(e); j++) {
-                int x = fn_804620F4(e, j);
+        if (AI_GetActionSpeed(e) > best)
+            best = AI_GetActionSpeed(e);
+        if (AI_GetActionControlCount(e)) {
+            for (unsigned int j = 0; j < AI_GetActionControlCount(e); j++) {
+                int x = AI_GetActionControl(e, j);
                 AI_SetControllerAction(fn_80151BF8(self), x);
             }
         }
-        if (!fn_80463524(e) || fn_80463524(e) == 7) {
-            float w = fn_80463BF8(e) + fn_80463BA0(e);
-            fn_8042FE08(&v, fn_80462C04(e), w);
+        if (!AI_GetActionMoveKind(e) || AI_GetActionMoveKind(e) == 7) {
+            float w = AI_GetActionWeight(e) + AI_GetActionSpeed(e);
+            fn_8042FE08(&v, AI_GetActionMove(e), w);
         }
-        if (fn_80463BCC(e) == 5) {
-            fn_8042DC84(&v, fn_80462C04(e));
+        if (AI_GetActionPriority(e) == 5) {
+            fn_8042DC84(&v, AI_GetActionMove(e));
             break;
         }
     }

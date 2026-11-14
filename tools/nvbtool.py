@@ -177,7 +177,7 @@ FIELD_NAMES = {
         195: "duration (ms is a guess) added to the game clock (fn_8042EFF8) to give the end time stored as a float at entity +0x334 (fn_8009E144)",
         196: "amount fn_80084A60 takes from the actor's float at +0x324 (it subtracts it if that float is not below it) when the move at clip 0x112 starts (fn_800D579C); in the ground state, with action 9 and fn_800860CC, fn_80084B68 passing on it lets fn_800D01A4 enter state 8 or fn_800D572C take over (fn_800C0F48)",
         199: "Task_Search_Update starts RANGED only when the ticks since RANGED last started (fn_801514C0) exceed it (guess: ranged cooldown)",
-        200: "third argument of fn_80138738(9, 200, value), the pooled request it fills (fn_80462CA8 stores it), for the effect fn_8013E99C sends toward a target with a clear path; the second argument is the literal 200",
+        200: "third argument of fn_80138738(9, 200, value), the pooled request it fills (AI_SetActionCooldown stores it), for the effect fn_8013E99C sends toward a target with a clear path; the second argument is the literal 200",
         201: "scale of the stick vector fn_800CC1D4 returns, times its length, in the velocity handed to fn_80065CB0 (fn_800D84BC)",
         202: "effect name made with fn_80393D0C (colour 0xFF, 0xFF) on every slot's actor in the round reset, handle not stored (fn_80092550); mpTeleport for all 18",
         203: "effect name made with fn_80393D0C (colour 0xFF, 0xFF) as the entity's first handle at +0x3A4 (fn_800E50AC); the values read as super-block effects",

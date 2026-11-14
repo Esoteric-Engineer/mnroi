@@ -446,24 +446,35 @@ extern "C" float fn_80461FC0(register AIObject *self)
     return self->weight[18];
 }
 
-struct Rec
+// A task or behavior record: its name at +0xC
+struct Named
 {
-    char pad[0x4];
-    int i4;       // +0x4
-    int i8;       // +0x8
-    int arr[14];  // +0xC
-    int i44;      // +0x44
-    int i48;      // +0x48
-    int i4C;      // +0x4C
-    int i50;      // +0x50
-    int i54;      // +0x54
-    char pad58[0x8];
-    int i60; // +0x60
+    char pad[0xC];
+    int name; // +0xC
 };
 
-extern "C" int fn_80461FEC(register Rec *self)
+// AIAction (docs/ai.md section 3, Behaviors)
+struct AIAction
 {
-    return self->arr[0];
+    char pad[0x4];
+    int behavior;     // +0x4
+    int controlCount; // +0x8
+    int controls[8];  // +0xC, controller actions
+    int moveKind;     // +0x2C
+    Vector move;      // +0x30
+    float speed;      // +0x40
+    int active;       // +0x44
+    int duration;     // +0x48
+    int start;        // +0x4C
+    int end;          // +0x50
+    int cooldown;     // +0x54
+    char pad58[0x8];
+    int next; // +0x60
+};
+
+extern "C" int fn_80461FEC(register Named *self)
+{
+    return self->name;
 }
 
 extern "C" void fn_80462018(register char *self, register int inChrg)
@@ -475,69 +486,69 @@ extern "C" void fn_80462018(register char *self, register int inChrg)
     }
 }
 
-extern "C" int fn_80462074(register Rec *self)
+extern "C" int AI_GetNextAction(register AIAction *self)
 {
-    return self->i60;
+    return self->next;
 }
 
-extern "C" void fn_804620A0(register Rec *self, register int v)
+extern "C" void AI_SetNextAction(register AIAction *self, register int v)
 {
-    self->i60 = v;
+    self->next = v;
 }
 
-extern "C" int fn_804620C8(register Rec *self)
+extern "C" int AI_GetActionControlCount(register AIAction *self)
 {
-    return self->i8;
+    return self->controlCount;
 }
 
-extern "C" int fn_804620F4(register Rec *self, register int i)
+extern "C" int AI_GetActionControl(register AIAction *self, register int i)
 {
-    return self->arr[i];
+    return self->controls[i];
 }
 
-extern "C" void fn_80462130(register Rec *self, register int v)
+extern "C" void AI_SetActionActive(register AIAction *self, register int v)
 {
-    self->i44 = v;
+    self->active = v;
 }
 
-extern "C" int fn_80462158(register Rec *self)
+extern "C" int AI_IsActionActive(register AIAction *self)
 {
-    return self->i44;
+    return self->active;
 }
 
-extern "C" int fn_80462184(register Rec *self)
+extern "C" int AI_GetActionDuration(register AIAction *self)
 {
-    return self->i48;
+    return self->duration;
 }
 
-extern "C" int fn_804621B0(register Rec *self)
+extern "C" int AI_GetActionStart(register AIAction *self)
 {
-    return self->i4C;
+    return self->start;
 }
 
-extern "C" int fn_804621DC(register Rec *self)
+extern "C" int AI_GetActionBehavior(register AIAction *self)
 {
-    return self->i4;
+    return self->behavior;
 }
 
-extern "C" int fn_80462208(register Rec *self)
+extern "C" int AI_GetActionCooldown(register AIAction *self)
 {
-    return self->i54;
+    return self->cooldown;
 }
 
-extern "C" int fn_80462234(register Rec *self)
+extern "C" int AI_GetActionEnd(register AIAction *self)
 {
-    return self->i50;
+    return self->end;
 }
 
-extern "C" void fn_80462260(register Rec *self, register int v)
+extern "C" void AI_SetActionEnd(register AIAction *self, register int v)
 {
-    self->i50 = v;
+    self->end = v;
 }
 
-extern "C" int fn_80462288(register Rec *self)
+extern "C" int fn_80462288(register Named *self)
 {
-    return self->arr[0];
+    return self->name;
 }
 
 extern "C" int fn_804622B4(register char *self)

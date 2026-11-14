@@ -108,7 +108,7 @@ void fn_80147C40(void *c, int a);
 void fn_80147B88(void *c, int a);
 void fn_80147CF8(void *c, int a);
 void fn_80147D68(void *c, int a);
-int fn_804621DC(void *e);
+int AI_GetActionBehavior(void *e);
 void *fn_80085980(void *actor);
 void AI_SetCondition(void *ai, int bit);
 void AI_ClearCondition(void *ai, int bit);
@@ -639,7 +639,7 @@ extern "C" int fn_80133A6C(void *a, void *b)
     void *x = a;
     void *y = b;
 
-    if (fn_804621DC(x) == fn_804621DC(y)) {
+    if (AI_GetActionBehavior(x) == AI_GetActionBehavior(y)) {
         return 1;
     } else {
         return 0;
@@ -1501,21 +1501,21 @@ extern "C" void fn_8013589C(register AIObject *self)
 struct AIAction; // 0x70-byte action record, docs/ai.md section 3 Behaviors
 
 extern "C" {
-void *fn_80462074(void *e);
-void fn_804620A0(void *e, int v);
+void *AI_GetNextAction(void *e);
+void AI_SetNextAction(void *e, int v);
 typedef int (*EventPred)(void *e, void *key);
 int fn_801B686C(void *list, void *key, EventPred pred);
 void fn_8013880C(void *e);
 void fn_801B6040(void *list, void *e);
 int fn_801B6A44(void *list);
 void *fn_801B5D3C(void *list, int i);
-int fn_80462158(AIAction *e);
-unsigned int fn_804621B0(AIAction *e);
-unsigned int fn_80462184(AIAction *e);
-void fn_80462130(AIAction *e, int v);
-void fn_80462260(AIAction *e, unsigned int now);
-unsigned int fn_80462234(AIAction *e);
-unsigned int fn_80462208(AIAction *e);
+int AI_IsActionActive(AIAction *e);
+unsigned int AI_GetActionStart(AIAction *e);
+unsigned int AI_GetActionDuration(AIAction *e);
+void AI_SetActionActive(AIAction *e, int v);
+void AI_SetActionEnd(AIAction *e, unsigned int now);
+unsigned int AI_GetActionEnd(AIAction *e);
+unsigned int AI_GetActionCooldown(AIAction *e);
 void fn_801B6130(void *list, int i);
 void fn_8013880CE(AIAction *e) __asm__("fn_8013880C");
 }
@@ -1528,9 +1528,9 @@ extern "C" void fn_80135D64(register AIObject *self, void *list)
     void *e = list;
     while (e) {
         void *cur = e;
-        e = fn_80462074(e);
-        fn_804620A0(cur, 0);
-        if (fn_804621DC(cur) != -1 && fn_801B686C(self->fAC, cur, 0) != -1) {
+        e = AI_GetNextAction(e);
+        AI_SetNextAction(cur, 0);
+        if (AI_GetActionBehavior(cur) != -1 && fn_801B686C(self->fAC, cur, 0) != -1) {
             fn_8013880C(cur);
         } else {
             fn_801B6040(self->fAC, cur);
@@ -1545,11 +1545,11 @@ extern "C" void fn_80135E48(register AIObject *self)
     for (i = fn_801B6A44(self->fAC) - 1; i >= 0; i--) {
         AIAction *e = (AIAction *)fn_801B5D3C(self->fAC, i);
         if (e) {
-            if (fn_80462158(e) && now - fn_804621B0(e) >= fn_80462184(e)) {
-                fn_80462130(e, 0);
-                fn_80462260(e, now);
+            if (AI_IsActionActive(e) && now - AI_GetActionStart(e) >= AI_GetActionDuration(e)) {
+                AI_SetActionActive(e, 0);
+                AI_SetActionEnd(e, now);
             }
-            if (!fn_80462158(e) && now - fn_80462234(e) >= fn_80462208(e)) {
+            if (!AI_IsActionActive(e) && now - AI_GetActionEnd(e) >= AI_GetActionCooldown(e)) {
                 fn_801B6130(self->fAC, i);
                 fn_8013880CE(e);
             }
@@ -1559,8 +1559,8 @@ extern "C" void fn_80135E48(register AIObject *self)
 
 extern "C" {
 void fn_801B60F4(void *list);
-unsigned int fn_804620C8(void *e);
-int fn_804620F4(void *e, unsigned int i);
+unsigned int AI_GetActionControlCount(void *e);
+int AI_GetActionControl(void *e, unsigned int i);
 }
 
 extern "C" void fn_80135F94(register AIObject *self)
@@ -1580,7 +1580,7 @@ extern "C" int fn_80136040(void *item, void *key)
 {
     int id = (int)key;
     void *e = item;
-    if (e && fn_804621DC(e) == id) {
+    if (e && AI_GetActionBehavior(e) == id) {
         return 1;
     }
     return 0;
@@ -1590,7 +1590,7 @@ extern "C" int fn_801360C0(void *item, void *key)
 {
     int id = (int)key;
     void *e = item;
-    if (e && fn_804621DC(e) != id) {
+    if (e && AI_GetActionBehavior(e) != id) {
         return 1;
     }
     return 0;
@@ -1600,10 +1600,10 @@ extern "C" int fn_80136140(void *item, void *key)
 {
     int id = (int)key;
     void *e = item;
-    if (e && fn_804620C8(e)) {
+    if (e && AI_GetActionControlCount(e)) {
         unsigned int i;
-        for (i = 0; i < fn_804620C8(e); i++) {
-            int v = fn_804620F4(e, i);
+        for (i = 0; i < AI_GetActionControlCount(e); i++) {
+            int v = AI_GetActionControl(e, i);
             if (v == id) {
                 return 1;
             }
@@ -2149,7 +2149,7 @@ extern "C" void fn_80137494(register AIObject *self, float x, float y)
         int j;
         for (j = 0; j < fn_801B6A44(self->fAC); j++) {
             AIAction *e = (AIAction *)fn_801B5D3C(self->fAC, j);
-            AIBehavior *def = &lbl_80571814[fn_804621DC(e)];
+            AIBehavior *def = &lbl_80571814[AI_GetActionBehavior(e)];
             const char *name = fn_80462288(def);
             if (!name) {
                 name = "BEHAVIOR_NONE";

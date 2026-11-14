@@ -471,10 +471,10 @@ extern "C" float fn_8014B824(register Mover *self)
 
 extern "C" {
 void fn_8014BA7C(Mover *self);
-void *fn_804634F8(void *ai);
+void *AI_GetActionQueue(void *ai);
 int fn_801B6A44(void *list);
 void *fn_801B5D3C(void *list, int i);
-int fn_80463524(int b);
+int AI_GetActionMoveKind(int b);
 void fn_80138AE0(int h, int a, Vector *v, float f);
 }
 
@@ -490,12 +490,12 @@ extern "C" void fn_8014B900(register Mover *self)
     int i;
     for (i = 0; i < 24; i++)
         fn_80447C38(&self->fF0[i]);
-    void *list = fn_804634F8(AI_GetMoverAI(self));
+    void *list = AI_GetActionQueue(AI_GetMoverAI(self));
     int n = fn_801B6A44(list);
     int j;
     for (j = 0; j < n; j++) {
         int b = (int)fn_801B5D3C(list, j);
-        if (!fn_80463524(b)) {
+        if (!AI_GetActionMoveKind(b)) {
             Vector v;
             fn_80447C38(&v);
             fn_80138AE0(b, 0, &v, 0.0f);
