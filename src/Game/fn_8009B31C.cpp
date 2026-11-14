@@ -182,6 +182,10 @@ void fn_8009CB38(Node *node, void *file, unsigned version);
 void fn_80428FA8(Vector *v, float x, float y, float z);
 void fn_8042FC74(Vector *v);
 void fn_8042F76C(Vector *v);
+void fn_8042F984(Vector *out, Vector *a, Vector *b);
+float fn_8042EBF4(Vector *a, Vector *b);
+Vector *fn_8044460C(Link *link);
+Vector *fn_80444A04(Link *link, int i);
 int fn_801464E4(void *volume, Vector *p);
 int fn_80146918(void *volume, Vector *from, Vector *to, Vector *hit);
 void fn_8009CDE4(Link *link, Level *lv, void *file);
@@ -687,4 +691,30 @@ void fn_8009D238(register Node *node)
 {
     fn_8009D0F4(node);
     fn_8009D024(node);
+}
+
+// Distance along a link from a spot to the closest point on it; the point goes to out.
+float fn_8009D278(register Node *a, register Link *b, register Vector *out)
+{
+    Vector v1;
+    float len;
+    Vector v2;
+    float dot;
+    float d;
+    float res;
+    float t;
+    fn_8042F984(&v1, fn_8044460C(b), &lbl_805528D0);
+    len = fn_8042EC54(&v1);
+    if (len < 0.001f) {
+        t = 0.0f;
+    } else {
+        fn_8042F984(&v2, &v1, &lbl_805528D0);
+        fn_8042F76C(&v2);
+        dot = fn_8042EBF4(fn_8044460C(b), &v2);
+        d = (fn_80444A04(b, 0)->x - lbl_805528E0.x) * v2.x + (fn_80444A04(b, 0)->y - lbl_805528E0.y) * v2.y + (fn_80444A04(b, 0)->z - lbl_805528E0.z) * v2.z;
+        t = -d / dot;
+    }
+    fn_80429090(out, fn_80444A04(b, 0), fn_8044460C(b), t);
+    res = fn_804290F8(out, &a->pos);
+    return res;
 }
