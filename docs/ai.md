@@ -214,7 +214,7 @@ The registering classes are named by the type-registry string (`fn_801BEE2C`): `
 
 ### 4.7 Path-node graph (0x8009B31C-0x8009D584)
 
-Unmatched. The graph of spots the paths are built on, loaded from a `.npd` file: its `.rodata` opens with `"npd"`, `"rb"`, `"Game:Pathing"` and `"PATH WARNING!  %d nodes have no sector.\n"`, and the loader is most likely `fn_8009B35C`, which level load (`Game/fn_8002CE78.cpp`) calls. One whole file:
+The graph of spots the paths are built on, loaded from a `.npd` file by `fn_8009B35C` (level load, `Game/fn_8002CE78.cpp`). The `Level`, node and link fields are in `Game/fn_8009B31C.cpp`. One whole file:
 
 - **`.text`** starts right after `Game/fn_80097750.cpp` and ends with `_GLOBAL_.I` `fn_8009D548` (in `.ctors`), which calls the static initializer `fn_8009D454(1, 0xFFFF)`.
 - **`.rodata`** runs from 0x8048A9D8 through the `"invalid"` at 0x8048AC7C (its own constants, then linkonce pool words and header strings). The bytes before it, 0x8048A828-0x8048A9D8, end the previous file the same way and are unclaimed.
@@ -230,7 +230,6 @@ Signatures below are as the matched AI callers declare them.
 | `fn_8009C004(query, from, to, fromSpot, toSpot, mask, range)` | the two route queries, the route length `fn_8014C0B8` | Spot-to-spot search; fills a 0x58-byte query (`Query` in `Game/fn_8014BC7C.cpp`, route length `+0x48`) and reads `fn_80132DC4` (section 4.6, `+0x4C`) |
 | `fn_8009B994(volume, on)` | damage-volume add (0) and remove (1), `fn_801477B0` / `fn_80147884` | Turns off and back on the graph inside a damage volume |
 | `fn_8009B83C` | script code `fn_80081208` | |
-| `fn_8009B31C` | `fn_800B3420` | |
 
 ---
 
