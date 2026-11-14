@@ -2506,4 +2506,30 @@ extern "C" int fn_8015CB34(register Self *self)
     return 1;
 }
 
+// FORCESUPERBLOCK enter
+extern "C" int fn_8015CD44(register Self *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    fn_8046412C(self->ai, 3);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 0x25);
+    return 1;
+}
+
+// FORCESUPERBLOCK exit
+extern "C" int fn_8015CDDC(register Self *self)
+{
+    fn_80442174(self->ai, 0x25);
+    fn_80136214(self->ai, 0x25);
+    return 1;
+}
+
+// FORCESUPERBLOCK update
+extern "C" int fn_8015CE34(register Self *self)
+{
+    return 1;
+}
+
 extern "C" const float lbl_8049B9B4 __attribute__((section(".rodata"))) = 0.25f; // pad: keeps .rodata 8-aligned; read by fn_8015D0A0
