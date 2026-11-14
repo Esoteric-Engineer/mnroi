@@ -1,4 +1,4 @@
-// Path-node graph: unload step, the .npd loader, the hull and damage-volume link switches and the point-to-point route query (docs/ai.md row 15, section 4.7).
+// Path-node graph: unload step, the .npd loader, the hull and damage-volume link switches and the route queries (docs/ai.md row 15, section 4.7).
 
 #define SWAP16(x) ((((x) & 0xFF) << 8) | ((unsigned short)(x) >> 8))
 
@@ -233,6 +233,21 @@ int fn_8009BB7C(register void *path, Vector *from, Vector *to, Sector *fromWorld
     return fn_8009C004(path, from, to, fromSpot, toSpot, mask, range);
 }
 
-// 4-byte pad to the section alignment; fn_8009BD7C reads it
-extern const float lbl_8048AA3C __attribute__((section(".rodata"))) = 0.3f;
+// Route query from a spot: snap the far end to the nearest spot (within 20, not the spot's own side), then search from the given spot
+int fn_8009BD7C(register void *path, Node *fromSpot, Vector *to, Sector *toWorld, unsigned mask, float range)
+{
+    if (!toWorld)
+        toWorld = fn_8004DD38((Level *)fn_80430050(lbl_8052F060), to);
+    Vector b;
+    Node *toSpot;
+    fn_8042DC84(&b, to);
+    fn_8042FB28(&b)[2] += 0.3f;
+    toSpot = fn_8009C55C(&b, toWorld, mask + 0x40000000, 20.0f, 0, 0, fn_80444710(fromSpot));
+    if (!toSpot)
+        return 0;
+    return fn_8009C004(path, fn_80444688(fromSpot), to, fromSpot, toSpot, mask, range);
+}
+
+// 4-byte pad to the section alignment; fn_8009BEC4 reads it
+extern const float lbl_8048AA44 __attribute__((section(".rodata"))) = 0.3f;
 }
