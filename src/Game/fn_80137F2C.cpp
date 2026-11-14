@@ -290,7 +290,7 @@ AIAction *fn_80142558(void *ai, AIBehavior *rec);
 AIAction *fn_80142B04(void *ai, AIBehavior *rec);
 AIAction *fn_801426A0(void *ai, AIBehavior *rec);
 AIAction *fn_80142F80(void *ai, AIBehavior *rec);
-void fn_801435F0(void);
+AIAction *fn_801435F0(void *ai, AIBehavior *rec);
 void fn_8014379C(void);
 void fn_80144038(void);
 void fn_80144544(void);
@@ -530,6 +530,7 @@ LvObj *fn_800B3A74(void *scene, int v, int a, int b);
 unsigned int fn_801370B0(void *ai);
 void *fn_8009C55C(Vector *pos, void *world, unsigned int mask, float r, void *test, void *b, int c);
 PEnt *fn_801500F0P(void *list, int i) __asm__("fn_801500F0");
+void fn_8015FD2C(void *ai, Vector *dir, float f, Vector *out);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -2938,5 +2939,35 @@ extern "C" AIAction *fn_80142F80(void *ai, AIBehavior *rec)
     return 0;
 }
 
-// The .rodata claim's 8-align pad, read by the unclaimed fn_801435F0: becomes that handler's literal once it is matched.
-extern "C" const float lbl_8049AF94 __attribute__((section(".rodata"))) = 0.08f;
+// TURN_TOWARDS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801435F0(void *ai, AIBehavior *rec)
+{
+    PEnt *p = fn_80442080(ai);
+    if (!p) {
+        return 0;
+    }
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    Vector d;
+    float turn = 0.08f;
+    fn_80429038(&d, fn_800B1724(*t), fn_800B1724(*p));
+    d.z = 0.0f;
+    fn_8042F76C(&d);
+    Vector look;
+    fn_8042DC84(&look, &d);
+    float dot = fn_8042EBF4(fn_800B1750(*fn_80442080(ai)), &d);
+    if (dot < 1.0f) {
+        fn_8015FD2C(ai, &d, 1000.0f, &look);
+    }
+    AIAction *h = fn_80138738(-1, 0, 0);
+    if (h) {
+        fn_80138AE0(h, 0, &look, turn);
+        return h;
+    }
+    return 0;
+}
+
+// The .rodata claim's 8-align pad, read by the unclaimed fn_8014379C: becomes that handler's literal once it is matched.
+extern "C" const float lbl_8049AFA4 __attribute__((section(".rodata"))) = 2.0f;
