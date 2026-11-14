@@ -126,7 +126,8 @@ Vector *fn_80444688(Node *node);
 int fn_8004D2D8(Vector *p, Vector *planes, int count);
 void fn_80444870(Node *node, int on);
 char *strncpy(char *dst, const char *src, unsigned n);
-void fn_8009CF44(void *graph);
+void fn_8009CF44(Level *graph);
+void fn_801ACC0C(void *p);
 float *fn_8042FB28(void *v);
 int fn_80444710(Node *node);
 Node *fn_8009C55C(Vector *pos, Sector *world, unsigned mask, float radius, SpotTest test, void *ctx, int region);
@@ -190,7 +191,7 @@ extern char lbl_80552920[];       // the GameFlow instance
 extern void *lbl_8066B56C;
 extern unsigned short lbl_8066B97C;
 
-int fn_8009B31C(void *graph)
+int fn_8009B31C(Level *graph)
 {
     fn_8009CF44(graph);
     return 1;
@@ -601,5 +602,20 @@ void fn_8009CDE4(register Link *link, Level *lv, void *file)
     fn_80429038(&link->dir, fn_80444688(fn_80444984(link, lv)), fn_80444688(fn_80444904(link, lv)));
     fn_8042F76C(&link->dir);
     link->pad20 = 0;
+}
+
+// Frees the node and link arrays.
+void fn_8009CF44(Level *graph)
+{
+    if (graph->nodes) {
+        fn_801ACC0C(graph->nodes);
+        graph->nodes = 0;
+    }
+    if (graph->links) {
+        fn_801ACC0C(graph->links);
+        graph->links = 0;
+    }
+    graph->nNodes = 0;
+    graph->nLinks = 0;
 }
 }
