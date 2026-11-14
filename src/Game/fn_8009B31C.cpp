@@ -20,7 +20,13 @@ public:
 
 struct Link
 {
-    char pad[0x30];
+    unsigned short from;  // +0x0 (node index)
+    unsigned short to;    // +0x2
+    unsigned short flags; // +0x4
+    char pad6[0xA];
+    Vector dir;           // +0x10 (from -> to, normalised)
+    int pad20;            // +0x20
+    char pad24[0xC];
 };
 
 struct Node
@@ -166,13 +172,14 @@ int fn_801A8B60(void *dst, int size, int count, void *file);
 void fn_801A875C(void *file);
 void *fn_801AC988(unsigned size, const char *tag, int line, int align);
 void SetLoadProgress__8GameFlowfi(void *self, float f, int a);
-Node *fn_80444904(Link *link, int i);
-Node *fn_80444984(Link *link, int i);
+Node *fn_80444904(Link *link, Level *lv);
+Node *fn_80444984(Link *link, Level *lv);
 void fn_80444638(Link *link, int off);
 void fn_8042DC84(Vector *dst, Vector *src);
 void fn_8009CB38(Node *node, void *file, unsigned version);
 void fn_80428FA8(Vector *v, float x, float y, float z);
 void fn_8042FC74(Vector *v);
+void fn_8042F76C(Vector *v);
 int fn_801464E4(void *volume, Vector *p);
 int fn_80146918(void *volume, Vector *from, Vector *to, Vector *hit);
 void fn_8009CDE4(Link *link, Level *lv, void *file);
@@ -580,5 +587,19 @@ void fn_8009CB38(register Node *node, void *file, unsigned version)
     fn_801A8B60(&node->firstLink, 2, 1, file);
     node->firstLink = SWAP16(node->firstLink);
     fn_801A8B60(&node->nLinks, 1, 1, file);
+}
+
+// Reads one link record of the .npd file and works out its direction.
+void fn_8009CDE4(register Link *link, Level *lv, void *file)
+{
+    fn_801A8B60(link, 2, 1, file);
+    link->from = SWAP16(link->from);
+    fn_801A8B60(&link->to, 2, 1, file);
+    link->to = SWAP16(link->to);
+    fn_801A8B60(&link->flags, 2, 1, file);
+    link->flags = SWAP16(link->flags);
+    fn_80429038(&link->dir, fn_80444688(fn_80444984(link, lv)), fn_80444688(fn_80444904(link, lv)));
+    fn_8042F76C(&link->dir);
+    link->pad20 = 0;
 }
 }
