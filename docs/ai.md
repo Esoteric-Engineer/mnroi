@@ -180,7 +180,7 @@ Volumes the scripts register by entity handle, through the manager wrappers `fn_
 | 2 `+0x4C` | `fn_80147B88` | 0x330 | `fn_801475D8`: a point inside any one's hull |
 | 3 `+0x70` | `fn_80147C40` | 0x330 | |
 | 4 `+0x94` | `fn_80147CF8` / `fn_80147D68` | bare handles | |
-| 5 `+0xB8` | `fn_8014601C` | path links that climb more than 1 | `fn_8014630C`, called by tasks `fn_801549D0` and `fn_8015C8BC` |
+| 5 `+0xB8` | `fn_8014601C` | path links that climb more than 1 | `fn_8014630C`, called by tasks `fn_801549D0` and CLIMBATTACK enter `fn_8015C8BC` |
 
 ### 4.6 Path (`Mover+0x20`)
 
@@ -227,7 +227,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 9 | Shared helpers | 0x8015E2FC-0x80160428, unit `Game/fn_8015E2FC.cpp` | Done |
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
-| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x8015C8BC. Next is the task with vtable `lbl_804F5E50` (name unconfirmed; text order isn't id order): enter `fn_8015C8BC` (0x1E4), exit `fn_8015CAA0`, update `fn_8015CB34`. `.rodata` (now to 0x8049B9B0) must stay 8-aligned or `main.dol` shifts ([`matching_notes.md`](matching_notes.md) 25); the enter's float `lbl_8049B9B0` leaves it at 0x8049B9B4, so define the next pool float as the pad until its reader is matched |
+| 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done to 0x8015CD44. Next is FORCESUPERBLOCK (0x16, vtable `lbl_804F5E18`; text order isn't id order): enter `fn_8015CD44` (0x98), exit `fn_8015CDDC`, update `fn_8015CE34`. `.rodata` (now to 0x8049B9B8) must stay 8-aligned or `main.dol` shifts ([`matching_notes.md`](matching_notes.md) 25): the unit defines `lbl_8049B9B4` (0.25) as a pad after its last function, so delete that definition when its reader `fn_8015D0A0` is matched |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | 41 unclaimed handler functions (0xC52C bytes), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D`. `APPROACH` (`fn_801399CC`, 0x1728) is the largest |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.

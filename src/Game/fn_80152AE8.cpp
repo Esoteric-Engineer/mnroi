@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B9B0.
+// Owns .rodata 0x8049B838-0x8049B9B8.
 
 struct Ent {
     int pad;
@@ -165,7 +165,7 @@ unsigned int fn_80148024(void *grp);
 int fn_8008612C(void *actor);
 int fn_8008603C(void *actor);
 void *fn_8013726C(void *ai);
-int fn_8014630C(void *p, Vec *pos);
+void *fn_8014630C(void *p, Vec *pos);
 int fn_800CCA08(Ctl &c);
 int fn_800CDA20(Ctl &c);
 int fn_800CD014(Ctl &c);
@@ -2422,3 +2422,88 @@ extern "C" int fn_8015C560(register RangedOnly *self)
     }
     return 1;
 }
+
+extern "C" {
+void *fn_80444904(void *link, int i);
+void *fn_80444984(void *link, int i);
+Vector *fn_80444688(void *spot);
+void fn_80428FE0(Vector *dst, Vector *a, Vector *b);
+void fn_80435530(Vector *v, float s);
+void fn_804640E8(void *ai, Vector *v);
+void fn_80135F94(void *ai);
+Vector *fn_80462854(void *ai);
+unsigned int fn_80151470(void *brain);
+}
+
+// CLIMBATTACK enter
+extern "C" int fn_8015C8BC(register Self *self)
+{
+    fn_8046412C(self->ai, 0);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 5);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    fn_80442130(self->ai, 0x15);
+    fn_80442130(self->ai, 0x16);
+    void *link = fn_8014630C(fn_8013726C(self->ai), fn_800B1724(*fn_80442080(self->ai)));
+    if (link) {
+        Vector mid;
+        fn_80428FE0(&mid, fn_80444688(fn_80444904(link, 0)), fn_80444688(fn_80444984(link, 0)));
+        fn_80435530(&mid, 0.5f);
+        fn_804640E8(self->ai, &mid);
+        fn_80442414((TaskBase *)self, 1);
+        fn_80442130(self->ai, 0x24);
+        fn_80461BF8(fn_804420AC(self->ai), &mid);
+        fn_80135F94(self->ai);
+    } else {
+        fn_804643C8(self, 1);
+    }
+    fn_801513D8(fn_80442104(self->ai), 3000);
+    return 1;
+}
+
+// CLIMBATTACK exit
+extern "C" int fn_8015CAA0(register Self *self)
+{
+    fn_80136214(self->ai, 0x24);
+    if (fn_80134870(self->ai))
+        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(fn_80134870(self->ai)), 1);
+    return 1;
+}
+
+// CLIMBATTACK update
+extern "C" int fn_8015CB34(register Self *self)
+{
+    if (!fn_80151B90(self->brain, self))
+        return 0;
+    fn_8014B518(fn_804420AC(self->ai), fn_80462854(self->ai), -1);
+    if (fn_804643F0(self) != 1)
+        fn_804643C8(self, 1);
+    if (!fn_80151430(self->brain)) {
+        fn_804643C8(self, 1);
+        return 0;
+    }
+    if (fn_80461D48(self->ai, 0x28)) {
+        fn_804643C8(self, 1);
+        return 0;
+    }
+    fn_80442174(self->ai, 7);
+    Ent *t = fn_80134870(self->ai);
+    if (!t)
+        fn_8014F7B0(fn_804420D8(self->ai), 3);
+    if (fn_800CCB38(*fn_8044203C(self->ai))) {
+        fn_8015105C(fn_80442104(self->ai), 0x12);
+        fn_804643C8(self, 1);
+    } else if (fn_800CC96C(*fn_8044203C(self->ai)) && fn_80151470(self->brain) > 2000) {
+        if (fn_8015EC1C(fn_80461F10(self->ai)))
+            fn_80442130(self->ai, 8);
+        if (fn_8015EC1C(fn_80461F68(self->ai)))
+            fn_80442130(self->ai, 9);
+    }
+    return 1;
+}
+
+extern "C" const float lbl_8049B9B4 __attribute__((section(".rodata"))) = 0.25f; // pad: keeps .rodata 8-aligned; read by fn_8015D0A0
