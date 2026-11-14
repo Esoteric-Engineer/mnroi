@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B900.
+// Owns .rodata 0x8049B838-0x8049B910.
 
 struct Ent {
     int pad;
@@ -1159,6 +1159,152 @@ extern "C" int fn_80156A88(register RangedTask *self)
             || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
             || fn_8015FFD4(self->ai))
             fn_80442130(self->ai, 7);
+    } else {
+    }
+    return 1;
+}
+
+extern "C" {
+int fn_80463F90(void *finder);
+Ent *fn_800ACFA8(int handle);
+void fn_801501AC(void *finder, Ent *actor);
+}
+
+// FINDTHROWABLE enter: done at once when the held actor is far enough from its throw target.
+extern "C" int fn_80157D58(register Self *self)
+{
+    register SCtl *c;
+    if (fn_80134870(self->ai) && fn_800B0C58(fn_80134870(self->ai))) {
+        c = fn_80085954(fn_800B14A0(*fn_80134870(self->ai)));
+        if (!fn_800CCF90(*c)) {
+            float d = fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)));
+            if (d > 3.0f) {
+                fn_804643C8(self, 1);
+                return 0;
+            }
+        }
+    }
+    fn_8046412C(self->ai, 1);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 5);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 1);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 0xf);
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 0x1d);
+    if (fn_801368B8(self->ai))
+        fn_80442130(self->ai, 0xe);
+    if (fn_8008606C(fn_80442080(self->ai)))
+        fn_80442130(self->ai, 0x20);
+    Ent *t = fn_800ACFA8(fn_80463F90(fn_804420D8(self->ai)));
+    if (t)
+        fn_801501AC(fn_804420D8(self->ai), t);
+    fn_801513D8(self->brain, 5000);
+    return 1;
+}
+
+// FINDTHROWABLE exit
+extern "C" int fn_80157F88(register Self *self)
+{
+    fn_80464170(self->ai, 1);
+    if (!fn_80134870(self->ai) || (fn_80134870(self->ai) && !fn_800B0C58(fn_80134870(self->ai))))
+        fn_8014F7B0(fn_804420D8(self->ai), 0);
+    return 1;
+}
+
+extern "C" {
+PEnt *fn_8044203CF(void *a) __asm__("fn_8044203C");
+int fn_800CD21CF(Ent &a) __asm__("fn_800CD21C");
+Ent *fn_800CD9B0F(Ent &a) __asm__("fn_800CD9B0");
+int fn_800CCA58F(Ent &a) __asm__("fn_800CCA58");
+PEnt *fn_8015F7A4F(PEnt *a, float f1, int kind, Vector *v, float f2) __asm__("fn_8015F7A4");
+void *fn_800B1478F(Ent &a) __asm__("fn_800B1478");
+int fn_800B13D8F(Ent &actor) __asm__("fn_800B13D8");
+int fn_800B0CC0F(Ent &a) __asm__("fn_800B0CC0");
+int fn_800A3F44(void *a);
+int fn_8015ED50(void *a, void *b);
+void fn_800C98BC(void *self, PEnt *node, int v);
+}
+
+// FINDTHROWABLE update: picks a throwable (fn_8015F7A4), walks to it and sets bit 0x13 within reach.
+extern "C" int fn_80158038(register Self *self)
+{
+    if (fn_80151B90(self->brain, self)) {
+        if (!fn_80151430(self->brain)) {
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        if (fn_800CD21CF(*fn_8044203CF(self->ai))) {
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
+            fn_80442130(self->ai, 0xe);
+        Ent *e = fn_800CD9B0F(*fn_8044203CF(self->ai));
+        if (!e) {
+            Vector v;
+            if (fn_8015F6CC(self->ai, &v)) {
+                float hi = 0.5f;
+                if (fn_800CCA58F(*fn_8044203CF(self->ai)) && fn_800860FC(fn_80442080(self->ai)))
+                    hi = 0.0f;
+                if (fn_80134870(self->ai)) {
+                    if (fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)))
+                        > fn_800B1884(*fn_80442080(self->ai), 216))
+                        hi = 0.0f;
+                }
+                Ent *t = fn_8015F7A4F(fn_80442080(self->ai), 20.0f, 2, &v, hi);
+                if (t && !fn_800A3F44(fn_800B1478F(*t))) {
+                    fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8F(*t), 0);
+                    fn_801501AC(fn_804420D8(self->ai), t);
+                    float d = fn_8015E580(fn_800B1724(*t), fn_800B1724(*fn_80442080(self->ai)));
+                    float lim = fn_800B1884(*fn_80442080(self->ai), 210);
+                    if (fn_800860FC(fn_80442080(self->ai)))
+                        lim = fn_800B1884(*fn_80442080(self->ai), 240);
+                    if (d <= lim) {
+                        fn_80442130(self->ai, 0x13);
+                        if (fn_801368B8(self->ai) && !fn_800860FC(fn_80442080(self->ai)))
+                            fn_80442174(self->ai, 0xe);
+                        if (fn_8008606C(fn_80442080(self->ai)))
+                            fn_80442174(self->ai, 0x20);
+                    } else {
+                        fn_80442130(self->ai, 0x12);
+                        if (fn_80461D48(self->ai, 0x34)) {
+                            fn_804643C8(self, 1);
+                            return 1;
+                        }
+                    }
+                } else {
+                    fn_804643C8(self, 1);
+                    return 1;
+                }
+            } else {
+                if (fn_80461D48(self->ai, 0x33)) {
+                    fn_804643C8(self, 1);
+                    return 1;
+                }
+            }
+        } else {
+            fn_804643C8(self, 1);
+            if (!fn_8015F384(self->ai)) {
+                if (fn_800B0CC0F(*e) && fn_800A4130(fn_800B1478F(*e)) && fn_8046439C(self->ai) > 0.0f) {
+                    if (fn_80134870(self->ai) && fn_8015ED50(self->ai, fn_800B1724(*fn_80134870(self->ai))))
+                        fn_8015105C(self->brain, 8);
+                    else
+                        fn_80442130(self->ai, 0x10);
+                } else {
+                    fn_804643C8(self, 1);
+                    fn_8015105C(self->brain, 7);
+                }
+                PEnt *t = fn_8014F8BC(fn_804420D8(self->ai));
+                if (t) {
+                    fn_800C98BC(fn_8044203CF(self->ai), t, 1);
+                    fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8F(*t), 0);
+                }
+            }
+        }
     } else {
     }
     return 1;
