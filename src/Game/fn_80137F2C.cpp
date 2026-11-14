@@ -226,6 +226,13 @@ struct VEnt { // fn_80442080's result with its vptr, +0x198
     virtual int v57(float f); // +0x1D0
 };
 
+struct Region { // a volume registry list 1 entry (docs/ai.md section 4.5)
+    char pad0[0x10];
+    Vector centre; // +0x10
+    char pad20[0x310];
+    int owner; // +0x330, actor id
+};
+
 extern AIBehavior lbl_80571814[];
 extern AIAction lbl_8056A7F0[];
 extern char lbl_805717F0[]; // pool of free Actions
@@ -265,7 +272,7 @@ AIAction *fn_80140C10(void *ai, AIBehavior *rec);
 AIAction *fn_80140E64(void *ai, AIBehavior *rec);
 AIAction *fn_80141394(void *ai, AIBehavior *rec);
 AIAction *fn_801414C8(void *ai, AIBehavior *rec);
-void fn_80141D78(void);
+AIAction *fn_80141D78(void *ai, AIBehavior *rec);
 void fn_8014470C(void);
 void fn_80144E30(void);
 void fn_801420B4(void);
@@ -499,6 +506,8 @@ int fn_80146A88(void *rec, Vector *a, Vector *b, Vector *hit);
 float fn_8042CE28(unsigned int n);
 void fn_8042D854(Vector *dst, Vector *src);
 int fn_8008606C(void *e);
+int fn_80462CD0(void *list);
+Region *fn_80462D18(void *list, int i);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -2557,3 +2566,54 @@ extern "C" AIAction *fn_801414C8(void *ai, AIBehavior *rec)
     }
     return 0;
 }
+
+// DEFEND_REGIONS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80141D78(void *ai, AIBehavior *rec)
+{
+    if (fn_800CCC28(*fn_8044203C(ai))) {
+        return 0;
+    }
+    Vector pos, dir, fwd;
+    fn_8042DC84(&pos, fn_800B1724(*fn_80442080(ai)));
+    fn_80067050(*fn_80442080(ai), &fwd);
+    fwd.z = 0.0f;
+    float len = fn_8042EC54(&fwd);
+    if (len < 0.1f) {
+        fn_8042DC84(&fwd, fn_800B1750(*fn_80442080(ai)));
+    }
+    fn_80429090(&dir, &pos, &fwd, 2.5f);
+    for (int i = 0; i < fn_80462CD0(fn_8013726C(ai)); i++) {
+        Region *r = fn_80462D18(fn_8013726C(ai), i);
+        if (!r) {
+            continue;
+        }
+        if (r->owner != fn_800B13D8(*fn_80442080(ai))) {
+            continue;
+        }
+        if (!fn_801464E4(r, &pos)) {
+            AIAction *h = fn_80138738(0x16, 1000, 0);
+            if (h) {
+                Vector out;
+                fn_80146604(r, &pos, &out);
+                Vector in;
+                fn_80429038(&in, &r->centre, &pos);
+                fn_8042F76C(&in);
+                fn_80433FFC(&out);
+                fn_80138AE0(h, 0, &out, 1.0f);
+                fn_80462BB4(h, 5);
+                fn_80462BDC(h, 1000.0f);
+                Vector at;
+                fn_8042DC84(&at, fn_800B1724(*fn_80442080(ai)));
+                at.z += 1.0f;
+                return h;
+            } else {
+                int n = 0;
+                n++;
+            }
+        }
+    }
+    return 0;
+}
+
+// The .rodata claim's 8-align pad, read by the unclaimed fn_801420B4: becomes that handler's literal once it is matched.
+extern "C" const float lbl_8049AF54 __attribute__((section(".rodata"))) = 3.0f;
