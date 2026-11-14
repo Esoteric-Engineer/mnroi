@@ -261,7 +261,7 @@ AIAction *fn_8013F438(void *ai, AIBehavior *rec);
 AIAction *fn_8013F8D0(void *ai, AIBehavior *rec);
 AIAction *fn_8013F9F0(void *ai, AIBehavior *rec);
 AIAction *fn_801409D0(void *ai, AIBehavior *rec);
-void fn_80140C10(void);
+AIAction *fn_80140C10(void *ai, AIBehavior *rec);
 void fn_80140E64(void);
 void fn_80141394(void);
 void fn_801414C8(void);
@@ -426,6 +426,7 @@ unsigned int fn_8015EA6C(int a, float *d);
 int fn_8008618C(void *e);
 float fn_80086730(void *e);
 int fn_800CD0EC(Base &c);
+void *fn_800ACFA8(int handle);
 int fn_800CD174(Base &c);
 int fn_800CD21C(Base &c);
 int fn_80462928(void *ai);
@@ -2286,6 +2287,37 @@ extern "C" AIAction *fn_801409D0(void *ai, AIBehavior *rec)
                 fn_80138A24(h, 7);
             }
             fn_80138A24(h, 0x12);
+            return h;
+        }
+    }
+    return 0;
+}
+
+// SWAT (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80140C10(void *ai, AIBehavior *rec)
+{
+    if (fn_80461D48(ai, 2) && fn_80461D48(ai, 0x33) && fn_80461D48(ai, 0x14) && fn_80461D48(ai, 0x18)) {
+        AIAction *h = fn_80138738(0x12, 1000, 100);
+        if (h) {
+            Vector v;
+            fn_8042DC84(&v, fn_800B1750(*fn_80442080(ai)));
+            int hit;
+            if (fn_8015E2FC(ai, &v, 2.0f, &hit, 0.0f)) {
+                void *o = fn_800ACFA8(hit);
+                if (o && fn_800B0CC0(o) && fn_8008572C(fn_80442080(ai), fn_800B1478(o)) && !fn_800A4538(fn_800B1478(o))) {
+                    fn_80138A24(h, 2);
+                    fn_80138A24(h, 0x19);
+                } else {
+                    fn_80138A24(h, 5);
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        if (fn_80085D3C(fn_80442080(ai))) {
+                            fn_80138A24(h, 7);
+                        } else {
+                            fn_80138A24(h, 0x14);
+                        }
+                    }
+                }
+            }
             return h;
         }
     }
