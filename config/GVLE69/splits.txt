@@ -809,7 +809,7 @@ Game/fn_80132480.cpp:
 	.text       start:0x80132480 end:0x80137D98
 
 Game/fn_80137F2C.cpp:
-	.text       start:0x80137F2C end:0x80141394
+	.text       start:0x80137F2C end:0x801414C8
 	.rodata     start:0x8049AB10 end:0x8049AF20
 
 Game/fn_80142558.cpp:

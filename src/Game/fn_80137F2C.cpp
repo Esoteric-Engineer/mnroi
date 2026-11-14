@@ -263,7 +263,7 @@ AIAction *fn_8013F9F0(void *ai, AIBehavior *rec);
 AIAction *fn_801409D0(void *ai, AIBehavior *rec);
 AIAction *fn_80140C10(void *ai, AIBehavior *rec);
 AIAction *fn_80140E64(void *ai, AIBehavior *rec);
-void fn_80141394(void);
+AIAction *fn_80141394(void *ai, AIBehavior *rec);
 void fn_801414C8(void);
 void fn_80141D78(void);
 void fn_8014470C(void);
@@ -2382,6 +2382,29 @@ extern "C" AIAction *fn_80140E64(void *ai, AIBehavior *rec)
                 }
             }
             return h;
+        }
+    }
+    return 0;
+}
+
+// SUPER_BLOCK_THROWN (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80141394(void *ai, AIBehavior *rec)
+{
+    if (fn_80461D48(ai, 2)) {
+        Ent *t = fn_80134870(ai);
+        if (!t) {
+            return 0;
+        }
+        if (fn_80461D48(ai, 0x2d) || fn_80461D48(ai, 0x2c)) {
+            AIAction *h = fn_80138738(0x14, 1500, 100);
+            if (h) {
+                fn_80138A24(h, 0);
+                if (fn_801369B0(ai) && fn_80461D48(ai, 0x2c)) {
+                    fn_80138A24(h, 0x17);
+                }
+                fn_80462BB4(h, 5);
+                return h;
+            }
         }
     }
     return 0;
