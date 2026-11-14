@@ -220,12 +220,6 @@ The graph of spots the paths are built on, loaded from a `.npd` file by `fn_8009
 - **`.rodata`** runs from 0x8048A9D8 through the `"invalid"` at 0x8048AC7C (its own constants, then linkonce pool words and header strings). The bytes before it, 0x8048A828-0x8048A9D8, end the previous file the same way and are unclaimed.
 - **`.bss`** is the static initializer's two `Vector`s, `lbl_805528D0` and `lbl_805528E0`. It also sets floats in `.sbss` 0x8066D668-0x8066D674.
 
-Signatures below are as the matched AI callers declare them.
-
-| Function | Called by | Role (guess) |
-|---|---|---|
-| `fn_8009D238`, `fn_8009D1D0` | the search | Re-sort a node in the open list (head `lbl_8066B988`, ordered by f), reset a node's search fields |
-
 ---
 
 ## 5. Notes

@@ -672,3 +672,19 @@ float fn_8009D184(register Vector *a, register Vector *b)
 {
     return fn_804290F8(b, a);
 }
+
+// Resets a node's search fields.
+void fn_8009D1D0(Node *node)
+{
+    node->stamp = lbl_8066B984;
+    node->via = 0;
+    node->next = node->prev = 0;
+    node->flags &= ~3;
+}
+
+// Re-sorts a node in the open list.
+void fn_8009D238(register Node *node)
+{
+    fn_8009D0F4(node);
+    fn_8009D024(node);
+}
