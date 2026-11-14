@@ -58,6 +58,7 @@ public:
     float z;
     float w;
     Vector();
+    Vector(float x, float y, float z, float w) __asm__("fn_8042D768");
 } __attribute__((aligned(8)));
 
 struct Ent {
@@ -292,7 +293,7 @@ AIAction *fn_801426A0(void *ai, AIBehavior *rec);
 AIAction *fn_80142F80(void *ai, AIBehavior *rec);
 AIAction *fn_801435F0(void *ai, AIBehavior *rec);
 AIAction *fn_8014379C(void *ai, AIBehavior *rec);
-void fn_80144038(void);
+AIAction *fn_80144038(void *ai, AIBehavior *rec);
 void fn_80144544(void);
 void fn_80144628(void);
 void fn_80144970(void);
@@ -3078,4 +3079,89 @@ extern "C" AIAction *fn_8014379C(void *ai, AIBehavior *rec)
         }
     }
     return 0;
+}
+
+// WALL_CLIMB (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144038(void *ai, AIBehavior *rec)
+{
+    if (fn_80461D48(ai, 0x29)) {
+        return 0;
+    }
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    AIAction *h = fn_80138738(0x21, 1000, 0);
+    fn_80138A24(h, 8);
+    fn_80138A24(h, 7);
+    Vector d, n, flat;
+    fn_8042DC84(&d, fn_800B1724(*t));
+    fn_8042D8A8(&d, fn_800B1724(*fn_80442080(ai)));
+    fn_8042DC84(&flat, &d);
+    flat.z = 0.0f;
+    fn_8042DC84(&n, &flat);
+    fn_8042F76C(&n);
+    float lenSq = fn_8042EBF4(&flat, &flat);
+    float zSq = d.z * d.z;
+    float w[4];
+    w[0] = 0.0f;
+    w[1] = 0.0f;
+    w[2] = 0.0f;
+    w[3] = 0.0f;
+    int any = 0;
+    if (fn_8015E8A8(ai, fn_800B1724(*t)) < 2.0f) {
+        w[0] = 1.0f;
+        any = 1;
+    } else if (fn_8015E8A8(ai, fn_800B1724(*t)) > 8.0f) {
+        w[1] = 1.0f;
+        any = 1;
+    } else if (fn_8015EEA0(ai)) {
+        any = 1;
+        w[0] = 1.0f;
+    }
+    Vector *fwd = fn_800B1750(*fn_80442080(ai));
+    Vector back;
+    fn_8042D80C(&back, fwd);
+    fn_8042F76C(&back);
+    if (fn_8042EBF4(&back, &n) < 0.5f) {
+        Vector up(0.0f, 0.0f, 1.0f, 1.0f);
+        Vector side;
+        fn_8042F984(&side, &up, &back);
+        if (fn_8042EBF4(&side, &n) > 0.0f) {
+            w[3] = 1.0f;
+            any = 1;
+        } else {
+            w[2] = 1.0f;
+            any = 1;
+        }
+        w[0] *= 0.5f;
+        w[1] *= 0.5f;
+    }
+    if (fn_8042EBF4(&n, fn_800B1750(*fn_80442080(ai))) > 0.0f || fn_8015EEA0(ai)) {
+        any = 1;
+        w[0] = 1.0f;
+        w[1] = 0.0f;
+        w[2] = 0.0f;
+        w[3] = 0.0f;
+    }
+    Vector dir(0.0f, 0.0f, 0.0f, 1.0f);
+    if (any) {
+        unsigned int side = fn_8015EA6C(4, w);
+        switch (side) {
+        case 0:
+            dir.z = 1.0f;
+            break;
+        case 1:
+            dir.z = -1.0f;
+            break;
+        case 2:
+            dir.x = 1.0f;
+            break;
+        case 3:
+            dir.x = -1.0f;
+            break;
+        }
+    }
+    fn_80138AE0(h, 7, &dir, 1.0f);
+    return h;
 }
