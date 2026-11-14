@@ -299,7 +299,7 @@ AIAction *fn_80144628(void *ai, AIBehavior *rec);
 AIAction *fn_80144970(void *ai, AIBehavior *rec);
 AIAction *fn_80144CB4(void *ai, AIBehavior *rec);
 AIAction *fn_80144D3C(void *ai, AIBehavior *rec);
-void fn_80144DB8(void);
+AIAction *fn_80144DB8(void *ai, AIBehavior *rec);
 void fn_80145200(void);
 void fn_80145AA8(void);
 
@@ -3317,6 +3317,17 @@ extern "C" AIAction *fn_80144D3C(void *ai, AIBehavior *rec)
     AIAction *h = fn_80138738(0x26, 60000, 0);
     if (h) {
         fn_80138A24(h, 7);
+        return h;
+    }
+    return 0;
+}
+
+// FORCE_FLY (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144DB8(void *ai, AIBehavior *rec)
+{
+    AIAction *h = fn_80138738(-1, 0, 0);
+    if (h) {
+        fn_80138A24(h, 9);
         return h;
     }
     return 0;
