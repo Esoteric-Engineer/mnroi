@@ -86,7 +86,7 @@ int fn_804636AC(Nav *nav);
 int fn_80463550(void *p);
 int fn_80444CD0(void *p);
 void *AI_GetMover(void *ai);
-void fn_804634A4(void *p, int a);
+void AI_SetMoverSpotKind(void *p, int a);
 Sub *AI_GetActor(void *ai);
 Vector *fn_8044460C(void *wp);
 Vector *fn_800B1750(Ent &actor);
@@ -109,7 +109,7 @@ extern Vector lbl_80593DE0;
 void fn_8042FE08(Vector *v, Vector *dir, float s);
 float fn_8015E580(Vector *a, Vector *b);
 int fn_801BA090(Vector *a, Vector *b, float r, Vector *c, Vector *d, float *t);
-Vector *fn_804625CC(void *p);
+Vector *AI_GetMoverWaypoint(void *p);
 double __ieee754_sqrt(double x);
 float fn_804341BC(Vector *a, Vector *b);
 int fn_80463644(Nav *nav);
@@ -123,7 +123,7 @@ void *fn_800B24AC(Ent &actor);
 int fn_8004A9CC(Vector *from, Vector *dir, float len, unsigned int mask, void *hit, void *body, void *world, int c, int d);
 void fn_8042F76C(Vector *v);
 float fn_8042EBF4(Vector *a, Vector *b);
-void fn_80463410(void *p, Vector *v);
+void AI_SetMoverWaypoint(void *p, Vector *v);
 void fn_8014D928(Nav *nav, void *spot);
 int fn_8014D744(Nav *nav);
 int fn_80463678(Nav *nav);
@@ -283,7 +283,7 @@ extern "C" void fn_8014C660(register Nav *self)
 {
     if (!fn_804623BC(self))
         return;
-    fn_804634A4(AI_GetMover(self->f5C), 0);
+    AI_SetMoverSpotKind(AI_GetMover(self->f5C), 0);
     self->f54 &= ~1;
 }
 
@@ -383,10 +383,10 @@ extern "C" int fn_8014C6D8(register Nav *self)
         }
     } else {
         float dist = __ieee754_sqrt(
-            (fn_800B1724(*AI_GetEntity(self->f5C))->x - fn_804625CC(AI_GetMover(self->f5C))->x)
-                * (fn_800B1724(*AI_GetEntity(self->f5C))->x - fn_804625CC(AI_GetMover(self->f5C))->x)
-            + (fn_800B1724(*AI_GetEntity(self->f5C))->y - fn_804625CC(AI_GetMover(self->f5C))->y)
-                * (fn_800B1724(*AI_GetEntity(self->f5C))->y - fn_804625CC(AI_GetMover(self->f5C))->y));
+            (fn_800B1724(*AI_GetEntity(self->f5C))->x - AI_GetMoverWaypoint(AI_GetMover(self->f5C))->x)
+                * (fn_800B1724(*AI_GetEntity(self->f5C))->x - AI_GetMoverWaypoint(AI_GetMover(self->f5C))->x)
+            + (fn_800B1724(*AI_GetEntity(self->f5C))->y - AI_GetMoverWaypoint(AI_GetMover(self->f5C))->y)
+                * (fn_800B1724(*AI_GetEntity(self->f5C))->y - AI_GetMoverWaypoint(AI_GetMover(self->f5C))->y));
         if (dist < 1.0f) {
             float dz = fn_800B1724(*AI_GetEntity(self->f5C))->z - self->f80.z < 0.0f
                            ? -(fn_800B1724(*AI_GetEntity(self->f5C))->z - self->f80.z)
@@ -444,9 +444,9 @@ extern "C" int fn_8014D034(register Nav *self)
             fn_8042F76C(&b);
             if (fn_8042EBF4(&a, &b) < 0.4f) {
                 self->f54 |= 0x8000;
-                fn_80463410(AI_GetMover(self->f5C), 0);
+                AI_SetMoverWaypoint(AI_GetMover(self->f5C), 0);
             } else {
-                fn_80463410(AI_GetMover(self->f5C), fn_80444688(self->f50));
+                AI_SetMoverWaypoint(AI_GetMover(self->f5C), fn_80444688(self->f50));
             }
             self->f54 &= ~2;
             return 0;
@@ -489,20 +489,20 @@ extern "C" int fn_8014D034(register Nav *self)
                 fn_804637BC(self, fn_804635EC(self->f58, 0), self->f58, 1);
             if (self->f58) {
                 if (fn_80444570(self->f58))
-                    fn_804634A4(AI_GetMover(self->f5C), 1);
+                    AI_SetMoverSpotKind(AI_GetMover(self->f5C), 1);
                 else if (fn_80444CD0(self->f58))
-                    fn_804634A4(AI_GetMover(self->f5C), 2);
+                    AI_SetMoverSpotKind(AI_GetMover(self->f5C), 2);
                 else if (fn_80444D04(self->f58)) {
                     if (fn_8014BAD0(AI_GetMover(self->f5C)))
-                        fn_804634A4(AI_GetMover(self->f5C), 3);
+                        AI_SetMoverSpotKind(AI_GetMover(self->f5C), 3);
                 } else if (fn_804445A4(self->f58))
-                    fn_804634A4(AI_GetMover(self->f5C), 4);
+                    AI_SetMoverSpotKind(AI_GetMover(self->f5C), 4);
                 else if (fn_804445D8(self->f58))
-                    fn_804634A4(AI_GetMover(self->f5C), 2);
+                    AI_SetMoverSpotKind(AI_GetMover(self->f5C), 2);
                 else if (fn_80444D38(self->f58))
-                    fn_804634A4(AI_GetMover(self->f5C), 5);
+                    AI_SetMoverSpotKind(AI_GetMover(self->f5C), 5);
                 else
-                    fn_804634A4(AI_GetMover(self->f5C), 0);
+                    AI_SetMoverSpotKind(AI_GetMover(self->f5C), 0);
             }
         } else {
             self->f54 |= 0x80;
@@ -572,9 +572,9 @@ extern "C" void fn_8014D928(register Nav *self, void *spot)
             float len = fn_8042EC54(&c);
             if (!fn_8004A9CC(&b, &c, len, 0x8000, 0, fn_800B24AC(*AI_GetEntity(self->f5C)),
                              fn_800B1CC8(*AI_GetEntity(self->f5C)), 0, 3)) {
-                if (fn_804625CC(AI_GetMover(self->f5C))->x == fn_80444688(fn_80444984(spot, 0))->x
-                    && fn_804625CC(AI_GetMover(self->f5C))->y == fn_80444688(fn_80444984(spot, 0))->y
-                    && fn_804625CC(AI_GetMover(self->f5C))->z == fn_80444688(fn_80444984(spot, 0))->z)
+                if (AI_GetMoverWaypoint(AI_GetMover(self->f5C))->x == fn_80444688(fn_80444984(spot, 0))->x
+                    && AI_GetMoverWaypoint(AI_GetMover(self->f5C))->y == fn_80444688(fn_80444984(spot, 0))->y
+                    && AI_GetMoverWaypoint(AI_GetMover(self->f5C))->z == fn_80444688(fn_80444984(spot, 0))->z)
                     fn_804637BC(self, fn_80444688(fn_80444984(spot, 0)), spot, 1);
                 else
                     fn_804637BC(self, &a, spot, 0);

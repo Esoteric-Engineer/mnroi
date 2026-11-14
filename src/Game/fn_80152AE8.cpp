@@ -124,7 +124,7 @@ float fn_8015E580(Vec *a, Vec *b);
 float fn_800B2620(Ent &e);
 int fn_8015F384(void *ai);
 float fn_8015E8A8(void *ai, Vec *p);
-int fn_80461B58(char *mover);
+int AI_HasMoverPath(char *mover);
 Ent *fn_8015F7A4(Ent *actor, float range, int mode, Vec *dir, float cosmin);
 int fn_8015E764(void *ai, Vec *p);
 void fn_80442414(TaskBase *task, int v);
@@ -150,7 +150,7 @@ int fn_800B0CC0(void *e);
 void *fn_800B1478(void *e);
 int fn_800A4130(void *e);
 void fn_80136214(void *ai, int n);
-int fn_80462624(char *mover);
+int AI_GetMoverSpotKind(char *mover);
 int fn_80151430(void *brain);
 void fn_804641B4(void *ai, int v);
 int fn_804641DC(void *ai);
@@ -380,7 +380,7 @@ extern "C" int Task_Search_Update(register Self *self)
                 if (fn_8015E8A8(self->ai, fn_800B1724(*target)) > fn_800B1884(*AI_GetEntity(self->ai), 0xd8)) {
                     if (!fn_80461D48(self->ai, 0x14) && fn_8015EC1C(fn_80461F68(self->ai))) {
                         fn_8015105C(self->brain, 3);
-                    } else if (fn_80461B58(AI_GetMover(self->ai))) {
+                    } else if (AI_HasMoverPath(AI_GetMover(self->ai))) {
                         void *p = fn_8015F7A4(AI_GetEntity(self->ai), 20.0f, 2,
                                               fn_800B1750(*AI_GetEntity(self->ai)), 0.0f);
                         if (p && fn_801500C4(AI_GetTargetList(self->ai)) > 0)
@@ -447,7 +447,7 @@ extern "C" int Task_Search_Update(register Self *self)
         } else if (!target) {
             target = fn_8014F8BC(AI_GetTargetList(self->ai));
             if (target) {
-                if (!fn_80461B58(AI_GetMover(self->ai)))
+                if (!AI_HasMoverPath(AI_GetMover(self->ai)))
                     fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(target), 0);
                 if (fn_80461F10(self->ai) > 0.0f)
                     fn_8015105C(self->brain, 2);
@@ -464,7 +464,7 @@ extern "C" int Task_Search_Update(register Self *self)
             if (fn_801368B8(self->ai)) {
                 AI_SetStateBit(self->ai, 0xe);
             } else if (fn_80134870(self->ai)) {
-                if (!fn_80461B58(AI_GetMover(self->ai)) || fn_8015E97C(1.0f))
+                if (!AI_HasMoverPath(AI_GetMover(self->ai)) || fn_8015E97C(1.0f))
                     fn_80464208(self->ai, fn_8042EFF8(lbl_80593BE8));
             }
         } else if (fn_80134870(self->ai) && fn_8015F07C(self->ai)) {
@@ -558,7 +558,7 @@ extern "C" int Task_Melee_Update(register Self *self)
             AI_SetTaskDone(self, 1);
             return 1;
         }
-        if (fn_80462624(AI_GetMover(self->ai)) == 1) {
+        if (AI_GetMoverSpotKind(AI_GetMover(self->ai)) == 1) {
             AI_SetTaskDone(self, 1);
             return 1;
         }
@@ -704,7 +704,7 @@ extern "C" int Task_Melee_Update(register Self *self)
                     if (fn_800CD014(*fn_80085954(te)) || fn_800CCE00(*fn_80085954(te)) || fn_80461D48(self->ai, 0x30))
                         w[1] *= 3.0f;
                 }
-                if (fn_80462624(AI_GetMover(self->ai)) == 1
+                if (AI_GetMoverSpotKind(AI_GetMover(self->ai)) == 1
                     || fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd3))
                     w[6] = 0.0f;
                 if (!fn_8015F4A4(self->ai, 0.33f) && fn_80085D3C(AI_GetEntity(self->ai))) {
@@ -1118,7 +1118,7 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
                 if (fn_8008606C(AI_GetEntity(self->ai)) || fn_801368B8(self->ai)) {
                     AI_SetStateBit(self->ai, 1);
                     AI_ClearStateBit(self->ai, 2);
-                    if (!fn_80461B58(AI_GetMover(self->ai)) && fn_80134870(self->ai))
+                    if (!AI_HasMoverPath(AI_GetMover(self->ai)) && fn_80134870(self->ai))
                         fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(fn_80134870(self->ai)), 0);
                 }
                 if (fn_8008606C(AI_GetEntity(self->ai))) {
@@ -1402,7 +1402,7 @@ extern "C" int Task_FindWieldable_Update(register Self *self)
 extern "C" {
 void AI_SaveTaskStateBits(void *task);
 void AI_RestoreTaskStateBits(void *task);
-void fn_80464014(char *mover);
+void AI_ResetMoverStuckTime(char *mover);
 void fn_8014DEB8(void *list);
 void fn_8014DE58(void *list);
 }
@@ -1419,7 +1419,7 @@ extern "C" int Task_Possess_Enter(register Self *self)
 extern "C" int Task_Possess_Exit(register Self *self)
 {
     AI_RestoreTaskStateBits(self);
-    fn_80464014(AI_GetMover(self->ai));
+    AI_ResetMoverStuckTime(AI_GetMover(self->ai));
     fn_8014DEB8(AI_GetTargetList(self->ai));
     fn_8014DE58(AI_GetTargetList(self->ai));
     return 1;
@@ -1494,8 +1494,8 @@ extern "C" int Task_CarryThrowable_Exit(register Self *self)
 }
 
 extern "C" {
-void fn_80461BF8(char *mover, Vector *v);
-void fn_80463410(char *mover, Vector *v);
+void AI_SetMoverMoveDest(char *mover, Vector *v);
+void AI_SetMoverWaypoint(char *mover, Vector *v);
 }
 
 // Carries the throwable toward the held actor and sets bit 0x10 to throw.
@@ -1554,8 +1554,8 @@ extern "C" int Task_CarryThrowable_Update(register Self *self)
                 fn_80464040(AI_GetMover(self->ai), 0);
                 if (fn_801504BC(AI_GetTargetList(self->ai), &v)) {
                     fn_80464040(AI_GetMover(self->ai), 1);
-                    fn_80461BF8(AI_GetMover(self->ai), &v);
-                    fn_80463410(AI_GetMover(self->ai), &v);
+                    AI_SetMoverMoveDest(AI_GetMover(self->ai), &v);
+                    AI_SetMoverWaypoint(AI_GetMover(self->ai), &v);
                 }
                 AI_SetStateBit(self->ai, 0x10);
             }
@@ -1701,7 +1701,7 @@ extern "C" int Task_Wielding_Update(register Self *self)
 }
 
 extern "C" {
-int fn_80461C94(char *mover);
+int AI_GetMoverDestThing(char *mover);
 float fn_800A4054(void *e);
 float fn_80086614(void *e);
 }
@@ -1717,7 +1717,7 @@ extern "C" int Task_AttackThing_Enter(register Self *self)
     AI_SetStateBit(self->ai, 1);
     AI_SetStateBit(self->ai, 0x1b);
     AI_SetStateBit(self->ai, 0x1d);
-    int h = fn_80461C94(AI_GetMover(self->ai));
+    int h = AI_GetMoverDestThing(AI_GetMover(self->ai));
     if (h) {
         Ent *t = fn_800ACFA8(h);
         if (t)
@@ -1800,7 +1800,7 @@ extern "C" {
 float fn_8015E580V(Vec *a, Vector *b) __asm__("fn_8015E580");
 float fn_804290F8(Vec *a, Vector *b);
 void fn_80135668(void *ai, int on);
-int fn_80463FE8(char *mover);
+int AI_GetMoverWaypointIndex(char *mover);
 void fn_80149A6C(int kind, const char *fmt, ...);
 int fn_800861EC(void *actor);
 }
@@ -1883,7 +1883,7 @@ extern "C" int Task_MoveTo_Update(register MoveTo *self)
             d = fn_804290F8(fn_800B1724(*AI_GetEntity(self->ai)), &self->dest);
         if (d < 2.0f) {
             AI_SetTaskDone(self, 1);
-            int at = fn_80463FE8(AI_GetMover(self->ai));
+            int at = AI_GetMoverWaypointIndex(AI_GetMover(self->ai));
             fn_80149A6C(0, "%udl %udl", fn_800B13D8F(*AI_GetEntity(self->ai)), at);
         }
     } else {
@@ -2415,7 +2415,7 @@ extern "C" int Task_ClimbAttack_Enter(register Self *self)
         fn_804640E8(self->ai, &mid);
         fn_80442414((TaskBase *)self, 1);
         AI_SetStateBit(self->ai, 0x24);
-        fn_80461BF8(AI_GetMover(self->ai), &mid);
+        AI_SetMoverMoveDest(AI_GetMover(self->ai), &mid);
         fn_80135F94(self->ai);
     } else {
         AI_SetTaskDone(self, 1);

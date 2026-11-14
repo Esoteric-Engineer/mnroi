@@ -797,7 +797,7 @@ int fn_80085D3C(void *actor);
 void *fn_80085980(Ent *e);
 float fn_80426A84(void *p);
 void fn_80067050(Ent &actor, Vector *out);
-Vector *fn_80462574(void *a);
+Vector *AI_GetMoverLookAhead(void *a);
 void fn_80463F3C(void *a, int b);
 void fn_8042D8A8(Vector *v, Vector *b);
 void fn_8042F76C(Vector *v);
@@ -831,7 +831,7 @@ extern "C" int fn_80151D64(void *ai, Vector *out, float *weight)
     Vector vel;
     fn_8042DC84(&pos, (Vector *)fn_800B1724(*self));
     fn_80067050(*self, &fwd);
-    fn_8042DC84(&vel, fn_80462574(AI_GetMover(ai)));
+    fn_8042DC84(&vel, AI_GetMoverLookAhead(AI_GetMover(ai)));
     Vector from;
     Vector to;
     for (int i = 0; i < n; i++) {
@@ -849,7 +849,7 @@ extern "C" int fn_80151D64(void *ai, Vector *out, float *weight)
         Vector ovel;
         fn_8042DC84(&opos, (Vector *)fn_800B1724(*other));
         fn_80067050(*other, &ofwd);
-        fn_8042DC84(&ovel, fn_80462574(AI_GetMover(fn_80085980(other))));
+        fn_8042DC84(&ovel, AI_GetMoverLookAhead(AI_GetMover(fn_80085980(other))));
         Vector d;
         fn_80429038(&d, &opos, &pos);
         float dist = fn_8042EC54(&d);
@@ -967,7 +967,7 @@ extern "C" int fn_8015243C(Ent *a, Obstacle *b, Vector *out)
 extern "C" {
 void *fn_80463F64(void *ai);
 int fn_800B0CC0(Ent *e);
-int fn_80461C94(void *a);
+int AI_GetMoverDestThing(void *a);
 void fn_804628D8(void *ai, int a);
 }
 
@@ -1001,7 +1001,7 @@ extern "C" Ent *fn_801526E4(void *ai, Vector *out, float *weight)
             continue;
         if (!fn_800B0CC0(e))
             continue;
-        if (fn_800B13D8(e) == fn_80461C94(AI_GetMover(ai)))
+        if (fn_800B13D8(e) == AI_GetMoverDestThing(AI_GetMover(ai)))
             continue;
         if (e == fn_80134870(ai))
             continue;

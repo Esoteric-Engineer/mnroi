@@ -48,7 +48,7 @@ struct AITask
     int done; // +0x1C
 };
 
-extern "C" void fn_80464014(register Sub210 *self)
+extern "C" void AI_ResetMoverStuckTime(register Sub210 *self)
 {
     self->f278 = 0.0f;
 }

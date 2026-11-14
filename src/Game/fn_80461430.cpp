@@ -287,27 +287,27 @@ struct Sub210
     Vector v2D0; // +0x2D0
 };
 
-extern "C" char *fn_80461B2C(register char *self)
+extern "C" char *AI_GetMoverHeading(register char *self)
 {
     return self + 0xE0;
 }
 
-extern "C" int fn_80461B58(register char *self)
+extern "C" int AI_HasMoverPath(register char *self)
 {
     return fn_804623BC(self + 0x20);
 }
 
-extern "C" int fn_80461BA0(register Sub210 *self)
+extern "C" int AI_HasMoverWaypoint(register Sub210 *self)
 {
     return self->i294;
 }
 
-extern "C" int fn_80461BCC(register Sub210 *self)
+extern "C" int AI_HasMoverMoveDest(register Sub210 *self)
 {
     return self->hasPoint;
 }
 
-extern "C" void fn_80461BF8(register Sub210 *self, register const Vector *v)
+extern "C" void AI_SetMoverMoveDest(register Sub210 *self, register const Vector *v)
 {
     if (!v) {
         self->hasPoint = 0;
@@ -324,12 +324,12 @@ struct Flagged
     BitSet bits; // +0xC
 };
 
-extern "C" int fn_80461C58(register Flagged *self)
+extern "C" int AI_HasMoverDestThing(register Flagged *self)
 {
     return self->i8 != 0;
 }
 
-extern "C" int fn_80461C94(register Flagged *self)
+extern "C" int AI_GetMoverDestThing(register Flagged *self)
 {
     return self->i8;
 }
@@ -627,7 +627,7 @@ extern "C" void *fn_80462530(register Holder *self)
     return fn_800ACFA8(self->iD8);
 }
 
-extern "C" Vector *fn_80462574(register Sub210 *self)
+extern "C" Vector *AI_GetMoverLookAhead(register Sub210 *self)
 {
     return &self->v2D0;
 }
@@ -637,22 +637,22 @@ extern "C" int fn_804625A0(register Sub210 *self)
     return self->i2C0;
 }
 
-extern "C" Vector *fn_804625CC(register Sub210 *self)
+extern "C" Vector *AI_GetMoverWaypoint(register Sub210 *self)
 {
     return &self->v2A0;
 }
 
-extern "C" Vector *fn_804625F8(register Sub210 *self)
+extern "C" Vector *AI_GetMoverMoveDest(register Sub210 *self)
 {
     return &self->point;
 }
 
-extern "C" int fn_80462624(register Sub210 *self)
+extern "C" int AI_GetMoverSpotKind(register Sub210 *self)
 {
     return self->iD0;
 }
 
-extern "C" int fn_80462650(register Sub210 *self)
+extern "C" int AI_IsMoverAboveTarget(register Sub210 *self)
 {
     return self->i2B8;
 }

@@ -157,7 +157,7 @@ int fn_800B0C58(Ent &e);
 void *AI_GetTargetList(void *ai);
 void fn_8014F7B0(void *rec, int v);
 void fn_8042D8A8(Vector *dst, void *src);
-void *fn_804625F8(char *p);
+void *AI_GetMoverMoveDest(char *p);
 float fn_8015E580(void *a, void *b);
 void *fn_800B1750(Ent &e);
 float fn_8042EBF4(Vector *v, void *w);
@@ -175,7 +175,7 @@ float fn_80086614(void *p);
 float fn_8015E64C(void *ai);
 int fn_8008606C(void *ent);
 int fn_801368B8(void *ai);
-int fn_80461B58(char *p);
+int AI_HasMoverPath(char *p);
 int fn_800CCA08(Base &b);
 int fn_8004A9CC(Vector *from, Vector *dir, float len, unsigned int mask, void *hit, void *a, void *b, int c, int d);
 }
@@ -612,7 +612,7 @@ extern "C" int fn_80161754(register TaskSelf *self)
         fn_8042D8A8(&v, fn_800B1724(*AI_GetEntity(self->ai)));
         v.z = 0.0f;
         float dist = fn_8042EC54(&v);
-        float d2 = fn_8015E580(fn_800B1724(*AI_GetEntity(self->ai)), fn_804625F8(AI_GetMover(self->ai)));
+        float d2 = fn_8015E580(fn_800B1724(*AI_GetEntity(self->ai)), AI_GetMoverMoveDest(AI_GetMover(self->ai)));
         if (!(dist > fn_800B1884(*AI_GetEntity(self->ai), 0xD4)) && !(dist < fn_800B1884(*AI_GetEntity(self->ai), 0xD2))) {
         } else {
             fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*t), 0);
@@ -696,7 +696,7 @@ extern "C" int fn_80161D18(register TaskSelf *self)
     } else {
         AI_SetTaskDone(self, 1);
     }
-    float d = fn_8015E580(fn_800B1724(*AI_GetEntity(self->ai)), fn_804625F8(AI_GetMover(self->ai)));
+    float d = fn_8015E580(fn_800B1724(*AI_GetEntity(self->ai)), AI_GetMoverMoveDest(AI_GetMover(self->ai)));
     if (d > fn_800B1884(*AI_GetEntity(self->ai), 0xD2))
         AI_SetTaskDone(self, 1);
     return 1;
@@ -995,7 +995,7 @@ extern "C" int fn_80162F80(register TaskSelf *self)
                     AI_ClearStateBit(self->ai, 0x13);
                     AI_SetStateBit(self->ai, 1);
                     AI_ClearStateBit(self->ai, 2);
-                    if (!fn_80461B58(AI_GetMover(self->ai)) && fn_80134870(self->ai))
+                    if (!AI_HasMoverPath(AI_GetMover(self->ai)) && fn_80134870(self->ai))
                         fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*fn_80134870(self->ai)), 0);
                 }
             }

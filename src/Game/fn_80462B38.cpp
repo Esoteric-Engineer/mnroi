@@ -20,9 +20,9 @@ void *fn_80444984(void *p, int i);
 int fn_80444688(void *p);
 void *AI_GetMover(void *ai);
 void *AI_GetEntity(void *ai);
-int fn_80462650(void *p);
+int AI_IsMoverAboveTarget(void *p);
 int fn_800861EC(void *p);
-void fn_80461BF8(void *p, void *v);
+void AI_SetMoverMoveDest(void *p, void *v);
 int fn_80442508(void *set, int bit);
 }
 
@@ -345,7 +345,7 @@ struct Sub210
     Vector v2E0; // +0x2E0
 };
 
-extern "C" void fn_80463410(register Sub210 *self, register void *v)
+extern "C" void AI_SetMoverWaypoint(register Sub210 *self, register void *v)
 {
     if (v == 0) {
         self->hasDest = 0;
@@ -362,7 +362,7 @@ extern "C" void fn_80463470(register Sub210 *self, register int v)
     }
 }
 
-extern "C" void fn_804634A4(register Sub210 *self, register int v)
+extern "C" void AI_SetMoverSpotKind(register Sub210 *self, register int v)
 {
     self->iD0 = v;
 }
@@ -438,12 +438,12 @@ extern "C" void fn_804637BC(register Slots *self, register void *v, register int
     self->i90 = a;
     self->i98 = b;
     fn_80463470((Sub210 *)AI_GetMover(self->ai), self->i90);
-    if (fn_80462650(AI_GetMover(self->ai)))
+    if (AI_IsMoverAboveTarget(AI_GetMover(self->ai)))
         return;
-    fn_80463410((Sub210 *)AI_GetMover(self->ai), v);
+    AI_SetMoverWaypoint((Sub210 *)AI_GetMover(self->ai), v);
     if (fn_804633B0(self)) {
         if (!fn_800861EC(AI_GetEntity(self->ai))) {
-            fn_80461BF8(AI_GetMover(self->ai), &self->v80);
+            AI_SetMoverMoveDest(AI_GetMover(self->ai), &self->v80);
         }
     }
 }
@@ -458,7 +458,7 @@ extern "C" void *fn_804638F8(register char *self)
     return fn_800ACFA8(*(int *)(self + 0xE0));
 }
 
-extern "C" float fn_8046393C(register Sub210 *self)
+extern "C" float AI_GetMoverStuckTime(register Sub210 *self)
 {
     return self->f278;
 }
@@ -671,7 +671,7 @@ extern "C" int fn_80463FBC(register Record *self)
     return self->iEC;
 }
 
-extern "C" int fn_80463FE8(register Sub210 *self)
+extern "C" int AI_GetMoverWaypointIndex(register Sub210 *self)
 {
     return self->i290;
 }

@@ -1339,7 +1339,7 @@ void *AI_GetBrain(AIObject *ai);
 int fn_80151AF8(void *brain, int id);
 TeleTask *fn_8015105CT(void *brain, int id) __asm__("fn_8015105C");
 NavNode *fn_800B3A74(void *scene, int v, int a, int b);
-void fn_80461BF8(void *p, Vector *v);
+void AI_SetMoverMoveDest(void *p, Vector *v);
 }
 
 extern "C" void fn_80135668(register AIObject *self, int on)
@@ -1370,7 +1370,7 @@ extern "C" void fn_80135668(register AIObject *self, int on)
                     }
                 }
                 fn_8042DC84V(&task.f30, &v);
-                fn_80461BF8(AI_GetMover(self), &v);
+                AI_SetMoverMoveDest(AI_GetMover(self), &v);
             }
         }
     }
@@ -1985,7 +1985,7 @@ struct AIMoveOut {
 };
 
 extern "C" {
-Vector *fn_80461B2C(void *p);
+Vector *AI_GetMoverHeading(void *p);
 Vector *fn_8042FB28(Vector *v);
 }
 
@@ -1993,7 +1993,7 @@ extern "C" void fn_80137298(register AIObject *self, int kind, AIMoveOut *out)
 {
     if (kind == 0) {
         Vector v;
-        fn_8042DC84V(&v, fn_80461B2C(AI_GetMover(self)));
+        fn_8042DC84V(&v, AI_GetMoverHeading(AI_GetMover(self)));
         fn_8042FB28(&v)->z = 0.0f;
         float len = fn_8042EC54(&v);
         fn_8042DC84V(&out->f20, &v);
@@ -2003,7 +2003,7 @@ extern "C" void fn_80137298(register AIObject *self, int kind, AIMoveOut *out)
     }
     if (kind == 7) {
         Vector v;
-        fn_8042DC84V(&v, fn_80461B2C(AI_GetMover(self)));
+        fn_8042DC84V(&v, AI_GetMoverHeading(AI_GetMover(self)));
         v.y = 0.0f;
         float len = fn_8042EC54(&v);
         fn_8042DC84V(&out->f20, &v);
@@ -2043,13 +2043,13 @@ void *fn_80151BCC(void *brain);
 char *fn_80461FEC(void *task);
 unsigned int fn_80151C24(void *brain);
 void *fn_80151C50(void *brain, int i);
-int fn_80461BA0(void *mover);
-int fn_80461C58(void *mover);
-void *fn_80461C94(void *mover);
+int AI_HasMoverWaypoint(void *mover);
+int AI_HasMoverDestThing(void *mover);
+void *AI_GetMoverDestThing(void *mover);
 void *fn_800ACFA8(void *handle);
 char *fn_800AFF88(void *thing);
-int fn_80461BCC(void *mover);
-int fn_80461B58(void *mover);
+int AI_HasMoverMoveDest(void *mover);
+int AI_HasMoverPath(void *mover);
 int fn_80461E00(AIObject *ai);
 float fn_80138868(AIObject *ai, float x, float y);
 char *fn_80462288(AIBehavior *b);
@@ -2092,23 +2092,23 @@ extern "C" void fn_80137494(register AIObject *self, float x, float y)
     dy += step;
     char thing[0x50];
     const char *mover = none;
-    if (fn_80461BA0(AI_GetMover(self))) {
+    if (AI_HasMoverWaypoint(AI_GetMover(self))) {
         mover = "WAYPOINT";
-    } else if (fn_80461C58(AI_GetMover(self))) {
+    } else if (AI_HasMoverDestThing(AI_GetMover(self))) {
         mover = "DEST_THING";
-        void *handle = fn_80461C94(AI_GetMover(self));
+        void *handle = AI_GetMoverDestThing(AI_GetMover(self));
         void *dest = fn_800ACFA8(handle);
         if (dest) {
             sprintf(thing, "%s (%s)", mover, fn_800AFF88(dest));
             mover = thing;
         }
-    } else if (fn_80461BCC(AI_GetMover(self))) {
+    } else if (AI_HasMoverMoveDest(AI_GetMover(self))) {
         mover = "MOVE_DEST";
     } else {
         mover = "TO_TARGET";
     }
     const char *pathing = none;
-    if (fn_80461B58(AI_GetMover(self))) {
+    if (AI_HasMoverPath(AI_GetMover(self))) {
         pathing = "YES";
     }
     sprintf(buf, "Mover:'%s'", mover);

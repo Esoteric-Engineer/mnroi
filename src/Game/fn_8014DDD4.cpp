@@ -171,7 +171,7 @@ int fn_800B0CC0(Ent &e);
 void *fn_800B1478(Ent &e);
 int fn_800A4538(void *p);
 void *AI_GetMover(void *ai);
-float fn_8046393C(void *m);
+float AI_GetMoverStuckTime(void *m);
 int fn_800CC8EC(Ent &e);
 int fn_800CCB38(Ent &e);
 int fn_800CCEEC(Ent &e);
@@ -538,7 +538,7 @@ extern "C" void fn_8014E648(register Self *self)
     if (fn_80442508(self->fFC, 0x16))
         fn_80461CC0(self->f0, 0x16);
     fn_8014E0B8(self);
-    d = fn_8046393C(AI_GetMover(self->f0));
+    d = AI_GetMoverStuckTime(AI_GetMover(self->f0));
     if (d > 2.0f) {
         fn_80461CC0(self->f0, 0x34);
         fn_80461CC0(self->f0, 0x33);

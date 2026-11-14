@@ -281,7 +281,7 @@ public:
 
 extern "C" {
 Ent *fn_800ACFA8(int h);
-int fn_80462650(Mover *self);
+int AI_IsMoverAboveTarget(Mover *self);
 int fn_801368B8(void *ai);
 NavFlags *AI_GetPath(Mover *self);
 int fn_8014BE08(Nav *nav, void *ai, Vector *dest, int a, int b, int c);
@@ -317,7 +317,7 @@ extern "C" void fn_8014ADB0(register Mover *self)
     if (!t)
         self->f8 = 0;
     fn_8014A9B0(self);
-    if (!fn_80462650(self)) {
+    if (!AI_IsMoverAboveTarget(self)) {
         if (fn_801368B8(self->f0)) {
             if (!(AI_GetPath(self)->f9C & 0x200000) && t)
                 fn_8014BE08(&self->f20, self->f0, fn_800B1724(*t), 0, 1, 0);
@@ -397,16 +397,16 @@ extern "C" void fn_8014B420(register Mover *self, Vector *v)
 
 extern "C" {
 Mover *AI_GetMover(void *ai);
-void fn_80463410(Mover *self, Vector *v);
-void fn_80461BF8(Mover *self, Vector *v);
+void AI_SetMoverWaypoint(Mover *self, Vector *v);
+void AI_SetMoverMoveDest(Mover *self, Vector *v);
 void fn_8014C660(Nav *nav);
 }
 
 // Set a waypoint and repath to it, at most once per +0x10 ms; index -1 keeps +0x290.
 extern "C" int fn_8014B518(register Mover *self, Vector *dest, int index)
 {
-    fn_80463410(AI_GetMover(self->f0), 0);
-    fn_80461BF8(self, dest);
+    AI_SetMoverWaypoint(AI_GetMover(self->f0), 0);
+    AI_SetMoverMoveDest(self, dest);
     if (index != -1)
         self->f290 = index;
     if (fn_8042EFF8(lbl_80593BE8) < (unsigned int)(self->fC + self->f10))
@@ -437,21 +437,21 @@ extern "C" int fn_8014B63C(register Mover *self, int id, int force)
         fn_8014A860(AI_GetEntity(self->f0), t, &dest);
     else
         fn_8014A574(AI_GetEntity(self->f0), t, &dest);
-    fn_80461BF8(self, &dest);
+    AI_SetMoverMoveDest(self, &dest);
     int r = 0;
     self->fC = fn_8042EFF8(lbl_80593BE8);
-    if (fn_80462650(self) && !force)
+    if (AI_IsMoverAboveTarget(self) && !force)
         return 0;
     self->fD0 = 0;
     r = fn_8014BE08(&self->f20, self->f0, &dest, 0, 1, 0);
     if (!r || fn_804633B0(&self->f20))
-        fn_80463410(self, &dest);
+        AI_SetMoverWaypoint(self, &dest);
     return r;
 }
 
 extern "C" {
-int fn_80461BA0(Mover *self);
-int fn_80461BCC(Mover *self);
+int AI_HasMoverWaypoint(Mover *self);
+int AI_HasMoverMoveDest(Mover *self);
 }
 
 // Height to hold: the waypoint's, else the move destination's, else the target's, else our own.
@@ -460,9 +460,9 @@ extern "C" float fn_8014B824(register Mover *self)
     register Sub *e = fn_804633E4(self);
     float z = fn_800B1724(*e)->z;
 
-    if (fn_80461BA0(self))
+    if (AI_HasMoverWaypoint(self))
         return self->f2A0.z;
-    else if (fn_80461BCC(self))
+    else if (AI_HasMoverMoveDest(self))
         return self->f280.z;
     else if (fn_80134870(self->f0))
         return fn_800B1724(*fn_80134870(self->f0))->z;
@@ -505,7 +505,7 @@ extern "C" void fn_8014B900(register Mover *self)
 
 extern "C" {
 void fn_80463470(Mover *self, int v);
-void fn_804634A4(Mover *self, int v);
+void AI_SetMoverSpotKind(Mover *self, int v);
 }
 
 // Clear the path: reset the path at +0x20 and zero +0x2B0 and +0xD0.
@@ -513,7 +513,7 @@ extern "C" void fn_8014BA7C(register Mover *self)
 {
     fn_8014C660(&self->f20);
     fn_80463470(self, 0);
-    fn_804634A4(self, 0);
+    AI_SetMoverSpotKind(self, 0);
 }
 
 extern "C" int fn_801368B8(void *ai);
@@ -530,8 +530,8 @@ extern "C" int fn_8014BAD0(register Mover *self)
 __asm__(".section .rodata\n\t.float 0.0\n\t.long 0x7F7FFFFF\n\t.float 5.0\n\t.text"); // 0x8049B410: linkonce pool words (matching_notes 23)
 
 extern "C" {
-Vector *fn_804625CC(Mover *self);
-Vector *fn_804625F8(Mover *self);
+Vector *AI_GetMoverWaypoint(Mover *self);
+Vector *AI_GetMoverMoveDest(Mover *self);
 }
 
 // Where to head: the waypoint, else the move destination, else where we stand.
@@ -544,13 +544,13 @@ extern "C" void fn_8014BB4C(register Mover *self, Vector *out)
     int found = 0;
     Vector v;
     fn_8042DC84(&v, fn_800B1724(*AI_GetEntity(self->f0)));
-    if (fn_80461BA0(self)) {
-        fn_8042DC84(&v, fn_804625CC(self));
+    if (AI_HasMoverWaypoint(self)) {
+        fn_8042DC84(&v, AI_GetMoverWaypoint(self));
         found = 1;
         waypoint = 1;
     }
-    if (!found && fn_80461BCC(self)) {
-        fn_8042DC84(&v, fn_804625F8(self));
+    if (!found && AI_HasMoverMoveDest(self)) {
+        fn_8042DC84(&v, AI_GetMoverMoveDest(self));
         found = 1;
         dest = 1;
     }

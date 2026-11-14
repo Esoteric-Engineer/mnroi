@@ -356,10 +356,10 @@ void AI_ClearStateBit(void *ai, int bit);
 int fn_80461D48(void *ai, int bit);
 int fn_80133208(void *e);
 char *AI_GetMover(void *ai);
-int fn_80461BA0(void *p);
-int fn_80461BCC(void *p);
-Vector *fn_804625CC(void *p);
-Vector *fn_804625F8(void *p);
+int AI_HasMoverWaypoint(void *p);
+int AI_HasMoverMoveDest(void *p);
+Vector *AI_GetMoverWaypoint(void *p);
+Vector *AI_GetMoverMoveDest(void *p);
 float fn_8015E580(Vector *a, Vector *b);
 float fn_800B1884(Ent &e, int id);
 int fn_800861EC(void *e);
@@ -421,9 +421,9 @@ int fn_800A3F44(void *p);
 int fn_8015E764(void *ai, Vector *p);
 int fn_800E5F04(Base &c, void *other);
 int fn_801368B8(void *ai);
-int fn_80461C94(char *mover);
+int AI_GetMoverDestThing(char *mover);
 int fn_800CCC28(Base &c);
-int fn_80462624(char *mover);
+int AI_GetMoverSpotKind(char *mover);
 int fn_8015F008(void *ai);
 int fn_80462880(void *ai);
 float fn_80462954(void *ai);
@@ -524,7 +524,7 @@ Ent *fn_801526E4(void *ai, Vector *pos, float *f);
 int fn_800A4438(void *p);
 int fn_800A4408(void *p);
 void fn_804628D8(void *ai, int id);
-Vector *fn_80462574(void *mover);
+Vector *AI_GetMoverLookAhead(void *mover);
 extern char lbl_8052F060[]; // the level object
 void *fn_80430050(void *level);
 LvObj *fn_800B3A74(void *scene, int v, int a, int b);
@@ -544,7 +544,7 @@ float fn_801467AC(void *rec, Vector *pos);
 int fn_8008612C(void *e);
 Vector *fn_80462854(void *ai);
 void fn_80428FA8(Vector *v, float x, float y, float z);
-int fn_80462650(void *mover);
+int AI_IsMoverAboveTarget(void *mover);
 void *fn_80151C8C(void *brain);
 int fn_80462828(void *ai);
 void *Entity_GetActor(Base &c);
@@ -887,12 +887,12 @@ extern "C" AIAction *fn_80139284(void *ai, AIBehavior *rec)
         Vector goal;
         int found = 0;
         fn_8042DC84(&goal, me);
-        if (fn_80461BA0(AI_GetMover(ai))) {
-            fn_8042DC84(&goal, fn_804625CC(AI_GetMover(ai)));
+        if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+            fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
             found = 1;
         }
-        if (!found && fn_80461BCC(AI_GetMover(ai))) {
-            fn_8042DC84(&goal, fn_804625F8(AI_GetMover(ai)));
+        if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+            fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
             found = 1;
         }
         if (!found && fn_80134870(ai)) {
@@ -1056,12 +1056,12 @@ extern "C" AIAction *fn_801399CC(void *ai, AIBehavior *rec)
                 Vector v;
                 Vector g;
                 int have = 0;
-                if (fn_80461BA0(AI_GetMover(ai))) {
-                    fn_8042DC84(&g, fn_804625CC(AI_GetMover(ai)));
+                if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+                    fn_8042DC84(&g, AI_GetMoverWaypoint(AI_GetMover(ai)));
                     have = 1;
                 }
-                if (!have && fn_80461BCC(AI_GetMover(ai))) {
-                    fn_8042DC84(&g, fn_804625F8(AI_GetMover(ai)));
+                if (!have && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+                    fn_8042DC84(&g, AI_GetMoverMoveDest(AI_GetMover(ai)));
                     have = 1;
                 }
                 if (!have) {
@@ -1105,13 +1105,13 @@ extern "C" AIAction *fn_801399CC(void *ai, AIBehavior *rec)
             }
         }
     }
-    if (fn_80461BA0(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625CC(AI_GetMover(ai)));
+    if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
         found = 1;
         fromA = 1;
     }
-    if (!found && fn_80461BCC(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625F8(AI_GetMover(ai)));
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
         found = 1;
         fromB = 1;
     }
@@ -1202,7 +1202,7 @@ extern "C" AIAction *fn_801399CC(void *ai, AIBehavior *rec)
                 }
             } else if (fn_8008609C(AI_GetEntity(ai)) && range > fn_800B1884(*AI_GetEntity(ai), 0xd3) &&
                        range < fn_800B1884(*AI_GetEntity(ai), 0xd4) && fn_80134870(ai) && fn_800B0C58(fn_80134870(ai)) &&
-                       fn_80461C94(AI_GetMover(ai)) == fn_800B13D8(*fn_80134870(ai)) &&
+                       AI_GetMoverDestThing(AI_GetMover(ai)) == fn_800B13D8(*fn_80134870(ai)) &&
                        fn_8015EE34(ai, fn_80134870(ai))) {
                 fn_80138A24(h, 0xc);
                 fn_80138A24(h, 0x16);
@@ -1216,7 +1216,7 @@ extern "C" AIAction *fn_801399CC(void *ai, AIBehavior *rec)
             }
         }
         if (!done) {
-            switch (fn_80462624(AI_GetMover(ai))) {
+            switch (AI_GetMoverSpotKind(AI_GetMover(ai))) {
             case 4:
                 if (fn_801369B0(ai)) {
                     fn_80138A24(h, 8);
@@ -1408,7 +1408,7 @@ extern "C" AIAction *fn_8013BCE8(void *ai, AIBehavior *rec)
 {
     Vector goal;
     int found = 0;
-    if (fn_801369B0(ai) && fn_80462624(AI_GetMover(ai)) == 4) {
+    if (fn_801369B0(ai) && AI_GetMoverSpotKind(AI_GetMover(ai)) == 4) {
         AIAction *h = fn_80138738(-1, 0, 0);
         if (h) {
             Vector v;
@@ -1423,13 +1423,13 @@ extern "C" AIAction *fn_8013BCE8(void *ai, AIBehavior *rec)
         }
     }
     float dist = 3.40282347e+38f;
-    if (fn_80461BA0(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625CC(AI_GetMover(ai)));
+    if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
         found = 1;
         dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), &goal);
     }
-    if (!found && fn_80461BCC(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625F8(AI_GetMover(ai)));
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
         found = 1;
         dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), &goal);
     }
@@ -1450,7 +1450,7 @@ extern "C" AIAction *fn_8013BCE8(void *ai, AIBehavior *rec)
         if (h) {
             fn_80138AE0(h, 0, &v, 1.0f);
         }
-        switch (fn_80462624(AI_GetMover(ai))) {
+        switch (AI_GetMoverSpotKind(AI_GetMover(ai))) {
         case 1:
             if (!fn_80461D48(ai, 0x3d)) {
                 fn_80138A24(h, 5);
@@ -2160,8 +2160,8 @@ extern "C" AIAction *fn_8013F438(void *ai, AIBehavior *rec)
         float z = fn_800B1724(*AI_GetEntity(ai))->z;
         float gz = fn_8014B824(AI_GetMover(ai));
         float dz = gz - z;
-        if (fn_80461BA0(AI_GetMover(ai))) {
-            gz = fn_804625CC(AI_GetMover(ai))->z;
+        if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+            gz = AI_GetMoverWaypoint(AI_GetMover(ai))->z;
         }
         if (fn_804628AC(ai)) {
             fn_80138A24(h, 9);
@@ -2171,7 +2171,7 @@ extern "C" AIAction *fn_8013F438(void *ai, AIBehavior *rec)
             fn_80138A24(h, 9);
         }
         if (fn_804628AC(ai) && z < gz + 2.5f &&
-            fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), fn_804625F8(AI_GetMover(ai))) > 2.0f) {
+            fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), AI_GetMoverMoveDest(AI_GetMover(ai))) > 2.0f) {
             fn_80138A24(h, 0x10);
         }
         Ent *t = fn_80134870(ai);
@@ -2828,12 +2828,12 @@ extern "C" AIAction *fn_80142B04(void *ai, AIBehavior *rec)
     }
     Vector pos, goal;
     fn_8042DC84(&pos, fn_800B1724(*p));
-    fn_8042DC84(&goal, fn_80462574(AI_GetMover(ai)));
+    fn_8042DC84(&goal, AI_GetMoverLookAhead(AI_GetMover(ai)));
     Ent *t = fn_80134870(ai);
-    if (fn_80461BA0(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625CC(AI_GetMover(ai)));
-    } else if (fn_80461BCC(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625F8(AI_GetMover(ai)));
+    if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
+    } else if (AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
     } else if (t) {
         fn_8042DC84(&goal, fn_800B1724(*t));
     }
@@ -3002,8 +3002,8 @@ extern "C" AIAction *fn_8014379C(void *ai, AIBehavior *rec)
     }
     float dist = fn_8015E64C(ai);
     if (fn_8015F384(ai) && fn_80151AF8(AI_GetBrain(ai), 0xb)) {
-        fn_8015F538(ai, fn_804625F8(AI_GetMover(ai)), &at);
-        dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), fn_804625F8(AI_GetMover(ai)));
+        fn_8015F538(ai, AI_GetMoverMoveDest(AI_GetMover(ai)), &at);
+        dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), AI_GetMoverMoveDest(AI_GetMover(ai)));
         if (dist < 2.0f) {
             return 0;
         }
@@ -3281,8 +3281,8 @@ extern "C" AIAction *fn_80144970(void *ai, AIBehavior *rec)
     int found = 0;
     Vector goal;
     fn_8042DC84(&goal, fn_80462854(ai));
-    if (!found && fn_80461BCC(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625F8(AI_GetMover(ai)));
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
         found = 1;
     }
     if (found) {
@@ -3365,12 +3365,12 @@ extern "C" AIAction *fn_80144E30(void *ai, AIBehavior *rec)
     Vector goal;
     int found = 0;
     fn_8042DC84(&goal, fn_800B1724(*AI_GetEntity(ai)));
-    if (fn_80461BA0(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625CC(AI_GetMover(ai)));
+    if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
         found = 1;
     }
-    if (!found && fn_80461BCC(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625F8(AI_GetMover(ai)));
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
         found = 1;
     }
     if (found) {
@@ -3416,13 +3416,13 @@ extern "C" AIAction *fn_80145200(void *ai, AIBehavior *rec)
     int unused = 0;
     int found = 0;
     Vector goal;
-    if (fn_80461BA0(AI_GetMover(ai)) && !fn_80462650(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625CC(AI_GetMover(ai)));
+    if (AI_HasMoverWaypoint(AI_GetMover(ai)) && !AI_IsMoverAboveTarget(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
         found = 1;
         byA = 1;
     }
-    if (!found && fn_80461BCC(AI_GetMover(ai))) {
-        fn_8042DC84(&goal, fn_804625F8(AI_GetMover(ai)));
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
         found = 1;
         byB = 1;
     }
