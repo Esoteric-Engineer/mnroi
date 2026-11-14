@@ -216,7 +216,7 @@ AIAction *fn_8013BCE8(void *ai, AIBehavior *rec);
 AIAction *fn_8013C1C8(void *ai, AIBehavior *rec);
 AIAction *fn_8013C3A4(void *ai, AIBehavior *rec);
 AIAction *fn_8013CD40(void *ai, AIBehavior *rec);
-void fn_8013D464(void);
+AIAction *fn_8013D464(void *ai, AIBehavior *rec);
 void fn_8013DA7C(void);
 void fn_8013E0C4(void);
 void fn_8013E99C(void);
@@ -1605,3 +1605,92 @@ extern "C" AIAction *fn_8013CD40(void *ai, AIBehavior *rec)
     }
     return 0;
 }
+
+// JUMP_ATTACK_PEAK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013D464(void *ai, AIBehavior *rec)
+{
+    if (!(fn_80462A5C(ai) > 0.0f)) {
+        return 0;
+    }
+    if (fn_80461D48(ai, 0x29)) {
+        return 0;
+    }
+    if (fn_80461D48(ai, 0x40)) {
+        return 0;
+    }
+    if (fn_80134870(ai)) {
+        if (fn_8015E8A8(ai, fn_800B1724(*fn_80134870(ai))) > fn_800B1884(*fn_80442080(ai), 0xd8)) {
+            return 0;
+        }
+    }
+    Vector v;
+    AIAction *none = 0;
+    if (fn_800CCBD8(*fn_8044203C(ai)) || fn_800CC6DC(*fn_8044203C(ai)) == 5 || fn_8044203CB(ai)->v42()) {
+        unsigned int dt = fn_800CC2B4(*fn_8044203C(ai)) - fn_8042EFF8(lbl_80593BE8);
+        if (!fn_8015E97C(5.0f)) {
+            return 0;
+        }
+        if (dt) {
+            fn_80067050(*fn_80442080(ai), &v);
+            int below = 0;
+            int above = 0;
+            int level = 0;
+            if (fn_800B1724(*fn_80134870(ai))->z < fn_800B1724(*fn_80442080(ai))->z - 1.0f) {
+                below = 1;
+            } else if (fn_800B1724(*fn_80134870(ai))->z > fn_800B1724(*fn_80442080(ai))->z + 1.0f) {
+                above = 1;
+            } else {
+                level = 1;
+            }
+            AIAction *h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector p;
+                fn_8015F6CC(ai, &p);
+                fn_80138AE0(h, 0, &p, 1.0f);
+                if (v.z > 0.5f) {
+                    fn_80138A24(h, 2);
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        fn_80138A24(h, 7);
+                    }
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461FC0(ai))) {
+                        fn_80138A24(h, 0xd);
+                    }
+                } else {
+                    if (fn_8015EC1C(fn_80462A88(ai))) {
+                        fn_80138A24(h, 0x12);
+                        if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                            fn_80138A24(h, 7);
+                        }
+                    }
+                }
+                return h;
+            }
+        }
+    }
+    int dur = 1250;
+    int jitter = fn_8015EA18(500) - 250;
+    dur += jitter;
+    if (!fn_80461D48(ai, 0x3d)) {
+        AIAction *h = fn_80138738(10, dur, 10);
+        if (h) {
+            Vector p;
+            float dist = fn_8015E64C(ai);
+            float range = fn_800B1884(*fn_80442080(ai), 0xd3);
+            float s = dist / range < 1.0f ? dist / range : 1.0f;
+            s = 1.0f;
+            fn_8015F6CC(ai, &p);
+            fn_80138AE0(h, 0, &p, s);
+            fn_80462BDC(h, 10.0f);
+            fn_80138A24(h, 5);
+            fn_80461E58(ai, &p);
+            if (fn_801369B0(ai) && fn_80085D3C(fn_80442080(ai)) && fn_8015EC1C(fn_80461F3C(ai))) {
+                fn_80138A24(h, 7);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// 8-aligns the .rodata claim: fn_8013DA7C's first literal; drop it when that handler joins the unit.
+extern "C" const float lbl_8049AE74 __attribute__((section(".rodata"))) = 0.0f;
