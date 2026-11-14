@@ -11,24 +11,43 @@ struct Sector // a level sector, found by position (fn_8004DD38)
     unsigned short nNodes;    // +0x11E
 };
 
-struct Node
-{
-    char pad0[0x40];
-    float cost; // +0x40
-    char pad44[0x1C];
-};
-
-struct Link
-{
-    char pad[0x30];
-};
-
 class Vector
 {
 public:
     float x, y, z, w;
     Vector();
 } __attribute__((aligned(8)));
+
+struct Link
+{
+    char pad[0x30];
+};
+
+struct Node
+{
+    char pad0[0x2C];
+    unsigned short flags; // +0x2C (bit 0: on the open list)
+    char pad2E[2];
+    Node *next;           // +0x30 open list, ordered by f
+    Node *prev;           // +0x34
+    unsigned short stamp; // +0x38 (search id, lbl_8066B984)
+    char pad3A[2];
+    float h;              // +0x3C
+    float cost;           // +0x40 (cost from the start)
+    float f;              // +0x44 (h + cost)
+    Link *via;            // +0x48 (the link the search reached it by)
+    char pad4C[4];
+    Vector pos;           // +0x50
+};
+
+struct Query // the 0x58-byte base of the Mover's path (docs/ai.md section 4.6)
+{
+    char pad0[0x44];
+    unsigned short flags; // +0x44
+    float length;         // +0x48
+    int kind;             // +0x4C
+    Node *spot;           // +0x50
+};
 
 struct Mat4
 {
@@ -80,12 +99,33 @@ void fn_8009CF44(void *graph);
 float *fn_8042FB28(void *v);
 int fn_80444710(Node *node);
 Node *fn_8009C55C(Vector *pos, void *world, unsigned mask, float radius, void *test, void *ctx, int n);
-float fn_8009D278(Node *a, Node *b, Vector *out);
-float fn_8009D184(Vector *v, unsigned n);
-int fn_804445D8(Node *node);
-int fn_804445A4(Node *node);
-int fn_80444570(Node *node);
-int fn_8009C004(void *query, Vector *from, Vector *to, Node *fromSpot, Node *toSpot, unsigned mask, float range);
+float fn_8009D278(Node *a, Link *b, Vector *out);
+float fn_8009D184(Vector *a, Vector *b);
+int fn_804445D8(Link *link);
+int fn_804445A4(Link *link);
+int fn_80444570(Link *link);
+int fn_8009C004(Query *query, Vector *from, Vector *to, Node *fromSpot, Node *toSpot, unsigned mask, float range);
+float fn_80132DC4(int kind);
+float fn_804290F8(Vector *a, Vector *b);
+void fn_80429038(Vector *out, Vector *a, Vector *b);
+float fn_8042EC54(Vector *v);
+void fn_804448C0(Query *q);
+Link *fn_80444770(Node *node, int i);
+unsigned short fn_80444740(Node *node);
+int fn_80444A5C(Link *link, unsigned mask);
+int fn_80444BB0(Node *node, unsigned mask);
+void fn_8009CFDC();
+void fn_8009D024(Node *node);
+void fn_8009D0F4(Node *node);
+void fn_8009D1D0(Node *node);
+void fn_8009D238(Node *node);
+int fn_8009C92C(Query *q, Node *last, Vector *from, Vector *to);
+extern Vector lbl_805528D0;
+extern Vector lbl_805528E0;
+extern unsigned short lbl_8066B984; // search id
+extern Node *lbl_8066B988;          // open list head
+extern int lbl_8066B98C;            // open list count
+extern float lbl_8066D678;
 void fn_801B4094(char *path, const char *ext);
 void *fn_801A8368(const char *path, const char *mode, int flags);
 void fn_801A953C(void *file);
@@ -218,7 +258,7 @@ void fn_8009B994(void *volume, int on)
 }
 
 // Route query between two points: snap each end to the nearest spot (within 20, the far end first), then search between them
-int fn_8009BB7C(register void *path, Vector *from, Vector *to, Sector *fromWorld, Sector *toWorld, unsigned mask, float range)
+int fn_8009BB7C(register Query *path, Vector *from, Vector *to, Sector *fromWorld, Sector *toWorld, unsigned mask, float range)
 {
     if (!fromWorld)
         fromWorld = fn_8004DD38((Level *)fn_80430050(lbl_8052F060), from);
@@ -241,7 +281,7 @@ int fn_8009BB7C(register void *path, Vector *from, Vector *to, Sector *fromWorld
 }
 
 // Route query from a spot: snap the far end to the nearest spot (within 20, not the spot's own side), then search from the given spot
-int fn_8009BD7C(register void *path, Node *fromSpot, Vector *to, Sector *toWorld, unsigned mask, float range)
+int fn_8009BD7C(register Query *path, Node *fromSpot, Vector *to, Sector *toWorld, unsigned mask, float range)
 {
     if (!toWorld)
         toWorld = fn_8004DD38((Level *)fn_80430050(lbl_8052F060), to);
@@ -259,7 +299,7 @@ int fn_8009BD7C(register void *path, Node *fromSpot, Vector *to, Sector *toWorld
 __asm__(".section .rodata\n\t.long 0x3E99999A\n\t.long 0x41A00000\n\t.text");
 
 // Cost of the step between two spots
-void fn_8009BEC4(register void *path, Node *from, Node *to, unsigned n, float *total, float *base)
+void fn_8009BEC4(register Query *path, Node *from, Link *to, Vector *dest, float *total, float *base)
 {
     Vector v;
     float d = fn_8009D278(from, to, &v);
@@ -272,9 +312,110 @@ void fn_8009BEC4(register void *path, Node *from, Node *to, unsigned n, float *t
     else {
     }
     float b = from->cost + d;
-    float extra = fn_8009D184(&v, n);
+    float extra = fn_8009D184(&v, dest);
     float t = b + extra;
     *total = t;
     *base = b;
 }
+
+#define ABS(x) ((x) < 0.0f ? -(x) : (x))
+
+// A* between two spots: expands the open list over the links the mask allows.
+int fn_8009C004(register Query *path, Vector *from, Vector *to, Node *fromSpot, Node *toSpot, unsigned mask, float range)
+{
+    Node *cur;
+    Node *next;
+    Link *l;
+    unsigned short i;
+    Link *link;
+    float g;
+    if (fromSpot == toSpot) {
+        path->spot = fromSpot;
+        path->length = fn_804290F8(from, fn_80444688(path->spot)) + fn_804290F8(fn_80444688(path->spot), to);
+        path->flags |= 2;
+        return 1;
+    }
+    if (fn_80444710(fromSpot) != fn_80444710(toSpot))
+        return 0;
+    fn_8009CFDC();
+    fn_804448C0(path);
+    fn_8042DC84(&lbl_805528E0, from);
+    fn_80429038(&lbl_805528D0, to, from);
+    lbl_8066D678 = fn_8042EC54(&lbl_805528D0);
+    fromSpot->stamp = lbl_8066B984;
+    fromSpot->cost = 0.0f;
+    fromSpot->h = fn_8009D184(from, to);
+    fromSpot->f = fromSpot->h;
+    fromSpot->via = 0;
+    fromSpot->next = fromSpot->prev = 0;
+    fn_8042DC84(&fromSpot->pos, from);
+    fromSpot->flags |= 1;
+    lbl_8066B988 = fromSpot;
+    lbl_8066B98C = 1;
+    cur = lbl_8066B988;
+    Vector v;
+    float f;
+    float h;
+    while (lbl_8066B98C) {
+        cur = lbl_8066B988;
+        if (cur == toSpot) {
+            if (fn_8009C92C(path, cur, from, to))
+                return 2;
+            else
+                return 0;
+        }
+        fn_8009D0F4(cur);
+        i = 0;
+        link = fn_80444770(cur, 0);
+        for (; i < fn_80444740(cur); i++, link++) {
+            if (!fn_80444A5C(link, mask))
+                continue;
+            if (fn_80444570(link)) {
+                float lim = fn_80132DC4(path->kind);
+                Vector a;
+                Vector b;
+                fn_8042DC84(&a, fn_80444688(fn_80444904(link, 0)));
+                fn_8042DC84(&b, fn_80444688(fn_80444984(link, 0)));
+                float dz = ABS(a.z - b.z);
+                if (lim < dz)
+                    continue;
+            }
+            next = fn_80444984(link, 0);
+            if (next != toSpot && !fn_80444BB0(next, mask))
+                continue;
+            l = cur->via;
+            for (;;) {
+                if (!l)
+                    break;
+                if (fn_80444904(l, 0) == next)
+                    break;
+                l = fn_80444904(l, 0)->via;
+            }
+            if (l)
+                continue;
+            fn_8009BEC4(path, cur, link, to, &f, &g);
+            fn_8009D278(cur, link, &v);
+            h = fn_8009D184(&v, to);
+            if (next->stamp != lbl_8066B984) {
+                fn_8009D1D0(next);
+            } else {
+                if (next->f <= f)
+                    continue;
+            }
+            next->via = link;
+            next->cost = g;
+            fn_8042DC84(&next->pos, &v);
+            next->h = h;
+            next->f = f;
+            if (!(next->flags & 1))
+                fn_8009D024(next);
+            else
+                fn_8009D238(next);
+        }
+    }
+    return 0;
+}
+
+// 4-byte pad to the section alignment; fn_8009C55C reads it
+extern const float lbl_8048AA5C __attribute__((section(".rodata"))) = 1.0f;
 }

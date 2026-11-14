@@ -198,8 +198,8 @@ The registering classes are named by the type-registry string (`fn_801BEE2C`): `
 | Offset | Type | Meaning (guess) |
 |---|---|---|
 | +0x0, +0x4 | `unsigned`, `void *[16]` | Entry count and entries (each entry's `+0x0` is a spot) |
-| +0x44 | `unsigned short` | Base flags; bits 1 (`fn_80463584`: at the last entry, rebuild rather than reset) and 2 (`fn_804635B8`) are tested, set outside the AI (guess: the route query `fn_8009BB7C`) |
-| +0x48 | `float` | Cleared by the base reset |
+| +0x44 | `unsigned short` | Base flags, set by the path-node graph and cleared by the route build `fn_8009C92C` (unmatched). Bit 1 (`fn_80463584`: at the last entry, rebuild rather than reset): the route has more than 16 spots. Bit 2 (`fn_804635B8`): the two ends are the same spot (`fn_8009C004`) |
+| +0x48 | `float` | Route length, the sum of its legs (`fn_8009C004`, `fn_8009C92C`); cleared by the base reset |
 | +0x4C | `int` | `fn_80463204(ai)` at each build. The path-node search passes it to `fn_80132DC4`, which returns the float of that entry (0-30, else 0) of the 31 16-byte entries `lbl_804CF968` |
 | +0x50 | spot | Next spot |
 | +0x54 | `unsigned short` | Flags: 3 on build, reset clears 1, reaching a spot clears 2, 8 from the build's flag argument, 0x20 when the route query returns 1; the update sets 0x80 and 0x8000 and clears 0xC0. Tests: 1 `AI_IsPathBuilt`, 2 `fn_80463644`, 8 `fn_804636AC`, 0x20 `fn_804633B0`, 0x80 `fn_804636E0`, 0x8000 `fn_80463678` |
@@ -225,8 +225,8 @@ Signatures below are as the matched AI callers declare them.
 | Function | Called by | Role (guess) |
 |---|---|---|
 | `fn_8009C55C(pos, world, mask, radius, test, ctx, n)` | the route length `fn_8014C0B8`, teleport (`fn_80134D64`, `fn_80135668`), `EVADE`, `fn_801504BC`, and the two route queries | Nearest spot to a point within `radius` that passes `test` (the teleport passes `fn_80134940` and the volume registry); `mask` from `fn_801370B0` |
-| `fn_8009BD7C(path, fromSpot, to, toWorld, mask, range)` | path rebuild `fn_8014C31C` | Route query from a spot |
-| `fn_8009C004(query, from, to, fromSpot, toSpot, mask, range)` | the two route queries, the route length `fn_8014C0B8` | Spot-to-spot search; fills a 0x58-byte query (`Query` in `Game/fn_8014BC7C.cpp`, route length `+0x48`) and reads `fn_80132DC4` (section 4.6, `+0x4C`) |
+| `fn_8009C92C(query, last, from, to)` | the search `fn_8009C004` | Builds the route from the links the search reached `last` by (`Node+0x48`), sums its length into the query, fails past 255 spots |
+| `fn_8009CFDC`, `fn_8009D024`, `fn_8009D0F4`, `fn_8009D238`, `fn_8009D1D0` | the search | Start a search (bump the stamp `lbl_8066B984`, skipping 0), insert a node in the open list (head `lbl_8066B988`, ordered by f), unlink one, re-sort one, reset a node's search fields |
 
 ---
 
