@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B910.
+// Owns .rodata 0x8049B838-0x8049B950.
 
 struct Ent {
     int pad;
@@ -1411,5 +1411,309 @@ extern "C" int fn_80158844(register Self *self)
     return 1;
 }
 
-// 8-alignment pad for the .rodata claim (matching_notes 25); CARRYTHROWABLE's fn_80158F20 reads it.
-extern "C" const float lbl_8049B91C __attribute__((section(".rodata"))) = 100.0f;
+extern "C" {
+void fn_80463B20(void *task);
+void fn_80463B60(void *task);
+void fn_80464014(char *mover);
+void fn_8014DEB8(void *list);
+void fn_8014DE58(void *list);
+}
+
+// POSSESS enter
+extern "C" int fn_80158BBC(register Self *self)
+{
+    fn_80463B20(self);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_8014B900(fn_804420AC(self->ai));
+    return 1;
+}
+
+// POSSESS exit
+extern "C" int fn_80158C38(register Self *self)
+{
+    fn_80463B60(self);
+    fn_80464014(fn_804420AC(self->ai));
+    fn_8014DEB8(fn_804420D8(self->ai));
+    fn_8014DE58(fn_804420D8(self->ai));
+    return 1;
+}
+
+// POSSESS update
+extern "C" int fn_80158CBC(register Self *self)
+{
+    return 1;
+}
+
+extern "C" {
+int fn_801504BC(void *finder, Vector *out);
+void fn_8014B518(char *mover, Vector *pos, int index);
+}
+
+// CARRYTHROWABLE enter: walks to the finder's point.
+extern "C" int fn_80158CEC(register Self *self)
+{
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 0xf);
+    fn_80442130(self->ai, 0x12);
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 0x1b);
+    fn_80442130(self->ai, 0x15);
+    fn_80442130(self->ai, 0x16);
+    fn_80442130(self->ai, 0x17);
+    Ent *t = fn_8014F8BC(fn_804420D8(self->ai));
+    if (t) {
+        fn_801501AC(fn_804420D8(self->ai), t);
+        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8F(*t), 0);
+    }
+    if (fn_8015F384(self->ai)) {
+        fn_80442174(self->ai, 1);
+        fn_80442130(self->ai, 5);
+    } else {
+        fn_80442130(self->ai, 1);
+    }
+    if (fn_80085F7C(fn_80442080(self->ai)))
+        fn_80442130(self->ai, 0xe);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 4);
+    fn_80442174(self->ai, 9);
+    fn_801513D8(self->brain, 1000);
+    fn_80442414((TaskBase *)self, 0);
+    Vector v;
+    if (fn_801504BC(fn_804420D8(self->ai), &v))
+        fn_8014B518(fn_804420AC(self->ai), &v, -1);
+    return 1;
+}
+
+extern "C" {
+void fn_80464040(char *mover, int v);
+void fn_800F8B90(SCtl *c);
+}
+
+// CARRYTHROWABLE exit: rearms the ranged and melee timers.
+extern "C" int fn_80158F20(register Self *self)
+{
+    fn_80442174(self->ai, 0x10);
+    int wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_8046439C(self->ai)) + 10000;
+    fn_80464290(self->ai, fn_8042EFF8(lbl_80593BE8) + wait);
+    wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_80461F94(self->ai)) + 7500;
+    fn_80464208(self->ai, fn_8042EFF8(lbl_80593BE8) + wait);
+    fn_80464040(fn_804420AC(self->ai), 0);
+    if (fn_800CDA20(*fn_8044203C(self->ai)))
+        fn_800F8B90(fn_8044203C(self->ai));
+    return 1;
+}
+
+extern "C" {
+void fn_80461BF8(char *mover, Vector *v);
+void fn_80463410(char *mover, Vector *v);
+}
+
+// CARRYTHROWABLE update: carries the throwable toward the held actor and sets bit 0x10 to throw.
+extern "C" int fn_80159088(register Self *self)
+{
+    if (fn_80151B90(self->brain, self)) {
+        if (!fn_80151430(self->brain)) {
+            if (!fn_804643F0(self)) {
+                if (fn_80134870(self->ai) && fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai))) < 3.0f
+                    && fn_8015E64C(self->ai) < fn_800B1884(*fn_80442080(self->ai), 211)) {
+                    fn_804643C8(self, 1);
+                    return 1;
+                } else {
+                    if (fn_801368B8(self->ai) && fn_8015F008(self->ai))
+                        fn_80442130(self->ai, 0xe);
+                    else
+                        fn_80442174(self->ai, 0xe);
+                    fn_80442414((TaskBase *)self, 1);
+                    fn_801513D8(self->brain, 2000);
+                }
+            } else {
+                fn_804643C8(self, 1);
+                return 1;
+            }
+        }
+        float dh = fn_800B1724(*fn_80442080(self->ai))->z - fn_8014B824(fn_804420AC(self->ai)) < 0.0f
+            ? -(fn_800B1724(*fn_80442080(self->ai))->z - fn_8014B824(fn_804420AC(self->ai)))
+            : fn_800B1724(*fn_80442080(self->ai))->z - fn_8014B824(fn_804420AC(self->ai));
+        if (dh > 6.0f) {
+            if (fn_801368B8(self->ai))
+                fn_80442130(self->ai, 0xe);
+        } else if (dh < 3.0f && !fn_8015F008(self->ai)) {
+            float out;
+            int hit = fn_80085300(fn_80442080(self->ai), fn_800B1724(*fn_80442080(self->ai)), 0.7f, 3.0f, &out);
+            if (hit && fn_80085F7C(fn_80442080(self->ai)) && !fn_804628AC(self->ai))
+                fn_80442174(self->ai, 0xe);
+        }
+        if (fn_804628AC(self->ai) && fn_80461D48(self->ai, 0x3c)) {
+            if (fn_80085F7C(fn_80442080(self->ai)))
+                fn_80442130(self->ai, 0xe);
+            if (fn_8008606C(fn_80442080(self->ai)))
+                fn_80442130(self->ai, 0x20);
+        }
+        if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
+            fn_80442130(self->ai, 0xe);
+        if (fn_80085F7C(fn_80442080(self->ai)) && fn_8015F07C(self->ai) && !fn_804628AC(self->ai))
+            fn_80442174(self->ai, 0xe);
+        if (fn_80461D48(self->ai, 0xc)) {
+            Ent *t = fn_80134870(self->ai);
+            if (t && fn_800B0C58(t) && fn_804643F0(self)
+                && (fn_80086B1C(fn_80442080(self->ai)) || fn_80086B6C(fn_80442080(self->ai))
+                    || (fn_8015F07C(self->ai) && fn_8015E830(self->ai))
+                    || (fn_8015EEA0(self->ai) && fn_8015F07C(self->ai)))) {
+                fn_800C98BC(fn_8044203CF(self->ai), (PEnt *)t, 1);
+                Vector v;
+                fn_80464040(fn_804420AC(self->ai), 0);
+                if (fn_801504BC(fn_804420D8(self->ai), &v)) {
+                    fn_80464040(fn_804420AC(self->ai), 1);
+                    fn_80461BF8(fn_804420AC(self->ai), &v);
+                    fn_80463410(fn_804420AC(self->ai), &v);
+                }
+                fn_80442130(self->ai, 0x10);
+            }
+        } else {
+            fn_804643C8(self, 1);
+        }
+    }
+    return 1;
+}
+
+extern "C" {
+Ent *fn_800E89B0(void *self, float a, float b, int c, Vector *dir, int d);
+}
+
+// WIELDING enter: done at once when the held actor is beyond 3 units.
+extern "C" int fn_801596B0(register Self *self)
+{
+    if (fn_80134870(self->ai)) {
+        float d = fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)));
+        if (d > 3.0f) {
+            fn_804643C8(self, 1);
+            return 0;
+        }
+    }
+    Ent *t = fn_8014F8BC(fn_804420D8(self->ai));
+    if (t) {
+        fn_801501AC(fn_804420D8(self->ai), t);
+        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8F(*t), 0);
+    }
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 1);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 0xf);
+    fn_80442130(self->ai, 0x12);
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 0x1b);
+    fn_80442130(self->ai, 0x15);
+    fn_80442130(self->ai, 0x16);
+    fn_80442130(self->ai, 0x17);
+    if (fn_801368B8(self->ai))
+        fn_80442130(self->ai, 0xe);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442174(self->ai, 9);
+    fn_80442174(self->ai, 0x13);
+    fn_800E89B0(fn_8044203C(self->ai), fn_800B1884(*fn_80442080(self->ai), 223), fn_800B1884(*fn_80442080(self->ai), 2), 0, 0, 0);
+    fn_801513D8(self->brain, 0);
+    return 1;
+}
+
+// WIELDING exit: rearms the ranged and melee timers.
+extern "C" int fn_8015990C(register Self *self)
+{
+    fn_80442174(self->ai, 1);
+    fn_80442174(self->ai, 0x10);
+    fn_80442174(self->ai, 8);
+    int wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_8046439C(self->ai)) + 10000;
+    fn_80464290(self->ai, fn_8042EFF8(lbl_80593BE8) + wait);
+    wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_80461F94(self->ai)) + 7500;
+    fn_80464208(self->ai, fn_8042EFF8(lbl_80593BE8) + wait);
+    return 1;
+}
+
+// WIELDING update: keeps the wielded thing ready while in reach and picks a swing (0x10), 0xA or 8.
+extern "C" int fn_80159A40(register Self *self)
+{
+    if (fn_80151B90(self->brain, self)) {
+        if (!fn_80151430(self->brain))
+            fn_80442174(self->ai, 8);
+        if (!fn_800CDA20(*fn_8044203C(self->ai))) {
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        void *grab = fn_800CD9B0(*fn_8044203C(self->ai));
+        if (grab && fn_800B0CC0(grab) && !fn_800A4130(fn_800B1478(grab))) {
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        float h = fn_8014B824(fn_804420AC(self->ai));
+        if (fn_80134870(self->ai))
+            h = fn_800B1724(*fn_80134870(self->ai))->z;
+        float dh = ABS(fn_800B1724(*fn_80442080(self->ai))->z - h);
+        if (dh > 4.0f) {
+            if (fn_801368B8(self->ai)) {
+                fn_80442130(self->ai, 0xe);
+            } else {
+                fn_804643C8(self, 1);
+                if (fn_8015F008(self->ai) || dh > 6.0f)
+                    fn_80442130(self->ai, 0x10);
+                else
+                    fn_80442130(self->ai, 0xa);
+            }
+        }
+        if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
+            fn_80442130(self->ai, 0xe);
+        if (fn_804628AC(self->ai)) {
+            if (fn_80085F7C(fn_80442080(self->ai)))
+                fn_80442130(self->ai, 0xe);
+            if (fn_8008606C(fn_80442080(self->ai)))
+                fn_80442130(self->ai, 0x20);
+        }
+        if (fn_8015E64C(self->ai) > fn_800B1884(*fn_80442080(self->ai), 210)) {
+            Ent *t = fn_80134870(self->ai);
+            if (t) {
+                fn_80442130(self->ai, 1);
+                fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8F(*t), 0);
+            }
+        } else if (!fn_80151430(self->brain)) {
+            fn_80442174(self->ai, 1);
+            fn_80442174(self->ai, 0x10);
+            fn_80442174(self->ai, 8);
+            fn_80442174(self->ai, 0xa);
+            if (dh < 3.0f && !fn_8015F008(self->ai)) {
+                int hit;
+                float out;
+                hit = fn_80085300(fn_80442080(self->ai), fn_800B1724(*fn_80442080(self->ai)), 0.7f, 3.0f, &out);
+                if (hit && fn_801368B8(self->ai))
+                    fn_80442174(self->ai, 0xe);
+            }
+            fn_801513D8(self->brain, fn_8015EA18(500) + 500);
+            switch ((unsigned int)fn_8015EA18(6)) {
+            case 0:
+                fn_80442130(self->ai, 0x10);
+                break;
+            case 1:
+            case 2:
+                if (fn_80134870(self->ai) && !fn_8015EE34(self->ai, fn_80134870(self->ai)) && !fn_80461D48(self->ai, 0x3d))
+                    fn_80442130(self->ai, 0xa);
+                else
+                    fn_80442130(self->ai, 8);
+                break;
+            case 3:
+            case 4:
+            case 5:
+                fn_80442130(self->ai, 8);
+                break;
+            }
+        }
+    } else {
+    }
+    return 1;
+}
+
+// 8-alignment pad for the .rodata claim (matching_notes 25); fn_8015A100 reads it.
+extern "C" const float lbl_8049B94C __attribute__((section(".rodata"))) = 0.1f;
