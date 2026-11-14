@@ -101,8 +101,8 @@ extern char lbl_80593BE8[];
 extern "C" {
 unsigned int fn_8042EFF8(void *g);
 int fn_8015EA18(unsigned int n);
-void fn_80461828(void *p, unsigned int count);
-void fn_804618B0(void *p);
+void BitSet_Resize(void *p, unsigned int count);
+void BitSet_ClearAll(void *p);
 void fn_8014DE58(Self *self);
 void fn_8014DEB8(Self *self);
 void fn_8014FAF4(Self *self);
@@ -164,8 +164,8 @@ int fn_801368B8(void *ai);
 Vector *fn_800B17A8(Ent &e);
 void fn_8042D80C(Vector *dst, Vector *src);
 int fn_8015E2FC(void *ai, Vector *to, float r, int *hit, float height);
-void fn_8044243C(void *set, int bit);
-int fn_80442508(void *set, int bit);
+void BitSet_Set(void *set, int bit);
+int BitSet_Test(void *set, int bit);
 int fn_800B1258(Ent &e);
 int fn_800B0CC0(Ent &e);
 void *fn_800B1478(Ent &e);
@@ -219,7 +219,7 @@ int fn_8015ED50(void *ai, void *pos);
 extern "C" void fn_8014DDD4(register Self *self, void *ai)
 {
     self->f0 = ai;
-    fn_80461828(self->fFC, 0x41);
+    BitSet_Resize(self->fFC, 0x41);
     fn_8014DE58(self);
     fn_8014DEB8(self);
 }
@@ -257,7 +257,7 @@ extern "C" void fn_8014DEB8(register Self *self)
     self->f108 = 0;
     self->f10C = 0;
     self->f110 = 0;
-    fn_804618B0(self->fFC);
+    BitSet_ClearAll(self->fFC);
 }
 
 extern "C" void fn_8014E044(register Self *self)
@@ -497,45 +497,45 @@ extern "C" void fn_8014E648(register Self *self)
         Vector *top = fn_800B17A8(*AI_GetEntity(self->f0));
         fn_8042D80C(&v, top);
         d = 2.0f;
-        fn_804618B0(self->fFC);
+        BitSet_ClearAll(self->fFC);
         int hit;
         Ent *e;
         if (fn_8015E2FC(self->f0, pos, d, &hit, 0.0f)) {
-            fn_8044243C(self->fFC, 0x14);
+            BitSet_Set(self->fFC, 0x14);
             e = fn_800ACFA8(hit);
             if (e && fn_800B1258(*e) && fn_800B0CC0(*e) && !fn_800A4538(fn_800B1478(*e))) {
-                fn_8044243C(self->fFC, 0x18);
+                BitSet_Set(self->fFC, 0x18);
                 self->fF0 = hit;
             }
         }
         if (fn_8015E2FC(self->f0, top, d, &hit, 0.0f)) {
-            fn_8044243C(self->fFC, 0x13);
+            BitSet_Set(self->fFC, 0x13);
             e = fn_800ACFA8(hit);
             if (e && fn_800B1258(*e) && fn_800B0CC0(*e) && !fn_800A4538(fn_800B1478(*e))) {
-                fn_8044243C(self->fFC, 0x17);
+                BitSet_Set(self->fFC, 0x17);
                 self->fF4 = hit;
             }
         }
         if (fn_8015E2FC(self->f0, &v, d, &hit, 0.0f)) {
-            fn_8044243C(self->fFC, 0x12);
+            BitSet_Set(self->fFC, 0x12);
             e = fn_800ACFA8(hit);
             if (e && fn_800B1258(*e) && fn_800B0CC0(*e) && !fn_800A4538(fn_800B1478(*e))) {
-                fn_8044243C(self->fFC, 0x16);
+                BitSet_Set(self->fFC, 0x16);
                 self->fF8 = hit;
             }
         }
     }
-    if (fn_80442508(self->fFC, 0x14))
+    if (BitSet_Test(self->fFC, 0x14))
         AI_SetCondition(self->f0, 0x14);
-    if (fn_80442508(self->fFC, 0x13))
+    if (BitSet_Test(self->fFC, 0x13))
         AI_SetCondition(self->f0, 0x13);
-    if (fn_80442508(self->fFC, 0x12))
+    if (BitSet_Test(self->fFC, 0x12))
         AI_SetCondition(self->f0, 0x12);
-    if (fn_80442508(self->fFC, 0x18))
+    if (BitSet_Test(self->fFC, 0x18))
         AI_SetCondition(self->f0, 0x18);
-    if (fn_80442508(self->fFC, 0x17))
+    if (BitSet_Test(self->fFC, 0x17))
         AI_SetCondition(self->f0, 0x17);
-    if (fn_80442508(self->fFC, 0x16))
+    if (BitSet_Test(self->fFC, 0x16))
         AI_SetCondition(self->f0, 0x16);
     fn_8014E0B8(self);
     d = AI_GetMoverStuckTime(AI_GetMover(self->f0));
@@ -553,10 +553,10 @@ extern "C" void fn_8014E648(register Self *self)
     if (fn_800CCB38(*fn_8044203C_S(self->f0)))
         AI_SetCondition(self->f0, 0x20);
     if (fn_800CCEEC(*fn_8044203C_S(self->f0))
-        || (fn_80442508(AI_GetEvents(self->f0), 7) && !fn_80442508(AI_GetEvents(self->f0), 8)))
+        || (BitSet_Test(AI_GetEvents(self->f0), 7) && !BitSet_Test(AI_GetEvents(self->f0), 8)))
         AI_SetCondition(self->f0, 0x1E);
     if (fn_800CCE78(*fn_8044203C_S(self->f0))
-        || (fn_80442508(AI_GetEvents(self->f0), 7) && fn_80442508(AI_GetEvents(self->f0), 8)))
+        || (BitSet_Test(AI_GetEvents(self->f0), 7) && BitSet_Test(AI_GetEvents(self->f0), 8)))
         AI_SetCondition(self->f0, 0x1F);
     if (fn_800CDA20(*fn_8044203C_S(self->f0))) {
         if (fn_800A4130(fn_800B1478(*fn_800CD9B0(*fn_8044203C_S(self->f0)))))

@@ -308,7 +308,7 @@ void fn_80138C04(AIBehavior *self, int id, const char *name, BehaviorFn update, 
 void *fn_80138D90(AIBehavior *self, void *ai);
 void fn_80135D64(void *ai, void *action);
 void *AI_GetBehaviorSet(void *ai);
-int fn_80442508(void *set, int bit);
+int BitSet_Test(void *set, int bit);
 void AI_ResetAction(AIAction *a);
 void fn_801B60F4(void *pool);
 void fn_801B6040(void *pool, AIAction *a);
@@ -626,7 +626,7 @@ extern "C" void fn_801385A0(void *ai)
 
     lbl_8066BF5C = ai;
     for (i = 0; i <= 0x29; i++) {
-        if (fn_80442508(AI_GetBehaviorSet(ai), i)) {
+        if (BitSet_Test(AI_GetBehaviorSet(ai), i)) {
             void *t = lbl_80571814[i].run(ai);
             if (t) {
                 fn_80135D64(ai, t);
@@ -691,7 +691,7 @@ extern "C" float fn_80138868(void *ai, float x, float y)
     int i;
     for (i = 0; i <= 0x29; i++) {
         unsigned int color = 0xFFC04000;
-        if (fn_80442508(AI_GetBehaviorSet(ai), i)) {
+        if (BitSet_Test(AI_GetBehaviorSet(ai), i)) {
             color = 0xFF10C000;
         }
         fn_8042AC7C(lbl_8066D6DC, color);
@@ -841,7 +841,7 @@ extern "C" AIAction *fn_80138E10(void *ai, AIBehavior *rec)
             }
             return h;
         } else if (fn_800CE4D0(AI_GetActor(ai)) && AI_IsBehaviorEnabled(ai, 0xe) && !fn_804628AC(ai) &&
-                   (fn_80442508(AI_GetEvents(ai), 1) || fn_80442508(AI_GetEvents(ai), 2))) {
+                   (BitSet_Test(AI_GetEvents(ai), 1) || BitSet_Test(AI_GetEvents(ai), 2))) {
             AI_DisableBehavior(ai, 0xe);
         } else {
             h = fn_80138738(-1, 0, 0);
@@ -1300,14 +1300,14 @@ extern "C" AIAction *fn_8013B0F4(void *ai, AIBehavior *rec)
             }
         }
     } else {
-        if (fn_80442508(AI_GetEvents(ai), 9)) {
+        if (BitSet_Test(AI_GetEvents(ai), 9)) {
             AIAction *h = fn_80138738(4, 1500, 0);
             fn_80138A24(h, 5);
             fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
             AI_SetActionPriority(h, 5);
             return h;
         }
-        if (fn_80442508(AI_GetEvents(ai), 4)) {
+        if (BitSet_Test(AI_GetEvents(ai), 4)) {
             Ent *e = AI_GetEventSource(ai);
             if (e && fn_800B0C58(e) && fn_8009B04C(*fn_800B14A0S(e)) == 0x2e) {
                 float axes[3] = {1.0f, 1.0f, 1.0f};
@@ -1510,7 +1510,7 @@ extern "C" AIAction *fn_8013C1C8(void *ai, AIBehavior *rec)
 extern "C" AIAction *fn_8013C3A4(void *ai, AIBehavior *rec)
 {
     fn_8014F7B0(AI_GetTargetList(ai), 0);
-    if (AI_TestCondition(ai, 0x2c) || fn_80442508(AI_GetEvents(ai), 2)) {
+    if (AI_TestCondition(ai, 0x2c) || BitSet_Test(AI_GetEvents(ai), 2)) {
         Ent *t = AI_GetEvent2Actor(ai);
         float dist = t ? fn_804290F8(fn_800B1724(*t), fn_800B1724(*AI_GetEntity(ai))) : 0.0f;
         int far = t && dist > 12.0f;
@@ -1582,7 +1582,7 @@ extern "C" AIAction *fn_8013C3A4(void *ai, AIBehavior *rec)
             }
         }
     }
-    if (!AI_TestCondition(ai, 0x2d) && !fn_80442508(AI_GetEvents(ai), 1) && !AI_TestCondition(ai, 0x35) && fn_8015E97C(5.0f) &&
+    if (!AI_TestCondition(ai, 0x2d) && !BitSet_Test(AI_GetEvents(ai), 1) && !AI_TestCondition(ai, 0x35) && fn_8015E97C(5.0f) &&
         !AI_TestCondition(ai, 5) && !AI_TestCondition(ai, 6)) {
         AIAction *h = fn_80138738(-1, 0, 0);
         if (h) {
@@ -1592,7 +1592,7 @@ extern "C" AIAction *fn_8013C3A4(void *ai, AIBehavior *rec)
     }
     AIAction *h = fn_80138738(7, 500, 10);
     if (h) {
-        int x = fn_80442508(AI_GetEvents(ai), 1);
+        int x = BitSet_Test(AI_GetEvents(ai), 1);
         int y = fn_8015FFD4(ai);
         if (x && !fn_801369B0(ai)) {
             Vector v;
@@ -1625,7 +1625,7 @@ extern "C" AIAction *fn_8013C3A4(void *ai, AIBehavior *rec)
         if (x) {
             AI_SetActionDuration(h, 1000);
         }
-        if (fn_80442508(AI_GetEvents(ai), 6) && AI_GetEvent6Actor(ai) && (AI_GetEvent6Actor(ai)->f2a0 & 2)) {
+        if (BitSet_Test(AI_GetEvents(ai), 6) && AI_GetEvent6Actor(ai) && (AI_GetEvent6Actor(ai)->f2a0 & 2)) {
             z = 1;
         }
         int w = z;
@@ -3436,7 +3436,7 @@ extern "C" AIAction *fn_80145200(void *ai, AIBehavior *rec)
     }
     int stuck = 0;
     if (fn_8015F07C(ai) &&
-        (!AI_TestCondition(ai, 0x35) || (fn_80151AF8(AI_GetBrain(ai), 3) && !fn_80442508(fn_80151C8C(AI_GetBrain(ai)), 1)))) {
+        (!AI_TestCondition(ai, 0x35) || (fn_80151AF8(AI_GetBrain(ai), 3) && !BitSet_Test(fn_80151C8C(AI_GetBrain(ai)), 1)))) {
         stuck = 1;
     }
     Vector hit, pos, to;

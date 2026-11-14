@@ -695,8 +695,8 @@ extern "C" void fn_80133B94(void *actor, int a, int b, int c)
 }
 
 extern "C" {
-void *fn_804617F0(void *p);
-void fn_80461828(void *p, unsigned int count);
+void *BitSet_Init(void *p);
+void BitSet_Resize(void *p, unsigned int count);
 void fn_801B5BA8(void *p, int n, float f);
 void fn_801B5E38(void *p, int n);
 void fn_80461904(void *p);
@@ -710,23 +710,23 @@ extern "C" AIObject *fn_80133C8C(register AIObject *self, void *ent)
 {
     int i;
 
-    fn_804617F0((char *)self + 0xc);
-    fn_804617F0((char *)self + 0x14);
+    BitSet_Init((char *)self + 0xc);
+    BitSet_Init((char *)self + 0x14);
     fn_801B5BA8((char *)self + 0xac, 4, 1.0f);
     fn_80461904((char *)self + 0xd0);
     fn_80461A68((char *)self + 0x210);
-    fn_804617F0((char *)self + 0x500);
-    fn_804617F0((char *)self + 0x508);
+    BitSet_Init((char *)self + 0x500);
+    BitSet_Init((char *)self + 0x508);
     __6Vector((char *)self + 0x540);
     __6Vector((char *)self + 0x570);
     __6Vector((char *)self + 0x580);
     self->f52C = ent;
     self->f530 = Entity_GetActor(ent);
     fn_800859AC(self->f530, self);
-    fn_80461828((char *)self + 0x500, 0x2a);
-    fn_80461828((char *)self + 0x508, 0x2a);
-    fn_80461828((char *)self + 0xc, 0x41);
-    fn_80461828((char *)self + 0x14, 0x20);
+    BitSet_Resize((char *)self + 0x500, 0x2a);
+    BitSet_Resize((char *)self + 0x508, 0x2a);
+    BitSet_Resize((char *)self + 0xc, 0x41);
+    BitSet_Resize((char *)self + 0x14, 0x20);
     for (i = 0; i < 26; i++) {
         self->f44[i] = 0;
     }
@@ -751,7 +751,7 @@ AIBrainBase *fn_80136AC8(AIObject *ai, int profile);
 void fn_80150960(void *brain);
 void fn_8014DDD4(void *p, AIObject *ai);
 void fn_8014A3B4(void *p, AIObject *ai);
-void fn_804618B0(void *p);
+void BitSet_ClearAll(void *p);
 void fn_801343B0(AIObject *ai);
 void fn_801B60F4(void *p);
 void fn_801B6A70(void *p, int (*cmp)(void *, void *));
@@ -785,10 +785,10 @@ extern "C" void fn_80133E5C(register AIObject *self, void *ent)
     fn_80150960(self->f204);
     fn_8014DDD4(self->fD0, self);
     fn_8014A3B4(self->f210, self);
-    fn_804618B0(self->fC);
-    fn_804618B0(self->f14);
-    fn_804618B0(self->f500);
-    fn_804618B0(self->f508);
+    BitSet_ClearAll(self->fC);
+    BitSet_ClearAll(self->f14);
+    BitSet_ClearAll(self->f500);
+    BitSet_ClearAll(self->f508);
     self->f534 = 1;
     self->f8 = 1.0f;
     self->f538 = 0;
@@ -888,7 +888,7 @@ extern "C" void fn_80134280(register AIObject *self)
     self->f528 = 0;
     self->f524 = 1;
     self->f594 = 0;
-    fn_804618B0(AI_GetEvents(self));
+    BitSet_ClearAll(AI_GetEvents(self));
 }
 
 extern "C" {
@@ -1658,13 +1658,13 @@ extern "C" int fn_801363A4(register AIObject *self, int id)
 }
 
 extern "C" {
-void fn_8044243C(void *bits, int bit);
+void BitSet_Set(void *bits, int bit);
 int fn_8009B04C(Ent &actor);
 }
 
 extern "C" void fn_8013646C(register AIObject *self, unsigned int event, Ent *src, Ent *other)
 {
-    fn_8044243C(self->f14, event);
+    BitSet_Set(self->f14, event);
     if (src && fn_800B13D8(*src)) {
         self->f1C = fn_800B13D8(*src);
     } else {
@@ -1708,44 +1708,44 @@ extern "C" void fn_8013646C(register AIObject *self, unsigned int event, Ent *sr
 }
 
 extern "C" {
-void fn_804424A0(void *bits, int bit);
-int fn_80442508(void *bits, int bit);
+void BitSet_Clear(void *bits, int bit);
+int BitSet_Test(void *bits, int bit);
 }
 
 extern "C" void fn_80136678(register AIObject *self)
 {
     if (self->f2C && self->f2C + 3000 < fn_8042EFF8(lbl_80593BE8)) {
         self->f2C = 0;
-        fn_804424A0(self->f14, 1);
+        BitSet_Clear(self->f14, 1);
     }
     if (self->f30 && self->f30 + 3000 < fn_8042EFF8(lbl_80593BE8)) {
         self->f30 = 0;
-        fn_804424A0(self->f14, 6);
+        BitSet_Clear(self->f14, 6);
         self->f24 = 0;
     }
     if (self->f34 && self->f34 + 1000 < fn_8042EFF8(lbl_80593BE8)) {
         self->f34 = 0;
-        fn_804424A0(self->f14, 4);
+        BitSet_Clear(self->f14, 4);
         self->f28 = 0;
     }
     if (self->f38 && self->f38 + 3000 < fn_8042EFF8(lbl_80593BE8)) {
         self->f38 = 0;
-        fn_804424A0(self->f14, 2);
+        BitSet_Clear(self->f14, 2);
         self->f20 = 0;
     }
     if (self->f3C && self->f3C + 1000 < fn_8042EFF8(lbl_80593BE8)) {
         self->f3C = 0;
-        fn_804424A0(self->f14, 9);
+        BitSet_Clear(self->f14, 9);
     }
     if (self->f40 && self->f40 + 1000 < fn_8042EFF8(lbl_80593BE8)) {
         self->f40 = 0;
-        fn_804424A0(self->f14, 10);
+        BitSet_Clear(self->f14, 10);
     }
-    if (fn_80442508(self->f14, 7)) {
-        fn_804424A0(self->f14, 7);
+    if (BitSet_Test(self->f14, 7)) {
+        BitSet_Clear(self->f14, 7);
     }
-    if (fn_80442508(self->f14, 8)) {
-        fn_804424A0(self->f14, 8);
+    if (BitSet_Test(self->f14, 8)) {
+        BitSet_Clear(self->f14, 8);
     }
 }
 

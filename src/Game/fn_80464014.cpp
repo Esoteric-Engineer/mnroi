@@ -10,8 +10,8 @@ struct Vector
 
 extern "C" {
 void fn_8042DC84(void *dst, void *src);
-int fn_8044243C(void *set, int bit);
-int fn_804424A0(void *set, int bit);
+int BitSet_Set(void *set, int bit);
+int BitSet_Clear(void *set, int bit);
 unsigned int fn_8042EFF8(void *clock);
 extern char lbl_80593BE8[];
 }
@@ -80,12 +80,12 @@ extern "C" void fn_804640E8(register AIObject *self, register void *v)
 
 extern "C" void fn_8046412C(register AIObject *self, register int bit)
 {
-    fn_8044243C(self->bits508, bit);
+    BitSet_Set(self->bits508, bit);
 }
 
 extern "C" void fn_80464170(register AIObject *self, register int bit)
 {
-    fn_804424A0(self->bits508, bit);
+    BitSet_Clear(self->bits508, bit);
 }
 
 extern "C" void fn_804641B4(register AIObject *self, register int v)

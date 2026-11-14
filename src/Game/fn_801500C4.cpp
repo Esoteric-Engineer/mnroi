@@ -64,9 +64,9 @@ void *fn_8009C55C(void *a, int b, int c, float range, void *callback, void *user
 int AI_GetActionPriority(void *a);
 float AI_GetActionWeight(void *a);
 void Task_Base_Destroy(void *task, int flags);
-void fn_804617F0(void *timer);
-void fn_80461828(void *timer, int a);
-void fn_804618B0(void *timer);
+void BitSet_Init(void *timer);
+void BitSet_Resize(void *timer, int a);
+void BitSet_ClearAll(void *timer);
 int fn_80085954(PEnt *e);
 AITask *fn_8015105C(struct BrainSelf *brain, int id);
 }
@@ -254,7 +254,7 @@ extern "C" int fn_80150798(register void *self)
 extern "C" BrainSelf *fn_801507C0(register BrainSelf *self, void *ai)
 {
     self->vtable = (void *)lbl_804F5CB0;
-    fn_804617F0(self->timer);
+    BitSet_Init(self->timer);
     fn_80150820(self, ai);
     return self;
 }
@@ -277,8 +277,8 @@ extern "C" void fn_80150820(register BrainSelf *self, void *ai)
     }
     self->f68 = 0;
     self->f6C = 0;
-    fn_80461828(self->timer, 2);
-    fn_804618B0(self->timer);
+    BitSet_Resize(self->timer, 2);
+    BitSet_ClearAll(self->timer);
 }
 
 extern "C" void fn_80150960(register BrainSelf *self)
@@ -1026,7 +1026,7 @@ void fn_80463AB4(TaskSelf *self);
 extern "C" TaskSelf *fn_8015294C(register TaskSelf *self, void *ai, int id)
 {
     self->vtable = (void *)lbl_804F5CC8;
-    fn_804617F0(self->timer);
+    BitSet_Init(self->timer);
     if (!ai) {
         goto done;
         return self;

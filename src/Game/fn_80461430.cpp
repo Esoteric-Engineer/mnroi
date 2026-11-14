@@ -145,16 +145,16 @@ struct BitSet
     unsigned int count;  // +0x4, in bits
 };
 
-extern "C" void fn_804618B0(register BitSet *self);
+extern "C" void BitSet_ClearAll(register BitSet *self);
 
-extern "C" BitSet *fn_804617F0(register BitSet *self)
+extern "C" BitSet *BitSet_Init(register BitSet *self)
 {
     self->words = 0;
     self->count = 0;
     return self;
 }
 
-extern "C" void fn_80461828(register BitSet *self, register unsigned int count)
+extern "C" void BitSet_Resize(register BitSet *self, register unsigned int count)
 {
     if (self->words) {
         if (self->words) {
@@ -164,17 +164,17 @@ extern "C" void fn_80461828(register BitSet *self, register unsigned int count)
     }
     self->count = count;
     self->words = new unsigned int[(self->count >> 5) + 1];
-    fn_804618B0(self);
+    BitSet_ClearAll(self);
 }
 
-extern "C" void fn_804618B0(register BitSet *self)
+extern "C" void BitSet_ClearAll(register BitSet *self)
 {
     memset(self->words, 0, ((self->count >> 5) + 1) * sizeof(unsigned int));
 }
 
 extern "C" void *fn_80461904(register char *self)
 {
-    fn_804617F0((BitSet *)(self + 0xFC));
+    BitSet_Init((BitSet *)(self + 0xFC));
     return self;
 }
 
@@ -235,10 +235,10 @@ public:
 extern "C" {
 void __6Vector(Vector *v);
 void fn_8042DC84(Vector *dst, const Vector *src);
-void fn_8044243C(BitSet *b, unsigned int bit);
-void fn_804424A0(BitSet *b, unsigned int bit);
-int fn_80442508(BitSet *b, unsigned int bit);
-void fn_80447EAC(void *p, int flags);
+void BitSet_Set(BitSet *b, unsigned int bit);
+void BitSet_Clear(BitSet *b, unsigned int bit);
+int BitSet_Test(BitSet *b, unsigned int bit);
+void BitSet_Destroy(void *p, int flags);
 int fn_801B6A44(void *list);
 int fn_801B5D3C(void *list, int index);
 void *fn_8046234C(register char *self);
@@ -368,22 +368,22 @@ struct AIObject
 
 extern "C" void AI_SetCondition(register AIObject *self, register unsigned int bit)
 {
-    fn_8044243C(&self->conditions, bit);
+    BitSet_Set(&self->conditions, bit);
 }
 
 extern "C" void AI_ClearCondition(register AIObject *self, register unsigned int bit)
 {
-    fn_804424A0(&self->conditions, bit);
+    BitSet_Clear(&self->conditions, bit);
 }
 
 extern "C" int AI_TestCondition(register AIObject *self, register unsigned int bit)
 {
-    return fn_80442508(&self->conditions, bit);
+    return BitSet_Test(&self->conditions, bit);
 }
 
 extern "C" void AI_ClearConditions(register AIObject *self)
 {
-    fn_804618B0(&self->conditions);
+    BitSet_ClearAll(&self->conditions);
 }
 
 extern "C" char *AI_GetEvents(register char *self)
@@ -479,7 +479,7 @@ extern "C" int fn_80461FEC(register Named *self)
 
 extern "C" void fn_80462018(register char *self, register int inChrg)
 {
-    fn_80447EAC(self + 0x1C, 2);
+    BitSet_Destroy(self + 0x1C, 2);
     if (inChrg & 1) {
         __builtin_delete(self);
     } else {

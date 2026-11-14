@@ -23,7 +23,7 @@ void *AI_GetEntity(void *ai);
 int AI_IsMoverAboveTarget(void *p);
 int fn_800861EC(void *p);
 void AI_SetMoverMoveDest(void *p, void *v);
-int fn_80442508(void *set, int bit);
+int BitSet_Test(void *set, int bit);
 }
 
 // AIAction (docs/ai.md section 3, Behaviors), 0x70 bytes
@@ -482,7 +482,7 @@ extern "C" int fn_80463968(register AIObject *self)
 
 extern "C" int fn_80463994(register AIObject *self, register int bit)
 {
-    return fn_80442508(self->set508, bit);
+    return BitSet_Test(self->set508, bit);
 }
 
 extern "C" void fn_804639E4(register AIObject *self, register int v)
@@ -497,7 +497,7 @@ extern "C" void AI_SetControllerAction(register AIObject *self, register int i)
 
 extern "C" {
 void fn_80463AD4(register void *self);
-void fn_80447EAC(void *set, int inChrg);
+void BitSet_Destroy(void *set, int inChrg);
 void __builtin_delete(void *p);
 void fn_801ACFD4(void *p) __asm__("__builtin_vec_delete");
 void *memcpy(void *dst, const void *src, unsigned int n);
@@ -513,14 +513,14 @@ struct BitSet
     unsigned int count;  // +0x4, in bits
 };
 
-extern "C" BitSet *fn_80463E14(register BitSet *self, register BitSet *src);
+extern "C" BitSet *BitSet_Assign(register BitSet *self, register BitSet *src);
 
 // The base task (docs/ai.md 4.4)
 struct AITask
 {
     AIObject *ai; // +0x0
     char pad4[0xC];
-    BitSet state; // +0x10, the AI's state bits, saved and restored around the task
+    BitSet behaviors; // +0x10, the AI's enabled behaviors, saved and restored around the task
     char pad18[0x4];
     int i1C; // +0x1C
     char pad20[0x4];
@@ -531,7 +531,7 @@ extern "C" void Task_Base_Destroy(register AITask *self, register int inChrg)
 {
     self->vtbl = lbl_804F5CC8;
     fn_80463AD4(self);
-    fn_80447EAC(&self->state, 2);
+    BitSet_Destroy(&self->behaviors, 2);
     if (inChrg & 1) {
         __builtin_delete(self);
     } else {
@@ -556,12 +556,12 @@ extern "C" void AI_SetBehaviors(register AIObject *self, register BitSet *src);
 
 extern "C" void AI_SaveTaskBehaviors(register AITask *self)
 {
-    AI_GetBehaviors(self->ai, &self->state);
+    AI_GetBehaviors(self->ai, &self->behaviors);
 }
 
 extern "C" void AI_RestoreTaskBehaviors(register AITask *self)
 {
-    AI_SetBehaviors(self->ai, &self->state);
+    AI_SetBehaviors(self->ai, &self->behaviors);
 }
 
 extern "C" float AI_GetActionSpeed(register AIAction *self)
@@ -600,12 +600,12 @@ extern "C" void AI_FlushTaskDeletes(register void *brain)
 
 extern "C" void AI_SetBehaviors(register AIObject *self, register BitSet *src)
 {
-    fn_80463E14((BitSet *)((char *)self + 0x500), src);
+    BitSet_Assign((BitSet *)((char *)self + 0x500), src);
 }
 
 extern "C" void AI_GetBehaviors(register AIObject *self, register BitSet *dst)
 {
-    fn_80463E14(dst, (BitSet *)((char *)self + 0x500));
+    BitSet_Assign(dst, (BitSet *)((char *)self + 0x500));
 }
 
 extern "C" int Task_Base_Enter(register void *self)
@@ -619,7 +619,7 @@ extern "C" int Task_Base_Exit(register void *self)
 }
 
 // BitSet assignment
-extern "C" BitSet *fn_80463E14(register BitSet *self, register BitSet *src)
+extern "C" BitSet *BitSet_Assign(register BitSet *self, register BitSet *src)
 {
     if (!self->words || !src->words || self->count != src->count) {
         if (self->words) {
@@ -636,7 +636,6 @@ extern "C" BitSet *fn_80463E14(register BitSet *self, register BitSet *src)
     return self;
 }
 
-// AIObject+0xD0 (docs/ai.md 4.1)
 // AIObject+0xD0 (docs/ai.md 4.1)
 struct TargetList
 {

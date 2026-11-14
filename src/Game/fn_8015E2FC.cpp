@@ -97,7 +97,7 @@ float fn_801BDB9C(float a);
 float fn_80085A04(void *e);
 void fn_8042F838(Vector *out, Vector *v, float angle);
 void *AI_GetEvents(void *ai);
-int fn_80442508(void *set, int bit);
+int BitSet_Test(void *set, int bit);
 int fn_800862DC(void *e);
 int fn_8046441C(void *ai);
 int AI_TestCondition(void *ai, int bit);
@@ -525,7 +525,7 @@ void fn_8015FD2C(void *ai, Vector *dir, float rate, Vector *out)
 
 int fn_8015FFD4(void *ai)
 {
-    if (fn_80442508(AI_GetEvents(ai), 4)) {
+    if (BitSet_Test(AI_GetEvents(ai), 4)) {
         if (!fn_800862DC(AI_GetEntity(ai)) && fn_8046441C(ai) == 0x60)
             return 1;
         if (fn_8046441C(ai) == 0x3E || fn_8046441C(ai) == 0x40 || fn_8046441C(ai) == 0x3F || fn_8046441C(ai) == 0x41

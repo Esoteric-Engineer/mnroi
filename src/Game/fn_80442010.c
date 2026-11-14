@@ -72,23 +72,23 @@ int AI_GetBrain(register AIObject *o)
     return *(int *)((char *)o + 0x204);
 }
 
-void fn_8044243C(register BitSet *b, register unsigned int bit);
-void fn_804424A0(register BitSet *b, register unsigned int bit);
-int fn_80442508(register BitSet *b, register unsigned int bit);
+void BitSet_Set(register BitSet *b, register unsigned int bit);
+void BitSet_Clear(register BitSet *b, register unsigned int bit);
+int BitSet_Test(register BitSet *b, register unsigned int bit);
 
 void AI_EnableBehavior(register AIObject *o, register unsigned int bit)
 {
-    fn_8044243C(&o->behaviors, bit);
+    BitSet_Set(&o->behaviors, bit);
 }
 
 void AI_DisableBehavior(register AIObject *o, register unsigned int bit)
 {
-    fn_804424A0(&o->behaviors, bit);
+    BitSet_Clear(&o->behaviors, bit);
 }
 
 int AI_IsBehaviorEnabled(register AIObject *o, register unsigned int bit)
 {
-    return fn_80442508(&o->behaviors, bit);
+    return BitSet_Test(&o->behaviors, bit);
 }
 
 void fn_80442208(register AIObject *o, register float v)
@@ -161,17 +161,17 @@ void fn_80442414(register AITask *t, register int v)
     t->unk20 = v;
 }
 
-void fn_8044243C(register BitSet *b, register unsigned int bit)
+void BitSet_Set(register BitSet *b, register unsigned int bit)
 {
     b->words[bit >> 5] |= 1 << (bit & 31);
 }
 
-void fn_804424A0(register BitSet *b, register unsigned int bit)
+void BitSet_Clear(register BitSet *b, register unsigned int bit)
 {
     b->words[bit >> 5] &= ~(1 << (bit & 31));
 }
 
-int fn_80442508(register BitSet *b, register unsigned int bit)
+int BitSet_Test(register BitSet *b, register unsigned int bit)
 {
     return (b->words[bit >> 5] & (1 << (bit & 31))) != 0;
 }

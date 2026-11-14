@@ -109,12 +109,12 @@ extern "C" void *fn_801641FC(BrainSelf *self, int id);
 extern "C" BrainSelf *fn_80164274(BrainSelf *self, void *ai);
 
 extern "C" void *AI_GetBehaviorSet(void *ai);
-extern "C" void fn_804618B0(void *p);
+extern "C" void BitSet_ClearAll(void *p);
 extern "C" void AI_EnableBehavior(void *ai, unsigned int bit);
 extern "C" void AI_DisableBehavior(void *ai, unsigned int bit);
 extern "C" void fn_8046412C(void *ai, unsigned int bit);
 extern "C" void *fn_80151C8C(BrainSelf *brain);
-extern "C" void fn_8044243C(void *timer, int v);
+extern "C" void BitSet_Set(void *timer, int v);
 
 extern "C" {
 int fn_80151B90(BrainSelf *brain, void *task);
@@ -133,8 +133,8 @@ int fn_800B18EC(Ent &e, int id);
 char *AI_GetMover(void *ai);
 int fn_800B13D8(Ent &e);
 void fn_8014B63C(char *p, int a, int b);
-int fn_80442508(void *set, int bit);
-void fn_804424A0(void *set, int v);
+int BitSet_Test(void *set, int bit);
+void BitSet_Clear(void *set, int v);
 float fn_80461F68(void *ai);
 float fn_80461EE4(void *ai);
 int fn_8015EC1C(float f);
@@ -327,7 +327,7 @@ extern "C" TaskSelf *fn_8015294C(TaskSelf *self, void *ai, int id);
 // BRUTE3's special task (vtable lbl_804F6380): enter, exit, update
 extern "C" int fn_801607FC(register TaskSelf *self)
 {
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
@@ -343,8 +343,8 @@ extern "C" int fn_801607FC(register TaskSelf *self)
     AI_EnableBehavior(self->ai, 0x15);
     AI_EnableBehavior(self->ai, 0x16);
     AI_EnableBehavior(self->ai, 0x17);
-    fn_804618B0(fn_80151C8C(self->brain));
-    fn_8044243C(fn_80151C8C(self->brain), 1);
+    BitSet_ClearAll(fn_80151C8C(self->brain));
+    BitSet_Set(fn_80151C8C(self->brain), 1);
     return 1;
 }
 
@@ -383,12 +383,12 @@ extern "C" int fn_80160950(register TaskSelf *self)
                     return 0;
                 }
             }
-            if (fn_80442508(fn_80151C8C(self->brain), 1)) {
+            if (BitSet_Test(fn_80151C8C(self->brain), 1)) {
                 if (!fn_80151430(self->brain)) {
                     AI_DisableBehavior(self->ai, 9);
                     fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
-                    fn_804424A0(fn_80151C8C(self->brain), 1);
-                    fn_8044243C(fn_80151C8C(self->brain), 0);
+                    BitSet_Clear(fn_80151C8C(self->brain), 1);
+                    BitSet_Set(fn_80151C8C(self->brain), 0);
                     if (AI_TestCondition(self->ai, 0x2B) && fn_8015EC1C(fn_80461F68(self->ai))) {
                         AI_EnableBehavior(self->ai, 9);
                         return 1;
@@ -447,7 +447,7 @@ extern "C" int fn_80160950(register TaskSelf *self)
                         break;
                     }
                 }
-            } else if (fn_80442508(fn_80151C8C(self->brain), 0) && !fn_80151430(self->brain)) {
+            } else if (BitSet_Test(fn_80151C8C(self->brain), 0) && !fn_80151430(self->brain)) {
                 if (fn_80134870(self->ai)) {
                     Vector from;
                     Vector dir;
@@ -463,7 +463,7 @@ extern "C" int fn_80160950(register TaskSelf *self)
                         AI_DisableBehavior(self->ai, 9);
                 }
                 fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB8));
-                fn_8044243C(fn_80151C8C(self->brain), 1);
+                BitSet_Set(fn_80151C8C(self->brain), 1);
             }
         }
         if (AI_TestCondition(self->ai, 0x2D) || AI_TestCondition(self->ai, 0x2C) || AI_TestCondition(self->ai, 0x24))
@@ -579,12 +579,12 @@ extern "C" int fn_8016157C(register TaskSelf *self)
     fn_8046412C(self->ai, 6);
     fn_8046412C(self->ai, 5);
     AI_SaveTaskBehaviors(self);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0x18);
     AI_EnableBehavior(self->ai, 0x28);
     AI_EnableBehavior(self->ai, 0x1E);
     AI_EnableBehavior(self->ai, 4);
-    fn_804618B0(fn_80151C8C(self->brain));
+    BitSet_ClearAll(fn_80151C8C(self->brain));
     fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
     fn_800E9AF8(AI_GetActor(self->ai), 15.0f, 4.0f, 0.5f, 0, 0);
     if (fn_80134870(self->ai)) {
@@ -637,13 +637,13 @@ extern "C" int fn_80161754(register TaskSelf *self)
 extern "C" int fn_80161BDC(register TaskSelf *self)
 {
     AI_SaveTaskBehaviors(self);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0x18);
     Ent *t = fn_80134870(self->ai);
     if (t)
         fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*t), 0);
     fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB8));
-    fn_8044243C(fn_80151C8C(self->brain), 1);
+    BitSet_Set(fn_80151C8C(self->brain), 1);
     AI_EnableBehavior(self->ai, 9);
     AI_EnableBehavior(self->ai, 0x1E);
     return 1;
@@ -664,19 +664,19 @@ extern "C" int fn_80161D18(register TaskSelf *self)
         AI_SetTaskDone(self, 1);
         return 0;
     }
-    if (fn_80442508(fn_80151C8C(self->brain), 1)) {
+    if (BitSet_Test(fn_80151C8C(self->brain), 1)) {
         if (!fn_80151430(self->brain) && fn_8009B04C(*AI_GetEntity(self->ai)) != 0x63) {
             if (!AI_TestCondition(self->ai, 0x35))
                 AI_DisableBehavior(self->ai, 9);
             fn_80136214(self->ai, 9);
             fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
-            fn_804424A0(fn_80151C8C(self->brain), 1);
+            BitSet_Clear(fn_80151C8C(self->brain), 1);
         }
     } else if (!fn_80151430(self->brain)) {
         if (AI_TestCondition(self->ai, 0x35) && !AI_TestCondition(self->ai, 0x40) && fn_801600DC(self->ai, 1, 4.0f))
             AI_EnableBehavior(self->ai, 9);
         fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB8));
-        fn_8044243C(fn_80151C8C(self->brain), 1);
+        BitSet_Set(fn_80151C8C(self->brain), 1);
     }
     if (fn_800B0C58(*t) && (fn_80085954(fn_800B14A0(*t))->v42() || fn_800CCBD8(*fn_80085954(fn_800B14A0(*t)))))
         AI_DisableBehavior(self->ai, 0x28);
@@ -706,7 +706,7 @@ extern "C" int fn_80161D18(register TaskSelf *self)
 extern "C" int fn_8016216C(register TaskSelf *self)
 {
     AI_SaveTaskBehaviors(self);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0x18);
     AI_EnableBehavior(self->ai, 0x1A);
     AI_EnableBehavior(self->ai, 0x1C);
@@ -716,7 +716,7 @@ extern "C" int fn_8016216C(register TaskSelf *self)
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 6);
     fn_8046412C(self->ai, 5);
-    fn_804618B0(fn_80151C8C(self->brain));
+    BitSet_ClearAll(fn_80151C8C(self->brain));
     fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
     fn_800E9AF8(AI_GetActor(self->ai), 15.0f, 4.0f, 0.5f, 0, 0);
     return 1;
@@ -935,7 +935,7 @@ __asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F7
 // HUMAN3's special task (vtable lbl_804F6568): enter, exit, update
 extern "C" int fn_80162E2C(register TaskSelf *self)
 {
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
@@ -951,8 +951,8 @@ extern "C" int fn_80162E2C(register TaskSelf *self)
     AI_EnableBehavior(self->ai, 0x15);
     AI_EnableBehavior(self->ai, 0x16);
     AI_EnableBehavior(self->ai, 0x17);
-    fn_804618B0(fn_80151C8C(self->brain));
-    fn_8044243C(fn_80151C8C(self->brain), 1);
+    BitSet_ClearAll(fn_80151C8C(self->brain));
+    BitSet_Set(fn_80151C8C(self->brain), 1);
     return 1;
 }
 
@@ -999,12 +999,12 @@ extern "C" int fn_80162F80(register TaskSelf *self)
                         fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*fn_80134870(self->ai)), 0);
                 }
             }
-            if (fn_80442508(fn_80151C8C(self->brain), 1)) {
+            if (BitSet_Test(fn_80151C8C(self->brain), 1)) {
                 if (!fn_80151430(self->brain)) {
                     AI_DisableBehavior(self->ai, 9);
                     fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
-                    fn_804424A0(fn_80151C8C(self->brain), 1);
-                    fn_8044243C(fn_80151C8C(self->brain), 0);
+                    BitSet_Clear(fn_80151C8C(self->brain), 1);
+                    BitSet_Set(fn_80151C8C(self->brain), 0);
                     if (AI_TestCondition(self->ai, 0x2B) && fn_8015EC1C(fn_80461F68(self->ai))) {
                         AI_EnableBehavior(self->ai, 9);
                         return 1;
@@ -1064,7 +1064,7 @@ extern "C" int fn_80162F80(register TaskSelf *self)
                     }
                 } else {
                 }
-            } else if (fn_80442508(fn_80151C8C(self->brain), 0) && !fn_80151430(self->brain)) {
+            } else if (BitSet_Test(fn_80151C8C(self->brain), 0) && !fn_80151430(self->brain)) {
                 if (fn_80134870(self->ai)) {
                     Vector from;
                     Vector dir;
@@ -1085,7 +1085,7 @@ extern "C" int fn_80162F80(register TaskSelf *self)
                         AI_DisableBehavior(self->ai, 9);
                 }
                 fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB8));
-                fn_8044243C(fn_80151C8C(self->brain), 1);
+                BitSet_Set(fn_80151C8C(self->brain), 1);
             }
         }
         if (AI_TestCondition(self->ai, 0x2D) || AI_TestCondition(self->ai, 0x2C) || AI_TestCondition(self->ai, 0x24))

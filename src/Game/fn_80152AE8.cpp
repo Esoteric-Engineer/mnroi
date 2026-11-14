@@ -49,7 +49,7 @@ public:
 extern "C" {
 void *fn_80464068(void *ai);
 void *AI_GetBehaviorSet(void *ai);
-void fn_804618B0(void *set);
+void BitSet_ClearAll(void *set);
 int fn_80151B90(void *brain, void *task);
 void *fn_8015105C(void *brain, int id);
 void fn_8046412C(void *ai, int bit);
@@ -100,7 +100,7 @@ void fn_80464290(void *ai, unsigned int t);
 int fn_80464230(void *ai);
 int fn_8015F410(void *ai, float min);
 void *AI_GetEvents(void *ai);
-int fn_80442508(void *set, int bit);
+int BitSet_Test(void *set, int bit);
 float fn_80464344(void *ai);
 float fn_80462A04(void *ai);
 int fn_8015FFD4(void *ai);
@@ -190,8 +190,8 @@ inline int sn_return_decl(int a) { return a; } // sets the flag: no function-end
 
 extern "C" int Task_Sleep_Enter(register Self *self)
 {
-    fn_804618B0(fn_80464068(self->ai));
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(fn_80464068(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     return 1;
 }
 
@@ -219,7 +219,7 @@ extern "C" int Task_Search_Enter(register Self *self)
     if (fn_8046439C(self->ai) > 0.0f)
         fn_8046412C(self->ai, 2);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
     AI_EnableBehavior(self->ai, 0);
@@ -286,8 +286,8 @@ extern "C" int Task_Search_Update(register Self *self)
             fn_8015105C(AI_GetBrain(self->ai), 0x12);
             return 1;
         }
-        if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-            || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+        if ((BitSet_Test(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+            || (BitSet_Test(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
             || fn_8015FFD4(self->ai))
             AI_EnableBehavior(self->ai, 7);
         else
@@ -496,7 +496,7 @@ extern "C" int Task_Melee_Enter(register Self *self)
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
     AI_EnableBehavior(self->ai, 0);
@@ -872,8 +872,8 @@ extern "C" int Task_Melee_Update(register Self *self)
             else
                 AI_DisableBehavior(self->ai, 0x20);
         }
-        if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-            || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+        if ((BitSet_Test(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+            || (BitSet_Test(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
             || fn_8015FFD4(self->ai)) {
             if (!AI_IsBehaviorEnabled(self->ai, 0x19))
                 AI_EnableBehavior(self->ai, 7);
@@ -928,7 +928,7 @@ extern "C" int Task_Ranged_Enter(register RangedTask *self)
     register float d;
     register PEnt *e;
     self->f28 = 0;
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     if (fn_80461F68(self->ai) > 0.0f)
         fn_8046412C(self->ai, 0);
@@ -1145,8 +1145,8 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
             if (hit)
                 AI_SetTaskDone(self, 1);
         }
-        if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-            || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+        if ((BitSet_Test(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+            || (BitSet_Test(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
             || fn_8015FFD4(self->ai))
             AI_EnableBehavior(self->ai, 7);
     } else {
@@ -1178,7 +1178,7 @@ extern "C" int Task_FindThrowable_Enter(register Self *self)
     fn_8046412C(self->ai, 1);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 1);
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
@@ -1311,7 +1311,7 @@ extern "C" int Task_FindWieldable_Enter(register Self *self)
         }
     }
     fn_8046412C(self->ai, 2);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 1);
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
@@ -1410,7 +1410,7 @@ void fn_8014DE58(void *list);
 extern "C" int Task_Possess_Enter(register Self *self)
 {
     AI_SaveTaskBehaviors(self);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     fn_8014B900(AI_GetMover(self->ai));
     return 1;
@@ -1438,7 +1438,7 @@ void fn_8014B518(char *mover, Vector *pos, int index);
 // Walks to the finder's point.
 extern "C" int Task_CarryThrowable_Enter(register Self *self)
 {
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
     AI_EnableBehavior(self->ai, 4);
@@ -1585,7 +1585,7 @@ extern "C" int Task_Wielding_Enter(register Self *self)
         fn_801501AC(AI_GetTargetList(self->ai), t);
         fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8F(*t), 0);
     }
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 1);
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
@@ -1709,7 +1709,7 @@ float fn_80086614(void *e);
 // Targets the thing the mover is aimed at.
 extern "C" int Task_AttackThing_Enter(register Self *self)
 {
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
     AI_EnableBehavior(self->ai, 0);
@@ -1812,7 +1812,7 @@ extern "C" int Task_MoveTo_Enter(register MoveTo *self)
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
@@ -1936,7 +1936,7 @@ extern "C" int Task_Stop_Update(register Self *self)
 extern "C" int Task_Enslave_Enter(register Self *self)
 {
     AI_SaveTaskBehaviors(self);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     fn_8014B900(AI_GetMover(self->ai));
     return 1;
@@ -2106,7 +2106,7 @@ extern "C" int Task_GoGetAndThrowAt_Enter(register Self *self)
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
@@ -2199,7 +2199,7 @@ extern "C" int fn_801362DC(void *ai, int id);
 extern "C" int Task_WallClimb_Enter(register Self *self)
 {
     fn_8014B900(AI_GetMover(self->ai));
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0x21);
     fn_801362DC(self->ai, 4);
     fn_801513D8(AI_GetBrain(self->ai), (int)(fn_80464318(self->ai) * 20.0f));
@@ -2299,8 +2299,8 @@ struct RangedOnly : Self {
 
 extern "C" {
 void *fn_80151C8C(void *brain);
-void fn_8044243C(void *set, int v);
-void fn_804424A0(void *set, int v);
+void BitSet_Set(void *set, int v);
+void BitSet_Clear(void *set, int v);
 void fn_800CD6C4(Ctl &c, int on);
 void fn_800BD3A8(void *ctl, int v);
 void fn_80429038V(Vector *out, Vec *a, Vector *b) __asm__("fn_80429038");
@@ -2313,7 +2313,7 @@ extern "C" int Task_RangedOnly_Enter(register RangedOnly *self)
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     AI_EnableBehavior(self->ai, 9);
     AI_EnableBehavior(self->ai, 4);
@@ -2323,9 +2323,9 @@ extern "C" int Task_RangedOnly_Enter(register RangedOnly *self)
     } else {
         fn_8014F7B0(AI_GetTargetList(self->ai), 1);
     }
-    fn_804618B0(fn_80151C8C(self->brain));
+    BitSet_ClearAll(fn_80151C8C(self->brain));
     fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xb8));
-    fn_8044243C(fn_80151C8C(self->brain), 1);
+    BitSet_Set(fn_80151C8C(self->brain), 1);
     fn_800CD6C4(*AI_GetActor(self->ai), 1);
     return 1;
 }
@@ -2351,15 +2351,15 @@ extern "C" int Task_RangedOnly_Update(register RangedOnly *self)
         if (!t)
             fn_8014F7B0(AI_GetTargetList(self->ai), 1);
     }
-    if (fn_80442508(fn_80151C8C(self->brain), 1)) {
+    if (BitSet_Test(fn_80151C8C(self->brain), 1)) {
         if (!fn_80151430(self->brain)) {
             AI_DisableBehavior(self->ai, 9);
             fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xb9));
-            fn_804424A0(fn_80151C8C(self->brain), 1);
-            fn_8044243C(fn_80151C8C(self->brain), 0);
+            BitSet_Clear(fn_80151C8C(self->brain), 1);
+            BitSet_Set(fn_80151C8C(self->brain), 0);
             fn_800BD3A8(AI_GetActor(self->ai), fn_800B18EC(*AI_GetEntity(self->ai), 0xb9));
         }
-    } else if (fn_80442508(fn_80151C8C(self->brain), 0)) {
+    } else if (BitSet_Test(fn_80151C8C(self->brain), 0)) {
         if (!fn_80151430(self->brain)) {
             if (t) {
                 Vector from;
@@ -2376,7 +2376,7 @@ extern "C" int Task_RangedOnly_Update(register RangedOnly *self)
                     AI_DisableBehavior(self->ai, 9);
             }
             fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xb8));
-            fn_8044243C(fn_80151C8C(self->brain), 1);
+            BitSet_Set(fn_80151C8C(self->brain), 1);
         }
     } else {
     }
@@ -2400,7 +2400,7 @@ extern "C" int Task_ClimbAttack_Enter(register Self *self)
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     AI_EnableBehavior(self->ai, 4);
     AI_EnableBehavior(self->ai, 0x1a);
@@ -2467,7 +2467,7 @@ extern "C" int Task_ForceSuperBlock_Enter(register Self *self)
 {
     fn_8014B900(AI_GetMover(self->ai));
     fn_8046412C(self->ai, 3);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     AI_EnableBehavior(self->ai, 4);
     AI_EnableBehavior(self->ai, 0x25);
@@ -2490,7 +2490,7 @@ extern "C" int Task_ForcePowerStand_Enter(register Self *self)
 {
     fn_8014B900(AI_GetMover(self->ai));
     fn_8046412C(self->ai, 3);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     AI_EnableBehavior(self->ai, 4);
     AI_EnableBehavior(self->ai, 0x26);
@@ -2520,7 +2520,7 @@ extern "C" int Task_HoverAndFire_Enter(register HoverFire *self)
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     AI_EnableBehavior(self->ai, 0x27);
     AI_EnableBehavior(self->ai, 9);
@@ -2549,7 +2549,7 @@ extern "C" int Task_MobilityCharge_Enter(register Self *self)
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     AI_EnableBehavior(self->ai, 0x1a);
     AI_EnableBehavior(self->ai, 0x1c);
@@ -2588,7 +2588,7 @@ extern "C" int Task_PowerStand_Enter(register Self *self)
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    BitSet_ClearAll(AI_GetBehaviorSet(self->ai));
     AI_EnableBehavior(self->ai, 0);
     AI_EnableBehavior(self->ai, 4);
     AI_EnableBehavior(self->ai, 0xf);
@@ -2634,16 +2634,16 @@ extern "C" int Task_PowerStand_Update(register Self *self)
             && ((dist < reach * 2.0f && fn_800CC6DC(*fn_80085954(fn_800B14A0(*t))) != 0xd)
                 || fn_80086730(actor) > fn_8008677C(actor) * 0.5f))
             AI_SetTaskDone(self, 1);
-        else if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-                 || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+        else if ((BitSet_Test(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+                 || (BitSet_Test(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
                  || fn_8015FFD4(self->ai))
             AI_EnableBehavior(self->ai, 7);
         else
             AI_DisableBehavior(self->ai, 7);
     } else if (fn_80086730(actor) > fn_8008677C(actor) * 0.5f)
         AI_SetTaskDone(self, 1);
-    else if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-             || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+    else if ((BitSet_Test(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+             || (BitSet_Test(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
              || fn_8015FFD4(self->ai))
         AI_EnableBehavior(self->ai, 7);
     else
