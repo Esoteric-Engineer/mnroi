@@ -159,7 +159,7 @@ void fn_800FAF4C(register PadInput *self);
 void *fn_800859D4(PEnt *actor);
 void fn_80133E5C(AIObject *ai, void *tmpl);
 void fn_80133FA0(AIObject *ai);
-void *fn_80442080(AIObject *ai);
+void *AI_GetEntity(AIObject *ai);
 void fn_800859AC(void *actor, void *ai);
 void fn_80447DBC(AIObject *ai, int inChrg);
 void fn_8013741C(AIObject *ai, int *buttons);
@@ -599,7 +599,7 @@ extern "C" void fn_800FBA70(register AIDriven *self, void *owner)
 extern "C" void fn_800FBB30(register AIDriven *self)
 {
     if (self->ai) {
-        fn_800859AC(fn_80442080(self->ai), 0);
+        fn_800859AC(AI_GetEntity(self->ai), 0);
         fn_80133FA0(self->ai);
         if (self->ai) {
             fn_80447DBC(self->ai, 3);

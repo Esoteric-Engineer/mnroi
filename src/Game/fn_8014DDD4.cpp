@@ -111,8 +111,8 @@ Ent *fn_8014F8BC(Self *self);
 void fn_80461D04(void *a, int b);
 void fn_80461CC0(void *a, int b);
 Ent *fn_80134870(void *a);
-PEnt *fn_80442080(void *a);
-void *fn_8044203C(void *a);
+PEnt *AI_GetEntity(void *a);
+void *AI_GetActor(void *a);
 void *fn_800B1724(Ent &node);
 Vector *fn_800B1750(Ent &actor);
 Ent *fn_800B1590(Ent &a);
@@ -156,7 +156,7 @@ int fn_8015EE34(void *ai, Ent *e);
 int fn_804622B4(void *list);
 void *fn_804622FC(void *list, int i);
 int fn_80146A88(void *o, Vector *a, Vector *b, Vector *hit);
-Sub *fn_8044203C_S(void *ai) __asm__("fn_8044203C");
+Sub *fn_8044203C_S(void *ai) __asm__("AI_GetActor");
 int fn_80462880(void *ai);
 void fn_804639E4(void *ai, int v);
 int fn_800861EC(void *e);
@@ -170,7 +170,7 @@ int fn_800B1258(Ent &e);
 int fn_800B0CC0(Ent &e);
 void *fn_800B1478(Ent &e);
 int fn_800A4538(void *p);
-void *fn_804420AC(void *ai);
+void *AI_GetMover(void *ai);
 float fn_8046393C(void *m);
 int fn_800CC8EC(Ent &e);
 int fn_800CCB38(Ent &e);
@@ -182,7 +182,7 @@ Ent *fn_800CD9B0(Ent &e);
 int fn_800A4130(void *p);
 int fn_8013338C(void *e);
 int fn_800B0C1C(Ent &e);
-int fn_80442104(void *ai);
+int AI_GetBrain(void *ai);
 int fn_80151AF8(int brain, int id);
 int fn_800CCF60(Ent &e);
 int fn_8013379C(void *ai, int a);
@@ -308,19 +308,19 @@ extern "C" void fn_8014E288(register Self *self)
         float lo = 0.5f;
         float hi = 4.0f;
         if (fn_80134870(self->f0)) {
-            if (fn_8015E8A8(self->f0, fn_800B1724(*fn_80134870(self->f0))) > fn_800B1884(*fn_80442080(self->f0), 216))
+            if (fn_8015E8A8(self->f0, fn_800B1724(*fn_80134870(self->f0))) > fn_800B1884(*AI_GetEntity(self->f0), 216))
                 hi = 20.0f;
         }
         Vector v;
         if (!fn_8015F6CC(self->f0, &v))
-            fn_8042DC84(&v, fn_800B1750(*fn_80442080(self->f0)));
-        PEnt *p = fn_8015F7A4(fn_80442080(self->f0), hi, 2, &v, lo);
+            fn_8042DC84(&v, fn_800B1750(*AI_GetEntity(self->f0)));
+        PEnt *p = fn_8015F7A4(AI_GetEntity(self->f0), hi, 2, &v, lo);
         if (p)
             self->fE8 = fn_800B13D8(*p);
         self->f114 = fn_8042EFF8(lbl_80593BE8) + 3000;
     }
-    PEnt *a = fn_80442080(self->f0);
-    void *b = fn_8044203C(self->f0);
+    PEnt *a = AI_GetEntity(self->f0);
+    void *b = AI_GetActor(self->f0);
     if (self->fE8) {
         Ent *c = fn_800B1590(*fn_800ACFA8(self->fE8));
         if (c) {
@@ -340,16 +340,16 @@ extern "C" void fn_8014E4FC(register Self *self)
         fn_80461D04(self->f0, 13);
         Vector v;
         if (!fn_8015F6CC(self->f0, &v))
-            fn_8042DC84(&v, fn_800B1750(*fn_80442080(self->f0)));
+            fn_8042DC84(&v, fn_800B1750(*AI_GetEntity(self->f0)));
         float hi = 4.0f;
         float lo = 0.5f;
-        PEnt *p = fn_8015F7A4(fn_80442080(self->f0), hi, 1, &v, lo);
+        PEnt *p = fn_8015F7A4(AI_GetEntity(self->f0), hi, 1, &v, lo);
         if (p)
             self->fEC = fn_800B13D8(*p);
         self->f118 = fn_8042EFF8(lbl_80593BE8) + 3000;
     }
-    PEnt *a = fn_80442080(self->f0);
-    void *b = fn_8044203C(self->f0);
+    PEnt *a = AI_GetEntity(self->f0);
+    void *b = AI_GetActor(self->f0);
     if (self->fEC)
         fn_80461CC0(self->f0, 13);
 }
@@ -363,26 +363,26 @@ extern "C" void fn_8014E648(register Self *self)
     Ent *target = fn_80134870(self->f0);
     if (!target)
         target = fn_80134870(self->f0);
-    void *rec = fn_80147ACC(fn_8013726C(self->f0), fn_80442080(self->f0));
+    void *rec = fn_80147ACC(fn_8013726C(self->f0), AI_GetEntity(self->f0));
     if (rec) {
         fn_80461CC0(self->f0, 3);
-        if (!fn_801464E4(rec, fn_800B1724(*fn_80442080(self->f0))))
+        if (!fn_801464E4(rec, fn_800B1724(*AI_GetEntity(self->f0))))
             fn_80461CC0(self->f0, 4);
     }
     float d;
     if (target) {
         fn_80461CC0(self->f0, 2);
         if (fn_80463994(self->f0, 0)) {
-            d = fn_804290F8(fn_800B1724(*target), fn_800B1724(*fn_80442080(self->f0)));
-            if (d > fn_800B1884(*fn_80442080(self->f0), 213))
+            d = fn_804290F8(fn_800B1724(*target), fn_800B1724(*AI_GetEntity(self->f0)));
+            if (d > fn_800B1884(*AI_GetEntity(self->f0), 213))
                 fn_80461CC0(self->f0, 10);
-            else if (d > fn_800B1884(*fn_80442080(self->f0), 212))
+            else if (d > fn_800B1884(*AI_GetEntity(self->f0), 212))
                 fn_80461CC0(self->f0, 9);
-            else if (d > fn_800B1884(*fn_80442080(self->f0), 211))
+            else if (d > fn_800B1884(*AI_GetEntity(self->f0), 211))
                 fn_80461CC0(self->f0, 8);
-            else if (d > fn_800B1884(*fn_80442080(self->f0), 210))
+            else if (d > fn_800B1884(*AI_GetEntity(self->f0), 210))
                 fn_80461CC0(self->f0, 7);
-            else if (d > fn_800B1884(*fn_80442080(self->f0), 209))
+            else if (d > fn_800B1884(*AI_GetEntity(self->f0), 209))
                 fn_80461CC0(self->f0, 6);
             else
                 fn_80461CC0(self->f0, 5);
@@ -452,7 +452,7 @@ extern "C" void fn_8014E648(register Self *self)
             Vector a;
             Vector b;
             Vector c;
-            fn_8042DC84(&a, fn_800B1724(*fn_80442080(self->f0)));
+            fn_8042DC84(&a, fn_800B1724(*AI_GetEntity(self->f0)));
             fn_8042DC84(&b, fn_800B1724(*target));
             a.z = 0.0f;
             b.z = 0.0f;
@@ -485,7 +485,7 @@ extern "C" void fn_8014E648(register Self *self)
     }
     if (fn_800CCA58(*fn_8044203C_S(self->f0)))
         fn_80461CC0(self->f0, 0x1B);
-    if (fn_800861EC(fn_80442080(self->f0)) || fn_801368B8(self->f0))
+    if (fn_800861EC(AI_GetEntity(self->f0)) || fn_801368B8(self->f0))
         fn_80461CC0(self->f0, 0x1A);
     if (fn_8042EFF8(lbl_80593BE8) > self->f130) {
         self->f130 = fn_8042EFF8(lbl_80593BE8) + fn_8015EA18(500);
@@ -493,8 +493,8 @@ extern "C" void fn_8014E648(register Self *self)
         self->fF4 = 0;
         self->fF8 = 0;
         Vector v;
-        Vector *pos = fn_800B1750(*fn_80442080(self->f0));
-        Vector *top = fn_800B17A8(*fn_80442080(self->f0));
+        Vector *pos = fn_800B1750(*AI_GetEntity(self->f0));
+        Vector *top = fn_800B17A8(*AI_GetEntity(self->f0));
         fn_8042D80C(&v, top);
         d = 2.0f;
         fn_804618B0(self->fFC);
@@ -538,14 +538,14 @@ extern "C" void fn_8014E648(register Self *self)
     if (fn_80442508(self->fFC, 0x16))
         fn_80461CC0(self->f0, 0x16);
     fn_8014E0B8(self);
-    d = fn_8046393C(fn_804420AC(self->f0));
+    d = fn_8046393C(AI_GetMover(self->f0));
     if (d > 2.0f) {
         fn_80461CC0(self->f0, 0x34);
         fn_80461CC0(self->f0, 0x33);
     } else if (d > 1.0f) {
         fn_80461CC0(self->f0, 0x33);
         int hit;
-        if (fn_8015E2FC(self->f0, fn_800B1750(*fn_80442080(self->f0)), 1.5f, &hit, 0.0f))
+        if (fn_8015E2FC(self->f0, fn_800B1750(*AI_GetEntity(self->f0)), 1.5f, &hit, 0.0f))
             fn_80461CC0(self->f0, 0x34);
     }
     if (fn_800CC8EC(*fn_8044203C_S(self->f0)))
@@ -566,11 +566,11 @@ extern "C" void fn_8014E648(register Self *self)
     }
     if (fn_80463994(self->f0, 6))
         fn_8014E044(self);
-    if (fn_8013338C(fn_80442080(self->f0)) || (fn_80134870(self->f0) && !fn_800B0C1C(*fn_80134870(self->f0))))
+    if (fn_8013338C(AI_GetEntity(self->f0)) || (fn_80134870(self->f0) && !fn_800B0C1C(*fn_80134870(self->f0))))
         fn_80461CC0(self->f0, 0x35);
-    if (fn_80151AF8(fn_80442104(self->f0), 6))
+    if (fn_80151AF8(AI_GetBrain(self->f0), 6))
         fn_80461CC0(self->f0, 0x37);
-    if (fn_80151AF8(fn_80442104(self->f0), 14))
+    if (fn_80151AF8(AI_GetBrain(self->f0), 14))
         fn_80461CC0(self->f0, 0x38);
     if (fn_800CCF60(*fn_8044203C_S(self->f0)))
         fn_80461CC0(self->f0, 0x24);
@@ -578,9 +578,9 @@ extern "C" void fn_8014E648(register Self *self)
         fn_80461CC0(self->f0, 0x3C);
         fn_80135668(self->f0, 1);
     }
-    if (fn_8014AB90(fn_804420AC(self->f0)))
+    if (fn_8014AB90(AI_GetMover(self->f0)))
         fn_80461CC0(self->f0, 0x3D);
-    if (fn_800860CC(fn_80442080(self->f0)) && fn_8014ACA0(fn_804420AC(self->f0)))
+    if (fn_800860CC(AI_GetEntity(self->f0)) && fn_8014ACA0(AI_GetMover(self->f0)))
         fn_80461CC0(self->f0, 0x3E);
     if (fn_80463968(self->f0))
         fn_80461CC0(self->f0, 0x3F);
@@ -618,8 +618,8 @@ extern "C" Ent *fn_8014F8BC(register Self *self)
     fn_8004E9C8(&q);
     fn_80434C88(&q);
     fn_80434CDC(&q, 7);
-    fn_80434D18(&q, fn_80442080(self->f0));
-    fn_8004E4B4(&q, fn_800B1724(*fn_80442080(self->f0)), 200.0f, fn_800B1CC8(*fn_80442080(self->f0)));
+    fn_80434D18(&q, AI_GetEntity(self->f0));
+    fn_8004E4B4(&q, fn_800B1724(*AI_GetEntity(self->f0)), 200.0f, fn_800B1CC8(*AI_GetEntity(self->f0)));
     Slot *s;
     Ent *e;
     float bestDist = 3.4028235e38f;
@@ -634,9 +634,9 @@ extern "C" Ent *fn_8014F8BC(register Self *self)
             continue;
         if (fn_800B0C58(*e) && fn_80085EEC(fn_800B14A0(*e)))
             continue;
-        if (fn_8015F278(fn_80442080(self->f0), e))
+        if (fn_8015F278(AI_GetEntity(self->f0), e))
             continue;
-        float dist = fn_804290F8(fn_800B1724(*fn_80442080(self->f0)), fn_800B1724(*e));
+        float dist = fn_804290F8(fn_800B1724(*AI_GetEntity(self->f0)), fn_800B1724(*e));
         if (dist < bestDist) {
             bestDist = dist;
             best = e;
@@ -658,7 +658,7 @@ extern "C" void fn_8014FAF4(register Self *self)
     self->f4 = 0;
     Query q;
     fn_8004E9C8(&q);
-    PEnt *a = fn_80442080(self->f0);
+    PEnt *a = AI_GetEntity(self->f0);
     fn_80434C88(&q);
     fn_80434CDC(&q, 0);
     fn_80434CDC(&q, 7);
@@ -709,7 +709,7 @@ extern "C" void fn_8014FD94(register Self *self)
     self->f48 = 0;
     Query q;
     fn_8004E9C8(&q);
-    PEnt *a = fn_80442080(self->f0);
+    PEnt *a = AI_GetEntity(self->f0);
     fn_80434C88(&q);
     fn_80434CDC(&q, 2);
     fn_80434CDC(&q, 8);

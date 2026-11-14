@@ -165,7 +165,7 @@ float fn_8042EC54(Vector *v);
 float fn_8042FE6C(Vector *v);
 int fn_800B24AC(Ent &e);
 int fn_800B1CC8i(Ent &e) __asm__("fn_800B1CC8");
-Tgt *fn_80442080(void *ai);
+Tgt *AI_GetEntity(void *ai);
 Tgt *fn_80134870t(void *ai) __asm__("fn_80134870");
 AiObj *fn_801332C0(Tgt *actor);
 int fn_800B13D8r(Ent &e) __asm__("fn_800B13D8");
@@ -500,12 +500,12 @@ extern "C" int fn_80149270(void *ai, float dist, Vector *out)
     Tgt &t = *fn_80134870t(ai);
     if (!&t)
         return 0;
-    AiObj *rec = fn_801332C0(fn_80442080(ai));
+    AiObj *rec = fn_801332C0(AI_GetEntity(ai));
     if (!rec)
         return 0;
     int n = fn_80148024(rec);
-    int slot = fn_80147F20(rec, fn_800B13D8r(*fn_80442080(ai)));
-    return fn_80148D30(fn_80442080(ai), &t, dist, slot, n, out, 0, 0);
+    int slot = fn_80147F20(rec, fn_800B13D8r(*AI_GetEntity(ai)));
+    return fn_80148D30(AI_GetEntity(ai), &t, dist, slot, n, out, 0, 0);
 }
 
 // Same around the target's facing, 8 slots; out falls back to the target's position.
@@ -516,17 +516,17 @@ extern "C" int fn_80149388(void *ai, float dist, Vector *out, int byCamera)
     Tgt &t = *fn_80134870t(ai);
     if (!&t)
         return 0;
-    AiObj *rec = fn_801332C0(fn_80442080(ai));
+    AiObj *rec = fn_801332C0(AI_GetEntity(ai));
     if (!rec)
         return 0;
     int n = 8;
-    int slot = fn_80147F20(rec, fn_800B13D8r(*fn_80442080(ai)));
+    int slot = fn_80147F20(rec, fn_800B13D8r(*AI_GetEntity(ai)));
     Vector best;
     float bestDist = 3.4028235e38f;
     fn_8042DC84(&best, fn_800B1724v(t));
     Vector spot;
-    if (fn_80148D30(fn_80442080(ai), &t, dist, slot, n, &spot, byCamera, 1)) {
-        float d = fn_804290F8(&spot, fn_800B1724v(*fn_80442080(ai)));
+    if (fn_80148D30(AI_GetEntity(ai), &t, dist, slot, n, &spot, byCamera, 1)) {
+        float d = fn_804290F8(&spot, fn_800B1724v(*AI_GetEntity(ai)));
         if (d < bestDist) {
             bestDist = d;
             fn_8042DC84(&best, &spot);

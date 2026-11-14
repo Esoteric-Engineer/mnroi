@@ -110,8 +110,8 @@ extern "C" BrainSelf *fn_80164274(BrainSelf *self, void *ai);
 
 extern "C" void *fn_80462780(void *ai);
 extern "C" void fn_804618B0(void *p);
-extern "C" void fn_80442130(void *ai, unsigned int bit);
-extern "C" void fn_80442174(void *ai, unsigned int bit);
+extern "C" void AI_SetStateBit(void *ai, unsigned int bit);
+extern "C" void AI_ClearStateBit(void *ai, unsigned int bit);
 extern "C" void fn_8046412C(void *ai, unsigned int bit);
 extern "C" void *fn_80151C8C(BrainSelf *brain);
 extern "C" void fn_8044243C(void *timer, int v);
@@ -127,10 +127,10 @@ int fn_80085D3C(void *ent);
 Ent *fn_80134870(void *ai);
 int fn_8015F008(void *ai);
 float fn_8015E4E8(void *ai);
-PEnt *fn_80442080(void *ai);
+PEnt *AI_GetEntity(void *ai);
 float fn_800B1884(Ent &e, int id);
 int fn_800B18EC(Ent &e, int id);
-char *fn_804420AC(void *ai);
+char *AI_GetMover(void *ai);
 int fn_800B13D8(Ent &e);
 void fn_8014B63C(char *p, int a, int b);
 int fn_80442508(void *set, int bit);
@@ -151,10 +151,10 @@ void *fn_800B24AC(Ent &e);
 void *fn_800B1CC8(Ent &e);
 void fn_80463B20(void *task);
 void fn_80463B60(void *task);
-void *fn_8044203C(void *ai);
+void *AI_GetActor(void *ai);
 void *fn_800E9AF8(void *actor, float a, float b, float c, int d, void *e);
 int fn_800B0C58(Ent &e);
-void *fn_804420D8(void *ai);
+void *AI_GetTargetList(void *ai);
 void fn_8014F7B0(void *rec, int v);
 void fn_8042D8A8(Vector *dst, void *src);
 void *fn_804625F8(char *p);
@@ -331,18 +331,18 @@ extern "C" int fn_801607FC(register TaskSelf *self)
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_80442130(self->ai, 0);
-    fn_80442174(self->ai, 1);
-    fn_80442130(self->ai, 2);
-    fn_80442130(self->ai, 4);
-    fn_80442174(self->ai, 8);
-    fn_80442174(self->ai, 9);
+    AI_SetStateBit(self->ai, 0);
+    AI_ClearStateBit(self->ai, 1);
+    AI_SetStateBit(self->ai, 2);
+    AI_SetStateBit(self->ai, 4);
+    AI_ClearStateBit(self->ai, 8);
+    AI_ClearStateBit(self->ai, 9);
     fn_8046412C(self->ai, 6);
-    fn_80442130(self->ai, 0x1A);
-    fn_80442130(self->ai, 0x1C);
-    fn_80442130(self->ai, 0x15);
-    fn_80442130(self->ai, 0x16);
-    fn_80442130(self->ai, 0x17);
+    AI_SetStateBit(self->ai, 0x1A);
+    AI_SetStateBit(self->ai, 0x1C);
+    AI_SetStateBit(self->ai, 0x15);
+    AI_SetStateBit(self->ai, 0x16);
+    AI_SetStateBit(self->ai, 0x17);
     fn_804618B0(fn_80151C8C(self->brain));
     fn_8044243C(fn_80151C8C(self->brain), 1);
     return 1;
@@ -360,7 +360,7 @@ extern "C" int fn_80160950(register TaskSelf *self)
             fn_804643C8(self, 1);
             return 1;
         }
-        if (!fn_801369B0(self->ai) && fn_80085D3C(fn_80442080(self->ai))) {
+        if (!fn_801369B0(self->ai) && fn_80085D3C(AI_GetEntity(self->ai))) {
             fn_804643C8(self, 1);
             return 0;
         }
@@ -375,32 +375,32 @@ extern "C" int fn_80160950(register TaskSelf *self)
             }
         } else {
             if (fn_80461D48(self->ai, 3) && !fn_80461D48(self->ai, 0x2B)) {
-                if (fn_8015E4E8(self->ai) > fn_800B1884(*fn_80442080(self->ai), 0xD4) + 2.0f) {
-                    fn_80442130(self->ai, 1);
-                    fn_80442174(self->ai, 2);
+                if (fn_8015E4E8(self->ai) > fn_800B1884(*AI_GetEntity(self->ai), 0xD4) + 2.0f) {
+                    AI_SetStateBit(self->ai, 1);
+                    AI_ClearStateBit(self->ai, 2);
                     if (fn_80134870(self->ai))
-                        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(*fn_80134870(self->ai)), 0);
+                        fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*fn_80134870(self->ai)), 0);
                     return 0;
                 }
             }
             if (fn_80442508(fn_80151C8C(self->brain), 1)) {
                 if (!fn_80151430(self->brain)) {
-                    fn_80442174(self->ai, 9);
-                    fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xB9));
+                    AI_ClearStateBit(self->ai, 9);
+                    fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
                     fn_804424A0(fn_80151C8C(self->brain), 1);
                     fn_8044243C(fn_80151C8C(self->brain), 0);
                     if (fn_80461D48(self->ai, 0x2B) && fn_8015EC1C(fn_80461F68(self->ai))) {
-                        fn_80442130(self->ai, 9);
+                        AI_SetStateBit(self->ai, 9);
                         return 1;
                     }
-                    fn_80442174(self->ai, 9);
-                    fn_80442174(self->ai, 0x19);
-                    fn_80442174(self->ai, 0xA);
-                    fn_80442174(self->ai, 2);
-                    fn_80442174(self->ai, 0xD);
-                    fn_80442174(self->ai, 7);
-                    fn_80442174(self->ai, 1);
-                    fn_80442174(self->ai, 0x13);
+                    AI_ClearStateBit(self->ai, 9);
+                    AI_ClearStateBit(self->ai, 0x19);
+                    AI_ClearStateBit(self->ai, 0xA);
+                    AI_ClearStateBit(self->ai, 2);
+                    AI_ClearStateBit(self->ai, 0xD);
+                    AI_ClearStateBit(self->ai, 7);
+                    AI_ClearStateBit(self->ai, 1);
+                    AI_ClearStateBit(self->ai, 0x13);
                     float a = 0.0f;
                     if (fn_80461D48(self->ai, 0x25))
                         a = 1.0f;
@@ -424,26 +424,26 @@ extern "C" int fn_80160950(register TaskSelf *self)
                     unsigned int pick = fn_8015EA6C(7, w);
                     switch (pick) {
                     case 0:
-                        fn_80442130(self->ai, 9);
+                        AI_SetStateBit(self->ai, 9);
                         break;
                     case 1:
-                        fn_80442130(self->ai, 0x19);
-                        fn_80442174(self->ai, 7);
+                        AI_SetStateBit(self->ai, 0x19);
+                        AI_ClearStateBit(self->ai, 7);
                         break;
                     case 2:
-                        fn_80442130(self->ai, 7);
+                        AI_SetStateBit(self->ai, 7);
                         break;
                     case 3:
-                        fn_80442130(self->ai, 0xD);
+                        AI_SetStateBit(self->ai, 0xD);
                         break;
                     case 4:
-                        fn_80442174(self->ai, 2);
+                        AI_ClearStateBit(self->ai, 2);
                         break;
                     case 5:
                         fn_804643C8(self, 1);
                         break;
                     case 6:
-                        fn_80442130(self->ai, 0x13);
+                        AI_SetStateBit(self->ai, 0x13);
                         break;
                     }
                 }
@@ -451,23 +451,23 @@ extern "C" int fn_80160950(register TaskSelf *self)
                 if (fn_80134870(self->ai)) {
                     Vector from;
                     Vector dir;
-                    fn_8042DC84(&from, fn_800B1724(*fn_80442080(self->ai)));
+                    fn_8042DC84(&from, fn_800B1724(*AI_GetEntity(self->ai)));
                     from.z += 1.0f;
                     fn_80429038(&dir, fn_800B1724(*fn_80134870(self->ai)), &from);
                     float len = fn_8042EC54(&dir);
                     len -= fn_800B2670(*fn_80134870(self->ai));
-                    if (!fn_8004A9CC(&from, &dir, len, 0x8000, 0, fn_800B24AC(*fn_80442080(self->ai)),
-                                     fn_800B1CC8(*fn_80442080(self->ai)), 0, 3))
-                        fn_80442130(self->ai, 9);
+                    if (!fn_8004A9CC(&from, &dir, len, 0x8000, 0, fn_800B24AC(*AI_GetEntity(self->ai)),
+                                     fn_800B1CC8(*AI_GetEntity(self->ai)), 0, 3))
+                        AI_SetStateBit(self->ai, 9);
                     else
-                        fn_80442174(self->ai, 9);
+                        AI_ClearStateBit(self->ai, 9);
                 }
-                fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xB8));
+                fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB8));
                 fn_8044243C(fn_80151C8C(self->brain), 1);
             }
         }
         if (fn_80461D48(self->ai, 0x2D) || fn_80461D48(self->ai, 0x2C) || fn_80461D48(self->ai, 0x24))
-            fn_80442130(self->ai, 7);
+            AI_SetStateBit(self->ai, 7);
     } else {
     }
     return 1;
@@ -580,17 +580,17 @@ extern "C" int fn_8016157C(register TaskSelf *self)
     fn_8046412C(self->ai, 5);
     fn_80463B20(self);
     fn_804618B0(fn_80462780(self->ai));
-    fn_80442130(self->ai, 0x18);
-    fn_80442130(self->ai, 0x28);
-    fn_80442130(self->ai, 0x1E);
-    fn_80442130(self->ai, 4);
+    AI_SetStateBit(self->ai, 0x18);
+    AI_SetStateBit(self->ai, 0x28);
+    AI_SetStateBit(self->ai, 0x1E);
+    AI_SetStateBit(self->ai, 4);
     fn_804618B0(fn_80151C8C(self->brain));
-    fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xB9));
-    fn_800E9AF8(fn_8044203C(self->ai), 15.0f, 4.0f, 0.5f, 0, 0);
+    fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
+    fn_800E9AF8(AI_GetActor(self->ai), 15.0f, 4.0f, 0.5f, 0, 0);
     if (fn_80134870(self->ai)) {
         if (!fn_800B0C58(*fn_80134870(self->ai)))
-            fn_8014F7B0(fn_804420D8(self->ai), 0);
-        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(*fn_80134870(self->ai)), 0);
+            fn_8014F7B0(AI_GetTargetList(self->ai), 0);
+        fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*fn_80134870(self->ai)), 0);
     }
     return 1;
 }
@@ -609,22 +609,22 @@ extern "C" int fn_80161754(register TaskSelf *self)
     if (t) {
         Vector v;
         fn_8042DC84(&v, fn_800B1724(*t));
-        fn_8042D8A8(&v, fn_800B1724(*fn_80442080(self->ai)));
+        fn_8042D8A8(&v, fn_800B1724(*AI_GetEntity(self->ai)));
         v.z = 0.0f;
         float dist = fn_8042EC54(&v);
-        float d2 = fn_8015E580(fn_800B1724(*fn_80442080(self->ai)), fn_804625F8(fn_804420AC(self->ai)));
-        if (!(dist > fn_800B1884(*fn_80442080(self->ai), 0xD4)) && !(dist < fn_800B1884(*fn_80442080(self->ai), 0xD2))) {
+        float d2 = fn_8015E580(fn_800B1724(*AI_GetEntity(self->ai)), fn_804625F8(AI_GetMover(self->ai)));
+        if (!(dist > fn_800B1884(*AI_GetEntity(self->ai), 0xD4)) && !(dist < fn_800B1884(*AI_GetEntity(self->ai), 0xD2))) {
         } else {
-            fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(*t), 0);
+            fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*t), 0);
         }
         if (!fn_80151430(self->brain)) {
-            float dot = fn_8042EBF4(&v, fn_800B1750(*fn_80442080(self->ai)));
-            if (dot > 0.99f && dist <= fn_800B1884(*fn_80442080(self->ai), 0xD4) + 2.0f
-                && dist >= fn_800B1884(*fn_80442080(self->ai), 0xD2)) {
+            float dot = fn_8042EBF4(&v, fn_800B1750(*AI_GetEntity(self->ai)));
+            if (dot > 0.99f && dist <= fn_800B1884(*AI_GetEntity(self->ai), 0xD4) + 2.0f
+                && dist >= fn_800B1884(*AI_GetEntity(self->ai), 0xD2)) {
                 float len = dist - MAX(ABS(t->f60 - t->f50), ABS(t->f64 - t->f54));
                 if (!fn_80461D48(self->ai, 0x40) && fn_801600DC(self->ai, 1, 4.0f)
-                    && !fn_8004A9CC((Vector *)fn_800B1724(*fn_80442080(self->ai)), &v, len, 0x1F, 0,
-                                    fn_800B24AC(*fn_80442080(self->ai)), 0, 0, 0))
+                    && !fn_8004A9CC((Vector *)fn_800B1724(*AI_GetEntity(self->ai)), &v, len, 0x1F, 0,
+                                    fn_800B24AC(*AI_GetEntity(self->ai)), 0, 0, 0))
                     fn_8015105C(self->brain, 3);
             }
         }
@@ -638,14 +638,14 @@ extern "C" int fn_80161BDC(register TaskSelf *self)
 {
     fn_80463B20(self);
     fn_804618B0(fn_80462780(self->ai));
-    fn_80442130(self->ai, 0x18);
+    AI_SetStateBit(self->ai, 0x18);
     Ent *t = fn_80134870(self->ai);
     if (t)
-        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(*t), 0);
-    fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xB8));
+        fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*t), 0);
+    fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB8));
     fn_8044243C(fn_80151C8C(self->brain), 1);
-    fn_80442130(self->ai, 9);
-    fn_80442130(self->ai, 0x1E);
+    AI_SetStateBit(self->ai, 9);
+    AI_SetStateBit(self->ai, 0x1E);
     return 1;
 }
 
@@ -665,23 +665,23 @@ extern "C" int fn_80161D18(register TaskSelf *self)
         return 0;
     }
     if (fn_80442508(fn_80151C8C(self->brain), 1)) {
-        if (!fn_80151430(self->brain) && fn_8009B04C(*fn_80442080(self->ai)) != 0x63) {
+        if (!fn_80151430(self->brain) && fn_8009B04C(*AI_GetEntity(self->ai)) != 0x63) {
             if (!fn_80461D48(self->ai, 0x35))
-                fn_80442174(self->ai, 9);
+                AI_ClearStateBit(self->ai, 9);
             fn_80136214(self->ai, 9);
-            fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xB9));
+            fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
             fn_804424A0(fn_80151C8C(self->brain), 1);
         }
     } else if (!fn_80151430(self->brain)) {
         if (fn_80461D48(self->ai, 0x35) && !fn_80461D48(self->ai, 0x40) && fn_801600DC(self->ai, 1, 4.0f))
-            fn_80442130(self->ai, 9);
-        fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xB8));
+            AI_SetStateBit(self->ai, 9);
+        fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB8));
         fn_8044243C(fn_80151C8C(self->brain), 1);
     }
     if (fn_800B0C58(*t) && (fn_80085954(fn_800B14A0(*t))->v42() || fn_800CCBD8(*fn_80085954(fn_800B14A0(*t)))))
-        fn_80442174(self->ai, 0x28);
+        AI_ClearStateBit(self->ai, 0x28);
     else
-        fn_80442130(self->ai, 0x28);
+        AI_SetStateBit(self->ai, 0x28);
     int done = 0;
     if (fn_800B0CC0(*t))
         done = fn_800A4054(fn_800B1478(*t)) < 0.1f;
@@ -692,12 +692,12 @@ extern "C" int fn_80161D18(register TaskSelf *self)
         return 1;
     }
     float range = fn_8015E64C(self->ai);
-    if (!(range > fn_800B1884(*fn_80442080(self->ai), 0xD4)) && !(range < fn_800B1884(*fn_80442080(self->ai), 0xD3))) {
+    if (!(range > fn_800B1884(*AI_GetEntity(self->ai), 0xD4)) && !(range < fn_800B1884(*AI_GetEntity(self->ai), 0xD3))) {
     } else {
         fn_804643C8(self, 1);
     }
-    float d = fn_8015E580(fn_800B1724(*fn_80442080(self->ai)), fn_804625F8(fn_804420AC(self->ai)));
-    if (d > fn_800B1884(*fn_80442080(self->ai), 0xD2))
+    float d = fn_8015E580(fn_800B1724(*AI_GetEntity(self->ai)), fn_804625F8(AI_GetMover(self->ai)));
+    if (d > fn_800B1884(*AI_GetEntity(self->ai), 0xD2))
         fn_804643C8(self, 1);
     return 1;
 }
@@ -707,18 +707,18 @@ extern "C" int fn_8016216C(register TaskSelf *self)
 {
     fn_80463B20(self);
     fn_804618B0(fn_80462780(self->ai));
-    fn_80442130(self->ai, 0x18);
-    fn_80442130(self->ai, 0x1A);
-    fn_80442130(self->ai, 0x1C);
-    fn_80442130(self->ai, 0x28);
-    fn_80442130(self->ai, 0x1E);
-    fn_80442130(self->ai, 4);
+    AI_SetStateBit(self->ai, 0x18);
+    AI_SetStateBit(self->ai, 0x1A);
+    AI_SetStateBit(self->ai, 0x1C);
+    AI_SetStateBit(self->ai, 0x28);
+    AI_SetStateBit(self->ai, 0x1E);
+    AI_SetStateBit(self->ai, 4);
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 6);
     fn_8046412C(self->ai, 5);
     fn_804618B0(fn_80151C8C(self->brain));
-    fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xB9));
-    fn_800E9AF8(fn_8044203C(self->ai), 15.0f, 4.0f, 0.5f, 0, 0);
+    fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
+    fn_800E9AF8(AI_GetActor(self->ai), 15.0f, 4.0f, 0.5f, 0, 0);
     return 1;
 }
 
@@ -745,19 +745,19 @@ extern "C" int fn_801622DC(register TaskSelf *self)
         }
         Vector v;
         fn_8042DC84(&v, fn_800B1724(*t));
-        fn_8042D8A8(&v, fn_800B1724(*fn_80442080(self->ai)));
+        fn_8042D8A8(&v, fn_800B1724(*AI_GetEntity(self->ai)));
         v.z = 0.0f;
         float dist = fn_8042EC54(&v);
-        if (!(dist > fn_800B1884(*fn_80442080(self->ai), 0xD4)) && !(dist < fn_800B1884(*fn_80442080(self->ai), 0xD2))) {
+        if (!(dist > fn_800B1884(*AI_GetEntity(self->ai), 0xD4)) && !(dist < fn_800B1884(*AI_GetEntity(self->ai), 0xD2))) {
         } else {
-            fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(*t), 0);
+            fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*t), 0);
         }
         if (!fn_80151430(self->brain)) {
-            float dot = fn_8042EBF4(&v, fn_800B1750(*fn_80442080(self->ai)));
-            if (dot > 0.95f && dist <= fn_800B1884(*fn_80442080(self->ai), 0xD4)) {
+            float dot = fn_8042EBF4(&v, fn_800B1750(*AI_GetEntity(self->ai)));
+            if (dot > 0.95f && dist <= fn_800B1884(*AI_GetEntity(self->ai), 0xD4)) {
                 float len = dist - MAX(ABS(t->f60 - t->f50), ABS(t->f64 - t->f54));
-                if (!fn_8004A9CC((Vector *)fn_800B1724(*fn_80442080(self->ai)), &v, len, 0x1F, 0,
-                                 fn_800B24AC(*fn_80442080(self->ai)), 0, 0, 0))
+                if (!fn_8004A9CC((Vector *)fn_800B1724(*AI_GetEntity(self->ai)), &v, len, 0x1F, 0,
+                                 fn_800B24AC(*AI_GetEntity(self->ai)), 0, 0, 0))
                     fn_8015105C(self->brain, 3);
             }
         }
@@ -939,18 +939,18 @@ extern "C" int fn_80162E2C(register TaskSelf *self)
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_80442130(self->ai, 0);
-    fn_80442174(self->ai, 1);
-    fn_80442130(self->ai, 2);
-    fn_80442130(self->ai, 4);
-    fn_80442174(self->ai, 8);
-    fn_80442174(self->ai, 9);
+    AI_SetStateBit(self->ai, 0);
+    AI_ClearStateBit(self->ai, 1);
+    AI_SetStateBit(self->ai, 2);
+    AI_SetStateBit(self->ai, 4);
+    AI_ClearStateBit(self->ai, 8);
+    AI_ClearStateBit(self->ai, 9);
     fn_8046412C(self->ai, 6);
-    fn_80442130(self->ai, 0x1A);
-    fn_80442130(self->ai, 0x1C);
-    fn_80442130(self->ai, 0x15);
-    fn_80442130(self->ai, 0x16);
-    fn_80442130(self->ai, 0x17);
+    AI_SetStateBit(self->ai, 0x1A);
+    AI_SetStateBit(self->ai, 0x1C);
+    AI_SetStateBit(self->ai, 0x15);
+    AI_SetStateBit(self->ai, 0x16);
+    AI_SetStateBit(self->ai, 0x17);
     fn_804618B0(fn_80151C8C(self->brain));
     fn_8044243C(fn_80151C8C(self->brain), 1);
     return 1;
@@ -968,7 +968,7 @@ extern "C" int fn_80162F80(register TaskSelf *self)
             fn_804643C8(self, 1);
             return 1;
         }
-        if (!fn_801369B0(self->ai) && fn_80085D3C(fn_80442080(self->ai))) {
+        if (!fn_801369B0(self->ai) && fn_80085D3C(AI_GetEntity(self->ai))) {
             fn_804643C8(self, 1);
             return 0;
         }
@@ -983,40 +983,40 @@ extern "C" int fn_80162F80(register TaskSelf *self)
             }
         } else {
             if (!fn_80461D48(self->ai, 0x2B)) {
-                if (!fn_8008606C(fn_80442080(self->ai)) && !fn_801368B8(self->ai)) {
+                if (!fn_8008606C(AI_GetEntity(self->ai)) && !fn_801368B8(self->ai)) {
                 } else {
-                    fn_80442174(self->ai, 9);
-                    fn_80442174(self->ai, 0x19);
-                    fn_80442174(self->ai, 0xA);
-                    fn_80442174(self->ai, 2);
-                    fn_80442174(self->ai, 0xD);
-                    fn_80442174(self->ai, 7);
-                    fn_80442174(self->ai, 1);
-                    fn_80442174(self->ai, 0x13);
-                    fn_80442130(self->ai, 1);
-                    fn_80442174(self->ai, 2);
-                    if (!fn_80461B58(fn_804420AC(self->ai)) && fn_80134870(self->ai))
-                        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(*fn_80134870(self->ai)), 0);
+                    AI_ClearStateBit(self->ai, 9);
+                    AI_ClearStateBit(self->ai, 0x19);
+                    AI_ClearStateBit(self->ai, 0xA);
+                    AI_ClearStateBit(self->ai, 2);
+                    AI_ClearStateBit(self->ai, 0xD);
+                    AI_ClearStateBit(self->ai, 7);
+                    AI_ClearStateBit(self->ai, 1);
+                    AI_ClearStateBit(self->ai, 0x13);
+                    AI_SetStateBit(self->ai, 1);
+                    AI_ClearStateBit(self->ai, 2);
+                    if (!fn_80461B58(AI_GetMover(self->ai)) && fn_80134870(self->ai))
+                        fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(*fn_80134870(self->ai)), 0);
                 }
             }
             if (fn_80442508(fn_80151C8C(self->brain), 1)) {
                 if (!fn_80151430(self->brain)) {
-                    fn_80442174(self->ai, 9);
-                    fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xB9));
+                    AI_ClearStateBit(self->ai, 9);
+                    fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB9));
                     fn_804424A0(fn_80151C8C(self->brain), 1);
                     fn_8044243C(fn_80151C8C(self->brain), 0);
                     if (fn_80461D48(self->ai, 0x2B) && fn_8015EC1C(fn_80461F68(self->ai))) {
-                        fn_80442130(self->ai, 9);
+                        AI_SetStateBit(self->ai, 9);
                         return 1;
                     }
-                    fn_80442174(self->ai, 9);
-                    fn_80442174(self->ai, 0x19);
-                    fn_80442174(self->ai, 0xA);
-                    fn_80442174(self->ai, 2);
-                    fn_80442174(self->ai, 0xD);
-                    fn_80442174(self->ai, 7);
-                    fn_80442174(self->ai, 1);
-                    fn_80442174(self->ai, 0x13);
+                    AI_ClearStateBit(self->ai, 9);
+                    AI_ClearStateBit(self->ai, 0x19);
+                    AI_ClearStateBit(self->ai, 0xA);
+                    AI_ClearStateBit(self->ai, 2);
+                    AI_ClearStateBit(self->ai, 0xD);
+                    AI_ClearStateBit(self->ai, 7);
+                    AI_ClearStateBit(self->ai, 1);
+                    AI_ClearStateBit(self->ai, 0x13);
                     float a = 0.0f;
                     if (fn_80461D48(self->ai, 0x25))
                         a = 1.0f;
@@ -1040,26 +1040,26 @@ extern "C" int fn_80162F80(register TaskSelf *self)
                     unsigned int pick = fn_8015EA6C(7, w);
                     switch (pick) {
                     case 0:
-                        fn_80442130(self->ai, 9);
+                        AI_SetStateBit(self->ai, 9);
                         break;
                     case 1:
-                        fn_80442130(self->ai, 0x19);
-                        fn_80442174(self->ai, 7);
+                        AI_SetStateBit(self->ai, 0x19);
+                        AI_ClearStateBit(self->ai, 7);
                         break;
                     case 2:
-                        fn_80442130(self->ai, 7);
+                        AI_SetStateBit(self->ai, 7);
                         break;
                     case 3:
-                        fn_80442130(self->ai, 0xD);
+                        AI_SetStateBit(self->ai, 0xD);
                         break;
                     case 4:
-                        fn_80442174(self->ai, 2);
+                        AI_ClearStateBit(self->ai, 2);
                         break;
                     case 5:
                         fn_804643C8(self, 1);
                         break;
                     case 6:
-                        fn_80442130(self->ai, 0x13);
+                        AI_SetStateBit(self->ai, 0x13);
                         break;
                     }
                 } else {
@@ -1068,28 +1068,28 @@ extern "C" int fn_80162F80(register TaskSelf *self)
                 if (fn_80134870(self->ai)) {
                     Vector from;
                     Vector dir;
-                    fn_8042DC84(&from, fn_800B1724(*fn_80442080(self->ai)));
+                    fn_8042DC84(&from, fn_800B1724(*AI_GetEntity(self->ai)));
                     from.z += 1.0f;
                     fn_80429038(&dir, fn_800B1724(*fn_80134870(self->ai)), &from);
                     float len = fn_8042EC54(&dir);
                     len -= fn_800B2670(*fn_80134870(self->ai));
-                    int clear = !fn_8004A9CC(&from, &dir, len, 0x8000, 0, fn_800B24AC(*fn_80442080(self->ai)),
-                                             fn_800B1CC8(*fn_80442080(self->ai)), 0, 3);
+                    int clear = !fn_8004A9CC(&from, &dir, len, 0x8000, 0, fn_800B24AC(*AI_GetEntity(self->ai)),
+                                             fn_800B1CC8(*AI_GetEntity(self->ai)), 0, 3);
                     int hidden = 0;
                     if (fn_800B0C58(*fn_80134870(self->ai))
                         && fn_800CCA08(*fn_80085954(fn_800B14A0(*fn_80134870(self->ai)))))
                         hidden = 1;
                     if (clear && !hidden)
-                        fn_80442130(self->ai, 9);
+                        AI_SetStateBit(self->ai, 9);
                     else
-                        fn_80442174(self->ai, 9);
+                        AI_ClearStateBit(self->ai, 9);
                 }
-                fn_801513D8(self->brain, fn_800B18EC(*fn_80442080(self->ai), 0xB8));
+                fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xB8));
                 fn_8044243C(fn_80151C8C(self->brain), 1);
             }
         }
         if (fn_80461D48(self->ai, 0x2D) || fn_80461D48(self->ai, 0x2C) || fn_80461D48(self->ai, 0x24))
-            fn_80442130(self->ai, 7);
+            AI_SetStateBit(self->ai, 7);
     } else {
     }
     return 1;

@@ -18,8 +18,8 @@ float *fn_8042FB28(void *p);
 void fn_8042DC84(void *dst, void *src);
 void *fn_80444984(void *p, int i);
 int fn_80444688(void *p);
-void *fn_804420AC(void *ai);
-void *fn_80442080(void *ai);
+void *AI_GetMover(void *ai);
+void *AI_GetEntity(void *ai);
 int fn_80462650(void *p);
 int fn_800861EC(void *p);
 void fn_80461BF8(void *p, void *v);
@@ -437,13 +437,13 @@ extern "C" void fn_804637BC(register Slots *self, register void *v, register int
     fn_8042DC84(&self->v80, v);
     self->i90 = a;
     self->i98 = b;
-    fn_80463470((Sub210 *)fn_804420AC(self->ai), self->i90);
-    if (fn_80462650(fn_804420AC(self->ai)))
+    fn_80463470((Sub210 *)AI_GetMover(self->ai), self->i90);
+    if (fn_80462650(AI_GetMover(self->ai)))
         return;
-    fn_80463410((Sub210 *)fn_804420AC(self->ai), v);
+    fn_80463410((Sub210 *)AI_GetMover(self->ai), v);
     if (fn_804633B0(self)) {
-        if (!fn_800861EC(fn_80442080(self->ai))) {
-            fn_80461BF8(fn_804420AC(self->ai), &self->v80);
+        if (!fn_800861EC(AI_GetEntity(self->ai))) {
+            fn_80461BF8(AI_GetMover(self->ai), &self->v80);
         }
     }
 }

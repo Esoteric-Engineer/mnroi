@@ -139,7 +139,7 @@ int fn_80426E88(void *text, int font);
 void fn_80101188(void *text, float height);
 void fn_80100C50(void *text, int a);
 void fn_8042AC7C(void *text, unsigned int color);
-PlayerEnt *fn_80442080(void *a);
+PlayerEnt *AI_GetEntity(void *a);
 int fn_800B13D8(Ent &actor);
 int fn_800B92DC(void **text, const char *s, float x, float y);
 void *fn_80133A30(void);
@@ -276,7 +276,7 @@ extern "C" void fn_80132838(void)
         fn_80101188(lbl_8066D6DC, 13.0f);
         fn_80100C50(lbl_8066D6DC, 0);
         fn_8042AC7C(lbl_8066D6DC, 0xFFB0B000);
-        sprintf(buf, "%s-%#.4d", (char *)fn_80442080(ai) + 0xfc, fn_800B13D8(*fn_80442080(ai)));
+        sprintf(buf, "%s-%#.4d", (char *)AI_GetEntity(ai) + 0xfc, fn_800B13D8(*AI_GetEntity(ai)));
         fn_800B92DC(&lbl_8066D6DC, buf, x, y);
         y = y + 13.0f;
     }
@@ -570,7 +570,7 @@ extern "C" void fn_801336F0(void)
 
     for (i = 0; i < lbl_8066BF1C; i++) {
         void *ai = lbl_8056A72C[i];
-        PlayerEnt *e = fn_80442080(ai);
+        PlayerEnt *e = AI_GetEntity(ai);
         if (e) {
             if (fn_80086B6C(e)) {
                 fn_8009E09C(e);
@@ -760,7 +760,7 @@ void fn_8014A554(void *p);
 void fn_801509A8(void *brain);
 void fn_80462018(void *brain, int inChrg);
 int fn_80085D3C(void *actor);
-void *fn_804420D8(AIObject *ai);
+void *AI_GetTargetList(AIObject *ai);
 void fn_8014F7B0(void *p, int v);
 float fn_80461EE4(AIObject *ai);
 float fn_80461F10(AIObject *ai);
@@ -817,7 +817,7 @@ extern "C" void fn_80133FA0(register AIObject *self)
         fn_80462018(self->f204, 3);
     } else {
     }
-    fn_80133078(fn_80442080(self));
+    fn_80133078(AI_GetEntity(self));
     fn_801334B0(self);
 }
 
@@ -830,7 +830,7 @@ extern "C" void fn_80134028(register AIObject *self)
     if (!fn_80085D3C(self->f530)) {
         return;
     }
-    fn_8014F7B0(fn_804420D8(self), 0);
+    fn_8014F7B0(AI_GetTargetList(self), 0);
     w[0] = fn_80461EE4(self) * fn_80461F10(self);
     w[1] = 2.0f * fn_80461EE4(self) * fn_80461FC0(self);
     w[2] = 2.0f * fn_80461EE4(self) * fn_80461F68(self);
@@ -900,28 +900,28 @@ float fn_8042CE28(int v);
 // Reads 22 PLAYER tuning fields (ids 0x8B-0xA4, 0xF6, 0xF7) into +0x598.
 extern "C" void fn_801343B0(register AIObject *self)
 {
-    self->f598[0] = fn_800B1884(*fn_80442080(self), 0x8B);
-    self->f598[1] = fn_800B1884(*fn_80442080(self), 0x8C);
-    self->f598[2] = fn_8042CE28(fn_800B18EC(*fn_80442080(self), 0xA4));
-    self->f598[3] = fn_8042CE28(fn_800B18EC(*fn_80442080(self), 0x8D));
-    self->f598[4] = fn_800B1884(*fn_80442080(self), 0x8E);
-    self->f598[5] = fn_800B1884(*fn_80442080(self), 0x8F);
-    self->f598[6] = fn_800B1884(*fn_80442080(self), 0x90);
-    self->f598[7] = fn_800B1884(*fn_80442080(self), 0x91);
-    self->f598[8] = fn_800B1884(*fn_80442080(self), 0x92);
-    self->f598[9] = fn_800B1884(*fn_80442080(self), 0x9F);
-    self->f598[10] = fn_800B1884(*fn_80442080(self), 0x93);
-    self->f598[11] = fn_800B1884(*fn_80442080(self), 0x94);
-    self->f598[12] = fn_800B1884(*fn_80442080(self), 0x95);
-    self->f598[13] = fn_800B1884(*fn_80442080(self), 0x96);
-    self->f598[14] = fn_800B1884(*fn_80442080(self), 0x97);
-    self->f598[15] = fn_800B1884(*fn_80442080(self), 0x98);
-    self->f598[16] = fn_800B1884(*fn_80442080(self), 0x99);
-    self->f598[17] = fn_800B1884(*fn_80442080(self), 0x9A);
-    self->f598[18] = fn_800B1884(*fn_80442080(self), 0x9B);
-    self->f598[19] = fn_800B1884(*fn_80442080(self), 0x9C);
-    self->f598[20] = fn_800B1884(*fn_80442080(self), 0xF7);
-    self->f598[21] = fn_800B1884(*fn_80442080(self), 0xF6);
+    self->f598[0] = fn_800B1884(*AI_GetEntity(self), 0x8B);
+    self->f598[1] = fn_800B1884(*AI_GetEntity(self), 0x8C);
+    self->f598[2] = fn_8042CE28(fn_800B18EC(*AI_GetEntity(self), 0xA4));
+    self->f598[3] = fn_8042CE28(fn_800B18EC(*AI_GetEntity(self), 0x8D));
+    self->f598[4] = fn_800B1884(*AI_GetEntity(self), 0x8E);
+    self->f598[5] = fn_800B1884(*AI_GetEntity(self), 0x8F);
+    self->f598[6] = fn_800B1884(*AI_GetEntity(self), 0x90);
+    self->f598[7] = fn_800B1884(*AI_GetEntity(self), 0x91);
+    self->f598[8] = fn_800B1884(*AI_GetEntity(self), 0x92);
+    self->f598[9] = fn_800B1884(*AI_GetEntity(self), 0x9F);
+    self->f598[10] = fn_800B1884(*AI_GetEntity(self), 0x93);
+    self->f598[11] = fn_800B1884(*AI_GetEntity(self), 0x94);
+    self->f598[12] = fn_800B1884(*AI_GetEntity(self), 0x95);
+    self->f598[13] = fn_800B1884(*AI_GetEntity(self), 0x96);
+    self->f598[14] = fn_800B1884(*AI_GetEntity(self), 0x97);
+    self->f598[15] = fn_800B1884(*AI_GetEntity(self), 0x98);
+    self->f598[16] = fn_800B1884(*AI_GetEntity(self), 0x99);
+    self->f598[17] = fn_800B1884(*AI_GetEntity(self), 0x9A);
+    self->f598[18] = fn_800B1884(*AI_GetEntity(self), 0x9B);
+    self->f598[19] = fn_800B1884(*AI_GetEntity(self), 0x9C);
+    self->f598[20] = fn_800B1884(*AI_GetEntity(self), 0xF7);
+    self->f598[21] = fn_800B1884(*AI_GetEntity(self), 0xF6);
 }
 
 class AIActor
@@ -938,7 +938,7 @@ extern "C" {
 void fn_80135F94(AIObject *ai);
 void fn_80150A5C(void *brain);
 void fn_8014B900(void *p);
-PlayerEnt *fn_8044203C(AIObject *ai);
+PlayerEnt *AI_GetActor(AIObject *ai);
 AIActor *fn_800CDA94(Ent &e);
 void fn_8008656C(void *e, int v);
 int fn_80150258(void *p);
@@ -952,8 +952,8 @@ extern "C" void fn_801346C0(register AIObject *self)
     fn_80135F94(self);
     fn_80150A5C(self->f204);
     fn_8014B900(self->f210);
-    fn_800CDA94(*fn_8044203C(self))->s15(0);
-    fn_800CDA94(*fn_8044203C(self))->s15(7);
+    fn_800CDA94(*AI_GetActor(self))->s15(0);
+    fn_800CDA94(*AI_GetActor(self))->s15(7);
 }
 
 extern "C" void fn_801347B4(register AIObject *self)
@@ -966,18 +966,18 @@ extern "C" void fn_801347B4(register AIObject *self)
 extern "C" void fn_80134804(register AIObject *self)
 {
     self->f4 = 0;
-    if (fn_80442080(self)) {
-        fn_8008656C(fn_80442080(self), 0);
+    if (AI_GetEntity(self)) {
+        fn_8008656C(AI_GetEntity(self), 0);
     }
 }
 
 extern "C" Ent *fn_80134870(register AIObject *self)
 {
-    if (fn_80150258(fn_804420D8(self))) {
-        return fn_80150200(fn_804420D8(self));
+    if (fn_80150258(AI_GetTargetList(self))) {
+        return fn_80150200(AI_GetTargetList(self));
     } else {
-        if (fn_80461948(fn_804420D8(self))) {
-            return fn_80461948(fn_804420D8(self));
+        if (fn_80461948(AI_GetTargetList(self))) {
+            return fn_80461948(AI_GetTargetList(self));
         } else {
             return 0;
         }
@@ -1100,7 +1100,7 @@ extern "C" void fn_80134BE0(register AIObject *self, float t)
         return;
     }
     if (fn_80461D48(self, 3)) {
-        void *p = fn_80147ACC(fn_8013726C(self), fn_80442080(self));
+        void *p = fn_80147ACC(fn_8013726C(self), AI_GetEntity(self));
         if (p) {
             if (!fn_801464E4(p, &v)) {
                 return;
@@ -1144,7 +1144,7 @@ struct ActorFlags {
 typedef int (*SpotTest)(void *e, Vector *pos, short kind, void *list);
 
 extern "C" {
-AIWorld *fn_80442080W(AIObject *ai) __asm__("fn_80442080");
+AIWorld *fn_80442080W(AIObject *ai) __asm__("AI_GetEntity");
 unsigned int fn_801370B0(AIObject *ai);
 void *fn_8009C55C(Vector *pos, int n, unsigned int mask, float r, SpotTest test, void *b, int c);
 int fn_800CDA20(Ent &actor);
@@ -1157,7 +1157,7 @@ void fn_8043432C(Matrix *m, Vector *pos);
 void *fn_800B1A98(Ent &actor);
 int fn_80461714(void *e, int a);
 void fn_800AFAB0(Ent &actor, void *scene, int rec, Matrix *m, int a);
-TeleActorD *fn_8044203CT(AIObject *ai) __asm__("fn_8044203C");
+TeleActorD *fn_8044203CT(AIObject *ai) __asm__("AI_GetActor");
 void fn_8009AEC8(Ent &actor, int v);
 int fn_80097CE8(Ent &actor, int a, int mode, float speed, int set, float blend, float f);
 void fn_800BD2D0(void *actor, int clip);
@@ -1181,27 +1181,27 @@ extern "C" int fn_80134D64(register AIObject *self)
     void *spot = fn_8009C55C(&v, n, fn_801370B0(self), 20.0f, fn_80134940, fn_8013726C(self), -1);
     lbl_8066BF54 = 0;
     if (spot) {
-        if (fn_800CDA20(*fn_8044203C(self))) {
-            fn_800F880C(*fn_8044203C(self), fn_800B1590(*fn_800CD9B0(*fn_8044203C(self))), 0, 0);
+        if (fn_800CDA20(*AI_GetActor(self))) {
+            fn_800F880C(*AI_GetActor(self), fn_800B1590(*fn_800CD9B0(*AI_GetActor(self))), 0, 0);
             return 0;
         }
-        self->f550 = fn_80393D0C(*fn_80442080(self), "peonTeleQuick", 0xff, 0xff);
+        self->f550 = fn_80393D0C(*AI_GetEntity(self), "peonTeleQuick", 0xff, 0xff);
         {
             Matrix m;
             fn_8042DCC0(&m);
             fn_8043432C(&m, fn_80444688(spot));
-            fn_800AFAB0(*fn_80442080(self), fn_800B1A98(*fn_80442080(self)), fn_80461714(spot, 0), &m, 0);
+            fn_800AFAB0(*AI_GetEntity(self), fn_800B1A98(*AI_GetEntity(self)), fn_80461714(spot, 0), &m, 0);
         }
         fn_8044203CT(self)->s5(2);
-        fn_8009AEC8(*fn_80442080(self), 0);
-        int clip = fn_80097CE8(*fn_80442080(self), 0x147, 0, 30.0f, 0, 7.5f, -1.0f);
-        fn_800BD2D0(fn_8044203C(self), clip);
-        fn_800BD3A8(fn_8044203C(self), clip);
-        if (fn_8009AD80(*fn_80442080(self))) {
-            fn_801A479C(fn_8009AD80(*fn_80442080(self)), fn_800B1668(*fn_80442080(self)), 1);
+        fn_8009AEC8(*AI_GetEntity(self), 0);
+        int clip = fn_80097CE8(*AI_GetEntity(self), 0x147, 0, 30.0f, 0, 7.5f, -1.0f);
+        fn_800BD2D0(AI_GetActor(self), clip);
+        fn_800BD3A8(AI_GetActor(self), clip);
+        if (fn_8009AD80(*AI_GetEntity(self))) {
+            fn_801A479C(fn_8009AD80(*AI_GetEntity(self)), fn_800B1668(*AI_GetEntity(self)), 1);
         }
-        fn_8014F8BC(fn_804420D8(self));
-        fn_8014F7B0(fn_804420D8(self), 0);
+        fn_8014F8BC(AI_GetTargetList(self));
+        fn_8014F7B0(AI_GetTargetList(self), 0);
         ((ActorFlags *)self->f530)->f304 |= 0x20000000;
         self->f53C = 0;
         if (fn_80461D48(self, 0x39) && fn_80461D48(self, 0x3b)) {
@@ -1225,7 +1225,7 @@ extern "C" int fn_8013513C(register AIObject *self)
     if (!lbl_8066BF34 && !fn_80461D48(self, 0x39)) {
         return 0;
     }
-    PlayerEnt *actor = fn_80442080(self);
+    PlayerEnt *actor = AI_GetEntity(self);
     if (!actor) {
         return 0;
     }
@@ -1241,12 +1241,12 @@ extern "C" int fn_8013513C(register AIObject *self)
     if (fn_80461D48(self, 0x20) || fn_80461D48(self, 0x32)) {
         return 0;
     }
-    if (fn_800CE4D0(fn_8044203C(self))) {
-        if (!fn_80085F7C(fn_80442080(self)) && !fn_800861EC(fn_80442080(self))) {
+    if (fn_800CE4D0(AI_GetActor(self))) {
+        if (!fn_80085F7C(AI_GetEntity(self)) && !fn_800861EC(AI_GetEntity(self))) {
             return 0;
         }
     }
-    if (fn_800CCC28(*fn_8044203C(self))) {
+    if (fn_800CCC28(*AI_GetActor(self))) {
         return 0;
     }
     return 1;
@@ -1281,14 +1281,14 @@ struct AIWorldD : AIWorld { // matching_notes 44
 };
 
 extern "C" {
-AIWorldD *fn_80442080D(AIObject *ai) __asm__("fn_80442080");
+AIWorldD *fn_80442080D(AIObject *ai) __asm__("AI_GetEntity");
 float fn_804290F8(Vector *a, Vector *b);
 void fn_80429038(Vector *out, Vector *a, Vector *b);
 float fn_8042EC54(Vector *v);
 int fn_8004A9CC(Vector *from, Vector *dir, float len, unsigned int mask, void *hit, void *body, int b, int c, int d);
-void *fn_804420AC(AIObject *ai);
+void *AI_GetMover(AIObject *ai);
 void *fn_800B24ACE(Ent &actor) __asm__("fn_800B24AC");
-void *fn_80442010(void *p);
+void *AI_GetPath(void *p);
 float fn_8014C0B8(void *p, AIObject *ai, Vector *from, Vector *to);
 }
 
@@ -1297,21 +1297,21 @@ extern "C" int fn_80135400(register AIObject *self, float t, Vector *pos)
     if (fn_80461D48(self, 0x39)) {
         return 1;
     }
-    float d = fn_804290F8(pos, fn_800B1724(*fn_80442080(self)));
+    float d = fn_804290F8(pos, fn_800B1724(*AI_GetEntity(self)));
     if (d > t) {
         return 1;
     }
     Vector eye;
     fn_80442080D(self)->s5(&eye, 0);
-    float dz = eye.z - fn_800B1724(*fn_80442080(self))->z;
+    float dz = eye.z - fn_800B1724(*AI_GetEntity(self))->z;
     Vector to;
     fn_8042DC84V(&to, pos);
     to.z += dz;
     Vector dir;
     fn_80429038(&dir, &to, &eye);
     float len = fn_8042EC54(&dir);
-    if (fn_8004A9CC(&eye, &dir, len, 8, 0, fn_800B24ACE(*fn_80442080(self)), 0, 0, 0)) {
-        float r = fn_8014C0B8(fn_80442010(fn_804420AC(self)), self, fn_800B1724(*fn_80442080(self)), pos);
+    if (fn_8004A9CC(&eye, &dir, len, 8, 0, fn_800B24ACE(*AI_GetEntity(self)), 0, 0, 0)) {
+        float r = fn_8014C0B8(AI_GetPath(AI_GetMover(self)), self, fn_800B1724(*AI_GetEntity(self)), pos);
         if (r >= t || r == 0.0f) {
             return 1;
         }
@@ -1335,7 +1335,7 @@ struct NavNode {
 };
 
 extern "C" {
-void *fn_80442104(AIObject *ai);
+void *AI_GetBrain(AIObject *ai);
 int fn_80151AF8(void *brain, int id);
 TeleTask *fn_8015105CT(void *brain, int id) __asm__("fn_8015105C");
 NavNode *fn_800B3A74(void *scene, int v, int a, int b);
@@ -1352,25 +1352,25 @@ extern "C" void fn_80135668(register AIObject *self, int on)
         return;
     }
     self->f564 = 1;
-    if (fn_80085D3C(fn_80442080(self))) {
-        if (fn_80151AF8(fn_80442104(self), 0xb)) {
-            TeleTask &task = *fn_8015105CT(fn_80442104(self), 0xb);
+    if (fn_80085D3C(AI_GetEntity(self))) {
+        if (fn_80151AF8(AI_GetBrain(self), 0xb)) {
+            TeleTask &task = *fn_8015105CT(AI_GetBrain(self), 0xb);
             if (&task) {
                 Vector v;
-                fn_8042DC84V(&v, fn_800B1724(*fn_80442080(self)));
+                fn_8042DC84V(&v, fn_800B1724(*AI_GetEntity(self)));
                 NavNode *node = fn_800B3A74(fn_80430050(lbl_8052F060), 0, 0, 0);
                 if (node) {
                     NavSub *sub = &node->f10;
                     fn_8042DC84V(&v, &sub->f30);
                 } else {
-                    void *spot = fn_8009C55C(fn_800B1724(*fn_80442080(self)), fn_800B1CC8(*fn_80442080(self)),
+                    void *spot = fn_8009C55C(fn_800B1724(*AI_GetEntity(self)), fn_800B1CC8(*AI_GetEntity(self)),
                                              fn_801370B0(self), 20.0f, 0, 0, -1);
                     if (spot) {
                         fn_8042DC84V(&v, fn_80444688(spot));
                     }
                 }
                 fn_8042DC84V(&task.f30, &v);
-                fn_80461BF8(fn_804420AC(self), &v);
+                fn_80461BF8(AI_GetMover(self), &v);
             }
         }
     }
@@ -1388,7 +1388,7 @@ extern "C" {
 extern int lbl_8066BF44; // countdown handed to lbl_80593BE8's setValue
 extern Actor10 lbl_80593BE8_A __asm__("lbl_80593BE8");
 int fn_8008653C(void *actor);
-int fn_804421B8(AIObject *ai, int v);
+int AI_TestStateBit(AIObject *ai, int v);
 void fn_80461D98(AIObject *ai);
 void fn_80135E48(AIObject *ai);
 int fn_80085EEC(void *actor);
@@ -1422,17 +1422,17 @@ extern "C" void fn_8013589C(register AIObject *self)
         lbl_80593BE8_A.setValue(lbl_8066BF44);
     }
     if (((ActorFlags *)self->f530)->f304 & 0x20000000) {
-        self->f554 = fn_80393D0C(*fn_80442080(self), "peonTeleQuick", 0xff, 0xff);
+        self->f554 = fn_80393D0C(*AI_GetEntity(self), "peonTeleQuick", 0xff, 0xff);
         ((ActorFlags *)self->f530)->f304 &= ~0x20000000;
     }
-    if (lbl_8066BF20 || (lbl_8066BF24 && !fn_8008653C(fn_80442080(self)))) {
+    if (lbl_8066BF20 || (lbl_8066BF24 && !fn_8008653C(AI_GetEntity(self)))) {
         for (i = 0; i < 26; i++) {
             self->f44[i] = 0;
         }
         fn_8014B900(self->f210);
         return;
     }
-    if (fn_804421B8(self, 1) && fn_804421B8(self, 2)) {
+    if (AI_TestStateBit(self, 1) && AI_TestStateBit(self, 2)) {
         i = 0;
         i++;
     }
@@ -1485,11 +1485,11 @@ extern "C" void fn_8013589C(register AIObject *self)
             switch (self->f528) {
             case 0:
                 self->f528 = 1;
-                t = fn_800B18EC(*fn_80442080(self), 0xb9);
+                t = fn_800B18EC(*AI_GetEntity(self), 0xb9);
                 break;
             case 1:
                 self->f528 = 0;
-                t = fn_800B18EC(*fn_80442080(self), 0xb8);
+                t = fn_800B18EC(*AI_GetEntity(self), 0xb8);
                 break;
             }
         }
@@ -1751,19 +1751,19 @@ extern "C" void fn_80136678(register AIObject *self)
 
 extern "C" int fn_801368B8(register AIObject *self)
 {
-    if (!fn_80085D3C(fn_80442080(self))) {
-        if (fn_800861EC(fn_80442080(self))) {
+    if (!fn_80085D3C(AI_GetEntity(self))) {
+        if (fn_800861EC(AI_GetEntity(self))) {
             return 1;
         }
         return 0;
     }
     if (self->f514) {
-        if (fn_8015F384(self) && fn_80085F7C(fn_80442080(self))) {
+        if (fn_8015F384(self) && fn_80085F7C(AI_GetEntity(self))) {
             return 1;
         }
         return 0;
     }
-    return fn_80085F7C(fn_80442080(self));
+    return fn_80085F7C(AI_GetEntity(self));
 }
 
 extern "C" {
@@ -1773,7 +1773,7 @@ int fn_8015E97C(float chance);
 
 extern "C" int fn_801369B0(register AIObject *self)
 {
-    if (!fn_80085D3C(fn_80442080(self))) {
+    if (!fn_80085D3C(AI_GetEntity(self))) {
         return 0;
     }
     if (fn_80461F3C(self) == 0.0f) {
@@ -1785,7 +1785,7 @@ extern "C" int fn_801369B0(register AIObject *self)
         }
         return 0;
     }
-    if (fn_8008618C(fn_80442080(self)) && !fn_8015F410(self, 0.1f) && !fn_8015E97C(0.05f)) {
+    if (fn_8008618C(AI_GetEntity(self)) && !fn_8015F410(self, 0.1f) && !fn_8015E97C(0.05f)) {
         return 0;
     }
     return 1;
@@ -1947,24 +1947,24 @@ int fn_8008603C(void *actor);
 extern "C" unsigned int fn_801370B0(register AIObject *self)
 {
     unsigned int mask = 0;
-    if (fn_80085E2C(fn_80442080(self))) {
+    if (fn_80085E2C(AI_GetEntity(self))) {
         mask |= 0x20000;
-    } else if (!fn_80085DFC(fn_80442080(self))) {
+    } else if (!fn_80085DFC(AI_GetEntity(self))) {
         mask |= 0x10000;
     }
-    if (!fn_80085E5C(fn_80442080(self))) {
+    if (!fn_80085E5C(AI_GetEntity(self))) {
         mask |= 0x80000;
     }
-    if (fn_8008612C(fn_80442080(self)) && fn_801369B0(self)) {
+    if (fn_8008612C(AI_GetEntity(self)) && fn_801369B0(self)) {
         mask |= 0x400000;
     }
-    if (fn_8008603C(fn_80442080(self)) && fn_801369B0(self)) {
+    if (fn_8008603C(AI_GetEntity(self)) && fn_801369B0(self)) {
         mask |= 0x800000;
     }
-    if (fn_8008606C(fn_80442080(self))) {
+    if (fn_8008606C(AI_GetEntity(self))) {
         mask |= 0x1000000;
     }
-    if (fn_801368B8(self) || fn_800861EC(fn_80442080(self))) {
+    if (fn_801368B8(self) || fn_800861EC(AI_GetEntity(self))) {
         mask |= 0x200000;
     }
     return mask;
@@ -1993,7 +1993,7 @@ extern "C" void fn_80137298(register AIObject *self, int kind, AIMoveOut *out)
 {
     if (kind == 0) {
         Vector v;
-        fn_8042DC84V(&v, fn_80461B2C(fn_804420AC(self)));
+        fn_8042DC84V(&v, fn_80461B2C(AI_GetMover(self)));
         fn_8042FB28(&v)->z = 0.0f;
         float len = fn_8042EC54(&v);
         fn_8042DC84V(&out->f20, &v);
@@ -2003,7 +2003,7 @@ extern "C" void fn_80137298(register AIObject *self, int kind, AIMoveOut *out)
     }
     if (kind == 7) {
         Vector v;
-        fn_8042DC84V(&v, fn_80461B2C(fn_804420AC(self)));
+        fn_8042DC84V(&v, fn_80461B2C(AI_GetMover(self)));
         v.y = 0.0f;
         float len = fn_8042EC54(&v);
         fn_8042DC84V(&out->f20, &v);
@@ -2077,10 +2077,10 @@ extern "C" void fn_80137494(register AIObject *self, float x, float y)
     }
     const char *none = "NONE";
     const char *behavior = none;
-    if (fn_80151BCC(fn_80442104(self))) {
-        behavior = fn_80461FEC(fn_80151BCC(fn_80442104(self)));
+    if (fn_80151BCC(AI_GetBrain(self))) {
+        behavior = fn_80461FEC(fn_80151BCC(AI_GetBrain(self)));
     }
-    unsigned int ntasks = fn_80151C24(fn_80442104(self));
+    unsigned int ntasks = fn_80151C24(AI_GetBrain(self));
     const char *tname = none;
     int tid = 0;
     if (fn_80134870(self)) {
@@ -2092,23 +2092,23 @@ extern "C" void fn_80137494(register AIObject *self, float x, float y)
     dy += step;
     char thing[0x50];
     const char *mover = none;
-    if (fn_80461BA0(fn_804420AC(self))) {
+    if (fn_80461BA0(AI_GetMover(self))) {
         mover = "WAYPOINT";
-    } else if (fn_80461C58(fn_804420AC(self))) {
+    } else if (fn_80461C58(AI_GetMover(self))) {
         mover = "DEST_THING";
-        void *handle = fn_80461C94(fn_804420AC(self));
+        void *handle = fn_80461C94(AI_GetMover(self));
         void *dest = fn_800ACFA8(handle);
         if (dest) {
             sprintf(thing, "%s (%s)", mover, fn_800AFF88(dest));
             mover = thing;
         }
-    } else if (fn_80461BCC(fn_804420AC(self))) {
+    } else if (fn_80461BCC(AI_GetMover(self))) {
         mover = "MOVE_DEST";
     } else {
         mover = "TO_TARGET";
     }
     const char *pathing = none;
-    if (fn_80461B58(fn_804420AC(self))) {
+    if (fn_80461B58(AI_GetMover(self))) {
         pathing = "YES";
     }
     sprintf(buf, "Mover:'%s'", mover);
@@ -2137,7 +2137,7 @@ extern "C" void fn_80137494(register AIObject *self, float x, float y)
     if (ntasks > 1) {
         int i;
         for (i = ntasks - 2; i >= 0; i--) {
-            void *task = fn_80151C50(fn_80442104(self), i);
+            void *task = fn_80151C50(AI_GetBrain(self), i);
             sprintf(buf, "'%s'", fn_80461FEC(task));
             fn_800B92DC(&lbl_8066D6DC, buf, x + dx, y + dy);
             dy += step;
@@ -2161,8 +2161,8 @@ extern "C" void fn_80137494(register AIObject *self, float x, float y)
     if (fn_80133A30() == self) {
         Vector pos;
         ScreenPos scr;
-        fn_800B16D8(*fn_80442080(self), &pos);
-        fn_8042FB28(&pos)->z += fn_800B2620(*fn_80442080(self));
+        fn_800B16D8(*AI_GetEntity(self), &pos);
+        fn_8042FB28(&pos)->z += fn_800B2620(*AI_GetEntity(self));
         fn_80430750(&scr, &pos, fn_80094630(lbl_80552110)->f3A0->fC0);
         fn_804615A4(fn_80094630(lbl_80552110)->f3A0, &scr, 1);
         if (scr.z < 0.0f) {

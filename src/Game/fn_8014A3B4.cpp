@@ -1,5 +1,5 @@
 // The Mover (AIObject+0x210): init, destroy, update, aim points beside a target, height hold, volume probes, waypoint, chase, stop, clear path, heading point (docs/ai.md row 11).
-// .rodata 0x8049B3C0-0x8049B468, the whole file's. fn_80442080 returns Sub * so Ent & arguments convert (matching_notes 50).
+// .rodata 0x8049B3C0-0x8049B468, the whole file's. AI_GetEntity returns Sub * so Ent & arguments convert (matching_notes 50).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -89,7 +89,7 @@ struct Mover {
 };
 
 extern "C" {
-Sub *fn_80442080(void *ai);
+Sub *AI_GetEntity(void *ai);
 void fn_80428FA8(Vector *v, float x, float y, float z);
 extern Vector lbl_80593DD0;
 }
@@ -102,7 +102,7 @@ extern "C" void fn_8014A3B4(register Mover *self, void *ai)
         return;
     }
     self->f0 = ai;
-    self->f4 = fn_80442080(self->f0);
+    self->f4 = AI_GetEntity(self->f0);
     fn_80428FA8(&self->fE0, 0.0f, 0.0f, 0.0f);
     self->f270 = 0;
     self->f274 = 0;
@@ -200,15 +200,15 @@ extern char lbl_80593BE8[];
 
 extern "C" void fn_8014A9B0(register Mover *self)
 {
-    if (!fn_800861EC(fn_80442080(self->f0))) {
+    if (!fn_800861EC(AI_GetEntity(self->f0))) {
         return;
     }
-    float range = fn_800B1884(*fn_80442080(self->f0), 214);
-    float z = fn_800B1724(*fn_80442080(self->f0))->z;
+    float range = fn_800B1884(*AI_GetEntity(self->f0), 214);
+    float z = fn_800B1724(*AI_GetEntity(self->f0))->z;
     float tz = fn_8014B824(self);
     if (fn_80134870(self->f0))
         tz = fn_800B1724(*fn_80134870(self->f0))->z;
-    if (fn_8015E64C(self->f0) <= fn_800B1884(*fn_80442080(self->f0), 212)
+    if (fn_8015E64C(self->f0) <= fn_800B1884(*AI_GetEntity(self->f0), 212)
         && z <= 2.0f * range + tz && z >= tz + 1.0f) {
         if (!self->f2B8)
             self->f2B8 = 1;
@@ -240,7 +240,7 @@ extern "C" int fn_8014AB90(register Mover *self)
 {
     Vector dir;
 
-    fn_80067050(*fn_80442080(self->f0), &dir);
+    fn_80067050(*AI_GetEntity(self->f0), &dir);
     dir.z = 0.0f;
     float len = fn_8042EC54(&dir);
     if (len < 0.01f)
@@ -257,7 +257,7 @@ extern "C" int fn_8014ACA0(register Mover *self)
 {
     Vector dir;
 
-    fn_80067050(*fn_80442080(self->f0), &dir);
+    fn_80067050(*AI_GetEntity(self->f0), &dir);
     dir.z = 0.0f;
     float len = fn_8042EC54(&dir);
     if (len < 0.01f)
@@ -283,7 +283,7 @@ extern "C" {
 Ent *fn_800ACFA8(int h);
 int fn_80462650(Mover *self);
 int fn_801368B8(void *ai);
-NavFlags *fn_80442010(Mover *self);
+NavFlags *AI_GetPath(Mover *self);
 int fn_8014BE08(Nav *nav, void *ai, Vector *dest, int a, int b, int c);
 int fn_8014BC7C(Nav *nav, void *ai, Ent *dest, int a, int b, int c);
 int fn_804623BC(Nav *nav);
@@ -299,9 +299,9 @@ float fn_80434040(Vector *v);
 float fn_80426A84(void *clock);
 void fn_8042FDBC(Vector *out, Vector *v, float s);
 void *fn_804634CC(Mover *self);
-Sub *fn_8044203C(void *ai);
+Sub *AI_GetActor(void *ai);
 int fn_800CCC28(Ent &e);
-int fn_804421B8(void *ai, int bit);
+int AI_TestStateBit(void *ai, int bit);
 int fn_800CD0EC(Ent &e);
 int fn_800CD064(Ent &e);
 int fn_800CC6DC(Ent &e);
@@ -319,10 +319,10 @@ extern "C" void fn_8014ADB0(register Mover *self)
     fn_8014A9B0(self);
     if (!fn_80462650(self)) {
         if (fn_801368B8(self->f0)) {
-            if (!(fn_80442010(self)->f9C & 0x200000) && t)
+            if (!(AI_GetPath(self)->f9C & 0x200000) && t)
                 fn_8014BE08(&self->f20, self->f0, fn_800B1724(*t), 0, 1, 0);
         } else {
-            if ((fn_80442010(self)->f9C & 0x200000) && t)
+            if ((AI_GetPath(self)->f9C & 0x200000) && t)
                 fn_8014BE08(&self->f20, self->f0, fn_800B1724(*t), 0, 1, 0);
         }
         if (fn_804623BC(&self->f20)) {
@@ -341,7 +341,7 @@ extern "C" void fn_8014ADB0(register Mover *self)
     if (self->f274) {
         fn_80447C38(&self->fE0);
         Vector c;
-        fn_8042DC84(&c, fn_800B1724(*fn_80442080(self->f0)));
+        fn_8042DC84(&c, fn_800B1724(*AI_GetEntity(self->f0)));
         c.z += 0.2f;
         int i;
         for (i = 0; i < self->f274; i++)
@@ -354,15 +354,15 @@ extern "C" void fn_8014ADB0(register Mover *self)
     float speed = fn_80434040(&vel);
     fn_8042FDBC(&self->f2D0, &self->fE0, fn_80426A84(lbl_80593BE8) * 30.0f * speed);
     fn_8042D854(&self->f2D0, fn_800B1724(*fn_804633E4(self)));
-    int a = fn_800CCC28(*fn_8044203C(fn_804634CC(self)));
-    int b = fn_804421B8(fn_804634CC(self), 7);
-    int c = fn_804421B8(fn_804634CC(self), 25);
-    int d = fn_800CD0EC(*fn_8044203C(fn_804634CC(self))) || fn_800CD064(*fn_8044203C(fn_804634CC(self)));
-    int e = fn_800CC6DC(*fn_8044203C(fn_804634CC(self))) == 21 || fn_800CC6DC(*fn_8044203C(fn_804634CC(self))) == 22;
+    int a = fn_800CCC28(*AI_GetActor(fn_804634CC(self)));
+    int b = AI_TestStateBit(fn_804634CC(self), 7);
+    int c = AI_TestStateBit(fn_804634CC(self), 25);
+    int d = fn_800CD0EC(*AI_GetActor(fn_804634CC(self))) || fn_800CD064(*AI_GetActor(fn_804634CC(self)));
+    int e = fn_800CC6DC(*AI_GetActor(fn_804634CC(self))) == 21 || fn_800CC6DC(*AI_GetActor(fn_804634CC(self))) == 22;
     float len = fn_80434040(&self->fE0);
     if ((a || b || d || e) && len > 0.0f) {
         fn_8014B900(self);
-        fn_800CDA94(*fn_8044203C(self->f0))->s15(0);
+        fn_800CDA94(*AI_GetActor(self->f0))->s15(0);
         fn_80447C38(&self->fE0);
         self->f278 = 0.0f;
     } else {
@@ -390,13 +390,13 @@ extern "C" void fn_8014B420(register Mover *self, Vector *v)
         self->f270 = 0;
     if (self->f274 < 24)
         self->f274++;
-    if (fn_800CC9D8(fn_80085928(fn_80442080(fn_804634CC(self)))) && fn_80434040(v) > 0.1f) {
+    if (fn_800CC9D8(fn_80085928(AI_GetEntity(fn_804634CC(self)))) && fn_80434040(v) > 0.1f) {
         int unused = 0;
     }
 }
 
 extern "C" {
-Mover *fn_804420AC(void *ai);
+Mover *AI_GetMover(void *ai);
 void fn_80463410(Mover *self, Vector *v);
 void fn_80461BF8(Mover *self, Vector *v);
 void fn_8014C660(Nav *nav);
@@ -405,7 +405,7 @@ void fn_8014C660(Nav *nav);
 // Set a waypoint and repath to it, at most once per +0x10 ms; index -1 keeps +0x290.
 extern "C" int fn_8014B518(register Mover *self, Vector *dest, int index)
 {
-    fn_80463410(fn_804420AC(self->f0), 0);
+    fn_80463410(AI_GetMover(self->f0), 0);
     fn_80461BF8(self, dest);
     if (index != -1)
         self->f290 = index;
@@ -433,10 +433,10 @@ extern "C" int fn_8014B63C(register Mover *self, int id, int force)
     if (!t)
         return 0;
     Vector dest;
-    if (fn_800861EC(fn_80442080(self->f0)))
-        fn_8014A860(fn_80442080(self->f0), t, &dest);
+    if (fn_800861EC(AI_GetEntity(self->f0)))
+        fn_8014A860(AI_GetEntity(self->f0), t, &dest);
     else
-        fn_8014A574(fn_80442080(self->f0), t, &dest);
+        fn_8014A574(AI_GetEntity(self->f0), t, &dest);
     fn_80461BF8(self, &dest);
     int r = 0;
     self->fC = fn_8042EFF8(lbl_80593BE8);
@@ -520,7 +520,7 @@ extern "C" int fn_801368B8(void *ai);
 
 extern "C" int fn_8014BAD0(register Mover *self)
 {
-    if (fn_800861EC(fn_80442080(self->f0)))
+    if (fn_800861EC(AI_GetEntity(self->f0)))
         return 1;
     if (!fn_801368B8(self->f0))
         return 0;
@@ -543,7 +543,7 @@ extern "C" void fn_8014BB4C(register Mover *self, Vector *out)
     int unused1 = 0;
     int found = 0;
     Vector v;
-    fn_8042DC84(&v, fn_800B1724(*fn_80442080(self->f0)));
+    fn_8042DC84(&v, fn_800B1724(*AI_GetEntity(self->f0)));
     if (fn_80461BA0(self)) {
         fn_8042DC84(&v, fn_804625CC(self));
         found = 1;

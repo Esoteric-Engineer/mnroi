@@ -93,7 +93,7 @@ void fn_800C98BC(void *self, void *node, int v);
 int fn_8009B234(void *p);
 int fn_80084A60(void *actor, float f);
 void fn_8005A828(Ent &actor, Vector *p);
-void *fn_804420D8(void *p);
+void *AI_GetTargetList(void *p);
 void fn_801501AC(void *a, void *b);
 int fn_800CCA58(void *self);
 int fn_80097CE8(Ent &actor, int a, int mode, float speed, void *set, float blend, float f);
@@ -187,7 +187,7 @@ extern "C" int fn_800D5FEC(register Obj *self, int mode)
     }
     fn_8005A828(*Entity_GetActor(self), fn_800B1724(*f1878));
     if (fn_800CC60C(self))
-        fn_801501AC(fn_804420D8(Entity_GetActorA(self)->f380), f1878);
+        fn_801501AC(AI_GetTargetList(Entity_GetActorA(self)->f380), f1878);
     if (fn_800CCA58(self)) {
         self->s5(0x22);
         self->f10 |= 1;

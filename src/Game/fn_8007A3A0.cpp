@@ -7,14 +7,14 @@ void *fn_800ACFA8(int handle);
 int fn_800B0C58(void *actor);
 void *fn_800B14A0(void *actor);
 void *fn_80085980(void *x);
-void *fn_80442104(void *ai);
+void *AI_GetBrain(void *ai);
 void *fn_80151BCC(void *brain);
-int fn_804423E8(void *task);
+int AI_GetTaskId(void *task);
 void *fn_8015105C(void *brain, int id);
 int fn_8015123C(void *brain, int id);
-void *fn_804420AC(void *ai);
-void *fn_80442010(void *mover);
-void *fn_804420D8(void *ai);
+void *AI_GetMover(void *ai);
+void *AI_GetPath(void *mover);
+void *AI_GetTargetList(void *ai);
 void fn_8014B518(void *mover, void *pos, int index);
 void fn_8014D034(void *x);
 void fn_8042DC84(void *dst, void *src);
@@ -35,11 +35,11 @@ struct WaypointOwner {
     Waypoint *list; // +0x148
 };
 
-WaypointOwner *fn_80442080(void *ai);
+WaypointOwner *AI_GetEntity(void *ai);
 
 int fn_80151AF8(void *brain, int id);
 void fn_80442414(void *task, int v);
-void *fn_8044203C(void *ai);
+void *AI_GetActor(void *ai);
 int fn_800F63DC(void *actor, int a, int b);
 
 struct TaskData {
@@ -76,7 +76,7 @@ struct ScriptActorD : ScriptActor { // matching_notes 44
 };
 
 RangedOnlyTask *fn_8015105CR(void *brain, int id) __asm__("fn_8015105C");
-ScriptActorD *fn_8044203CA(void *ai) __asm__("fn_8044203C");
+ScriptActorD *fn_8044203CA(void *ai) __asm__("AI_GetActor");
 
 struct Ent {
     int pad;
@@ -85,7 +85,7 @@ struct PlayerEnt : Ent { // matching_notes 44
     int x;
 };
 
-PlayerEnt *fn_80442080P(void *ai) __asm__("fn_80442080");
+PlayerEnt *fn_80442080P(void *ai) __asm__("AI_GetEntity");
 void fn_8009AEC8(Ent &actor, int v);
 void fn_8009AF28(Ent &actor);
 int fn_80097CE8(Ent &actor, int a, int mode, float speed, int set, float blend, float f);
@@ -94,7 +94,7 @@ void fn_80133878(int a, int b);
 void fn_801338C0(int a, int b);
 void fn_80133908(int a);
 void fn_801343B0(void *ai);
-void fn_80442130(void *ai, int v);
+void AI_SetStateBit(void *ai, int v);
 void fn_80442208(void *ai, float v);
 void fn_80442230(void *ai, float v);
 void fn_80442258(void *ai, float v);
@@ -137,7 +137,7 @@ struct HoverTask : AITask { // id 0x18
 };
 
 HoverTask &fn_8015105CH(void *brain, int id) __asm__("fn_8015105C");
-void fn_80442174(void *ai, unsigned int bit);
+void AI_ClearStateBit(void *ai, unsigned int bit);
 void fn_80086490(void *x, int v);
 void fn_800864C0(void *x, int v);
 int fn_800ACFA8I(int handle) __asm__("fn_800ACFA8");
@@ -145,7 +145,7 @@ PlayerEnt *fn_80085954(void *actor);
 int fn_800CCF90(Ent &x);
 int fn_800B0C1C(void *actor);
 void fn_800B9CE8(Ent &actor, int a, void *b, void *c);
-PlayerEnt *fn_8044203CP(void *ai) __asm__("fn_8044203C");
+PlayerEnt *fn_8044203CP(void *ai) __asm__("AI_GetActor");
 
 struct MoveTask {
     char pad0[0x30];
@@ -171,9 +171,9 @@ void fn_8007A448(int handle)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     void *task = fn_80151BCC(brain);
-    if (task != 0 && fn_804423E8(task) == 6) {
+    if (task != 0 && AI_GetTaskId(task) == 6) {
         return;
     } else {
         if (fn_8015105C(brain, 6))
@@ -186,8 +186,8 @@ void fn_8007A4FC(int handle)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
-    while (fn_80151BCC(brain) != 0 && fn_804423E8(fn_80151BCC(brain)) != 6) {
+    void *brain = AI_GetBrain(ai);
+    while (fn_80151BCC(brain) != 0 && AI_GetTaskId(fn_80151BCC(brain)) != 6) {
         if (fn_8015123C(brain, -1)) {
         } else {
             return;
@@ -202,7 +202,7 @@ void fn_8007A5DC(int handle)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     if (fn_8015105C(brain, 14))
         return;
 }
@@ -212,8 +212,8 @@ void fn_8007A658(int handle)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
-    while (fn_80151BCC(brain) != 0 && fn_804423E8(fn_80151BCC(brain)) != 14) {
+    void *brain = AI_GetBrain(ai);
+    while (fn_80151BCC(brain) != 0 && AI_GetTaskId(fn_80151BCC(brain)) != 14) {
         if (fn_8015123C(brain, -1)) {
         } else {
             return;
@@ -228,12 +228,12 @@ void fn_8007A738(int handle, void *pos)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     void *task = fn_8015105C(brain, 11);
     if (task) {
         MoveTask *t = (MoveTask *)task;
-        fn_8014B518(fn_804420AC(ai), pos, -1);
-        fn_8014D034(fn_80442010(fn_804420AC(ai)));
+        fn_8014B518(AI_GetMover(ai), pos, -1);
+        fn_8014D034(AI_GetPath(AI_GetMover(ai)));
         fn_8042DC84(t->dest, pos);
         return;
     }
@@ -244,17 +244,17 @@ void fn_8007A818(int handle, unsigned int index)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    if (index >= fn_80442080(ai)->count)
+    if (index >= AI_GetEntity(ai)->count)
         return;
-    Waypoint *w = &fn_80442080(ai)->list[index];
+    Waypoint *w = &AI_GetEntity(ai)->list[index];
     if (w == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     void *task = fn_8015105C(brain, 11);
     if (task) {
         MoveTask *t = (MoveTask *)task;
-        fn_8014B518(fn_804420AC(ai), w->pos, index);
-        fn_8014D034(fn_80442010(fn_804420AC(ai)));
+        fn_8014B518(AI_GetMover(ai), w->pos, index);
+        fn_8014D034(AI_GetPath(AI_GetMover(ai)));
         fn_8042DC84(t->dest, w->pos);
         return;
     }
@@ -270,13 +270,13 @@ void fn_8007A958(int handle, int target)
         return;
     if (!fn_800B0CC0(other) && !fn_800B0C58(other))
         return;
-    fn_801501AC(fn_804420D8(ai), other);
-    void *brain = fn_80442104(ai);
+    fn_801501AC(AI_GetTargetList(ai), other);
+    void *brain = AI_GetBrain(ai);
     void *task = fn_8015105C(brain, 9);
     if (task) {
-        fn_801501AC(fn_804420D8(ai), other);
+        fn_801501AC(AI_GetTargetList(ai), other);
         fn_80152A10(task);
-        fn_8014B63C(fn_804420AC(ai), fn_800B13D8(other), 0);
+        fn_8014B63C(AI_GetMover(ai), fn_800B13D8(other), 0);
         return;
     }
 }
@@ -286,7 +286,7 @@ void fn_8007AA8C(int handle, int v)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    RangedOnlyTask *task = fn_8015105CR(fn_80442104(ai), 0x14);
+    RangedOnlyTask *task = fn_8015105CR(AI_GetBrain(ai), 0x14);
     if (task) {
         task->f28 = v;
         task->enter();
@@ -308,15 +308,15 @@ void fn_8007ABE8(int handle, int target)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    fn_801501AC(fn_804420D8(ai), fn_800ACFA8(target));
+    fn_801501AC(AI_GetTargetList(ai), fn_800ACFA8(target));
 }
 
 int fn_8007AC68(int handle, int a, int b)
 {
     void *ai = fn_8007A3A0(handle);
-    if (ai == 0 || fn_8044203C(ai) == 0)
+    if (ai == 0 || AI_GetActor(ai) == 0)
         return 0;
-    return fn_800F63DC(fn_8044203C(ai), a, b);
+    return fn_800F63DC(AI_GetActor(ai), a, b);
 }
 
 int fn_8007AD0C(int handle, int what, int at)
@@ -330,12 +330,12 @@ int fn_8007AD0C(int handle, int what, int at)
     void *b = fn_800ACFA8(at);
     if (b == 0)
         return 0;
-    void *brain = fn_80442104(ai);
-    if (fn_80151AF8(fn_80442104(ai), 0x11) == 0) {
+    void *brain = AI_GetBrain(ai);
+    if (fn_80151AF8(AI_GetBrain(ai), 0x11) == 0) {
         void *task = fn_8015105C(brain, 0x11);
         if (task) {
-            fn_801501AC(fn_804420D8(ai), a);
-            fn_8014B63C(fn_804420AC(ai), fn_800B13D8(a), 0);
+            fn_801501AC(AI_GetTargetList(ai), a);
+            fn_8014B63C(AI_GetMover(ai), fn_800B13D8(a), 0);
             ThrowAtTask *t = (ThrowAtTask *)task;
             t->what = what;
             t->at = at;
@@ -359,12 +359,12 @@ int fn_8007AE94(int handle, int what, int at)
     void *b = fn_800ACFA8(at);
     if (b == 0)
         return 0;
-    void *brain = fn_80442104(ai);
-    if (fn_80151AF8(fn_80442104(ai), 0x1A) == 0) {
+    void *brain = AI_GetBrain(ai);
+    if (fn_80151AF8(AI_GetBrain(ai), 0x1A) == 0) {
         void *task = fn_8015105C(brain, 0x1A);
         if (task) {
-            fn_801501AC(fn_804420D8(ai), a);
-            fn_8014B63C(fn_804420AC(ai), fn_800B13D8(a), 0);
+            fn_801501AC(AI_GetTargetList(ai), a);
+            fn_8014B63C(AI_GetMover(ai), fn_800B13D8(a), 0);
             ThrowAtTask *t = (ThrowAtTask *)task;
             t->what = what;
             t->at = at;
@@ -397,7 +397,7 @@ void fn_8007B0EC(int handle, int anim, int b, int mode)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     if (fn_80151AF8(brain, 0x13))
         return;
     PlayAnimTask &task = fn_8015105CA(brain, 0x13);
@@ -409,7 +409,7 @@ void fn_8007B0EC(int handle, int anim, int b, int mode)
         if (mode == 1)
             fn_8009AF28(*fn_80442080P(ai));
         unsigned int clip = fn_80097CE8(*fn_80442080P(ai), anim, mode, 30.0f, 0, 7.5f, -1.0f);
-        fn_800BD2D0(fn_8044203C(ai), clip);
+        fn_800BD2D0(AI_GetActor(ai), clip);
     } else {
     }
 }
@@ -478,7 +478,7 @@ void fn_8007B4D8(int handle, int v)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    fn_80442130(ai, v);
+    AI_SetStateBit(ai, v);
 }
 
 void fn_8007B540(int handle, int on, int b)
@@ -586,7 +586,7 @@ void fn_8007BAA0(int handle)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     if (fn_8015105C(brain, 0x16)) {
     } else {
     }
@@ -597,7 +597,7 @@ void fn_8007BB24(int handle)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     if (fn_80151AF8(brain, 0x16)) {
         fn_8015123C(brain, 0x16);
     } else {
@@ -609,7 +609,7 @@ void fn_8007BBB4(int handle)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     if (fn_8015105C(brain, 0x17)) {
     } else {
     }
@@ -620,7 +620,7 @@ void fn_8007BC38(int handle)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     if (fn_80151AF8(brain, 0x17)) {
         fn_8015123C(brain, 0x17);
     } else {
@@ -632,12 +632,12 @@ void fn_8007BCC8(int handle, int keep)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     HoverTask &task = fn_8015105CH(brain, 0x18);
     if (&task) {
         task.f28 = 1;
         if (keep == 0)
-            fn_80442174(ai, 9);
+            AI_ClearStateBit(ai, 9);
     } else {
     }
 }
@@ -647,7 +647,7 @@ void fn_8007BD7C(int handle)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    void *brain = fn_80442104(ai);
+    void *brain = AI_GetBrain(ai);
     if (fn_80151AF8(brain, 0x18)) {
         fn_8015123C(brain, 0x18);
     } else {
@@ -660,9 +660,9 @@ void fn_8007BE0C(int handle, int on)
     if (ai == 0)
         return;
     if (on)
-        fn_80086490(fn_80442080(ai), 1);
+        fn_80086490(AI_GetEntity(ai), 1);
     else
-        fn_800864C0(fn_80442080(ai), 1);
+        fn_800864C0(AI_GetEntity(ai), 1);
 }
 
 int fn_8007BEA8(int handle)
@@ -680,7 +680,7 @@ int fn_8007BF40(int handle, int a, int hb, int hc)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return 0;
-    if (fn_8044203C(ai) == 0)
+    if (AI_GetActor(ai) == 0)
         return 0;
     void *b = fn_800ACFA8(hb);
     Ent *c = (Ent *)(PlayerEnt *)fn_800ACFA8I(hc);

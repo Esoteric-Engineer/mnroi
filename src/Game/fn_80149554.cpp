@@ -32,7 +32,7 @@ struct Actor : Ent { // matching_notes 49
 extern "C" {
 int fn_8046325C(AIMessage *m);
 int fn_80463230(AIMessage *m);
-Actor *fn_80442080(void *ai);
+Actor *AI_GetEntity(void *ai);
 int fn_800B13D8(Ent &e);
 Ent *fn_800ACFA8(int id);
 int fn_800B0C58(Ent *e);
@@ -63,7 +63,7 @@ extern "C" void fn_80149570(void *ai)
     for (i = 0; i < lbl_8066F1AC; i++) {
         unsigned int slot = (lbl_8066F1B0 + i) % (sizeof lbl_80571CB0 / sizeof lbl_80571CB0[0]);
         AIMessage *m = lbl_80571CB0[slot];
-        if (m && fn_8046325C(m) == fn_800B13D8(*fn_80442080(ai))) {
+        if (m && fn_8046325C(m) == fn_800B13D8(*AI_GetEntity(ai))) {
             fn_80149660(m);
             lbl_80571CB0[slot] = 0;
         }

@@ -142,7 +142,7 @@ void fn_80434420(Mat4 *dst, Mat4 *src);
 void fn_8042D8A8(Vector *dst, Vector *src);
 void fn_8042D854(Vector *dst, Vector *src);
 float fn_8042CE28(unsigned int n);
-Ent *fn_80442080(void *ai);
+Ent *AI_GetEntity(void *ai);
 int fn_80462D68(Registry *self);
 Volume *fn_80462DB0(Registry *self, int i);
 Vector *fn_800B1724(Ent *e);
@@ -550,7 +550,7 @@ void fn_80146ED0(Volume *vol)
 // Whether pos (or, without one, the AI's actor) is inside the hull of any list-2 volume
 int fn_801475D8(register Registry *self, void *ai, Vector *pos)
 {
-    Ent *actor = fn_80442080(ai);
+    Ent *actor = AI_GetEntity(ai);
     for (int i = 0; i < fn_80462D68(self); i++) {
         Volume *v = fn_80462DB0(self, i);
         if (v) {

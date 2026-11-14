@@ -37,8 +37,8 @@ struct PlayerEnt : Ent { // matching_notes 48
 };
 
 extern "C" {
-void *fn_80442080(void *ai);
-PlayerEnt *fn_80442080P(void *ai) __asm__("fn_80442080");
+void *AI_GetEntity(void *ai);
+PlayerEnt *fn_80442080P(void *ai) __asm__("AI_GetEntity");
 Vector *fn_800B1724(Ent &e);
 void fn_8042DC84(Vector *dst, Vector *src);
 void fn_8043539C(Placement *p);
@@ -65,7 +65,7 @@ int fn_800B0C1C(void *e);
 void *fn_800B14C8(void *e);
 int fn_8008582C(void *e);
 int fn_8015F2D0(void *a, void *b);
-void *fn_80442104(void *ai);
+void *AI_GetBrain(void *ai);
 int fn_80151AF8(void *brain, int id);
 float fn_80086730(void *e);
 float fn_8008677C(void *e);
@@ -116,7 +116,7 @@ int fn_8015E2FC(void *ai, Vector *to, float r, int *hit, float height)
 {
     if (ai == 0 || to == 0)
         return 0;
-    void *actor = fn_80442080(ai);
+    void *actor = AI_GetEntity(ai);
     Vector from;
     fn_8042DC84(&from, fn_800B1724(*(Ent *)actor));
     from.z += 0.4f;
@@ -303,7 +303,7 @@ int fn_8015EF54(void *ai)
 int fn_8015F008(void *self)
 {
     register float v = fn_8015E64C(self);
-    register void *p = fn_80442080(self);
+    register void *p = AI_GetEntity(self);
 
     return v > fn_800B1884(p, 0xD3);
 }
@@ -312,7 +312,7 @@ int fn_8015F008(void *self)
 int fn_8015F07C(void *self)
 {
     register float v = fn_8015E64C(self);
-    register void *p = fn_80442080(self);
+    register void *p = AI_GetEntity(self);
 
     return v < fn_800B1884(p, 0xD4);
 }
@@ -361,20 +361,20 @@ int fn_8015F2D0(void *a, void *b)
 // Whether the brain runs a POSSESS (6) or ENSLAVE (0xE) task.
 int fn_8015F384(void *ai)
 {
-    if (fn_80151AF8(fn_80442104(ai), 6) || fn_80151AF8(fn_80442104(ai), 0xE))
+    if (fn_80151AF8(AI_GetBrain(ai), 6) || fn_80151AF8(AI_GetBrain(ai), 0xE))
         return 1;
     return 0;
 }
 
 int fn_8015F410(void *ai, float min)
 {
-    float frac = fn_80086730(fn_80442080(ai)) / fn_8008677C(fn_80442080(ai));
+    float frac = fn_80086730(AI_GetEntity(ai)) / fn_8008677C(AI_GetEntity(ai));
     return frac >= min;
 }
 
 int fn_8015F4A4(void *ai, float min)
 {
-    float frac = fn_80086614(fn_80442080(ai)) / fn_80086640(fn_80442080(ai));
+    float frac = fn_80086614(AI_GetEntity(ai)) / fn_80086640(AI_GetEntity(ai));
     return frac >= min;
 }
 
@@ -382,7 +382,7 @@ float fn_8015F538(void *ai, Vector *p, void *o)
 {
     if (o == 0)
         return 0.0f;
-    if (fn_80442080(ai) == 0)
+    if (AI_GetEntity(ai) == 0)
         return 0.0f;
     Vector d;
     fn_80429038(&d, p, fn_800B1724(*fn_80442080P(ai)));
@@ -394,7 +394,7 @@ float fn_8015F608(void *ai, Vector *p, void *o)
 {
     if (o == 0)
         return 0.0f;
-    if (fn_80442080(ai) == 0)
+    if (AI_GetEntity(ai) == 0)
         return 0.0f;
     Vector d;
     fn_80429038(&d, p, fn_800B1724(*fn_80442080P(ai)));
@@ -513,7 +513,7 @@ void fn_8015FD2C(void *ai, Vector *dir, float rate, Vector *out)
     diff = fn_801BDB9C(diff);
     step = (diff < 0.0f ? -diff : diff) * 0.011111111f;
     step = step >= 0.4f ? (step <= 1.0f ? step : 1.0f) : 0.4f;
-    step *= fn_80085A04(fn_80442080(ai)) * rate * fn_80426A84(lbl_80593BE8);
+    step *= fn_80085A04(AI_GetEntity(ai)) * rate * fn_80426A84(lbl_80593BE8);
     if ((diff < 0.0f ? -diff : diff) > step) {
         diff = diff >= -step ? (diff <= step ? diff : step) : -step;
         fn_8042F838(&res, fn_800B1750(*fn_80442080P(ai)), diff);
@@ -526,7 +526,7 @@ void fn_8015FD2C(void *ai, Vector *dir, float rate, Vector *out)
 int fn_8015FFD4(void *ai)
 {
     if (fn_80442508(fn_80461DD4(ai), 4)) {
-        if (!fn_800862DC(fn_80442080(ai)) && fn_8046441C(ai) == 0x60)
+        if (!fn_800862DC(AI_GetEntity(ai)) && fn_8046441C(ai) == 0x60)
             return 1;
         if (fn_8046441C(ai) == 0x3E || fn_8046441C(ai) == 0x40 || fn_8046441C(ai) == 0x3F || fn_8046441C(ai) == 0x41
             || fn_8046441C(ai) == 0x2D)

@@ -54,7 +54,7 @@ void *fn_800B1724(Ent &node);
 void fn_80429038(Vector *out, Vector *a, Vector *b);
 float fn_8042EC54(Vector *v);
 Ent *fn_80134870(void *a);
-PEnt *fn_80442080(void *a);
+PEnt *AI_GetEntity(void *a);
 int fn_800B24AC(Ent &e);
 int fn_800B1CC8(Ent &e);
 int fn_80461714(void *a, int b);
@@ -139,7 +139,7 @@ extern "C" int fn_801502CC(void *a, void *b, short c, void *user)
     float len = fn_8042EC54(&dir);
     len -= 2.0f;
     Placement hit;
-    int clear = !fn_8004A9CC(&from, &dir, len, 0x8000, 0, fn_800B24AC(*fn_80442080(target)), fn_80461714(a, 0), 0, 5);
+    int clear = !fn_8004A9CC(&from, &dir, len, 0x8000, 0, fn_800B24AC(*AI_GetEntity(target)), fn_80461714(a, 0), 0, 5);
     int color = 0xffff0000;
     if (clear)
         color = 0xff00ff00;
@@ -148,7 +148,7 @@ extern "C" int fn_801502CC(void *a, void *b, short c, void *user)
 
 extern "C" int fn_801504BC(register Finder *self, Vector *out)
 {
-    void *found = fn_8009C55C(fn_800B1724(*fn_80442080(self->ai)), fn_800B1CC8(*fn_80442080(self->ai)),
+    void *found = fn_8009C55C(fn_800B1724(*AI_GetEntity(self->ai)), fn_800B1CC8(*AI_GetEntity(self->ai)),
                               fn_801370B0(self->ai), 20.0f, (void *)fn_801502CC, self->ai, -1);
     if (found) {
         fn_8042DC84(out, fn_80444688(found));
@@ -201,7 +201,7 @@ struct BrainSelf {
 
 struct TaskData {
     void *ai; // +0x0
-    void *brain; // +0x4, fn_80442104
+    void *brain; // +0x4, AI_GetBrain
     int target; // +0x8, target handle while covered
     char *name; // +0xC, lbl_804CFB58[id]
     char timer[8]; // +0x10
@@ -263,7 +263,7 @@ extern "C" void fn_80150820(register BrainSelf *self, void *ai)
 {
     unsigned int i;
     self->ai = ai;
-    self->entity = fn_80442080(self->ai);
+    self->entity = AI_GetEntity(self->ai);
     self->f8 = fn_80085954(self->entity);
     self->cur = 0;
     self->count = 0;
@@ -592,7 +592,7 @@ extern "C" int fn_8015123C(register BrainSelf *self, int id)
 
 extern char lbl_80593BE8[];
 extern "C" int fn_8042EFF8(void *p);
-extern "C" int fn_804423E8(AITask *t);
+extern "C" int AI_GetTaskId(AITask *t);
 
 extern "C" void fn_801513D8(register BrainSelf *self, int len)
 {
@@ -630,7 +630,7 @@ extern "C" int fn_801514C0(register BrainSelf *self, int id)
 extern "C" void fn_801515C4(register BrainSelf *self, AITask *t)
 {
     Slot *s = &self->slots[self->f6C];
-    s->a = fn_804423E8(t);
+    s->a = AI_GetTaskId(t);
     s->b = fn_8042EFF8(lbl_80593BE8);
     if (++self->f6C >= sizeof(self->slots) / sizeof(Slot))
         self->f6C = 0;
@@ -656,7 +656,7 @@ int fn_80463524(void *e);
 void fn_8042FE08(Vector *dst, Vector *src, float w);
 void fn_80447C38(Vector *v);
 void fn_80435530(Vector *v, float f);
-void *fn_804420AC(void *ai);
+void *AI_GetMover(void *ai);
 void fn_8014B420(void *a, Vector *v);
 void fn_80463C9C(BrainSelf *self);
 }
@@ -699,7 +699,7 @@ extern "C" int fn_80151674(register BrainSelf *self)
         }
     }
     fn_80435530(&v, best);
-    fn_8014B420(fn_804420AC(fn_80151BF8(self)), &v);
+    fn_8014B420(AI_GetMover(fn_80151BF8(self)), &v);
     return 1;
 }
 
@@ -713,7 +713,7 @@ extern "C" void fn_80151934(register BrainSelf *self)
         self->f14 = 0;
     if (self->cur) {
         while (fn_80463AF4(self->cur))
-            fn_8015123C(self, fn_804423E8(self->cur));
+            fn_8015123C(self, AI_GetTaskId(self->cur));
     }
     fn_80463C9C(self);
 }
@@ -729,7 +729,7 @@ extern "C" int fn_80151A9C(register BrainSelf *self)
 extern "C" int fn_80151AF8(register BrainSelf *self, int id)
 {
     for (int i = self->count - 1; i >= 0; i--) {
-        if (fn_804423E8((AITask *)self->tasks[i]) == id)
+        if (AI_GetTaskId((AITask *)self->tasks[i]) == id)
             return 1;
     }
     return 0;
@@ -790,7 +790,7 @@ extern "C" TaskSelf *fn_80151D0C(register TaskSelf *self, register void *ai)
 __asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.text"); // 0x8049B5A0-0x8049B5B8, pool entries no function in the unit loads
 
 extern "C" {
-void *fn_804420D8(void *ai);
+void *AI_GetTargetList(void *ai);
 int fn_8014FCAC(void *a);
 Ent *fn_8014FCD8(void *a, int i);
 int fn_80085D3C(void *actor);
@@ -815,14 +815,14 @@ inline void sn_label_decl() { clear:; } // clears the return flag fn_80151D0C se
 
 extern "C" int fn_80151D64(void *ai, Vector *out, float *weight)
 {
-    int n = fn_8014FCAC(fn_804420D8(ai));
+    int n = fn_8014FCAC(AI_GetTargetList(ai));
     float radius = 1.2f;
-    if (!fn_80085D3C(fn_80442080(ai)))
+    if (!fn_80085D3C(AI_GetEntity(ai)))
         radius = 2.0f;
     int hits = 0;
     fn_80447C38(out);
     *weight = 0.0f;
-    PEnt *self = fn_80442080(ai);
+    PEnt *self = AI_GetEntity(ai);
     if (!self)
         return 0;
     float dt = fn_80426A84(lbl_80593BE8);
@@ -831,11 +831,11 @@ extern "C" int fn_80151D64(void *ai, Vector *out, float *weight)
     Vector vel;
     fn_8042DC84(&pos, (Vector *)fn_800B1724(*self));
     fn_80067050(*self, &fwd);
-    fn_8042DC84(&vel, fn_80462574(fn_804420AC(ai)));
+    fn_8042DC84(&vel, fn_80462574(AI_GetMover(ai)));
     Vector from;
     Vector to;
     for (int i = 0; i < n; i++) {
-        Ent *other = fn_8014FCD8(fn_804420D8(ai), i);
+        Ent *other = fn_8014FCD8(AI_GetTargetList(ai), i);
         if (!other)
             continue;
         if (other == fn_80134870(ai))
@@ -849,14 +849,14 @@ extern "C" int fn_80151D64(void *ai, Vector *out, float *weight)
         Vector ovel;
         fn_8042DC84(&opos, (Vector *)fn_800B1724(*other));
         fn_80067050(*other, &ofwd);
-        fn_8042DC84(&ovel, fn_80462574(fn_804420AC(fn_80085980(other))));
+        fn_8042DC84(&ovel, fn_80462574(AI_GetMover(fn_80085980(other))));
         Vector d;
         fn_80429038(&d, &opos, &pos);
         float dist = fn_8042EC54(&d);
         dist = dist > 0.1f ? dist : 0.1f;
         if (dist < 2.0f * radius) {
             float s = 1.0f - dist / (2.0f * radius);
-            fn_80463F3C(fn_804420AC(ai), 1);
+            fn_80463F3C(AI_GetMover(ai), 1);
             Vector push;
             fn_8042DC84(&push, &pos);
             fn_8042D8A8(&push, &opos);
@@ -875,7 +875,7 @@ extern "C" int fn_80151D64(void *ai, Vector *out, float *weight)
         }
         float vdist = fn_804290F8(&vel, &opos);
         if (vdist < 2.0f * radius) {
-            fn_80463F3C(fn_804420AC(ai), 1);
+            fn_80463F3C(AI_GetMover(ai), 1);
             Vector push;
             fn_8042DC84(&push, &d);
             fn_8042F76C(&push);
@@ -900,7 +900,7 @@ extern "C" int fn_80151D64(void *ai, Vector *out, float *weight)
         Vector target;
         fn_8042FDBC(&target, out, *weight);
         fn_8042D854(&target, (Vector *)fn_800B1724(*self));
-        fn_80463EF0(fn_804420AC(ai), &target);
+        fn_80463EF0(AI_GetMover(ai), &target);
         return 1;
     }
     return 0;
@@ -973,11 +973,11 @@ void fn_804628D8(void *ai, int a);
 
 extern "C" Ent *fn_801526E4(void *ai, Vector *out, float *weight)
 {
-    int n = fn_801500C4((Finder *)fn_804420D8(ai));
+    int n = fn_801500C4((Finder *)AI_GetTargetList(ai));
     int unused = 0;
     fn_80447C38(out);
     *weight = 0.0f;
-    PEnt *self = fn_80442080(ai);
+    PEnt *self = AI_GetEntity(ai);
     if (!self)
         return 0;
     Ent *e;
@@ -996,12 +996,12 @@ extern "C" Ent *fn_801526E4(void *ai, Vector *out, float *weight)
         }
     }
     for (int i = 0; i < n; i++) {
-        e = (Ent *)fn_801500F0((Finder *)fn_804420D8(ai), i);
+        e = (Ent *)fn_801500F0((Finder *)AI_GetTargetList(ai), i);
         if (!e)
             continue;
         if (!fn_800B0CC0(e))
             continue;
-        if (fn_800B13D8(e) == fn_80461C94(fn_804420AC(ai)))
+        if (fn_800B13D8(e) == fn_80461C94(AI_GetMover(ai)))
             continue;
         if (e == fn_80134870(ai))
             continue;
@@ -1019,7 +1019,7 @@ extern "C" Ent *fn_801526E4(void *ai, Vector *out, float *weight)
 extern char lbl_804F5CC8[];
 extern char *lbl_804CFB58[]; // task names by id, "TASK_SLEEP"...
 extern "C" {
-void *fn_80442104(void *ai);
+void *AI_GetBrain(void *ai);
 void fn_80463AB4(TaskSelf *self);
 }
 
@@ -1032,7 +1032,7 @@ extern "C" TaskSelf *fn_8015294C(register TaskSelf *self, void *ai, int id)
         return self;
     }
     self->ai = ai;
-    self->brain = fn_80442104(self->ai);
+    self->brain = AI_GetBrain(self->ai);
     self->id = id;
     self->f1C = 0;
     self->f20 = 0;
@@ -1056,6 +1056,6 @@ extern "C" void fn_80152A78(register TaskData *self)
     if (self->target) {
         Ent *t = fn_800ACFA8(self->target);
         if (t)
-            fn_801501AC((Finder *)fn_804420D8(self->ai), t);
+            fn_801501AC((Finder *)AI_GetTargetList(self->ai), t);
     }
 }

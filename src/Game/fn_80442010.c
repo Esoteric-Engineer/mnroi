@@ -1,4 +1,5 @@
-// Leaf accessors on the game-state and name-table objects, plus a bit set; see docs/versus.md section 4.1.
+// Leaf accessors: AIObject, Mover and task ones (docs/ai.md section 4), then the game-state and name-table ones
+// (docs/versus.md section 4.1), plus a bit set.
 
 extern int fn_800CD834(int value);
 
@@ -7,14 +8,9 @@ typedef struct BitSet
     unsigned int *words;
 } BitSet;
 
-// An object with float parameters at +0x598-0x5E0 and a bit set at +0x500; not G, whose +0x598 is an int.
-typedef struct Obj
+typedef struct AIObject
 {
-    char unk0[0x18];
-    int unk18;
-    char unk1C[0x4];
-    int unk20;
-    char unk24[0x4DC];
+    char unk0[0x500];
     BitSet bits; // +0x500
     int unk504;
     char unk508[0x24];
@@ -36,34 +32,42 @@ typedef struct Obj
     float unk5D8;
     float unk5DC;
     float unk5E0;
-} Obj;
+} AIObject;
 
-char *fn_80442010(register Obj *o)
+typedef struct AITask
 {
-    return (char *)o + 0x20;
+    char unk0[0x18];
+    int id; // +0x18
+    char unk1C[0x4];
+    int unk20;
+} AITask;
+
+char *AI_GetPath(register char *mover)
+{
+    return mover + 0x20;
 }
 
-int fn_8044203C(register Obj *o)
+int AI_GetActor(register AIObject *o)
 {
     return fn_800CD834(o->unk52C);
 }
 
-int fn_80442080(register Obj *o)
+int AI_GetEntity(register AIObject *o)
 {
     return o->unk530;
 }
 
-char *fn_804420AC(register Obj *o)
+char *AI_GetMover(register AIObject *o)
 {
     return (char *)o + 0x210;
 }
 
-char *fn_804420D8(register Obj *o)
+char *AI_GetTargetList(register AIObject *o)
 {
     return (char *)o + 0xD0;
 }
 
-int fn_80442104(register Obj *o)
+int AI_GetBrain(register AIObject *o)
 {
     return *(int *)((char *)o + 0x204);
 }
@@ -72,89 +76,89 @@ void fn_8044243C(register BitSet *b, register unsigned int bit);
 void fn_804424A0(register BitSet *b, register unsigned int bit);
 int fn_80442508(register BitSet *b, register unsigned int bit);
 
-void fn_80442130(register Obj *o, register unsigned int bit)
+void AI_SetStateBit(register AIObject *o, register unsigned int bit)
 {
     fn_8044243C(&o->bits, bit);
 }
 
-void fn_80442174(register Obj *o, register unsigned int bit)
+void AI_ClearStateBit(register AIObject *o, register unsigned int bit)
 {
     fn_804424A0(&o->bits, bit);
 }
 
-int fn_804421B8(register Obj *o, register unsigned int bit)
+int AI_TestStateBit(register AIObject *o, register unsigned int bit)
 {
     return fn_80442508(&o->bits, bit);
 }
 
-void fn_80442208(register Obj *o, register float v)
+void fn_80442208(register AIObject *o, register float v)
 {
     o->unk598 = v;
 }
 
-void fn_80442230(register Obj *o, register float v)
+void fn_80442230(register AIObject *o, register float v)
 {
     o->unk59C = v;
 }
 
-void fn_80442258(register Obj *o, register float v)
+void fn_80442258(register AIObject *o, register float v)
 {
     o->unk5B0 = v;
 }
 
-void fn_80442280(register Obj *o, register float v)
+void fn_80442280(register AIObject *o, register float v)
 {
     o->unk5B4 = v;
 }
 
-void fn_804422A8(register Obj *o, register float v)
+void fn_804422A8(register AIObject *o, register float v)
 {
     o->unk5B8 = v;
 }
 
-void fn_804422D0(register Obj *o, register float v)
+void fn_804422D0(register AIObject *o, register float v)
 {
     o->unk5BC = v;
 }
 
-void fn_804422F8(register Obj *o, register float v)
+void fn_804422F8(register AIObject *o, register float v)
 {
     o->unk5C4 = v;
 }
 
-void fn_80442320(register Obj *o, register float v)
+void fn_80442320(register AIObject *o, register float v)
 {
     o->unk5C8 = v;
 }
 
-void fn_80442348(register Obj *o, register float v)
+void fn_80442348(register AIObject *o, register float v)
 {
     o->unk5D4 = v;
 }
 
-void fn_80442370(register Obj *o, register float v)
+void fn_80442370(register AIObject *o, register float v)
 {
     o->unk5D8 = v;
 }
 
-void fn_80442398(register Obj *o, register float v)
+void fn_80442398(register AIObject *o, register float v)
 {
     o->unk5DC = v;
 }
 
-void fn_804423C0(register Obj *o, register float v)
+void fn_804423C0(register AIObject *o, register float v)
 {
     o->unk5E0 = v;
 }
 
-int fn_804423E8(register Obj *o)
+int AI_GetTaskId(register AITask *t)
 {
-    return o->unk18;
+    return t->id;
 }
 
-void fn_80442414(register Obj *o, register int v)
+void fn_80442414(register AITask *t, register int v)
 {
-    o->unk20 = v;
+    t->unk20 = v;
 }
 
 void fn_8044243C(register BitSet *b, register unsigned int bit)
