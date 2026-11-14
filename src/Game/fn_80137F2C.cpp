@@ -298,7 +298,7 @@ AIAction *fn_80144544(void *ai, AIBehavior *rec);
 AIAction *fn_80144628(void *ai, AIBehavior *rec);
 AIAction *fn_80144970(void *ai, AIBehavior *rec);
 AIAction *fn_80144CB4(void *ai, AIBehavior *rec);
-void fn_80144D3C(void);
+AIAction *fn_80144D3C(void *ai, AIBehavior *rec);
 void fn_80144DB8(void);
 void fn_80145200(void);
 void fn_80145AA8(void);
@@ -3306,6 +3306,17 @@ extern "C" AIAction *fn_80144CB4(void *ai, AIBehavior *rec)
     if (h) {
         fn_80138A24(h, 0);
         fn_80138A24(h, 0x17);
+        return h;
+    }
+    return 0;
+}
+
+// FORCE_POWER_STAND (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144D3C(void *ai, AIBehavior *rec)
+{
+    AIAction *h = fn_80138738(0x26, 60000, 0);
+    if (h) {
+        fn_80138A24(h, 7);
         return h;
     }
     return 0;
