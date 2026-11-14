@@ -718,3 +718,34 @@ float fn_8009D278(register Node *a, register Link *b, register Vector *out)
     res = fn_804290F8(out, &a->pos);
     return res;
 }
+
+extern float lbl_8066B974; // .sdata
+extern float lbl_8066B978;
+extern float lbl_8066D668; // .sbss, set by the static initializer
+extern float lbl_8066D66C;
+extern float lbl_8066D670;
+extern float lbl_8066D674;
+extern "C" void __6Vector(void *self);
+
+// 65535 is GCC 2.95's default init priority.
+static void __static_initialization_and_destruction_0(int initialize, int priority)
+{
+    if (priority == 65535) {
+        if (initialize) {
+            lbl_8066D668 = 320.0f - lbl_8066B974 * 0.5f;
+            lbl_8066D66C = lbl_8066D668 + lbl_8066B974 * 0.5f;
+            lbl_8066D670 = 240.0f - lbl_8066B978 * 0.5f;
+            lbl_8066D674 = lbl_8066B978 * 0.5f + lbl_8066D670 - 12.0f;
+            __6Vector(&lbl_805528D0);
+            __6Vector(&lbl_805528E0);
+        } else {
+        }
+    }
+}
+
+void fn_8009D548(void)
+{
+    __static_initialization_and_destruction_0(1, 65535);
+}
+
+static void (*const sCtorEntry)(void) __attribute__((section(".ctors"))) = fn_8009D548;

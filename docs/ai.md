@@ -216,9 +216,9 @@ The registering classes are named by the type-registry string (`fn_801BEE2C`): `
 
 The graph of spots the paths are built on, loaded from a `.npd` file by `fn_8009B35C` (level load, `Game/fn_8002CE78.cpp`). The `Level`, node and link fields are in `Game/fn_8009B31C.cpp`. One whole file:
 
-- **`.text`** starts right after `Game/fn_80097750.cpp` and ends with `_GLOBAL_.I` `fn_8009D548` (in `.ctors`), which calls the static initializer `fn_8009D454(1, 0xFFFF)`.
-- **`.rodata`** runs from 0x8048A9D8 through the `"invalid"` at 0x8048AC7C (its own constants, then linkonce pool words and header strings). The bytes before it, 0x8048A828-0x8048A9D8, end the previous file the same way and are unclaimed.
-- **`.bss`** is the static initializer's two `Vector`s, `lbl_805528D0` and `lbl_805528E0`. It also sets floats in `.sbss` 0x8066D668-0x8066D674.
+- **`.text`** starts right after `Game/fn_80097750.cpp` and ends with `_GLOBAL_.I` `fn_8009D548` (in `.ctors`), which calls the static initializer `fn_8009D454(1, 0xFFFF)`. It sets the floats in `.sbss` 0x8066D668-0x8066D674 and constructs the two `Vector`s.
+- **`.rodata`** runs from 0x8048A9D8 through the `"invalid"` at 0x8048AC7C (its own constants, then linkonce pool words and header strings). The bytes before it, 0x8048A828-0x8048A9D8, end the previous file the same way and are unclaimed. The unit claims up to 0x8048AA88 (the initializer's last literal); the rest has no reader.
+- **`.bss` and `.sbss`** (`lbl_805528D0`, `lbl_805528E0`, 0x8066D668-0x8066D674) are unclaimed: the initializer has no function-end branch pair, so it is hand-written over `extern` globals ([`matching_notes.md`](matching_notes.md) entry 83).
 
 ---
 
@@ -249,7 +249,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 12 | Task methods | 0x80152AE8-0x8015D950 | `Game/fn_80152AE8.cpp` | Done |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0 | row 2's unit | Done |
 | 14 | Rename pass | accessors | `Game/fn_80442010.c` and row 5's units | Done. Names (`AI_*`, `Task_Base_*`, `BitSet_*`) only where section 4 records what a function returns; the rest keep `fn_` |
-| 15 | Path-node graph | 0x8009B31C-0x8009D584 | `Game/fn_8009B31C.cpp` | Open. One whole C++ file; claim its `.rodata` and `.bss` from section 4.7 with it. When the route queries match, settle the path flag guesses in section 4.6 (`+0x44`) |
+| 15 | Path-node graph | 0x8009B31C-0x8009D584 | `Game/fn_8009B31C.cpp` | Done. Its `.rodata` tail, `.bss` and `.sbss` stay unclaimed (section 4.7) |
 
 Out of scope for AI: the rest of the script command file (0x8007C034-0x80081E08) and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
 
