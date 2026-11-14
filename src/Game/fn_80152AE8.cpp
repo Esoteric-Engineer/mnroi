@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B8E0.
+// Owns .rodata 0x8049B838-0x8049B900.
 
 struct Ent {
     int pad;
@@ -971,5 +971,195 @@ extern "C" int fn_801567F0(register RangedTask *self)
 extern "C" int fn_80156A50(register RangedTask *self)
 {
     self->f28 = 0;
+    return 1;
+}
+
+#define ABS(x) ((x) < 0.0f ? -(x) : (x))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+struct Body {
+    char pad0[0x50];
+    float f50, f54; // +0x50
+    char pad58[0x8];
+    float f60, f64; // +0x60
+    char pad68[0x130];
+    virtual void s0();
+    virtual void s1();
+    virtual void s2();
+    virtual void s3();
+    virtual void s4();
+    virtual void s5(Vector *out, int a); // vtable +0x30
+};
+
+struct BodyD : Body { // matching_notes 44
+    int x;
+};
+
+extern "C" {
+Body *fn_80134870B(void *ai) __asm__("fn_80134870");
+BodyD *fn_80442080B(void *ai) __asm__("fn_80442080");
+void fn_8042D8A8V(Vector *dst, Vec *src) __asm__("fn_8042D8A8");
+float fn_8042EBF4V(Vector *a, Vec *b) __asm__("fn_8042EBF4");
+int fn_8004A9CCV(Vector *from, Vector *dir, float len, int a, int b, int c, int d, int e, int f) __asm__("fn_8004A9CC");
+int fn_8008618C(void *actor);
+}
+
+// RANGED update: weighs eight ranged choices and checks the line of fire with a raycast.
+extern "C" int fn_80156A88(register RangedTask *self)
+{
+    if (fn_80151B90(self->brain, self)) {
+        if (!fn_80461D48(self->ai, 2)) {
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        int ready = !fn_80151430(self->brain);
+        if (!fn_801369B0(self->ai) && fn_80085D3C(fn_80442080(self->ai))) {
+            fn_804643C8(self, 1);
+            return 0;
+        }
+        if (!fn_8015F008(self->ai) && fn_80134870(self->ai) && fn_8015EE34(self->ai, fn_80134870(self->ai))) {
+            if (!fn_80461D48(self->ai, 4) && fn_80461D48(self->ai, 0x2b)) {
+            } else {
+                fn_804643C8(self, 1);
+            }
+        } else if (ready) {
+            register unsigned int base = 1500;
+            unsigned int n = 1500;
+            if (fn_80461D48(self->ai, 0x2b) && fn_8015EC1C(fn_80461F68(self->ai))) {
+                fn_80442130(self->ai, 9);
+                n = 3000;
+                return 1;
+            }
+            fn_80442174(self->ai, 9);
+            fn_80442174(self->ai, 0x19);
+            fn_80442174(self->ai, 0xa);
+            fn_80442174(self->ai, 2);
+            fn_80442174(self->ai, 0xd);
+            fn_80442174(self->ai, 7);
+            fn_80442174(self->ai, 1);
+            fn_80442174(self->ai, 0x13);
+            float m25 = 0.0f;
+            if (fn_80461D48(self->ai, 0x25))
+                m25 = 1.0f;
+            float m28 = 0.0f;
+            if (!fn_80461D48(self->ai, 0x28))
+                m28 = 1.0f;
+            float w[8];
+            w[0] = fn_80461EE4(self->ai) * 3.0f * fn_80461F68(self->ai);
+            w[1] = 2.0f * fn_80464318(self->ai) * fn_80462A30(self->ai);
+            w[2] = 2.0f * fn_80464318(self->ai) * fn_80464344(self->ai) * m25;
+            w[3] = 2.0f * fn_80464318(self->ai) * fn_80462A30(self->ai);
+            w[4] = 2.0f * (100.0f - fn_80461EE4(self->ai)) * (100.0f - fn_80461F68(self->ai));
+            w[5] = (100.0f - fn_80461EE4(self->ai)) * 100.0f;
+            w[6] = 2.0f * fn_80461EE4(self->ai) * fn_80461F94(self->ai);
+            w[7] = 2.0f * fn_80461EE4(self->ai) * fn_80461F68(self->ai);
+            if (fn_80461D48(self->ai, 3) && !fn_80461D48(self->ai, 4) && fn_80461D48(self->ai, 0x2b)) {
+                w[2] = 0.0f;
+                w[4] = 0.0f;
+                w[5] = 0.0f;
+                w[1] = 0.0f;
+            }
+            if (!fn_800860FC(fn_80442080(self->ai)))
+                w[6] = 0.0f;
+            if (fn_800CCA58(*fn_8044203C(self->ai)))
+                w[0] *= 2.0f;
+            if (!fn_801368B8(self->ai) || !fn_8015F410(self->ai, 0.3f))
+                w[7] = 0.0f;
+            if (!fn_80461D48(self->ai, 0x25) && !fn_80461D48(self->ai, 0x2c) && !fn_80461D48(self->ai, 0x2d)
+                && !fn_80461D48(self->ai, 0x30))
+                w[1] = 0.0f;
+            Vector dir;
+            fn_80134870B(self->ai)->s5(&dir, 0);
+            fn_8042D8A8V(&dir, fn_800B1724(*fn_80442080(self->ai)));
+            float len = fn_8042EC54(&dir);
+            float dot = fn_8042EBF4V(&dir, fn_800B1750(*fn_80442080(self->ai)));
+            float ext = MAX(ABS(fn_80134870B(self->ai)->f60 - fn_80134870B(self->ai)->f50),
+                            ABS(fn_80134870B(self->ai)->f64 - fn_80134870B(self->ai)->f54));
+            len -= ext;
+            Vector from;
+            fn_80442080B(self->ai)->s5(&from, 0);
+            int hit = fn_8004A9CCV(&from, &dir, len, 0x8000, 0, fn_800B24AC(*fn_80442080(self->ai)),
+                                   fn_800B1CC8(*fn_80442080(self->ai)), 0, 3);
+            if (hit)
+                w[0] = 0.0f;
+            unsigned int choice = fn_8015EA6C(8, w);
+            switch (choice) {
+            case 0:
+                fn_80442130(self->ai, 9);
+                if (fn_8008618C(fn_80442080(self->ai)))
+                    n = 750;
+                else
+                    n = 3000;
+                break;
+            case 1:
+                fn_80442130(self->ai, 0x19);
+                fn_80442174(self->ai, 7);
+                break;
+            case 2:
+                fn_80442130(self->ai, 7);
+                break;
+            case 3:
+                fn_80442130(self->ai, 0xd);
+                n /= 2;
+                break;
+            case 4:
+                fn_80442174(self->ai, 2);
+                n /= 4;
+                break;
+            case 5:
+                fn_804643C8(self, 1);
+                break;
+            case 6:
+                fn_8015105C(fn_80442104(self->ai), 4);
+                return 1;
+            case 7:
+                fn_8015105C(fn_80442104(self->ai), 0x18);
+                return 1;
+            }
+            n += fn_8015EA18(1500);
+            float t = fn_8042CE28(n);
+            t = 1.0f - fn_80461EE4(self->ai) / 100.0f >= 0.25f
+                ? (1.0f - fn_80461EE4(self->ai) / 100.0f <= 1.0f ? (1.0f - fn_80461EE4(self->ai) / 100.0f) * t : t)
+                : t * 0.25f;
+            t = t / fn_80464094(self->ai);
+            fn_801513D8(self->brain, (int)t);
+        } else {
+            if (fn_80461D48(self->ai, 3) && !fn_80461D48(self->ai, 0x2b)) {
+                if (fn_8008606C(fn_80442080(self->ai)) || fn_801368B8(self->ai)) {
+                    fn_80442130(self->ai, 1);
+                    fn_80442174(self->ai, 2);
+                    if (!fn_80461B58(fn_804420AC(self->ai)) && fn_80134870(self->ai))
+                        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(fn_80134870(self->ai)), 0);
+                }
+                if (fn_8008606C(fn_80442080(self->ai))) {
+                    if (fn_8015E830(self->ai))
+                        fn_80442130(self->ai, 0x20);
+                    else
+                        fn_80442174(self->ai, 0x20);
+                }
+            } else if (fn_8008606C(fn_80442080(self->ai))) {
+                fn_80442174(self->ai, 0x20);
+            }
+            Vector dir;
+            fn_80134870B(self->ai)->s5(&dir, 0);
+            fn_8042D8A8V(&dir, fn_800B1724(*fn_80442080(self->ai)));
+            float len = fn_8042EC54(&dir);
+            float dot = fn_8042EBF4V(&dir, fn_800B1750(*fn_80442080(self->ai)));
+            float ext = MAX(ABS(fn_80134870B(self->ai)->f60 - fn_80134870B(self->ai)->f50),
+                            ABS(fn_80134870B(self->ai)->f64 - fn_80134870B(self->ai)->f54));
+            len -= ext;
+            Vector from;
+            fn_80442080B(self->ai)->s5(&from, 0);
+            int hit = fn_8004A9CCV(&from, &dir, len, 0x8000, 0, fn_800B24AC(*fn_80442080(self->ai)),
+                                   fn_800B1CC8(*fn_80442080(self->ai)), 0, 3);
+            if (hit)
+                fn_804643C8(self, 1);
+        }
+        if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+            || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+            || fn_8015FFD4(self->ai))
+            fn_80442130(self->ai, 7);
+    } else {
+    }
     return 1;
 }
