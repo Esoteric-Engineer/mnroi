@@ -89,9 +89,10 @@ From `Game/fn_80442010.c` (whose `Obj` is this class) and `Game/fn_80132480.cpp`
 | +0x508 | bit set | 42 bits. `fn_80463994(ai, n)` tests one; bits 0-3, 5 and 6 switch on parts of `fn_8014E648` (range bands, the `+0xE8`/`+0xEC` searches, bit 15, target state, `fn_8014E044`) |
 | +0x52C | handle | The actor; `fn_8044203C` resolves it (`fn_800CD834`) |
 | +0x530 | entity | The owner entity whose PLAYER tuning fields are read (`fn_80442080`). Its `+0x304` bit 0x20000000 is set by a teleport and makes the next update play `peonTeleQuick`; its `+0x308` bit 0x4000 makes SEARCH use tuning field 211 for 212 and 213. Its vptr is at `+0x198`; PRONE tests slot `+0x1D0` (`int (float)`, called with 0.15) |
-| +0x524, +0x528, +0x590, +0x594 | `int` | Each with a getter and a setter; +0x520, +0x538, +0x560, +0x564 are `int`s too. `+0x520` counts down to 0; when `+0x524` runs out the update flips `+0x528` and reloads `+0x524` from `fn_800B18EC(actor, 0xB9)` (to 1) or `0xB8` (to 0) |
+| +0x524, +0x528, +0x590, +0x594 | `int` | Each with a getter and a setter; +0x520, +0x538, +0x564 are `int`s too. `+0x520` counts down to 0; when `+0x524` runs out the update flips `+0x528` and reloads `+0x524` from `fn_800B18EC(actor, 0xB9)` (to 1) or `0xB8` (to 0) |
 | +0x53C | `unsigned` | Teleport cooldown end tick, 0 when not armed (`lbl_8066BF38` ticks) |
 | +0x550, +0x554 | `int` | Handles from `fn_80393D0C(actor, "peonTeleQuick", 0xFF, 0xFF)` (guess: a sound) |
+| +0x560 | `int` | Actor id of the object `AVOID_OBJECTS` steers around (`fn_801526E4` finds it), 0 when none; set by `fn_804628D8` |
 | +0x564 | `int` | Latch for `fn_80135668` (teleport task 0xB target) |
 | +0x568, +0x570 | `int`, `Vector` | A flag and a point, set together by `fn_80461E58` |
 | +0x558, +0x55C | `unsigned` | End ticks of two timers on the clock `lbl_80593BE8` (`fn_8042EFF8` ticks); `fn_80464230`/`fn_804642B8` return 1 once reached. Reset sets them to `fn_8015EA18(7000)` plus 15000 and 20000. Guess: cooldowns |
@@ -228,7 +229,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 10 | Perception and messages | 0x80145CB0-0x8014A3B4 | Done, three files (section 2) |
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
 | 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done. `.rodata` 0x8049B9C8-0x8049B9E0 (floats 1, 0, 176, -0, 0, 1) has no reader in `.text` and stays unclaimed |
-| 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | Unit reaches 0x801426A0, its `.rodata` 0x8049AF68: the 8-align pad `lbl_8049AF64` (1.0) is defined at the file's end and becomes `fn_801426A0`'s first literal. 16 unclaimed functions (0x34D4 bytes) before the static init, next `AVOID_OBJECTS` `fn_801426A0` (0x464), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D` |
+| 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | Unit reaches 0x80142B04, its `.rodata` 0x8049AF70: the 8-align pad `lbl_8049AF6C` (1.0) is defined at the file's end and becomes `fn_80142B04`'s first literal. 15 unclaimed functions (0x3070 bytes) before the static init, next `JUMP` `fn_80142B04` (0x47C), then static init `fn_80145B74`, `_GLOBAL_.I`, `_GLOBAL_.D` |
 | 14 | Rename pass | Task methods in row 12's unit; accessors in `Game/fn_80442010.c` and row 5's units | After row 13. One area per run, each one `symbols.txt` edit plus a rename across `src/`, checked by `main.dol: OK`. Task methods take their `TASK_` string: `Task_ClimbAttack_Enter`, `_Exit`, `_Update`. Accessors get a name (`AI_GetMover`, no class prefix) only where section 4 records what they return; the rest keep `fn_`. Symbols stay `extern "C"` |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
