@@ -254,7 +254,7 @@ AIAction *fn_8013D464(void *ai, AIBehavior *rec);
 AIAction *fn_8013DA7C(void *ai, AIBehavior *rec);
 AIAction *fn_8013E0C4(void *ai, AIBehavior *rec);
 AIAction *fn_8013E99C(void *ai, AIBehavior *rec);
-void fn_8013F08C(void);
+AIAction *fn_8013F08C(void *ai, AIBehavior *rec);
 void fn_8013F438(void);
 void fn_8013F8D0(void);
 void fn_8013F9F0(void);
@@ -2000,6 +2000,70 @@ extern "C" AIAction *fn_8013E99C(void *self, AIBehavior *rec)
             }
             return h;
         }
+    }
+    return 0;
+}
+
+// STRAFE (docs/ai.md section 4.3): weighs four directions, drops the blocked ones, picks one.
+extern "C" AIAction *fn_8013F08C(void *ai, AIBehavior *rec)
+{
+    int dur = 500;
+    int rest = 500;
+    if (fn_800861EC(fn_80442080(ai))) {
+        dur = 1000;
+        rest = 0;
+    }
+    AIAction *h = fn_80138738(13, dur, rest);
+    if (h) {
+        fn_80138A24(h, 0xb);
+        float w[4];
+        w[0] = 3.0f;
+        w[1] = 1.0f;
+        w[2] = 3.0f;
+        w[3] = 1.0f;
+        if (fn_800861EC(fn_80442080(ai))) {
+            w[1] = 0.0f;
+            w[3] = 0.0f;
+        }
+        if (fn_8015E64C(ai) <= fn_800B1884(*fn_80442080(ai), 0xd3)) {
+            w[1] = 0.0f;
+        }
+        if (fn_8015E64C(ai) < fn_800B1884(*fn_80442080(ai), 0xd2)) {
+            w[0] = 0.0f;
+            w[1] = 0.0f;
+            w[2] = 0.0f;
+        }
+        if (fn_80461D48(ai, 0x40)) {
+            w[1] = 0.0f;
+        }
+        for (int i = 0; i <= 3; i++) {
+            if (w[i] == 0.0f) {
+                continue;
+            }
+            if (!fn_801600DC(ai, i, 2.5f)) {
+                w[i] = 0.0f;
+            }
+        }
+        Vector v;
+        unsigned int r = fn_8015EA6C(4, w);
+        switch (r) {
+        case 0:
+            fn_8042D80C(&v, fn_800B17A8(*fn_80442080(ai)));
+            break;
+        case 1:
+            fn_8042DC84(&v, fn_800B1750(*fn_80442080(ai)));
+            break;
+        case 2:
+            fn_8042DC84(&v, fn_800B17A8(*fn_80442080(ai)));
+            break;
+        case 3:
+            fn_8042D80C(&v, fn_800B1750(*fn_80442080(ai)));
+            break;
+        }
+        Vector p;
+        fn_8042DC84(&p, &v);
+        fn_80138AE0(h, 0, &p, 1.0f);
+        return h;
     }
     return 0;
 }
