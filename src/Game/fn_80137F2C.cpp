@@ -296,7 +296,7 @@ AIAction *fn_8014379C(void *ai, AIBehavior *rec);
 AIAction *fn_80144038(void *ai, AIBehavior *rec);
 AIAction *fn_80144544(void *ai, AIBehavior *rec);
 AIAction *fn_80144628(void *ai, AIBehavior *rec);
-void fn_80144970(void);
+AIAction *fn_80144970(void *ai, AIBehavior *rec);
 void fn_80144CB4(void);
 void fn_80144D3C(void);
 void fn_80144DB8(void);
@@ -541,6 +541,9 @@ int fn_80085300(void *actor, Vector *p, float a, float b, float *out);
 int fn_80462E00(void *list);
 Region *fn_80462E48(void *list, int i);
 float fn_801467AC(void *rec, Vector *pos);
+int fn_8008612C(void *e);
+Vector *fn_80462854(void *ai);
+void fn_80428FA8(Vector *v, float x, float y, float z);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -3243,3 +3246,58 @@ extern "C" AIAction *fn_8014470C(void *ai, AIBehavior *rec)
     }
     return 0;
 }
+
+// APPROACH_MOBILITY (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144970(void *ai, AIBehavior *rec)
+{
+    if (!fn_8008612C(fn_80442080(ai)) && !fn_8008603C(fn_80442080(ai))) {
+        return 0;
+    }
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    Vector pos;
+    fn_8042DC84(&pos, fn_800B1724(*fn_80442080(ai)));
+    Vector at;
+    fn_8042DC84(&at, fn_800B1724(*t));
+    if (fn_800CCB38(*fn_8044203C(ai))) {
+        fn_80136214(ai, 0x24);
+        AIAction *h = fn_80138738(0x21, 1000, 0);
+        if (h) {
+            Vector up;
+            fn_80428FA8(&up, 0.0f, 0.0f, 1.0f);
+            fn_80138AE0(h, 7, &up, 1.0f);
+            fn_80138A24(h, 0x18);
+            return h;
+        }
+        return 0;
+    }
+    int found = 0;
+    Vector goal;
+    fn_8042DC84(&goal, fn_80462854(ai));
+    if (!found && fn_80461BCC(fn_804420AC(ai))) {
+        fn_8042DC84(&goal, fn_804625F8(fn_804420AC(ai)));
+        found = 1;
+    }
+    if (found) {
+        Vector d;
+        fn_8015F538(ai, &goal, &d);
+        d.z = 0.0f;
+        float len = fn_8042EC54(&d);
+        if (len < 0.1) {
+            fn_8042DC84(&d, fn_800B1750(*fn_80442080(ai)));
+        }
+        AIAction *h = fn_80138738(0x24, 2000, 0);
+        if (h) {
+            fn_80138AE0(h, 0, &d, 1.0f);
+            fn_80138A24(h, 0x18);
+            fn_80462BDC(h, 20.0f);
+            return h;
+        }
+    }
+    return 0;
+}
+
+// The .rodata claim's 8-align pad, read by the unclaimed fn_80144E30: becomes that handler's literal once it is matched.
+extern "C" const float lbl_8049B004 __attribute__((section(".rodata"))) = 0.0f;
