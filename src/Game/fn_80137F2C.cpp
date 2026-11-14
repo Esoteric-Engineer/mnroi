@@ -1,5 +1,5 @@
 // AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), then the handlers. docs/ai.md rows 2 and 13.
-// .rodata 0x8049AB10-0x8049AE08: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88, APPROACH_RANGED's from 0x8049AD94, TOO_CLOSE's from 0x8049AD9C, APPROACH's from 0x8049ADA4, PRONE's from 0x8049ADD4, MOVE_TO_WAYPOINT's from 0x8049AE04).
+// .rodata 0x8049AB10-0x8049AE28: the behavior names, the list title, then each handler's float pool in .text order; the last word is BLOCK's 0.0f (end of file).
 __asm__(".section .rodata\n\t.globl lbl_8049AB10\nlbl_8049AB10:\n\t.4byte 0x6C696400\n\t.text"); // 8-aligns the claim: the tail of the "invalid" string ahead of it, which no code reads
 
 inline int sn_return_decl(int a) { return a; }
@@ -193,6 +193,7 @@ extern char lbl_805717F0[]; // pool of free Actions
 extern char lbl_80593BE8[];
 extern Vector lbl_80593E00;
 extern void *lbl_8066BF5C;
+extern float lbl_8066BF60;
 extern void *lbl_8066D6DC; // the overlay text object (docs/versus.md section 6)
 
 extern "C" {
@@ -207,7 +208,7 @@ AIAction *fn_80139284(void *ai, AIBehavior *rec);
 AIAction *fn_801397C8(void *ai, AIBehavior *rec);
 AIAction *fn_8013B0F4(void *ai, AIBehavior *rec);
 AIAction *fn_8013BCE8(void *ai, AIBehavior *rec);
-void fn_8013C1C8(void);
+AIAction *fn_8013C1C8(void *ai, AIBehavior *rec);
 void fn_8013C3A4(void);
 void fn_8013CD40(void);
 void fn_8013D464(void);
@@ -396,6 +397,7 @@ Vector *fn_800CE230(SCtl &c);
 void fn_80435530(Vector *v, float s);
 int fn_800CCA58(Base &c);
 int fn_800CCAE8(Base &c);
+void fn_80462BDC(AIAction *a, float v);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -1324,3 +1326,33 @@ extern "C" AIAction *fn_8013BCE8(void *ai, AIBehavior *rec)
     }
     return 0;
 }
+
+// AVOID_OBSTACLES (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013C1C8(void *ai, AIBehavior *rec)
+{
+    if (fn_80461D48(ai, 0x14)) {
+        Vector v;
+        int a = fn_80461D48(ai, 0x12);
+        int b = fn_80461D48(ai, 0x13);
+        if (a && !b) {
+            fn_8042DC84(&v, fn_800B17A8(*fn_80442080(ai)));
+        } else if (!a && b) {
+            fn_8042D80C(&v, fn_800B17A8(*fn_80442080(ai)));
+        } else if (a) {
+            fn_8042D80C(&v, fn_800B1750(*fn_80442080(ai)));
+        } else {
+            fn_8042D80C(&v, fn_800B17A8(*fn_80442080(ai)));
+        }
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            fn_80138AE0(h, 0, &v, 1.0f);
+            fn_80462BDC(h, lbl_8066BF60);
+        }
+        return h;
+    } else {
+        AIAction *h = 0;
+    }
+    return 0;
+}
+
+extern "C" const float lbl_8049AE24 __attribute__((section(".rodata"))) = 0.0f; // the next handler fn_8013C3A4's 0.0f, which pads .rodata to 8
