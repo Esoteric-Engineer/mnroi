@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B988; exports lbl_8049B960 for GOGETANDTHROWAT.
+// Owns .rodata 0x8049B838-0x8049B9A0.
 
 struct Ent {
     int pad;
@@ -1877,9 +1877,6 @@ extern "C" int fn_8015A8B4(register MoveTo *self)
     return 1;
 }
 
-// "%udl %udl" is pooled once per file and GOGETANDTHROWAT update reads it too (matching_notes 129).
-__asm__(".section .rodata\n\t.globl lbl_8049B960\nlbl_8049B960:\n\t.text");
-
 // MOVETO update: done within 2 of dest, and tells the actor it arrived.
 extern "C" int fn_8015A900(register MoveTo *self)
 {
@@ -2132,5 +2129,142 @@ extern "C" int fn_8015B1A4(register GetThrow *self)
         }
         break;
     }
+    return 1;
+}
+
+// GOGETANDTHROWAT enter
+extern "C" int fn_8015B648(register Self *self)
+{
+    fn_8046412C(self->ai, 0);
+    fn_8046412C(self->ai, 5);
+    fn_8046412C(self->ai, 3);
+    fn_8046412C(self->ai, 6);
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0);
+    fn_80442130(self->ai, 0x1a);
+    fn_80442130(self->ai, 0x1c);
+    fn_80442130(self->ai, 4);
+    fn_80442130(self->ai, 0xf);
+    fn_80442130(self->ai, 0x15);
+    fn_80442130(self->ai, 0x16);
+    fn_80442130(self->ai, 0x17);
+    fn_80442130(self->ai, 0x1b);
+    fn_80442130(self->ai, 1);
+    return 1;
+}
+
+// GOGETANDTHROWAT exit
+extern "C" int fn_8015B744(register Self *self)
+{
+    return 1;
+}
+
+extern "C" {
+Body *fn_800ACFA8B(int handle) __asm__("fn_800ACFA8");
+float fn_804290F8E(Vec *a, Vec *b) __asm__("fn_804290F8");
+}
+
+// GOGETANDTHROWAT update: walks to the thing (steps 0-1) and picks it up within half its extent (2),
+// then throws it at the target (3-4).
+extern "C" int fn_8015B774(register GetThrow *self)
+{
+    if (!fn_80151B90(self->brain, self))
+        return 0;
+    Body *thing = fn_800ACFA8B(self->thing);
+    Ent *target = fn_800ACFA8(self->target);
+    if (!thing || !target) {
+        fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*fn_80442080(self->ai)), self->thing);
+        fn_804643C8(self, 1);
+        return 0;
+    }
+    switch ((unsigned int)fn_804643F0(self)) {
+    case 0:
+        if (fn_800CD9F4(*fn_8044203C(self->ai)) == self->thing) {
+            fn_80442414((TaskBase *)self, 3);
+        } else {
+            fn_801501AC(fn_804420D8(self->ai), (Ent *)thing);
+            fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(thing), 0);
+            fn_80442414((TaskBase *)self, 1);
+        }
+        break;
+    case 1: {
+        float reach = MAX(ABS(thing->f60 - thing->f50), ABS(thing->f64 - thing->f54)) / 2.0f < 3.0f
+            ? 3.0f
+            : MAX(ABS(thing->f60 - thing->f50), ABS(thing->f64 - thing->f54)) / 2.0f;
+        fn_801501AC(fn_804420D8(self->ai), (Ent *)thing);
+        fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(thing), 0);
+        if (fn_804290F8E(fn_800B1724(*(Ent *)thing), fn_800B1724(*fn_80442080(self->ai))) < reach) {
+            fn_80442414((TaskBase *)self, 2);
+            fn_801501AC(fn_804420D8(self->ai), (Ent *)thing);
+            fn_80442130(self->ai, 0x13);
+        }
+        break;
+    }
+    case 2:
+        if (fn_800CD9B0(*fn_8044203C(self->ai))) {
+            fn_80442174(self->ai, 0x13);
+            fn_80442414((TaskBase *)self, 3);
+        } else {
+        }
+        break;
+    case 3:
+        if (fn_800CCE00(*fn_8044203C(self->ai))) {
+            fn_80442414((TaskBase *)self, 4);
+        } else if (fn_800CDA20(*fn_8044203C(self->ai)) && !fn_80151AF8(fn_80442104(self->ai), 7)) {
+            fn_8015105C(fn_80442104(self->ai), 7);
+            fn_801501AC(fn_804420D8(self->ai), target);
+            fn_8014B63C(fn_804420AC(self->ai), fn_800B13D8(target), 0);
+        }
+        if (!fn_800CDA20(*fn_8044203C(self->ai)))
+            fn_80442414((TaskBase *)self, 4);
+        break;
+    case 4:
+        if (!fn_800CD9B0(*fn_8044203C(self->ai))) {
+            fn_804643C8(self, 1);
+            fn_80149A6C(1, "%udl %udl", fn_800B13D8F(*fn_80442080(self->ai)), self->thing);
+        }
+        break;
+    }
+    return 1;
+}
+
+extern "C" int fn_801362DC(void *ai, int id);
+
+// WALLCLIMB enter
+extern "C" int fn_8015BED8(register Self *self)
+{
+    fn_8014B900(fn_804420AC(self->ai));
+    fn_804618B0(fn_80462780(self->ai));
+    fn_80442130(self->ai, 0x21);
+    fn_801362DC(self->ai, 4);
+    fn_801513D8(fn_80442104(self->ai), (int)(fn_80464318(self->ai) * 20.0f));
+    return 1;
+}
+
+// WALLCLIMB exit
+extern "C" int fn_8015BF98(register Self *self)
+{
+    return 1;
+}
+
+// WALLCLIMB update: done once the climb ends or the actor's regenerating meter is under 5%.
+extern "C" int fn_8015BFC8(register Self *self)
+{
+    if (!fn_80151B90(self->brain, self))
+        return 0;
+    if (!fn_800CCB38(*fn_8044203C(self->ai)))
+        fn_804643C8(self, 1);
+    if (!fn_8015F410(self->ai, 0.05f)) {
+        fn_804643C8(self, 1);
+        return 0;
+    }
+    if (fn_80151430(fn_80442104(self->ai)))
+        return 1;
+    fn_80442174(self->ai, 0x21);
+    fn_80442174(self->ai, 0x22);
+    if (!fn_8015E830(self->ai))
+        fn_80442130(self->ai, 0x22);
+    else
+        fn_801513D8(fn_80442104(self->ai), (int)(fn_80464318(self->ai) * 20.0f));
     return 1;
 }
