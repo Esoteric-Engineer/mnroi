@@ -505,20 +505,20 @@ Target *fn_800CD9B0T(Base &c) __asm__("fn_800CD9B0");
 void fn_8042F984(Vector *out, Vector *a, Vector *b);
 void fn_80429090(Vector *out, Vector *a, Vector *b, float s);
 void *fn_8013726C(void *ai);
-int fn_80462D68(void *list);
-void *fn_80462DB0(void *list, int i);
-int fn_804622B4(void *list);
-void *fn_804622FC(void *list, int i);
-int fn_80462E98(void *list);
-Ent *fn_80462EE0(void *list, int i);
+int AI_GetRingOutCount(void *list);
+void *AI_GetRingOut(void *list, int i);
+int AI_GetDamageRegionCount(void *list);
+void *AI_GetDamageRegion(void *list, int i);
+int AI_GetCrystalCount(void *list);
+Ent *AI_GetCrystal(void *list, int i);
 int fn_801464E4(void *rec, Vector *pos);
 void fn_80146604(void *rec, Vector *pos, Vector *out);
 int fn_80146A88(void *rec, Vector *a, Vector *b, Vector *hit);
 float fn_8042CE28(unsigned int n);
 void fn_8042D854(Vector *dst, Vector *src);
 int fn_8008606C(void *e);
-int fn_80462CD0(void *list);
-Region *fn_80462D18(void *list, int i);
+int AI_GetDefendRegionCount(void *list);
+Region *AI_GetDefendRegion(void *list, int i);
 int fn_80151D64(void *ai, Vector *out, float *f);
 Ent *fn_801526E4(void *ai, Vector *pos, float *f);
 int fn_800A4438(void *p);
@@ -538,8 +538,8 @@ int fn_800CCB88(Base &c);
 int fn_800CCB38(Base &c);
 void fn_8042FE08(Vector *v, Vector *d, float s); // v += d * s
 int fn_80085300(void *actor, Vector *p, float a, float b, float *out);
-int fn_80462E00(void *list);
-Region *fn_80462E48(void *list, int i);
+int AI_GetRooftopRegionCount(void *list);
+Region *AI_GetRooftopRegion(void *list, int i);
 float fn_801467AC(void *rec, Vector *pos);
 int fn_8008612C(void *e);
 Vector *fn_80462854(void *ai);
@@ -2492,8 +2492,8 @@ extern "C" AIAction *fn_801414C8(void *ai, AIBehavior *rec)
     }
     fn_80429090(&dir, &pos, &fwd, 2.5f);
     if (fn_800CE4D0(AI_GetActor(ai))) {
-        for (int i = 0; i < fn_80462D68(fn_8013726C(ai)); i++) {
-            void *v = fn_80462DB0(fn_8013726C(ai), i);
+        for (int i = 0; i < AI_GetRingOutCount(fn_8013726C(ai)); i++) {
+            void *v = AI_GetRingOut(fn_8013726C(ai), i);
             if (!v) {
                 continue;
             }
@@ -2531,8 +2531,8 @@ extern "C" AIAction *fn_801414C8(void *ai, AIBehavior *rec)
             }
         }
     }
-    for (int i = 0; i < fn_804622B4(fn_8013726C(ai)); i++) {
-        void *v = fn_804622FC(fn_8013726C(ai), i);
+    for (int i = 0; i < AI_GetDamageRegionCount(fn_8013726C(ai)); i++) {
+        void *v = AI_GetDamageRegion(fn_8013726C(ai), i);
         if (!v) {
             continue;
         }
@@ -2573,8 +2573,8 @@ extern "C" AIAction *fn_801414C8(void *ai, AIBehavior *rec)
     Vector sum;
     int n = 0;
     fn_80447C38(&sum);
-    for (int i = 0; i < fn_80462E98(fn_8013726C(ai)); i++) {
-        Ent *e = fn_80462EE0(fn_8013726C(ai), i);
+    for (int i = 0; i < AI_GetCrystalCount(fn_8013726C(ai)); i++) {
+        Ent *e = AI_GetCrystal(fn_8013726C(ai), i);
         if (e) {
             Vector at, d;
             fn_8042DC84(&at, fn_800B1724(*e));
@@ -2623,8 +2623,8 @@ extern "C" AIAction *fn_80141D78(void *ai, AIBehavior *rec)
         fn_8042DC84(&fwd, fn_800B1750(*AI_GetEntity(ai)));
     }
     fn_80429090(&dir, &pos, &fwd, 2.5f);
-    for (int i = 0; i < fn_80462CD0(fn_8013726C(ai)); i++) {
-        Region *r = fn_80462D18(fn_8013726C(ai), i);
+    for (int i = 0; i < AI_GetDefendRegionCount(fn_8013726C(ai)); i++) {
+        Region *r = AI_GetDefendRegion(fn_8013726C(ai), i);
         if (!r) {
             continue;
         }
@@ -3227,8 +3227,8 @@ extern "C" AIAction *fn_8014470C(void *ai, AIBehavior *rec)
     }
     Vector at;
     fn_8042DC84(&at, fn_800B1724(*t));
-    for (int i = 0; i < fn_80462E00(fn_8013726C(ai)); i++) {
-        Region *r = fn_80462E48(fn_8013726C(ai), i);
+    for (int i = 0; i < AI_GetRooftopRegionCount(fn_8013726C(ai)); i++) {
+        Region *r = AI_GetRooftopRegion(fn_8013726C(ai), i);
         if (!r) {
             continue;
         }
@@ -3442,8 +3442,8 @@ extern "C" AIAction *fn_80145200(void *ai, AIBehavior *rec)
     Vector hit, pos, to;
     fn_8042DC84(&pos, fn_800B1724(*AI_GetEntity(ai)));
     fn_8042DC84(&to, &goal);
-    for (int i = 0; i < fn_804622B4(fn_8013726C(ai)); i++) {
-        void *v = fn_804622FC(fn_8013726C(ai), i);
+    for (int i = 0; i < AI_GetDamageRegionCount(fn_8013726C(ai)); i++) {
+        void *v = AI_GetDamageRegion(fn_8013726C(ai), i);
         if (!v) {
             continue;
         }

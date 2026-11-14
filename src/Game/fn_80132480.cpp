@@ -1022,8 +1022,8 @@ float fn_804310C0(Vector *a, Vector *b);
 ViewOwner *fn_8043289C(void *g);
 int fn_801B9324(void *p, Vector *pos, float r);
 int fn_8015EC1C(float chance);
-int fn_804622B4(void *list);
-void *fn_804622FC(void *list, int i);
+int AI_GetDamageRegionCount(void *list);
+void *AI_GetDamageRegion(void *list, int i);
 int fn_801464E4(void *e, Vector *pos);
 void fn_8042DC84V(Vector *dst, Vector *src) __asm__("fn_8042DC84");
 int fn_800861EC(void *actor);
@@ -1051,8 +1051,8 @@ extern "C" int fn_80134940(void *e, Vector *pos, short kind, void *list)
     if (list) {
         void *l = list;
         int i;
-        for (i = 0; i < fn_804622B4(l); i++) {
-            void *it = fn_804622FC(l, i);
+        for (i = 0; i < AI_GetDamageRegionCount(l); i++) {
+            void *it = AI_GetDamageRegion(l, i);
             if (fn_801464E4(it, fn_80444688(e))) {
                 return 0;
             }

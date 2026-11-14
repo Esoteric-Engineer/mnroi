@@ -26,32 +26,32 @@ struct Volume {
 };
 
 // The registry's volume kinds, one per list; lists 0 and 1 also record an owner
-class Volume0 : public Volume
+class DamageVolume : public Volume
 {
 public:
     int owner; // +0x330
     char pad334[0xC];
-    Volume0() __asm__("fn_80462F3C");
+    DamageVolume() __asm__("fn_80462F3C");
 };
 
-class Volume1 : public Volume
+class DefendVolume : public Volume
 {
 public:
     int owner; // +0x330, the actor id the volume holds
     char pad334[0xC];
-    Volume1() __asm__("fn_80462F7C");
+    DefendVolume() __asm__("fn_80462F7C");
 };
 
-class Volume2 : public Volume
+class RingOutVolume : public Volume
 {
 public:
-    Volume2() __asm__("fn_80462FBC");
+    RingOutVolume() __asm__("fn_80462FBC");
 };
 
-class Volume3 : public Volume
+class RooftopVolume : public Volume
 {
 public:
-    Volume3() __asm__("fn_80462FFC");
+    RooftopVolume() __asm__("fn_80462FFC");
 };
 
 struct Registry {
@@ -143,16 +143,16 @@ void fn_8042D8A8(Vector *dst, Vector *src);
 void fn_8042D854(Vector *dst, Vector *src);
 float fn_8042CE28(unsigned int n);
 Ent *AI_GetEntity(void *ai);
-int fn_80462D68(Registry *self);
-Volume *fn_80462DB0(Registry *self, int i);
+int AI_GetRingOutCount(Registry *self);
+Volume *AI_GetRingOut(Registry *self, int i);
 Vector *fn_800B1724(Ent *e);
 int fn_8004D2D8(Vector *p, Vector *planes, int count);
 typedef int (*Pred)(void *elem, int key);
 int fn_801B686C(void *list, int key, Pred pred);
 int fn_801B6768(void *list, void *e);
 void fn_8009B994(Volume *v, int on);
-int fn_80462CD0(Registry *self);
-Volume1 *fn_80462D18(Registry *self, int i);
+int AI_GetDefendRegionCount(Registry *self);
+DefendVolume *AI_GetDefendRegion(Registry *self, int i);
 int fn_800B13D8(Ent *e);
 void fn_80429090(Vector *out, Vector *a, Vector *dir, float t);
 extern Colors lbl_8049B0BC; // 0xFFFF0000, 0xFF00FF00, 0xFF0000FF, 0xFF00FFFF, 0xFFFF00FF, 0xFFFFFF00
@@ -551,8 +551,8 @@ void fn_80146ED0(Volume *vol)
 int fn_801475D8(register Registry *self, void *ai, Vector *pos)
 {
     Ent *actor = AI_GetEntity(ai);
-    for (int i = 0; i < fn_80462D68(self); i++) {
-        Volume *v = fn_80462DB0(self, i);
+    for (int i = 0; i < AI_GetRingOutCount(self); i++) {
+        Volume *v = AI_GetRingOut(self, i);
         if (v) {
             Ent &e = *fn_800ACFA8(v->handle);
             if (&e && fn_800B0D64(&e)) {
@@ -583,7 +583,7 @@ void fn_801477B0(register Registry *self, int handle, int owner)
     if (fn_800ACFA8(handle)) {
         int idx = fn_801B686C(self->lists[0], handle, fn_80145CB0);
         if (idx == -1) {
-            Volume0 *v = new Volume0;
+            DamageVolume *v = new DamageVolume;
             v->handle = handle;
             v->owner = owner;
             fn_80146ED0(v);
@@ -597,7 +597,7 @@ void fn_80147884(register Registry *self, int handle)
 {
     int idx = fn_801B686C(self->lists[0], handle, fn_80145CB0);
     if (idx != -1) {
-        Volume0 *v = (Volume0 *)fn_801B5D3C(self->lists[0], idx);
+        DamageVolume *v = (DamageVolume *)fn_801B5D3C(self->lists[0], idx);
         if (!v) {
             return;
         }
@@ -614,7 +614,7 @@ void fn_80147968(register Registry *self, int owner, int handle)
 {
     if (fn_800ACFA8(handle)) {
         int idx = fn_801B686C(self->lists[1], handle, fn_80145CB0);
-        Volume1 *v = new Volume1;
+        DefendVolume *v = new DefendVolume;
         v->handle = handle;
         v->owner = owner;
         fn_80146ED0(v);
@@ -626,7 +626,7 @@ void fn_80147A20(register Registry *self, int owner, int handle)
 {
     int idx = fn_801B686C(self->lists[1], handle, fn_80145CB0);
     if (idx != -1) {
-        Volume1 *v = (Volume1 *)fn_801B5D3C(self->lists[1], idx);
+        DefendVolume *v = (DefendVolume *)fn_801B5D3C(self->lists[1], idx);
         if (!v) {
             return;
         }
@@ -636,10 +636,10 @@ void fn_80147A20(register Registry *self, int owner, int handle)
 }
 
 // The list-1 volume that holds this actor
-Volume1 *fn_80147ACC(register Registry *self, Ent *actor)
+DefendVolume *fn_80147ACC(register Registry *self, Ent *actor)
 {
-    for (int i = 0; i < fn_80462CD0(self); i++) {
-        Volume1 *v = fn_80462D18(self, i);
+    for (int i = 0; i < AI_GetDefendRegionCount(self); i++) {
+        DefendVolume *v = AI_GetDefendRegion(self, i);
         if (!v) {
             continue;
         }
@@ -655,7 +655,7 @@ void fn_80147B88(register Registry *self, int handle)
     if (fn_800ACFA8(handle)) {
         int idx = fn_801B686C(self->lists[2], handle, fn_80145CB0);
         if (idx == -1) {
-            Volume2 *v = new Volume2;
+            RingOutVolume *v = new RingOutVolume;
             v->handle = handle;
             fn_80146ED0(v);
             fn_801B6040(self->lists[2], v);
@@ -668,7 +668,7 @@ void fn_80147C40(register Registry *self, int handle)
     if (fn_800ACFA8(handle)) {
         int idx = fn_801B686C(self->lists[3], handle, fn_80145CB0);
         if (idx == -1) {
-            Volume3 *v = new Volume3;
+            RooftopVolume *v = new RooftopVolume;
             v->handle = handle;
             fn_80146ED0(v);
             fn_801B6040(self->lists[3], v);

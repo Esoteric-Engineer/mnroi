@@ -153,8 +153,8 @@ int fn_80086B6C(void *e);
 unsigned int fn_804324EC(void *g);
 int fn_8015F008(void *ai);
 int fn_8015EE34(void *ai, Ent *e);
-int fn_804622B4(void *list);
-void *fn_804622FC(void *list, int i);
+int AI_GetDamageRegionCount(void *list);
+void *AI_GetDamageRegion(void *list, int i);
 int fn_80146A88(void *o, Vector *a, Vector *b, Vector *hit);
 Sub *fn_8044203C_S(void *ai) __asm__("AI_GetActor");
 int fn_80462880(void *ai);
@@ -445,8 +445,8 @@ extern "C" void fn_8014E648(register Self *self)
                 self->fD0 = 0;
             }
         }
-        for (int i = 0; i < fn_804622B4(fn_8013726C(self->f0)); i++) {
-            void *o = fn_804622FC(fn_8013726C(self->f0), i);
+        for (int i = 0; i < AI_GetDamageRegionCount(fn_8013726C(self->f0)); i++) {
+            void *o = AI_GetDamageRegion(fn_8013726C(self->f0), i);
             if (!o)
                 continue;
             Vector a;

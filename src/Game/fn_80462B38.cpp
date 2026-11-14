@@ -97,42 +97,42 @@ extern "C" void AI_SetActionCooldown(register AIAction *self, register int v)
 }
 
 // lbl_80569890 (docs/ai.md row 10): count and entry of its lists at +0x28, +0x4C, +0x70, +0x94
-extern "C" int fn_80462CD0(register char *self)
+extern "C" int AI_GetDefendRegionCount(register char *self)
 {
     return fn_801B6A44(self + 0x28);
 }
 
-extern "C" int fn_80462D18(register char *self, register int i)
+extern "C" int AI_GetDefendRegion(register char *self, register int i)
 {
     return fn_801B5D3C(self + 0x28, i);
 }
 
-extern "C" int fn_80462D68(register char *self)
+extern "C" int AI_GetRingOutCount(register char *self)
 {
     return fn_801B6A44(self + 0x4C);
 }
 
-extern "C" int fn_80462DB0(register char *self, register int i)
+extern "C" int AI_GetRingOut(register char *self, register int i)
 {
     return fn_801B5D3C(self + 0x4C, i);
 }
 
-extern "C" int fn_80462E00(register char *self)
+extern "C" int AI_GetRooftopRegionCount(register char *self)
 {
     return fn_801B6A44(self + 0x70);
 }
 
-extern "C" int fn_80462E48(register char *self, register int i)
+extern "C" int AI_GetRooftopRegion(register char *self, register int i)
 {
     return fn_801B5D3C(self + 0x70, i);
 }
 
-extern "C" int fn_80462E98(register char *self)
+extern "C" int AI_GetCrystalCount(register char *self)
 {
     return fn_801B6A44(self + 0x94);
 }
 
-extern "C" void *fn_80462EE0(register char *self, register int i)
+extern "C" void *AI_GetCrystal(register char *self, register int i)
 {
     register void *p = fn_800ACFA8(fn_801B5D3C(self + 0x94, i));
     return p;

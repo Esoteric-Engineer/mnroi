@@ -174,14 +174,16 @@ Deleting a task is deferred: `AI_DeferTaskDelete` queues up to 16 in `lbl_80571D
 
 Volumes the scripts register by entity handle, through the manager wrappers `fn_8013379C`-`fn_801339C8`. Six lists (`fn_801B6040` add, `fn_801B686C` find, `fn_801B6768` remove) at `+0x4 + 0x24 * n`. A volume is a 0x330-byte base (base constructor `fn_8046303C`): handle `+0x0`, centre `+0x10`, edge count `+0x20`, then 16 edge starts `+0x30`, ends `+0x130` and normals (a guess) `+0x230`. `fn_80146ED0` builds the edges from the entity's collision hull (`fn_8009AD80`), in world space.
 
-| List | Adds / removes | Kind | Read by |
-|---|---|---|---|
-| 0 `+0x4` | `fn_801477B0` / `fn_80147884` | 0x340, owner `+0x330` | teleport spot test `fn_80134940` (rejects spots inside, `fn_801464E4`); `fn_801600DC` (a path crossing one, `fn_80146A88`, is blocked); `AVOID_HAZARDS` |
-| 1 `+0x28` | `fn_80147968` / `fn_80147A20` | 0x340, actor id `+0x330` | `fn_80147ACC(actor)` finds the actor's volume; `fn_80134BE0` keeps the AI inside it; `DEFEND_REGIONS` steers back into it when outside |
-| 2 `+0x4C` | `fn_80147B88` | 0x330 | `fn_801475D8`: a point inside any one's hull; `AVOID_HAZARDS`, only while `fn_800CE4D0` holds |
-| 3 `+0x70` | `fn_80147C40` | 0x330 | `ROOFTOP_REGIONS`: one holding both the AI and its target |
-| 4 `+0x94` | `fn_80147CF8` / `fn_80147D68` | bare handles | `AVOID_HAZARDS` steers away from those within 6 |
-| 5 `+0xB8` | `fn_8014601C` | path links that climb more than 1 | `fn_8014630C`, called by `Task_Melee_Update` and `Task_ClimbAttack_Enter` |
+Who registers each list comes from the callers of the manager wrappers: the class whose vtable holds the caller, named by the type-registry string copied just before its constructor is called (`fn_801BEE2C`: `cRegionDamage` builds vtable `lbl_80502D10` in `fn_80468BA0`, `cBossRingOut` `lbl_804FCD70` in `fn_80469954`, `cCrystalDetonate` `lbl_804FE7D8` in `fn_80468ABC`).
+
+| List | Adds / removes | Kind | Registered by | Read by |
+|---|---|---|---|---|
+| 0 `+0x4` | `fn_801477B0` / `fn_80147884` | `DamageVolume` 0x340, owner `+0x330` | `cRegionDamage` (`fn_8020C380`, `fn_8020CC38`) and script node `fn_801CF86C`; `AI_GetDamageRegionCount`, `AI_GetDamageRegion` | teleport spot test `fn_80134940` (rejects spots inside, `fn_801464E4`); `fn_801600DC` (a path crossing one, `fn_80146A88`, is blocked); `AVOID_HAZARDS` |
+| 1 `+0x28` | `fn_80147968` / `fn_80147A20` | `DefendVolume` 0x340, actor id `+0x330` | script API; `AI_GetDefendRegionCount`, `AI_GetDefendRegion` | `fn_80147ACC(actor)` finds the actor's volume; `fn_80134BE0` keeps the AI inside it; `DEFEND_REGIONS` steers back into it when outside |
+| 2 `+0x4C` | `fn_80147B88` | `RingOutVolume` 0x330 | `cBossRingOut` (`fn_801F21DC`); `AI_GetRingOutCount`, `AI_GetRingOut` | `fn_801475D8`: a point inside any one's hull; `AVOID_HAZARDS`, only while `fn_800CE4D0` holds |
+| 3 `+0x70` | `fn_80147C40` | `RooftopVolume` 0x330 | script API; `AI_GetRooftopRegionCount`, `AI_GetRooftopRegion` | `ROOFTOP_REGIONS`: one holding both the AI and its target |
+| 4 `+0x94` | `fn_80147CF8` / `fn_80147D68` | bare handles | `cCrystalDetonate` (`fn_801FC724`, `fn_801FC768`); `AI_GetCrystalCount`, `AI_GetCrystal` (resolved) | `AVOID_HAZARDS` steers away from those within 6 |
+| 5 `+0xB8` | `fn_8014601C` | path links that climb more than 1 | not traced | `fn_8014630C`, called by `Task_Melee_Update` and `Task_ClimbAttack_Enter` |
 
 ### 4.6 Path (`Mover+0x20`)
 
@@ -232,7 +234,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 11 | Mover, path and target list | 0x8014A3B4-0x80150000, three files (section 2) | Done |
 | 12 | Task methods | 0x80152AE8-0x8015D950, unit `Game/fn_80152AE8.cpp` (pair-less: needs the flag-setter) | Done. `.rodata` 0x8049B9C8-0x8049B9E0 (floats 1, 0, 176, -0, 0, 1) has no reader in `.text` and stays unclaimed |
 | 13 | Behavior handlers | 0x80138E10-0x80145CB0, extending row 2's unit | Done |
-| 14 | Rename pass | Accessors in `Game/fn_80442010.c` and row 5's units | Task methods, the `AIObject` accessors of `Game/fn_80442010.c` (its `+0x598` setters, `fn_80442414` and the bit-set ops keep `fn_`) and row 5's task base (`Task_Base_*`, done flag, state-bit copies, deferred delete; `fn_80463AB4`, `fn_80463AD4`, `fn_804643F0` keep `fn_`) and Mover (`AI_*Mover*`; the `+0x2B0`, `+0x2C0`, `+0x2C4`, `+0x2E0` accessors keep `fn_`) and path (`AI_*Path*`; the flag tests keep `fn_`) and `AIObject` (behavior set `+0x500`, conditions, events, controller actions, avoid object; the weights, the `+0x508` set, the timers and the `+0x514`-`+0x594` fields keep `fn_`) and `+0xD0` target list (best target, nearest throwable and wieldable; the `+0xD8`-`+0xE0` handles and the ray hit keep `fn_`) and `AIAction` done. Next the volume registry and `BitSet` ones, one area per run, each one `symbols.txt` edit plus a rename across `src/` and `docs/` (a function that names a unit, like `fn_80464014`, must not be renamed in the unit name in `splits.txt`, `configure.py` or `docs/`), checked by `main.dol: OK`. Accessors get a name (`AI_GetMover`, no class prefix) only where section 4 records what they return; the rest keep `fn_`. Symbols stay `extern "C"` |
+| 14 | Rename pass | Accessors in `Game/fn_80442010.c` and row 5's units | Task methods, the `AIObject` accessors of `Game/fn_80442010.c` (its `+0x598` setters, `fn_80442414` and the bit-set ops keep `fn_`) and row 5's task base (`Task_Base_*`, done flag, state-bit copies, deferred delete; `fn_80463AB4`, `fn_80463AD4`, `fn_804643F0` keep `fn_`) and Mover (`AI_*Mover*`; the `+0x2B0`, `+0x2C0`, `+0x2C4`, `+0x2E0` accessors keep `fn_`) and path (`AI_*Path*`; the flag tests keep `fn_`) and `AIObject` (behavior set `+0x500`, conditions, events, controller actions, avoid object; the weights, the `+0x508` set, the timers and the `+0x514`-`+0x594` fields keep `fn_`) and `+0xD0` target list (best target, nearest throwable and wieldable; the `+0xD8`-`+0xE0` handles and the ray hit keep `fn_`) and `AIAction` and the volume registry (lists 0-4; the volume constructors keep `fn_`) done. Next the `BitSet` ones, one area per run, each one `symbols.txt` edit plus a rename across `src/` and `docs/` (a function that names a unit, like `fn_80464014`, must not be renamed in the unit name in `splits.txt`, `configure.py` or `docs/`), checked by `main.dol: OK`. Accessors get a name (`AI_GetMover`, no class prefix) only where section 4 records what they return; the rest keep `fn_`. Symbols stay `extern "C"` |
 
 Out of scope for AI: the general script code in 0x8007C034-0x80081E08 and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
 

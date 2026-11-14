@@ -551,12 +551,12 @@ extern "C" int fn_80462288(register Named *self)
     return self->name;
 }
 
-extern "C" int fn_804622B4(register char *self)
+extern "C" int AI_GetDamageRegionCount(register char *self)
 {
     return fn_801B6A44(self + 0x4);
 }
 
-extern "C" int fn_804622FC(register char *self, register int index)
+extern "C" int AI_GetDamageRegion(register char *self, register int index)
 {
     return fn_801B5D3C(self + 0x4, index);
 }

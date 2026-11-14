@@ -106,8 +106,8 @@ void fn_8042D80C(Vector *dst, Vector *src);
 void fn_80447C38(Vector *v);
 void fn_80429090(Vector *out, Vector *a, Vector *b, float t);
 void *fn_8013726C(void *ai);
-int fn_804622B4(void *list);
-void *fn_804622FC(void *list, int i);
+int AI_GetDamageRegionCount(void *list);
+void *AI_GetDamageRegion(void *list, int i);
 int fn_80146A88(void *o, Vector *a, Vector *b, Vector *hit);
 extern Vector lbl_80593DE0;
 
@@ -568,8 +568,8 @@ int fn_801600DC(void *ai, int side, float dist)
     fn_80429090(&to, &from, &dir, 2.5f);
     from.z = 0.0f;
     to.z = 0.0f;
-    for (int i = 0; i < fn_804622B4(fn_8013726C(ai)); i++) {
-        void *o = fn_804622FC(fn_8013726C(ai), i);
+    for (int i = 0; i < AI_GetDamageRegionCount(fn_8013726C(ai)); i++) {
+        void *o = AI_GetDamageRegion(fn_8013726C(ai), i);
         if (o == 0)
             continue;
         Vector hit;
