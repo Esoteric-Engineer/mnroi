@@ -1,5 +1,5 @@
 // Task methods (enter, exit, update per class), from SLEEP on; see docs/ai.md row 12 and section 4.4.
-// Owns .rodata 0x8049B838-0x8049B878.
+// Owns .rodata 0x8049B838-0x8049B8C8.
 
 struct Ent {
     int pad;
@@ -35,6 +35,16 @@ struct Self {
     void *ai;    // +0x0
     void *brain; // +0x4
 };
+
+class Vector
+{
+public:
+    float x;
+    float y;
+    float z;
+    float w;
+    Vector();
+} __attribute__((aligned(8)));
 
 extern "C" {
 void *fn_80464068(void *ai);
@@ -133,6 +143,47 @@ int fn_800CE4D0(void *ctl);
 float fn_8042CE28(unsigned int n);
 float fn_80464094(void *ai);
 void fn_801513D8(void *brain, int len);
+void fn_804643C8(Self *task, int done);
+int fn_804643F0(Self *task);
+void *fn_800CD9B0(Ctl &c);
+int fn_800B0CC0(void *e);
+void *fn_800B1478(void *e);
+int fn_800A4130(void *e);
+void fn_80136214(void *ai, int n);
+int fn_80462624(char *mover);
+int fn_80151430(void *brain);
+void fn_804641B4(void *ai, int v);
+int fn_804641DC(void *ai);
+float fn_80462A30(void *ai);
+float fn_80464370(void *ai);
+float fn_80462A5C(void *ai);
+float fn_80461FC0(void *ai);
+int fn_8008615C(void *actor);
+int fn_800860FC(void *actor);
+void *fn_801332C0(void *actor);
+unsigned int fn_80148024(void *grp);
+int fn_8008612C(void *actor);
+int fn_8008603C(void *actor);
+void *fn_8013726C(void *ai);
+int fn_8014630C(void *p, Vec *pos);
+int fn_800CCA08(Ctl &c);
+int fn_800CDA20(Ctl &c);
+int fn_800CD014(Ctl &c);
+int fn_800CCE00(Ctl &c);
+int fn_800CCAE8(Ctl &c);
+int fn_8015F4A4(void *ai, float f);
+int fn_800865E4(void *actor);
+int fn_8015F6CC(void *ai, Vector *out);
+void fn_8042DC84(Vector *dst, Vec *src);
+void fn_8042D8A8(Vector *dst, Vector *src);
+float fn_8042EBF4(Vector *a, Vector *b);
+float fn_8042EC54(Vector *v);
+int fn_800866C0(void *actor);
+unsigned int fn_8015EA6C(int n, float *w);
+int fn_800B24AC(Ent &e);
+int fn_800B1CC8(Ent &e);
+int fn_8004A9CC(Vec *from, Vector *dir, float len, int a, int b, int c, int d, int e, int f);
+int fn_804421B8(void *ai, unsigned int bit);
 }
 
 inline int sn_return_decl(int a) { return a; } // sets the flag: no function-end branch pair (prodg.md)
@@ -487,5 +538,390 @@ extern "C" int fn_801549A8(register Self *self)
     return 1;
 }
 
-// Pads .rodata to 8: MELEE update fn_801549D0's 0.33f.
-extern "C" const float lbl_8049B884 __attribute__((section(".rodata"))) = 0.33f;
+// MELEE update: weighs ten attack choices, picks one with fn_8015EA6C and sets the task length.
+extern "C" int fn_801549D0(register Self *self)
+{
+    if (fn_80151B90(self->brain, self)) {
+        if (!fn_80461D48(self->ai, 2)) {
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        if (fn_800CCB38(*fn_8044203C(self->ai))) {
+            fn_8015105C(fn_80442104(self->ai), 0x12);
+            return 1;
+        }
+        void *grab = fn_800CD9B0(*fn_8044203C(self->ai));
+        if (grab) {
+            if (fn_800B0CC0(grab)) {
+                if (fn_800A4130(fn_800B1478(grab)))
+                    fn_8015105C(fn_80442104(self->ai), 8);
+                else
+                    fn_8015105C(fn_80442104(self->ai), 7);
+            }
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        if (fn_80461D48(self->ai, 0x14)) {
+            fn_80136214(self->ai, 8);
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        if (fn_80462624(fn_804420AC(self->ai)) == 1) {
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        if (fn_80461D48(self->ai, 3)) {
+            if (fn_80461D48(self->ai, 4)) {
+                fn_804643C8(self, 1);
+                return 1;
+            } else if (fn_80461D48(self->ai, 0x2b) && fn_8015F008(self->ai)) {
+                fn_804643C8(self, 1);
+                return 1;
+            }
+        }
+        if (fn_80134870(self->ai)
+            && fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai))) > fn_800B1884(*fn_80442080(self->ai), 0xd8)) {
+            fn_804643C8(self, 1);
+            return 1;
+        }
+        if (fn_801368B8(self->ai) && fn_80461D48(self->ai, 0x1c)) {
+            if (!fn_8015EE34(self->ai, fn_80134870(self->ai)) && !fn_80461D48(self->ai, 0x28))
+                fn_80442130(self->ai, 0xe);
+            else
+                fn_80442174(self->ai, 0xe);
+        }
+        int ready = !fn_80151430(self->brain);
+        if (ready) {
+            if (!fn_8015F008(self->ai) || fn_8015EEA0(self->ai) || fn_8015EF54(self->ai)) {
+                unsigned int n = 1500;
+                float w[10];
+                fn_80442174(self->ai, 8);
+                fn_80442174(self->ai, 7);
+                fn_80442174(self->ai, 0xd);
+                fn_80442174(self->ai, 0x11);
+                fn_80442174(self->ai, 0x19);
+                fn_80442174(self->ai, 0xa);
+                fn_80442174(self->ai, 0xb);
+                fn_80442174(self->ai, 0xc);
+                fn_80442174(self->ai, 3);
+                fn_80442174(self->ai, 0x13);
+                if (fn_80085D3C(fn_80442080(self->ai))) {
+                    float hp = fn_80086730(fn_80442080(self->ai)) / fn_8008677C(fn_80442080(self->ai));
+                    if (hp < 0.33f)
+                        fn_804641B4(self->ai, 1);
+                    else if (hp > 0.66f)
+                        fn_804641B4(self->ai, 0);
+                }
+                w[0] = fn_80461EE4(self->ai) * 3.0f * fn_80461F10(self->ai);
+                w[1] = fn_80461EE4(self->ai) * (fn_804641DC(self->ai) ? 6.0f : 3.0f) * fn_80462A30(self->ai);
+                w[2] = fn_80464318(self->ai) * (fn_804641DC(self->ai) ? 9.0f : 3.0f) * fn_80464344(self->ai);
+                w[3] = fn_80464318(self->ai) * 3.2f * fn_80462A30(self->ai);
+                w[4] = fn_80461EE4(self->ai) * 3.0f * fn_80464370(self->ai);
+                w[5] = (101.0f - fn_80461EE4(self->ai)) * (101.0f - fn_80461F10(self->ai));
+                w[6] = fn_80461EE4(self->ai) * 2.0f * fn_80462A5C(self->ai);
+                w[7] = (101.0f - fn_80461EE4(self->ai)) * 100.0f;
+                w[8] = fn_80461EE4(self->ai) * 10.0f * fn_80461FC0(self->ai);
+                w[9] = fn_80461EE4(self->ai) * fn_80461F94(self->ai);
+                if (fn_8008615C(fn_80442080(self->ai)))
+                    w[9] *= 3.0f;
+                if (!fn_80461D48(self->ai, 0x25) && !fn_80461D48(self->ai, 0x30))
+                    w[2] = 0.0f;
+                if (!fn_800860FC(fn_80442080(self->ai)) || !fn_80085F7C(fn_80442080(self->ai)))
+                    w[9] = 0.0f;
+                if (fn_80461D48(self->ai, 0x28)) {
+                    w[4] = 0.0f;
+                    if (fn_804643F0(self) == 1) {
+                    } else {
+                        w[1] = 0.0f;
+                        w[2] = 0.0f;
+                    }
+                    w[3] = 0.0f;
+                    w[5] = 0.0f;
+                    w[6] = 0.0f;
+                    w[7] = 0.0f;
+                    w[0] *= 3.0f;
+                }
+                if (fn_80461D48(self->ai, 0x27)) {
+                    w[1] = 0.0f;
+                    w[3] = 0.0f;
+                    w[2] = 0.0f;
+                    w[5] = 0.0f;
+                    w[9] *= 2.0f;
+                    w[6] *= 2.0f;
+                }
+                void *grp = fn_801332C0(fn_80442080(self->ai));
+                if (grp && fn_80148024(grp) <= 1) {
+                    w[5] = 0.0f;
+                    w[7] = 0.0f;
+                    w[4] *= 2.0f;
+                    if (!fn_80085D3C(fn_80442080(self->ai)))
+                        w[0] *= 2.0f;
+                }
+                if (fn_804643F0(self) == 1) {
+                    fn_80442414((TaskBase *)self, 0);
+                    if (fn_8015EC1C(fn_80464370(self->ai))) {
+                        w[4] *= 2.0f;
+                        w[0] = 0.0f;
+                    } else {
+                        w[4] = 0.0f;
+                        w[0] *= 2.0f;
+                    }
+                    w[3] = 0.0f;
+                    w[5] = 0.0f;
+                    w[6] = 0.0f;
+                    w[7] = 0.0f;
+                    if (fn_80461D48(self->ai, 0x28)) {
+                        if (fn_8015EC1C(fn_80462A30(self->ai))) {
+                            w[1] *= 2.0f;
+                            w[2] = 0.0f;
+                        } else {
+                            w[1] = 0.0f;
+                            w[2] *= 2.0f;
+                        }
+                    } else {
+                        w[1] = 0.0f;
+                        w[2] = 0.0f;
+                    }
+                }
+                if (!fn_800860FC(fn_80442080(self->ai))
+                    && fn_8015E64C(self->ai) >= fn_800B1884(*fn_80442080(self->ai), 0xd2))
+                    w[4] = 0.0f;
+                if (fn_80134870(self->ai) && !fn_8015EE34(self->ai, fn_80134870(self->ai))) {
+                    w[0] = 0.0f;
+                    w[1] = 0.0f;
+                    w[3] = 0.0f;
+                }
+                if (!fn_8008612C(fn_80442080(self->ai)) && !fn_8008603C(fn_80442080(self->ai)))
+                    w[8] = 0.0f;
+                else if (!fn_8014630C(fn_8013726C(self->ai), fn_800B1724(*fn_80442080(self->ai))))
+                    w[8] = 0.0f;
+                if (fn_80461D48(self->ai, 0x35)) {
+                    w[5] = 0.0f;
+                    w[7] = 0.0f;
+                } else {
+                    w[4] = 0.0f;
+                    w[0] = 0.0f;
+                    w[2] = 0.0f;
+                    w[5] = 0.0f;
+                    w[6] = 0.0f;
+                }
+                if (fn_80134870(self->ai) && fn_800B0C58(fn_80134870(self->ai))) {
+                    void *te = fn_800B14A0(*fn_80134870(self->ai));
+                    if (fn_800CCA08(*fn_80085954(te)) || fn_800CDA20(*fn_80085954(te)) || fn_80461D48(self->ai, 0x30))
+                        w[3] *= 3.2f;
+                    if (fn_800CD014(*fn_80085954(te)) || fn_800CCE00(*fn_80085954(te)) || fn_80461D48(self->ai, 0x30))
+                        w[1] *= 3.0f;
+                }
+                if (fn_80462624(fn_804420AC(self->ai)) == 1
+                    || fn_8015E64C(self->ai) < fn_800B1884(*fn_80442080(self->ai), 0xd3))
+                    w[6] = 0.0f;
+                if (!fn_8015F4A4(self->ai, 0.33f) && fn_80085D3C(fn_80442080(self->ai))) {
+                    if (fn_80464344(self->ai) > 0.0f)
+                        w[2] = fn_80461EE4(self->ai) * 2.0f * 100.0f;
+                    if (fn_80462A30(self->ai) > 0.0f)
+                        w[1] = fn_80461EE4(self->ai) * 2.0f * 100.0f;
+                }
+                if (fn_800865E4(fn_80442080(self->ai)) && !fn_80461D48(self->ai, 0x28)) {
+                    w[0] = 0.0f;
+                    w[1] = 0.0f;
+                    w[2] = 0.0f;
+                    w[3] = 0.0f;
+                    w[4] = 10000.0f;
+                    w[5] = 0.0f;
+                    w[6] = 0.0f;
+                    w[8] = 0.0f;
+                    w[9] = 0.0f;
+                }
+                Vector dir;
+                fn_8015F6CC(self->ai, &dir);
+                Vector face;
+                fn_8042DC84(&face, fn_800B1750(*fn_80442080(self->ai)));
+                float dist = fn_8015E64C(self->ai);
+                int inRange = dist > fn_800B1884(*fn_80442080(self->ai), 0xd3)
+                    && dist < fn_800B1884(*fn_80442080(self->ai), 0xd4);
+                float dot = fn_8042EBF4(&face, &dir);
+                if (fn_80461D48(self->ai, 0x3d) || dot < 0.66f || !inRange)
+                    w[6] = 0.0f;
+                if (fn_80461D48(self->ai, 0x40)) {
+                    w[6] = 0.0f;
+                    w[0] = 0.0f;
+                    w[3] = 0.0f;
+                    w[1] = 0.0f;
+                }
+                Ent *target = fn_80134870(self->ai);
+                if (target && fn_800B0C58(target) && fn_80085D3C(fn_80442080(self->ai))
+                    && !fn_80461D48(self->ai, 0x28) && fn_800866C0(fn_800B14A0(*target))) {
+                    w[1] = 0.0f;
+                    w[2] = 0.0f;
+                    w[3] = 0.0f;
+                    w[4] = 0.0f;
+                    w[5] = 0.0f;
+                    w[6] = 0.0f;
+                    w[7] = 0.0f;
+                    w[8] = 0.0f;
+                    w[9] = 0.0f;
+                }
+                if (fn_8015E64C(self->ai) < fn_800B1884(*fn_80442080(self->ai), 0xd1))
+                    w[1] = 0.0f;
+                unsigned int choice = fn_8015EA6C(10, w);
+                switch (choice) {
+                case 0:
+                    if (fn_8015EEA0(self->ai) && !fn_80461D48(self->ai, 0x3d)) {
+                        fn_80442130(self->ai, 0xb);
+                    } else {
+                        fn_80442130(self->ai, 8);
+                        n = 1000;
+                    }
+                    break;
+                case 1:
+                    fn_80442130(self->ai, 0x19);
+                    fn_80442174(self->ai, 1);
+                    fn_80442174(self->ai, 7);
+                    n /= 2;
+                    break;
+                case 2:
+                    fn_80442130(self->ai, 7);
+                    fn_80442174(self->ai, 1);
+                    fn_80442174(self->ai, 3);
+                    break;
+                case 3:
+                    if (fn_8015EC1C(fn_80462A30(self->ai))) {
+                        fn_80442130(self->ai, 0x19);
+                    } else {
+                        fn_80442130(self->ai, 0xd);
+                        fn_80442174(self->ai, 1);
+                        fn_80442174(self->ai, 3);
+                        n /= 2;
+                    }
+                    break;
+                case 4: {
+                    Vector from;
+                    fn_8042DC84(&from, fn_800B1724(*fn_80442080(self->ai)));
+                    from.z += 1.0f;
+                    Vector to;
+                    fn_8042DC84(&to, fn_800B1724(*fn_80134870(self->ai)));
+                    to.z += 1.0f;
+                    Vector ray;
+                    fn_8042DC84(&ray, (Vec *)&to);
+                    fn_8042D8A8(&ray, &from);
+                    float len = fn_8042EC54(&ray);
+                    len -= 1.0f;
+                    if (len < 0.0f)
+                        len = 0.0f;
+                    int hit = 0;
+                    if (len > 0.5f)
+                        hit = fn_8004A9CC(fn_800B1724(*fn_80442080(self->ai)), &ray, len, 1, 0,
+                                          fn_800B24AC(*fn_80442080(self->ai)), fn_800B1CC8(*fn_80442080(self->ai)),
+                                          fn_800B13D8(fn_80134870(self->ai)), 0);
+                    if (hit) {
+                        fn_80442130(self->ai, 1);
+                        fn_80442174(self->ai, 0x11);
+                    } else {
+                        fn_80442174(self->ai, 1);
+                        fn_80442130(self->ai, 0x11);
+                    }
+                    break;
+                }
+                case 5:
+                    fn_80442174(self->ai, 1);
+                    fn_80442174(self->ai, 3);
+                    n /= 2;
+                    break;
+                case 6:
+                    if (!fn_8015EA18(4)
+                        || (fn_8015E64C(self->ai) < fn_800B1884(*fn_80442080(self->ai), 0xd2) && fn_8015EEA0(self->ai)))
+                        fn_80442130(self->ai, 0xb);
+                    else if (!fn_8015EA18(3)
+                             || (fn_8015E64C(self->ai) < fn_800B1884(*fn_80442080(self->ai), 0xd2)
+                                 && fn_8015EF54(self->ai)))
+                        fn_80442130(self->ai, 0xc);
+                    else
+                        fn_80442130(self->ai, 0xa);
+                    fn_80442130(self->ai, 1);
+                    break;
+                case 7:
+                    fn_804643C8(self, 1);
+                    return 1;
+                    break;
+                case 8:
+                    if (fn_80461D48(self->ai, 0x28)) {
+                        fn_80442130(self->ai, 8);
+                    } else {
+                        fn_8015105C(fn_80442104(self->ai), 0x15);
+                        return 1;
+                    }
+                    break;
+                case 9:
+                    fn_8015105C(fn_80442104(self->ai), 4);
+                    fn_804643C8(self, 1);
+                    return 1;
+                    break;
+                }
+                n += fn_8015EA18(1500);
+                float t = fn_8042CE28(n);
+                t = 1.0f - fn_80461EE4(self->ai) / 100.0f >= 0.25f
+                    ? (1.0f - fn_80461EE4(self->ai) / 100.0f <= 1.0f ? (1.0f - fn_80461EE4(self->ai) / 100.0f) * t : t)
+                    : t * 0.25f;
+                t = t / fn_80464094(self->ai);
+                fn_801513D8(self->brain, (int)t);
+            } else {
+                fn_804643C8(self, 1);
+            }
+        }
+        if (fn_804628AC(self->ai)) {
+            if (fn_80085F7C(fn_80442080(self->ai)))
+                fn_80442130(self->ai, 0xe);
+            if (fn_8008606C(fn_80442080(self->ai)))
+                fn_80442130(self->ai, 0x20);
+        }
+        if (fn_8008606C(fn_80442080(self->ai))) {
+            if (fn_8015E830(self->ai))
+                fn_80442130(self->ai, 0x20);
+            else
+                fn_80442174(self->ai, 0x20);
+        }
+        if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+            || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+            || fn_8015FFD4(self->ai)) {
+            if (!fn_804421B8(self->ai, 0x19))
+                fn_80442130(self->ai, 7);
+        }
+        if (fn_800CD21C(*fn_8044203C(self->ai))) {
+            float chance = fn_80464344(self->ai) / 100.0f * 5.0f;
+            if (fn_8015E97C(chance))
+                fn_80442130(self->ai, 7);
+        }
+        if (fn_80134870(self->ai) && fn_800B0C58(fn_80134870(self->ai))
+            && fn_800CCBD8(*fn_80085954(fn_800B14A0(*fn_80134870(self->ai))))
+            && fn_80086374(fn_800B14A0(*fn_80134870(self->ai)))
+            && (fn_8015EE34(self->ai, fn_80134870(self->ai)) || fn_8015EEA0(self->ai))
+            && fn_8015E64C(self->ai) < fn_800B1884(*fn_80442080(self->ai), 0xd4)) {
+            if (fn_8015EC1C(fn_80462A30(self->ai))) {
+                if (!fn_804421B8(self->ai, 7))
+                    fn_80442130(self->ai, 0x19);
+            } else {
+                if (!fn_804421B8(self->ai, 0x19))
+                    fn_80442130(self->ai, 7);
+            }
+        }
+        if (!fn_80461D48(self->ai, 0x3d) && !fn_804421B8(self->ai, 0xb) && !fn_804421B8(self->ai, 0xc)
+            && !fn_804421B8(self->ai, 0xa) && fn_8015E64C(self->ai) < fn_800B1884(*fn_80442080(self->ai), 0xd2)) {
+            if (fn_8015EEA0(self->ai))
+                fn_80442130(self->ai, 0xb);
+            else if (fn_8015EF54(self->ai))
+                fn_80442130(self->ai, 0xc);
+        }
+        if (!fn_804628AC(self->ai)) {
+            if (fn_800CCA58(*fn_8044203C(self->ai)) && !fn_8015F008(self->ai))
+                fn_80442174(self->ai, 0xe);
+            if (fn_800CCAE8(*fn_8044203C(self->ai)) && !fn_8015F008(self->ai))
+                fn_80442174(self->ai, 0x20);
+        }
+        if (fn_804421B8(self->ai, 0x19) && fn_8015E64C(self->ai) < fn_800B1884(*fn_80442080(self->ai), 0xd1)) {
+            fn_80442174(self->ai, 0x19);
+            fn_801513D8(fn_80442104(self->ai), 0);
+        }
+    } else {
+    }
+    return 1;
+}

@@ -151,7 +151,7 @@ extern "C" void fn_804643C8(register AITask *self, register int v)
     self->done = v;
 }
 
-// Receiver unknown (called from the task methods and row 9's helpers)
+// Task +0x20 (docs/ai.md 4.4)
 extern "C" int fn_804643F0(register char *self)
 {
     return *(int *)(self + 0x20);
