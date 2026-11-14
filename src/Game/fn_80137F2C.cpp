@@ -1,5 +1,5 @@
 // AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), then the handlers. docs/ai.md rows 2 and 13.
-// .rodata 0x8049AB14-0x8049AD9C: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88, APPROACH_RANGED's from 0x8049AD94).
+// .rodata 0x8049AB14-0x8049AD9C: the behavior names, the list title and the float pools (IDLE's from 0x8049AD88, APPROACH_RANGED's from 0x8049AD94, TOO_CLOSE's from 0x8049AD9C).
 
 inline int sn_return_decl(int a) { return a; }
 
@@ -136,7 +136,7 @@ AIAction *fn_8013922C(void *ai, AIBehavior *rec);
 AIAction *fn_80139258(void *ai, AIBehavior *rec);
 void fn_801399CC(void);
 AIAction *fn_80139284(void *ai, AIBehavior *rec);
-void fn_801397C8(void);
+AIAction *fn_801397C8(void *ai, AIBehavior *rec);
 void fn_8013B0F4(void);
 void fn_8013BCE8(void);
 void fn_8013C1C8(void);
@@ -238,6 +238,9 @@ int fn_800861EC(void *e);
 Body *fn_80085954(void *p);
 int fn_800CCBD8(Base &b);
 void fn_80433FFC(Vector *v);
+int fn_8015F384(void *ai);
+float fn_8015E64C(void *ai);
+int fn_801600DC(void *ai, int side, float dist);
 }
 
 #define BH(f) ((BehaviorFn)f)
@@ -630,6 +633,40 @@ extern "C" AIAction *fn_80139284(void *ai, AIBehavior *rec)
                 fn_80433FFC(&v);
                 float f = 1.0f;
                 fn_80138AE0(h, 0, &v, f);
+                return h;
+            }
+        }
+    }
+    return 0;
+}
+
+// TOO_CLOSE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801397C8(void *ai, AIBehavior *rec)
+{
+    if (fn_804421B8(ai, 7) || fn_804421B8(ai, 8) || fn_804421B8(ai, 0x11)) {
+        return 0;
+    }
+    if (fn_80461D48(ai, 4)) {
+        return 0;
+    }
+    if (!fn_8015F384(ai) && fn_80461D48(ai, 0x35)) {
+        return 0;
+    }
+    Ent *t = fn_80134870(ai);
+    if (t) {
+        float near = fn_800B1884(*fn_80442080(ai), 0xd3);
+        Vector unused;
+        float range = fn_8015E64C(ai);
+        if (range < near) {
+            Vector v;
+            fn_8042DC84(&v, fn_800B1750(*fn_80442080(ai)));
+            fn_80433FFC(&v);
+            if (fn_801600DC(ai, 3, 2.5f)) {
+                AIAction *h = fn_80138738(3, 500, 0);
+                if (h) {
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                    fn_80138A24(h, 0xb);
+                }
                 return h;
             }
         }
