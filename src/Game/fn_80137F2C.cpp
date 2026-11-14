@@ -260,7 +260,7 @@ AIAction *fn_8013F08C(void *ai, AIBehavior *rec);
 AIAction *fn_8013F438(void *ai, AIBehavior *rec);
 AIAction *fn_8013F8D0(void *ai, AIBehavior *rec);
 AIAction *fn_8013F9F0(void *ai, AIBehavior *rec);
-void fn_801409D0(void);
+AIAction *fn_801409D0(void *ai, AIBehavior *rec);
 void fn_80140C10(void);
 void fn_80140E64(void);
 void fn_80141394(void);
@@ -2260,5 +2260,34 @@ extern "C" AIAction *fn_8013F9F0(void *ai, AIBehavior *rec)
     return 0;
 }
 
-// 8-aligns the .rodata claim: fn_801409D0's first literal; drop it when that handler joins the unit.
-extern "C" const float lbl_8049AEF4 __attribute__((section(".rodata"))) = 1.0f;
+// BODY_THROW (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801409D0(void *ai, AIBehavior *rec)
+{
+    int grab = 0;
+    Ent *t = fn_80134870(ai);
+    if (t && fn_800B0C58(t) && fn_80085D3C(fn_80442080(ai)) && !fn_80461D48(ai, 0x28) && fn_800866C0(fn_800B14A0(t))) {
+        grab = 1;
+    }
+    if (fn_800CD0EC(*fn_8044203C(ai)) || grab) {
+        fn_80136214(ai, 0x11);
+        return 0;
+    }
+    if (!fn_8015F008(ai) && fn_8015EE34(ai, fn_80134870(ai))) {
+        AIAction *h = fn_80138738(0x11, 100, 200);
+        if (h) {
+            Vector v;
+            if (fn_8015F6CC(ai, &v)) {
+                fn_80138AE0(h, 0, &v, 1.0f);
+            } else {
+                fn_8042DC84(&v, fn_800B1750(*fn_80442080(ai)));
+                fn_80138AE0(h, 0, &v, 1.0f);
+            }
+            if (fn_801369B0(ai)) {
+                fn_80138A24(h, 7);
+            }
+            fn_80138A24(h, 0x12);
+            return h;
+        }
+    }
+    return 0;
+}
