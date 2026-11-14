@@ -96,11 +96,11 @@ float fn_8042FE6C(Vector *v);
 float fn_801BDB9C(float a);
 float fn_80085A04(void *e);
 void fn_8042F838(Vector *out, Vector *v, float angle);
-void *fn_80461DD4(void *ai);
+void *AI_GetEvents(void *ai);
 int fn_80442508(void *set, int bit);
 int fn_800862DC(void *e);
 int fn_8046441C(void *ai);
-int fn_80461D48(void *ai, int bit);
+int AI_TestCondition(void *ai, int bit);
 Vector *fn_800B17A8(Ent &e);
 void fn_8042D80C(Vector *dst, Vector *src);
 void fn_80447C38(Vector *v);
@@ -525,7 +525,7 @@ void fn_8015FD2C(void *ai, Vector *dir, float rate, Vector *out)
 
 int fn_8015FFD4(void *ai)
 {
-    if (fn_80442508(fn_80461DD4(ai), 4)) {
+    if (fn_80442508(AI_GetEvents(ai), 4)) {
         if (!fn_800862DC(AI_GetEntity(ai)) && fn_8046441C(ai) == 0x60)
             return 1;
         if (fn_8046441C(ai) == 0x3E || fn_8046441C(ai) == 0x40 || fn_8046441C(ai) == 0x3F || fn_8046441C(ai) == 0x41
@@ -541,22 +541,22 @@ int fn_801600DC(void *ai, int side, float dist)
     Vector dir;
     switch (side) {
     case 0:
-        if (fn_80461D48(ai, 0x12))
+        if (AI_TestCondition(ai, 0x12))
             return 0;
         fn_8042D80C(&dir, fn_800B17A8(*fn_80442080P(ai)));
         break;
     case 1:
-        if (fn_80461D48(ai, 0x14))
+        if (AI_TestCondition(ai, 0x14))
             return 0;
         fn_8042DC84(&dir, fn_800B1750(*fn_80442080P(ai)));
         break;
     case 2:
-        if (fn_80461D48(ai, 0x13))
+        if (AI_TestCondition(ai, 0x13))
             return 0;
         fn_8042DC84(&dir, fn_800B17A8(*fn_80442080P(ai)));
         break;
     case 3:
-        if (fn_80461D48(ai, 0x15))
+        if (AI_TestCondition(ai, 0x15))
             return 0;
         fn_8042D80C(&dir, fn_800B1750(*fn_80442080P(ai)));
         break;

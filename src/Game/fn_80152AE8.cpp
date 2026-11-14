@@ -48,7 +48,7 @@ public:
 
 extern "C" {
 void *fn_80464068(void *ai);
-void *fn_80462780(void *ai);
+void *AI_GetBehaviorSet(void *ai);
 void fn_804618B0(void *set);
 int fn_80151B90(void *brain, void *task);
 void *fn_8015105C(void *brain, int id);
@@ -60,8 +60,8 @@ float fn_80461F10(void *ai);
 float fn_80461F68(void *ai);
 float fn_80464318(void *ai);
 float fn_80461EE4(void *ai);
-void AI_SetStateBit(void *ai, unsigned int bit);
-void AI_ClearStateBit(void *ai, unsigned int bit);
+void AI_EnableBehavior(void *ai, unsigned int bit);
+void AI_DisableBehavior(void *ai, unsigned int bit);
 PEnt *AI_GetEntity(void *ai);
 int fn_80133208(void *actor);
 int fn_801368B8(void *ai);
@@ -99,7 +99,7 @@ void fn_80464208(void *ai, unsigned int t);
 void fn_80464290(void *ai, unsigned int t);
 int fn_80464230(void *ai);
 int fn_8015F410(void *ai, float min);
-void *fn_80461DD4(void *ai);
+void *AI_GetEvents(void *ai);
 int fn_80442508(void *set, int bit);
 float fn_80464344(void *ai);
 float fn_80462A04(void *ai);
@@ -109,7 +109,7 @@ int fn_8015EE34(void *ai, Ent *e);
 int fn_8015EEA0(void *ai);
 int fn_8015EF54(void *ai);
 int fn_804628AC(void *ai);
-int fn_80461D48(void *ai, int bit);
+int AI_TestCondition(void *ai, int bit);
 int fn_80085F7C(void *actor);
 int fn_80086B1C(void *actor);
 int fn_80086B6C(void *actor);
@@ -183,7 +183,7 @@ unsigned int fn_8015EA6C(int n, float *w);
 int fn_800B24AC(Ent &e);
 int fn_800B1CC8(Ent &e);
 int fn_8004A9CC(Vec *from, Vector *dir, float len, int a, int b, int c, int d, int e, int f);
-int AI_TestStateBit(void *ai, unsigned int bit);
+int AI_IsBehaviorEnabled(void *ai, unsigned int bit);
 }
 
 inline int sn_return_decl(int a) { return a; } // sets the flag: no function-end branch pair (prodg.md)
@@ -191,7 +191,7 @@ inline int sn_return_decl(int a) { return a; } // sets the flag: no function-end
 extern "C" int Task_Sleep_Enter(register Self *self)
 {
     fn_804618B0(fn_80464068(self->ai));
-    fn_804618B0(fn_80462780(self->ai));
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
     return 1;
 }
 
@@ -219,30 +219,30 @@ extern "C" int Task_Search_Enter(register Self *self)
     if (fn_8046439C(self->ai) > 0.0f)
         fn_8046412C(self->ai, 2);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 0);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 0);
     if (fn_80133208(AI_GetEntity(self->ai))) {
         if (fn_80461F10(self->ai) > 0.0f)
-            AI_SetStateBit(self->ai, 1);
+            AI_EnableBehavior(self->ai, 1);
         else if (fn_80461F68(self->ai) > 0.0f)
-            AI_SetStateBit(self->ai, 2);
+            AI_EnableBehavior(self->ai, 2);
         if (fn_80464318(self->ai) > 0.0f)
-            AI_SetStateBit(self->ai, 0x1d);
+            AI_EnableBehavior(self->ai, 0x1d);
     }
-    AI_SetStateBit(self->ai, 3);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0xf);
+    AI_EnableBehavior(self->ai, 3);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0xf);
     if (fn_801368B8(self->ai)) {
         register float d = fn_8015E64C(self->ai);
         if (d >= fn_800B1884(*AI_GetEntity(self->ai), 0xd4))
-            AI_SetStateBit(self->ai, 0xe);
+            AI_EnableBehavior(self->ai, 0xe);
     }
-    AI_SetStateBit(self->ai, 0x15);
-    AI_SetStateBit(self->ai, 0x16);
-    AI_SetStateBit(self->ai, 0x17);
-    AI_SetStateBit(self->ai, 0x1b);
+    AI_EnableBehavior(self->ai, 0x15);
+    AI_EnableBehavior(self->ai, 0x16);
+    AI_EnableBehavior(self->ai, 0x17);
+    AI_EnableBehavior(self->ai, 0x1b);
     if (!fn_80134870(self->ai) || (fn_80134870(self->ai) && !fn_800B0C58(fn_80134870(self->ai))))
         fn_8014F7B0(AI_GetTargetList(self->ai), 0);
     if (fn_80134870(self->ai))
@@ -258,7 +258,7 @@ extern "C" int Task_Search_Exit(register Self *self)
     if (fn_8046439C(self->ai) > 0.0f)
         fn_80464170(self->ai, 2);
     if (fn_80461EE4(self->ai) > 0.0f)
-        AI_ClearStateBit(self->ai, 0x12);
+        AI_DisableBehavior(self->ai, 0x12);
     return 1;
 }
 
@@ -286,20 +286,20 @@ extern "C" int Task_Search_Update(register Self *self)
             fn_8015105C(AI_GetBrain(self->ai), 0x12);
             return 1;
         }
-        if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-            || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+        if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+            || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
             || fn_8015FFD4(self->ai))
-            AI_SetStateBit(self->ai, 7);
+            AI_EnableBehavior(self->ai, 7);
         else
-            AI_ClearStateBit(self->ai, 7);
+            AI_DisableBehavior(self->ai, 7);
         if (fn_80134870(self->ai) && fn_800B0C58(fn_80134870(self->ai))
             && fn_800CCBD8(*fn_80085954(fn_800B14A0(*fn_80134870(self->ai))))
             && fn_80086374(fn_800B14A0(*fn_80134870(self->ai)))
             && (fn_8015EE34(self->ai, fn_80134870(self->ai)) || fn_8015EEA0(self->ai))
             && fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd4))
-            AI_SetStateBit(self->ai, 7);
-        if (fn_804628AC(self->ai) && fn_80461D48(self->ai, 0x3c) && fn_80085F7C(AI_GetEntity(self->ai)))
-            AI_SetStateBit(self->ai, 0xe);
+            AI_EnableBehavior(self->ai, 7);
+        if (fn_804628AC(self->ai) && AI_TestCondition(self->ai, 0x3c) && fn_80085F7C(AI_GetEntity(self->ai)))
+            AI_EnableBehavior(self->ai, 0xe);
         float a = fn_80464318(self->ai) / 100.0f;
         float b = fn_80461EE4(self->ai) / 100.0f;
         float c = fn_80461F94(self->ai) / 100.0f;
@@ -311,11 +311,11 @@ extern "C" int Task_Search_Update(register Self *self)
             if (fn_8044734C(AI_GetMover(self->ai)) && fn_80444570(fn_8044734C(AI_GetMover(self->ai))))
                 busy = 1;
             if (fn_80461F94(self->ai) > 0.0f) {
-                if (fn_80461D48(self->ai, 0xc) && fn_801500C4(AI_GetTargetList(self->ai)) > 0.0f) {
+                if (AI_TestCondition(self->ai, 0xc) && fn_801500C4(AI_GetTargetList(self->ai)) > 0.0f) {
                     fn_8015105C(self->brain, 7);
                     return 1;
                 }
-                if (fn_80461D48(self->ai, 0xb) && fn_80464230(self->ai) && !busy) {
+                if (AI_TestCondition(self->ai, 0xb) && fn_80464230(self->ai) && !busy) {
                     fn_8015105C(self->brain, 4);
                     int wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_80461F94(self->ai)) + 7500;
                     fn_80464208(self->ai, fn_8042EFF8(lbl_80593BE8) + wait);
@@ -323,11 +323,11 @@ extern "C" int Task_Search_Update(register Self *self)
                 }
             }
             if (fn_8046439C(self->ai) > 0.0f) {
-                if (fn_80461D48(self->ai, 0xe)) {
+                if (AI_TestCondition(self->ai, 0xe)) {
                     fn_8015105C(self->brain, 8);
                     return 1;
                 }
-                if (fn_80461D48(self->ai, 0xd) && fn_804642B8(self->ai) && !fn_80461D48(self->ai, 0x2b) && !busy
+                if (AI_TestCondition(self->ai, 0xd) && fn_804642B8(self->ai) && !AI_TestCondition(self->ai, 0x2b) && !busy
                     && fn_8015EE34(self->ai, fn_80134870(self->ai)) && fn_801500C4(AI_GetTargetList(self->ai)) > 0.0f) {
                     fn_8015105C(self->brain, 5);
                     int wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_8046439C(self->ai)) + 10000;
@@ -336,7 +336,7 @@ extern "C" int Task_Search_Update(register Self *self)
                 }
             }
         }
-        if (fn_80461D48(self->ai, 3) && !fn_80461D48(self->ai, 4) && fn_80461D48(self->ai, 0x2b)
+        if (AI_TestCondition(self->ai, 3) && !AI_TestCondition(self->ai, 4) && AI_TestCondition(self->ai, 0x2b)
             && fn_80461F68(self->ai) > 0.0f) {
             fn_8015105C(self->brain, 3);
             return 1;
@@ -345,7 +345,7 @@ extern "C" int Task_Search_Update(register Self *self)
         if (fn_800CD21C(*AI_GetActor(self->ai))) {
             float chance = fn_80464344(self->ai) / 100.0f * 5.0f;
             if (fn_8015E97C(chance))
-                AI_SetStateBit(self->ai, 7);
+                AI_EnableBehavior(self->ai, 7);
         }
         float range211 = fn_800B1884(*AI_GetEntity(self->ai), 0xd3);
         float range210 = fn_800B1884(*AI_GetEntity(self->ai), 0xd2);
@@ -365,7 +365,7 @@ extern "C" int Task_Search_Update(register Self *self)
             if (dist > range212 + range210 || fn_800CC6DC(*fn_80085954(fn_800B14A0(*target))) == 13) {
                 if (fn_80086730(Entity_GetActor(*AI_GetActor(self->ai)))
                         < fn_8008677C(Entity_GetActor(*AI_GetActor(self->ai))) * 0.4f
-                    && !fn_8015F384(self->ai) && !fn_80461D48(self->ai, 0x3f)) {
+                    && !fn_8015F384(self->ai) && !AI_TestCondition(self->ai, 0x3f)) {
                     fn_8015105C(AI_GetBrain(self->ai), 0x19);
                     return 1;
                 }
@@ -378,7 +378,7 @@ extern "C" int Task_Search_Update(register Self *self)
             if (fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd3)
                 && (fn_8015EEA0(self->ai) || fn_8015EF54(self->ai))) {
                 if (fn_8015E8A8(self->ai, fn_800B1724(*target)) > fn_800B1884(*AI_GetEntity(self->ai), 0xd8)) {
-                    if (!fn_80461D48(self->ai, 0x14) && fn_8015EC1C(fn_80461F68(self->ai))) {
+                    if (!AI_TestCondition(self->ai, 0x14) && fn_8015EC1C(fn_80461F68(self->ai))) {
                         fn_8015105C(self->brain, 3);
                     } else if (AI_HasMoverPath(AI_GetMover(self->ai))) {
                         void *p = fn_8015F7A4(AI_GetEntity(self->ai), 20.0f, 2,
@@ -395,18 +395,18 @@ extern "C" int Task_Search_Update(register Self *self)
             if (fn_80461F10(self->ai) > 0.0f && near && fn_8015EE34(self->ai, target)) {
                 if (fn_8015E764(self->ai, fn_800B1724(*target))) {
                     TaskBase *task = (TaskBase *)(Task *)fn_8015105C(self->brain, 2);
-                    if (task && fn_80461D48(self->ai, 0x2e)) {
+                    if (task && AI_TestCondition(self->ai, 0x2e)) {
                         fn_80442414(task, 1);
-                        AI_SetStateBit(self->ai, 8);
+                        AI_EnableBehavior(self->ai, 8);
                     }
                 } else {
-                    AI_SetStateBit(self->ai, 1);
-                    AI_ClearStateBit(self->ai, 2);
+                    AI_EnableBehavior(self->ai, 1);
+                    AI_DisableBehavior(self->ai, 2);
                     if (fn_8008606C(AI_GetEntity(self->ai))) {
                         if (fn_8015E830(self->ai))
-                            AI_SetStateBit(self->ai, 0x20);
+                            AI_EnableBehavior(self->ai, 0x20);
                         else
-                            AI_ClearStateBit(self->ai, 0x20);
+                            AI_DisableBehavior(self->ai, 0x20);
                     }
                 }
             } else if (fn_8015EC1C(fn_80461F68(self->ai)) && mid) {
@@ -417,8 +417,8 @@ extern "C" int Task_Search_Update(register Self *self)
                             || fn_80086B6C(AI_GetEntity(self->ai))))) {
                     fn_8015105C(self->brain, 3);
                 } else {
-                    AI_SetStateBit(self->ai, 1);
-                    AI_ClearStateBit(self->ai, 2);
+                    AI_EnableBehavior(self->ai, 1);
+                    AI_DisableBehavior(self->ai, 2);
                 }
             } else if (!fn_8015EE34(self->ai, target) && fn_800CCA58(*fn_80085954(fn_800B14A0(*target)))
                        && fn_8015E8A8(self->ai, fn_800B1724(*fn_80134870(self->ai)))
@@ -429,18 +429,18 @@ extern "C" int Task_Search_Update(register Self *self)
                 int same = fn_801514C0(self->brain, 3) > fn_800B18EC(*AI_GetEntity(self->ai), 0xc7);
                 if (!fn_80086B6C(AI_GetEntity(self->ai)) && !fn_80086B1C(AI_GetEntity(self->ai))
                     && fn_8015EC1C(fn_80461F68(self->ai)) && mid && same) {
-                    AI_ClearStateBit(self->ai, 1);
-                    AI_SetStateBit(self->ai, 2);
+                    AI_DisableBehavior(self->ai, 1);
+                    AI_EnableBehavior(self->ai, 2);
                 } else {
-                    AI_SetStateBit(self->ai, 1);
-                    AI_ClearStateBit(self->ai, 2);
+                    AI_EnableBehavior(self->ai, 1);
+                    AI_DisableBehavior(self->ai, 2);
                 }
                 fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(target), 0);
                 if (fn_8008606C(AI_GetEntity(self->ai))) {
                     if (fn_8015E830(self->ai))
-                        AI_SetStateBit(self->ai, 0x20);
+                        AI_EnableBehavior(self->ai, 0x20);
                     else
-                        AI_ClearStateBit(self->ai, 0x20);
+                        AI_DisableBehavior(self->ai, 0x20);
                 }
                 return 1;
             }
@@ -455,14 +455,14 @@ extern "C" int Task_Search_Update(register Self *self)
                 fn_8014B900(AI_GetMover(self->ai));
             }
         }
-        if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
-            AI_SetStateBit(self->ai, 0xe);
+        if (AI_TestCondition(self->ai, 0x1c) && fn_801368B8(self->ai))
+            AI_EnableBehavior(self->ai, 0xe);
         float dh = fn_800B1724(*AI_GetEntity(self->ai))->z - fn_8014B824(AI_GetMover(self->ai)) < 0.0f
             ? -(fn_800B1724(*AI_GetEntity(self->ai))->z - fn_8014B824(AI_GetMover(self->ai)))
             : fn_800B1724(*AI_GetEntity(self->ai))->z - fn_8014B824(AI_GetMover(self->ai));
         if (dh > 4.0f || fn_80086B1C(AI_GetEntity(self->ai)) || fn_80086B6C(AI_GetEntity(self->ai))) {
             if (fn_801368B8(self->ai)) {
-                AI_SetStateBit(self->ai, 0xe);
+                AI_EnableBehavior(self->ai, 0xe);
             } else if (fn_80134870(self->ai)) {
                 if (!AI_HasMoverPath(AI_GetMover(self->ai)) || fn_8015E97C(1.0f))
                     fn_80464208(self->ai, fn_8042EFF8(lbl_80593BE8));
@@ -472,17 +472,17 @@ extern "C" int Task_Search_Update(register Self *self)
             int hit = fn_80085300(AI_GetEntity(self->ai), fn_800B1724(*AI_GetEntity(self->ai)), 0.7f, 4.0f, &out);
             if (hit) {
                 if (fn_801368B8(self->ai))
-                    AI_ClearStateBit(self->ai, 0xe);
+                    AI_DisableBehavior(self->ai, 0xe);
                 else
                     fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(fn_80134870(self->ai)), 0);
             }
         }
-        if (fn_80461D48(self->ai, 0x1d))
-            AI_SetStateBit(self->ai, 0x1b);
+        if (AI_TestCondition(self->ai, 0x1d))
+            AI_EnableBehavior(self->ai, 0x1b);
         if (flag12)
-            AI_SetStateBit(self->ai, 0x12);
+            AI_EnableBehavior(self->ai, 0x12);
         else
-            AI_ClearStateBit(self->ai, 0x12);
+            AI_DisableBehavior(self->ai, 0x12);
     } else {
     }
     return 1;
@@ -490,26 +490,26 @@ extern "C" int Task_Search_Update(register Self *self)
 
 extern "C" int Task_Melee_Enter(register Self *self)
 {
-    AI_SetStateBit(self->ai, 0);
+    AI_EnableBehavior(self->ai, 0);
     if (fn_80461F68(self->ai) > 0.0f)
         fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 1);
-    AI_SetStateBit(self->ai, 0x1b);
-    AI_SetStateBit(self->ai, 0x1d);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 1);
+    AI_EnableBehavior(self->ai, 0x1b);
+    AI_EnableBehavior(self->ai, 0x1d);
     if (fn_801368B8(self->ai) && fn_800CE4D0(AI_GetActor(self->ai)))
-        AI_SetStateBit(self->ai, 0xe);
-    AI_SetStateBit(self->ai, 0x15);
-    AI_SetStateBit(self->ai, 0x16);
-    AI_SetStateBit(self->ai, 0x17);
-    AI_SetStateBit(self->ai, 8);
+        AI_EnableBehavior(self->ai, 0xe);
+    AI_EnableBehavior(self->ai, 0x15);
+    AI_EnableBehavior(self->ai, 0x16);
+    AI_EnableBehavior(self->ai, 0x17);
+    AI_EnableBehavior(self->ai, 8);
     unsigned int n = 1500;
     n += fn_8015EA18(1500);
     float len = fn_8042CE28(n);
@@ -534,7 +534,7 @@ extern "C" int Task_Melee_Exit(register Self *self)
 extern "C" int Task_Melee_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
-        if (!fn_80461D48(self->ai, 2)) {
+        if (!AI_TestCondition(self->ai, 2)) {
             AI_SetTaskDone(self, 1);
             return 1;
         }
@@ -553,7 +553,7 @@ extern "C" int Task_Melee_Update(register Self *self)
             AI_SetTaskDone(self, 1);
             return 1;
         }
-        if (fn_80461D48(self->ai, 0x14)) {
+        if (AI_TestCondition(self->ai, 0x14)) {
             fn_80136214(self->ai, 8);
             AI_SetTaskDone(self, 1);
             return 1;
@@ -562,11 +562,11 @@ extern "C" int Task_Melee_Update(register Self *self)
             AI_SetTaskDone(self, 1);
             return 1;
         }
-        if (fn_80461D48(self->ai, 3)) {
-            if (fn_80461D48(self->ai, 4)) {
+        if (AI_TestCondition(self->ai, 3)) {
+            if (AI_TestCondition(self->ai, 4)) {
                 AI_SetTaskDone(self, 1);
                 return 1;
-            } else if (fn_80461D48(self->ai, 0x2b) && fn_8015F008(self->ai)) {
+            } else if (AI_TestCondition(self->ai, 0x2b) && fn_8015F008(self->ai)) {
                 AI_SetTaskDone(self, 1);
                 return 1;
             }
@@ -576,27 +576,27 @@ extern "C" int Task_Melee_Update(register Self *self)
             AI_SetTaskDone(self, 1);
             return 1;
         }
-        if (fn_801368B8(self->ai) && fn_80461D48(self->ai, 0x1c)) {
-            if (!fn_8015EE34(self->ai, fn_80134870(self->ai)) && !fn_80461D48(self->ai, 0x28))
-                AI_SetStateBit(self->ai, 0xe);
+        if (fn_801368B8(self->ai) && AI_TestCondition(self->ai, 0x1c)) {
+            if (!fn_8015EE34(self->ai, fn_80134870(self->ai)) && !AI_TestCondition(self->ai, 0x28))
+                AI_EnableBehavior(self->ai, 0xe);
             else
-                AI_ClearStateBit(self->ai, 0xe);
+                AI_DisableBehavior(self->ai, 0xe);
         }
         int ready = !fn_80151430(self->brain);
         if (ready) {
             if (!fn_8015F008(self->ai) || fn_8015EEA0(self->ai) || fn_8015EF54(self->ai)) {
                 unsigned int n = 1500;
                 float w[10];
-                AI_ClearStateBit(self->ai, 8);
-                AI_ClearStateBit(self->ai, 7);
-                AI_ClearStateBit(self->ai, 0xd);
-                AI_ClearStateBit(self->ai, 0x11);
-                AI_ClearStateBit(self->ai, 0x19);
-                AI_ClearStateBit(self->ai, 0xa);
-                AI_ClearStateBit(self->ai, 0xb);
-                AI_ClearStateBit(self->ai, 0xc);
-                AI_ClearStateBit(self->ai, 3);
-                AI_ClearStateBit(self->ai, 0x13);
+                AI_DisableBehavior(self->ai, 8);
+                AI_DisableBehavior(self->ai, 7);
+                AI_DisableBehavior(self->ai, 0xd);
+                AI_DisableBehavior(self->ai, 0x11);
+                AI_DisableBehavior(self->ai, 0x19);
+                AI_DisableBehavior(self->ai, 0xa);
+                AI_DisableBehavior(self->ai, 0xb);
+                AI_DisableBehavior(self->ai, 0xc);
+                AI_DisableBehavior(self->ai, 3);
+                AI_DisableBehavior(self->ai, 0x13);
                 if (fn_80085D3C(AI_GetEntity(self->ai))) {
                     float hp = fn_80086730(AI_GetEntity(self->ai)) / fn_8008677C(AI_GetEntity(self->ai));
                     if (hp < 0.33f)
@@ -616,11 +616,11 @@ extern "C" int Task_Melee_Update(register Self *self)
                 w[9] = fn_80461EE4(self->ai) * fn_80461F94(self->ai);
                 if (fn_8008615C(AI_GetEntity(self->ai)))
                     w[9] *= 3.0f;
-                if (!fn_80461D48(self->ai, 0x25) && !fn_80461D48(self->ai, 0x30))
+                if (!AI_TestCondition(self->ai, 0x25) && !AI_TestCondition(self->ai, 0x30))
                     w[2] = 0.0f;
                 if (!fn_800860FC(AI_GetEntity(self->ai)) || !fn_80085F7C(AI_GetEntity(self->ai)))
                     w[9] = 0.0f;
-                if (fn_80461D48(self->ai, 0x28)) {
+                if (AI_TestCondition(self->ai, 0x28)) {
                     w[4] = 0.0f;
                     if (fn_804643F0(self) == 1) {
                     } else {
@@ -633,7 +633,7 @@ extern "C" int Task_Melee_Update(register Self *self)
                     w[7] = 0.0f;
                     w[0] *= 3.0f;
                 }
-                if (fn_80461D48(self->ai, 0x27)) {
+                if (AI_TestCondition(self->ai, 0x27)) {
                     w[1] = 0.0f;
                     w[3] = 0.0f;
                     w[2] = 0.0f;
@@ -662,7 +662,7 @@ extern "C" int Task_Melee_Update(register Self *self)
                     w[5] = 0.0f;
                     w[6] = 0.0f;
                     w[7] = 0.0f;
-                    if (fn_80461D48(self->ai, 0x28)) {
+                    if (AI_TestCondition(self->ai, 0x28)) {
                         if (fn_8015EC1C(fn_80462A30(self->ai))) {
                             w[1] *= 2.0f;
                             w[2] = 0.0f;
@@ -687,7 +687,7 @@ extern "C" int Task_Melee_Update(register Self *self)
                     w[8] = 0.0f;
                 else if (!fn_8014630C(fn_8013726C(self->ai), fn_800B1724(*AI_GetEntity(self->ai))))
                     w[8] = 0.0f;
-                if (fn_80461D48(self->ai, 0x35)) {
+                if (AI_TestCondition(self->ai, 0x35)) {
                     w[5] = 0.0f;
                     w[7] = 0.0f;
                 } else {
@@ -699,9 +699,9 @@ extern "C" int Task_Melee_Update(register Self *self)
                 }
                 if (fn_80134870(self->ai) && fn_800B0C58(fn_80134870(self->ai))) {
                     void *te = fn_800B14A0(*fn_80134870(self->ai));
-                    if (fn_800CCA08(*fn_80085954(te)) || fn_800CDA20(*fn_80085954(te)) || fn_80461D48(self->ai, 0x30))
+                    if (fn_800CCA08(*fn_80085954(te)) || fn_800CDA20(*fn_80085954(te)) || AI_TestCondition(self->ai, 0x30))
                         w[3] *= 3.2f;
-                    if (fn_800CD014(*fn_80085954(te)) || fn_800CCE00(*fn_80085954(te)) || fn_80461D48(self->ai, 0x30))
+                    if (fn_800CD014(*fn_80085954(te)) || fn_800CCE00(*fn_80085954(te)) || AI_TestCondition(self->ai, 0x30))
                         w[1] *= 3.0f;
                 }
                 if (AI_GetMoverSpotKind(AI_GetMover(self->ai)) == 1
@@ -713,7 +713,7 @@ extern "C" int Task_Melee_Update(register Self *self)
                     if (fn_80462A30(self->ai) > 0.0f)
                         w[1] = fn_80461EE4(self->ai) * 2.0f * 100.0f;
                 }
-                if (fn_800865E4(AI_GetEntity(self->ai)) && !fn_80461D48(self->ai, 0x28)) {
+                if (fn_800865E4(AI_GetEntity(self->ai)) && !AI_TestCondition(self->ai, 0x28)) {
                     w[0] = 0.0f;
                     w[1] = 0.0f;
                     w[2] = 0.0f;
@@ -732,9 +732,9 @@ extern "C" int Task_Melee_Update(register Self *self)
                 int inRange = dist > fn_800B1884(*AI_GetEntity(self->ai), 0xd3)
                     && dist < fn_800B1884(*AI_GetEntity(self->ai), 0xd4);
                 float dot = fn_8042EBF4(&face, &dir);
-                if (fn_80461D48(self->ai, 0x3d) || dot < 0.66f || !inRange)
+                if (AI_TestCondition(self->ai, 0x3d) || dot < 0.66f || !inRange)
                     w[6] = 0.0f;
-                if (fn_80461D48(self->ai, 0x40)) {
+                if (AI_TestCondition(self->ai, 0x40)) {
                     w[6] = 0.0f;
                     w[0] = 0.0f;
                     w[3] = 0.0f;
@@ -742,7 +742,7 @@ extern "C" int Task_Melee_Update(register Self *self)
                 }
                 Ent *target = fn_80134870(self->ai);
                 if (target && fn_800B0C58(target) && fn_80085D3C(AI_GetEntity(self->ai))
-                    && !fn_80461D48(self->ai, 0x28) && fn_800866C0(fn_800B14A0(*target))) {
+                    && !AI_TestCondition(self->ai, 0x28) && fn_800866C0(fn_800B14A0(*target))) {
                     w[1] = 0.0f;
                     w[2] = 0.0f;
                     w[3] = 0.0f;
@@ -758,31 +758,31 @@ extern "C" int Task_Melee_Update(register Self *self)
                 unsigned int choice = fn_8015EA6C(10, w);
                 switch (choice) {
                 case 0:
-                    if (fn_8015EEA0(self->ai) && !fn_80461D48(self->ai, 0x3d)) {
-                        AI_SetStateBit(self->ai, 0xb);
+                    if (fn_8015EEA0(self->ai) && !AI_TestCondition(self->ai, 0x3d)) {
+                        AI_EnableBehavior(self->ai, 0xb);
                     } else {
-                        AI_SetStateBit(self->ai, 8);
+                        AI_EnableBehavior(self->ai, 8);
                         n = 1000;
                     }
                     break;
                 case 1:
-                    AI_SetStateBit(self->ai, 0x19);
-                    AI_ClearStateBit(self->ai, 1);
-                    AI_ClearStateBit(self->ai, 7);
+                    AI_EnableBehavior(self->ai, 0x19);
+                    AI_DisableBehavior(self->ai, 1);
+                    AI_DisableBehavior(self->ai, 7);
                     n /= 2;
                     break;
                 case 2:
-                    AI_SetStateBit(self->ai, 7);
-                    AI_ClearStateBit(self->ai, 1);
-                    AI_ClearStateBit(self->ai, 3);
+                    AI_EnableBehavior(self->ai, 7);
+                    AI_DisableBehavior(self->ai, 1);
+                    AI_DisableBehavior(self->ai, 3);
                     break;
                 case 3:
                     if (fn_8015EC1C(fn_80462A30(self->ai))) {
-                        AI_SetStateBit(self->ai, 0x19);
+                        AI_EnableBehavior(self->ai, 0x19);
                     } else {
-                        AI_SetStateBit(self->ai, 0xd);
-                        AI_ClearStateBit(self->ai, 1);
-                        AI_ClearStateBit(self->ai, 3);
+                        AI_EnableBehavior(self->ai, 0xd);
+                        AI_DisableBehavior(self->ai, 1);
+                        AI_DisableBehavior(self->ai, 3);
                         n /= 2;
                     }
                     break;
@@ -806,38 +806,38 @@ extern "C" int Task_Melee_Update(register Self *self)
                                           fn_800B24AC(*AI_GetEntity(self->ai)), fn_800B1CC8(*AI_GetEntity(self->ai)),
                                           fn_800B13D8(fn_80134870(self->ai)), 0);
                     if (hit) {
-                        AI_SetStateBit(self->ai, 1);
-                        AI_ClearStateBit(self->ai, 0x11);
+                        AI_EnableBehavior(self->ai, 1);
+                        AI_DisableBehavior(self->ai, 0x11);
                     } else {
-                        AI_ClearStateBit(self->ai, 1);
-                        AI_SetStateBit(self->ai, 0x11);
+                        AI_DisableBehavior(self->ai, 1);
+                        AI_EnableBehavior(self->ai, 0x11);
                     }
                     break;
                 }
                 case 5:
-                    AI_ClearStateBit(self->ai, 1);
-                    AI_ClearStateBit(self->ai, 3);
+                    AI_DisableBehavior(self->ai, 1);
+                    AI_DisableBehavior(self->ai, 3);
                     n /= 2;
                     break;
                 case 6:
                     if (!fn_8015EA18(4)
                         || (fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd2) && fn_8015EEA0(self->ai)))
-                        AI_SetStateBit(self->ai, 0xb);
+                        AI_EnableBehavior(self->ai, 0xb);
                     else if (!fn_8015EA18(3)
                              || (fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd2)
                                  && fn_8015EF54(self->ai)))
-                        AI_SetStateBit(self->ai, 0xc);
+                        AI_EnableBehavior(self->ai, 0xc);
                     else
-                        AI_SetStateBit(self->ai, 0xa);
-                    AI_SetStateBit(self->ai, 1);
+                        AI_EnableBehavior(self->ai, 0xa);
+                    AI_EnableBehavior(self->ai, 1);
                     break;
                 case 7:
                     AI_SetTaskDone(self, 1);
                     return 1;
                     break;
                 case 8:
-                    if (fn_80461D48(self->ai, 0x28)) {
-                        AI_SetStateBit(self->ai, 8);
+                    if (AI_TestCondition(self->ai, 0x28)) {
+                        AI_EnableBehavior(self->ai, 8);
                     } else {
                         fn_8015105C(AI_GetBrain(self->ai), 0x15);
                         return 1;
@@ -862,26 +862,26 @@ extern "C" int Task_Melee_Update(register Self *self)
         }
         if (fn_804628AC(self->ai)) {
             if (fn_80085F7C(AI_GetEntity(self->ai)))
-                AI_SetStateBit(self->ai, 0xe);
+                AI_EnableBehavior(self->ai, 0xe);
             if (fn_8008606C(AI_GetEntity(self->ai)))
-                AI_SetStateBit(self->ai, 0x20);
+                AI_EnableBehavior(self->ai, 0x20);
         }
         if (fn_8008606C(AI_GetEntity(self->ai))) {
             if (fn_8015E830(self->ai))
-                AI_SetStateBit(self->ai, 0x20);
+                AI_EnableBehavior(self->ai, 0x20);
             else
-                AI_ClearStateBit(self->ai, 0x20);
+                AI_DisableBehavior(self->ai, 0x20);
         }
-        if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-            || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+        if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+            || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
             || fn_8015FFD4(self->ai)) {
-            if (!AI_TestStateBit(self->ai, 0x19))
-                AI_SetStateBit(self->ai, 7);
+            if (!AI_IsBehaviorEnabled(self->ai, 0x19))
+                AI_EnableBehavior(self->ai, 7);
         }
         if (fn_800CD21C(*AI_GetActor(self->ai))) {
             float chance = fn_80464344(self->ai) / 100.0f * 5.0f;
             if (fn_8015E97C(chance))
-                AI_SetStateBit(self->ai, 7);
+                AI_EnableBehavior(self->ai, 7);
         }
         if (fn_80134870(self->ai) && fn_800B0C58(fn_80134870(self->ai))
             && fn_800CCBD8(*fn_80085954(fn_800B14A0(*fn_80134870(self->ai))))
@@ -889,28 +889,28 @@ extern "C" int Task_Melee_Update(register Self *self)
             && (fn_8015EE34(self->ai, fn_80134870(self->ai)) || fn_8015EEA0(self->ai))
             && fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd4)) {
             if (fn_8015EC1C(fn_80462A30(self->ai))) {
-                if (!AI_TestStateBit(self->ai, 7))
-                    AI_SetStateBit(self->ai, 0x19);
+                if (!AI_IsBehaviorEnabled(self->ai, 7))
+                    AI_EnableBehavior(self->ai, 0x19);
             } else {
-                if (!AI_TestStateBit(self->ai, 0x19))
-                    AI_SetStateBit(self->ai, 7);
+                if (!AI_IsBehaviorEnabled(self->ai, 0x19))
+                    AI_EnableBehavior(self->ai, 7);
             }
         }
-        if (!fn_80461D48(self->ai, 0x3d) && !AI_TestStateBit(self->ai, 0xb) && !AI_TestStateBit(self->ai, 0xc)
-            && !AI_TestStateBit(self->ai, 0xa) && fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd2)) {
+        if (!AI_TestCondition(self->ai, 0x3d) && !AI_IsBehaviorEnabled(self->ai, 0xb) && !AI_IsBehaviorEnabled(self->ai, 0xc)
+            && !AI_IsBehaviorEnabled(self->ai, 0xa) && fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd2)) {
             if (fn_8015EEA0(self->ai))
-                AI_SetStateBit(self->ai, 0xb);
+                AI_EnableBehavior(self->ai, 0xb);
             else if (fn_8015EF54(self->ai))
-                AI_SetStateBit(self->ai, 0xc);
+                AI_EnableBehavior(self->ai, 0xc);
         }
         if (!fn_804628AC(self->ai)) {
             if (fn_800CCA58(*AI_GetActor(self->ai)) && !fn_8015F008(self->ai))
-                AI_ClearStateBit(self->ai, 0xe);
+                AI_DisableBehavior(self->ai, 0xe);
             if (fn_800CCAE8(*AI_GetActor(self->ai)) && !fn_8015F008(self->ai))
-                AI_ClearStateBit(self->ai, 0x20);
+                AI_DisableBehavior(self->ai, 0x20);
         }
-        if (AI_TestStateBit(self->ai, 0x19) && fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd1)) {
-            AI_ClearStateBit(self->ai, 0x19);
+        if (AI_IsBehaviorEnabled(self->ai, 0x19) && fn_8015E64C(self->ai) < fn_800B1884(*AI_GetEntity(self->ai), 0xd1)) {
+            AI_DisableBehavior(self->ai, 0x19);
             fn_801513D8(AI_GetBrain(self->ai), 0);
         }
     } else {
@@ -928,31 +928,31 @@ extern "C" int Task_Ranged_Enter(register RangedTask *self)
     register float d;
     register PEnt *e;
     self->f28 = 0;
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
     if (fn_80461F68(self->ai) > 0.0f)
         fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    AI_ClearStateBit(self->ai, 1);
-    AI_SetStateBit(self->ai, 2);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 9);
-    AI_ClearStateBit(self->ai, 8);
+    AI_DisableBehavior(self->ai, 1);
+    AI_EnableBehavior(self->ai, 2);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 9);
+    AI_DisableBehavior(self->ai, 8);
     fn_8046412C(self->ai, 6);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
     if (fn_801368B8(self->ai)) {
         d = fn_8015E64C(self->ai);
         e = AI_GetEntity(self->ai);
         if (d >= fn_800B1884(*e, 0xd4))
-            AI_SetStateBit(self->ai, 0xe);
+            AI_EnableBehavior(self->ai, 0xe);
     }
     float t = fn_80461F68(self->ai) * 2000.0f + 1000.0f;
     fn_801513D8(self->brain, (unsigned int)(fn_80464094(self->ai) * 1500.0f));
-    AI_SetStateBit(self->ai, 0x15);
-    AI_SetStateBit(self->ai, 0x16);
-    AI_SetStateBit(self->ai, 0x17);
+    AI_EnableBehavior(self->ai, 0x15);
+    AI_EnableBehavior(self->ai, 0x16);
+    AI_EnableBehavior(self->ai, 0x17);
     if (fn_80134870(self->ai))
         fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(fn_80134870(self->ai)), 1);
     return 1;
@@ -998,7 +998,7 @@ int fn_8008618C(void *actor);
 extern "C" int Task_Ranged_Update(register RangedTask *self)
 {
     if (fn_80151B90(self->brain, self)) {
-        if (!fn_80461D48(self->ai, 2)) {
+        if (!AI_TestCondition(self->ai, 2)) {
             AI_SetTaskDone(self, 1);
             return 1;
         }
@@ -1008,31 +1008,31 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
             return 0;
         }
         if (!fn_8015F008(self->ai) && fn_80134870(self->ai) && fn_8015EE34(self->ai, fn_80134870(self->ai))) {
-            if (!fn_80461D48(self->ai, 4) && fn_80461D48(self->ai, 0x2b)) {
+            if (!AI_TestCondition(self->ai, 4) && AI_TestCondition(self->ai, 0x2b)) {
             } else {
                 AI_SetTaskDone(self, 1);
             }
         } else if (ready) {
             register unsigned int base = 1500;
             unsigned int n = 1500;
-            if (fn_80461D48(self->ai, 0x2b) && fn_8015EC1C(fn_80461F68(self->ai))) {
-                AI_SetStateBit(self->ai, 9);
+            if (AI_TestCondition(self->ai, 0x2b) && fn_8015EC1C(fn_80461F68(self->ai))) {
+                AI_EnableBehavior(self->ai, 9);
                 n = 3000;
                 return 1;
             }
-            AI_ClearStateBit(self->ai, 9);
-            AI_ClearStateBit(self->ai, 0x19);
-            AI_ClearStateBit(self->ai, 0xa);
-            AI_ClearStateBit(self->ai, 2);
-            AI_ClearStateBit(self->ai, 0xd);
-            AI_ClearStateBit(self->ai, 7);
-            AI_ClearStateBit(self->ai, 1);
-            AI_ClearStateBit(self->ai, 0x13);
+            AI_DisableBehavior(self->ai, 9);
+            AI_DisableBehavior(self->ai, 0x19);
+            AI_DisableBehavior(self->ai, 0xa);
+            AI_DisableBehavior(self->ai, 2);
+            AI_DisableBehavior(self->ai, 0xd);
+            AI_DisableBehavior(self->ai, 7);
+            AI_DisableBehavior(self->ai, 1);
+            AI_DisableBehavior(self->ai, 0x13);
             float m25 = 0.0f;
-            if (fn_80461D48(self->ai, 0x25))
+            if (AI_TestCondition(self->ai, 0x25))
                 m25 = 1.0f;
             float m28 = 0.0f;
-            if (!fn_80461D48(self->ai, 0x28))
+            if (!AI_TestCondition(self->ai, 0x28))
                 m28 = 1.0f;
             float w[8];
             w[0] = fn_80461EE4(self->ai) * 3.0f * fn_80461F68(self->ai);
@@ -1043,7 +1043,7 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
             w[5] = (100.0f - fn_80461EE4(self->ai)) * 100.0f;
             w[6] = 2.0f * fn_80461EE4(self->ai) * fn_80461F94(self->ai);
             w[7] = 2.0f * fn_80461EE4(self->ai) * fn_80461F68(self->ai);
-            if (fn_80461D48(self->ai, 3) && !fn_80461D48(self->ai, 4) && fn_80461D48(self->ai, 0x2b)) {
+            if (AI_TestCondition(self->ai, 3) && !AI_TestCondition(self->ai, 4) && AI_TestCondition(self->ai, 0x2b)) {
                 w[2] = 0.0f;
                 w[4] = 0.0f;
                 w[5] = 0.0f;
@@ -1055,8 +1055,8 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
                 w[0] *= 2.0f;
             if (!fn_801368B8(self->ai) || !fn_8015F410(self->ai, 0.3f))
                 w[7] = 0.0f;
-            if (!fn_80461D48(self->ai, 0x25) && !fn_80461D48(self->ai, 0x2c) && !fn_80461D48(self->ai, 0x2d)
-                && !fn_80461D48(self->ai, 0x30))
+            if (!AI_TestCondition(self->ai, 0x25) && !AI_TestCondition(self->ai, 0x2c) && !AI_TestCondition(self->ai, 0x2d)
+                && !AI_TestCondition(self->ai, 0x30))
                 w[1] = 0.0f;
             Vector dir;
             fn_80134870B(self->ai)->s5(&dir, 0);
@@ -1075,25 +1075,25 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
             unsigned int choice = fn_8015EA6C(8, w);
             switch (choice) {
             case 0:
-                AI_SetStateBit(self->ai, 9);
+                AI_EnableBehavior(self->ai, 9);
                 if (fn_8008618C(AI_GetEntity(self->ai)))
                     n = 750;
                 else
                     n = 3000;
                 break;
             case 1:
-                AI_SetStateBit(self->ai, 0x19);
-                AI_ClearStateBit(self->ai, 7);
+                AI_EnableBehavior(self->ai, 0x19);
+                AI_DisableBehavior(self->ai, 7);
                 break;
             case 2:
-                AI_SetStateBit(self->ai, 7);
+                AI_EnableBehavior(self->ai, 7);
                 break;
             case 3:
-                AI_SetStateBit(self->ai, 0xd);
+                AI_EnableBehavior(self->ai, 0xd);
                 n /= 2;
                 break;
             case 4:
-                AI_ClearStateBit(self->ai, 2);
+                AI_DisableBehavior(self->ai, 2);
                 n /= 4;
                 break;
             case 5:
@@ -1114,21 +1114,21 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
             t = t / fn_80464094(self->ai);
             fn_801513D8(self->brain, (int)t);
         } else {
-            if (fn_80461D48(self->ai, 3) && !fn_80461D48(self->ai, 0x2b)) {
+            if (AI_TestCondition(self->ai, 3) && !AI_TestCondition(self->ai, 0x2b)) {
                 if (fn_8008606C(AI_GetEntity(self->ai)) || fn_801368B8(self->ai)) {
-                    AI_SetStateBit(self->ai, 1);
-                    AI_ClearStateBit(self->ai, 2);
+                    AI_EnableBehavior(self->ai, 1);
+                    AI_DisableBehavior(self->ai, 2);
                     if (!AI_HasMoverPath(AI_GetMover(self->ai)) && fn_80134870(self->ai))
                         fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8(fn_80134870(self->ai)), 0);
                 }
                 if (fn_8008606C(AI_GetEntity(self->ai))) {
                     if (fn_8015E830(self->ai))
-                        AI_SetStateBit(self->ai, 0x20);
+                        AI_EnableBehavior(self->ai, 0x20);
                     else
-                        AI_ClearStateBit(self->ai, 0x20);
+                        AI_DisableBehavior(self->ai, 0x20);
                 }
             } else if (fn_8008606C(AI_GetEntity(self->ai))) {
-                AI_ClearStateBit(self->ai, 0x20);
+                AI_DisableBehavior(self->ai, 0x20);
             }
             Vector dir;
             fn_80134870B(self->ai)->s5(&dir, 0);
@@ -1145,10 +1145,10 @@ extern "C" int Task_Ranged_Update(register RangedTask *self)
             if (hit)
                 AI_SetTaskDone(self, 1);
         }
-        if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-            || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+        if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+            || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
             || fn_8015FFD4(self->ai))
-            AI_SetStateBit(self->ai, 7);
+            AI_EnableBehavior(self->ai, 7);
     } else {
     }
     return 1;
@@ -1178,18 +1178,18 @@ extern "C" int Task_FindThrowable_Enter(register Self *self)
     fn_8046412C(self->ai, 1);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 1);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0xf);
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 0x1d);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 1);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0xf);
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 0x1d);
     if (fn_801368B8(self->ai))
-        AI_SetStateBit(self->ai, 0xe);
+        AI_EnableBehavior(self->ai, 0xe);
     if (fn_8008606C(AI_GetEntity(self->ai)))
-        AI_SetStateBit(self->ai, 0x20);
+        AI_EnableBehavior(self->ai, 0x20);
     Ent *t = fn_800ACFA8(fn_80463F90(AI_GetTargetList(self->ai)));
     if (t)
         fn_801501AC(AI_GetTargetList(self->ai), t);
@@ -1231,8 +1231,8 @@ extern "C" int Task_FindThrowable_Update(register Self *self)
             AI_SetTaskDone(self, 1);
             return 1;
         }
-        if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
-            AI_SetStateBit(self->ai, 0xe);
+        if (AI_TestCondition(self->ai, 0x1c) && fn_801368B8(self->ai))
+            AI_EnableBehavior(self->ai, 0xe);
         Ent *e = fn_800CD9B0F(*fn_8044203CF(self->ai));
         if (!e) {
             Vector v;
@@ -1254,14 +1254,14 @@ extern "C" int Task_FindThrowable_Update(register Self *self)
                     if (fn_800860FC(AI_GetEntity(self->ai)))
                         lim = fn_800B1884(*AI_GetEntity(self->ai), 240);
                     if (d <= lim) {
-                        AI_SetStateBit(self->ai, 0x13);
+                        AI_EnableBehavior(self->ai, 0x13);
                         if (fn_801368B8(self->ai) && !fn_800860FC(AI_GetEntity(self->ai)))
-                            AI_ClearStateBit(self->ai, 0xe);
+                            AI_DisableBehavior(self->ai, 0xe);
                         if (fn_8008606C(AI_GetEntity(self->ai)))
-                            AI_ClearStateBit(self->ai, 0x20);
+                            AI_DisableBehavior(self->ai, 0x20);
                     } else {
-                        AI_SetStateBit(self->ai, 0x12);
-                        if (fn_80461D48(self->ai, 0x34)) {
+                        AI_EnableBehavior(self->ai, 0x12);
+                        if (AI_TestCondition(self->ai, 0x34)) {
                             AI_SetTaskDone(self, 1);
                             return 1;
                         }
@@ -1271,7 +1271,7 @@ extern "C" int Task_FindThrowable_Update(register Self *self)
                     return 1;
                 }
             } else {
-                if (fn_80461D48(self->ai, 0x33)) {
+                if (AI_TestCondition(self->ai, 0x33)) {
                     AI_SetTaskDone(self, 1);
                     return 1;
                 }
@@ -1283,7 +1283,7 @@ extern "C" int Task_FindThrowable_Update(register Self *self)
                     if (fn_80134870(self->ai) && fn_8015ED50(self->ai, fn_800B1724(*fn_80134870(self->ai))))
                         fn_8015105C(self->brain, 8);
                     else
-                        AI_SetStateBit(self->ai, 0x10);
+                        AI_EnableBehavior(self->ai, 0x10);
                 } else {
                     AI_SetTaskDone(self, 1);
                     fn_8015105C(self->brain, 7);
@@ -1311,21 +1311,21 @@ extern "C" int Task_FindWieldable_Enter(register Self *self)
         }
     }
     fn_8046412C(self->ai, 2);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 1);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0xf);
-    AI_SetStateBit(self->ai, 0x12);
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 0x15);
-    AI_SetStateBit(self->ai, 0x16);
-    AI_SetStateBit(self->ai, 0x17);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 1);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0xf);
+    AI_EnableBehavior(self->ai, 0x12);
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 0x15);
+    AI_EnableBehavior(self->ai, 0x16);
+    AI_EnableBehavior(self->ai, 0x17);
     if (fn_801368B8(self->ai))
-        AI_SetStateBit(self->ai, 0xe);
+        AI_EnableBehavior(self->ai, 0xe);
     if (fn_8008606C(AI_GetEntity(self->ai)))
-        AI_SetStateBit(self->ai, 0x20);
+        AI_EnableBehavior(self->ai, 0x20);
     Ent *t = fn_800ACFA8(fn_80463FBC(AI_GetTargetList(self->ai)));
     if (t)
         fn_801501AC(AI_GetTargetList(self->ai), t);
@@ -1336,8 +1336,8 @@ extern "C" int Task_FindWieldable_Enter(register Self *self)
 extern "C" int Task_FindWieldable_Exit(register Self *self)
 {
     fn_80464170(self->ai, 2);
-    AI_ClearStateBit(self->ai, 0x13);
-    AI_ClearStateBit(self->ai, 5);
+    AI_DisableBehavior(self->ai, 0x13);
+    AI_DisableBehavior(self->ai, 5);
     fn_801501AC(AI_GetTargetList(self->ai), 0);
     return 1;
 }
@@ -1354,8 +1354,8 @@ extern "C" int Task_FindWieldable_Update(register Self *self)
             AI_SetTaskDone(self, 1);
             return 1;
         }
-        if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
-            AI_SetStateBit(self->ai, 0xe);
+        if (AI_TestCondition(self->ai, 0x1c) && fn_801368B8(self->ai))
+            AI_EnableBehavior(self->ai, 0xe);
         Ent *e = fn_800CD9B0F(*fn_8044203CF(self->ai));
         if (!e) {
             e = fn_80134870(self->ai);
@@ -1373,14 +1373,14 @@ extern "C" int Task_FindWieldable_Update(register Self *self)
                 lim = 5.0f;
                 float d = fn_8015E580(fn_800B1724(*t), fn_800B1724(*AI_GetEntity(self->ai)));
                 if (d <= lim) {
-                    AI_SetStateBit(self->ai, 0x13);
+                    AI_EnableBehavior(self->ai, 0x13);
                     if (fn_80085F7C(AI_GetEntity(self->ai)))
-                        AI_ClearStateBit(self->ai, 0xe);
+                        AI_DisableBehavior(self->ai, 0xe);
                     if (fn_8008606C(AI_GetEntity(self->ai)))
-                        AI_ClearStateBit(self->ai, 0x20);
+                        AI_DisableBehavior(self->ai, 0x20);
                     return 1;
                 }
-                if (fn_80461D48(self->ai, 0x33)) {
+                if (AI_TestCondition(self->ai, 0x33)) {
                     AI_SetTaskDone(self, 1);
                     return 0;
                 }
@@ -1400,8 +1400,8 @@ extern "C" int Task_FindWieldable_Update(register Self *self)
 }
 
 extern "C" {
-void AI_SaveTaskStateBits(void *task);
-void AI_RestoreTaskStateBits(void *task);
+void AI_SaveTaskBehaviors(void *task);
+void AI_RestoreTaskBehaviors(void *task);
 void AI_ResetMoverStuckTime(char *mover);
 void fn_8014DEB8(void *list);
 void fn_8014DE58(void *list);
@@ -1409,16 +1409,16 @@ void fn_8014DE58(void *list);
 
 extern "C" int Task_Possess_Enter(register Self *self)
 {
-    AI_SaveTaskStateBits(self);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
+    AI_SaveTaskBehaviors(self);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
     fn_8014B900(AI_GetMover(self->ai));
     return 1;
 }
 
 extern "C" int Task_Possess_Exit(register Self *self)
 {
-    AI_RestoreTaskStateBits(self);
+    AI_RestoreTaskBehaviors(self);
     AI_ResetMoverStuckTime(AI_GetMover(self->ai));
     fn_8014DEB8(AI_GetTargetList(self->ai));
     fn_8014DE58(AI_GetTargetList(self->ai));
@@ -1438,34 +1438,34 @@ void fn_8014B518(char *mover, Vector *pos, int index);
 // Walks to the finder's point.
 extern "C" int Task_CarryThrowable_Enter(register Self *self)
 {
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0xf);
-    AI_SetStateBit(self->ai, 0x12);
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 0x1b);
-    AI_SetStateBit(self->ai, 0x15);
-    AI_SetStateBit(self->ai, 0x16);
-    AI_SetStateBit(self->ai, 0x17);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0xf);
+    AI_EnableBehavior(self->ai, 0x12);
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 0x1b);
+    AI_EnableBehavior(self->ai, 0x15);
+    AI_EnableBehavior(self->ai, 0x16);
+    AI_EnableBehavior(self->ai, 0x17);
     Ent *t = fn_8014F8BC(AI_GetTargetList(self->ai));
     if (t) {
         fn_801501AC(AI_GetTargetList(self->ai), t);
         fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8F(*t), 0);
     }
     if (fn_8015F384(self->ai)) {
-        AI_ClearStateBit(self->ai, 1);
-        AI_SetStateBit(self->ai, 5);
+        AI_DisableBehavior(self->ai, 1);
+        AI_EnableBehavior(self->ai, 5);
     } else {
-        AI_SetStateBit(self->ai, 1);
+        AI_EnableBehavior(self->ai, 1);
     }
     if (fn_80085F7C(AI_GetEntity(self->ai)))
-        AI_SetStateBit(self->ai, 0xe);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 4);
-    AI_ClearStateBit(self->ai, 9);
+        AI_EnableBehavior(self->ai, 0xe);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 4);
+    AI_DisableBehavior(self->ai, 9);
     fn_801513D8(self->brain, 1000);
     fn_80442414((TaskBase *)self, 0);
     Vector v;
@@ -1482,7 +1482,7 @@ void fn_800F8B90(SCtl *c);
 // Rearms the ranged and melee timers.
 extern "C" int Task_CarryThrowable_Exit(register Self *self)
 {
-    AI_ClearStateBit(self->ai, 0x10);
+    AI_DisableBehavior(self->ai, 0x10);
     int wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_8046439C(self->ai)) + 10000;
     fn_80464290(self->ai, fn_8042EFF8(lbl_80593BE8) + wait);
     wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_80461F94(self->ai)) + 7500;
@@ -1510,9 +1510,9 @@ extern "C" int Task_CarryThrowable_Update(register Self *self)
                     return 1;
                 } else {
                     if (fn_801368B8(self->ai) && fn_8015F008(self->ai))
-                        AI_SetStateBit(self->ai, 0xe);
+                        AI_EnableBehavior(self->ai, 0xe);
                     else
-                        AI_ClearStateBit(self->ai, 0xe);
+                        AI_DisableBehavior(self->ai, 0xe);
                     fn_80442414((TaskBase *)self, 1);
                     fn_801513D8(self->brain, 2000);
                 }
@@ -1526,24 +1526,24 @@ extern "C" int Task_CarryThrowable_Update(register Self *self)
             : fn_800B1724(*AI_GetEntity(self->ai))->z - fn_8014B824(AI_GetMover(self->ai));
         if (dh > 6.0f) {
             if (fn_801368B8(self->ai))
-                AI_SetStateBit(self->ai, 0xe);
+                AI_EnableBehavior(self->ai, 0xe);
         } else if (dh < 3.0f && !fn_8015F008(self->ai)) {
             float out;
             int hit = fn_80085300(AI_GetEntity(self->ai), fn_800B1724(*AI_GetEntity(self->ai)), 0.7f, 3.0f, &out);
             if (hit && fn_80085F7C(AI_GetEntity(self->ai)) && !fn_804628AC(self->ai))
-                AI_ClearStateBit(self->ai, 0xe);
+                AI_DisableBehavior(self->ai, 0xe);
         }
-        if (fn_804628AC(self->ai) && fn_80461D48(self->ai, 0x3c)) {
+        if (fn_804628AC(self->ai) && AI_TestCondition(self->ai, 0x3c)) {
             if (fn_80085F7C(AI_GetEntity(self->ai)))
-                AI_SetStateBit(self->ai, 0xe);
+                AI_EnableBehavior(self->ai, 0xe);
             if (fn_8008606C(AI_GetEntity(self->ai)))
-                AI_SetStateBit(self->ai, 0x20);
+                AI_EnableBehavior(self->ai, 0x20);
         }
-        if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
-            AI_SetStateBit(self->ai, 0xe);
+        if (AI_TestCondition(self->ai, 0x1c) && fn_801368B8(self->ai))
+            AI_EnableBehavior(self->ai, 0xe);
         if (fn_80085F7C(AI_GetEntity(self->ai)) && fn_8015F07C(self->ai) && !fn_804628AC(self->ai))
-            AI_ClearStateBit(self->ai, 0xe);
-        if (fn_80461D48(self->ai, 0xc)) {
+            AI_DisableBehavior(self->ai, 0xe);
+        if (AI_TestCondition(self->ai, 0xc)) {
             Ent *t = fn_80134870(self->ai);
             if (t && fn_800B0C58(t) && fn_804643F0(self)
                 && (fn_80086B1C(AI_GetEntity(self->ai)) || fn_80086B6C(AI_GetEntity(self->ai))
@@ -1557,7 +1557,7 @@ extern "C" int Task_CarryThrowable_Update(register Self *self)
                     AI_SetMoverMoveDest(AI_GetMover(self->ai), &v);
                     AI_SetMoverWaypoint(AI_GetMover(self->ai), &v);
                 }
-                AI_SetStateBit(self->ai, 0x10);
+                AI_EnableBehavior(self->ai, 0x10);
             }
         } else {
             AI_SetTaskDone(self, 1);
@@ -1585,23 +1585,23 @@ extern "C" int Task_Wielding_Enter(register Self *self)
         fn_801501AC(AI_GetTargetList(self->ai), t);
         fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8F(*t), 0);
     }
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 1);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0xf);
-    AI_SetStateBit(self->ai, 0x12);
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 0x1b);
-    AI_SetStateBit(self->ai, 0x15);
-    AI_SetStateBit(self->ai, 0x16);
-    AI_SetStateBit(self->ai, 0x17);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 1);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0xf);
+    AI_EnableBehavior(self->ai, 0x12);
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 0x1b);
+    AI_EnableBehavior(self->ai, 0x15);
+    AI_EnableBehavior(self->ai, 0x16);
+    AI_EnableBehavior(self->ai, 0x17);
     if (fn_801368B8(self->ai))
-        AI_SetStateBit(self->ai, 0xe);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_ClearStateBit(self->ai, 9);
-    AI_ClearStateBit(self->ai, 0x13);
+        AI_EnableBehavior(self->ai, 0xe);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_DisableBehavior(self->ai, 9);
+    AI_DisableBehavior(self->ai, 0x13);
     fn_800E89B0(AI_GetActor(self->ai), fn_800B1884(*AI_GetEntity(self->ai), 223), fn_800B1884(*AI_GetEntity(self->ai), 2), 0, 0, 0);
     fn_801513D8(self->brain, 0);
     return 1;
@@ -1610,9 +1610,9 @@ extern "C" int Task_Wielding_Enter(register Self *self)
 // Rearms the ranged and melee timers.
 extern "C" int Task_Wielding_Exit(register Self *self)
 {
-    AI_ClearStateBit(self->ai, 1);
-    AI_ClearStateBit(self->ai, 0x10);
-    AI_ClearStateBit(self->ai, 8);
+    AI_DisableBehavior(self->ai, 1);
+    AI_DisableBehavior(self->ai, 0x10);
+    AI_DisableBehavior(self->ai, 8);
     int wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_8046439C(self->ai)) + 10000;
     fn_80464290(self->ai, fn_8042EFF8(lbl_80593BE8) + wait);
     wait = fn_8015EA18(4) * 100 * (int)(100.0f - fn_80461F94(self->ai)) + 7500;
@@ -1625,7 +1625,7 @@ extern "C" int Task_Wielding_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
         if (!fn_80151430(self->brain))
-            AI_ClearStateBit(self->ai, 8);
+            AI_DisableBehavior(self->ai, 8);
         if (!fn_800CDA20(*AI_GetActor(self->ai))) {
             AI_SetTaskDone(self, 1);
             return 1;
@@ -1641,57 +1641,57 @@ extern "C" int Task_Wielding_Update(register Self *self)
         float dh = ABS(fn_800B1724(*AI_GetEntity(self->ai))->z - h);
         if (dh > 4.0f) {
             if (fn_801368B8(self->ai)) {
-                AI_SetStateBit(self->ai, 0xe);
+                AI_EnableBehavior(self->ai, 0xe);
             } else {
                 AI_SetTaskDone(self, 1);
                 if (fn_8015F008(self->ai) || dh > 6.0f)
-                    AI_SetStateBit(self->ai, 0x10);
+                    AI_EnableBehavior(self->ai, 0x10);
                 else
-                    AI_SetStateBit(self->ai, 0xa);
+                    AI_EnableBehavior(self->ai, 0xa);
             }
         }
-        if (fn_80461D48(self->ai, 0x1c) && fn_801368B8(self->ai))
-            AI_SetStateBit(self->ai, 0xe);
+        if (AI_TestCondition(self->ai, 0x1c) && fn_801368B8(self->ai))
+            AI_EnableBehavior(self->ai, 0xe);
         if (fn_804628AC(self->ai)) {
             if (fn_80085F7C(AI_GetEntity(self->ai)))
-                AI_SetStateBit(self->ai, 0xe);
+                AI_EnableBehavior(self->ai, 0xe);
             if (fn_8008606C(AI_GetEntity(self->ai)))
-                AI_SetStateBit(self->ai, 0x20);
+                AI_EnableBehavior(self->ai, 0x20);
         }
         if (fn_8015E64C(self->ai) > fn_800B1884(*AI_GetEntity(self->ai), 210)) {
             Ent *t = fn_80134870(self->ai);
             if (t) {
-                AI_SetStateBit(self->ai, 1);
+                AI_EnableBehavior(self->ai, 1);
                 fn_8014B63C(AI_GetMover(self->ai), fn_800B13D8F(*t), 0);
             }
         } else if (!fn_80151430(self->brain)) {
-            AI_ClearStateBit(self->ai, 1);
-            AI_ClearStateBit(self->ai, 0x10);
-            AI_ClearStateBit(self->ai, 8);
-            AI_ClearStateBit(self->ai, 0xa);
+            AI_DisableBehavior(self->ai, 1);
+            AI_DisableBehavior(self->ai, 0x10);
+            AI_DisableBehavior(self->ai, 8);
+            AI_DisableBehavior(self->ai, 0xa);
             if (dh < 3.0f && !fn_8015F008(self->ai)) {
                 int hit;
                 float out;
                 hit = fn_80085300(AI_GetEntity(self->ai), fn_800B1724(*AI_GetEntity(self->ai)), 0.7f, 3.0f, &out);
                 if (hit && fn_801368B8(self->ai))
-                    AI_ClearStateBit(self->ai, 0xe);
+                    AI_DisableBehavior(self->ai, 0xe);
             }
             fn_801513D8(self->brain, fn_8015EA18(500) + 500);
             switch ((unsigned int)fn_8015EA18(6)) {
             case 0:
-                AI_SetStateBit(self->ai, 0x10);
+                AI_EnableBehavior(self->ai, 0x10);
                 break;
             case 1:
             case 2:
-                if (fn_80134870(self->ai) && !fn_8015EE34(self->ai, fn_80134870(self->ai)) && !fn_80461D48(self->ai, 0x3d))
-                    AI_SetStateBit(self->ai, 0xa);
+                if (fn_80134870(self->ai) && !fn_8015EE34(self->ai, fn_80134870(self->ai)) && !AI_TestCondition(self->ai, 0x3d))
+                    AI_EnableBehavior(self->ai, 0xa);
                 else
-                    AI_SetStateBit(self->ai, 8);
+                    AI_EnableBehavior(self->ai, 8);
                 break;
             case 3:
             case 4:
             case 5:
-                AI_SetStateBit(self->ai, 8);
+                AI_EnableBehavior(self->ai, 8);
                 break;
             }
         }
@@ -1709,14 +1709,14 @@ float fn_80086614(void *e);
 // Targets the thing the mover is aimed at.
 extern "C" int Task_AttackThing_Enter(register Self *self)
 {
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 1);
-    AI_SetStateBit(self->ai, 0x1b);
-    AI_SetStateBit(self->ai, 0x1d);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 1);
+    AI_EnableBehavior(self->ai, 0x1b);
+    AI_EnableBehavior(self->ai, 0x1d);
     int h = AI_GetMoverDestThing(AI_GetMover(self->ai));
     if (h) {
         Ent *t = fn_800ACFA8(h);
@@ -1754,19 +1754,19 @@ extern "C" int Task_AttackThing_Update(register Self *self)
         float d = fn_8015E64C(self->ai);
         float reach = MAX(ABS(t->f60 - t->f50), ABS(t->f64 - t->f54)) / 2.0f;
         if (d < reach) {
-            AI_SetStateBit(self->ai, 8);
-            AI_ClearStateBit(self->ai, 1);
+            AI_EnableBehavior(self->ai, 8);
+            AI_DisableBehavior(self->ai, 1);
             if (!fn_804643F0(self)) {
                 fn_80442414((TaskBase *)self, 1);
                 fn_801513D8(AI_GetBrain(self->ai), 500);
             } else if (fn_804643F0(self) == 1) {
-                AI_ClearStateBit(self->ai, 8);
+                AI_DisableBehavior(self->ai, 8);
                 fn_80442414((TaskBase *)self, 0);
                 fn_801513D8(AI_GetBrain(self->ai), 500);
             }
         } else {
-            AI_ClearStateBit(self->ai, 8);
-            AI_SetStateBit(self->ai, 1);
+            AI_DisableBehavior(self->ai, 8);
+            AI_EnableBehavior(self->ai, 1);
         }
     }
     return 1;
@@ -1812,41 +1812,41 @@ extern "C" int Task_MoveTo_Enter(register MoveTo *self)
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0xf);
-    AI_SetStateBit(self->ai, 0x15);
-    AI_SetStateBit(self->ai, 0x16);
-    AI_SetStateBit(self->ai, 0x17);
-    AI_SetStateBit(self->ai, 0x1b);
-    AI_SetStateBit(self->ai, 5);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0xf);
+    AI_EnableBehavior(self->ai, 0x15);
+    AI_EnableBehavior(self->ai, 0x16);
+    AI_EnableBehavior(self->ai, 0x17);
+    AI_EnableBehavior(self->ai, 0x1b);
+    AI_EnableBehavior(self->ai, 5);
     fn_8014B518(AI_GetMover(self->ai), &self->dest, -1);
     if (!fn_80134870(self->ai) || (fn_80134870(self->ai) && !fn_800B0C58(fn_80134870(self->ai))))
         fn_8014F7B0(AI_GetTargetList(self->ai), 0);
     float d = fn_8015E580V(fn_800B1724(*AI_GetEntity(self->ai)), &self->dest);
     if (d < 4.0f) {
         if (fn_800CCAE8(*AI_GetActor(self->ai)))
-            AI_ClearStateBit(self->ai, 0x20);
+            AI_DisableBehavior(self->ai, 0x20);
     }
     if (fn_801368B8(self->ai)) {
         if (fn_800861EC(AI_GetEntity(self->ai))) {
-            AI_SetStateBit(self->ai, 0x18);
-            AI_ClearStateBit(self->ai, 5);
-            AI_SetStateBit(self->ai, 0x28);
+            AI_EnableBehavior(self->ai, 0x18);
+            AI_DisableBehavior(self->ai, 5);
+            AI_EnableBehavior(self->ai, 0x28);
         } else if (d > 2.0f) {
-            AI_SetStateBit(self->ai, 0xe);
+            AI_EnableBehavior(self->ai, 0xe);
         }
     }
     if (fn_8008606C(AI_GetEntity(self->ai)) && d > 4.0f)
-        AI_SetStateBit(self->ai, 0x20);
+        AI_EnableBehavior(self->ai, 0x20);
     if (fn_804628AC(self->ai)) {
         if (fn_80085F7C(AI_GetEntity(self->ai)))
-            AI_SetStateBit(self->ai, 0xe);
+            AI_EnableBehavior(self->ai, 0xe);
         if (fn_8008606C(AI_GetEntity(self->ai)))
-            AI_SetStateBit(self->ai, 0x20);
+            AI_EnableBehavior(self->ai, 0x20);
     }
     return 1;
 }
@@ -1866,18 +1866,18 @@ extern "C" int Task_MoveTo_Update(register MoveTo *self)
         Vector v;
         if (fn_804628AC(self->ai)) {
             if (fn_80085F7C(AI_GetEntity(self->ai)))
-                AI_SetStateBit(self->ai, 0xe);
+                AI_EnableBehavior(self->ai, 0xe);
             if (fn_8008606C(AI_GetEntity(self->ai)))
-                AI_SetStateBit(self->ai, 0x20);
+                AI_EnableBehavior(self->ai, 0x20);
         }
         d = fn_8015E580V(fn_800B1724(*AI_GetEntity(self->ai)), &self->dest);
         if (d < 4.0f) {
             if (fn_800CCA58(*AI_GetActor(self->ai)))
-                AI_ClearStateBit(self->ai, 0xe);
+                AI_DisableBehavior(self->ai, 0xe);
         }
         if (d < 8.0f) {
             if (fn_800CCAE8(*AI_GetActor(self->ai)))
-                AI_ClearStateBit(self->ai, 0x20);
+                AI_DisableBehavior(self->ai, 0x20);
         }
         if (!fn_800861EC(AI_GetEntity(self->ai)))
             d = fn_804290F8(fn_800B1724(*AI_GetEntity(self->ai)), &self->dest);
@@ -1905,7 +1905,7 @@ extern "C" int Task_ForceControl_Exit(register Self *self)
 extern "C" int Task_ForceControl_Update(register Self *self)
 {
     if (fn_80151B90(self->brain, self)) {
-        if (fn_80461D48(self->ai, 0x33))
+        if (AI_TestCondition(self->ai, 0x33))
             AI_SetTaskDone(self, 1);
     } else {
     }
@@ -1926,7 +1926,7 @@ extern "C" int Task_Stop_Exit(register Self *self)
 // Done once state bit 0x33 is set.
 extern "C" int Task_Stop_Update(register Self *self)
 {
-    if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
+    if (fn_80151B90(self->brain, self) && AI_TestCondition(self->ai, 0x33)) {
         AI_SetTaskDone(self, 1);
     } else {
     }
@@ -1935,16 +1935,16 @@ extern "C" int Task_Stop_Update(register Self *self)
 
 extern "C" int Task_Enslave_Enter(register Self *self)
 {
-    AI_SaveTaskStateBits(self);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
+    AI_SaveTaskBehaviors(self);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
     fn_8014B900(AI_GetMover(self->ai));
     return 1;
 }
 
 extern "C" int Task_Enslave_Exit(register Self *self)
 {
-    AI_RestoreTaskStateBits(self);
+    AI_RestoreTaskBehaviors(self);
     return 1;
 }
 
@@ -1984,7 +1984,7 @@ extern "C" int Task_ForceJump_Exit(register Self *self)
 // Done once state bit 0x33 is set.
 extern "C" int Task_ForceJump_Update(register Self *self)
 {
-    if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
+    if (fn_80151B90(self->brain, self) && AI_TestCondition(self->ai, 0x33)) {
         AI_SetTaskDone(self, 1);
     } else {
     }
@@ -2005,7 +2005,7 @@ extern "C" int Task_Swing_Exit(register Self *self)
 // Done once state bit 0x33 is set.
 extern "C" int Task_Swing_Update(register Self *self)
 {
-    if (fn_80151B90(self->brain, self) && fn_80461D48(self->ai, 0x33)) {
+    if (fn_80151B90(self->brain, self) && AI_TestCondition(self->ai, 0x33)) {
         AI_SetTaskDone(self, 1);
     } else {
     }
@@ -2106,17 +2106,17 @@ extern "C" int Task_GoGetAndThrowAt_Enter(register Self *self)
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0xf);
-    AI_SetStateBit(self->ai, 0x15);
-    AI_SetStateBit(self->ai, 0x16);
-    AI_SetStateBit(self->ai, 0x17);
-    AI_SetStateBit(self->ai, 0x1b);
-    AI_SetStateBit(self->ai, 1);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0xf);
+    AI_EnableBehavior(self->ai, 0x15);
+    AI_EnableBehavior(self->ai, 0x16);
+    AI_EnableBehavior(self->ai, 0x17);
+    AI_EnableBehavior(self->ai, 0x1b);
+    AI_EnableBehavior(self->ai, 1);
     return 1;
 }
 
@@ -2162,13 +2162,13 @@ extern "C" int Task_GoGetAndThrowAt_Update(register GetThrow *self)
         if (fn_804290F8E(fn_800B1724(*(Ent *)thing), fn_800B1724(*AI_GetEntity(self->ai))) < reach) {
             fn_80442414((TaskBase *)self, 2);
             fn_801501AC(AI_GetTargetList(self->ai), (Ent *)thing);
-            AI_SetStateBit(self->ai, 0x13);
+            AI_EnableBehavior(self->ai, 0x13);
         }
         break;
     }
     case 2:
         if (fn_800CD9B0(*AI_GetActor(self->ai))) {
-            AI_ClearStateBit(self->ai, 0x13);
+            AI_DisableBehavior(self->ai, 0x13);
             fn_80442414((TaskBase *)self, 3);
         } else {
         }
@@ -2199,8 +2199,8 @@ extern "C" int fn_801362DC(void *ai, int id);
 extern "C" int Task_WallClimb_Enter(register Self *self)
 {
     fn_8014B900(AI_GetMover(self->ai));
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0x21);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0x21);
     fn_801362DC(self->ai, 4);
     fn_801513D8(AI_GetBrain(self->ai), (int)(fn_80464318(self->ai) * 20.0f));
     return 1;
@@ -2224,10 +2224,10 @@ extern "C" int Task_WallClimb_Update(register Self *self)
     }
     if (fn_80151430(AI_GetBrain(self->ai)))
         return 1;
-    AI_ClearStateBit(self->ai, 0x21);
-    AI_ClearStateBit(self->ai, 0x22);
+    AI_DisableBehavior(self->ai, 0x21);
+    AI_DisableBehavior(self->ai, 0x22);
     if (!fn_8015E830(self->ai))
-        AI_SetStateBit(self->ai, 0x22);
+        AI_EnableBehavior(self->ai, 0x22);
     else
         fn_801513D8(AI_GetBrain(self->ai), (int)(fn_80464318(self->ai) * 20.0f));
     return 1;
@@ -2313,10 +2313,10 @@ extern "C" int Task_RangedOnly_Enter(register RangedOnly *self)
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 9);
-    AI_SetStateBit(self->ai, 4);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 9);
+    AI_EnableBehavior(self->ai, 4);
     if (self->target) {
         Ent *t = fn_800ACFA8(self->target);
         fn_801501AC(AI_GetTargetList(self->ai), t);
@@ -2353,7 +2353,7 @@ extern "C" int Task_RangedOnly_Update(register RangedOnly *self)
     }
     if (fn_80442508(fn_80151C8C(self->brain), 1)) {
         if (!fn_80151430(self->brain)) {
-            AI_ClearStateBit(self->ai, 9);
+            AI_DisableBehavior(self->ai, 9);
             fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xb9));
             fn_804424A0(fn_80151C8C(self->brain), 1);
             fn_8044243C(fn_80151C8C(self->brain), 0);
@@ -2371,9 +2371,9 @@ extern "C" int Task_RangedOnly_Update(register RangedOnly *self)
                 len -= fn_800B2670(*t);
                 if (!fn_8004A9CCV(&from, &dir, len, 0x8000, 0, fn_800B24AC(*AI_GetEntity(self->ai)),
                                   fn_800B1CC8(*AI_GetEntity(self->ai)), 0, 3))
-                    AI_SetStateBit(self->ai, 9);
+                    AI_EnableBehavior(self->ai, 9);
                 else
-                    AI_ClearStateBit(self->ai, 9);
+                    AI_DisableBehavior(self->ai, 9);
             }
             fn_801513D8(self->brain, fn_800B18EC(*AI_GetEntity(self->ai), 0xb8));
             fn_8044243C(fn_80151C8C(self->brain), 1);
@@ -2400,13 +2400,13 @@ extern "C" int Task_ClimbAttack_Enter(register Self *self)
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
-    AI_SetStateBit(self->ai, 0x15);
-    AI_SetStateBit(self->ai, 0x16);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
+    AI_EnableBehavior(self->ai, 0x15);
+    AI_EnableBehavior(self->ai, 0x16);
     void *link = fn_8014630C(fn_8013726C(self->ai), fn_800B1724(*AI_GetEntity(self->ai)));
     if (link) {
         Vector mid;
@@ -2414,7 +2414,7 @@ extern "C" int Task_ClimbAttack_Enter(register Self *self)
         fn_80435530(&mid, 0.5f);
         fn_804640E8(self->ai, &mid);
         fn_80442414((TaskBase *)self, 1);
-        AI_SetStateBit(self->ai, 0x24);
+        AI_EnableBehavior(self->ai, 0x24);
         AI_SetMoverMoveDest(AI_GetMover(self->ai), &mid);
         fn_80135F94(self->ai);
     } else {
@@ -2443,11 +2443,11 @@ extern "C" int Task_ClimbAttack_Update(register Self *self)
         AI_SetTaskDone(self, 1);
         return 0;
     }
-    if (fn_80461D48(self->ai, 0x28)) {
+    if (AI_TestCondition(self->ai, 0x28)) {
         AI_SetTaskDone(self, 1);
         return 0;
     }
-    AI_ClearStateBit(self->ai, 7);
+    AI_DisableBehavior(self->ai, 7);
     Ent *t = fn_80134870(self->ai);
     if (!t)
         fn_8014F7B0(AI_GetTargetList(self->ai), 3);
@@ -2456,9 +2456,9 @@ extern "C" int Task_ClimbAttack_Update(register Self *self)
         AI_SetTaskDone(self, 1);
     } else if (fn_800CC96C(*AI_GetActor(self->ai)) && fn_80151470(self->brain) > 2000) {
         if (fn_8015EC1C(fn_80461F10(self->ai)))
-            AI_SetStateBit(self->ai, 8);
+            AI_EnableBehavior(self->ai, 8);
         if (fn_8015EC1C(fn_80461F68(self->ai)))
-            AI_SetStateBit(self->ai, 9);
+            AI_EnableBehavior(self->ai, 9);
     }
     return 1;
 }
@@ -2467,16 +2467,16 @@ extern "C" int Task_ForceSuperBlock_Enter(register Self *self)
 {
     fn_8014B900(AI_GetMover(self->ai));
     fn_8046412C(self->ai, 3);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0x25);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0x25);
     return 1;
 }
 
 extern "C" int Task_ForceSuperBlock_Exit(register Self *self)
 {
-    AI_ClearStateBit(self->ai, 0x25);
+    AI_DisableBehavior(self->ai, 0x25);
     fn_80136214(self->ai, 0x25);
     return 1;
 }
@@ -2490,16 +2490,16 @@ extern "C" int Task_ForcePowerStand_Enter(register Self *self)
 {
     fn_8014B900(AI_GetMover(self->ai));
     fn_8046412C(self->ai, 3);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0x26);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0x26);
     return 1;
 }
 
 extern "C" int Task_ForcePowerStand_Exit(register Self *self)
 {
-    AI_ClearStateBit(self->ai, 0x26);
+    AI_DisableBehavior(self->ai, 0x26);
     fn_80136214(self->ai, 0x26);
     return 1;
 }
@@ -2520,10 +2520,10 @@ extern "C" int Task_HoverAndFire_Enter(register HoverFire *self)
     fn_8046412C(self->ai, 0);
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 0x27);
-    AI_SetStateBit(self->ai, 9);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 0x27);
+    AI_EnableBehavior(self->ai, 9);
     fn_8014F7B0(AI_GetTargetList(self->ai), 1);
     fn_801513D8(self->brain, fn_8015EA18(2000) + 1000);
     self->hover = 0;
@@ -2549,17 +2549,17 @@ extern "C" int Task_MobilityCharge_Enter(register Self *self)
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 0x1a);
-    AI_SetStateBit(self->ai, 0x1c);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 0x1a);
+    AI_EnableBehavior(self->ai, 0x1c);
     if (fn_80085F7C(AI_GetEntity(self->ai))) {
-        AI_SetStateBit(self->ai, 0xe);
-        AI_SetStateBit(self->ai, 1);
+        AI_EnableBehavior(self->ai, 0xe);
+        AI_EnableBehavior(self->ai, 1);
     }
     if (fn_8008606C(AI_GetEntity(self->ai))) {
-        AI_SetStateBit(self->ai, 0x20);
-        AI_SetStateBit(self->ai, 2);
+        AI_EnableBehavior(self->ai, 0x20);
+        AI_EnableBehavior(self->ai, 2);
     }
     fn_8014F7B0(AI_GetTargetList(self->ai), 0);
     fn_801513D8(self->brain, 2000);
@@ -2575,8 +2575,8 @@ extern "C" int Task_MobilityCharge_Update(register Self *self)
 {
     if (!fn_80151430(self->brain))
         AI_SetTaskDone(self, 1);
-    if (fn_800CE4D0(AI_GetActor(self->ai)) && AI_TestStateBit(self->ai, 0x1b))
-        AI_ClearStateBit(self->ai, 0x1b);
+    if (fn_800CE4D0(AI_GetActor(self->ai)) && AI_IsBehaviorEnabled(self->ai, 0x1b))
+        AI_DisableBehavior(self->ai, 0x1b);
     return 1;
 }
 
@@ -2588,11 +2588,11 @@ extern "C" int Task_PowerStand_Enter(register Self *self)
     fn_8046412C(self->ai, 3);
     fn_8046412C(self->ai, 5);
     fn_8046412C(self->ai, 6);
-    fn_804618B0(fn_80462780(self->ai));
-    AI_SetStateBit(self->ai, 0);
-    AI_SetStateBit(self->ai, 4);
-    AI_SetStateBit(self->ai, 0xf);
-    AI_SetStateBit(self->ai, 0x29);
+    fn_804618B0(AI_GetBehaviorSet(self->ai));
+    AI_EnableBehavior(self->ai, 0);
+    AI_EnableBehavior(self->ai, 4);
+    AI_EnableBehavior(self->ai, 0xf);
+    AI_EnableBehavior(self->ai, 0x29);
     fn_8014B900(AI_GetMover(self->ai));
     return 1;
 }
@@ -2634,19 +2634,19 @@ extern "C" int Task_PowerStand_Update(register Self *self)
             && ((dist < reach * 2.0f && fn_800CC6DC(*fn_80085954(fn_800B14A0(*t))) != 0xd)
                 || fn_80086730(actor) > fn_8008677C(actor) * 0.5f))
             AI_SetTaskDone(self, 1);
-        else if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-                 || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+        else if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+                 || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
                  || fn_8015FFD4(self->ai))
-            AI_SetStateBit(self->ai, 7);
+            AI_EnableBehavior(self->ai, 7);
         else
-            AI_ClearStateBit(self->ai, 7);
+            AI_DisableBehavior(self->ai, 7);
     } else if (fn_80086730(actor) > fn_8008677C(actor) * 0.5f)
         AI_SetTaskDone(self, 1);
-    else if ((fn_80442508(fn_80461DD4(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
-             || (fn_80442508(fn_80461DD4(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
+    else if ((fn_80442508(AI_GetEvents(self->ai), 1) && fn_8015E97C(fn_80464344(self->ai) / 100.0f * 20.0f))
+             || (fn_80442508(AI_GetEvents(self->ai), 2) && fn_8015E97C(fn_80462A04(self->ai) / 100.0f * 80.0f))
              || fn_8015FFD4(self->ai))
-        AI_SetStateBit(self->ai, 7);
+        AI_EnableBehavior(self->ai, 7);
     else
-        AI_ClearStateBit(self->ai, 7);
+        AI_DisableBehavior(self->ai, 7);
     return 1;
 }

@@ -91,7 +91,7 @@ void *fn_800B1724(Ent &actor);
 float fn_804290F8(void *a, void *b);
 int fn_800CC60C(void *self);
 void *fn_80085980(void *actor);
-int AI_TestStateBit(void *o, unsigned int bit);
+int AI_IsBehaviorEnabled(void *o, unsigned int bit);
 int fn_800CCF60(void *self);
 int fn_800CC6DC(void *e);
 int fn_800B0CC0(Ent *a);
@@ -115,7 +115,7 @@ void fn_803A0588(char *tbl, int a, int b, void *n1, void *n2, int d, void *e, un
 extern "C" int fn_800E5B2C(register Obj *self, Ent *other, int d, void *e, float f, int u1, int u2)
 {
     int near = fn_804290F8(fn_800B1724(*other), fn_800B1724(*Entity_GetActor(self))) < 2.0f;
-    if ((fn_800CC60C(self) && AI_TestStateBit(fn_80085980(Entity_GetActor(self)), 7) && near && fn_800CCF60(self))
+    if ((fn_800CC60C(self) && AI_IsBehaviorEnabled(fn_80085980(Entity_GetActor(self)), 7) && near && fn_800CCF60(self))
         || fn_800CC6DC(self) == 0x22) {
         Ent *x = other;
         if (fn_800B0CC0(x)

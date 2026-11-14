@@ -110,8 +110,8 @@ void fn_80147CF8(void *c, int a);
 void fn_80147D68(void *c, int a);
 int fn_804621DC(void *e);
 void *fn_80085980(void *actor);
-void fn_80461CC0(void *ai, int bit);
-void fn_80461D04(void *ai, int bit);
+void AI_SetCondition(void *ai, int bit);
+void AI_ClearCondition(void *ai, int bit);
 void *fn_80461E2C(void *ai);
 void fn_8042DC84(void *p, int v);
 void fn_80134028(AIObject *ai);
@@ -676,20 +676,20 @@ extern "C" void fn_80133B94(void *actor, int a, int b, int c)
     ai = fn_80085980(actor);
     if (ai) {
         if (a) {
-            fn_80461CC0(ai, 0x39);
+            AI_SetCondition(ai, 0x39);
         } else {
-            fn_80461D04(ai, 0x39);
+            AI_ClearCondition(ai, 0x39);
         }
         if (b) {
             fn_8042DC84(fn_80461E2C(ai), b);
-            fn_80461CC0(ai, 0x3a);
+            AI_SetCondition(ai, 0x3a);
         } else {
-            fn_80461D04(ai, 0x3a);
+            AI_ClearCondition(ai, 0x3a);
         }
         if (c) {
-            fn_80461CC0(ai, 0x3b);
+            AI_SetCondition(ai, 0x3b);
         } else {
-            fn_80461D04(ai, 0x3b);
+            AI_ClearCondition(ai, 0x3b);
         }
     }
 }
@@ -775,7 +775,7 @@ unsigned int fn_8015EA6C(int n, float *w);
 void fn_8015105C(void *brain, int id);
 void fn_8014DEB8(void *p);
 int fn_8015EA18(int n);
-void *fn_80461DD4(AIObject *ai);
+void *AI_GetEvents(AIObject *ai);
 }
 
 extern "C" void fn_80133E5C(register AIObject *self, void *ent)
@@ -888,7 +888,7 @@ extern "C" void fn_80134280(register AIObject *self)
     self->f528 = 0;
     self->f524 = 1;
     self->f594 = 0;
-    fn_804618B0(fn_80461DD4(self));
+    fn_804618B0(AI_GetEvents(self));
 }
 
 extern "C" {
@@ -1078,7 +1078,7 @@ extern "C" {
 int fn_8013513C(AIObject *ai);
 int fn_801352EC(AIObject *ai, Vector *pos, int *n);
 int fn_80135400(AIObject *ai, float t, Vector *pos);
-int fn_80461D48(void *ai, int bit);
+int AI_TestCondition(void *ai, int bit);
 void *fn_8013726C(AIObject *ai);
 void *fn_80147ACC(void *rec, void *actor);
 unsigned int fn_8042EFF8(void *clock);
@@ -1099,7 +1099,7 @@ extern "C" void fn_80134BE0(register AIObject *self, float t)
         self->f53C = 0;
         return;
     }
-    if (fn_80461D48(self, 3)) {
+    if (AI_TestCondition(self, 3)) {
         void *p = fn_80147ACC(fn_8013726C(self), AI_GetEntity(self));
         if (p) {
             if (!fn_801464E4(p, &v)) {
@@ -1204,9 +1204,9 @@ extern "C" int fn_80134D64(register AIObject *self)
         fn_8014F7B0(AI_GetTargetList(self), 0);
         ((ActorFlags *)self->f530)->f304 |= 0x20000000;
         self->f53C = 0;
-        if (fn_80461D48(self, 0x39) && fn_80461D48(self, 0x3b)) {
-            fn_80461D04(self, 0x39);
-            fn_80461D04(self, 0x3b);
+        if (AI_TestCondition(self, 0x39) && AI_TestCondition(self, 0x3b)) {
+            AI_ClearCondition(self, 0x39);
+            AI_ClearCondition(self, 0x3b);
         }
         return 1;
     }
@@ -1222,7 +1222,7 @@ int fn_800CCC28(Ent &actor);
 
 extern "C" int fn_8013513C(register AIObject *self)
 {
-    if (!lbl_8066BF34 && !fn_80461D48(self, 0x39)) {
+    if (!lbl_8066BF34 && !AI_TestCondition(self, 0x39)) {
         return 0;
     }
     PlayerEnt *actor = AI_GetEntity(self);
@@ -1238,7 +1238,7 @@ extern "C" int fn_8013513C(register AIObject *self)
     if (fn_8015F384(self)) {
         return 0;
     }
-    if (fn_80461D48(self, 0x20) || fn_80461D48(self, 0x32)) {
+    if (AI_TestCondition(self, 0x20) || AI_TestCondition(self, 0x32)) {
         return 0;
     }
     if (fn_800CE4D0(AI_GetActor(self))) {
@@ -1262,7 +1262,7 @@ int fn_800B1CC8(Ent &actor);
 
 extern "C" int fn_801352EC(register AIObject *self, Vector *pos, int *n)
 {
-    if (fn_80461D48(self, 0x3a) && fn_80461D48(self, 0x39)) {
+    if (AI_TestCondition(self, 0x3a) && AI_TestCondition(self, 0x39)) {
         fn_8042DC84V(pos, (Vector *)fn_80461E2C(self));
         *n = fn_8004DD38(fn_80430050(lbl_8052F060), pos);
         return 1;
@@ -1294,7 +1294,7 @@ float fn_8014C0B8(void *p, AIObject *ai, Vector *from, Vector *to);
 
 extern "C" int fn_80135400(register AIObject *self, float t, Vector *pos)
 {
-    if (fn_80461D48(self, 0x39)) {
+    if (AI_TestCondition(self, 0x39)) {
         return 1;
     }
     float d = fn_804290F8(pos, fn_800B1724(*AI_GetEntity(self)));
@@ -1388,8 +1388,8 @@ extern "C" {
 extern int lbl_8066BF44; // countdown handed to lbl_80593BE8's setValue
 extern Actor10 lbl_80593BE8_A __asm__("lbl_80593BE8");
 int fn_8008653C(void *actor);
-int AI_TestStateBit(AIObject *ai, int v);
-void fn_80461D98(AIObject *ai);
+int AI_IsBehaviorEnabled(AIObject *ai, int v);
+void AI_ClearConditions(AIObject *ai);
 void fn_80135E48(AIObject *ai);
 int fn_80085EEC(void *actor);
 int fn_80085F1C(void *actor);
@@ -1432,11 +1432,11 @@ extern "C" void fn_8013589C(register AIObject *self)
         fn_8014B900(self->f210);
         return;
     }
-    if (AI_TestStateBit(self, 1) && AI_TestStateBit(self, 2)) {
+    if (AI_IsBehaviorEnabled(self, 1) && AI_IsBehaviorEnabled(self, 2)) {
         i = 0;
         i++;
     }
-    fn_80461D98(self);
+    AI_ClearConditions(self);
     for (i = 0; i < 26; i++) {
         self->f44[i] = 0;
     }

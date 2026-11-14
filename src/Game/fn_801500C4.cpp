@@ -523,8 +523,8 @@ extern "C" void fn_80150FFC(register BrainSelf *self, void *task)
 
 extern "C" {
 int AI_GetTaskDone(AITask *t);
-void AI_RestoreTaskStateBits(AITask *t);
-void AI_SaveTaskStateBits(AITask *t);
+void AI_RestoreTaskBehaviors(AITask *t);
+void AI_SaveTaskBehaviors(AITask *t);
 void fn_80152A78(TaskData *t);
 void fn_80152A10(TaskData *t);
 void fn_801515C4(BrainSelf *self, AITask *t);
@@ -547,13 +547,13 @@ extern "C" AITask *fn_8015105C(register BrainSelf *self, int id)
         return 0;
     if (self->cur) {
         self->cur->exit();
-        AI_RestoreTaskStateBits(self->cur);
+        AI_RestoreTaskBehaviors(self->cur);
         fn_80152A78(self->cur);
         fn_801515C4(self, self->cur);
     }
     self->tasks[self->count++] = t;
     self->cur = t;
-    AI_SaveTaskStateBits(self->cur);
+    AI_SaveTaskBehaviors(self->cur);
     fn_80152A10(self->cur);
     fn_801513D8(self, 0);
     int r = self->cur->enter();
@@ -573,14 +573,14 @@ extern "C" int fn_8015123C(register BrainSelf *self, int id)
         return 0;
     t->exit();
     fn_80152A78(t);
-    AI_RestoreTaskStateBits(t);
+    AI_RestoreTaskBehaviors(t);
     fn_801515C4(self, t);
     AI_DeferTaskDelete(self, t);
     self->tasks[--self->count] = 0;
     t = (AITask *)self->tasks[self->count - 1];
     self->cur = t;
     fn_80152A10(self->cur);
-    AI_SaveTaskStateBits(self->cur);
+    AI_SaveTaskBehaviors(self->cur);
     fn_801513D8(self, 0);
     self->cur->enter();
     if (fn_80133A08()) {
@@ -651,7 +651,7 @@ float fn_80463BA0(void *e);
 Vector *fn_80462C04(void *e);
 unsigned int fn_804620C8(void *e);
 int fn_804620F4(void *e, unsigned int i);
-void fn_80463A0C(void *ai, int x);
+void AI_SetControllerAction(void *ai, int x);
 int fn_80463524(void *e);
 void fn_8042FE08(Vector *dst, Vector *src, float w);
 void fn_80447C38(Vector *v);
@@ -686,7 +686,7 @@ extern "C" int fn_80151674(register BrainSelf *self)
         if (fn_804620C8(e)) {
             for (unsigned int j = 0; j < fn_804620C8(e); j++) {
                 int x = fn_804620F4(e, j);
-                fn_80463A0C(fn_80151BF8(self), x);
+                AI_SetControllerAction(fn_80151BF8(self), x);
             }
         }
         if (!fn_80463524(e) || fn_80463524(e) == 7) {
@@ -968,7 +968,7 @@ extern "C" {
 void *fn_80463F64(void *ai);
 int fn_800B0CC0(Ent *e);
 int AI_GetMoverDestThing(void *a);
-void fn_804628D8(void *ai, int a);
+void AI_SetAvoidObject(void *ai, int a);
 }
 
 extern "C" Ent *fn_801526E4(void *ai, Vector *out, float *weight)
@@ -992,7 +992,7 @@ extern "C" Ent *fn_801526E4(void *ai, Vector *out, float *weight)
                 return e;
             }
         } else {
-            fn_804628D8(ai, 0);
+            AI_SetAvoidObject(ai, 0);
         }
     }
     for (int i = 0; i < n; i++) {

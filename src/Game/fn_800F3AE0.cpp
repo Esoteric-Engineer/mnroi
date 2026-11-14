@@ -31,7 +31,7 @@ void fn_800CD484(void *self, int a);
 int fn_800CC60C(void *self);
 void *fn_80085980(void *actor);
 void fn_80136214(void *p, int a);
-void AI_ClearStateBit(void *p, unsigned int bit);
+void AI_DisableBehavior(void *p, unsigned int bit);
 }
 
 extern "C" int fn_800F3AE0(register Obj *self, int unused)
@@ -44,7 +44,7 @@ extern "C" int fn_800F3AE0(register Obj *self, int unused)
     fn_800CD484(self, 0);
     if (fn_800CC60C(self) && fn_80085980(Entity_GetActor(self))) {
         fn_80136214(fn_80085980(Entity_GetActor(self)), 0x19);
-        AI_ClearStateBit(fn_80085980(Entity_GetActor(self)), 0x19);
+        AI_DisableBehavior(fn_80085980(Entity_GetActor(self)), 0x19);
     }
     return 1;
 }

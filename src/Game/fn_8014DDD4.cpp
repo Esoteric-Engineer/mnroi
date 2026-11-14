@@ -108,8 +108,8 @@ void fn_8014DEB8(Self *self);
 void fn_8014FAF4(Self *self);
 void fn_8014FD94(Self *self);
 Ent *fn_8014F8BC(Self *self);
-void fn_80461D04(void *a, int b);
-void fn_80461CC0(void *a, int b);
+void AI_ClearCondition(void *a, int b);
+void AI_SetCondition(void *a, int b);
 Ent *fn_80134870(void *a);
 PEnt *AI_GetEntity(void *a);
 void *AI_GetActor(void *a);
@@ -176,7 +176,7 @@ int fn_800CC8EC(Ent &e);
 int fn_800CCB38(Ent &e);
 int fn_800CCEEC(Ent &e);
 int fn_800CCE78(Ent &e);
-void *fn_80461DD4(void *ai);
+void *AI_GetEvents(void *ai);
 int fn_800CDA20(Ent &e);
 Ent *fn_800CD9B0(Ent &e);
 int fn_800A4130(void *p);
@@ -304,7 +304,7 @@ extern "C" void fn_8014E224(register Self *self)
 extern "C" void fn_8014E288(register Self *self)
 {
     if (fn_8042EFF8(lbl_80593BE8) > self->f114) {
-        fn_80461D04(self->f0, 11);
+        AI_ClearCondition(self->f0, 11);
         float lo = 0.5f;
         float hi = 4.0f;
         if (fn_80134870(self->f0)) {
@@ -329,7 +329,7 @@ extern "C" void fn_8014E288(register Self *self)
             fn_8042F76C(&v);
             float f = fn_8042EBF4(&v, fn_800B1750(*a));
             if (f > 0.5f)
-                fn_80461CC0(self->f0, 11);
+                AI_SetCondition(self->f0, 11);
         }
     }
 }
@@ -337,7 +337,7 @@ extern "C" void fn_8014E288(register Self *self)
 extern "C" void fn_8014E4FC(register Self *self)
 {
     if (fn_8042EFF8(lbl_80593BE8) > self->f118) {
-        fn_80461D04(self->f0, 13);
+        AI_ClearCondition(self->f0, 13);
         Vector v;
         if (!fn_8015F6CC(self->f0, &v))
             fn_8042DC84(&v, fn_800B1750(*AI_GetEntity(self->f0)));
@@ -351,7 +351,7 @@ extern "C" void fn_8014E4FC(register Self *self)
     PEnt *a = AI_GetEntity(self->f0);
     void *b = AI_GetActor(self->f0);
     if (self->fEC)
-        fn_80461CC0(self->f0, 13);
+        AI_SetCondition(self->f0, 13);
 }
 
 // Sets the AIObject+0xC condition bits from the target, the encounter and the actor's state.
@@ -365,50 +365,50 @@ extern "C" void fn_8014E648(register Self *self)
         target = fn_80134870(self->f0);
     void *rec = fn_80147ACC(fn_8013726C(self->f0), AI_GetEntity(self->f0));
     if (rec) {
-        fn_80461CC0(self->f0, 3);
+        AI_SetCondition(self->f0, 3);
         if (!fn_801464E4(rec, fn_800B1724(*AI_GetEntity(self->f0))))
-            fn_80461CC0(self->f0, 4);
+            AI_SetCondition(self->f0, 4);
     }
     float d;
     if (target) {
-        fn_80461CC0(self->f0, 2);
+        AI_SetCondition(self->f0, 2);
         if (fn_80463994(self->f0, 0)) {
             d = fn_804290F8(fn_800B1724(*target), fn_800B1724(*AI_GetEntity(self->f0)));
             if (d > fn_800B1884(*AI_GetEntity(self->f0), 213))
-                fn_80461CC0(self->f0, 10);
+                AI_SetCondition(self->f0, 10);
             else if (d > fn_800B1884(*AI_GetEntity(self->f0), 212))
-                fn_80461CC0(self->f0, 9);
+                AI_SetCondition(self->f0, 9);
             else if (d > fn_800B1884(*AI_GetEntity(self->f0), 211))
-                fn_80461CC0(self->f0, 8);
+                AI_SetCondition(self->f0, 8);
             else if (d > fn_800B1884(*AI_GetEntity(self->f0), 210))
-                fn_80461CC0(self->f0, 7);
+                AI_SetCondition(self->f0, 7);
             else if (d > fn_800B1884(*AI_GetEntity(self->f0), 209))
-                fn_80461CC0(self->f0, 6);
+                AI_SetCondition(self->f0, 6);
             else
-                fn_80461CC0(self->f0, 5);
+                AI_SetCondition(self->f0, 5);
         }
         if (fn_80463994(self->f0, 5)) {
             if (fn_800B0C58(*target)) {
                 Ctrl *ctrl = fn_80085954(fn_800B14A0(*target));
                 if (ctrl) {
                     if (ctrl->s42())
-                        fn_80461CC0(self->f0, 0x25);
+                        AI_SetCondition(self->f0, 0x25);
                     if (fn_800CC9D8(*ctrl))
-                        fn_80461CC0(self->f0, 0x26);
+                        AI_SetCondition(self->f0, 0x26);
                     if (fn_800CCA58(*ctrl))
-                        fn_80461CC0(self->f0, 0x27);
+                        AI_SetCondition(self->f0, 0x27);
                     if (fn_800CCC28(*ctrl))
-                        fn_80461CC0(self->f0, 0x28);
+                        AI_SetCondition(self->f0, 0x28);
                     if (fn_800CD064(*ctrl) || fn_800CD0EC(*ctrl))
-                        fn_80461CC0(self->f0, 0x29);
+                        AI_SetCondition(self->f0, 0x29);
                     if (fn_800CCAE8(*ctrl))
-                        fn_80461CC0(self->f0, 0x2A);
+                        AI_SetCondition(self->f0, 0x2A);
                     if (fn_800CCE00(*ctrl))
-                        fn_80461CC0(self->f0, 0x2C);
+                        AI_SetCondition(self->f0, 0x2C);
                     if (fn_800CD014(*ctrl))
-                        fn_80461CC0(self->f0, 0x2D);
+                        AI_SetCondition(self->f0, 0x2D);
                     if (fn_80086B6C(fn_800B14A0(*target)))
-                        fn_80461CC0(self->f0, 0x30);
+                        AI_SetCondition(self->f0, 0x30);
                     if (self->f104 != fn_800B13D8(*target)) {
                         self->f104 = fn_800B13D8(*target);
                         self->f108 = 0;
@@ -428,19 +428,19 @@ extern "C" void fn_8014E648(register Self *self)
                     if (!self->f10C && self->f110)
                         self->f108 = 200;
                     if (self->f108)
-                        fn_80461CC0(self->f0, 0x31);
+                        AI_SetCondition(self->f0, 0x31);
                 }
             }
             if (rec && !fn_801464E4(rec, fn_800B1724(*target)))
-                fn_80461CC0(self->f0, 0x2B);
+                AI_SetCondition(self->f0, 0x2B);
             if (!fn_8015F008(self->f0) && fn_8015EE34(self->f0, target)) {
                 if (!self->fD0 && self->fD4 > 2000)
-                    fn_80461CC0(self->f0, 0x2E);
+                    AI_SetCondition(self->f0, 0x2E);
                 self->fD0 += fn_804324EC(lbl_80593BE8);
                 self->fD4 = 0;
             } else {
                 if (!self->fD4 && self->fD0 > 2000)
-                    fn_80461CC0(self->f0, 0x2F);
+                    AI_SetCondition(self->f0, 0x2F);
                 self->fD4 += fn_804324EC(lbl_80593BE8);
                 self->fD0 = 0;
             }
@@ -461,7 +461,7 @@ extern "C" void fn_8014E648(register Self *self)
                 Vector e;
                 d = fn_804290F8(&c, &a);
                 if (d < 10.0f)
-                    fn_80461CC0(self->f0, 0x40);
+                    AI_SetCondition(self->f0, 0x40);
                 break;
             }
         }
@@ -476,7 +476,7 @@ extern "C" void fn_8014E648(register Self *self)
         self->fEC = 0;
     if (fn_80463994(self->f0, 3)) {
         if (fn_800CCC28(*fn_8044203C_S(self->f0))) {
-            fn_80461CC0(self->f0, 15);
+            AI_SetCondition(self->f0, 15);
             if (!fn_80462880(self->f0))
                 fn_804639E4(self->f0, fn_8042EFF8(lbl_80593BE8));
         } else if (fn_80462880(self->f0)) {
@@ -484,9 +484,9 @@ extern "C" void fn_8014E648(register Self *self)
         }
     }
     if (fn_800CCA58(*fn_8044203C_S(self->f0)))
-        fn_80461CC0(self->f0, 0x1B);
+        AI_SetCondition(self->f0, 0x1B);
     if (fn_800861EC(AI_GetEntity(self->f0)) || fn_801368B8(self->f0))
-        fn_80461CC0(self->f0, 0x1A);
+        AI_SetCondition(self->f0, 0x1A);
     if (fn_8042EFF8(lbl_80593BE8) > self->f130) {
         self->f130 = fn_8042EFF8(lbl_80593BE8) + fn_8015EA18(500);
         self->fF0 = 0;
@@ -526,64 +526,64 @@ extern "C" void fn_8014E648(register Self *self)
         }
     }
     if (fn_80442508(self->fFC, 0x14))
-        fn_80461CC0(self->f0, 0x14);
+        AI_SetCondition(self->f0, 0x14);
     if (fn_80442508(self->fFC, 0x13))
-        fn_80461CC0(self->f0, 0x13);
+        AI_SetCondition(self->f0, 0x13);
     if (fn_80442508(self->fFC, 0x12))
-        fn_80461CC0(self->f0, 0x12);
+        AI_SetCondition(self->f0, 0x12);
     if (fn_80442508(self->fFC, 0x18))
-        fn_80461CC0(self->f0, 0x18);
+        AI_SetCondition(self->f0, 0x18);
     if (fn_80442508(self->fFC, 0x17))
-        fn_80461CC0(self->f0, 0x17);
+        AI_SetCondition(self->f0, 0x17);
     if (fn_80442508(self->fFC, 0x16))
-        fn_80461CC0(self->f0, 0x16);
+        AI_SetCondition(self->f0, 0x16);
     fn_8014E0B8(self);
     d = AI_GetMoverStuckTime(AI_GetMover(self->f0));
     if (d > 2.0f) {
-        fn_80461CC0(self->f0, 0x34);
-        fn_80461CC0(self->f0, 0x33);
+        AI_SetCondition(self->f0, 0x34);
+        AI_SetCondition(self->f0, 0x33);
     } else if (d > 1.0f) {
-        fn_80461CC0(self->f0, 0x33);
+        AI_SetCondition(self->f0, 0x33);
         int hit;
         if (fn_8015E2FC(self->f0, fn_800B1750(*AI_GetEntity(self->f0)), 1.5f, &hit, 0.0f))
-            fn_80461CC0(self->f0, 0x34);
+            AI_SetCondition(self->f0, 0x34);
     }
     if (fn_800CC8EC(*fn_8044203C_S(self->f0)))
-        fn_80461CC0(self->f0, 0x32);
+        AI_SetCondition(self->f0, 0x32);
     if (fn_800CCB38(*fn_8044203C_S(self->f0)))
-        fn_80461CC0(self->f0, 0x20);
+        AI_SetCondition(self->f0, 0x20);
     if (fn_800CCEEC(*fn_8044203C_S(self->f0))
-        || (fn_80442508(fn_80461DD4(self->f0), 7) && !fn_80442508(fn_80461DD4(self->f0), 8)))
-        fn_80461CC0(self->f0, 0x1E);
+        || (fn_80442508(AI_GetEvents(self->f0), 7) && !fn_80442508(AI_GetEvents(self->f0), 8)))
+        AI_SetCondition(self->f0, 0x1E);
     if (fn_800CCE78(*fn_8044203C_S(self->f0))
-        || (fn_80442508(fn_80461DD4(self->f0), 7) && fn_80442508(fn_80461DD4(self->f0), 8)))
-        fn_80461CC0(self->f0, 0x1F);
+        || (fn_80442508(AI_GetEvents(self->f0), 7) && fn_80442508(AI_GetEvents(self->f0), 8)))
+        AI_SetCondition(self->f0, 0x1F);
     if (fn_800CDA20(*fn_8044203C_S(self->f0))) {
         if (fn_800A4130(fn_800B1478(*fn_800CD9B0(*fn_8044203C_S(self->f0)))))
-            fn_80461CC0(self->f0, 0xE);
+            AI_SetCondition(self->f0, 0xE);
         else
-            fn_80461CC0(self->f0, 0xC);
+            AI_SetCondition(self->f0, 0xC);
     }
     if (fn_80463994(self->f0, 6))
         fn_8014E044(self);
     if (fn_8013338C(AI_GetEntity(self->f0)) || (fn_80134870(self->f0) && !fn_800B0C1C(*fn_80134870(self->f0))))
-        fn_80461CC0(self->f0, 0x35);
+        AI_SetCondition(self->f0, 0x35);
     if (fn_80151AF8(AI_GetBrain(self->f0), 6))
-        fn_80461CC0(self->f0, 0x37);
+        AI_SetCondition(self->f0, 0x37);
     if (fn_80151AF8(AI_GetBrain(self->f0), 14))
-        fn_80461CC0(self->f0, 0x38);
+        AI_SetCondition(self->f0, 0x38);
     if (fn_800CCF60(*fn_8044203C_S(self->f0)))
-        fn_80461CC0(self->f0, 0x24);
+        AI_SetCondition(self->f0, 0x24);
     if (fn_8013379C(self->f0, 0)) {
-        fn_80461CC0(self->f0, 0x3C);
+        AI_SetCondition(self->f0, 0x3C);
         fn_80135668(self->f0, 1);
     }
     if (fn_8014AB90(AI_GetMover(self->f0)))
-        fn_80461CC0(self->f0, 0x3D);
+        AI_SetCondition(self->f0, 0x3D);
     if (fn_800860CC(AI_GetEntity(self->f0)) && fn_8014ACA0(AI_GetMover(self->f0)))
-        fn_80461CC0(self->f0, 0x3E);
+        AI_SetCondition(self->f0, 0x3E);
     if (fn_80463968(self->f0))
-        fn_80461CC0(self->f0, 0x3F);
+        AI_SetCondition(self->f0, 0x3F);
 }
 
 extern "C" void fn_8014F7B0(register Self *self, int mode)

@@ -94,7 +94,7 @@ void fn_80133878(int a, int b);
 void fn_801338C0(int a, int b);
 void fn_80133908(int a);
 void fn_801343B0(void *ai);
-void AI_SetStateBit(void *ai, int v);
+void AI_EnableBehavior(void *ai, int v);
 void fn_80442208(void *ai, float v);
 void fn_80442230(void *ai, float v);
 void fn_80442258(void *ai, float v);
@@ -137,7 +137,7 @@ struct HoverTask : AITask { // id 0x18
 };
 
 HoverTask &fn_8015105CH(void *brain, int id) __asm__("fn_8015105C");
-void AI_ClearStateBit(void *ai, unsigned int bit);
+void AI_DisableBehavior(void *ai, unsigned int bit);
 void fn_80086490(void *x, int v);
 void fn_800864C0(void *x, int v);
 int fn_800ACFA8I(int handle) __asm__("fn_800ACFA8");
@@ -478,7 +478,7 @@ void fn_8007B4D8(int handle, int v)
     void *ai = fn_8007A3A0(handle);
     if (ai == 0)
         return;
-    AI_SetStateBit(ai, v);
+    AI_EnableBehavior(ai, v);
 }
 
 void fn_8007B540(int handle, int on, int b)
@@ -637,7 +637,7 @@ void fn_8007BCC8(int handle, int keep)
     if (&task) {
         task.f28 = 1;
         if (keep == 0)
-            AI_ClearStateBit(ai, 9);
+            AI_DisableBehavior(ai, 9);
     } else {
     }
 }

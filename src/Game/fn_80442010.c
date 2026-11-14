@@ -11,7 +11,7 @@ typedef struct BitSet
 typedef struct AIObject
 {
     char unk0[0x500];
-    BitSet bits; // +0x500
+    BitSet behaviors; // +0x500, enabled behavior ids
     int unk504;
     char unk508[0x24];
     int unk52C;
@@ -76,19 +76,19 @@ void fn_8044243C(register BitSet *b, register unsigned int bit);
 void fn_804424A0(register BitSet *b, register unsigned int bit);
 int fn_80442508(register BitSet *b, register unsigned int bit);
 
-void AI_SetStateBit(register AIObject *o, register unsigned int bit)
+void AI_EnableBehavior(register AIObject *o, register unsigned int bit)
 {
-    fn_8044243C(&o->bits, bit);
+    fn_8044243C(&o->behaviors, bit);
 }
 
-void AI_ClearStateBit(register AIObject *o, register unsigned int bit)
+void AI_DisableBehavior(register AIObject *o, register unsigned int bit)
 {
-    fn_804424A0(&o->bits, bit);
+    fn_804424A0(&o->behaviors, bit);
 }
 
-int AI_TestStateBit(register AIObject *o, register unsigned int bit)
+int AI_IsBehaviorEnabled(register AIObject *o, register unsigned int bit)
 {
-    return fn_80442508(&o->bits, bit);
+    return fn_80442508(&o->behaviors, bit);
 }
 
 void fn_80442208(register AIObject *o, register float v)

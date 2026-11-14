@@ -317,47 +317,28 @@ extern "C" void AI_SetMoverMoveDest(register Sub210 *self, register const Vector
     }
 }
 
-struct Flagged
+struct MoverDest
 {
     char pad[0x8];
-    int i8;      // +0x8
-    BitSet bits; // +0xC
+    int i8; // +0x8
 };
 
-extern "C" int AI_HasMoverDestThing(register Flagged *self)
+extern "C" int AI_HasMoverDestThing(register MoverDest *self)
 {
     return self->i8 != 0;
 }
 
-extern "C" int AI_GetMoverDestThing(register Flagged *self)
+extern "C" int AI_GetMoverDestThing(register MoverDest *self)
 {
     return self->i8;
 }
 
-extern "C" void fn_80461CC0(register Flagged *self, register unsigned int bit)
-{
-    fn_8044243C(&self->bits, bit);
-}
-
-extern "C" void fn_80461D04(register Flagged *self, register unsigned int bit)
-{
-    fn_804424A0(&self->bits, bit);
-}
-
-extern "C" int fn_80461D48(register Flagged *self, register unsigned int bit)
-{
-    return fn_80442508(&self->bits, bit);
-}
-
-extern "C" void fn_80461D98(register Flagged *self)
-{
-    fn_804618B0(&self->bits);
-}
-
 struct AIObject
 {
-    char pad[0x500];
-    BitSet state; // +0x500
+    char pad[0xC];
+    BitSet conditions; // +0xC
+    char pad14[0x4EC];
+    BitSet behaviors; // +0x500, enabled behavior ids
     char pad508[0xC];
     int i514; // +0x514
     char pad518[0xC];
@@ -378,7 +359,27 @@ struct AIObject
     float weight[22]; // +0x598, AI weights (docs/ai.md 4.1)
 };
 
-extern "C" char *fn_80461DD4(register char *self)
+extern "C" void AI_SetCondition(register AIObject *self, register unsigned int bit)
+{
+    fn_8044243C(&self->conditions, bit);
+}
+
+extern "C" void AI_ClearCondition(register AIObject *self, register unsigned int bit)
+{
+    fn_804424A0(&self->conditions, bit);
+}
+
+extern "C" int AI_TestCondition(register AIObject *self, register unsigned int bit)
+{
+    return fn_80442508(&self->conditions, bit);
+}
+
+extern "C" void AI_ClearConditions(register AIObject *self)
+{
+    fn_804618B0(&self->conditions);
+}
+
+extern "C" char *AI_GetEvents(register char *self)
 {
     return self + 0x14;
 }
@@ -678,26 +679,26 @@ struct AIIds
 extern "C" int fn_800ACFA8_i(int id) __asm__("fn_800ACFA8");
 extern "C" int fn_800B0CC0(void *p);
 
-extern "C" AIEnt *fn_8046267C(register AIIds *self)
+extern "C" AIEnt *AI_GetEvent2Actor(register AIIds *self)
 {
     AIEnt *p = (AIEnt *)(AIEntSub *)fn_800ACFA8_i(self->i20);
     return (p && fn_800B0CC0(p)) ? p : 0;
 }
 
-extern "C" void *fn_804626F0(register AIIds *self)
+extern "C" void *AI_GetEventSource(register AIIds *self)
 {
     return fn_800ACFA8(self->i1C);
 }
 
-extern "C" AIEnt *fn_80462734(register AIIds *self)
+extern "C" AIEnt *AI_GetEvent6Actor(register AIIds *self)
 {
     AIEnt *p = (AIEnt *)(AIEntSub *)fn_800ACFA8_i(self->i24);
     return p;
 }
 
-extern "C" BitSet *fn_80462780(register AIObject *self)
+extern "C" BitSet *AI_GetBehaviorSet(register AIObject *self)
 {
-    return &self->state;
+    return &self->behaviors;
 }
 
 extern "C" void fn_804627AC(register AIObject *self, register int v)
@@ -735,7 +736,7 @@ extern "C" int fn_804628AC(register AIObject *self)
     return self->i564;
 }
 
-extern "C" void fn_804628D8(register AIObject *self, register int v)
+extern "C" void AI_SetAvoidObject(register AIObject *self, register int v)
 {
     self->i560 = v;
 }

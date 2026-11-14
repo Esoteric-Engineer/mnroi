@@ -135,7 +135,7 @@ Vector *fn_804635EC(void *spot, int i);
 int fn_8014BAD0(void *mover);
 int fn_80444D38(void *wp);
 void fn_8014D7B0(Nav *nav);
-void fn_80461CC0(void *ai, int id);
+void AI_SetCondition(void *ai, int id);
 int fn_801368B8(void *ai);
 void *fn_8044734C(void *mover);
 int fn_80444D6C(void *spot);
@@ -518,7 +518,7 @@ extern "C" int fn_8014D744(register Nav *self)
     if (!self->f58)
         return 1;
     if (fn_80444570(self->f58))
-        fn_80461CC0(self->f5C, 0x1D);
+        AI_SetCondition(self->f5C, 0x1D);
     return 1;
 }
 
@@ -529,10 +529,10 @@ extern "C" void fn_8014D7B0(register Nav *self)
             fn_8014C660(self);
             return;
         }
-        fn_80461CC0(self->f5C, 0x1C);
+        AI_SetCondition(self->f5C, 0x1C);
     }
     if (AI_GetPathEntry(self) && fn_80444570(AI_GetPathEntry(self)->f0))
-        fn_80461CC0(self->f5C, 0x1D);
+        AI_SetCondition(self->f5C, 0x1D);
     if (!self->f58)
         return;
 }

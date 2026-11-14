@@ -490,7 +490,7 @@ extern "C" void fn_804639E4(register AIObject *self, register int v)
     self->i538 = v;
 }
 
-extern "C" void fn_80463A0C(register AIObject *self, register int i)
+extern "C" void AI_SetControllerAction(register AIObject *self, register int i)
 {
     self->i44[i] = 1;
 }
@@ -551,17 +551,17 @@ extern "C" int AI_GetTaskDone(register AITask *self)
     return self->i1C;
 }
 
-extern "C" void AI_GetStateBits(register AIObject *self, register BitSet *dst);
-extern "C" void AI_SetStateBits(register AIObject *self, register BitSet *src);
+extern "C" void AI_GetBehaviors(register AIObject *self, register BitSet *dst);
+extern "C" void AI_SetBehaviors(register AIObject *self, register BitSet *src);
 
-extern "C" void AI_SaveTaskStateBits(register AITask *self)
+extern "C" void AI_SaveTaskBehaviors(register AITask *self)
 {
-    AI_GetStateBits(self->ai, &self->state);
+    AI_GetBehaviors(self->ai, &self->state);
 }
 
-extern "C" void AI_RestoreTaskStateBits(register AITask *self)
+extern "C" void AI_RestoreTaskBehaviors(register AITask *self)
 {
-    AI_SetStateBits(self->ai, &self->state);
+    AI_SetBehaviors(self->ai, &self->state);
 }
 
 extern "C" float fn_80463BA0(register AIAction *self)
@@ -598,12 +598,12 @@ extern "C" void AI_FlushTaskDeletes(register void *brain)
     lbl_8066BF80 = 0;
 }
 
-extern "C" void AI_SetStateBits(register AIObject *self, register BitSet *src)
+extern "C" void AI_SetBehaviors(register AIObject *self, register BitSet *src)
 {
     fn_80463E14((BitSet *)((char *)self + 0x500), src);
 }
 
-extern "C" void AI_GetStateBits(register AIObject *self, register BitSet *dst)
+extern "C" void AI_GetBehaviors(register AIObject *self, register BitSet *dst)
 {
     fn_80463E14(dst, (BitSet *)((char *)self + 0x500));
 }
