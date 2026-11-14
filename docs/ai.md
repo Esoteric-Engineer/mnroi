@@ -224,7 +224,7 @@ Signatures below are as the matched AI callers declare them.
 
 | Function | Called by | Role (guess) |
 |---|---|---|
-| `fn_8009CFDC`, `fn_8009D024`, `fn_8009D0F4`, `fn_8009D238`, `fn_8009D1D0` | the search | Start a search (bump the stamp `lbl_8066B984`, skipping 0), insert a node in the open list (head `lbl_8066B988`, ordered by f), unlink one, re-sort one, reset a node's search fields |
+| `fn_8009D0F4`, `fn_8009D238`, `fn_8009D1D0` | the search | Unlink a node from the open list (head `lbl_8066B988`, ordered by f), re-sort one, reset a node's search fields |
 
 ---
 

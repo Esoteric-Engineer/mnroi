@@ -163,6 +163,7 @@ int fn_8009C92C(Query *q, Node *last, Vector *from, Vector *to);
 extern Vector lbl_805528D0;
 extern Vector lbl_805528E0;
 extern unsigned short lbl_8066B984; // search id
+extern int lbl_8066B980;
 extern Node *lbl_8066B988;          // open list head
 extern int lbl_8066B98C;            // open list count
 extern float lbl_8066D678;
@@ -617,5 +618,36 @@ void fn_8009CF44(Level *graph)
     }
     graph->nNodes = 0;
     graph->nLinks = 0;
+}
+
+// Starts a search: a fresh stamp (never 0).
+void fn_8009CFDC()
+{
+    if (++lbl_8066B984 == 0)
+        lbl_8066B984 = 1;
+    lbl_8066B980 = 0;
+}
+
+// Puts a node in the open list, ordered by f.
+void fn_8009D024(register Node *node)
+{
+    Node *cur;
+    Node *prev;
+    cur = lbl_8066B988;
+    prev = 0;
+    while (cur && cur->f <= node->f) {
+        prev = cur;
+        cur = cur->next;
+    }
+    node->next = cur;
+    node->prev = prev;
+    if (node->prev)
+        node->prev->next = node;
+    else
+        lbl_8066B988 = node;
+    if (node->next)
+        node->next->prev = node;
+    node->flags |= 1;
+    lbl_8066B98C++;
 }
 }
