@@ -720,6 +720,9 @@ Game/handlers/mainmenu.cpp:
 	.ctors      start:0x80482658 end:0x8048265C
 	.sbss       start:0x8066D778 end:0x8066D77C
 
+Game/handlers/mission.cpp:
+	.text       start:0x8010A448 end:0x8010AF90
+
 Game/fn_8010B7F8.cpp:
 	.text       start:0x8010B7F8 end:0x8010B904
 

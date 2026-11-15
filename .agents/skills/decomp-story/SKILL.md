@@ -80,6 +80,9 @@ lines: what the function does, and which doc holds the rest (`docs/story.md row 
 worth spending on a local fact the next editor can't get from the docs: the `.rodata` pool the unit
 owns, a symbol it renamed, a struct field only this file explains. Comments inside the file are
 one-liners; an offset in a struct is a trailing `// +0xNN`.
+Keep them minimal: a function symbol (`// fn_8044B694`), a struct offset, or a literal's text is fine; an
+explanation of *why* the source is shaped as it is belongs in `docs/matching_notes.md`, and a restatement of
+what the code does is not needed. Don't repeat a comment that another unit's header already carries.
 
 ## Report
 

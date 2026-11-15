@@ -60,7 +60,8 @@ Two engine classes carry every value a handler hands to the UI. The layout and s
 | `AptRef` | 12 | `+0x0` owning object, `+0x4` property name, `+0x8` element index (-1 for the property itself) | |
 | | | `operator[](int index)` -> `AptRef` | `__vc__6AptRefi` (0x8044B5B0) |
 | | | `operator=(char *const &)`, `operator=(const int &)` | `__as__6AptRefRCPc` (0x8044B694), `__as__6AptRefRCi` (0x8044B758) |
-| | | four more `operator=` overloads, value types unknown | 0x8044E9D4, 0x8044EA98, 0x8044EB5C, 0x8044EC20 |
+| | | four more `operator=` overloads | 0x8044E9D4, 0x8044EA98 (value types unknown); 0x8044EB5C takes `const long &` (guess: the track index `fn_80442E7C`) |
+| | | three setters that take the address of a string literal, apparently one per array size (guess) | 0x8044F238 (`char[5]`, "NONE"), 0x8044F2FC (`char[25]`), 0x8044EC20 (`char[1]`, "") |
 
 So `list["aIntel"][i - 1] = value;` compiles to the four-call chain the handlers are built from, and each assigned value gets its own stack temp because the operators take a reference.
 
