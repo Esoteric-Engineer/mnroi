@@ -38,7 +38,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x80087040-0x80088740 | **Chronicle** (`GAME:CHRONS`): loads the `.nsc` tables into `lbl_8054ED80`, `NameTable`, the mission accessors the handlers call, mission start `fn_8008856C`. The `.nsc` parser follows (`Game/fn_80088740.c`, `Game/fn_800887AC.cpp`). The start edge is unconfirmed | 2 |
 | 0x800A3810-0x800A90B0 | Rest of the template file ([`versus.md`](versus.md) section 5, rows 10-12): the scene reader `fn_800A4DF8` (0x1D30) and its helpers `fn_800A7208`, `fn_800A7A0C`, `fn_800A82B8` | 14 |
 | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp`: 66 handlers, mostly wrappers over the save profile. Static init 0x801099E8, `_GLOBAL_.I` 0x8010A40C | 23 |
-| 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp`: 16 handlers. `clashMission_StartLevel` is matched as `Game/fn_8010B7F8.cpp`. Static init 0x8010BB80, `_GLOBAL_.I` 0x8010BE9C | 1 |
+| 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp`: 16 handlers and the static init | 1 |
 | 0x8011C5B0-0x8011F2B0 | **Save profile**, singleton `fn_8011CA74`. The start comes from the pair map (a pair-less run from 0x8011C5B0) and `Game:SaveBuffer`. The file has no static initializer until `_GLOBAL_.I` 0x8012D9F0, and goes on with the memory-card I/O (`Memcard:Thread`, the save file names) and, from about 0x80126F0C, the APT glue (`Game/HUD/glueApt.cpp`) | 3 |
 | 0x801BEE2C-0x801C55F8 | `fn_801BEE2C`, the class registration (section 4.2) | 6 |
 | 0x80468974-~0x8046DF18 | Linkonce tail: the prototype constructors (0x80468974-0x8046B530; `cHelpText`'s, `fn_802116B0`, is in the mission-classes file), then accessors and destructors that only vtables reach, mixed with other files' tail functions | 7 |
@@ -158,7 +158,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 
 | # | Target | Range | Unit | Next action |
 |---|---|---|---|---|
-| 1 | Story handlers | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp` | The 16 handlers, then the static init and `_GLOBAL_.I`. Whole file, claiming `.ctors` and `.sbss` like `Game/handlers/mainmenu.cpp`. Next: `clashMission_Start` 0x8010AF90. Absorb `Game/fn_8010B7F8.cpp`. Give each handler its mangled name ([`versus.md`](versus.md) section 1). The largest are `GetMissionList` (0x724), `GetRewardInfo` (0x4A8) and `SetUpSpecialMission` (0x424) |
+| 1 | Story handlers | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp` | Done |
 | 2 | Chronicle | 0x80087040-0x80088740 | `Game/fn_80087040.cpp` | Identify first: is 0x80087040 a file start (the pair map is inconclusive; 0x80086E2C-0x80087040 is two unclaimed functions), and is it one file with the `.nsc` parser units? 29 functions: init `fn_80087040`, `NameTable`, the accessors `fn_80087C78`-`fn_80088374`, `fn_80087938`, mission start `fn_8008856C` |
 | 3 | Save profile | 0x8011C5B0-0x8011F2B0 | `Game/fn_8011C5B0.cpp` | Find the end edge first; the memory-card I/O follows. 86 functions, 63 of them 0x80 bytes or less. Record the story-progress and unlock fields in section 4.4 |
 | 4 | Class table and base class | 0x8007891C-0x8007A3A0 | `Game/fn_8007891C.cpp` | Table init `fn_8007891C`, find `fn_80078994`, create `fn_800789DC`, then the base methods (73 functions in 0x80078DD4-0x8007A318, 66 small), static init `fn_800796A4`, `_GLOBAL_.I`, `_GLOBAL_.D`. Record what each slot does in section 4.1 |

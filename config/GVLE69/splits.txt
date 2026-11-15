@@ -721,10 +721,10 @@ Game/handlers/mainmenu.cpp:
 	.sbss       start:0x8066D778 end:0x8066D77C
 
 Game/handlers/mission.cpp:
-	.text       start:0x8010A448 end:0x8010AF90
-
-Game/fn_8010B7F8.cpp:
-	.text       start:0x8010B7F8 end:0x8010B904
+	.text       start:0x8010A448 end:0x8010BED8
+	.ctors      start:0x80482660 end:0x80482664
+	.rodata     start:0x80491DD8 end:0x80491DE8
+	.sbss       start:0x8066D7D0 end:0x8066D7F0
 
 Game/handlers/venuetable.cpp:
 	.text       start:0x8010BED8 end:0x8010BFFC

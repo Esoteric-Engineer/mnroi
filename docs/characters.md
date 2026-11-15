@@ -365,7 +365,7 @@ The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<
 | +0x478 | `unsigned char` | `character`, rejected unless <= 19 (a roster index) | `fn_80442F98`, getter `fn_80442FC4` |
 | +0x479 | `unsigned char` | `unlockchar`, rejected unless <= 18 | `fn_80442FF4`, getter `fn_80443020` |
 | +0x47A | `unsigned char` | `sacrifice`, rejected unless <= 19 | `fn_80443050`, getter `fn_8044307C` |
-| +0x480 | `int[4]` | `rewards` | `fn_80442BC0`, `fn_80442C00(record, i)` |
+| +0x480 | `int[4]` | `rewards`: an ID over 9999 is reward type 3 (ID - 10000), over 999 type 2 (- 1000), over 99 type 1 (- 100), 0-99 type 0; negative or over 99999 is no reward (`clashMission_GetRewardInfo`) | `fn_80442BC0`, `fn_80442C00(record, i)` |
 | +0x4A4-+0x5A4 | `char[0x20]` x9 | `soundbanks`, up to nine | `fn_804430FC` |
 | +0x5C4 | int | `maxblessed` | `fn_80442F70` |
 

@@ -1067,7 +1067,6 @@ config.libs = [
             Object(Matching, "Game/fn_8010611C.cpp"),
             Object(Matching, "Game/handlers/mainmenu.cpp"),
             Object(Matching, "Game/handlers/mission.cpp"),
-            Object(Matching, "Game/fn_8010B7F8.cpp"),
             Object(Matching, "Game/handlers/venuetable.cpp"),
             Object(Matching, "Game/fn_8010BFFC.cpp"),
             Object(Matching, "Game/fn_8010C090.cpp"),
