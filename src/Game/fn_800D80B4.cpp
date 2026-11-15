@@ -94,7 +94,7 @@ void *fn_800B1724(Ent &actor);
 int fn_80085300(void *actor, void *node, float a, float b, float *out);
 int fn_800CC60C(void *self);
 void *fn_80085980(void *actor);
-void *fn_804420AC(void *p);
+void *AI_GetMover(void *p);
 void fn_8014BB4C(void *p, Vector *v);
 void fn_80067050(Ent &actor, Vector *v);
 int fn_800CC148(void *self, int id);
@@ -200,7 +200,7 @@ extern "C" int fn_800D80B4(register Obj *self)
     } else {
         if (fn_800CC60C(self)) {
             Vector v48;
-            fn_8014BB4C(fn_804420AC(fn_80085980(Entity_GetActor(self))), &v48);
+            fn_8014BB4C(AI_GetMover(fn_80085980(Entity_GetActor(self))), &v48);
         }
         self->f950 = -1.0f;
     }

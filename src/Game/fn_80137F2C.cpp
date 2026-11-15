@@ -1,0 +1,3572 @@
+// AI behavior registry (the 42-entry table, the action pool, the "Behaviors" debug list), the handlers and the static init. docs/ai.md rows 2 and 13.
+// .rodata 0x8049AB10-0x8049B088: the behavior names, the list title, each handler's float pool in .text order, then the static init's and the inline functions' pools.
+__asm__(".section .rodata\n\t.globl lbl_8049AB10\nlbl_8049AB10:\n\t.4byte 0x6C696400\n\t.text"); // 8-aligns the claim: the tail of the "invalid" string ahead of it, which no code reads
+
+inline int sn_return_decl(int a) { return a; }
+
+struct Vec4 {
+    float x;
+    float y;
+    float z;
+    float w;
+};
+
+class AIBehavior;
+typedef void *(*BehaviorFn)(void *ai, AIBehavior *rec);
+
+class AIBehavior // 0x1C bytes, lbl_80571814[id]
+{
+public:
+    int id;                // +0x0
+    int started;           // +0x4
+    int pad8;              // +0x8
+    const char *name;      // +0xC
+    BehaviorFn update;     // +0x10
+    BehaviorFn enter;      // +0x14
+    BehaviorFn exit;       // +0x18
+    void init(int id, const char *name, BehaviorFn update, BehaviorFn enter, BehaviorFn exit);
+    void *run(void *ai);
+    void *start(void *ai);
+};
+
+class AIAction // 0x70 bytes, lbl_8056A7F0[256], handed out by fn_80138738 (guess)
+{
+public:
+    char pad0[0x2C];
+    int kind;  // +0x2C
+    Vec4 pos;  // +0x30
+    float f;   // +0x40
+    char pad44[0x2C];
+    int setPos(int kind, Vec4 *pos, float f);
+    void init(int a, int b, int c);
+};
+
+class AISmallSet // up to 8 ints (guess)
+{
+public:
+    int pad0[2];
+    unsigned int count; // +0x8
+    int items[8];       // +0xC
+    int add(int x);
+};
+
+class Vector
+{
+public:
+    float x;
+    float y;
+    float z;
+    float w;
+    Vector();
+    Vector(float x, float y, float z, float w) __asm__("fn_8042D768");
+} __attribute__((aligned(8)));
+
+struct Ent {
+    int pad;
+};
+
+struct PEnt : Ent { // matching_notes 50
+    int x;
+    char pad8[0x300];
+    unsigned int f308; // +0x308
+};
+
+struct FEnt { // AI_GetEvent6Actor's result
+    char pad[0x2A0];
+    unsigned int f2a0; // +0x2A0
+};
+
+struct Base {
+    int pad;
+};
+
+class Placement { // fn_8004A9CC's hit record
+public:
+    char d[0x40];
+    Placement();
+};
+
+struct Target { // fn_80134870's result as ATTACK_RANGED reads it
+    char pad0[0x50];
+    float minX; // +0x50 (guess: bounds)
+    float minY; // +0x54
+    char pad58[0x8];
+    float maxX; // +0x60
+    float maxY; // +0x64
+    char pad68[0x130];
+    virtual void s0();
+    virtual void s1();
+    virtual void s2();
+    virtual void s3();
+    virtual void s4();
+    virtual void s5(Vector *out, int a); // vtable +0x30
+};
+
+struct TSub : Target {
+    int pad;
+};
+
+struct Actor {
+    char pad0[0x308];
+    unsigned int flags; // +0x308
+};
+
+#define ABS(x) ((x) < 0.0f ? -(x) : (x))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+struct SCtl : Base { // AI_GetActor's result, reference arguments convert (matching_notes 50)
+    int x;
+};
+
+struct Body : Base { // fn_80085954's result, vptr +0x3AC
+    char d[0x3A8];
+    virtual void v0();
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual void v6();
+    virtual void v7();
+    virtual void v8();
+    virtual void v9();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25();
+    virtual void v26();
+    virtual void v27();
+    virtual void v28();
+    virtual void v29();
+    virtual void v30();
+    virtual void v31();
+    virtual void v32();
+    virtual void v33();
+    virtual void v34();
+    virtual void v35();
+    virtual void v36();
+    virtual void v37();
+    virtual void v38();
+    virtual void v39();
+    virtual void v40();
+    virtual void v41();
+    virtual int v42(); // +0x158
+};
+
+struct VEnt { // AI_GetEntity's result with its vptr, +0x198
+    char d[0x198];
+    virtual void v0();
+    virtual void v1();
+    virtual void v2();
+    virtual void v3();
+    virtual void v4();
+    virtual void v5();
+    virtual void v6();
+    virtual void v7();
+    virtual void v8();
+    virtual void v9();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void v17();
+    virtual void v18();
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual void v24();
+    virtual void v25();
+    virtual void v26();
+    virtual void v27();
+    virtual void v28();
+    virtual void v29();
+    virtual void v30();
+    virtual void v31();
+    virtual void v32();
+    virtual void v33();
+    virtual void v34();
+    virtual void v35();
+    virtual void v36();
+    virtual void v37();
+    virtual void v38();
+    virtual void v39();
+    virtual void v40();
+    virtual void v41();
+    virtual void v42();
+    virtual void v43();
+    virtual void v44();
+    virtual void v45();
+    virtual void v46();
+    virtual void v47();
+    virtual void v48();
+    virtual void v49();
+    virtual void v50();
+    virtual void v51();
+    virtual void v52();
+    virtual void v53();
+    virtual void v54();
+    virtual void v55();
+    virtual void v56();
+    virtual int v57(float f); // +0x1D0
+};
+
+struct Region { // a volume registry list 1 entry (docs/ai.md section 4.5)
+    char pad0[0x10];
+    Vector centre; // +0x10
+    char pad20[0x310];
+    int owner; // +0x330, actor id
+};
+
+struct LvSub {
+    char pad0[0x30];
+    Vector pos; // +0x30
+};
+
+struct LvObj { // fn_800B3A74's result as EVADE reads it
+    char pad0[0x10];
+    LvSub sub; // +0x10
+};
+
+AIAction lbl_8056A7F0[256];
+char lbl_805717F0[0x24]; // pool of free Actions, a list (fn_801B5BA8 builds it)
+AIBehavior lbl_80571814[42];
+extern char lbl_80593BE8[];
+extern Vector lbl_80593E00;
+extern Vector lbl_80593DD0;
+extern Vector lbl_80593DE0;
+extern void *lbl_8066BF5C;
+extern float lbl_8066BF60;
+extern void *lbl_8066D6DC; // the overlay text object (docs/versus.md section 6)
+
+extern "C" {
+int sprintf(char *buf, const char *fmt, ...);
+void fn_80138030(void);
+void fn_8013866C(void);
+AIAction *fn_80138E10(void *ai, AIBehavior *rec);
+AIAction *fn_8013922C(void *ai, AIBehavior *rec);
+AIAction *fn_80139258(void *ai, AIBehavior *rec);
+AIAction *fn_801399CC(void *ai, AIBehavior *rec);
+AIAction *fn_80139284(void *ai, AIBehavior *rec);
+AIAction *fn_801397C8(void *ai, AIBehavior *rec);
+AIAction *fn_8013B0F4(void *ai, AIBehavior *rec);
+AIAction *fn_8013BCE8(void *ai, AIBehavior *rec);
+AIAction *fn_8013C1C8(void *ai, AIBehavior *rec);
+AIAction *fn_8013C3A4(void *ai, AIBehavior *rec);
+AIAction *fn_8013CD40(void *ai, AIBehavior *rec);
+AIAction *fn_8013D464(void *ai, AIBehavior *rec);
+AIAction *fn_8013DA7C(void *ai, AIBehavior *rec);
+AIAction *fn_8013E0C4(void *ai, AIBehavior *rec);
+AIAction *fn_8013E99C(void *ai, AIBehavior *rec);
+AIAction *fn_8013F08C(void *ai, AIBehavior *rec);
+AIAction *fn_8013F438(void *ai, AIBehavior *rec);
+AIAction *fn_8013F8D0(void *ai, AIBehavior *rec);
+AIAction *fn_8013F9F0(void *ai, AIBehavior *rec);
+AIAction *fn_801409D0(void *ai, AIBehavior *rec);
+AIAction *fn_80140C10(void *ai, AIBehavior *rec);
+AIAction *fn_80140E64(void *ai, AIBehavior *rec);
+AIAction *fn_80141394(void *ai, AIBehavior *rec);
+AIAction *fn_801414C8(void *ai, AIBehavior *rec);
+AIAction *fn_80141D78(void *ai, AIBehavior *rec);
+AIAction *fn_8014470C(void *ai, AIBehavior *rec);
+AIAction *fn_80144E30(void *ai, AIBehavior *rec);
+AIAction *fn_801420B4(void *ai, AIBehavior *rec);
+AIAction *fn_80142558(void *ai, AIBehavior *rec);
+AIAction *fn_80142B04(void *ai, AIBehavior *rec);
+AIAction *fn_801426A0(void *ai, AIBehavior *rec);
+AIAction *fn_80142F80(void *ai, AIBehavior *rec);
+AIAction *fn_801435F0(void *ai, AIBehavior *rec);
+AIAction *fn_8014379C(void *ai, AIBehavior *rec);
+AIAction *fn_80144038(void *ai, AIBehavior *rec);
+AIAction *fn_80144544(void *ai, AIBehavior *rec);
+AIAction *fn_80144628(void *ai, AIBehavior *rec);
+AIAction *fn_80144970(void *ai, AIBehavior *rec);
+AIAction *fn_80144CB4(void *ai, AIBehavior *rec);
+AIAction *fn_80144D3C(void *ai, AIBehavior *rec);
+AIAction *fn_80144DB8(void *ai, AIBehavior *rec);
+AIAction *fn_80145200(void *ai, AIBehavior *rec);
+AIAction *fn_80145AA8(void *ai, AIBehavior *rec);
+
+void fn_80137FBC(int id, const char *name, BehaviorFn update, BehaviorFn enter, BehaviorFn exit);
+void fn_80138C04(AIBehavior *self, int id, const char *name, BehaviorFn update, BehaviorFn enter, BehaviorFn exit);
+void *fn_80138D90(AIBehavior *self, void *ai);
+void fn_80135D64(void *ai, void *action);
+void *AI_GetBehaviorSet(void *ai);
+int BitSet_Test(void *set, int bit);
+void AI_ResetAction(AIAction *a);
+void fn_801B60F4(void *pool);
+void fn_801B6040(void *pool, AIAction *a);
+int fn_801B6A44(void *pool);
+void *fn_801B6130(void *pool, int idx);
+void AI_SetActionDuration(AIAction *a, int v);
+void AI_SetActionCooldown(AIAction *a, int v);
+void AI_SetActionStart(AIAction *a, int v);
+void AI_SetActionActive(AIAction *a, int v);
+void AI_SetActionBehavior(AIAction *a, int v);
+int fn_8042EFF8(void *p);
+void *AI_GetActionMove(void *a);
+float fn_80434040(void *a);
+void AI_SetNextAction(void *a, void *b);
+int fn_800B92DC(void **text, const char *s, float x, float y);
+void fn_80101188(void *text, float height);
+int fn_804624B8(void *text);
+void fn_8042AC7C(void *text, unsigned int color);
+const char *fn_80462288(AIBehavior *b);
+Ent *fn_80134870(void *ai);
+PEnt *AI_GetEntity(void *ai);
+int fn_800B0C58(Ent *e);
+void *fn_800B14A0(Ent *e);
+int fn_80085EEC(void *a);
+Vector *fn_800B1724(Ent &e);
+Vector &fn_800B1724R(Ent &e) __asm__("fn_800B1724");
+Vector *fn_800B1750(Ent &e);
+void fn_8042DC84(Vector *dst, Vector *src);
+void fn_8042D8A8(Vector *dst, Vector *src);
+void fn_8042F76C(Vector *v);
+float fn_8042EBF4(Vector *a, Vector *b);
+int fn_80138A24(AIAction *a, int bit);
+int fn_80138AE0(AIAction *a, int kind, Vector *pos, float f);
+void AI_SetActionPriority(AIAction *a, int v);
+int fn_80446E8C(void *ai);
+int fn_80086B1C(void *e);
+void fn_801362DC(void *ai, int a);
+void fn_80447C38(Vector *v);
+SCtl *AI_GetActor(void *ai);
+int fn_800CE4D0(void *a);
+int AI_IsBehaviorEnabled(void *ai, int bit);
+int fn_804628AC(void *ai);
+void *AI_GetEvents(void *ai);
+void AI_DisableBehavior(void *ai, int bit);
+int AI_TestCondition(void *ai, int bit);
+int fn_80133208(void *e);
+char *AI_GetMover(void *ai);
+int AI_HasMoverWaypoint(void *p);
+int AI_HasMoverMoveDest(void *p);
+Vector *AI_GetMoverWaypoint(void *p);
+Vector *AI_GetMoverMoveDest(void *p);
+float fn_8015E580(Vector *a, Vector *b);
+float fn_800B1884(Ent &e, int id);
+int fn_800861EC(void *e);
+Body *fn_80085954(void *p);
+int fn_800CCBD8(Base &b);
+void fn_80433FFC(Vector *v);
+int fn_8015F384(void *ai);
+float fn_8015E64C(void *ai);
+int fn_801600DC(void *ai, int side, float dist);
+int fn_800CDA20(Base &c);
+void *fn_8044734C(char *mover);
+int fn_80444570(void *wp);
+int fn_804445A4(void *wp);
+void *fn_80444904(void *wp, int i);
+void *fn_80444984(void *wp, int i);
+Vector *fn_80444688(void *spot);
+void fn_8014B900(char *mover);
+int fn_8015F6CC(void *ai, Vector *out);
+void *fn_800CD9B0(Base &c);
+void *fn_800B1478(void *e);
+int fn_800A4130(void *e);
+int fn_8015ED50(void *ai, void *pos);
+void fn_801363A4(void *ai, int a);
+float fn_8015F608(void *ai, Vector *p, Vector *out);
+float fn_804290F8(Vector *a, Vector *b);
+int fn_80085D3C(void *e);
+void fn_80138B7C(AIAction *a, int k, int b, int c);
+void fn_80429038(Vector *out, Vector *a, Vector *b);
+float fn_8042EC54(Vector *v);
+void fn_80067050(Ent &e, Vector *out);
+float fn_8015F538(void *ai, Vector *p, Vector *out);
+int fn_801369B0(void *ai);
+float fn_8015E8A8(void *ai, Vector *p);
+int fn_804625A0(char *mover);
+int fn_800B13D8(Ent &e);
+void fn_8014B63C(char *mover, int id, int b);
+int fn_8015F07C(void *ai);
+int fn_8015EE34(void *ai, Ent *e);
+int fn_8015E2FC(void *ai, Vector *to, float r, int *hit, float height);
+int fn_800CC96C(Base &c);
+int fn_800CC6DC(Base &c);
+int fn_8008603C(void *e);
+int fn_800860CC(void *e);
+int fn_80085F7C(void *e);
+int fn_80085FDC(void *e);
+int fn_8008609C(void *e);
+int fn_8015F410(void *ai, float min);
+float fn_80461EE4(void *ai);
+float fn_80461F3C(void *ai);
+float fn_80461FC0(void *ai);
+int fn_8015EC80(float percent, float seconds);
+int fn_8015EC1C(float chance);
+void *AI_GetTargetList(void *ai);
+Ent *fn_804624EC(void *p);
+int fn_800B0CC0(void *e);
+int fn_800A4538(void *p);
+int fn_800A3EE4(void *p);
+int fn_800A3F44(void *p);
+int fn_8015E764(void *ai, Vector *p);
+int fn_800E5F04(Base &c, void *other);
+int fn_801368B8(void *ai);
+int AI_GetMoverDestThing(char *mover);
+int fn_800CCC28(Base &c);
+int AI_GetMoverSpotKind(char *mover);
+int fn_8015F008(void *ai);
+int fn_80462880(void *ai);
+float fn_80462954(void *ai);
+float fn_80462980(void *ai);
+float fn_80462AB4(void *ai);
+float fn_804629AC(void *ai);
+float fn_804629D8(void *ai);
+float fn_80462AE0(void *ai);
+int fn_8015E97C(float f);
+void fn_80136214(void *ai, int a);
+Ent *AI_GetEventSource(void *ai);
+SCtl *fn_800B14A0S(Ent *e) __asm__("fn_800B14A0");
+int fn_8009B04C(Base &b);
+int fn_801603CC(void *ai, int axis);
+Vector *fn_800B17A8(Ent &e);
+void fn_8042D80C(Vector *dst, Vector *src);
+unsigned int fn_8015EA6C(int a, float *d);
+int fn_8008618C(void *e);
+float fn_80086730(void *e);
+int fn_800CD0EC(Base &c);
+void *fn_800ACFA8(int handle);
+int fn_800860FC(void *e);
+Ent *fn_80462530(void *brain);
+int fn_8008615C(void *e);
+float fn_80461F94(void *ai);
+int fn_800CD174(Base &c);
+int fn_800CD21C(Base &c);
+int fn_80462928(void *ai);
+void fn_804627AC(void *ai, int v);
+void fn_80462800(void *ai, int v);
+void fn_80462900(void *ai, int v);
+unsigned int fn_804627D4(void *ai);
+VEnt *fn_80442080V(void *ai) __asm__("AI_GetEntity");
+Vector *fn_800CE230(SCtl &c);
+void fn_80435530(Vector *v, float s);
+int fn_800CCA58(Base &c);
+int fn_800CCAE8(Base &c);
+void AI_SetActionWeight(AIAction *a, float v);
+void fn_8014F7B0(void *list, int mode);
+Ent *AI_GetEvent2Actor(void *ai);
+int fn_8008572C(void *a, void *b);
+float fn_80462A04(void *ai);
+float fn_80462B0C(void *ai);
+int fn_80086908(void *e);
+float fn_80462A30(void *ai);
+Vector *fn_800B1668(Ent &e);
+int fn_8015EA18(unsigned int n);
+int fn_8015FFD4(void *ai);
+float fn_800867A8(void *e);
+float fn_8008666C(void *e);
+FEnt *AI_GetEvent6Actor(void *ai);
+Body *fn_8044203CB(void *ai) __asm__("AI_GetActor");
+unsigned int fn_800CC2B4(Base &c);
+float fn_80462A5C(void *ai);
+float fn_80462A88(void *ai);
+void fn_80461E58(void *ai, Vector *v);
+int fn_800CCC28(Base &c);
+int fn_800B0C1C(Ent *e);
+int fn_801500C4(void *list);
+Ent *fn_801500F0(void *list, int i);
+int fn_800866C0(void *e);
+int fn_800CD2E8(Base &b);
+float fn_80461F10(void *ai);
+int fn_8015E830(void *ai);
+int fn_8009B04CE(Ent &e) __asm__("fn_8009B04C");
+Target *fn_80134870T(void *ai) __asm__("fn_80134870");
+TSub *fn_80442080T(void *ai) __asm__("AI_GetEntity");
+Actor *fn_80442080A(void *ai) __asm__("AI_GetEntity");
+void *fn_800B24AC(Ent &actor);
+void *fn_800B1CC8(Ent &actor);
+unsigned int fn_800B18EC(Ent &e, int id);
+int fn_8004A9CC(Vector *from, Vector *dir, float len, unsigned int mask, Placement *hit, void *a, void *b, int c, int d);
+int fn_8015EEA0(void *ai);
+int fn_800862DC(void *e);
+float fn_8014B824(void *mover);
+int fn_8015F0F0(void *ai, Ent *t);
+int fn_80086B6C(void *e);
+Target *fn_800CD9B0T(Base &c) __asm__("fn_800CD9B0");
+void fn_8042F984(Vector *out, Vector *a, Vector *b);
+void fn_80429090(Vector *out, Vector *a, Vector *b, float s);
+void *fn_8013726C(void *ai);
+int AI_GetRingOutCount(void *list);
+void *AI_GetRingOut(void *list, int i);
+int AI_GetDamageRegionCount(void *list);
+void *AI_GetDamageRegion(void *list, int i);
+int AI_GetCrystalCount(void *list);
+Ent *AI_GetCrystal(void *list, int i);
+int fn_801464E4(void *rec, Vector *pos);
+void fn_80146604(void *rec, Vector *pos, Vector *out);
+int fn_80146A88(void *rec, Vector *a, Vector *b, Vector *hit);
+float fn_8042CE28(unsigned int n);
+void fn_8042D854(Vector *dst, Vector *src);
+int fn_8008606C(void *e);
+int AI_GetDefendRegionCount(void *list);
+Region *AI_GetDefendRegion(void *list, int i);
+int fn_80151D64(void *ai, Vector *out, float *f);
+Ent *fn_801526E4(void *ai, Vector *pos, float *f);
+int fn_800A4438(void *p);
+int fn_800A4408(void *p);
+void AI_SetAvoidObject(void *ai, int id);
+Vector *AI_GetMoverLookAhead(void *mover);
+extern char lbl_8052F060[]; // the level object
+void *fn_80430050(void *level);
+LvObj *fn_800B3A74(void *scene, int v, int a, int b);
+unsigned int fn_801370B0(void *ai);
+void *fn_8009C55C(Vector *pos, void *world, unsigned int mask, float r, void *test, void *b, int c);
+PEnt *fn_801500F0P(void *list, int i) __asm__("fn_801500F0");
+void fn_8015FD2C(void *ai, Vector *dir, float f, Vector *out);
+void *AI_GetBrain(void *ai);
+int fn_80151AF8(void *brain, int id);
+int fn_800CCB88(Base &c);
+int fn_800CCB38(Base &c);
+void fn_8042FE08(Vector *v, Vector *d, float s); // v += d * s
+int fn_80085300(void *actor, Vector *p, float a, float b, float *out);
+int AI_GetRooftopRegionCount(void *list);
+Region *AI_GetRooftopRegion(void *list, int i);
+float fn_801467AC(void *rec, Vector *pos);
+int fn_8008612C(void *e);
+Vector *fn_80462854(void *ai);
+void fn_80428FA8(Vector *v, float x, float y, float z);
+int AI_IsMoverAboveTarget(void *mover);
+void *fn_80151C8C(void *brain);
+int fn_80462828(void *ai);
+void *Entity_GetActor(Base &c);
+float fn_8008677C(void *e);
+}
+
+#define BH(f) ((BehaviorFn)f)
+
+extern "C" void fn_80137F2C(void)
+{
+    int i;
+
+    for (i = 0; i <= 0x29; i++) {
+        fn_80138C04(&lbl_80571814[i], -1, "BEHAVIOR_NONE", 0, 0, 0);
+    }
+    fn_80138030();
+    fn_8013866C();
+}
+
+extern "C" void fn_80137FBC(int id, const char *name, BehaviorFn update, BehaviorFn enter, BehaviorFn exit)
+{
+    AIBehavior *rec = &lbl_80571814[id];
+
+    fn_80138C04(rec, id, name, update, enter, exit);
+}
+
+extern "C" void fn_80138030(void)
+{
+    fn_80137FBC(0, "IDLE", BH(fn_80138E10), BH(fn_8013922C), BH(fn_80139258));
+    fn_80137FBC(1, "APPROACH", BH(fn_801399CC), 0, 0);
+    fn_80137FBC(2, "APPROACH_RANGED", BH(fn_80139284), 0, 0);
+    fn_80137FBC(3, "TOO_CLOSE", BH(fn_801397C8), 0, 0);
+    fn_80137FBC(4, "PRONE", BH(fn_8013B0F4), 0, 0);
+    fn_80137FBC(5, "MOVE_TO_WAYPOINT", BH(fn_8013BCE8), 0, 0);
+    fn_80137FBC(6, "AVOID_OBSTACLES", BH(fn_8013C1C8), 0, 0);
+    fn_80137FBC(7, "BLOCK", BH(fn_8013C3A4), 0, 0);
+    fn_80137FBC(10, "JUMP_ATTACK", BH(fn_8013CD40), 0, 0);
+    fn_80137FBC(11, "JUMP_ATTACK_PEAK", BH(fn_8013D464), 0, 0);
+    fn_80137FBC(12, "JUMP_ATTACK_DESCEND", BH(fn_8013DA7C), 0, 0);
+    fn_80137FBC(8, "ATTACK_MELEE", BH(fn_8013E0C4), 0, 0);
+    fn_80137FBC(9, "ATTACK_RANGED", BH(fn_8013E99C), 0, 0);
+    fn_80137FBC(13, "STRAFE", BH(fn_8013F08C), 0, 0);
+    fn_80137FBC(14, "FLY", BH(fn_8013F438), 0, 0);
+    fn_80137FBC(15, "SUSPENDED", BH(fn_8013F8D0), 0, 0);
+    fn_80137FBC(16, "THROW_OBJECT", BH(fn_8013F9F0), 0, 0);
+    fn_80137FBC(17, "BODY_THROW", BH(fn_801409D0), 0, 0);
+    fn_80137FBC(18, "SWAT", BH(fn_80140C10), 0, 0);
+    fn_80137FBC(19, "PICKUP", BH(fn_80140E64), 0, 0);
+    fn_80137FBC(20, "SUPER_BLOCK_THROWN", BH(fn_80141394), 0, 0);
+    fn_80137FBC(21, "AVOID_HAZARDS", BH(fn_801414C8), 0, 0);
+    fn_80137FBC(22, "DEFEND_REGIONS", BH(fn_80141D78), 0, 0);
+    fn_80137FBC(23, "ROOFTOP_REGIONS", BH(fn_8014470C), 0, 0);
+    fn_80137FBC(24, "HOVER", BH(fn_80144E30), 0, 0);
+    fn_80137FBC(25, "DODGE", BH(fn_801420B4), 0, 0);
+    fn_80137FBC(26, "AVOID_ACTORS", BH(fn_80142558), 0, 0);
+    fn_80137FBC(27, "JUMP", BH(fn_80142B04), 0, 0);
+    fn_80137FBC(28, "AVOID_OBJECTS", BH(fn_801426A0), 0, 0);
+    fn_80137FBC(29, "EVADE", BH(fn_80142F80), 0, 0);
+    fn_80137FBC(30, "TURN_TOWARDS", BH(fn_801435F0), 0, 0);
+    fn_80137FBC(32, "SWING", BH(fn_8014379C), 0, 0);
+    fn_80137FBC(33, "WALL_CLIMB", BH(fn_80144038), 0, 0);
+    fn_80137FBC(34, "WALL_CLIMB_MELEE_ATTACK", BH(fn_80144544), 0, 0);
+    fn_80137FBC(35, "WALL_CLIMB_RANGED_ATTACK", BH(fn_80144628), 0, 0);
+    fn_80137FBC(36, "APPROACH_MOBILITY", BH(fn_80144970), 0, 0);
+    fn_80137FBC(37, "FORCE_SUPER_BLOCK", BH(fn_80144CB4), 0, 0);
+    fn_80137FBC(38, "FORCE_POWER_STAND", BH(fn_80144D3C), 0, 0);
+    fn_80137FBC(39, "FORCE_FLY", BH(fn_80144DB8), 0, 0);
+    fn_80137FBC(40, "FLYER_MOVE", BH(fn_80145200), 0, 0);
+    fn_80137FBC(41, "POWER_STAND", BH(fn_80145AA8), 0, 0);
+}
+
+extern "C" void fn_80138584(void)
+{
+}
+
+extern "C" void fn_801385A0(void *ai)
+{
+    int i;
+
+    lbl_8066BF5C = ai;
+    for (i = 0; i <= 0x29; i++) {
+        if (BitSet_Test(AI_GetBehaviorSet(ai), i)) {
+            void *t = lbl_80571814[i].run(ai);
+            if (t) {
+                fn_80135D64(ai, t);
+            }
+        }
+    }
+    lbl_8066BF5C = 0;
+}
+
+extern "C" void fn_8013866C(void)
+{
+    {
+        int i;
+        for (i = 0; i <= 0xFF; i++) {
+            AIAction *a = &lbl_8056A7F0[i];
+            AI_ResetAction(a);
+        }
+    }
+    fn_801B60F4(lbl_805717F0);
+    {
+        int j;
+        for (j = 0; j <= 0xFF; j++) {
+            fn_801B6040(lbl_805717F0, &lbl_8056A7F0[j]);
+        }
+    }
+}
+
+extern "C" AIAction *fn_80138738(int a, int b, int c)
+{
+    int n = fn_801B6A44(lbl_805717F0);
+    if (n <= 0) {
+        return 0;
+    }
+    AIAction *item = (AIAction *)fn_801B6130(lbl_805717F0, n - 1);
+    AI_SetActionDuration(item, b);
+    AI_SetActionCooldown(item, c);
+    AI_SetActionStart(item, fn_8042EFF8(lbl_80593BE8));
+    AI_SetActionActive(item, 1);
+    AI_SetActionBehavior(item, a);
+    return item;
+}
+
+extern "C" void fn_8013880C(AIAction *a)
+{
+    if (a == 0) {
+        return;
+    }
+    AI_ResetAction(a);
+    fn_801B6040(lbl_805717F0, a);
+    return;
+}
+
+extern "C" float fn_80138868(void *ai, float x, float y)
+{
+    float dy = 0.0f;
+    char buf[0x50];
+    sprintf(buf, "Behaviors");
+    fn_800B92DC(&lbl_8066D6DC, buf, x, y + dy);
+    dy += 12.0f;
+    fn_80101188(lbl_8066D6DC, 10.0f);
+    unsigned int saved = fn_804624B8(lbl_8066D6DC);
+    int i;
+    for (i = 0; i <= 0x29; i++) {
+        unsigned int color = 0xFFC04000;
+        if (BitSet_Test(AI_GetBehaviorSet(ai), i)) {
+            color = 0xFF10C000;
+        }
+        fn_8042AC7C(lbl_8066D6DC, color);
+        fn_800B92DC(&lbl_8066D6DC, fn_80462288(&lbl_80571814[i]), x, y + dy);
+        dy += 9.0f;
+        if (i == 0x23) {
+            dy = 0.0f;
+            x = 210.0f;
+            y = 220.0f;
+        }
+    }
+    fn_8042AC7C(lbl_8066D6DC, saved);
+    return dy;
+}
+
+__asm__(".text\n\t.globl fn_80138A24\n\t.type fn_80138A24,@function\nfn_80138A24:");
+int AISmallSet::add(int x)
+{
+    unsigned int i;
+
+    for (i = 0; i < count; i++) {
+        if (items[i] == x) {
+            return 0;
+        }
+    }
+    if (count > 7) {
+        return 0;
+    }
+    items[count++] = x;
+    return 1;
+}
+__asm__(".size fn_80138A24, 0xBC");
+
+__asm__(".text\n\t.globl fn_80138AE0\n\t.type fn_80138AE0,@function\nfn_80138AE0:");
+int AIAction::setPos(int k, Vec4 *p, float v)
+{
+    if (p == 0) {
+        return 0;
+    }
+    kind = k;
+    pos = *p;
+    f = v;
+    if (k != 7) {
+        pos.z = 0.0f;
+    }
+    return 1;
+}
+__asm__(".size fn_80138AE0, 0x9C");
+
+__asm__(".text\n\t.globl fn_80138B7C\n\t.type fn_80138B7C,@function\nfn_80138B7C:");
+void AIAction::init(int a, int b, int c)
+{
+    AI_SetActionDuration(this, b);
+    AI_SetActionCooldown(this, c);
+    AI_SetActionStart(this, fn_8042EFF8(lbl_80593BE8));
+    AI_SetActionActive(this, 1);
+    AI_SetActionBehavior(this, a);
+}
+__asm__(".size fn_80138B7C, 0x88");
+
+__asm__(".text\n\t.globl fn_80138C04\n\t.type fn_80138C04,@function\nfn_80138C04:");
+void AIBehavior::init(int i, const char *n, BehaviorFn u, BehaviorFn e, BehaviorFn x)
+{
+    id = i;
+    name = n;
+    update = u;
+    enter = e;
+    exit = x;
+    started = 0;
+    pad8 = 0;
+}
+__asm__(".size fn_80138C04, 0x6C");
+
+__asm__(".text\n\t.globl fn_80138C70\n\t.type fn_80138C70,@function\nfn_80138C70:");
+void *AIBehavior::run(void *ai)
+{
+    void *r = 0;
+
+    if (started == 0) {
+        r = fn_80138D90(this, ai);
+        started = 1;
+    }
+    if (update) {
+        void *t = 0;
+        int n;
+        t = update(ai, this);
+        if (t) {
+            if (fn_80434040(AI_GetActionMove(t)) > 0.0f) {
+                n = 0;
+                n++;
+            }
+        }
+        if (r) {
+            if (t) {
+                AI_SetNextAction(r, t);
+            }
+        } else {
+            r = t;
+        }
+    }
+    return r;
+}
+__asm__(".size fn_80138C70, 0x120");
+
+__asm__(".text\n\t.globl fn_80138D90\n\t.type fn_80138D90,@function\nfn_80138D90:");
+void *AIBehavior::start(void *ai)
+{
+    void *r = 0;
+
+    if (enter) {
+        r = enter(ai, this);
+    }
+    started = 1;
+    return r;
+}
+__asm__(".size fn_80138D90, 0x80");
+
+// IDLE and its enter/exit (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80138E10(void *ai, AIBehavior *rec)
+{
+    Ent *t = fn_80134870(ai);
+    AIAction *h;
+
+    if (t) {
+        if (fn_80134870(ai) && fn_800B0C58(fn_80134870(ai)) && fn_80085EEC(fn_800B14A0(fn_80134870(ai)))) {
+            h = fn_80138738(0, 2000, 500);
+            if (h) {
+                Vector v;
+                float f = 0.08f;
+                fn_8042DC84(&v, fn_800B1724(*t));
+                v.z = fn_800B1724R(*AI_GetEntity(ai)).z;
+                fn_8042D8A8(&v, fn_800B1724(*AI_GetEntity(ai)));
+                fn_8042F76C(&v);
+                fn_80138AE0(h, 0, &v, f);
+                fn_80138A24(h, 0x13);
+                AI_SetActionPriority(h, 5);
+                return h;
+            }
+        } else if (fn_80446E8C(ai) && fn_80086B1C(AI_GetEntity(ai))) {
+            fn_801362DC(ai, 0);
+            h = fn_80138738(0, 100, 300);
+            if (h) {
+                Vector v;
+                fn_80447C38(&v);
+                fn_80138A24(h, 7);
+                fn_80138AE0(h, 0, &v, 1.0f);
+            }
+            return h;
+        } else if (fn_800CE4D0(AI_GetActor(ai)) && AI_IsBehaviorEnabled(ai, 0xe) && !fn_804628AC(ai) &&
+                   (BitSet_Test(AI_GetEvents(ai), 1) || BitSet_Test(AI_GetEvents(ai), 2))) {
+            AI_DisableBehavior(ai, 0xe);
+        } else {
+            h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector v;
+                float f = 0.08f;
+                fn_8042DC84(&v, fn_800B1724(*t));
+                v.z = fn_800B1724R(*AI_GetEntity(ai)).z;
+                fn_8042D8A8(&v, fn_800B1724(*AI_GetEntity(ai)));
+                fn_8042F76C(&v);
+                float facing = fn_8042EBF4(fn_800B1750(*AI_GetEntity(ai)), &v);
+                if (facing < 0.66f)
+                    fn_80138AE0(h, 0, &v, f);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+extern "C" AIAction *fn_8013922C(void *ai, AIBehavior *rec)
+{
+    return 0;
+}
+
+extern "C" AIAction *fn_80139258(void *ai, AIBehavior *rec)
+{
+    return 0;
+}
+
+// APPROACH_RANGED (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80139284(void *ai, AIBehavior *rec)
+{
+    if (AI_TestCondition(ai, 2)) {
+        Ent *t = fn_80134870(ai);
+        if (!t) {
+            return 0;
+        }
+        if (!fn_80133208(AI_GetEntity(ai))) {
+            return 0;
+        }
+        Vector *me = fn_800B1724(*AI_GetEntity(ai));
+        Vector goal;
+        int found = 0;
+        fn_8042DC84(&goal, me);
+        if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+            fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
+            found = 1;
+        }
+        if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+            fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
+            found = 1;
+        }
+        if (!found && fn_80134870(ai)) {
+            fn_8042DC84(&goal, fn_800B1724(*fn_80134870(ai)));
+            found = 1;
+        }
+        float toGoal = fn_8015E580(me, &goal);
+        float toTarget = fn_8015E580(me, fn_800B1724(*t));
+        float far = fn_800B1884(*AI_GetEntity(ai), 0xd4);
+        float near = fn_800B1884(*AI_GetEntity(ai), 0xd3);
+        if (fn_800861EC(AI_GetEntity(ai)) && fn_800B0C58(t)) {
+            if (!fn_80085954(fn_800B14A0(t))->v42() && !fn_800CCBD8(*fn_80085954(fn_800B14A0(t)))) {
+            } else {
+                toTarget = near + 1.0f;
+            }
+        }
+        if (AI_GetEntity(ai)->f308 & 0x4000) {
+            far = near;
+        }
+        if (toGoal > far) {
+            AIAction *h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector v;
+                fn_8042DC84(&v, fn_800B1724(*t));
+                fn_8042D8A8(&v, fn_800B1724(*AI_GetEntity(ai)));
+                v.z = 0.0f;
+                fn_8042F76C(&v);
+                float f = 1.0f;
+                fn_80138AE0(h, 0, &v, f);
+                return h;
+            }
+        } else if (toTarget < near) {
+            if (AI_TestCondition(ai, 0x34)) {
+                return 0;
+            }
+            if (!AI_TestCondition(ai, 4) && AI_TestCondition(ai, 0x2b)) {
+                return 0;
+            }
+            AIAction *h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector v;
+                fn_8042DC84(&v, fn_800B1724(*t));
+                fn_8042D8A8(&v, fn_800B1724(*AI_GetEntity(ai)));
+                v.z = 0.0f;
+                fn_8042F76C(&v);
+                fn_80433FFC(&v);
+                float f = 1.0f;
+                fn_80138AE0(h, 0, &v, f);
+                return h;
+            }
+        }
+    }
+    return 0;
+}
+
+// TOO_CLOSE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801397C8(void *ai, AIBehavior *rec)
+{
+    if (AI_IsBehaviorEnabled(ai, 7) || AI_IsBehaviorEnabled(ai, 8) || AI_IsBehaviorEnabled(ai, 0x11)) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 4)) {
+        return 0;
+    }
+    if (!fn_8015F384(ai) && AI_TestCondition(ai, 0x35)) {
+        return 0;
+    }
+    Ent *t = fn_80134870(ai);
+    if (t) {
+        float near = fn_800B1884(*AI_GetEntity(ai), 0xd3);
+        Vector unused;
+        float range = fn_8015E64C(ai);
+        if (range < near) {
+            Vector v;
+            fn_8042DC84(&v, fn_800B1750(*AI_GetEntity(ai)));
+            fn_80433FFC(&v);
+            if (fn_801600DC(ai, 3, 2.5f)) {
+                AIAction *h = fn_80138738(3, 500, 0);
+                if (h) {
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                    fn_80138A24(h, 0xb);
+                }
+                return h;
+            }
+        }
+    }
+    return 0;
+}
+
+// APPROACH (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801399CC(void *ai, AIBehavior *rec)
+{
+    Vector goal;
+    int found = 0;
+
+    if (AI_TestCondition(ai, 4) || (AI_TestCondition(ai, 0x2b) && !fn_800CDA20(*AI_GetActor(ai)))) {
+        return 0;
+    }
+    void *wp = fn_8044734C(AI_GetMover(ai));
+    if (wp && fn_80444570(wp)) {
+        if (fn_800CDA20(*AI_GetActor(ai))) {
+            fn_8014B900(AI_GetMover(ai));
+            AIAction *h = fn_80138738(1, 100, 100);
+            if (h) {
+                Vector v;
+                fn_8015F6CC(ai, &v);
+                v.z = 0.0f;
+                fn_8042F76C(&v);
+                fn_80138AE0(h, 0, &v, 1.0f);
+                if (fn_800CD9B0(*AI_GetActor(ai)) && !fn_800A4130(fn_800B1478(fn_800CD9B0(*AI_GetActor(ai))))) {
+                    fn_80138A24(h, 10);
+                } else {
+                    fn_80138A24(h, 6);
+                }
+                return h;
+            }
+        } else {
+            float dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), fn_80444688(fn_80444904(wp, 0)));
+            if (dist < 2.0f && fn_8015ED50(ai, fn_80444688(fn_80444904(wp, 0)))) {
+                fn_801363A4(ai, 0x16);
+                AIAction *h = fn_80138738(1, 0x32, 0x1f4);
+                if (h) {
+                    Vector v;
+                    fn_8015F608(ai, fn_80444688(fn_80444984(wp, 0)), &v);
+                    float dz = fn_80444688(fn_80444984(wp, 0))->z - fn_800B1724(*AI_GetEntity(ai))->z;
+                    float len = fn_804290F8(fn_80444688(fn_80444904(wp, 0)), fn_80444688(fn_80444984(wp, 0)));
+                    v.z = 0.0f;
+                    fn_8042F76C(&v);
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                    if (dz > 0.25f || AI_TestCondition(ai, 0x14)) {
+                        fn_80138A24(h, 5);
+                        if (fn_80085D3C(AI_GetEntity(ai))) {
+                            if (len > 2.0f) {
+                                fn_80138A24(h, 7);
+                            }
+                        } else if ((len >= 3.0f && dz > 0.0f) || (len >= 4.0f && (dz < 0.0f ? -dz : dz) < 2.0f)) {
+                            fn_80138A24(h, 0x14);
+                        }
+                    } else {
+                        fn_80138B7C(h, 1, 0x1f4, 0);
+                    }
+                    return h;
+                }
+            } else if (dist < 4.0f && fn_8015ED50(ai, fn_80444688(fn_80444904(wp, 0)))) {
+                Vector v;
+                fn_80429038(&v, fn_80444688(fn_80444904(wp, 0)), fn_800B1724(*AI_GetEntity(ai)));
+                v.z = 0.0f;
+                float len = fn_8042EC54(&v);
+                AIAction *h = fn_80138738(1, 0x1f4, 0);
+                if (h) {
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                    return h;
+                }
+            }
+        }
+    } else if (wp && fn_804445A4(wp) && !AI_TestCondition(ai, 0x3d)) {
+        float dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), fn_80444688(fn_80444904(wp, 0)));
+        if (dist < 2.0f && fn_8015ED50(ai, fn_80444688(fn_80444904(wp, 0)))) {
+            AIAction *h = fn_80138738(1, 0x4b0, 0);
+            if (h) {
+                Vector v;
+                Vector g;
+                int have = 0;
+                if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+                    fn_8042DC84(&g, AI_GetMoverWaypoint(AI_GetMover(ai)));
+                    have = 1;
+                }
+                if (!have && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+                    fn_8042DC84(&g, AI_GetMoverMoveDest(AI_GetMover(ai)));
+                    have = 1;
+                }
+                if (!have) {
+                    fn_80067050(*AI_GetEntity(ai), &v);
+                    v.z = 0.0f;
+                    float len = fn_8042EC54(&v);
+                    if (len < 0.1f) {
+                        fn_8042DC84(&v, fn_800B1750(*AI_GetEntity(ai)));
+                    }
+                } else {
+                    fn_8015F538(ai, &g, &v);
+                }
+                fn_80138AE0(h, 0, &v, 1.0f);
+                if (fn_801369B0(ai)) {
+                    fn_80138A24(h, 8);
+                }
+                return h;
+            }
+        } else {
+            Vector v;
+            fn_80429038(&v, fn_80444688(fn_80444904(wp, 0)), fn_800B1724(*AI_GetEntity(ai)));
+            v.z = 0.0f;
+            float len = fn_8042EC54(&v);
+            AIAction *h = fn_80138738(1, 0x1f4, 0);
+            if (h) {
+                fn_80138AE0(h, 0, &v, 1.0f);
+                return h;
+            }
+        }
+    }
+
+    float dist = 3.40282347e+38f;
+    int fromA = 0;
+    int fromB = 0;
+    int fromTarget = 0;
+    if (fn_80134870(ai)) {
+        if (fn_8015E64C(ai) > fn_800B1884(*AI_GetEntity(ai), 0xd3) ||
+            fn_8015E8A8(ai, fn_800B1724(*fn_80134870(ai))) > 5.0f) {
+            if (!fn_804625A0(AI_GetMover(ai))) {
+                fn_8014B63C(AI_GetMover(ai), fn_800B13D8(*fn_80134870(ai)), 0);
+            }
+        }
+    }
+    if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
+        found = 1;
+        fromA = 1;
+    }
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
+        found = 1;
+        fromB = 1;
+    }
+    Vector from;
+    float reach = fn_8015E64C(ai) * 0.9f;
+    fn_8015F6CC(ai, &from);
+    int hit = 0;
+    if (fn_80134870(ai) && fn_8015F07C(ai) && fn_8015EE34(ai, fn_80134870(ai)) && AI_TestCondition(ai, 0x35) &&
+        !fn_8015E2FC(ai, &from, reach, &hit, 0.2f)) {
+        fn_8042DC84(&goal, fn_800B1724(*fn_80134870(ai)));
+        found = 1;
+        fromTarget = 1;
+    }
+    float scale = 1.0f;
+    if (fn_80134870(ai)) {
+        float d = fn_804290F8(fn_800B1724(*AI_GetEntity(ai)), fn_800B1724(*fn_80134870(ai)));
+        float far = fn_800B1884(*AI_GetEntity(ai), 0xd4);
+        if (fn_80134870(ai) && d <= far) {
+            scale = d / far;
+            scale = scale > 0.7f ? scale : 0.7f;
+        }
+    }
+    dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), &goal);
+    if (!fromTarget && dist <= 1.0f) {
+        return 0;
+    }
+    if (dist >= fn_800B1884(*AI_GetEntity(ai), 0xd5)) {
+        return 0;
+    }
+    if (found) {
+        int done = 0;
+        Vector v;
+        fn_8042DC84(&v, &goal);
+        fn_8042D8A8(&v, fn_800B1724(*AI_GetEntity(ai)));
+        v.z = 0.0f;
+        float len = fn_8042EC54(&v);
+        float range;
+        if (AI_TestCondition(ai, 0x35) && fn_80134870(ai) && fn_8015EE34(ai, fn_80134870(ai)) &&
+            fn_8015E64C(ai) < fn_800B1884(*AI_GetEntity(ai), 0xd1)) {
+            return 0;
+        }
+        if (fn_800CC96C(*AI_GetActor(ai)) && fn_800CC6DC(*AI_GetActor(ai)) == 0x1a && fn_8008603C(AI_GetEntity(ai))) {
+            Vector w;
+            fn_80429038(&w, fn_800B1724(*fn_80134870(ai)), fn_800B1724(*AI_GetEntity(ai)));
+            w.z = 0.0f;
+            range = fn_8042EC54(&w);
+            AIAction *h = fn_80138738(0x24, 0x1f4, 0);
+            if (h) {
+                fn_80138AE0(h, 0, &w, 1.0f);
+                if (fn_801369B0(ai)) {
+                    fn_80138A24(h, 7);
+                    fn_80138A24(h, 8);
+                }
+                return h;
+            }
+        }
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            fn_80138AE0(h, 0, &v, scale);
+            void *at = fn_8044734C(AI_GetMover(ai));
+            if (at && fn_80444570(at)) {
+            } else if (!fn_800860CC(AI_GetEntity(ai)) && !fn_80085F7C(AI_GetEntity(ai)) &&
+                fn_80085FDC(AI_GetEntity(ai)) && fn_801369B0(ai) && fn_8015F410(ai, 0.2f) &&
+                len > fn_800B1884(*AI_GetEntity(ai), 0xd4)) {
+                fn_80138A24(h, 0xd);
+            }
+            range = len;
+            if (fn_80134870(ai) && fn_800B0C58(fn_80134870(ai))) {
+                range = fn_8015E64C(ai);
+            }
+            if (!fn_800CCBD8(*AI_GetActor(ai)) && AI_TestCondition(ai, 0x33) && AI_TestCondition(ai, 0x14) &&
+                AI_TestCondition(ai, 0x18) && fn_8015EC80(fn_80461EE4(ai), 2.0f)) {
+                Ent *e = fn_804624EC(AI_GetTargetList(ai));
+                if (e && fn_800B0CC0(e) &&
+                    (fn_800A4538(fn_800B1478(e)) || !fn_800A3EE4(fn_800B1478(e)) || fn_800A3F44(fn_800B1478(e)) ||
+                     !fn_8015E764(ai, fn_800B1724(*e)) || fn_800A4130(fn_800B1478(e)))) {
+                } else if (!AI_TestCondition(ai, 0x40)) {
+                    fn_80138A24(h, 2);
+                    if (fn_800E5F04(*AI_GetActor(ai), fn_800B1478(e))) {
+                        fn_80138A24(h, 0x19);
+                    }
+                }
+                if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                    fn_80138A24(h, 7);
+                }
+                if (fn_8015EC1C(fn_80461FC0(ai)) && fn_801369B0(ai) && fn_80085D3C(AI_GetEntity(ai)) && fn_801368B8(ai)) {
+                    fn_80138A24(h, 9);
+                }
+            } else if (fn_8008609C(AI_GetEntity(ai)) && range > fn_800B1884(*AI_GetEntity(ai), 0xd3) &&
+                       range < fn_800B1884(*AI_GetEntity(ai), 0xd4) && fn_80134870(ai) && fn_800B0C58(fn_80134870(ai)) &&
+                       AI_GetMoverDestThing(AI_GetMover(ai)) == fn_800B13D8(*fn_80134870(ai)) &&
+                       fn_8015EE34(ai, fn_80134870(ai))) {
+                fn_80138A24(h, 0xc);
+                fn_80138A24(h, 0x16);
+                fn_80138B7C(h, 1, 0x1f4, 0);
+                done = 1;
+            } else if (!fn_80085D3C(AI_GetEntity(ai)) && !fn_800861EC(AI_GetEntity(ai)) && fn_80134870(ai) &&
+                       fn_800B0C58(fn_80134870(ai)) && !fn_800CCC28(*fn_80085954(fn_800B14A0(fn_80134870(ai)))) &&
+                       len < 4.0f && fn_8015F07C(ai)) {
+                fn_80138A24(h, 0xb);
+                fn_80138B7C(h, 1, 0x1f4, 0);
+            }
+        }
+        if (!done) {
+            switch (AI_GetMoverSpotKind(AI_GetMover(ai))) {
+            case 4:
+                if (fn_801369B0(ai)) {
+                    fn_80138A24(h, 8);
+                }
+                break;
+            case 2:
+                if (fn_801369B0(ai)) {
+                    fn_80138A24(h, 8);
+                    fn_80138A24(h, 7);
+                }
+                break;
+            }
+        }
+        return h;
+    }
+    return 0;
+}
+
+// PRONE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013B0F4(void *ai, AIBehavior *rec)
+{
+    if (fn_800CCC28(*AI_GetActor(ai))) {
+        unsigned int dt = fn_8042EFF8(lbl_80593BE8) - fn_80462880(ai);
+        if ((float)dt <= fn_80462954(ai)) {
+            fn_8014B900(AI_GetMover(ai));
+            AIAction *h = fn_80138738(4, 250, 100);
+            if (h) {
+                Vector v;
+                fn_80447C38(&v);
+                fn_80138AE0(h, 0, &v, 1.0f);
+                fn_80136214(ai, 4);
+                fn_80136214(ai, 8);
+                fn_80136214(ai, 10);
+                return h;
+            }
+            return 0;
+        }
+        int targeted = fn_80134870(ai) && !fn_8015F008(ai);
+        int flag25 = AI_TestCondition(ai, 0x25);
+        if (!targeted || !flag25) {
+            if (!fn_8015E97C(fn_80462980(ai) / 1000.0f) && (float)dt < fn_80462980(ai)) {
+                fn_8014B900(AI_GetMover(ai));
+                AIAction *h = fn_80138738(4, 250, 100);
+                if (h) {
+                    Vector v;
+                    fn_80447C38(&v);
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                    return h;
+                }
+                return 0;
+            }
+        }
+        float percent = fn_80462AB4(ai);
+        if (targeted) {
+        } else {
+            percent = 0.0f;
+        }
+        if (AI_TestCondition(ai, 0x29)) {
+            percent = 0.0f;
+        }
+        if (!AI_TestCondition(ai, 0x35)) {
+            percent = 0.0f;
+        }
+        int positive = percent > 0.0f;
+        int roll = fn_8015EC80(percent, 6.0f) || targeted;
+        if (positive && roll) {
+            AIAction *h = fn_80138738(4, 100, 100);
+            if (h) {
+                fn_80138A24(h, 2);
+                if (fn_801369B0(ai)) {
+                    fn_80138A24(h, 7);
+                }
+                AI_SetActionPriority(h, 5);
+                return h;
+            }
+        } else {
+            AIAction *h = fn_80138738(4, 100, 100);
+            if (h) {
+                fn_80138A24(h, 5);
+                return h;
+            }
+        }
+    } else {
+        if (BitSet_Test(AI_GetEvents(ai), 9)) {
+            AIAction *h = fn_80138738(4, 1500, 0);
+            fn_80138A24(h, 5);
+            fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+            AI_SetActionPriority(h, 5);
+            return h;
+        }
+        if (BitSet_Test(AI_GetEvents(ai), 4)) {
+            Ent *e = AI_GetEventSource(ai);
+            if (e && fn_800B0C58(e) && fn_8009B04C(*fn_800B14A0S(e)) == 0x2e) {
+                float axes[3] = {1.0f, 1.0f, 1.0f};
+                if (!fn_801603CC(ai, 0)) {
+                    axes[0] = 0.0f;
+                }
+                if (!fn_801603CC(ai, 2)) {
+                    axes[1] = 0.0f;
+                }
+                if (!fn_801603CC(ai, 3)) {
+                    axes[2] = 0.0f;
+                }
+                Vector dir;
+                fn_8042D80C(&dir, fn_800B1750(*AI_GetEntity(ai)));
+                unsigned int side = fn_8015EA6C(3, axes);
+                switch (side) {
+                case 0:
+                    fn_8042D80C(&dir, fn_800B17A8(*AI_GetEntity(ai)));
+                    break;
+                case 1:
+                    fn_8042DC84(&dir, fn_800B17A8(*AI_GetEntity(ai)));
+                    break;
+                case 2:
+                    fn_8042D80C(&dir, fn_800B1750(*AI_GetEntity(ai)));
+                    break;
+                }
+                AIAction *h = fn_80138738(4, 200, 0);
+                fn_80138A24(h, 0xc);
+                fn_80138AE0(h, 0, &dir, 1.0f);
+                AI_SetActionPriority(h, 5);
+                return h;
+            }
+        }
+    }
+    if (fn_80085D3C(AI_GetEntity(ai)) && (AI_TestCondition(ai, 0x1e) || AI_TestCondition(ai, 0x1f))) {
+        if (fn_801369B0(ai) && AI_TestCondition(ai, 0x1e) && fn_8015EC80(fn_804629AC(ai), 8.0f)) {
+            AIAction *h = fn_80138738(4, 500, 10);
+            if (h) {
+                fn_80138A24(h, 7);
+                fn_80138A24(h, 8);
+                fn_80138A24(h, 9);
+                return h;
+            }
+        } else if (fn_801369B0(ai) && AI_TestCondition(ai, 0x1f) && fn_801369B0(ai) && fn_8008603C(AI_GetEntity(ai))) {
+            AIAction *h = fn_80138738(4, 3000, 10);
+            if (h) {
+                fn_80138A24(h, 7);
+                fn_80138A24(h, 8);
+                return h;
+            }
+        }
+    }
+    if (fn_8008618C(AI_GetEntity(ai)) && fn_80086730(AI_GetEntity(ai)) < fn_800B1884(*AI_GetEntity(ai), 0xde)) {
+    } else if (fn_800CD0EC(*AI_GetActor(ai)) && !fn_800861EC(AI_GetEntity(ai)) && !fn_8015F384(ai)) {
+        if (!fn_80462928(ai)) {
+            fn_804627AC(ai, 200);
+            if (fn_800CD174(*AI_GetActor(ai))) {
+                fn_804627AC(ai, 400);
+            }
+            fn_80462800(ai, 0);
+            fn_80462900(ai, 1);
+        } else if (fn_804627D4(ai) < 50 && fn_8015EC80(fn_80462AE0(ai), 35.0f)) {
+            fn_80136214(ai, 7);
+            AIAction *h = fn_80138738(0x11, 0x23, 1);
+            fn_80138A24(h, 0x12);
+            return h;
+        }
+    } else {
+        fn_80462900(ai, 0);
+    }
+    if (fn_800CD21C(*AI_GetActor(ai))) {
+        int go = 0;
+        if (fn_80442080V(ai)->v57(0.15f)) {
+            if (fn_801369B0(ai) && fn_8015EC80(fn_804629AC(ai), 8.0f)) {
+                go = 1;
+            }
+        } else if (fn_801369B0(ai) && fn_8015EC80(fn_804629D8(ai), 8.0f)) {
+            go = 1;
+        }
+        if (fn_804628AC(ai) || AI_TestCondition(ai, 0x3c)) {
+            go = 1;
+        }
+        if (go) {
+            AIAction *h = fn_80138738(4, 500, 0);
+            if (h) {
+                fn_80138A24(h, 7);
+                fn_80138A24(h, 8);
+                fn_80138A24(h, 9);
+                return h;
+            }
+        }
+    }
+    return 0;
+}
+
+// MOVE_TO_WAYPOINT (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013BCE8(void *ai, AIBehavior *rec)
+{
+    Vector goal;
+    int found = 0;
+    if (fn_801369B0(ai) && AI_GetMoverSpotKind(AI_GetMover(ai)) == 4) {
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            Vector v;
+            fn_80067050(*AI_GetEntity(ai), &v);
+            v.z = 0.0f;
+            fn_8042F76C(&v);
+            fn_8042D8A8(&v, fn_800CE230(*AI_GetActor(ai)));
+            fn_80435530(&v, 0.5f);
+            fn_80138AE0(h, 0, &v, 1.0f);
+            fn_80138A24(h, 8);
+            return h;
+        }
+    }
+    float dist = 3.40282347e+38f;
+    if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
+        found = 1;
+        dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), &goal);
+    }
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
+        found = 1;
+        dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), &goal);
+    }
+    float reach = 2.0f;
+    if (fn_800CCA58(*AI_GetActor(ai))) {
+        reach = 4.0f;
+    } else if (fn_800CCAE8(*AI_GetActor(ai))) {
+        reach = 8.0f;
+    }
+    if (dist < reach) {
+        return 0;
+    } else if (found) {
+        Vector v;
+        fn_8042DC84(&v, &goal);
+        fn_8042D8A8(&v, fn_800B1724(*AI_GetEntity(ai)));
+        float len = fn_8042EC54(&v);
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            fn_80138AE0(h, 0, &v, 1.0f);
+        }
+        switch (AI_GetMoverSpotKind(AI_GetMover(ai))) {
+        case 1:
+            if (!AI_TestCondition(ai, 0x3d)) {
+                fn_80138A24(h, 5);
+                if (goal.z - fn_800B1724(*AI_GetEntity(ai))->z > 2.0f && fn_801369B0(ai)) {
+                    fn_80138A24(h, 7);
+                }
+                if (!fn_80085D3C(AI_GetEntity(ai))) {
+                    fn_80138A24(h, 0x14);
+                }
+            }
+            break;
+        case 4:
+            if (fn_801369B0(ai)) {
+                fn_80138A24(h, 8);
+            }
+            break;
+        case 2:
+            if (fn_801369B0(ai)) {
+                fn_80138A24(h, 8);
+            }
+            break;
+        }
+        return h;
+    }
+    return 0;
+}
+
+// AVOID_OBSTACLES (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013C1C8(void *ai, AIBehavior *rec)
+{
+    if (AI_TestCondition(ai, 0x14)) {
+        Vector v;
+        int a = AI_TestCondition(ai, 0x12);
+        int b = AI_TestCondition(ai, 0x13);
+        if (a && !b) {
+            fn_8042DC84(&v, fn_800B17A8(*AI_GetEntity(ai)));
+        } else if (!a && b) {
+            fn_8042D80C(&v, fn_800B17A8(*AI_GetEntity(ai)));
+        } else if (a) {
+            fn_8042D80C(&v, fn_800B1750(*AI_GetEntity(ai)));
+        } else {
+            fn_8042D80C(&v, fn_800B17A8(*AI_GetEntity(ai)));
+        }
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            fn_80138AE0(h, 0, &v, 1.0f);
+            AI_SetActionWeight(h, lbl_8066BF60);
+        }
+        return h;
+    } else {
+        AIAction *h = 0;
+    }
+    return 0;
+}
+
+// BLOCK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013C3A4(void *ai, AIBehavior *rec)
+{
+    fn_8014F7B0(AI_GetTargetList(ai), 0);
+    if (AI_TestCondition(ai, 0x2c) || BitSet_Test(AI_GetEvents(ai), 2)) {
+        Ent *t = AI_GetEvent2Actor(ai);
+        float dist = t ? fn_804290F8(fn_800B1724(*t), fn_800B1724(*AI_GetEntity(ai))) : 0.0f;
+        int far = t && dist > 12.0f;
+        if (far) {
+            return 0;
+        }
+        int facing = t && fn_8008572C(AI_GetEntity(ai), t);
+        int near = t && dist < 9.0f;
+        int a = fn_8015EC1C(fn_80462A04(ai));
+        int b = fn_8015EC1C(fn_80462B0C(ai) * 0.7f + 30.0f);
+        if (fn_80462B0C(ai) <= 0.0f) {
+            b = 0;
+        }
+        if (facing && (a || b) && near) {
+            fn_80136214(ai, 0x11);
+            fn_80136214(ai, 0x13);
+            if (b) {
+                AIAction *h = fn_80138738(-1, 0, 0);
+                if (h) {
+                    fn_80138A24(h, 0x12);
+                    fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+                    return h;
+                }
+            }
+            if (a) {
+                AIAction *h = fn_80138738(7, 250, 10);
+                if (h) {
+                    fn_80138A24(h, 2);
+                    fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+                    return h;
+                }
+            }
+        } else {
+            int close = t && dist < 5.0f;
+            if ((fn_801369B0(ai) && !close) || fn_80086908(AI_GetEntity(ai))) {
+                AIAction *h = fn_80138738(7, 1500, 1500);
+                if (h) {
+                    fn_80138A24(h, 0);
+                    fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+                    fn_80138A24(h, 0x17);
+                    return h;
+                }
+            } else {
+                int c = fn_8015EC1C(fn_80462A30(ai));
+                int side = AI_TestCondition(ai, 0x12) || AI_TestCondition(ai, 0x13);
+                if (c && !side) {
+                    Vector v;
+                    fn_8042DC84(&v, fn_800B1668(*AI_GetEntity(ai)));
+                    int r = fn_8015EA18(2);
+                    if (r == 1) {
+                        fn_80433FFC(&v);
+                    }
+                    AIAction *h = fn_80138738(7, 1000, 1000);
+                    if (h) {
+                        fn_80138A24(h, 0xc);
+                        fn_80138AE0(h, 0, &v, 1.0f);
+                        AI_SetActionWeight(h, 5.0f);
+                        return h;
+                    }
+                } else {
+                    AIAction *h = fn_80138738(7, 1000, 1000);
+                    if (h) {
+                        fn_80138A24(h, 0x17);
+                        fn_80138A24(h, 0);
+                        fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+                        return h;
+                    }
+                }
+            }
+        }
+    }
+    if (!AI_TestCondition(ai, 0x2d) && !BitSet_Test(AI_GetEvents(ai), 1) && !AI_TestCondition(ai, 0x35) && fn_8015E97C(5.0f) &&
+        !AI_TestCondition(ai, 5) && !AI_TestCondition(ai, 6)) {
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            fn_80138A24(h, 0x13);
+            return h;
+        }
+    }
+    AIAction *h = fn_80138738(7, 500, 10);
+    if (h) {
+        int x = BitSet_Test(AI_GetEvents(ai), 1);
+        int y = fn_8015FFD4(ai);
+        if (x && !fn_801369B0(ai)) {
+            Vector v;
+            fn_8042DC84(&v, fn_800B1668(*AI_GetEntity(ai)));
+            int r = fn_8015EA18(2);
+            if (r == 1) {
+                fn_80433FFC(&v);
+            }
+            fn_80138B7C(h, 7, 1000, 1000);
+            fn_80138A24(h, 0xc);
+            fn_80138AE0(h, 0, &v, 1.0f);
+            AI_SetActionWeight(h, 5.0f);
+            return h;
+        } else {
+            if (y) {
+                fn_80138B7C(h, 7, 2000, 1000);
+                fn_80138A24(h, 0x17);
+            } else if (AI_TestCondition(ai, 0x25)) {
+                fn_80136214(ai, 7);
+                fn_80138B7C(h, 7, 1500, 10);
+            } else {
+                fn_80138B7C(h, 7, 500, 1000);
+            }
+            fn_80138A24(h, 0);
+            fn_80138AE0(h, 0, &lbl_80593E00, 1.0f);
+        }
+        int hi = fn_800867A8(AI_GetEntity(ai)) > 0.75f;
+        int lo = fn_8008666C(AI_GetEntity(ai)) < 0.4f;
+        int z = 0;
+        if (x) {
+            AI_SetActionDuration(h, 1000);
+        }
+        if (BitSet_Test(AI_GetEvents(ai), 6) && AI_GetEvent6Actor(ai) && (AI_GetEvent6Actor(ai)->f2a0 & 2)) {
+            z = 1;
+        }
+        int w = z;
+        if ((w && fn_801369B0(ai)) || fn_80086908(AI_GetEntity(ai))) {
+            fn_80138A24(h, 0x17);
+            AI_SetActionDuration(h, 1500);
+        }
+    }
+    return h;
+}
+
+// JUMP_ATTACK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013CD40(void *ai, AIBehavior *rec)
+{
+    if (!(fn_80462A5C(ai) > 0.0f)) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 0x29)) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 0x40)) {
+        return 0;
+    }
+    if (fn_80134870(ai)) {
+        if (fn_8015E8A8(ai, fn_800B1724(*fn_80134870(ai))) > fn_800B1884(*AI_GetEntity(ai), 0xd8)) {
+            return 0;
+        }
+    }
+    Vector v;
+    AIAction *none = 0;
+    if (fn_800CCBD8(*AI_GetActor(ai)) || fn_800CC6DC(*AI_GetActor(ai)) == 5 || fn_8044203CB(ai)->v42()) {
+        unsigned int dt = fn_800CC2B4(*AI_GetActor(ai)) - fn_8042EFF8(lbl_80593BE8);
+        if (!fn_8015E97C(5.0f) && !fn_8015EE34(ai, fn_80134870(ai))) {
+            return 0;
+        }
+        if (dt < 500 && dt > 150) {
+            fn_80067050(*AI_GetEntity(ai), &v);
+            int below = 0;
+            int above = 0;
+            int level = 0;
+            if (fn_800B1724(*fn_80134870(ai))->z < fn_800B1724(*AI_GetEntity(ai))->z - 1.0f) {
+                below = 1;
+            } else if (fn_800B1724(*fn_80134870(ai))->z > fn_800B1724(*AI_GetEntity(ai))->z + 1.0f) {
+                above = 1;
+            } else {
+                level = 1;
+            }
+            AIAction *h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector p;
+                fn_8015F6CC(ai, &p);
+                fn_80138AE0(h, 0, &p, 1.0f);
+                if (v.z < -0.5f) {
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        fn_80138A24(h, 2);
+                        if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                            fn_80138A24(h, 7);
+                        }
+                        if (fn_801369B0(ai) && fn_8015EC1C(fn_80461FC0(ai))) {
+                            fn_80138A24(h, 0xd);
+                        }
+                    }
+                } else if (v.z > 0.5f) {
+                    fn_80138A24(h, 2);
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        fn_80138A24(h, 7);
+                    }
+                } else {
+                    if (fn_8015EC1C(fn_80462A88(ai))) {
+                        fn_80138A24(h, 0x12);
+                    } else {
+                        fn_80138A24(h, 2);
+                    }
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        fn_80138A24(h, 7);
+                    }
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461FC0(ai))) {
+                        fn_80138A24(h, 0xd);
+                    }
+                }
+                return h;
+            }
+        }
+    }
+    int dur = 2000;
+    int jitter = fn_8015EA18(500) - 250;
+    dur += jitter;
+    if (!AI_TestCondition(ai, 0x3d)) {
+        AIAction *h = fn_80138738(10, dur, 10);
+        if (h) {
+            Vector p;
+            float dist = fn_8015E64C(ai);
+            float range = fn_800B1884(*AI_GetEntity(ai), 0xd3);
+            float s = dist / range < 1.0f ? dist / range : 1.0f;
+            fn_8015F6CC(ai, &p);
+            fn_80138AE0(h, 0, &p, s);
+            AI_SetActionWeight(h, 10.0f);
+            fn_80138A24(h, 5);
+            fn_80461E58(ai, &p);
+            if (fn_801369B0(ai) && fn_80085D3C(AI_GetEntity(ai)) && fn_8015EC1C(fn_80461F3C(ai))) {
+                fn_80138A24(h, 7);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// JUMP_ATTACK_PEAK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013D464(void *ai, AIBehavior *rec)
+{
+    if (!(fn_80462A5C(ai) > 0.0f)) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 0x29)) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 0x40)) {
+        return 0;
+    }
+    if (fn_80134870(ai)) {
+        if (fn_8015E8A8(ai, fn_800B1724(*fn_80134870(ai))) > fn_800B1884(*AI_GetEntity(ai), 0xd8)) {
+            return 0;
+        }
+    }
+    Vector v;
+    AIAction *none = 0;
+    if (fn_800CCBD8(*AI_GetActor(ai)) || fn_800CC6DC(*AI_GetActor(ai)) == 5 || fn_8044203CB(ai)->v42()) {
+        unsigned int dt = fn_800CC2B4(*AI_GetActor(ai)) - fn_8042EFF8(lbl_80593BE8);
+        if (!fn_8015E97C(5.0f)) {
+            return 0;
+        }
+        if (dt) {
+            fn_80067050(*AI_GetEntity(ai), &v);
+            int below = 0;
+            int above = 0;
+            int level = 0;
+            if (fn_800B1724(*fn_80134870(ai))->z < fn_800B1724(*AI_GetEntity(ai))->z - 1.0f) {
+                below = 1;
+            } else if (fn_800B1724(*fn_80134870(ai))->z > fn_800B1724(*AI_GetEntity(ai))->z + 1.0f) {
+                above = 1;
+            } else {
+                level = 1;
+            }
+            AIAction *h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector p;
+                fn_8015F6CC(ai, &p);
+                fn_80138AE0(h, 0, &p, 1.0f);
+                if (v.z > 0.5f) {
+                    fn_80138A24(h, 2);
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        fn_80138A24(h, 7);
+                    }
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461FC0(ai))) {
+                        fn_80138A24(h, 0xd);
+                    }
+                } else {
+                    if (fn_8015EC1C(fn_80462A88(ai))) {
+                        fn_80138A24(h, 0x12);
+                        if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                            fn_80138A24(h, 7);
+                        }
+                    }
+                }
+                return h;
+            }
+        }
+    }
+    int dur = 1250;
+    int jitter = fn_8015EA18(500) - 250;
+    dur += jitter;
+    if (!AI_TestCondition(ai, 0x3d)) {
+        AIAction *h = fn_80138738(10, dur, 10);
+        if (h) {
+            Vector p;
+            float dist = fn_8015E64C(ai);
+            float range = fn_800B1884(*AI_GetEntity(ai), 0xd3);
+            float s = dist / range < 1.0f ? dist / range : 1.0f;
+            s = 1.0f;
+            fn_8015F6CC(ai, &p);
+            fn_80138AE0(h, 0, &p, s);
+            AI_SetActionWeight(h, 10.0f);
+            fn_80138A24(h, 5);
+            fn_80461E58(ai, &p);
+            if (fn_801369B0(ai) && fn_80085D3C(AI_GetEntity(ai)) && fn_8015EC1C(fn_80461F3C(ai))) {
+                fn_80138A24(h, 7);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// JUMP_ATTACK_DESCEND (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013DA7C(void *ai, AIBehavior *rec)
+{
+    if (!(fn_80462A5C(ai) > 0.0f)) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 0x29)) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 0x40)) {
+        return 0;
+    }
+    if (fn_80134870(ai)) {
+        if (fn_8015E8A8(ai, fn_800B1724(*fn_80134870(ai))) > fn_800B1884(*AI_GetEntity(ai), 0xd8)) {
+            return 0;
+        }
+    }
+    Vector v;
+    AIAction *none = 0;
+    if (fn_800CCBD8(*AI_GetActor(ai)) || fn_800CC6DC(*AI_GetActor(ai)) == 5 || fn_8044203CB(ai)->v42()) {
+        unsigned int dt = fn_800CC2B4(*AI_GetActor(ai)) - fn_8042EFF8(lbl_80593BE8);
+        if (!fn_8015E97C(2.0f)) {
+            return 0;
+        }
+        if (fn_800CC6DC(*AI_GetActor(ai)) == 5 || dt < 150) {
+            fn_80067050(*AI_GetEntity(ai), &v);
+            AIAction *h = fn_80138738(-1, 0, 0);
+            if (h) {
+                Vector p;
+                fn_8015F6CC(ai, &p);
+                fn_80138AE0(h, 0, &p, 1.0f);
+                if (v.z < -0.5f) {
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        fn_80138A24(h, 2);
+                        if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                            fn_80138A24(h, 7);
+                        }
+                    }
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461FC0(ai))) {
+                        fn_80138A24(h, 0xd);
+                    }
+                } else if (v.z > 0.5f) {
+                    fn_80138A24(h, 2);
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        fn_80138A24(h, 7);
+                    }
+                } else {
+                    if (fn_8015EC1C(fn_80462A88(ai))) {
+                        fn_80138A24(h, 0x12);
+                    } else {
+                        fn_80138A24(h, 2);
+                    }
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        fn_80138A24(h, 7);
+                    }
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461FC0(ai))) {
+                        fn_80138A24(h, 0xd);
+                    }
+                }
+                return h;
+            }
+        }
+    }
+    int dur = 2000;
+    int jitter = fn_8015EA18(500) - 250;
+    dur += jitter;
+    if (!AI_TestCondition(ai, 0x3d)) {
+        AIAction *h = fn_80138738(10, dur, 10);
+        if (h) {
+            Vector p;
+            float dist = fn_8015E64C(ai);
+            float range = fn_800B1884(*AI_GetEntity(ai), 0xd3);
+            float s = dist / range < 1.0f ? dist / range : 1.0f;
+            fn_8015F6CC(ai, &p);
+            fn_80138AE0(h, 0, &p, s);
+            AI_SetActionWeight(h, 10.0f);
+            fn_80138A24(h, 5);
+            fn_80461E58(ai, &p);
+            if (fn_801369B0(ai) && fn_80085D3C(AI_GetEntity(ai)) && fn_8015EC1C(fn_80461F3C(ai))) {
+                fn_80138A24(h, 7);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// ATTACK_MELEE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013E0C4(void *ai, AIBehavior *rec)
+{
+    if (fn_800CCC28(*AI_GetActor(ai))) {
+        return 0;
+    }
+    if ((!fn_8015F384(ai) && !AI_TestCondition(ai, 0x35) && fn_80134870(ai) && fn_800B0C1C(fn_80134870(ai))) ||
+        AI_TestCondition(ai, 0x40)) {
+        if (fn_8015E97C(5.0f) && fn_8015F07C(ai) &&
+            ((!AI_TestCondition(ai, 5) && !AI_TestCondition(ai, 6)) || AI_TestCondition(ai, 0x40))) {
+            AIAction *h = fn_80138738(-1, 0, 0);
+            if (h) {
+                fn_80138A24(h, 0x13);
+                return h;
+            }
+        }
+        return 0;
+    }
+    if (AI_TestCondition(ai, 0x29)) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 0x40)) {
+        return 0;
+    }
+    for (int i = 0; i < fn_801500C4(AI_GetTargetList(ai)); i++) {
+        void *t = fn_801500F0(AI_GetTargetList(ai), i);
+        if (t && fn_800B0CC0(t) && fn_800A3F44(fn_800B1478(t))) {
+            return 0;
+        }
+    }
+    if (fn_80085D3C(AI_GetEntity(ai)) && fn_80134870(ai) && fn_800B0C58(fn_80134870(ai)) && !AI_TestCondition(ai, 0x28)) {
+        void *e = fn_800B14A0(fn_80134870(ai));
+        if (fn_800866C0(e)) {
+            AIAction *h = fn_80138738(8, 50, 500);
+            fn_80138A24(h, 7);
+            fn_80138A24(h, 0x12);
+            fn_80136214(ai, 8);
+            fn_801363A4(ai, 0x12);
+            fn_801362DC(ai, 8);
+            return h;
+        }
+    }
+    if (fn_80134870(ai) && fn_800B0C58(fn_80134870(ai)) && fn_800CD2E8(*fn_80085954(fn_800B14A0(fn_80134870(ai))))) {
+        fn_801362DC(ai, 8);
+        fn_801363A4(ai, 2);
+        AIAction *h = fn_80138738(8, 50, 20);
+        fn_80138A24(h, 2);
+        return h;
+    }
+    int ok = fn_8015EC1C(fn_80461F3C(ai)) && fn_8015EC1C(fn_80461EE4(ai)) && fn_8015EC1C(fn_80461F10(ai));
+    if (fn_8015EE34(ai, fn_80134870(ai)) && fn_8015E830(ai)) {
+        if (fn_8044734C(AI_GetMover(ai)) && fn_80444570(fn_8044734C(AI_GetMover(ai))) && fn_800CCBD8(*AI_GetActor(ai))) {
+        } else {
+            AIAction *h = fn_80138738(8, 250, 50);
+            if (h) {
+                if (fn_80134870(ai)) {
+                    Vector p;
+                    fn_8015F6CC(ai, &p);
+                    fn_80138AE0(h, 0, &p, 1.0f);
+                }
+                if (ok && fn_8009B04CE(*AI_GetEntity(ai)) != 0x28) {
+                    fn_80138A24(h, 7);
+                }
+                fn_80138A24(h, 2);
+                if (fn_8015EC80(fn_80461FC0(ai), 1.0f) &&
+                    (!fn_800860CC(AI_GetEntity(ai)) || fn_800CCAE8(*AI_GetActor(ai)) || fn_800CE4D0(AI_GetActor(ai))) &&
+                    fn_801600DC(ai, 1, 5.0f)) {
+                    fn_80138A24(h, 0xd);
+                }
+                return h;
+            }
+        }
+    } else {
+    }
+    if (fn_800CC96C(*AI_GetActor(ai))) {
+        int low = 1;
+        if (fn_800CC6DC(*AI_GetActor(ai)) == 0x19) {
+            low = 0;
+        }
+        float z = fn_800B1724(*AI_GetEntity(ai))->z;
+        float tz = fn_800B1724(*fn_80134870(ai))->z;
+        if (z > tz) {
+            if (!low) {
+                Vector *d = fn_800CE230(*AI_GetActor(ai));
+                if (d) {
+                    Vector v;
+                    fn_80429038(&v, fn_800B1724(*fn_80134870(ai)), fn_800B1724(*AI_GetEntity(ai)));
+                    v.z = 0.0f;
+                    fn_8042F76C(&v);
+                    if (fn_8042EBF4(d, &v) > 0.2f) {
+                        AIAction *h = fn_80138738(8, 50, 20);
+                        fn_80138A24(h, 2);
+                        if (ok) {
+                            fn_80138A24(h, 7);
+                        }
+                        return h;
+                    }
+                }
+            } else if (z > tz + 3.0f) {
+                AIAction *h = fn_80138738(8, 50, 20);
+                fn_80138A24(h, 2);
+                if (ok) {
+                    fn_80138A24(h, 7);
+                }
+                return h;
+            }
+        }
+    }
+    return 0;
+}
+
+// ATTACK_RANGED (docs/ai.md section 4.3): an attack toward the target, gated by a clear path and tuning field 200.
+extern "C" AIAction *fn_8013E99C(void *self, AIBehavior *rec)
+{
+    if (!fn_8015F384(self) && !AI_TestCondition(self, 0x35)) {
+        if (fn_8015E97C(1.0f) && fn_8015F008(self) && !AI_TestCondition(self, 5) && !AI_TestCondition(self, 6)) {
+            AIAction *e = fn_80138738(-1, 0, 0);
+            if (e) {
+                fn_80138A24(e, 0x13);
+                return e;
+            }
+        }
+        return 0;
+    }
+    Target *t = fn_80134870T(self);
+    if (!t)
+        return 0;
+    if (AI_TestCondition(self, 0x29))
+        return 0;
+    Vector dir;
+    t->s5(&dir, 0);
+    fn_8042D8A8(&dir, fn_800B1724(*AI_GetEntity(self)));
+    float len = fn_8042EC54(&dir);
+    float facing = fn_8042EBF4(&dir, fn_800B1750(*AI_GetEntity(self)));
+    float size = MAX(ABS(fn_80134870T(self)->maxX - fn_80134870T(self)->minX),
+                     ABS(fn_80134870T(self)->maxY - fn_80134870T(self)->minY));
+    len -= size;
+    Vector from;
+    fn_80442080T(self)->s5(&from, 0);
+    if (facing > 0.5f) {
+        Placement hit;
+        int clear = !fn_8004A9CC(&from, &dir, len, 0x8000, &hit, fn_800B24AC(*AI_GetEntity(self)),
+                                 fn_800B1CC8(*AI_GetEntity(self)), 0, 3);
+        int color = 0xffff0000;
+        if (clear)
+            color = 0xff00ff00;
+        if (clear) {
+            int id = 200;
+            int n = fn_800B18EC(*AI_GetEntity(self), 200);
+            AIAction *h = fn_80138738(9, id, n);
+            if (h) {
+                if (fn_80442080A(self)->flags & 0x4000) {
+                    fn_80138A24(h, 2);
+                    fn_80138A24(h, 7);
+                } else {
+                    fn_80138A24(h, 1);
+                    int a = fn_8015EEA0(self);
+                    int b = fn_800862DC(AI_GetEntity(self));
+                    if (fn_801369B0(self) && (b || (!b && !a)))
+                        fn_80138A24(h, 7);
+                    if (fn_801369B0(self) && fn_8015EC1C(fn_80461FC0(self)))
+                        fn_80138A24(h, 0xd);
+                }
+                dir.z = 0.0f;
+                fn_8042F76C(&dir);
+                fn_80138AE0(h, 0, &dir, 0.08f);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// STRAFE (docs/ai.md section 4.3): weighs four directions, drops the blocked ones, picks one.
+extern "C" AIAction *fn_8013F08C(void *ai, AIBehavior *rec)
+{
+    int dur = 500;
+    int rest = 500;
+    if (fn_800861EC(AI_GetEntity(ai))) {
+        dur = 1000;
+        rest = 0;
+    }
+    AIAction *h = fn_80138738(13, dur, rest);
+    if (h) {
+        fn_80138A24(h, 0xb);
+        float w[4];
+        w[0] = 3.0f;
+        w[1] = 1.0f;
+        w[2] = 3.0f;
+        w[3] = 1.0f;
+        if (fn_800861EC(AI_GetEntity(ai))) {
+            w[1] = 0.0f;
+            w[3] = 0.0f;
+        }
+        if (fn_8015E64C(ai) <= fn_800B1884(*AI_GetEntity(ai), 0xd3)) {
+            w[1] = 0.0f;
+        }
+        if (fn_8015E64C(ai) < fn_800B1884(*AI_GetEntity(ai), 0xd2)) {
+            w[0] = 0.0f;
+            w[1] = 0.0f;
+            w[2] = 0.0f;
+        }
+        if (AI_TestCondition(ai, 0x40)) {
+            w[1] = 0.0f;
+        }
+        for (int i = 0; i <= 3; i++) {
+            if (w[i] == 0.0f) {
+                continue;
+            }
+            if (!fn_801600DC(ai, i, 2.5f)) {
+                w[i] = 0.0f;
+            }
+        }
+        Vector v;
+        unsigned int r = fn_8015EA6C(4, w);
+        switch (r) {
+        case 0:
+            fn_8042D80C(&v, fn_800B17A8(*AI_GetEntity(ai)));
+            break;
+        case 1:
+            fn_8042DC84(&v, fn_800B1750(*AI_GetEntity(ai)));
+            break;
+        case 2:
+            fn_8042DC84(&v, fn_800B17A8(*AI_GetEntity(ai)));
+            break;
+        case 3:
+            fn_8042D80C(&v, fn_800B1750(*AI_GetEntity(ai)));
+            break;
+        }
+        Vector p;
+        fn_8042DC84(&p, &v);
+        fn_80138AE0(h, 0, &p, 1.0f);
+        return h;
+    }
+    return 0;
+}
+
+// FLY (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013F438(void *ai, AIBehavior *rec)
+{
+    int a = fn_8015F008(ai);
+    int b = AI_TestCondition(ai, 0x27);
+    int c = AI_TestCondition(ai, 0x2a);
+    int d = AI_TestCondition(ai, 0x1c);
+    int e = AI_TestCondition(ai, 0xc) || AI_TestCondition(ai, 0xe);
+    if (!fn_801368B8(ai) && !fn_804628AC(ai)) {
+        return 0;
+    }
+    AIAction *h = fn_80138738(0xe, 0, 0);
+    if (h) {
+        float z = fn_800B1724(*AI_GetEntity(ai))->z;
+        float gz = fn_8014B824(AI_GetMover(ai));
+        float dz = gz - z;
+        if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+            gz = AI_GetMoverWaypoint(AI_GetMover(ai))->z;
+        }
+        if (fn_804628AC(ai)) {
+            fn_80138A24(h, 9);
+        }
+        if (dz > -1.0f) {
+            fn_80138A24(h, 0x10);
+            fn_80138A24(h, 9);
+        }
+        if (fn_804628AC(ai) && z < gz + 2.5f &&
+            fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), AI_GetMoverMoveDest(AI_GetMover(ai))) > 2.0f) {
+            fn_80138A24(h, 0x10);
+        }
+        Ent *t = fn_80134870(ai);
+        if (t) {
+            float dist = fn_8015E64C(ai);
+            float tdist = fn_8015E8A8(ai, fn_800B1724(*fn_80134870(ai)));
+            if (!fn_804628AC(ai) && fn_80085D3C(AI_GetEntity(ai)) && tdist > 0.0f && tdist < 5.0f &&
+                dist < fn_800B1884(*AI_GetEntity(ai), 0xd3) && !AI_TestCondition(ai, 0x14)) {
+                fn_80138A24(h, 2);
+            } else if (tdist < 5.0f) {
+                fn_80138A24(h, 9);
+            }
+        } else {
+            fn_80138A24(h, 9);
+        }
+        if (!fn_804628AC(ai) && fn_80134870(ai) && fn_8015EC1C(fn_80462A88(ai)) && fn_8015EE34(ai, fn_80134870(ai))) {
+            Vector p;
+            fn_8015F6CC(ai, &p);
+            fn_80138AE0(h, 0, &p, 1.0f);
+            fn_80138A24(h, 0x12);
+            if (fn_801369B0(ai)) {
+                fn_80138A24(h, 7);
+            }
+        }
+        return h;
+    }
+    return 0;
+}
+
+// SUSPENDED (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8013F8D0(void *ai, AIBehavior *rec)
+{
+    if (AI_TestCondition(ai, 0x32)) {
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            if (fn_800B1724(*AI_GetEntity(ai))->z < fn_8014B824(AI_GetMover(ai)) - 1.0f) {
+                Vector v;
+                fn_8042DC84(&v, &lbl_80593DD0);
+                fn_80138AE0(h, 0, &v, 1.0f);
+            } else {
+                fn_80138A24(h, 5);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// THROW_OBJECT (docs/ai.md section 4.3): throws when the path to the target is clear down the centre and both edges.
+extern "C" AIAction *fn_8013F9F0(void *ai, AIBehavior *rec)
+{
+    if (AI_TestCondition(ai, 0xc)) {
+        AIAction *h = fn_80138738(0x10, 100, 500);
+        if (h) {
+            Vector v;
+            if (fn_8015F6CC(ai, &v)) {
+                if (!fn_8015F384(ai) || !fn_80085D3C(AI_GetEntity(ai))) {
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                    AI_SetActionWeight(h, 10.0f);
+                }
+            } else {
+                fn_8042DC84(&v, fn_800B1750(*AI_GetEntity(ai)));
+                if (!fn_8015F384(ai) || !fn_80085D3C(AI_GetEntity(ai))) {
+                    fn_80138AE0(h, 0, &v, 1.0f);
+                }
+            }
+            float facing = fn_8042EBF4(&v, fn_800B1750(*AI_GetEntity(ai)));
+            if (facing < 0.0f) {
+                return h;
+            }
+            int seen = 1;
+            if (fn_80134870(ai)) {
+                seen = fn_8015F0F0(ai, fn_80134870(ai));
+            }
+            if (fn_80086B1C(AI_GetEntity(ai)) || fn_80086B6C(AI_GetEntity(ai))) {
+                fn_80138A24(h, 6);
+            }
+            int clear = 1;
+            if (fn_80134870(ai)) {
+                Vector from, to, dir;
+                fn_80442080T(ai)->s5(&from, 0);
+                fn_80134870T(ai)->s5(&to, 0);
+                fn_80429038(&dir, &to, &from);
+                fn_8042F76C(&dir);
+                float len = fn_804290F8(&from, &to);
+                float size = MAX(ABS(fn_80134870T(ai)->maxX - fn_80134870T(ai)->minX),
+                                 ABS(fn_80134870T(ai)->maxY - fn_80134870T(ai)->minY));
+                len -= size;
+                if (len > 10.0f) {
+                    len = 10.0f;
+                }
+                Vector side;
+                fn_8042F984(&side, &dir, &lbl_80593DE0);
+                Vector left, right;
+                Target *b = fn_800CD9B0T(*AI_GetActor(ai));
+                float half = MAX(ABS(b->maxX - b->minX), ABS(b->maxY - b->minY));
+                half /= 2.0f;
+                fn_80429090(&left, &from, &side, half);
+                fn_80429090(&right, &from, &side, -half);
+                Placement hit;
+                clear = !fn_8004A9CC(&from, &dir, len, 0x8000, &hit, fn_800B24AC(*AI_GetEntity(ai)),
+                                     fn_800B1CC8(*AI_GetEntity(ai)), 0, 3);
+                int color = 0xffff0000;
+                if (clear) {
+                    color = 0xff00ff00;
+                }
+                if (clear) {
+                    fn_80429038(&dir, &to, &left);
+                    fn_8042F76C(&dir);
+                    len = fn_804290F8(&left, &to);
+                    float size = MAX(ABS(fn_80134870T(ai)->maxX - fn_80134870T(ai)->minX),
+                                     ABS(fn_80134870T(ai)->maxY - fn_80134870T(ai)->minY));
+                    len -= size;
+                    if (len > 10.0f) {
+                        len = 10.0f;
+                    }
+                    clear = !fn_8004A9CC(&left, &dir, len, 0x8000, &hit, fn_800B24AC(*AI_GetEntity(ai)),
+                                         fn_800B1CC8(*AI_GetEntity(ai)), 0, 3);
+                    color = 0xffff0000;
+                    if (clear) {
+                        color = 0xff00ff00;
+                    }
+                    if (clear) {
+                        fn_80429038(&dir, &to, &right);
+                        fn_8042F76C(&dir);
+                        len = fn_804290F8(&right, &to);
+                        float size = MAX(ABS(fn_80134870T(ai)->maxX - fn_80134870T(ai)->minX),
+                                         ABS(fn_80134870T(ai)->maxY - fn_80134870T(ai)->minY));
+                        len -= size;
+                        if (len > 10.0f) {
+                            len = 10.0f;
+                        }
+                        clear = !fn_8004A9CC(&right, &dir, len, 0x8000, &hit, fn_800B24AC(*AI_GetEntity(ai)),
+                                             fn_800B1CC8(*AI_GetEntity(ai)), 0, 3);
+                        color = 0xffff0000;
+                        if (clear) {
+                            color = 0xff00ff00;
+                        }
+                    }
+                }
+            }
+            if (fn_80134870(ai) && fn_8015E64C(ai) > 5.0f && fn_8015E8A8(ai, fn_800B1724(*fn_80134870(ai))) > 4.0f &&
+                fn_8015EEA0(ai)) {
+                clear = 1;
+            }
+            if (clear) {
+                fn_80138A24(h, 0xa);
+                AI_SetActionPriority(h, 5);
+                fn_80138B7C(h, 0x10, 500, 500);
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// BODY_THROW (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801409D0(void *ai, AIBehavior *rec)
+{
+    int grab = 0;
+    Ent *t = fn_80134870(ai);
+    if (t && fn_800B0C58(t) && fn_80085D3C(AI_GetEntity(ai)) && !AI_TestCondition(ai, 0x28) && fn_800866C0(fn_800B14A0(t))) {
+        grab = 1;
+    }
+    if (fn_800CD0EC(*AI_GetActor(ai)) || grab) {
+        fn_80136214(ai, 0x11);
+        return 0;
+    }
+    if (!fn_8015F008(ai) && fn_8015EE34(ai, fn_80134870(ai))) {
+        AIAction *h = fn_80138738(0x11, 100, 200);
+        if (h) {
+            Vector v;
+            if (fn_8015F6CC(ai, &v)) {
+                fn_80138AE0(h, 0, &v, 1.0f);
+            } else {
+                fn_8042DC84(&v, fn_800B1750(*AI_GetEntity(ai)));
+                fn_80138AE0(h, 0, &v, 1.0f);
+            }
+            if (fn_801369B0(ai)) {
+                fn_80138A24(h, 7);
+            }
+            fn_80138A24(h, 0x12);
+            return h;
+        }
+    }
+    return 0;
+}
+
+// SWAT (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80140C10(void *ai, AIBehavior *rec)
+{
+    if (AI_TestCondition(ai, 2) && AI_TestCondition(ai, 0x33) && AI_TestCondition(ai, 0x14) && AI_TestCondition(ai, 0x18)) {
+        AIAction *h = fn_80138738(0x12, 1000, 100);
+        if (h) {
+            Vector v;
+            fn_8042DC84(&v, fn_800B1750(*AI_GetEntity(ai)));
+            int hit;
+            if (fn_8015E2FC(ai, &v, 2.0f, &hit, 0.0f)) {
+                void *o = fn_800ACFA8(hit);
+                if (o && fn_800B0CC0(o) && fn_8008572C(AI_GetEntity(ai), fn_800B1478(o)) && !fn_800A4538(fn_800B1478(o))) {
+                    fn_80138A24(h, 2);
+                    fn_80138A24(h, 0x19);
+                } else {
+                    fn_80138A24(h, 5);
+                    if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                        if (fn_80085D3C(AI_GetEntity(ai))) {
+                            fn_80138A24(h, 7);
+                        } else {
+                            fn_80138A24(h, 0x14);
+                        }
+                    }
+                }
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// PICKUP (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80140E64(void *ai, AIBehavior *rec)
+{
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    float dist = fn_804290F8(fn_800B1724(*AI_GetEntity(ai)), fn_800B1724(*t));
+    if ((fn_800860FC(AI_GetEntity(ai)) && !AI_TestCondition(ai, 0x3c) && dist < 10.0f) || dist < 3.0f) {
+        AIAction *h = fn_80138738(0x13, 50, 500);
+        if (h) {
+            Vector d;
+            fn_8042DC84(&d, fn_800B1724(*t));
+            fn_8042D8A8(&d, fn_800B1724(*AI_GetEntity(ai)));
+            d.z = 0.0f;
+            float len = fn_8042EC54(&d);
+            if (len > 1.0f) {
+                fn_80138AE0(h, 0, &d, 0.25f);
+            }
+            int both = 0;
+            Ent *o = fn_80462530(AI_GetTargetList(ai));
+            if (o && o != t) {
+                Vector a, b;
+                float da = fn_8015F538(ai, fn_800B1724(*o), &a);
+                float db = fn_8015F538(ai, fn_800B1724(*t), &b);
+                int ahead = fn_8042EBF4(&a, &b) > 0.25f;
+                int near = da > 2.0f && db > 0.1f && db < 2.0f;
+                if (ahead && near) {
+                    both = 1;
+                }
+            }
+            if (o && fn_8008615C(AI_GetEntity(ai)) && fn_800CC6DC(*AI_GetActor(ai)) == 0x22) {
+                Vector b, a;
+                float db, da;
+                db = fn_8015F538(ai, fn_800B1724(*t), &b);
+                da = fn_8015F538(ai, fn_800B1724(*o), &a);
+                if (db < da && db < fn_800B1884(*AI_GetEntity(ai), 0xd3) && fn_8042EBF4(&b, &a) > 0.0f) {
+                    fn_80138A24(h, 2);
+                    fn_80138B7C(h, 0x13, 100, 100);
+                    return h;
+                }
+            }
+            if (both || fn_80461F94(ai) == 0.0f) {
+                fn_80138A24(h, 2);
+                fn_80138A24(h, 0x19);
+                fn_80138B7C(h, 0x12, 100, 100);
+            } else {
+                fn_80138A24(h, 4);
+                if (fn_800860FC(AI_GetEntity(ai)) &&
+                    fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), fn_800B1724(*t)) > 2.5f) {
+                    fn_80138A24(h, 7);
+                }
+            }
+            return h;
+        }
+    }
+    return 0;
+}
+
+// SUPER_BLOCK_THROWN (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80141394(void *ai, AIBehavior *rec)
+{
+    if (AI_TestCondition(ai, 2)) {
+        Ent *t = fn_80134870(ai);
+        if (!t) {
+            return 0;
+        }
+        if (AI_TestCondition(ai, 0x2d) || AI_TestCondition(ai, 0x2c)) {
+            AIAction *h = fn_80138738(0x14, 1500, 100);
+            if (h) {
+                fn_80138A24(h, 0);
+                if (fn_801369B0(ai) && AI_TestCondition(ai, 0x2c)) {
+                    fn_80138A24(h, 0x17);
+                }
+                AI_SetActionPriority(h, 5);
+                return h;
+            }
+        }
+    }
+    return 0;
+}
+
+// AVOID_HAZARDS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801414C8(void *ai, AIBehavior *rec)
+{
+    Vector pos, dir, fwd;
+    fn_8042DC84(&pos, fn_800B1724(*AI_GetEntity(ai)));
+    fn_80067050(*AI_GetEntity(ai), &fwd);
+    fwd.z = 0.0f;
+    float len = fn_8042EC54(&fwd);
+    if (len < 0.1f) {
+        fn_8042DC84(&fwd, fn_800B1750(*AI_GetEntity(ai)));
+    }
+    float reach = 2.5f; // dead: the fn_80429090 call below takes the literal
+    if (fn_800CCAE8(*AI_GetActor(ai))) {
+        reach = 6.0f;
+    } else if (fn_800CCA58(*AI_GetActor(ai))) {
+        reach = 4.0f;
+    }
+    fn_80429090(&dir, &pos, &fwd, 2.5f);
+    if (fn_800CE4D0(AI_GetActor(ai))) {
+        for (int i = 0; i < AI_GetRingOutCount(fn_8013726C(ai)); i++) {
+            void *v = AI_GetRingOut(fn_8013726C(ai), i);
+            if (!v) {
+                continue;
+            }
+            Vector hit;
+            pos.z = 0.0f;
+            dir.z = 0.0f;
+            if (fn_801464E4(v, &dir)) {
+                Vector out;
+                Ent *t = fn_80134870(ai);
+                if (t) {
+                    fn_8042DC84(&pos, fn_800B1724(*t));
+                    pos.z = 0.0f;
+                }
+                fn_80146604(v, &pos, &out);
+                AIAction *h = fn_80138738(0x15, 1000, 0);
+                if (h) {
+                    fn_80138AE0(h, 0, &out, 1.0f);
+                    AI_SetActionWeight(h, 40.0f);
+                    return h;
+                }
+            }
+            if (fn_80146A88(v, &pos, &dir, &hit)) {
+                hit.z = pos.z;
+                Vector away;
+                fn_80429038(&away, &hit, &pos);
+                away.z = 0.0f;
+                fn_8042F76C(&away);
+                fn_80433FFC(&away);
+                AIAction *h = fn_80138738(0x15, 1000, 0);
+                if (h) {
+                    fn_80138AE0(h, 0, &away, 1.0f);
+                    AI_SetActionWeight(h, 40.0f);
+                    return h;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < AI_GetDamageRegionCount(fn_8013726C(ai)); i++) {
+        void *v = AI_GetDamageRegion(fn_8013726C(ai), i);
+        if (!v) {
+            continue;
+        }
+        Vector hit;
+        pos.z = 0.0f;
+        dir.z = 0.0f;
+        if (fn_801464E4(v, &pos)) {
+            Vector out;
+            fn_80146604(v, &pos, &out);
+            AIAction *h = fn_80138738(0x15, 1000, 10);
+            if (h) {
+                fn_80138AE0(h, 0, &out, 1.0f);
+                AI_SetActionPriority(h, 5);
+                if (fn_800CCC28(*AI_GetActor(ai))) {
+                    fn_80138A24(h, 5);
+                }
+                return h;
+            }
+        }
+        if (fn_80146A88(v, &pos, &dir, &hit)) {
+            hit.z = pos.z;
+            Vector away;
+            fn_80429038(&away, &hit, &pos);
+            away.z = 0.0f;
+            fn_8042F76C(&away);
+            fn_80433FFC(&away);
+            AIAction *h = fn_80138738(0x15, 1000, 10);
+            if (h) {
+                fn_80138AE0(h, 0, &away, 1.0f);
+                AI_SetActionPriority(h, 5);
+                if (fn_800CCC28(*AI_GetActor(ai))) {
+                    fn_80138A24(h, 5);
+                }
+                return h;
+            }
+        }
+    }
+    Vector sum;
+    int n = 0;
+    fn_80447C38(&sum);
+    for (int i = 0; i < AI_GetCrystalCount(fn_8013726C(ai)); i++) {
+        Ent *e = AI_GetCrystal(fn_8013726C(ai), i);
+        if (e) {
+            Vector at, d;
+            fn_8042DC84(&at, fn_800B1724(*e));
+            if (fn_804290F8(&at, &pos) < 6.0f) {
+                fn_8042DC84(&d, &pos);
+                fn_8042D8A8(&d, &at);
+                d.z = 0.0f;
+                fn_8042F76C(&d);
+                fn_8042D854(&sum, &d);
+                n++;
+            }
+        }
+    }
+    if (n) {
+        AIAction *h = fn_80138738(0x15, 1000, 10);
+        if (h) {
+            fn_80435530(&sum, 1.0f / fn_8042CE28(n));
+            if (fn_80085F7C(AI_GetEntity(ai))) {
+                fn_80138A24(h, 9);
+            } else if (fn_8008606C(AI_GetEntity(ai))) {
+                fn_80138A24(h, 9);
+                fn_80138A24(h, 5);
+            } else {
+                fn_80138A24(h, 5);
+            }
+            fn_80138AE0(h, 0, &sum, 1.0f);
+            AI_SetActionWeight(h, 50.0f);
+            return h;
+        }
+    }
+    return 0;
+}
+
+// DEFEND_REGIONS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80141D78(void *ai, AIBehavior *rec)
+{
+    if (fn_800CCC28(*AI_GetActor(ai))) {
+        return 0;
+    }
+    Vector pos, dir, fwd;
+    fn_8042DC84(&pos, fn_800B1724(*AI_GetEntity(ai)));
+    fn_80067050(*AI_GetEntity(ai), &fwd);
+    fwd.z = 0.0f;
+    float len = fn_8042EC54(&fwd);
+    if (len < 0.1f) {
+        fn_8042DC84(&fwd, fn_800B1750(*AI_GetEntity(ai)));
+    }
+    fn_80429090(&dir, &pos, &fwd, 2.5f);
+    for (int i = 0; i < AI_GetDefendRegionCount(fn_8013726C(ai)); i++) {
+        Region *r = AI_GetDefendRegion(fn_8013726C(ai), i);
+        if (!r) {
+            continue;
+        }
+        if (r->owner != fn_800B13D8(*AI_GetEntity(ai))) {
+            continue;
+        }
+        if (!fn_801464E4(r, &pos)) {
+            AIAction *h = fn_80138738(0x16, 1000, 0);
+            if (h) {
+                Vector out;
+                fn_80146604(r, &pos, &out);
+                Vector in;
+                fn_80429038(&in, &r->centre, &pos);
+                fn_8042F76C(&in);
+                fn_80433FFC(&out);
+                fn_80138AE0(h, 0, &out, 1.0f);
+                AI_SetActionPriority(h, 5);
+                AI_SetActionWeight(h, 1000.0f);
+                Vector at;
+                fn_8042DC84(&at, fn_800B1724(*AI_GetEntity(ai)));
+                at.z += 1.0f;
+                return h;
+            } else {
+                int n = 0;
+                n++;
+            }
+        }
+    }
+    return 0;
+}
+
+// DODGE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801420B4(void *ai, AIBehavior *rec)
+{
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    if (fn_8015E64C(ai) < fn_800B1884(*AI_GetEntity(ai), 0xd1)) {
+        fn_801363A4(ai, 0xc);
+        return 0;
+    }
+    int c = 50;
+    if (fn_8008609C(AI_GetEntity(ai))) {
+        c = 0;
+    }
+    AIAction *h = fn_80138738(0x19, 50, c);
+    if (!h) {
+        return 0;
+    }
+    float z = fn_800B1724(*AI_GetEntity(ai))->z;
+    float ground = fn_8014B824(AI_GetMover(ai));
+    float dz = ground - z;
+    fn_80138A24(h, 0xc);
+    Vector v;
+    float dist = fn_8015E64C(ai);
+    fn_8015F6CC(ai, &v);
+    float w[4];
+    w[0] = 3.0f;
+    w[1] = 1.0f;
+    w[2] = 3.0f;
+    w[3] = 1.0f;
+    if (dist < fn_800B1884(*AI_GetEntity(ai), 0xd3)) {
+        w[1] = 0.0f;
+    }
+    if (!fn_801603CC(ai, 1) || !AI_TestCondition(ai, 0x35)) {
+        w[1] = 0.0f;
+    }
+    if (!fn_801603CC(ai, 0)) {
+        w[0] = 0.0f;
+    }
+    if (!fn_801603CC(ai, 2)) {
+        w[2] = 0.0f;
+    }
+    if (!fn_801603CC(ai, 3)) {
+        w[3] = 0.0f;
+    }
+    if (dist < fn_800B1884(*AI_GetEntity(ai), 0xd2)) {
+        w[3] *= 100.0f;
+    }
+    unsigned int side = fn_8015EA6C(4, w);
+    Vector d;
+    switch (side) {
+    case 0:
+        fn_8042D80C(&d, fn_800B17A8(*AI_GetEntity(ai)));
+        break;
+    case 1:
+        fn_8042DC84(&d, fn_800B1750(*AI_GetEntity(ai)));
+        break;
+    case 2:
+        fn_8042DC84(&d, fn_800B17A8(*AI_GetEntity(ai)));
+        break;
+    case 3:
+        fn_8042D80C(&d, fn_800B1750(*AI_GetEntity(ai)));
+        break;
+    }
+    fn_80138AE0(h, 0, &d, 1.0f);
+    fn_801363A4(ai, 0xb);
+    fn_801363A4(ai, 0);
+    fn_801363A4(ai, 0x17);
+    fn_80136214(ai, 1);
+    fn_80136214(ai, 0x24);
+    if (fn_8015EE34(ai, fn_80134870(ai)) && fn_8015E97C(3.0f) && !fn_8015F008(ai) && !AI_TestCondition(ai, 0x29)) {
+        fn_80138A24(h, 2);
+    }
+    return h;
+}
+
+// AVOID_ACTORS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80142558(void *ai, AIBehavior *rec)
+{
+    if (fn_80134870(ai)) {
+        if (fn_804290F8(fn_800B1724(*AI_GetEntity(ai)), fn_800B1724(*fn_80134870(ai))) <= fn_800B1884(*AI_GetEntity(ai), 210))
+            return 0;
+    }
+    Vector v;
+    float f;
+    if (fn_80151D64(ai, &v, &f)) {
+        AIAction *h = fn_80138738(26, 250, 10);
+        if (!h)
+            return 0;
+        fn_80138AE0(h, 0, &v, f);
+        return h;
+    }
+    return 0;
+}
+
+// AVOID_OBJECTS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801426A0(void *ai, AIBehavior *rec)
+{
+    if (fn_80134870(ai) &&
+        fn_804290F8(fn_800B1724(*AI_GetEntity(ai)), fn_800B1724(*fn_80134870(ai))) <= fn_800B1884(*AI_GetEntity(ai), 0xd2) &&
+        !AI_TestCondition(ai, 0x18)) {
+        return 0;
+    }
+    if (fn_800CCC28(*AI_GetActor(ai))) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 0x34) && AI_TestCondition(ai, 0x14) && !AI_TestCondition(ai, 0x3d)) {
+        if (AI_TestCondition(ai, 0x18) && (!AI_TestCondition(ai, 0x12) || !AI_TestCondition(ai, 0x13))) {
+            AIAction *h = fn_80138738(0x1c, 2000, 0);
+            fn_80138A24(h, 0xc);
+            Vector v;
+            fn_8042DC84(&v, fn_800B17A8(*AI_GetEntity(ai)));
+            if (!fn_801603CC(ai, 2)) {
+                fn_80433FFC(&v);
+            }
+            fn_80138AE0(h, 0, &v, 1.0f);
+            return h;
+        } else {
+            AIAction *h = fn_80138738(-1, 0, 0);
+            fn_80138A24(h, 5);
+            if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                fn_80138A24(h, 7);
+            }
+            if (!fn_80085D3C(AI_GetEntity(ai))) {
+                fn_80138A24(h, 0x14);
+            }
+            fn_80138AE0(h, 0, fn_800B1750(*AI_GetEntity(ai)), 1.0f);
+            return h;
+        }
+    }
+    Vector v;
+    float f;
+    Ent *o = fn_801526E4(ai, &v, &f);
+    if (o) {
+        int pri = 500;
+        if (fn_800B0CC0(o)) {
+            if (fn_800A4438(fn_800B1478(o))) {
+                pri = 3000;
+            } else if (fn_800A4408(fn_800B1478(o))) {
+                pri = 1500;
+            }
+        }
+        fn_80136214(ai, 8);
+        fn_80136214(ai, 0x19);
+        AIAction *h = fn_80138738(0x1c, pri, 0);
+        if (!h) {
+            return 0;
+        }
+        fn_80138AE0(h, 0, &v, f);
+        AI_SetActionWeight(h, 10.0f);
+        AI_SetAvoidObject(ai, fn_800B13D8(*o));
+        return h;
+    } else {
+        AI_SetAvoidObject(ai, 0);
+        fn_80136214(ai, 0x1c);
+    }
+    return 0;
+}
+
+// JUMP (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80142B04(void *ai, AIBehavior *rec)
+{
+    if (!AI_IsBehaviorEnabled(ai, 1) && !AI_IsBehaviorEnabled(ai, 2) && !AI_IsBehaviorEnabled(ai, 5) && !fn_800CE4D0(AI_GetActor(ai))) {
+        return 0;
+    }
+    PEnt *p = AI_GetEntity(ai);
+    if (!p) {
+        return 0;
+    }
+    Vector pos, goal;
+    fn_8042DC84(&pos, fn_800B1724(*p));
+    fn_8042DC84(&goal, AI_GetMoverLookAhead(AI_GetMover(ai)));
+    Ent *t = fn_80134870(ai);
+    if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
+    } else if (AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
+    } else if (t) {
+        fn_8042DC84(&goal, fn_800B1724(*t));
+    }
+    if (t && AI_TestCondition(ai, 0x14) && !AI_TestCondition(ai, 0x18)) {
+        fn_8042DC84(&goal, fn_800B1724(*t));
+    }
+    float dz = pos.z - goal.z;
+    Vector fwd;
+    fn_80067050(*p, &fwd);
+    float speed = fn_8042EC54(&fwd);
+    if (speed > 1.0f && AI_TestCondition(ai, 0x3d)) {
+        return 0;
+    }
+    if (((dz < -1.4f && AI_TestCondition(ai, 0x33)) || (AI_TestCondition(ai, 0x14) && !AI_TestCondition(ai, 0x18))) &&
+        !AI_TestCondition(ai, 0x3d)) {
+        AIAction *h = fn_80138738(0x1b, 50, 2000);
+        if (!h) {
+            return 0;
+        }
+        Vector d;
+        fn_80429038(&d, &goal, &pos);
+        fn_8042F76C(&d);
+        fn_80138AE0(h, 0, &d, 1.0f);
+        fn_80138A24(h, 5);
+        if (!fn_80085D3C(AI_GetEntity(ai))) {
+            int hit;
+            if (fn_8015E2FC(ai, fn_800B1750(*AI_GetEntity(ai)), 2.0f, &hit, 2.0f)) {
+                fn_80138A24(h, 0x14);
+            } else {
+                fn_80138A24(h, 5);
+            }
+        }
+        if (fn_801369B0(ai)) {
+            fn_80138A24(h, 7);
+        }
+        return h;
+    }
+    return 0;
+}
+
+// EVADE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80142F80(void *ai, AIBehavior *rec)
+{
+    for (int i = 0; i < fn_801500C4(AI_GetTargetList(ai)); i++) {
+        Ent *o = fn_801500F0P(AI_GetTargetList(ai), i);
+        int danger = o && fn_800B0CC0(o) && fn_800A3F44(fn_800B1478(o));
+        int targeted = 0;
+        if (fn_80134870(ai) && AI_TestCondition(ai, 0x31)) {
+            targeted = 1;
+            o = fn_80134870(ai);
+        }
+        if (!danger && !targeted) {
+            continue;
+        }
+        Vector dir, at;
+        fn_8042DC84(&at, fn_800B1724(*AI_GetEntity(ai)));
+        LvObj *c = fn_800B3A74(fn_80430050(lbl_8052F060), 0, 0, 0);
+        if (c && fn_804290F8(&c->sub.pos, fn_800B1724(*o)) > 3.0f) {
+            LvSub *q = &c->sub;
+            fn_8042DC84(&at, &q->pos);
+        } else {
+            void *spot = fn_8009C55C(fn_800B1724(*AI_GetEntity(ai)), fn_800B1CC8(*AI_GetEntity(ai)), fn_801370B0(ai), 20.0f,
+                                     0, 0, -1);
+            if (spot) {
+                fn_8042DC84(&at, fn_80444688(spot));
+            } else {
+                fn_8042DC84(&at, &c->sub.pos);
+            }
+        }
+        fn_80429038(&dir, &at, fn_800B1724(*AI_GetEntity(ai)));
+        dir.z = 0.0f;
+        fn_8042F76C(&dir);
+        if (fn_804290F8(fn_800B1724(*AI_GetEntity(ai)), fn_800B1724(*o)) > 5.0f) {
+            return 0;
+        }
+        AIAction *h = fn_80138738(0x1d, 1500, 0);
+        if (!h) {
+            return 0;
+        }
+        fn_80138AE0(h, 0, &dir, 1.0f);
+        AI_SetActionWeight(h, 10.0f);
+        if (fn_8008606C(AI_GetEntity(ai)) && !fn_804628AC(ai) && !AI_TestCondition(ai, 0x3c)) {
+            if (fn_80442080V(ai)->v57(0.15f) && !AI_TestCondition(ai, 0x3d)) {
+                fn_80138A24(h, 5);
+                AI_SetActionDuration(h, 100);
+                AI_SetActionCooldown(h, 10);
+            } else {
+                fn_80138A24(h, 9);
+                AI_SetActionDuration(h, 800);
+                AI_SetActionCooldown(h, 200);
+                if (targeted) {
+                    AI_SetActionDuration(h, 1500);
+                }
+            }
+        }
+        if (fn_80085F7C(AI_GetEntity(ai))) {
+            if (fn_80442080V(ai)->v57(0.15f) && !AI_TestCondition(ai, 0x3d)) {
+                fn_80138A24(h, 5);
+                AI_SetActionDuration(h, 100);
+                AI_SetActionCooldown(h, 10);
+            } else {
+                fn_80138A24(h, 9);
+                AI_SetActionDuration(h, 500);
+                AI_SetActionCooldown(h, 200);
+                if (targeted) {
+                    AI_SetActionDuration(h, 1500);
+                }
+            }
+        }
+        if (AI_TestCondition(ai, 0x33) && !AI_TestCondition(ai, 0x3d)) {
+            fn_80138A24(h, 5);
+            if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                fn_80138A24(h, 7);
+            }
+            if (!fn_80085D3C(AI_GetEntity(ai))) {
+                fn_80138A24(h, 0x14);
+            }
+        }
+        return h;
+    }
+    return 0;
+}
+
+// TURN_TOWARDS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_801435F0(void *ai, AIBehavior *rec)
+{
+    PEnt *p = AI_GetEntity(ai);
+    if (!p) {
+        return 0;
+    }
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    Vector d;
+    float turn = 0.08f;
+    fn_80429038(&d, fn_800B1724(*t), fn_800B1724(*p));
+    d.z = 0.0f;
+    fn_8042F76C(&d);
+    Vector look;
+    fn_8042DC84(&look, &d);
+    float dot = fn_8042EBF4(fn_800B1750(*AI_GetEntity(ai)), &d);
+    if (dot < 1.0f) {
+        fn_8015FD2C(ai, &d, 1000.0f, &look);
+    }
+    AIAction *h = fn_80138738(-1, 0, 0);
+    if (h) {
+        fn_80138AE0(h, 0, &look, turn);
+        return h;
+    }
+    return 0;
+}
+
+// SWING (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8014379C(void *ai, AIBehavior *rec)
+{
+    if (!fn_8015F008(ai) && !fn_804628AC(ai) && !AI_TestCondition(ai, 0x3c)) {
+        return 0;
+    }
+    float z = fn_800B1724(*AI_GetEntity(ai))->z;
+    float ground = fn_8014B824(AI_GetMover(ai));
+    float dz = ground - z;
+    Vector at;
+    if (!fn_8015F6CC(ai, &at)) {
+        fn_8042DC84(&at, fn_800B1750(*AI_GetEntity(ai)));
+    }
+    float dist = fn_8015E64C(ai);
+    if (fn_8015F384(ai) && fn_80151AF8(AI_GetBrain(ai), 0xb)) {
+        fn_8015F538(ai, AI_GetMoverMoveDest(AI_GetMover(ai)), &at);
+        dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), AI_GetMoverMoveDest(AI_GetMover(ai)));
+        if (dist < 2.0f) {
+            return 0;
+        }
+    }
+    if (fn_800CCB88(*AI_GetActor(ai))) {
+        if (dist < fn_800B1884(*AI_GetEntity(ai), 0xd4)) {
+            AIAction *h = fn_80138738(0x20, 0, 0);
+            fn_80138A24(h, 2);
+            if (fn_801369B0(ai)) {
+                fn_80138A24(h, 9);
+            }
+            if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+                fn_80138A24(h, 7);
+            }
+            return h;
+        } else if (fn_801369B0(ai) && fn_8015EC1C(fn_80461FC0(ai))) {
+            AIAction *h = fn_80138738(0x20, 0, 100);
+            fn_80138A24(h, 9);
+            return h;
+        }
+    }
+    if (fn_800CCAE8(*AI_GetActor(ai)) && dist < fn_800B1884(*AI_GetEntity(ai), 0xd4) && !fn_804628AC(ai) &&
+        !AI_TestCondition(ai, 0x3c)) {
+        AIAction *h = fn_80138738(-1, 0, 0);
+        fn_80138A24(h, 2);
+        if (fn_801369B0(ai) && fn_8015EC1C(fn_80461F3C(ai))) {
+            fn_80138A24(h, 7);
+        }
+        return h;
+    }
+    if (fn_801369B0(ai) && fn_800CCB38(*AI_GetActor(ai))) {
+        AIAction *h = fn_80138738(0x20, 2000, 100);
+        if (h) {
+            fn_80138A24(h, 8);
+            return h;
+        }
+    }
+    if (fn_801369B0(ai) && fn_800CCAE8(*AI_GetActor(ai))) {
+        int pri = fn_8015EA18(100) + 150;
+        AIAction *h = fn_80138738(0x20, pri, 100);
+        if (h) {
+            if (AI_TestCondition(ai, 0x3c)) {
+                fn_80138A24(h, 0x15);
+            }
+            fn_80138A24(h, 9);
+            fn_80138AE0(h, 0, &at, 1.0f);
+            return h;
+        }
+    }
+    register float reach = 15.0f; // dead: the test below takes the literal
+    if (fn_801369B0(ai) && fn_80442080V(ai)->v57(0.15f)) {
+        if (fn_80134870(ai) && fn_8015EE34(ai, fn_80134870(ai)) && dist < 15.0f) {
+            if (!AI_TestCondition(ai, 0x3e) && fn_800860CC(AI_GetEntity(ai)) && !AI_TestCondition(ai, 0x14) && fn_8015E97C(10.0f)) {
+                Vector p;
+                float out;
+                fn_8042DC84(&p, fn_800B1724(*AI_GetEntity(ai)));
+                fn_8042FE08(&p, fn_800B1750(*AI_GetEntity(ai)), 12.0f);
+                p.z += 3.0f;
+                if (fn_80085300(AI_GetEntity(ai), &p, 0.7f, 8.0f, &out)) {
+                    AIAction *h = fn_80138738(0x20, 200, 100);
+                    if (h) {
+                        fn_80138A24(h, 9);
+                        return h;
+                    }
+                }
+            }
+        } else if (!AI_TestCondition(ai, 0x3d) && fn_801369B0(ai)) {
+            AIAction *h = fn_80138738(0x20, 100, 10);
+            if (h) {
+                fn_80138A24(h, 5);
+                fn_80138AE0(h, 0, &at, 1.0f);
+                return h;
+            }
+        }
+    } else if (fn_801369B0(ai)) {
+        AIAction *h = fn_80138738(0x20, 20, 20);
+        if (h) {
+            if (fn_804628AC(ai) || AI_TestCondition(ai, 0x3c)) {
+                fn_80138A24(h, 0x15);
+            }
+            fn_80138A24(h, 9);
+            fn_80138AE0(h, 0, &at, 1.0f);
+            return h;
+        }
+    }
+    return 0;
+}
+
+// WALL_CLIMB (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144038(void *ai, AIBehavior *rec)
+{
+    if (AI_TestCondition(ai, 0x29)) {
+        return 0;
+    }
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    AIAction *h = fn_80138738(0x21, 1000, 0);
+    fn_80138A24(h, 8);
+    fn_80138A24(h, 7);
+    Vector d, n, flat;
+    fn_8042DC84(&d, fn_800B1724(*t));
+    fn_8042D8A8(&d, fn_800B1724(*AI_GetEntity(ai)));
+    fn_8042DC84(&flat, &d);
+    flat.z = 0.0f;
+    fn_8042DC84(&n, &flat);
+    fn_8042F76C(&n);
+    float lenSq = fn_8042EBF4(&flat, &flat);
+    float zSq = d.z * d.z;
+    float w[4];
+    w[0] = 0.0f;
+    w[1] = 0.0f;
+    w[2] = 0.0f;
+    w[3] = 0.0f;
+    int any = 0;
+    if (fn_8015E8A8(ai, fn_800B1724(*t)) < 2.0f) {
+        w[0] = 1.0f;
+        any = 1;
+    } else if (fn_8015E8A8(ai, fn_800B1724(*t)) > 8.0f) {
+        w[1] = 1.0f;
+        any = 1;
+    } else if (fn_8015EEA0(ai)) {
+        any = 1;
+        w[0] = 1.0f;
+    }
+    Vector *fwd = fn_800B1750(*AI_GetEntity(ai));
+    Vector back;
+    fn_8042D80C(&back, fwd);
+    fn_8042F76C(&back);
+    if (fn_8042EBF4(&back, &n) < 0.5f) {
+        Vector up(0.0f, 0.0f, 1.0f, 1.0f);
+        Vector side;
+        fn_8042F984(&side, &up, &back);
+        if (fn_8042EBF4(&side, &n) > 0.0f) {
+            w[3] = 1.0f;
+            any = 1;
+        } else {
+            w[2] = 1.0f;
+            any = 1;
+        }
+        w[0] *= 0.5f;
+        w[1] *= 0.5f;
+    }
+    if (fn_8042EBF4(&n, fn_800B1750(*AI_GetEntity(ai))) > 0.0f || fn_8015EEA0(ai)) {
+        any = 1;
+        w[0] = 1.0f;
+        w[1] = 0.0f;
+        w[2] = 0.0f;
+        w[3] = 0.0f;
+    }
+    Vector dir(0.0f, 0.0f, 0.0f, 1.0f);
+    if (any) {
+        unsigned int side = fn_8015EA6C(4, w);
+        switch (side) {
+        case 0:
+            dir.z = 1.0f;
+            break;
+        case 1:
+            dir.z = -1.0f;
+            break;
+        case 2:
+            dir.x = 1.0f;
+            break;
+        case 3:
+            dir.x = -1.0f;
+            break;
+        }
+    }
+    fn_80138AE0(h, 7, &dir, 1.0f);
+    return h;
+}
+
+// WALL_CLIMB_MELEE_ATTACK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144544(void *ai, AIBehavior *rec)
+{
+    if (AI_TestCondition(ai, 0x29)) {
+        return 0;
+    }
+    if (!AI_TestCondition(ai, 2)) {
+        return 0;
+    }
+    AIAction *h = fn_80138738(0x22, 0x21, 100);
+    fn_80138A24(h, 8);
+    fn_80138A24(h, 2);
+    Vector v;
+    fn_80447C38(&v);
+    fn_80138AE0(h, 7, &v, 1.0f);
+    return h;
+}
+
+// WALL_CLIMB_RANGED_ATTACK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144628(void *ai, AIBehavior *rec)
+{
+    if (AI_TestCondition(ai, 0x29)) {
+        return 0;
+    }
+    AIAction *h = fn_80138738(0x21, 0, 0);
+    fn_80138A24(h, 8);
+    if (fn_801369B0(ai)) {
+        fn_80138A24(h, 7);
+    }
+    fn_80138A24(h, 2);
+    Vector v;
+    fn_80447C38(&v);
+    fn_80138AE0(h, 7, &v, 1.0f);
+    return h;
+}
+
+// ROOFTOP_REGIONS (docs/ai.md section 4.3).
+extern "C" AIAction *fn_8014470C(void *ai, AIBehavior *rec)
+{
+    if (fn_800CCC28(*AI_GetActor(ai))) {
+        return 0;
+    }
+    Vector pos;
+    fn_8042DC84(&pos, fn_800B1724(*AI_GetEntity(ai)));
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    Vector at;
+    fn_8042DC84(&at, fn_800B1724(*t));
+    for (int i = 0; i < AI_GetRooftopRegionCount(fn_8013726C(ai)); i++) {
+        Region *r = AI_GetRooftopRegion(fn_8013726C(ai), i);
+        if (!r) {
+            continue;
+        }
+        if (fn_801464E4(r, &pos) && fn_801464E4(r, &at)) {
+            Vector c;
+            fn_8042DC84(&c, &r->centre);
+            float d = fn_801467AC(r, &pos);
+            if (d > 2.0f) {
+                continue;
+            } else {
+                AIAction *h = fn_80138738(0x17, 500, 0);
+                if (h) {
+                    Vector a, b;
+                    fn_8015F538(ai, &r->centre, &b);
+                    fn_80138AE0(h, 0, &b, 1.0f);
+                    return h;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+// APPROACH_MOBILITY (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144970(void *ai, AIBehavior *rec)
+{
+    if (!fn_8008612C(AI_GetEntity(ai)) && !fn_8008603C(AI_GetEntity(ai))) {
+        return 0;
+    }
+    Ent *t = fn_80134870(ai);
+    if (!t) {
+        return 0;
+    }
+    Vector pos;
+    fn_8042DC84(&pos, fn_800B1724(*AI_GetEntity(ai)));
+    Vector at;
+    fn_8042DC84(&at, fn_800B1724(*t));
+    if (fn_800CCB38(*AI_GetActor(ai))) {
+        fn_80136214(ai, 0x24);
+        AIAction *h = fn_80138738(0x21, 1000, 0);
+        if (h) {
+            Vector up;
+            fn_80428FA8(&up, 0.0f, 0.0f, 1.0f);
+            fn_80138AE0(h, 7, &up, 1.0f);
+            fn_80138A24(h, 0x18);
+            return h;
+        }
+        return 0;
+    }
+    int found = 0;
+    Vector goal;
+    fn_8042DC84(&goal, fn_80462854(ai));
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
+        found = 1;
+    }
+    if (found) {
+        Vector d;
+        fn_8015F538(ai, &goal, &d);
+        d.z = 0.0f;
+        float len = fn_8042EC54(&d);
+        if (len < 0.1) {
+            fn_8042DC84(&d, fn_800B1750(*AI_GetEntity(ai)));
+        }
+        AIAction *h = fn_80138738(0x24, 2000, 0);
+        if (h) {
+            fn_80138AE0(h, 0, &d, 1.0f);
+            fn_80138A24(h, 0x18);
+            AI_SetActionWeight(h, 20.0f);
+            return h;
+        }
+    }
+    return 0;
+}
+
+// FORCE_SUPER_BLOCK (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144CB4(void *ai, AIBehavior *rec)
+{
+    AIAction *h = fn_80138738(0x25, 60000, 0);
+    if (h) {
+        fn_80138A24(h, 0);
+        fn_80138A24(h, 0x17);
+        return h;
+    }
+    return 0;
+}
+
+// FORCE_POWER_STAND (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144D3C(void *ai, AIBehavior *rec)
+{
+    AIAction *h = fn_80138738(0x26, 60000, 0);
+    if (h) {
+        fn_80138A24(h, 7);
+        return h;
+    }
+    return 0;
+}
+
+// FORCE_FLY (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144DB8(void *ai, AIBehavior *rec)
+{
+    AIAction *h = fn_80138738(-1, 0, 0);
+    if (h) {
+        fn_80138A24(h, 9);
+        return h;
+    }
+    return 0;
+}
+
+// HOVER (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80144E30(void *ai, AIBehavior *rec)
+{
+    AIAction *h = fn_80138738(-1, 0, 0);
+    float hover = fn_800B1884(*AI_GetEntity(ai), 0xd6);
+    float tz = 0.0f;
+    if (fn_80134870(ai)) {
+        tz = fn_800B1724R(*fn_80134870(ai)).z;
+    }
+    Vector p;
+    fn_8042DC84(&p, fn_800B1724(*AI_GetEntity(ai)));
+    p.z += 1.0f;
+    float ground = 0.0f;
+    int hit = fn_80085300(AI_GetEntity(ai), &p, 0.7f, 10.0f, &ground);
+    float z = fn_800B1724(*AI_GetEntity(ai))->z;
+    float above = z - ground;
+    float want = z;
+    if (hit) {
+        want = above + hover;
+    } else if (AI_TestCondition(ai, 2)) {
+        want = tz + hover;
+    } else {
+        want = z;
+    }
+    Vector goal;
+    int found = 0;
+    fn_8042DC84(&goal, fn_800B1724(*AI_GetEntity(ai)));
+    if (AI_HasMoverWaypoint(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
+        found = 1;
+    }
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
+        found = 1;
+    }
+    if (found) {
+        float top = goal.z + hover;
+        if (goal.z > z + hover) {
+            top = z + hover;
+        }
+        if (z < top - 1.0f) {
+            fn_80138A24(h, 9);
+            fn_80138A24(h, 0x10);
+        } else if (z > top) {
+            fn_8013880C(h);
+            h = 0;
+        } else {
+            fn_80138A24(h, 9);
+        }
+        return h;
+    }
+    if (z < want) {
+        fn_80138A24(h, 9);
+        fn_80138A24(h, 0x10);
+    } else if (z > want) {
+        fn_8013880C(h);
+        h = 0;
+    } else {
+        fn_80138A24(h, 9);
+    }
+    return h;
+}
+
+// FLYER_MOVE (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80145200(void *ai, AIBehavior *rec)
+{
+    if (!fn_800861EC(AI_GetEntity(ai))) {
+        return 0;
+    }
+    if (AI_TestCondition(ai, 4) || (AI_TestCondition(ai, 0x2b) && !fn_800CDA20(*AI_GetActor(ai)))) {
+        return 0;
+    }
+    float dist = 0.0f;
+    int byA = 0;
+    int byB = 0;
+    int unused = 0;
+    int found = 0;
+    Vector goal;
+    if (AI_HasMoverWaypoint(AI_GetMover(ai)) && !AI_IsMoverAboveTarget(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverWaypoint(AI_GetMover(ai)));
+        found = 1;
+        byA = 1;
+    }
+    if (!found && AI_HasMoverMoveDest(AI_GetMover(ai))) {
+        fn_8042DC84(&goal, AI_GetMoverMoveDest(AI_GetMover(ai)));
+        found = 1;
+        byB = 1;
+    }
+    dist = fn_8015E580(fn_800B1724(*AI_GetEntity(ai)), &goal);
+    if (dist >= fn_800B1884(*AI_GetEntity(ai), 0xd5)) {
+        return 0;
+    }
+    float dz = goal.z - fn_800B1724(*AI_GetEntity(ai))->z;
+    if (dist <= 2.0f && dz < fn_800B1884(*AI_GetEntity(ai), 0xd6)) {
+        return 0;
+    }
+    int stuck = 0;
+    if (fn_8015F07C(ai) &&
+        (!AI_TestCondition(ai, 0x35) || (fn_80151AF8(AI_GetBrain(ai), 3) && !BitSet_Test(fn_80151C8C(AI_GetBrain(ai)), 1)))) {
+        stuck = 1;
+    }
+    Vector hit, pos, to;
+    fn_8042DC84(&pos, fn_800B1724(*AI_GetEntity(ai)));
+    fn_8042DC84(&to, &goal);
+    for (int i = 0; i < AI_GetDamageRegionCount(fn_8013726C(ai)); i++) {
+        void *v = AI_GetDamageRegion(fn_8013726C(ai), i);
+        if (!v) {
+            continue;
+        }
+        if (fn_80146A88(v, &pos, &to, &hit)) {
+            hit.z = pos.z;
+            Vector away;
+            fn_80429038(&away, &hit, &pos);
+            away.z = 0.0f;
+            fn_8042F76C(&away);
+            fn_80433FFC(&away);
+            AIAction *h = fn_80138738(0x15, 1000, 10);
+            if (h) {
+                fn_80138AE0(h, 0, &away, 1.0f);
+                AI_SetActionWeight(h, 50.0f);
+                return h;
+            }
+        }
+    }
+    Vector d;
+    fn_8015F538(ai, &goal, &d);
+    if (found) {
+        AIAction *h = fn_80138738(-1, 0, 0);
+        if (h) {
+            float td = 9999.0f;
+            float ta = 9999.0f;
+            float reach = fn_800B1884(*AI_GetEntity(ai), 0xd4);
+            if (fn_80134870(ai)) {
+                td = fn_8015E580(fn_800B1724(*fn_80134870(ai)), &goal);
+                ta = fn_8015E580(fn_800B1724(*fn_80134870(ai)), fn_800B1724(*AI_GetEntity(ai)));
+            }
+            fn_80138AE0(h, 0, &d, 1.0f);
+            Ent *o = fn_804624EC(AI_GetTargetList(ai));
+            if (AI_TestCondition(ai, 0x14) && AI_TestCondition(ai, 0x18) && fn_8015EC1C(fn_80461EE4(ai))) {
+                if (o && fn_800B0CC0(o) && !fn_800A4538(fn_800B1478(o))) {
+                    fn_80138A24(h, 2);
+                }
+            } else if (AI_TestCondition(ai, 0x35) && !fn_80462828(ai) && ta < fn_800B1884(*AI_GetEntity(ai), 0xd2)) {
+                fn_80138A24(h, 2);
+                fn_80138B7C(h, 8, 100, 10);
+            } else if (fn_80134870(ai) && td < reach && ta < reach && dist < 10.0f) {
+                fn_80138A24(h, 0xb);
+            } else if (stuck) {
+                int moved = 0;
+                int r = fn_8015EA18(2);
+                if (r == 0 && fn_801603CC(ai, 0)) {
+                    fn_8042D80C(&d, fn_800B17A8(*AI_GetEntity(ai)));
+                    moved = 1;
+                } else if (fn_801603CC(ai, 2)) {
+                    fn_8042DC84(&d, fn_800B17A8(*AI_GetEntity(ai)));
+                    moved = 1;
+                }
+                if (moved) {
+                    fn_80138A24(h, 0xb);
+                    fn_80138AE0(h, 0, &d, 1.0f);
+                }
+            }
+        }
+        return h;
+    }
+    return 0;
+}
+
+// POWER_STAND (docs/ai.md section 4.3).
+extern "C" AIAction *fn_80145AA8(void *ai, AIBehavior *rec)
+{
+    void *actor = Entity_GetActor(*AI_GetActor(ai));
+    if (fn_80086730(actor) == fn_8008677C(actor)) {
+        return 0;
+    }
+    AIAction *h = fn_80138738(-1, 0, 0);
+    fn_80138A24(h, 7);
+    fn_80138AE0(h, 0, &lbl_80593E00, 0.0f);
+    return h;
+}
+
+extern "C" {
+void *fn_80462474(void *self); // AIAction constructor
+void fn_801B5BA8(void *list, int capacity, float grow);
+void fn_801B5C74(void *list, int inChrg);
+}
+
+// The file's static init, hand-written (matching_notes 82) so that the .rodata tail below follows its 1.0f.
+extern "C" void fn_80145B74(int initialize, int priority)
+{
+    if (priority == 65535) {
+        if (initialize) {
+            register AIAction *base;
+            register int n;
+            register AIAction *p;
+
+            base = lbl_8056A7F0;
+            p = lbl_8056A7F0;
+            n = 255;
+            if (n != -1) {
+                for (;;) {
+                    fn_80462474(p);
+                    p++;
+                    n--;
+                    if (n == -1) {
+                        break;
+                    }
+                }
+            }
+            fn_801B5BA8(lbl_805717F0, 256, 1.0f);
+        } else {
+            fn_801B5C74(lbl_805717F0, 2);
+        }
+    }
+}
+
+extern "C" void fn_80145C38(void)
+{
+    fn_80145B74(1, 65535);
+}
+
+extern "C" void fn_80145C74(void)
+{
+    fn_80145B74(0, 65535);
+}
+
+static void (*const sCtorEntry)(void) __attribute__((section(".ctors"))) = fn_80145C38;
+static void (*const sDtorEntry)(void) __attribute__((section(".dtors"))) = fn_80145C74;
+
+// 0x8049B034-0x8049B088: the pools of this file's inline functions (their code is in the linkonce tail), then the header's "invalid".
+__asm__(".section .rodata\n\t.long 0x3F800000\n\t.long 0x43300000\n\t.long 0x80000000\n\t.long 0x00000000\n\t.long 0x00000000\n\t.long 0x3F800000\n\t.long 0x00000000\n\t.long 0x3F800000\n"
+        "\t.globl lbl_8049B054\nlbl_8049B054:\n\t.long 0x3F800000\n\t.long 0x3F99999A\n\t.long 0x3F4CCCCD\n\t.long 0x40000000\n\t.long 0x3F000000\n\t.long 0x3F4CCCCD\n\t.long 0x3F4CCCCD\n\t.long 0x3F800000\n\t.long 0x3FA00000\n\t.long 0x3F400000\n\t.long 0x000007D0\n\t.long 0x696E7661\n\t.long 0x6C696400\n\t.text"); // lbl_8049B054 is Game/fn_80462B38.cpp's extern_pool

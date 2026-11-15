@@ -39,7 +39,7 @@ The `prodg` rule in `tools/project.py`:
 
 `-d` options reach the compiler too: `ngccc -O0 -dr -dg -c file.cpp` leaves `<temp name>.rtl` (the RTL as generated) and `<temp name>.greg` (after register allocation) in the current directory, so run it outside the repository.
 
-`ngccc` ships without headers. `include/gcc` has freestanding `stddef.h` and `limits.h`, and the ProDG flags put it on the include path. There is no `stdarg.h` yet: this GCC has no `__builtin_va_list`, and the DOL calls a `__va_arg` function, so SN's header was not GCC's. Reconstruct it when the first varargs function is matched.
+`ngccc` ships without headers. `include/gcc` has freestanding `stddef.h` and `limits.h`, and the ProDG flags put it on the include path. `include/gcc/stdarg.h` is egcs's PowerPC V.4 `va-ppc.h` (this GCC has no `__builtin_va_list`) with SN's two changes: `va_start` copies the list by struct assignment, so it is an inline word copy and not a `memcpy` call, and `va_arg` dereferences inside its statement expression, so `__ptr` lands in `r9`. Each `va_arg` expands to the six-way register/overflow test, dead arms included (`Game/fn_80149554.cpp`, `fn_80149A6C`).
 
 Plain `char` is signed. `cc1` sign-extends it (`extsb`), even though `ngccc`'s preprocessor step defines `__CHAR_UNSIGNED__`; `include/gcc/limits.h` follows the code.
 
@@ -192,7 +192,8 @@ to the next, including inline functions that emit no code:
   `return <global>;`, in an inline function too.
 - **Not set by:** a destructor, `return this->x;` or any other expression, a nested `return`, an enumerator,
   or a `static const` that folds.
-- **Cleared by:** a `switch` with `case`/`default` labels, or a user `label:`, in the function being compiled.
+- **Cleared by:** a `switch` with `case`/`default` labels, or a user `label:`, in the function being compiled
+  or in an unused inline function ahead of it (`inline void sn_label_decl() { clear:; }`).
 - A function with the flag set loses the pair and keeps one branch per `return`. A constructor never has
   the pair, because it sets the flag itself.
 
@@ -351,6 +352,7 @@ gives the hard register of each pseudo.
   free call with `this` as the first argument, so the asm side keeps its `fn_` name and nothing has to
   be renamed. `Game/fn_800B5BC4.cpp` calls 50 of its own class's methods that way.
 - **Static initialization.** For a file with global objects that have constructors, GCC 2.95 emits a local `__static_initialization_and_destruction_0(int initialize, int priority)` and a local `_GLOBAL_.I.<first global's name>` that calls it with `(1, 0xFFFF)`, at the end of the file's `.text`. A `_GLOBAL_.I` function in the DOL therefore marks the end of a file. In `symbols.txt`, give both their GCC names with `scope:local`. A global with a *destructor* adds a third function, `_GLOBAL_.D.<same name>`, calling it with `(0, 0xFFFF)` and listed in `.dtors`; the initializer's own branches are `if (priority == 0xFFFF) { if (initialize) ... else ... }`. A file can be nothing but these three (`Game/fn_800B7094.c`), and [`matching_notes.md`](matching_notes.md) has how to write all three by hand when the generated ones cannot be used.
+- **An `__asm__` label on a destructor drops its calls.** cc1plus then treats the class as having no destructor to call: static destruction and array cleanup keep only their `__builtin_delete`/`__builtin_vec_delete` branches. A constructor's label works. A destructor that has to be called needs its mangled name (`_._<len><Class>`), so a static init that destroys a global waits for the class name ([`nonmatching.md`](nonmatching.md), the AI manager's static init).
 - **`T x = T(...);`, not `T x(...);`:** copy-initialization keeps the constructor's returned `this` (`mr r0,r3` after each call), which the game's static initializers have.
 - **A class passed or returned by value travels through memory.** The caller puts it in a stack temp
   and passes the address, so a by-value parameter looks like a pointer one; the hidden return pointer
@@ -403,4 +405,3 @@ Most of the read-only data the SDK clusters own belongs to GCC-built runtime cod
 - Which file each tail function's pool belongs to, and so which inline functions each file used ([Inline functions](#inline-functions-and-the-tail-of-text)).
 - File boundaries: a `_GLOBAL_.I` function ends a file, but most files have none. `Game/fn_800092CC.cpp` may start before 0x800092CC.
 - Uninitialized C globals become COMMON symbols (`-fno-common` or the rules in [`common_bss.md`](common_bss.md)).
-- SN's `stdarg.h`.
