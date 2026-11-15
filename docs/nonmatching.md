@@ -12,7 +12,7 @@ constructor sets it, and so does a top-level `return` of a parameter, local, glo
 inside an unused inline function. Only a `case`/`default` or a user label clears it. No option changes it.
 
 **Fix:** put `inline int sn_return_decl(int a) { return a; }` ahead of the unit's first function when the
-original's flag was already set there (`Game/fn_800887AC.cpp`, `Game/handlers/characterselect.cpp` and
+original's flag was already set there (`Game/fn_80087040.cpp`, `Game/handlers/characterselect.cpp` and
 `Game/fn_8002623C.cpp` do). [`prodg.md`](prodg.md#the-function-end-branch-pair) has the code, the evidence
 and the ordering rules, and `python3 tools/pair_map.py <address>` says which state a function was in. There
 is no build-side workaround: the build used to have a per-unit `strip_fn_end_pair` that deleted the pair from

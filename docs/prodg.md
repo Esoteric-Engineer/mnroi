@@ -206,7 +206,7 @@ B baseline, and 7 of those 12 contain a switch.
 
 **Matching a pair-less unit.** Put a flag-setter ahead of the unit's first function, for example
 `inline int sn_return_decl(int a) { return a; }` or a header class's in-class constructor. It emits no code.
-`Game/fn_800887AC.cpp`, `Game/handlers/characterselect.cpp` and `Game/fn_8002623C.cpp` use that line, and
+`Game/fn_80087040.cpp`, `Game/handlers/characterselect.cpp` and `Game/fn_8002623C.cpp` use that line, and
 without it each is 8 bytes over per function. Order matters inside a unit: a function that comes before the
 first setter, or after a `switch`/label, keeps the pair, so use a real constructor or header function when
 the original's is known.

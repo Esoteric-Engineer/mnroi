@@ -341,7 +341,7 @@ The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<
 
 ### The script record (`.nsc`)
 
-`fn_800887AC` (`Game/fn_800887AC.cpp`) parses an `.nsc` mission or arena script (`Misc/clashMP.nsc` is the versus arena list) into 0x5C8-byte records, one per `mission` ... `endmission` block; the accessors are `Game/fn_804428E0.c`. Every `char[0x20]` field is `strncpy`'d with 0x20 and terminated by hand.
+`fn_800887AC` (`Game/fn_80087040.cpp`, the chronicle file) parses an `.nsc` mission or arena script (`Misc/clashMP.nsc` is the versus arena list) into 0x5C8-byte records, one per `mission` ... `endmission` block; the accessors are `Game/fn_804428E0.c`. Every `char[0x20]` field is `strncpy`'d with 0x20 and terminated by hand.
 
 | Offset | Type | Keyword | Accessors |
 |---|---|---|---|
@@ -365,11 +365,11 @@ The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<
 | +0x478 | `unsigned char` | `character`, rejected unless <= 19 (a roster index) | `fn_80442F98`, getter `fn_80442FC4` |
 | +0x479 | `unsigned char` | `unlockchar`, rejected unless <= 18 | `fn_80442FF4`, getter `fn_80443020` |
 | +0x47A | `unsigned char` | `sacrifice`, rejected unless <= 19 | `fn_80443050`, getter `fn_8044307C` |
-| +0x480 | `int[4]` | `rewards`: an ID over 9999 is reward type 3 (ID - 10000), over 999 type 2 (- 1000), over 99 type 1 (- 100), 0-99 type 0; negative or over 99999 is no reward (`clashMission_GetRewardInfo`) | `fn_80442BC0`, `fn_80442C00(record, i)` |
+| +0x480 | `int[4]` | `rewards`: an ID over 9999 is reward type 3 (ID - 10000), over 999 type 2 (- 1000), over 99 type 1 (- 100), 0-99 type 0; negative or over 99999 is no reward (`clashMission_GetRewardInfo`). `fn_800877F4` grants them: type 0 through `fn_804436D4`, 1 `fn_8044374C`, 2 `fn_80443608`, 3 `fn_80443640`, and over 99999 a fifth kind (ID - 100000, `fn_804435D0`) | `fn_80442BC0`, `fn_80442C00(record, i)` |
 | +0x4A4-+0x5A4 | `char[0x20]` x9 | `soundbanks`, up to nine | `fn_804430FC` |
 | +0x5C4 | int | `maxblessed` | `fn_80442F70` |
 
-`precutscene`, `postcutscene`, `unlocked` and `unlock` parse and do nothing. `profileid` (clamped to 0-5) and `gametype` are file-level settings on the owning table. Lines starting with `;`, `#` or `//` are comments. The owning table is `{profileid +0x0, gametype +0x4, count +0x8, records +0xC, current index +0x1A4}`; its int flags at `+0x1AC` (`fn_80443518`-`fn_804435A4`) are not `actor+0x1AC`.
+`precutscene`, `postcutscene`, `unlocked` and `unlock` parse and do nothing. `profileid` (clamped to 0-5) and `gametype` are file-level settings on the owning table. Lines starting with `;`, `#` or `//` are comments. The owning table (0x1B8 bytes) is `{profileid +0x0, gametype +0x4, count +0x8, records +0xC, current index +0x1A4}`, plus `+0x19C` (its low byte a character, the record's `unlockchar` for some record types), `+0x1A0` four `unsigned char` character slots, `+0x1B0` the master-script instance and `+0x1B4` the current record's index (its `+0x460`); its int flags at `+0x1AC` (`fn_80443518`-`fn_804435A4`) are not `actor+0x1AC`.
 
 **Physics** is Havok (`hk*`, the `hkRagdollConstraintData` ragdolls, `RagdollRecover_*`). No character-specific physics code has turned up; per-character physical tuning is most likely in the tuning fields.
 

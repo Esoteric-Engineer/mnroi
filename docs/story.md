@@ -16,7 +16,7 @@ See also:
 
 - **Startup.** `fn_8002F3A8` calls `fn_8007C8B0`, which creates the class table (`fn_8007891C`) and then registers all 102 classes (`fn_801BEE2C`, section 4.2).
 - **Story frontend.** The APT handlers in `Game/handlers/mission.cpp` (registered as [`versus.md`](versus.md) section 1 describes) call the chronicle (0x80087040, section 4.4) and the save profile `fn_8011CA74`.
-- **Mission start.** `fn_8008856C` copies the record's names into `G+0x59C`, `+0x5BC` and `+0x5DC` (`lbl_805526AC`, `lbl_805526CC`, `lbl_805526EC`). It then creates the record's master script (`+0x2A0`, the 4th `MISSION` argument, getter `fn_80442A54`) through `fn_800789DC`. No mission in `clashsp.nsc` or `clashMP.nsc` names one.
+- **Mission start.** `fn_8008856C` (chronicle file) creates the record's master script (`+0x2A0`, the 4th `MISSION` argument) through `fn_800789DC`. No mission in `clashsp.nsc` or `clashMP.nsc` names one.
 - **Level load.** `fn_8002CE78` (`Game/fn_8002CE78.cpp`) calls:
   - `fn_800777C4("global", 1)` and `fn_800777C4(scene, 0)`, which open `<name>.nhg`;
   - `fn_800A4DF8(scene, level, 0)`, the `.nsd` scene reader (allocator tags `Game:Scene:tScene`, `tPlayerStart`, `tInterestSpot`).
@@ -35,7 +35,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 |---|---|---|
 | 0x80074814-0x8007A3A0 | **Script base file**, one `.ctors` file. It has an inner edge near 0x8007608C: the pair-carrying run ends at 0x80076004, a pair-less run starts at 0x8007608C, and a second `"invalid"` (0x80487BE8) ends the first part's `.rodata` (the debris names `deb_*`, `cel_ConcreteChunk_*`). From 0x8007608C: Havok and `ShapeRepository`, the `.nhg` loader `fn_800777C4`. From 0x8007891C: the class table and the base class (section 4.1). It ends with static init `fn_800796A4`, `_GLOBAL_.I` 0x8007A318 and `_GLOBAL_.D` 0x8007A35C | 4, 22 |
 | 0x8007A3A0-0x80081E08 | **Script command file**: the AI script API (`Game/fn_8007A3A0.cpp`, to 0x8007C034), script init `fn_8007C8B0`, the `SCRIPT` property `fn_8007CA10`, `Scripts:Params` `fn_8007CABC`, the helpers the classes call (section 4.1), and the `cAIMessages` delivery targets ([`ai.md`](ai.md) section 3). `Game/fn_8007C830.c` is matched inside. Static init `fn_80081D00`, `_GLOBAL_.I` 0x80081DCC | 5 |
-| 0x80087040-0x80088740 | **Chronicle** (`GAME:CHRONS`): loads the `.nsc` tables into `lbl_8054ED80`, `NameTable`, the mission accessors the handlers call, mission start `fn_8008856C`. The `.nsc` parser follows (`Game/fn_80088740.c`, `Game/fn_800887AC.cpp`). The start edge is unconfirmed | 2 |
+| 0x80087040-0x8008995C | **Chronicle file**, `Game/fn_80087040.cpp`, with the `.nsc` parser and the static init `fn_80089854` that constructs both tables. Start edge: the two functions before it work on entity fields, and its `.rodata` opens with `GAME:CHRONS` right after the entity code's pool (0x80488758, read by `fn_80086C80`) | 2 |
 | 0x800A3810-0x800A90B0 | Rest of the template file ([`versus.md`](versus.md) section 5, rows 10-12): the scene reader `fn_800A4DF8` (0x1D30) and its helpers `fn_800A7208`, `fn_800A7A0C`, `fn_800A82B8` | 14 |
 | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp`: 66 handlers, mostly wrappers over the save profile. Static init 0x801099E8, `_GLOBAL_.I` 0x8010A40C | 23 |
 | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp`: 16 handlers and the static init | 1 |
@@ -141,7 +141,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 ### 4.4 Chronicle and save profile
 
-- **Chronicle.** `lbl_8054ED80` holds the `.nsc` tables (the owning table layout is in [`characters.md`](characters.md) section 4). `fn_80087040` loads `clashsp.nsc` and `clashMP.nsc` into it. [`ai.md`](ai.md) section 3 reads the AI settings from an entry of the same list. `clashMission_CompleteMission` calls `fn_80087938` (0x340), which probably applies `REWARDS` and `UNLOCKCHAR` (guess).
+- **Chronicle.** Two `.nsc` tables (layout in [`characters.md`](characters.md) section 4): `lbl_8054ED80` holds `clashsp.nsc`, `lbl_8054EF38` `clashMP.nsc`. [`ai.md`](ai.md) section 3 reads the AI settings from an entry of the story list.
 - **Save profile.** `fn_8011CA74` returns the profile, `new`ing it on the first call. The story handlers call `fn_8011ED0C` and `fn_8011ED50` (from `clashMission_CompleteMission`) on it, and `clashMemcard_ResetStoryMode` calls `fn_8011EA2C`.
 
 ---
@@ -159,7 +159,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | # | Target | Range | Unit | Next action |
 |---|---|---|---|---|
 | 1 | Story handlers | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp` | Done |
-| 2 | Chronicle | 0x80087040-0x80088740 | `Game/fn_80087040.cpp` | Identify first: is 0x80087040 a file start (the pair map is inconclusive; 0x80086E2C-0x80087040 is two unclaimed functions), and is it one file with the `.nsc` parser units? 29 functions: init `fn_80087040`, `NameTable`, the accessors `fn_80087C78`-`fn_80088374`, `fn_80087938`, mission start `fn_8008856C` |
+| 2 | Chronicle | 0x80087040-0x8008995C | `Game/fn_80087040.cpp` | Done |
 | 3 | Save profile | 0x8011C5B0-0x8011F2B0 | `Game/fn_8011C5B0.cpp` | Find the end edge first; the memory-card I/O follows. 86 functions, 63 of them 0x80 bytes or less. Record the story-progress and unlock fields in section 4.4 |
 | 4 | Class table and base class | 0x8007891C-0x8007A3A0 | `Game/fn_8007891C.cpp` | Table init `fn_8007891C`, find `fn_80078994`, create `fn_800789DC`, then the base methods (73 functions in 0x80078DD4-0x8007A318, 66 small), static init `fn_800796A4`, `_GLOBAL_.I`, `_GLOBAL_.D`. Record what each slot does in section 4.1 |
 | 5 | Rest of the script command file | 0x8007C034-0x80081E08 | extend `Game/fn_8007A3A0.cpp` | 121 functions: `fn_8007C8B0`, `fn_8007CA10`, `fn_8007CABC`, the helpers in section 4.1, the `cAIMessages` targets `fn_8007EFE0`/`fn_8007F184`/`fn_8007F2C4`, static init, `_GLOBAL_.I`. Absorb `Game/fn_8007C830.c` |
@@ -192,5 +192,5 @@ Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O fr
 - Is `fn_801BEE2C` a file of its own, or the start of the Avengers Mansion file?
 - Where are the edges inside 0x80074814-0x8007891C?
 - What do the base slots other than 1 and 2 do?
-- How are `REWARDS` and `UNLOCKCHAR` applied, and where does the profile store them?
+- Where does the profile store the unlocks that `REWARDS` grants (`fn_804435D0`-`fn_8044374C`)?
 - What are the 0x58-byte functions in the cutscene file?

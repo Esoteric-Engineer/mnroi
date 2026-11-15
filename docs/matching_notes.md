@@ -200,7 +200,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   call emits two copies, and no prototype, cast or temporary adds the third; only the
   new-expression's own temp does. The allocator is `__builtin_new` (`fn_801ACED4`,
   [`prodg.md`](prodg.md#c)), so a unit calling it is `.cpp` and the constructor that follows needs
-  its mangled name in `symbols.txt` (`Game/fn_800887AC.cpp`). While the class is unknown, declare `struct T { char d[0x28]; T(void *) __asm__("fn_XXXXXXXX"); };`: `d` supplies the
+  its mangled name in `symbols.txt` (`Game/fn_80087040.cpp`). While the class is unknown, declare `struct T { char d[0x28]; T(void *) __asm__("fn_XXXXXXXX"); };`: `d` supplies the
   `li r3, N` allocation size and no symbol needs renaming (`Game/fn_801500C4.cpp`, `fn_80150AA8`).
 
 - **`mr rN, r3` / `mr r3, rN` around a call result that is the receiver (or reference argument) of a method of a *base* class means the accessor returns a derived-class pointer.** The derived-to-base conversion saves the pointer in a whole-function pseudo, so it takes the first call-saved registers (`r30`, `r29`, ...); a same-class receiver gives the plain `mr r0, r3` / `mr r3, r0` pair. Declare `struct Sub : Obj { int pad; }`, make the accessor return `Sub *`, and call `acc(x)->get()`, with `__asm__("fn_XXXXXXXX")` on the base method (`Game/fn_80437B60.cpp`). A plain function whose parameter is `Ent &` does the same with `f(*acc(x), id)`: 22 of them fill `r30`-`r14` and the rest spill (`fn_801343B0` in `Game/fn_80132480.cpp`). Two copies with no frame slot (`mr r24, r3` / `mr r25, r24` / `mr r3, r25`) are two conversions, a base-qualified call: `acc(x)->Mid::get()` with `Sub : Mid : Obj` and `get` declared in `Obj`. Each conversion is one more saved value, which also moves the function's other saved values up ([`prodg.md`](prodg.md#register-allocation-at--o0)); two `register` locals give the copies but not the registers (`fn_80437E50`). A call among them whose pointer sits in the *lowest* register of the function (`mr r18, r3`, with the other conversions above it) takes the actor as a plain `void *`, not `Ent &` (`fn_80085300` in `Game/fn_800D80B4.cpp`). A derived result passed on through a scratch register (`mr r9, r3` / `mr r3, r9`) while later arguments are set up means the parameter is `Ent *`, not `Ent &` (`fn_8014B63C` calling `fn_8014A574` in `Game/fn_8014A3B4.cpp`). For a *virtual* method the qualified form `acc(x)->Mid::s5()` is a direct call, so use `acc(x)->s5()` with `Sub : Target` (`Game/fn_800E906C.cpp`). A virtual call that gets a second copy (`mr rA, r0` / `mr rB, rA`) has its slot declared in a base of the returned class: when the same accessor's result is also a base-method receiver (one `r29`-style save), put the data and plain methods in `Base`, the virtuals in `Obj : Base`, and return `Obj *` (`Game/fn_800ECA34.cpp`). The same conversion on a plain assignment, `mr rN, r3` / `stw rN, slot` with every later use reloading the slot and no `register` local (a `register` temp takes the lowest register instead of the DOL's, a `T &` local moves the slot), is `cand = (Target *)(Sub *)f();` with `f` returning `int` (`Game/fn_800E906C.cpp`). Write both casts: `Base *p = (Sub *)f();` folds the conversion away, while `Base *p = (Base *)(Sub *)f();` keeps it, in an initialisation too, and `Base` need not be polymorphic (`AI_GetEvent6Actor` in `Game/fn_80461430.cpp`).
@@ -209,7 +209,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   one. In a very long function the first copy is a frame slot, one per increment (`lwz r11, 0(r9)` /
   `stw r11, 0x8(r31)` / `lwz r8, 0x8(r31)` / `slwi r0, r8, 3`), and the source is still a plain
   `p[n++]`.** Another `.c`-vs-`.cpp` test that needs no size evidence, and the extra copy widens the
-  `stmw` range and the frame by one register (`Game/fn_800887AC.cpp`). The first copy is a saved value
+  `stmw` range and the frame by one register (`Game/fn_80087040.cpp`). The first copy is a saved value
   kept to the end of the function, so it sits in `r30` downwards once a call follows it, and the slot only
   appears with enough code after it: 370 `a[i] = "x"; b[i] = f("y");` pairs give the slot, 40 give `r30`, and
   800 bare calls give `r30`. Test this shape on the whole function, since a small scratch unit won't show it
@@ -236,10 +236,10 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   strips its diagnostics but keeps the test, so `if (x) { }` and `if (x) { ... } else { }` are
   normal source here; both are 1:1 reproducible. The empty body's branch polarity still gives the
   test's sense: `beq` to the next instruction is `if (x) { }`, `bne` is `if (!x) { }`
-  (`Game/fn_80088740.c`). `beq L` / `b L` / `L:`, a compare that skips a `b` to the same label, is
+  (`fn_80088740` in `Game/fn_80087040.cpp`). `beq L` / `b L` / `L:`, a compare that skips a `b` to the same label, is
   `if (x) { } else { }` (`fn_800F4B58`). In a long `else if` chain, the *last* arm having a
   jump over the rest of the chain means the chain ends in an empty `else` too
-  (`Game/fn_800887AC.cpp`, 20 of them). For a compound test whose *last* compare branches to the
+  (`Game/fn_80087040.cpp`, 20 of them). For a compound test whose *last* compare branches to the
   statement on its true sense and then `b`s past it (`bne S` / `beq S` / `b END` / `S:`), write the
   empty-then form `if (!a && b) { } else { S; }`; `if (a || !b) S;` inverts the last pair
   (`Game/fn_80160428.cpp`, `fn_80160950`).
@@ -249,7 +249,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   plus an unconditional one, and a constant condition degenerates to a pair. The `continue` target
   tells the two apart from `for`/`do`: `continue` branches to a `while`'s start label, i.e. the top,
   but to a separate end-of-body label in a `for (;;)` or `do`, so `continue`s that jump to the loop
-  top rule out both (`Game/fn_800887AC.cpp`).
+  top rule out both (`Game/fn_80087040.cpp`).
 
 - **A C++ *leaf* method copies `this` into a volatile register (`mr r9, r3`, or `mr r0, r3` when the
   body never uses it), not into `r30`.** `this` is a pseudo, so the allocator only needs a call-saved
@@ -314,7 +314,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   nothing there, so when such a function's body has no C++-only construct, give it its own `.c` unit
   and write `this` as a `register` first parameter, which reproduces the C++ `this`-in-`r30` shape
   (the rest of the parameters still spill). It does not prove the file is C
-  (`Game/fn_80088740.c`, next to the pair-less C++ `.nsc` parser). It scales to a whole file when
+  (`fn_80088740` matched as `.c` and turned out to be in the C++ chronicle file, `Game/fn_80087040.cpp`). It scales to a whole file when
   *nothing* in it needs C++: a `.c` unit matched all 42 functions of the pair-less C++ file at
   0x800B7204-0x800B869C, static initializer included (`Game/fn_800B7204.c`).
 
@@ -437,6 +437,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **`lis`/`addi sym` then `addis rX, rY, 1` / `subi rZ, rX, N` is `sym + 0x10000 - N`, a field offset in a struct larger than 32 KB, not an absolute address.** There is no relocation on the `subi`, so a wrong layout shows as a two-byte `main.dol` difference with the unit at 99.99%; fix the offending member's offset (`Game/fn_8002623C.cpp`, `EffectSystem.extra` at `+0x9720`).
 
 - **A relocation against `lbl_A+0xNN` where dtk's object has a second symbol `lbl_B`: dtk split one object at a referenced address.** Give `lbl_A` its real size in `symbols.txt` and delete `lbl_B`; dtk then writes every reference into the object as `lbl_A+offset`, which is what the compiler emits for a member (`lbl_80515030`, 0x9720 bytes).
+- **`main.dol: FAILED` after merging units into one file, with every string reference past one point 4 bytes low, while objdiff shows 100%: cc1plus pooled two identical literals that the DOL keeps apart.** It pools equal literals file-wide, a char-array initializer's (`char none[1] = "";`) included, so where the DOL has two copies their contents differ. `fn_801ACE74("\0")` keeps the chronicle's empty tag apart from the parser's `""` (`Game/fn_80087040.cpp`).
 - **`undefined: 'lbl_...'` from a still-asm function after a unit claims `.rodata`: the two share a string literal the compiler pooled once per file.** Give the first string of the claimed function's block a symbol that covers the whole block and delete the labels inside it, so dtk writes the asm's references as `lbl_A+offset` (above), then export `lbl_A` from the unit with `__asm__(".section .rodata\n\t.globl lbl_A\nlbl_A:\n\t.text");` between the previous function and this one. Delete the export once the last reader joins the unit: while it stays, objdiff names every later pool reference `lbl_A+off` and holds those functions under 100% (`Game/fn_80152AE8.cpp`, `lbl_8049B960`). A function-local `static const char[]` is no way out: cc1plus renames it `name.N`, moves it to `.sdata2` and emits the literal a second time (`Game/fn_80003808.cpp`, `lbl_804829FC`, read by `fn_8000805C`).
 
 - **Two counter increments an `-O2` unit keeps in source order (`lwz`/`addi`/`stw`, then the next `lwz`), where ours loads both first, are `volatile`.** The scheduler orders two volatile references and nothing else; one `volatile` is not enough. And read the loop's back-branch target before placing a statement inside the loop (`RealCore/fn_8023DAE0.c`).
