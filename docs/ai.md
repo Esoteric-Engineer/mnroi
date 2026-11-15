@@ -25,7 +25,7 @@ All of it is `-O0` game code (`tools/flavor_map.py`). A file's `.rodata` ends wi
 
 | Range | Contents | Unit |
 |---|---|---|
-| 0x8007A3A0-0x8007C034 | **AI script API**, 41 functions called by the script node classes at 0x801C5E0C-0x801DFED8. The file goes on with other script code to its `_GLOBAL_.I` 0x80081DCC | `Game/fn_8007A3A0.cpp` |
+| 0x8007A3A0-0x8007C034 | **AI script API**, 41 functions called by the script classes ([`story.md`](story.md) section 2). The file goes on with other script code to its `_GLOBAL_.I` 0x80081DCC | `Game/fn_8007A3A0.cpp` |
 | 0x8009B31C-0x8009D584 | **Path-node graph** (section 4.7), one whole file | `Game/fn_8009B31C.cpp` (row 15, in progress) |
 | 0x800FA34C-0x800FC1F8 | **Actor controller input**, three classes, inside the template registry file 0x800F9F88-0x80101A00 ([`versus.md`](versus.md) section 5, rows 10-12). Base (vtable `lbl_804F5708`, 0x5C0 bytes): 26 action states, this frame `+0x8` and last frame `+0xC`, and 10 analog axes of 0x30 bytes at `+0xE0`/`+0xE4`, all double-buffered. Pad subclass (`lbl_804F5678`, 0x8F0): sets the actions from the pad through the combo table `lbl_804CC810`. AI subclass (`lbl_804F55E8`, 0x5C4): `+0x5C0` is the actor's `AIObject`, and its update copies the AI's actions (`fn_8013741C`) and axes 0, 7 and 9 (`fn_80137298`) | `Game/fn_800FA34C.cpp` |
 | 0x80132480-0x80137F2C | **AI manager and `AIObject`** (sections 3, 4.1). Globals: the volume registry `lbl_80569890`, the encounter records `lbl_8056996C[16]` and the AI pointer table `lbl_8056A72C[49]` | `Game/fn_80132480.cpp` |
@@ -251,11 +251,10 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 14 | Rename pass | accessors | `Game/fn_80442010.c` and row 5's units | Done. Names (`AI_*`, `Task_Base_*`, `BitSet_*`) only where section 4 records what a function returns; the rest keep `fn_` |
 | 15 | Path-node graph | 0x8009B31C-0x8009D584 | `Game/fn_8009B31C.cpp` | Done. Its `.rodata` tail, `.bss` and `.sbss` stay unclaimed (section 4.7) |
 
-Out of scope for AI: the rest of the script command file (0x8007C034-0x80081E08) and the script node classes at 0x801C5E0C-0x801DFED8 (unless a row needs a caller's meaning), the video player from 0x80164F2C, and third-party code.
+Out of scope for AI: the rest of the script command file (0x8007C034-0x80081E08) and the script classes, both mapped in [`story.md`](story.md) (the actor and AI classes are its row 11), the video player from 0x80164F2C, and third-party code.
 
 ---
 
 ## 7. Open Questions
 
 - What does each `+0x598` weight tune? The getters are in `Game/fn_80461430.cpp` and `Game/fn_80464014.cpp`; their callers would name PLAYER fields 0x8B-0xA4, 0xF6 and 0xF7 (`tools/nvbtool.py` `FIELD_NAMES`).
-- Which of the script node classes at 0x801C5E0C-0x801DFED8 are AI commands, and what are their script names (`cSpawnPeon`, `cAIEnemyVictoryScene`, `cGlobalPeonCounter` in `.rodata` 0x8049EDD0-0x8049EE90)?
