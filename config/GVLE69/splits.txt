@@ -796,6 +796,10 @@ Game/fn_8011AC88.cpp:
 Game/fn_8011B768.cpp:
 	.text       start:0x8011B768 end:0x8011BD34
 
+Game/fn_8011C55C.cpp:
+	.text       start:0x8011C55C end:0x8011EDE0
+	.rodata     start:0x804993D0 end:0x80499430
+
 Game/fn_8013086C.c:
 	.text       start:0x8013086C end:0x80130914
 

@@ -39,7 +39,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x800A3810-0x800A90B0 | Rest of the template file ([`versus.md`](versus.md) section 5, rows 10-12): the scene reader `fn_800A4DF8` (0x1D30) and its helpers `fn_800A7208`, `fn_800A7A0C`, `fn_800A82B8` | 14 |
 | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp`: 66 handlers, mostly wrappers over the save profile. Static init 0x801099E8, `_GLOBAL_.I` 0x8010A40C | 23 |
 | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp`: 16 handlers and the static init | 1 |
-| 0x8011C5B0-0x8011F2B0 | **Save profile**, singleton `fn_8011CA74`. The start comes from the pair map (a pair-less run from 0x8011C5B0) and `Game:SaveBuffer`. The file has no static initializer until `_GLOBAL_.I` 0x8012D9F0, and goes on with the memory-card I/O (`Memcard:Thread`, the save file names) and, from about 0x80126F0C, the APT glue (`Game/HUD/glueApt.cpp`) | 3 |
+| 0x8011C55C-0x8011EDE0 | **Save profile**, `Game/fn_8011C55C.cpp`. Start: every caller of the empty `fn_8011C55C` is a profile function, and the save-buffer constructor `fn_8011C578` sets the pair flag for the pair-less run after it; the previous file's `.rodata` ends at 0x804993D4 with its own copy of the memory-card header strings. End: the memory-card manager follows (singleton `lbl_8066BE2C`, init `fn_8011EDE0`, vtable 0x804F59B8), and its `.rodata` (from 0x80499568) repeats the strings that end the profile's. The profile's 0x80499430-0x80499568 (ten floats, then `MemCard:General` ... `EAS SansCondensed`) is read by no code and stays unclaimed: probably header inlines (a guess). The memory-card file runs to `_GLOBAL_.I` 0x8012D9F0, the APT glue (`Game/HUD/glueApt.cpp`) from about 0x80126F0C | 3 |
 | 0x801BEE2C-0x801C55F8 | `fn_801BEE2C`, the class registration (section 4.2) | 6 |
 | 0x80468974-~0x8046DF18 | Linkonce tail: the prototype constructors (0x80468974-0x8046B530; `cHelpText`'s, `fn_802116B0`, is in the mission-classes file), then accessors and destructors that only vtables reach, mixed with other files' tail functions | 7 |
 
@@ -142,7 +142,26 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 ### 4.4 Chronicle and save profile
 
 - **Chronicle.** Two `.nsc` tables (layout in [`characters.md`](characters.md) section 4): `lbl_8054ED80` holds `clashsp.nsc`, `lbl_8054EF38` `clashMP.nsc`. [`ai.md`](ai.md) section 3 reads the AI settings from an entry of the story list.
-- **Save profile.** `fn_8011CA74` returns the profile, `new`ing it on the first call. The story handlers call `fn_8011ED0C` and `fn_8011ED50` (from `clashMission_CompleteMission`) on it, and `clashMemcard_ResetStoryMode` calls `fn_8011EA2C`.
+- **Save profile.** `fn_8011CA74` returns the 0x2E0-byte profile (`lbl_8066BE20`), `new`ing it on the first call. Two save buffers `{cursor, base, size}` at +0x0 (settings, 0x30 bytes) and +0xC (progress, 0x280 bytes). `fn_801300B4` fills the progress fields from the game state and the chronicle; the meanings below come from it.
+
+  | Offset | Field |
+  |---|---|
+  | +0x18 | flag, mirrored in `lbl_8066C640` |
+  | +0x1C, +0x20, +0x24 | volumes 0-10, scaled to 0-127 for `fn_80119224` channels 2, 1, 0 |
+  | +0x28 | rumble (guess: goes to the pad manager `fn_80122228`) |
+  | +0x30 | sound mode -1-2 (`fn_80118F18`) |
+  | +0x34 | 0-2, `fn_80131878` |
+  | +0x38-+0x58 | snapshot of +0x18-+0x34 and the pad setting, for cancelling an options screen |
+  | +0x5C | bitmask over the 20 roster characters (`fn_8044B48C`) |
+  | +0x60 | bitmask over 7 entries (`fn_8044D58C`), probably the versus arenas |
+  | +0x64 | `lbl_8066BF0C` |
+  | +0x78, +0x80 | chronicle flag word (`fn_804435A4`), `fn_8046120C` of the chronicle |
+  | +0x84, +0x88 | the chronicle's current record, and a record ID or 0 |
+  | +0x8C | `int[65]`, one per chronicle record (`fn_80461144`); a story reset clears bits 0xC000 |
+  | +0x190 | `char[4]`, the chronicle's four character slots |
+  | +0x194 | save date, YYYYMMDD |
+  | +0x198, +0x19C | play time in seconds, and the tick its timer started at (`clashMission_Start` starts it, `clashMission_CompleteMission` adds the elapsed time) |
+  | +0x1A0 | `int[80]` saved as bools: 25 from `fn_8044D4F0`, 43 from `fn_8044D454` at +25, 9 of 12 from `fn_8044D3B8` at +68. A story reset keeps them when asked |
 
 ---
 
@@ -160,7 +179,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 |---|---|---|---|---|
 | 1 | Story handlers | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp` | Done |
 | 2 | Chronicle | 0x80087040-0x8008995C | `Game/fn_80087040.cpp` | Done |
-| 3 | Save profile | 0x8011C5B0-0x8011F2B0 | `Game/fn_8011C5B0.cpp` | Find the end edge first; the memory-card I/O follows. 86 functions, 63 of them 0x80 bytes or less. Record the story-progress and unlock fields in section 4.4 |
+| 3 | Save profile | 0x8011C55C-0x8011EDE0 | `Game/fn_8011C55C.cpp` | Done |
 | 4 | Class table and base class | 0x8007891C-0x8007A3A0 | `Game/fn_8007891C.cpp` | Table init `fn_8007891C`, find `fn_80078994`, create `fn_800789DC`, then the base methods (73 functions in 0x80078DD4-0x8007A318, 66 small), static init `fn_800796A4`, `_GLOBAL_.I`, `_GLOBAL_.D`. Record what each slot does in section 4.1 |
 | 5 | Rest of the script command file | 0x8007C034-0x80081E08 | extend `Game/fn_8007A3A0.cpp` | 121 functions: `fn_8007C8B0`, `fn_8007CA10`, `fn_8007CABC`, the helpers in section 4.1, the `cAIMessages` targets `fn_8007EFE0`/`fn_8007F184`/`fn_8007F2C4`, static init, `_GLOBAL_.I`. Absorb `Game/fn_8007C830.c` |
 | 6 | Class registration | 0x801BEE2C-0x801C55F8 | `Game/fn_801BEE2C.cpp` | One function of 102 identical blocks (section 4.2). Declare the prototype constructors `extern` |
@@ -192,5 +211,5 @@ Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O fr
 - Is `fn_801BEE2C` a file of its own, or the start of the Avengers Mansion file?
 - Where are the edges inside 0x80074814-0x8007891C?
 - What do the base slots other than 1 and 2 do?
-- Where does the profile store the unlocks that `REWARDS` grants (`fn_804435D0`-`fn_8044374C`)?
+- Are the tables the profile saves at +0x1A0 (`fn_8044D4F0`, `fn_8044D454`, `fn_8044D3B8`) the ones the `REWARDS` setters (`fn_8044374C`, `fn_80443608`, `fn_80443640`) write?
 - What are the 0x58-byte functions in the cutscene file?
