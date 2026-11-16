@@ -5527,6 +5527,18 @@ Game/fn_80466268.cpp:
 Game/fn_80468888.cpp:
 	.text       start:0x80468888 end:0x80468934
 
+Game/fn_80468974.cpp:
+	.text       start:0x80468974 end:0x8046B530
+
+Game/fn_8046B530.cpp:
+	.text       start:0x8046B530 end:0x8046B738
+
+Game/fn_8046B738.cpp:
+	.text       start:0x8046B738 end:0x8046D6C0
+
+Game/fn_8046D6C0.cpp:
+	.text       start:0x8046D6C0 end:0x8046DCD4
+
 Game/fn_804708F8.c:
 	.text       start:0x804708F8 end:0x80470A80
 

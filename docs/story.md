@@ -218,8 +218,8 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 4 | Class table and base class | 0x8007891C-0x8007A3A0 | `Game/fn_8007891C.cpp` | Done |
 | 5 | Rest of the script command files | 0x8007C034-0x80081E08 | `Game/fn_8007A3A0.cpp`, `Game/fn_8007C8B0.cpp`, `Game/fn_8007DC60.cpp`, `Game/fn_800808D0.cpp` | Done |
 | 6 | Class registration | 0x801BEE2C-0x801C55F8 | `Game/fn_801BEE2C.cpp` | Done |
-| 7 | Script inline functions | 0x80468974-~0x8046DF18 | small units per run | The prototype constructors (class, size and address in `Game/fn_801BEE2C.cpp`), then the accessors and destructors. One small unit per run of neighbours, split where the `.rodata` pool changes, like [`ai.md`](ai.md) row 5 |
-| 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | In that order. The mission classes (`cEndMission`, `cHelpText`, `cCountDown`) run in every story scene. Confirm where `cSoundEvent`'s file ends |
+| 7 | Script inline functions | 0x80468974-0x8046DCD4 | `Game/fn_80468974.cpp`, `Game/fn_8046B530.cpp`, `Game/fn_8046B738.cpp`, `Game/fn_8046D6C0.cpp` | Done. 0x8046DCD4 on is render code |
+| 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | In that order. The mission classes (`cEndMission`, `cHelpText`, `cCountDown`) run in every story scene. `cHelpText`'s constructor `fn_802116B0` and destructor `fn_80211714` are in this file, not the inline run. Confirm where `cSoundEvent`'s file ends |
 | 9 | Effects | 0x801FBD90-0x801FCEBC | `Game/fn_801FBD90.cpp` | 4 classes, 32 functions |
 | 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | 6 classes, 101 functions. Absorb `Game/fn_8020C508.cpp` and `Game/fn_8020D104.cpp`. `cRegionDamage` uses the damage volumes ([`ai.md`](ai.md) section 4.5) |
 | 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | 18 classes, 250 functions, 185 of them 0x80 bytes or less. AI facts go in [`ai.md`](ai.md) |
