@@ -74,7 +74,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 - 0x8007DC60: after `fn_8007D404` (0x80488038) and at or before `fn_8007E698` (0x80488070). The guess is where the queue code ends.
 - 0x800808D0: confirmed. `fn_800808D0` is a byte-for-byte copy of the static helper `fn_80080300`, and the pool resumes at 0x80488190 after the third block.
 
-Still open: whether `fn_801BEE2C` opens the Avengers Mansion file, and where `cSoundEvent`'s file ends (graphics code with `Graphics:PushBuffer` starts at 0x802129FC).
+Still open: whether `fn_801BEE2C` opens the Avengers Mansion file (its name pool ends at 0x8049F5F5; 0x8049F5F8-0x8049F617 is unreferenced, `0.0, 1.0, 1.0, 1.0, 0.5, 1.5, "invalid"`; `fn_801C55F8`'s pool starts at 0x8049F618, `"PARADOX"`), and where `cSoundEvent`'s file ends (graphics code with `Graphics:PushBuffer` starts at 0x802129FC).
 
 ---
 
@@ -149,11 +149,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 ### 4.2 Class table and prototypes
 
-- **Registration.** For each class, `fn_801BEE2C`:
-  1. `new`s a 0x28-byte entry `{char name[0x20]; void *prototype; int zero}` into `lbl_8054D154[lbl_8066B890]` (`.bss`, 256 slots);
-  2. copies the name (`strncpy` 0x20, byte 0x1F cleared);
-  3. sets `+0x20` to `new(size)` run through the class's prototype constructor;
-  4. adds the entry to the table with `fn_801B4628(lbl_8066D614, name, entry)`, then clears `+0x24`.
+- **Registration.** `fn_801BEE2C` fills `lbl_8054D154[lbl_8066B890]` (`.bss`, 256 slots) with one 0x28-byte entry `{char name[0x20]; void *prototype; int count}` per class and adds it to the table. Its source lists each class's size and prototype constructor.
 - **The table.** `lbl_8066D614` is a hash with 0x3F buckets, named `"ScriptClasses"`. `fn_8007891C` creates it (`fn_801B4284`; flag `lbl_8066B898`). `fn_80078994` finds a class (`fn_801B48AC`).
 - **Creating an instance.** `fn_800789DC` calls the prototype's slot 2, then `fn_8007A2F0(copy, entry)` and `fn_80078FDC(copy)`.
 - **Live instances.** `fn_80078C58` adds an instance to `lbl_8054D554` (512 slots, count `lbl_8066D618`) and increments its entry's `+0x24`; `fn_80078CE0` undoes both. Destroying an instance is `fn_80078B10`.
@@ -221,8 +217,8 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 3 | Save profile | 0x8011C55C-0x8011EDE0 | `Game/fn_8011C55C.cpp` | Done |
 | 4 | Class table and base class | 0x8007891C-0x8007A3A0 | `Game/fn_8007891C.cpp` | Done |
 | 5 | Rest of the script command files | 0x8007C034-0x80081E08 | `Game/fn_8007A3A0.cpp`, `Game/fn_8007C8B0.cpp`, `Game/fn_8007DC60.cpp`, `Game/fn_800808D0.cpp` | Done |
-| 6 | Class registration | 0x801BEE2C-0x801C55F8 | `Game/fn_801BEE2C.cpp` | One function of 102 identical blocks (section 4.2). Declare the prototype constructors `extern` |
-| 7 | Script inline functions | 0x80468974-~0x8046DF18 | small units per run | The prototype constructors, then the accessors and destructors. One small unit per run of neighbours, split where the `.rodata` pool changes, like [`ai.md`](ai.md) row 5 |
+| 6 | Class registration | 0x801BEE2C-0x801C55F8 | `Game/fn_801BEE2C.cpp` | Done |
+| 7 | Script inline functions | 0x80468974-~0x8046DF18 | small units per run | The prototype constructors (class, size and address in `Game/fn_801BEE2C.cpp`), then the accessors and destructors. One small unit per run of neighbours, split where the `.rodata` pool changes, like [`ai.md`](ai.md) row 5 |
 | 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | In that order. The mission classes (`cEndMission`, `cHelpText`, `cCountDown`) run in every story scene. Confirm where `cSoundEvent`'s file ends |
 | 9 | Effects | 0x801FBD90-0x801FCEBC | `Game/fn_801FBD90.cpp` | 4 classes, 32 functions |
 | 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | 6 classes, 101 functions. Absorb `Game/fn_8020C508.cpp` and `Game/fn_8020D104.cpp`. `cRegionDamage` uses the damage volumes ([`ai.md`](ai.md) section 4.5) |
