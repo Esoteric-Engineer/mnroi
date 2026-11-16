@@ -41,7 +41,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp`: 16 handlers and the static init | 1 |
 | 0x8011C55C-0x8011EDE0 | **Save profile**, `Game/fn_8011C55C.cpp`. Start: every caller of the empty `fn_8011C55C` is a profile function, and the save-buffer constructor `fn_8011C578` sets the pair flag for the pair-less run after it; the previous file's `.rodata` ends at 0x804993D4 with its own copy of the memory-card header strings. End: the memory-card manager follows (singleton `lbl_8066BE2C`, init `fn_8011EDE0`, vtable 0x804F59B8), and its `.rodata` (from 0x80499568) repeats the strings that end the profile's. The profile's 0x80499430-0x80499568 (ten floats, then `MemCard:General` ... `EAS SansCondensed`) is read by no code and stays unclaimed: probably header inlines (a guess). The memory-card file runs to `_GLOBAL_.I` 0x8012D9F0, the APT glue (`Game/HUD/glueApt.cpp`) from about 0x80126F0C | 3 |
 | 0x801BEE2C-0x801C55F8 | `fn_801BEE2C`, the class registration (section 4.2) | 6 |
-| 0x80468974-~0x8046DF18 | Linkonce tail: the prototype constructors (0x80468974-0x8046B530; `cHelpText`'s, `fn_802116B0`, is in the mission-classes file), then accessors and destructors that only vtables reach, mixed with other files' tail functions | 7 |
+| 0x80468974-0x8046DCD4 | Linkonce tail: the prototype constructors, then accessors and destructors that only vtables reach, mixed with other headers' inline functions; render code follows | 7 |
 
 **The class files**, in address order:
 
@@ -128,6 +128,8 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 37 | `(h, int, value)` returning float | hook for `cAIMessages` kind 0. The base returns -1.0f; the caller keeps the minimum, and any 0 wins |
   | 43 | `(h, int, value)` | hook for `cAIMessages` kind 2 (kind 1 goes to slot 38) |
   | 47, 48 | `(h, value)` returning int | hooks that stop at the first 0 |
+  | 51 | `(int, int kind, int, float x3)` | not traced; `cRingOut` acts on kinds 3-4, `cCameraEvent` on 0 and 3 |
+  | 54 | `(float, unsigned event, int)` | not traced; `cCameraEvent` acts on 0x63, 0x14D and 0x309 |
   | 60 | `(h)` | all live scripts, from `fn_800ED448` with the actor's handle (guess: an actor is defeated) |
   | 63 | `()` | every frame after message delivery, for scripts with +0x20 bit 0 |
 - **Entity links.** Entity +0x14C is its own script, +0x150 the list of 0x1C-byte nodes `{script, entity, value, entity prev/next, script prev/next}` that tie other scripts to it. `fn_8007CF00(script, handle, value)` adds or updates a node, `fn_8007D070` removes one.
@@ -219,7 +221,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 5 | Rest of the script command files | 0x8007C034-0x80081E08 | `Game/fn_8007A3A0.cpp`, `Game/fn_8007C8B0.cpp`, `Game/fn_8007DC60.cpp`, `Game/fn_800808D0.cpp` | Done |
 | 6 | Class registration | 0x801BEE2C-0x801C55F8 | `Game/fn_801BEE2C.cpp` | Done |
 | 7 | Script inline functions | 0x80468974-0x8046DCD4 | `Game/fn_80468974.cpp`, `Game/fn_8046B530.cpp`, `Game/fn_8046B738.cpp`, `Game/fn_8046D6C0.cpp` | Done. 0x8046DCD4 on is render code |
-| 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | In that order. The mission classes (`cEndMission`, `cHelpText`, `cCountDown`) run in every story scene. `cHelpText`'s constructor `fn_802116B0` and destructor `fn_80211714` are in this file, not the inline run. Confirm where `cSoundEvent`'s file ends |
+| 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | Next: the mission classes (`cEndMission`, `cHelpText`, `cCountDown`; in every story scene), 26 functions with a static init, `.ctors`/`.dtors`, the static object `lbl_80593E10` and a pool from 0x804A1DC0. `cHelpText`'s constructor `fn_802116B0` and destructor `fn_80211714` are in this file. Then `cSoundEvent`; confirm where its file ends |
 | 9 | Effects | 0x801FBD90-0x801FCEBC | `Game/fn_801FBD90.cpp` | 4 classes, 32 functions |
 | 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | 6 classes, 101 functions. Absorb `Game/fn_8020C508.cpp` and `Game/fn_8020D104.cpp`. `cRegionDamage` uses the damage volumes ([`ai.md`](ai.md) section 4.5) |
 | 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | 18 classes, 250 functions, 185 of them 0x80 bytes or less. AI facts go in [`ai.md`](ai.md) |
