@@ -62,7 +62,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x8020C28C-0x80211334 | `cRegionDamage`, `cRegionTrigger`, `cRegionSound`, `cRegionSuck`, `cRegionDefend`, `cRegionLightProbeSwap`. `Game/fn_8020C508.cpp` and `Game/fn_8020D104.cpp` are matched inside | 10 |
 | 0x80211334-0x80211494 | `cRingOut` | 8 |
 | 0x80211494-0x802126F8 | `cEndMission`, `cHelpText`, `cCountDown`; static init `fn_80212380`, `_GLOBAL_.I` 0x80212670, `_GLOBAL_.D` 0x802126B4 | 8 |
-| 0x802126F8-~0x802129FC | `cSoundEvent` | 8 |
+| 0x802126F8-0x80212970 | `cSoundEvent`. End: `fn_80212970` and `fn_80212994` are called only from graphics code (0x80219BB8, 0x801A0168), while everything before is reached from the vtable `lbl_80503760` or the class's own methods; the file has no `.rodata` | 8 |
 
 **How the class-file edges were found.** `.ctors` has no entry between `_GLOBAL_.I` 0x801BEDE8 and 0x80212670, so the edges come from the vtables:
 - Each prototype constructor stores its class's vtable, and the vtable names the class's methods. Each group above fills one address range.
@@ -74,7 +74,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 - 0x8007DC60: after `fn_8007D404` (0x80488038) and at or before `fn_8007E698` (0x80488070). The guess is where the queue code ends.
 - 0x800808D0: confirmed. `fn_800808D0` is a byte-for-byte copy of the static helper `fn_80080300`, and the pool resumes at 0x80488190 after the third block.
 
-Still open: whether `fn_801BEE2C` opens the Avengers Mansion file (its name pool ends at 0x8049F5F5; 0x8049F5F8-0x8049F617 is unreferenced, `0.0, 1.0, 1.0, 1.0, 0.5, 1.5, "invalid"`; `fn_801C55F8`'s pool starts at 0x8049F618, `"PARADOX"`), and where `cSoundEvent`'s file ends (graphics code with `Graphics:PushBuffer` starts at 0x802129FC).
+Still open: whether `fn_801BEE2C` opens the Avengers Mansion file (its name pool ends at 0x8049F5F5; 0x8049F5F8-0x8049F617 is unreferenced, `0.0, 1.0, 1.0, 1.0, 0.5, 1.5, "invalid"`; `fn_801C55F8`'s pool starts at 0x8049F618, `"PARADOX"`).
 
 ---
 
@@ -221,7 +221,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 5 | Rest of the script command files | 0x8007C034-0x80081E08 | `Game/fn_8007A3A0.cpp`, `Game/fn_8007C8B0.cpp`, `Game/fn_8007DC60.cpp`, `Game/fn_800808D0.cpp` | Done |
 | 6 | Class registration | 0x801BEE2C-0x801C55F8 | `Game/fn_801BEE2C.cpp` | Done |
 | 7 | Script inline functions | 0x80468974-0x8046DCD4 | `Game/fn_80468974.cpp`, `Game/fn_8046B530.cpp`, `Game/fn_8046B738.cpp`, `Game/fn_8046D6C0.cpp` | Done. 0x8046DCD4 on is render code |
-| 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | Next: `cSoundEvent`; confirm where its file ends |
+| 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | Done |
 | 9 | Effects | 0x801FBD90-0x801FCEBC | `Game/fn_801FBD90.cpp` | 4 classes, 32 functions |
 | 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | 6 classes, 101 functions. Absorb `Game/fn_8020C508.cpp` and `Game/fn_8020D104.cpp`. `cRegionDamage` uses the damage volumes ([`ai.md`](ai.md) section 4.5) |
 | 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | 18 classes, 250 functions, 185 of them 0x80 bytes or less. AI facts go in [`ai.md`](ai.md) |
