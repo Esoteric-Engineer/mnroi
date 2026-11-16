@@ -3100,6 +3100,11 @@ Game/fn_8020D104.cpp:
 Game/fn_80211334.cpp:
 	.text       start:0x80211334 end:0x80211494
 
+Game/fn_80211494.cpp:
+	.text       start:0x80211494 end:0x802126F8
+	.ctors      start:0x804826C0 end:0x804826C4
+	.dtors      start:0x804828B8 end:0x804828BC
+
 Game/fn_80220980.cpp:
 	.text       start:0x80220980 end:0x80220BBC
 

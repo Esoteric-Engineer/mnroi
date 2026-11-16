@@ -117,13 +117,13 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 1, 2 | destructor, clone | |
   | 3 | `()` | by `fn_80078FDC` once the instance is registered (guess: on start) |
   | 4, 5, 6 | `()` | all live scripts, at level load (`fn_8002D110`), on the first frame after it (`fn_8002BD34`), and from `fn_8002D5F8` (guess: unload) |
-  | 8 | `(char kind, float, float, float, float, int)` | a delivered script message (`fn_8007E0C0`) |
+  | 8 | `(unsigned char kind, float, float, float, float, int)` | a delivered script message (`fn_8007E0C0`); `kind` is what `fn_8007D404` queued (`cCountDown` queues 10 for its 1-second tick) |
   | 12, 13 | `(h)`, `(h, value)` | hooks; 12 only for the entity's own script |
   | 14-16, 18, 30, 38 | `(h, h other, value)` | hooks |
   | 20 | `(h, h other, int, int, float, value)` returning int | hook; a 0 stops the chain and the caller gets 0 (`fn_8007E84C`) |
   | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`; guess: a damage filter) |
   | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894` |
-  | 23 | `(int, int, int, float x4, value)` | hook without handles |
+  | 23 | `(int, int, int kind, float x4, value)` | hook without handles; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999 |
   | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts (callers not traced) |
   | 37 | `(h, int, value)` returning float | hook for `cAIMessages` kind 0. The base returns -1.0f; the caller keeps the minimum, and any 0 wins |
   | 43 | `(h, int, value)` | hook for `cAIMessages` kind 2 (kind 1 goes to slot 38) |
@@ -221,7 +221,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 5 | Rest of the script command files | 0x8007C034-0x80081E08 | `Game/fn_8007A3A0.cpp`, `Game/fn_8007C8B0.cpp`, `Game/fn_8007DC60.cpp`, `Game/fn_800808D0.cpp` | Done |
 | 6 | Class registration | 0x801BEE2C-0x801C55F8 | `Game/fn_801BEE2C.cpp` | Done |
 | 7 | Script inline functions | 0x80468974-0x8046DCD4 | `Game/fn_80468974.cpp`, `Game/fn_8046B530.cpp`, `Game/fn_8046B738.cpp`, `Game/fn_8046D6C0.cpp` | Done. 0x8046DCD4 on is render code |
-| 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | Next: the mission classes (`cEndMission`, `cHelpText`, `cCountDown`; in every story scene), 26 functions with a static init, `.ctors`/`.dtors`, the static object `lbl_80593E10` and a pool from 0x804A1DC0. `cHelpText`'s constructor `fn_802116B0` and destructor `fn_80211714` are in this file. Then `cSoundEvent`; confirm where its file ends |
+| 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | Next: `cSoundEvent`; confirm where its file ends |
 | 9 | Effects | 0x801FBD90-0x801FCEBC | `Game/fn_801FBD90.cpp` | 4 classes, 32 functions |
 | 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | 6 classes, 101 functions. Absorb `Game/fn_8020C508.cpp` and `Game/fn_8020D104.cpp`. `cRegionDamage` uses the damage volumes ([`ai.md`](ai.md) section 4.5) |
 | 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | 18 classes, 250 functions, 185 of them 0x80 bytes or less. AI facts go in [`ai.md`](ai.md) |

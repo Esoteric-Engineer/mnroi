@@ -6,7 +6,8 @@
 # For a unit whose pool sits in another file's .rodata, so it cannot be claimed (see docs/prodg.md).
 # Checks each literal against the original from the given address on, retargets the pool's relocations to dtk's lbl_<address> symbols, and empties the section.
 # Literals loaded with lfs or lfd are supported, and string literals whose address is formed with addi (4-aligned in both copies).
-# A pool entry of the original that no code in the unit loads is written in the source as the word 0x6F727068 ("orph"), one per 4 bytes.
+# A pool entry of the original that no code in the unit loads is written in the source as the word 0x6F727068 ("orph"), one per 4 bytes;
+# zero padding on either side of a run of them is skipped.
 #
 # Usage:
 #   python3 tools/extern_pool.py build/GVLE69/src/file.o orig/GVLE69/sys/main.dol 0x8048DEA8
@@ -84,7 +85,7 @@ def map_pool(
         size = sizes[offset]
         if offset < end:
             raise SystemExit(f"{path}: the literal at .rodata+0x{offset:X} overlaps the one before it")
-        gap = pool[end:offset].lstrip(b"\0")
+        gap = pool[end:offset].strip(b"\0")
         orphans, rest = len(gap) // len(ORPHAN), gap
         if rest != ORPHAN * orphans:
             raise SystemExit(f"{path}: .rodata+0x{end:X} is neither a float literal nor padding")
