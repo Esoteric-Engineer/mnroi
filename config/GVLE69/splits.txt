@@ -236,10 +236,17 @@ Game/fn_8007891C.cpp:
 	.dtors      start:0x80482878 end:0x8048287C
 
 Game/fn_8007A3A0.cpp:
-	.text       start:0x8007A3A0 end:0x8007C034
+	.text       start:0x8007A3A0 end:0x8007C8B0
 
-Game/fn_8007C830.c:
-	.text       start:0x8007C830 end:0x8007C8B0
+Game/fn_8007C8B0.cpp:
+	.text       start:0x8007C8B0 end:0x8007DC60
+
+Game/fn_8007DC60.cpp:
+	.text       start:0x8007DC60 end:0x800808D0
+
+Game/fn_800808D0.cpp:
+	.text       start:0x800808D0 end:0x80081E08
+	.ctors      start:0x80482604 end:0x80482608
 
 Game/fn_80084498.cpp:
 	.text       start:0x80084498 end:0x80084734

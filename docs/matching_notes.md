@@ -188,6 +188,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   path. `__attribute__((aligned(8)))` on the innermost type restores the DOL's shape; it also decides
   whether a 16-byte member copy's address folds into the symbol (`Game/fn_8002623C.cpp`, `Vector`). The same holds for a byte field read through a pointer member (`p->tbl->e[i].kind`, DOL `add` then `lbz 0x2b`, ours `addi 0x2b` then `lbzx`): `__attribute__((aligned(4)))` on the element struct (`Game/fn_8043C1EC.cpp`, `fn_8043C3C0`). So a `u16` field in a struct cut down to `char` padding and 2-byte members folds (`addi 0x28` / `lhzx`) where the DOL has `add` / `lhz 0x28`: spell out the struct's word members instead of adding `aligned(8)`, which would move the array (`Game/fn_80223B50.cpp`).
 
+- **A field of a global array element that folds (`addi rB, base, off` / `lbzx`) where the DOL adds first (`add rX, off, base` / `lbz off(rX)`), while the element type is 4-aligned: the `extern` array was declared before its struct was complete.** An array of an incomplete type has no alignment yet, so the declaration keeps the folded path; move the struct definition above the `extern` (`Game/fn_8007C8B0.cpp`, `fn_8007DC0C`).
 - **A field of an indexed element that the DOL reads as `mulli` / `addi rB, self, off` / `lwzx rX, rB, product`, or as `mulli` / `add rX, self, product` / `lwz f(rX)`, where pointer arithmetic gives `add rX, product, self` (and an extra `addi`): the element is in a real array member.** `self[i].f` and every cast or `(self + i)->f` spelling of it is a pointer sum, expanded with the product first; `self->entries[i].f` is an array reference, which computes the index into a register by itself and then follows the alignment rule above: a 4-aligned element gives the `addi`/`lwzx` form (`Game/fn_804396F8.c`, `Slot slots[2]`), an `aligned(8)` one the `add` plus displacement (`Game/fn_8043E148.cpp`).
 
 - **`addi r0, rX, N` / `mr r3, r0` instead of `addi r3, rX, N` before a call is only about the frame
@@ -249,7 +250,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   plus an unconditional one, and a constant condition degenerates to a pair. The `continue` target
   tells the two apart from `for`/`do`: `continue` branches to a `while`'s start label, i.e. the top,
   but to a separate end-of-body label in a `for (;;)` or `do`, so `continue`s that jump to the loop
-  top rule out both (`Game/fn_80087040.cpp`).
+  top rule out both (`Game/fn_80087040.cpp`). A loop with no test and no pair at its top whose `continue`s still jump to the top is written with labels: `next: ...; if (c) goto next; ...; goto next; done:;` (`Game/fn_8007DC60.cpp`, `fn_800806E0`).
 
 - **A C++ *leaf* method copies `this` into a volatile register (`mr r9, r3`, or `mr r0, r3` when the
   body never uses it), not into `r30`.** `this` is a pseudo, so the allocator only needs a call-saved

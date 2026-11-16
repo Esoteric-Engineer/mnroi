@@ -244,6 +244,8 @@ functions, in vtable order, *after* the file's `__sti` and before `_GLOBAL_.I`; 
 destructor and slots 3-63 at 0x8007975C-0x8007A318 (`Game/fn_8007891C.cpp`, which hand-writes them in that
 order). The mechanism (`import_export_decl` keying virtual inlines to the vtable) is a guess.
 
+**A header's file-scope `static const` data comes after all of a file's function pools**, once per file that includes the header. So a block that recurs in `.rodata` marks where one file's pool ends. The ten words 1.2, 0.8, 2.0, 0.5, 0.8, 0.8, 1.0, 1.25, 0.75, 2000 are one such block, and they put three edges inside what looked like a single script command file ([`story.md`](story.md) section 2). This is observed, not measured.
+
 A linker keeps one copy of each linkonce function, and SN's placed them after the ordinary `.text`. The
 game's shared classes are there, from `Color` and `Vector` (0x80426EC4, 0x80428F74) through the `String` class
 (0x80448xxx-0x8044Axxx). The DOL shows it three ways:
