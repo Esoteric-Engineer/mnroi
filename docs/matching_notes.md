@@ -321,7 +321,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **An empty `void` method with one `b` to its epilogue (`mr r0, r3` / `b .L` / epilogue) is
   `.c` with an explicit `return;`.** Plain C emits that one branch per `return` and nothing for a bare
   `{ }`, so the empty body is 4 bytes short; `register T *this` supplies the `mr r0, r3` copy
-  (`Game/fn_800B4CF8.c`, `fn_800B5524`).
+  (`Game/fn_800B4CF8.c`, `fn_800B5524`). A pair-less `.cpp` unit (flag set) gives the same, and there a
+  loop exit that lands on a lone `b` to the epilogue is a `return;` after the loop (`Game/fn_8007891C.cpp`,
+  `fn_80078CE0`).
 
 - **A parameter spilled as `mr r0, rN` / `mr r9, r0` / `sth r9` is 16-bit, and `clrlwi`-on-read makes
   it unsigned.** Arguments arrive promoted to a word, so a 16-bit parameter needs the two copies to
@@ -430,6 +432,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **A two-byte value assembled in a register (`slwi 8` / `or` / `rlwinm 0, 16, 23`) and stored with one `sth` is `char s[2] = { f(), 0 };` in C++.** The initializer holds a call, so it is built in a pseudo and stored whole. A two-`char` struct does the same in C, but cc1plus clears the register first (`li rN, 0`), because a C++ class has more `TYPE_FIELDS` than initializers (`Game/fn_80448DA0.cpp`).
 
+- **A stub whose parameter copies skip a volatile register (`mr r0, r3` / `mr r11, r4` / `mr r10, r5`, no `r9`) has more parameters than it copies.** An unused `register` parameter that lands in its own argument register emits no `mr`, so the copies under-count the signature; take it from an override of the same slot (`Game/fn_8007891C.cpp`, slot 21 `fn_80079B0C`, `(this, 4 ints, float, 2 ints)`).
 - **Call-saved or float registers handed out in an order no declaration order reproduces: work out the lifetimes instead of permuting.** The `-O0` allocator sorts by lifetime, and a compiler-saved value (a reference local's initializer, an operand `fold` saves) can outlive or tie a `register` parameter, which no `register` local can. [`prodg.md`](prodg.md#register-allocation-at--o0) has the rule and how to dump the lifetimes (`Game/fn_804436D4.cpp`).
 
 - **A member assigned a `?:` times a non-trivial operand (`self->target = CLAMP(v) * self->owner->scale;`) allocates differently in cc1 and cc1plus.** Both distribute the multiply into the arms and load the operand once, but cc1plus keeps the result in a register that is allocated ahead of the `register` parameter it reads (`f13`, with the parameter in `f12`), and cc1 after it. No `.c` rewrite reproduces that; the plain statement in a `.cpp` unit does (`Game/fn_8044655C.cpp`).

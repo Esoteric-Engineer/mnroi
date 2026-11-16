@@ -238,6 +238,12 @@ with a caller gives `.text` (the caller) and `.gnu.linkonce.t.half__1V`. The fun
 **not** follow it: all pools go to the file's one `.rodata`, in the order the compiler wrote the functions
 out, and it writes the linkonce ones last.
 
+**Except the virtual ones of a class whose vtable the file emits.** Those go to the file's `.text` as ordinary
+functions, in vtable order, *after* the file's `__sti` and before `_GLOBAL_.I`; the class's non-virtual inlines
+(its constructor) still go to the tail. The script base class shows it: `__sti` 0x800796A4, then the
+destructor and slots 3-63 at 0x8007975C-0x8007A318 (`Game/fn_8007891C.cpp`, which hand-writes them in that
+order). The mechanism (`import_export_decl` keying virtual inlines to the vtable) is a guess.
+
 A linker keeps one copy of each linkonce function, and SN's placed them after the ordinary `.text`. The
 game's shared classes are there, from `Color` and `Vector` (0x80426EC4, 0x80428F74) through the `String` class
 (0x80448xxx-0x8044Axxx). The DOL shows it three ways:

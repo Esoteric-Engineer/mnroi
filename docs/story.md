@@ -33,7 +33,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 
 | Range | Contents | Row |
 |---|---|---|
-| 0x80074814-0x8007A3A0 | **Script base file**, one `.ctors` file. It has an inner edge near 0x8007608C: the pair-carrying run ends at 0x80076004, a pair-less run starts at 0x8007608C, and a second `"invalid"` (0x80487BE8) ends the first part's `.rodata` (the debris names `deb_*`, `cel_ConcreteChunk_*`). From 0x8007608C: Havok and `ShapeRepository`, the `.nhg` loader `fn_800777C4`. From 0x8007891C: the class table and the base class (section 4.1). It ends with static init `fn_800796A4`, `_GLOBAL_.I` 0x8007A318 and `_GLOBAL_.D` 0x8007A35C | 4, 22 |
+| 0x80074814-0x8007A3A0 | **Script base file**, one `.ctors` file. It has an inner edge near 0x8007608C: the pair-carrying run ends at 0x80076004, a pair-less run starts at 0x8007608C, and a second `"invalid"` (0x80487BE8) ends the first part's `.rodata` (the debris names `deb_*`, `cel_ConcreteChunk_*`). From 0x8007608C: Havok and `ShapeRepository`, the `.nhg` loader `fn_800777C4`. From 0x8007891C: the class table and the base class (section 4.1). Then static init `fn_800796A4`, the base class's inline virtuals ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)), `_GLOBAL_.I` 0x8007A318 and `_GLOBAL_.D` 0x8007A35C | 4, 22 |
 | 0x8007A3A0-0x80081E08 | **Script command file**: the AI script API (`Game/fn_8007A3A0.cpp`, to 0x8007C034), script init `fn_8007C8B0`, the `SCRIPT` property `fn_8007CA10`, `Scripts:Params` `fn_8007CABC`, the helpers the classes call (section 4.1), and the `cAIMessages` delivery targets ([`ai.md`](ai.md) section 3). `Game/fn_8007C830.c` is matched inside. Static init `fn_80081D00`, `_GLOBAL_.I` 0x80081DCC | 5 |
 | 0x80087040-0x8008995C | **Chronicle file**, `Game/fn_80087040.cpp`, with the `.nsc` parser and the static init `fn_80089854` that constructs both tables. Start edge: the two functions before it work on entity fields, and its `.rodata` opens with `GAME:CHRONS` right after the entity code's pool (0x80488758, read by `fn_80086C80`) | 2 |
 | 0x800A3810-0x800A90B0 | Rest of the template file ([`versus.md`](versus.md) section 5, rows 10-12): the scene reader `fn_800A4DF8` (0x1D30) and its helpers `fn_800A7208`, `fn_800A7A0C`, `fn_800A82B8` | 14 |
@@ -92,8 +92,18 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 ### 4.1 Base class
 
-- **Layout.** 0x28 bytes: 0x24 bytes of members, then the vptr at +0x24, because GCC 2.95 places the vptr after the data members ([`matching_notes.md`](matching_notes.md), the virtual-call entry). Derived fields start at +0x28. The base constructor `fn_80441FAC` (`Game/fn_80441D78.cpp`) stores the base vtable `lbl_804F4810`. 17 classes add no fields; the largest prototype is `cBrooklynBridge_AftershockBoss`, 0x144 bytes.
-- **Vtable.** 0x208 bytes: an 8-byte header, then 64 entries of 8 bytes, so slot `n` is the entry at `vt + 8n`. The base methods are 0x80078DD4-0x8007A318, nearly all stubs.
+- **Layout.** 0x28 bytes: 0x24 bytes of members, then the vptr at +0x24, because GCC 2.95 places the vptr after the data members ([`matching_notes.md`](matching_notes.md), the virtual-call entry). Derived fields start at +0x28. The base constructor `fn_80441FAC` (`Game/fn_80441D78.cpp`) stores the base vtable `lbl_804F4810`. 17 classes add no fields; the largest prototype is `cBrooklynBridge_AftershockBoss`, 0x144 bytes. The source calls the base `cScript` (a guess; no string names it).
+
+  | Offset | Field |
+  |---|---|
+  | +0x0 | class entry (section 4.2) |
+  | +0x4 | instance ID, from the counter `lbl_8066D61C` (starts at 1) |
+  | +0x8 | what `fn_80078FDC` was given (guess: the owning entity); `fn_800797D4` returns it |
+  | +0xC, +0x10 | parameter count (unsigned) and array of 8-byte `{type, value}` |
+  | +0x14-+0x20 | cleared on create; not read in the base |
+- **Parameters.** Types: 1 int, 2 float, 7-9 string (owned, freed on destroy), 3, 5 and 10-13 a scene index that `fn_80078E28` turns into a handle (`fn_800B13D8`; -1 and -2 become 0). Readers `(this, i)`: `fn_80079068` int, `fn_800791C8` unsigned, `fn_8007935C` float, `fn_800794FC` string (numbers printed into the shared buffer `lbl_8054DD54`). Past the count they return 0, 0.0f or `"Invalid Param"`.
+- **Vtable.** 0x208 bytes: an 8-byte header, then 64 entries of 8 bytes, so slot `n` is the entry at `vt + 8n`; slot 64 is null. Slot 2's base is `fn_80078DD4`; slots 1 and 3-63 are 0x8007975C-0x8007A2A0 in slot order, all stubs but the destructor (plus `fn_800797D4` after slot 3, not virtual).
+- **Known slots:** 1 destructor, 2 clone, 3 `()` called by `fn_80078FDC` once the instance is registered (guess: on-start), 21 `(int, int, int, int, float, int, int)` returning a float (the base returns the float argument). Base stubs that return something: 9, 20, 26, 47, 48 return 1, 17 returns 0, 37 returns -1.0f.
 - **Which slots the classes override** (count out of 102):
 
   | Slots | Overridden by |
@@ -105,7 +115,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 22 more slots | 6 or fewer each |
   | the other 29 slots | none |
 - **The outside functions the class files call most:**
-  - from the base: `fn_800797D4` (440 calls), `fn_800791C8` (398; `(this, i)`, guess: parameter `i`), `fn_80079068` (220), `fn_8007935C` (93);
+  - from the base: `fn_800797D4` (440 calls, +0x8), the parameter readers `fn_800791C8` (398), `fn_80079068` (220), `fn_8007935C` (93);
   - from the command file: `fn_8007D404` (351), `fn_80080B34` (175), `fn_8007CF00` (124), `fn_8007D7C4` (104), `fn_800809CC` (92), `fn_8007C034` (83);
   - from the entity code: `fn_80082AFC` (270).
 
@@ -118,6 +128,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   4. adds the entry to the table with `fn_801B4628(lbl_8066D614, name, entry)`, then clears `+0x24`.
 - **The table.** `lbl_8066D614` is a hash with 0x3F buckets, named `"ScriptClasses"`. `fn_8007891C` creates it (`fn_801B4284`; flag `lbl_8066B898`). `fn_80078994` finds a class (`fn_801B48AC`).
 - **Creating an instance.** `fn_800789DC` calls the prototype's slot 2, then `fn_8007A2F0(copy, entry)` and `fn_80078FDC(copy)`.
+- **Live instances.** `fn_80078C58` adds an instance to `lbl_8054D554` (512 slots, count `lbl_8066D618`) and increments its entry's `+0x24`; `fn_80078CE0` undoes both. Destroying an instance is `fn_80078B10`.
 
 ### 4.3 Missions and scenes
 
@@ -180,7 +191,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 1 | Story handlers | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp` | Done |
 | 2 | Chronicle | 0x80087040-0x8008995C | `Game/fn_80087040.cpp` | Done |
 | 3 | Save profile | 0x8011C55C-0x8011EDE0 | `Game/fn_8011C55C.cpp` | Done |
-| 4 | Class table and base class | 0x8007891C-0x8007A3A0 | `Game/fn_8007891C.cpp` | Table init `fn_8007891C`, find `fn_80078994`, create `fn_800789DC`, then the base methods (73 functions in 0x80078DD4-0x8007A318, 66 small), static init `fn_800796A4`, `_GLOBAL_.I`, `_GLOBAL_.D`. Record what each slot does in section 4.1 |
+| 4 | Class table and base class | 0x8007891C-0x8007A3A0 | `Game/fn_8007891C.cpp` | Done |
 | 5 | Rest of the script command file | 0x8007C034-0x80081E08 | extend `Game/fn_8007A3A0.cpp` | 121 functions: `fn_8007C8B0`, `fn_8007CA10`, `fn_8007CABC`, the helpers in section 4.1, the `cAIMessages` targets `fn_8007EFE0`/`fn_8007F184`/`fn_8007F2C4`, static init, `_GLOBAL_.I`. Absorb `Game/fn_8007C830.c` |
 | 6 | Class registration | 0x801BEE2C-0x801C55F8 | `Game/fn_801BEE2C.cpp` | One function of 102 identical blocks (section 4.2). Declare the prototype constructors `extern` |
 | 7 | Script inline functions | 0x80468974-~0x8046DF18 | small units per run | The prototype constructors, then the accessors and destructors. One small unit per run of neighbours, split where the `.rodata` pool changes, like [`ai.md`](ai.md) row 5 |
@@ -210,6 +221,6 @@ Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O fr
 - What does `<name>.nhg` hold? No loose `.nhg` is in `CLASH.BIG`.
 - Is `fn_801BEE2C` a file of its own, or the start of the Avengers Mansion file?
 - Where are the edges inside 0x80074814-0x8007891C?
-- What do the base slots other than 1 and 2 do?
+- What do the base slots other than 1, 2, 3 and 21 do? The overrides are the place to look; the base stubs' copies undercount their parameters ([`matching_notes.md`](matching_notes.md)).
 - Are the tables the profile saves at +0x1A0 (`fn_8044D4F0`, `fn_8044D454`, `fn_8044D3B8`) the ones the `REWARDS` setters (`fn_8044374C`, `fn_80443608`, `fn_80443640`) write?
 - What are the 0x58-byte functions in the cutscene file?
