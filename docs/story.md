@@ -19,7 +19,7 @@ See also:
 - **Mission start.** `fn_8008856C` (chronicle file) creates the record's master script (`+0x2A0`, the 4th `MISSION` argument) through `fn_800789DC`. No mission in `clashsp.nsc` or `clashMP.nsc` names one.
 - **Level load.** `fn_8002CE78` (`Game/fn_8002CE78.cpp`) calls:
   - `fn_800777C4("global", 1)` and `fn_800777C4(scene, 0)`, which open `<name>.nhg`;
-  - `fn_800A4DF8(scene, level, 0)`, the `.nsd` scene reader (allocator tags `Game:Scene:tScene`, `tPlayerStart`, `tInterestSpot`).
+  - `fn_800A4DF8(name, level, 0)`, the `.nsd` scene reader (allocator tags `Game:Scene:tScene`, `tPlayerStart`, `tInterestSpot`).
 - **Instances.** `fn_800789DC(name, flag)` finds a class (`fn_80078994`) and clones its prototype (slot 2, section 4.1). Its callers:
   - the entity property 0x10 `SCRIPT` (`fn_8007CA10`, [`characters.md`](characters.md) section 3);
   - mission start, above;
@@ -233,7 +233,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | Done |
 | 12 | Objects, props and triggers | 0x801FCEBC-0x8020C28C | `Game/fn_801FCEBC.cpp` | Done |
 | 13 | Cutscene play | 0x801F654C-0x801FBD90 | `Game/fn_801F654C.cpp` | Done |
-| 14 | Scene loader | 0x800A4DF8-0x800A90B0 | `Game/fn_800A4DF8.cpp` (section 2) | The scene reader file, from `fn_800A4DF8`. Then record the `.nsd` format in a `tools/nsdtool.py` (`dump`, `check`) like `tools/nottool.py` |
+| 14 | Scene loader | 0x800A4DF8-0x800A90B0 | extend `Game/fn_800A4DF8.cpp` (section 2) | 13 functions from `fn_800A6B28` (the section readers `fn_800A7208`, `fn_800A7A0C`, the finisher `fn_800A82B8`), then the static init and `_GLOBAL_.I` 0x800A90B0. Then record the `.nsd` format in a `tools/nsdtool.py` (`dump`, `check`) like `tools/nottool.py` |
 | 15 | NYC Streets classes | 0x801DB2BC-0x801DD29C | `Game/fn_801DB2BC.cpp` | 45 functions |
 | 16 | Daily Bugle classes | 0x801D1BFC-0x801D5320 | `Game/fn_801D1BFC.cpp` | 61 functions |
 | 17 | Avengers Mansion classes | 0x801C55F8-0x801CA72C | `Game/fn_801C55F8.cpp` | 79 functions; check the edge with row 6 |
