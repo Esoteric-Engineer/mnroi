@@ -210,7 +210,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 ## 5. Notes
 
-- **Boss fight ending** (the bosses of rows 15-17, e.g. `fn_801DB5C0`; probably rows 18-21 too). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and `fn_80082AFC` on a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
+- **Boss fight ending** (the bosses of rows 15-18, e.g. `fn_801DB5C0`; probably rows 19-21 too). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and `fn_80082AFC` on a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
 
 ---
 
@@ -237,7 +237,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 15 | NYC Streets classes | 0x801DB2BC-0x801DD29C | `Game/fn_801DB2BC.cpp` | Done |
 | 16 | Daily Bugle classes | 0x801D1BFC-0x801D5320 | `Game/fn_801D1BFC.cpp` | Done |
 | 17 | Avengers Mansion classes | 0x801C55F8-0x801CA72C | `Game/fn_801C55F8.cpp` | Done |
-| 18 | Grand Central classes | 0x801D5320-0x801DB2BC | `Game/fn_801D5320.cpp` | 96 functions |
+| 18 | Grand Central classes | 0x801D5320-0x801DB2BC | `Game/fn_801D5320.cpp` | Done |
 | 19 | Roekel Facility classes | 0x801E4870-0x801EAA38 | `Game/fn_801E4870.cpp` | 120 functions |
 | 20 | Brooklyn Bridge classes | 0x801CA72C-0x801D1BFC | `Game/fn_801CA72C.cpp` | 139 functions |
 | 21 | Power Plant classes | 0x801DD29C-0x801E4870 | `Game/fn_801DD29C.cpp` | 122 functions |
