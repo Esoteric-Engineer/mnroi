@@ -125,6 +125,8 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894`; `cSpawnPeon` treats it as its peon `h` dying to `other`, the float as the damage (guess) |
   | 23 | `(int, int, int kind, float x4, value)` | hook without handles; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7 |
   | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts (callers not traced) |
+  | 17 | `(h, h other, value)` returning int | not traced; `cTriggerOnAction` fires on it |
+  | 25, 27, 29 | `(h, int node, value)`, `(h, int, hit *, int, int)`, `(h, int x4)` | not traced. `cObjectMove` takes 25 as its object `h` reaching path node `node` (guess); `cVehicleBreak` takes 27 as a hit whose `float +0x18` is the force, and 29 with values 0-1 as the break |
   | 37 | `(h, int, value)` returning float | hook for `cAIMessages` kind 0. The base returns -1.0f; the caller keeps the minimum, and any 0 wins. `cActorWalk` takes the `int` as the path node actor `h` reached |
   | 43 | `(h, int, value)` | hook for `cAIMessages` kind 2 (kind 1 goes to slot 38) |
   | 47, 48 | `(h, value)` returning int | hooks that stop at the first 0 |
@@ -226,7 +228,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 9 | Effects | 0x801FBD90-0x801FCEBC | `Game/fn_801FBD90.cpp` | Done |
 | 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | Done |
 | 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | Done |
-| 12 | Objects, props and triggers | 0x801FCEBC-0x8020C28C | `Game/fn_801FCEBC.cpp` | 25 classes, 382 functions, 293 of them 0x80 bytes or less; most of the arena classes |
+| 12 | Objects, props and triggers | 0x801FCEBC-0x8020C28C | `Game/fn_801FCEBC.cpp` | Next: `cVehicleBarrier` slot 4 at 0x80203398. The clones of `cVehicleBreak` on and every class's accessors are in the tail from 0x80207BB4 |
 | 13 | Cutscene play | 0x801F654C-0x801FBD90 | `Game/fn_801F654C.cpp` | `cCutscenePlay`, the name tables and their 0x58-byte functions (97 functions). The player it drives is `cCutPlayer` ([`versus.md`](versus.md) section 5, row 8) |
 | 14 | Scene loader | 0x800A3810-0x800A90B0 | extend `Game/fn_800A3588.cpp` | 72 functions, among them `fn_800A4DF8`. Then record the `.nsd` format in a `tools/nsdtool.py` (`dump`, `check`) like `tools/nottool.py` |
 | 15 | NYC Streets classes | 0x801DB2BC-0x801DD29C | `Game/fn_801DB2BC.cpp` | 45 functions |
