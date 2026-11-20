@@ -74,7 +74,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 - 0x8007DC60: after `fn_8007D404` (0x80488038) and at or before `fn_8007E698` (0x80488070). The guess is where the queue code ends.
 - 0x800808D0: confirmed. `fn_800808D0` is a byte-for-byte copy of the static helper `fn_80080300`, and the pool resumes at 0x80488190 after the third block.
 
-Still open: whether `fn_801BEE2C` opens the Avengers Mansion file (its name pool ends at 0x8049F5F5; 0x8049F5F8-0x8049F617 is unreferenced, `0.0, 1.0, 1.0, 1.0, 0.5, 1.5, "invalid"`; `fn_801C55F8`'s pool starts at 0x8049F618, `"PARADOX"`).
+**The registration is a file of its own.** Every class file's `.rodata` ends with the same unreferenced header tail, `... 0.5, 1.5, "invalid"`, and 0x8049F5F8-0x8049F617 (`0.0, 1.0, 1.0, 1.0, 0.5, 1.5, "invalid"`) is that tail between `fn_801BEE2C`'s name pool (to 0x8049F5F5) and `fn_801C55F8`'s pool (from 0x8049F618, `"PARADOX"`).
 
 ---
 
@@ -123,7 +123,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 20 | `(h, h other, int, int, float, value)` returning int | hook; a 0 stops the chain and the caller gets 0 (`fn_8007E84C`). The boss classes mark `h` when the first `int` is 8 and the float is over 90000 (guess: a finishing move) |
   | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`). A damage filter: `cPlayerBonusMissions` passes `"damage"` to `fn_80081470` when `h` is the player |
   | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894`; `h` died. `cSpawnPeon` treats it as its peon dying to `other`, the float as the damage (guess); the boss classes end the fight when `h` is the boss or the player (section 5) |
-  | 23 | `(int, int, int kind, float x4, value)` | hook without handles; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7 |
+  | 23 | `(int, int, int kind, float x4, value)` | hook with no `h` first; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7; `cAvengersMansion_IronManSAC` compares the second `int` with an entity handle |
   | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts (callers not traced) |
   | 17 | `(h, h other, value)` returning int | not traced; `cTriggerOnAction` fires on it |
   | 19 | `(h, value)` | hook (`fn_800801F0`) |
@@ -210,7 +210,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 ## 5. Notes
 
-- **Boss fight ending** (the bosses of rows 15-16, e.g. `fn_801DB5C0`; probably rows 17-21 too). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and `fn_80082AFC` on a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
+- **Boss fight ending** (the bosses of rows 15-17, e.g. `fn_801DB5C0`; probably rows 18-21 too). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and `fn_80082AFC` on a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
 
 ---
 
@@ -236,7 +236,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 14 | Scene loader | 0x800A3588-0x800A90B0 | three units (section 2) | Done. The `.nsd` format is in `tools/nsdtool.py` |
 | 15 | NYC Streets classes | 0x801DB2BC-0x801DD29C | `Game/fn_801DB2BC.cpp` | Done |
 | 16 | Daily Bugle classes | 0x801D1BFC-0x801D5320 | `Game/fn_801D1BFC.cpp` | Done |
-| 17 | Avengers Mansion classes | 0x801C55F8-0x801CA72C | `Game/fn_801C55F8.cpp` | 79 functions; check the edge with row 6 |
+| 17 | Avengers Mansion classes | 0x801C55F8-0x801CA72C | `Game/fn_801C55F8.cpp` | Done |
 | 18 | Grand Central classes | 0x801D5320-0x801DB2BC | `Game/fn_801D5320.cpp` | 96 functions |
 | 19 | Roekel Facility classes | 0x801E4870-0x801EAA38 | `Game/fn_801E4870.cpp` | 120 functions |
 | 20 | Brooklyn Bridge classes | 0x801CA72C-0x801D1BFC | `Game/fn_801CA72C.cpp` | 139 functions |
@@ -251,7 +251,6 @@ Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O fr
 ## 7. Open Questions
 
 - What does `<name>.nhg` hold? No loose `.nhg` is in `CLASH.BIG`.
-- Is `fn_801BEE2C` a file of its own, or the start of the Avengers Mansion file?
 - Where are the edges inside 0x80074814-0x8007891C?
 - What do the slots with no caller traced do (7, 9-11, 17, 25, 26, 28, 34-36, 39-42, 44-46, 50, 51, 55-58, 62)? Look at the overrides: the base stubs' copies undercount their parameters ([`matching_notes.md`](matching_notes.md)).
 - Where exactly are the edges at 0x8007C8B0 and 0x8007DC60 (section 2)?
