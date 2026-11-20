@@ -121,7 +121,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 12, 13 | `(h)`, `(h, value)` | hooks; 12 only for the entity's own script |
   | 14-16, 18, 30, 38 | `(h, h other, value)` | hooks; the region classes treat 14 as `other` entering `h`'s region and 15 as it leaving |
   | 20 | `(h, h other, int, int, float, value)` returning int | hook; a 0 stops the chain and the caller gets 0 (`fn_8007E84C`) |
-  | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`; guess: a damage filter) |
+  | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`). A damage filter: `cPlayerBonusMissions` passes `"damage"` to `fn_80081470` when `h` is the player |
   | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894`; `cSpawnPeon` treats it as its peon `h` dying to `other`, the float as the damage (guess) |
   | 23 | `(int, int, int kind, float x4, value)` | hook without handles; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7 |
   | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts (callers not traced) |
@@ -154,7 +154,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 - **Registration.** `fn_801BEE2C` fills `lbl_8054D154[lbl_8066B890]` (`.bss`, 256 slots) with one 0x28-byte entry `{char name[0x20]; void *prototype; int count}` per class and adds it to the table. Its source lists each class's size and prototype constructor.
 - **The table.** `lbl_8066D614` is a hash with 0x3F buckets, named `"ScriptClasses"`. `fn_8007891C` creates it (`fn_801B4284`; flag `lbl_8066B898`). `fn_80078994` finds a class (`fn_801B48AC`).
-- **Creating an instance.** `fn_800789DC` calls the prototype's slot 2, then `fn_8007A2F0(copy, entry)` and `fn_80078FDC(copy)`.
+- **Creating an instance.** `fn_800789DC` calls the prototype's slot 2, then `fn_8007A2F0(copy, entry)` and `fn_80078FDC(copy)`. `cAISetTeleportDistance`'s slot 2 builds a `cTemporaryAIPossession` (0x30), so that class's own slots never run.
 - **Live instances.** `fn_80078C58` adds an instance to `lbl_8054D554` (512 slots, count `lbl_8066D618`) and increments its entry's `+0x24`; `fn_80078CE0` undoes both. Destroying an instance is `fn_80078B10`.
 
 ### 4.3 Missions and scenes
@@ -225,7 +225,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | Done |
 | 9 | Effects | 0x801FBD90-0x801FCEBC | `Game/fn_801FBD90.cpp` | Done |
 | 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | Done |
-| 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | 18 classes, 250 functions. Each class's clone and parameter accessors are at 0x801F3394-0x801F62E4, after all the classes' slots. AI facts go in [`ai.md`](ai.md) |
+| 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | Done |
 | 12 | Objects, props and triggers | 0x801FCEBC-0x8020C28C | `Game/fn_801FCEBC.cpp` | 25 classes, 382 functions, 293 of them 0x80 bytes or less; most of the arena classes |
 | 13 | Cutscene play | 0x801F654C-0x801FBD90 | `Game/fn_801F654C.cpp` | `cCutscenePlay`, the name tables and their 0x58-byte functions (97 functions). The player it drives is `cCutPlayer` ([`versus.md`](versus.md) section 5, row 8) |
 | 14 | Scene loader | 0x800A3810-0x800A90B0 | extend `Game/fn_800A3588.cpp` | 72 functions, among them `fn_800A4DF8`. Then record the `.nsd` format in a `tools/nsdtool.py` (`dump`, `check`) like `tools/nottool.py` |

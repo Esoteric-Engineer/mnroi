@@ -1,4 +1,4 @@
-// The actor and AI script classes, from cPathnodeToggle on (docs/story.md row 11).
+// The actor and AI script classes, their clones and parameter accessors (docs/story.md row 11).
 // Pool read from 0x804A09B4 (extern_pool).
 
 inline int sn_return_decl(int a) { return a; }
@@ -123,6 +123,60 @@ struct cActorPlayPath : cScript { // 0x28
     cActorPlayPath() __asm__("fn_80469870");
 };
 
+struct cAIRangedAttacker : cScript { // 0x88
+    Ref8 actor;         // +0x28
+    Ref8 targets[5];    // +0x30
+    int inRange[5];     // +0x58
+    int unk6C;          // +0x6C
+    int active;         // +0x70
+    int unk74;          // +0x74
+    int unk78;          // +0x78
+    int unk7C;          // +0x7C
+    int unk80;          // +0x80
+    int effect;         // +0x84
+    cAIRangedAttacker() __asm__("fn_804698BC");
+};
+
+struct cBossRingOut : cScript { // 0x28
+    cBossRingOut() __asm__("fn_80469954");
+};
+
+struct cActorSetHealth : cScript { // 0x2C
+    int done; // +0x28
+    cActorSetHealth() __asm__("fn_804699A0");
+};
+
+struct cPlayerBonusMissions : cScript { // 0x30
+    int count;   // +0x28
+    int stopped; // +0x2C
+    cPlayerBonusMissions() __asm__("fn_804699EC");
+};
+
+struct cGlobalPeonCounter : cScript { // 0x2C
+    int unk28; // +0x28
+    cGlobalPeonCounter() __asm__("fn_80469A38");
+};
+
+struct cAITeleportationToggle : cScript { // 0x2C
+    int on; // +0x28
+    cAITeleportationToggle() __asm__("fn_80469A84");
+};
+
+struct cAIEnemyVictoryScene : cScript { // 0x34
+    int done;   // +0x28
+    Ref8 unk2C; // +0x2C
+    cAIEnemyVictoryScene() __asm__("fn_80469AD0");
+};
+
+struct cTemporaryAIPossession : cScript { // 0x30
+    Ref8 actor; // +0x28
+    cTemporaryAIPossession() __asm__("fn_80469B2C");
+};
+
+struct cAISetTeleportDistance : cScript { // 0x28
+    cAISetTeleportDistance() __asm__("fn_80469B88");
+};
+
 struct VBase {
     char pad0[0x198];
 };
@@ -183,7 +237,7 @@ int fn_800809CC(void *ev);
 int fn_8007C034(void *ev);
 void fn_80082014(void *ev, int a);
 void fn_800820A0(void *ev, int a);
-void fn_80082E90(void *ev, char *name, int a, int b);
+int fn_80082E90(void *ev, char *name, int a, int b);
 void fn_8008643C(int actor);
 void fn_8006645C(int actor, int a);
 int fn_800861EC(int actor);
@@ -326,6 +380,80 @@ unsigned int fn_801F356C(cActorMoveToPos *self);
 unsigned int fn_801F35B4(cActorMoveToPos *self);
 int fn_801F35FC(cActorMoveToPos *self);
 int fn_801F3644(cActorMoveToPos *self);
+void fn_8007B4D8(int h, int v);
+void fn_8007B6E4(int h, int a, int b, int c);
+int fn_8007D7C4(cScript *self, unsigned char kind);
+void *fn_800ACFA8(int h);
+int fn_8007AD0C(int h, int what, int at);
+unsigned int fn_801F55FC(cAIRangedAttacker *self);
+unsigned int fn_801F5644(cAIRangedAttacker *self);
+unsigned int fn_801F568C(cAIRangedAttacker *self);
+unsigned int fn_801F56D4(cAIRangedAttacker *self);
+unsigned int fn_801F571C(cAIRangedAttacker *self);
+unsigned int fn_801F5764(cAIRangedAttacker *self);
+int fn_801F57AC(cAIRangedAttacker *self);
+int fn_801F57F4(cAIRangedAttacker *self);
+int fn_801F583C(cAIRangedAttacker *self);
+int fn_801F5884(cAIRangedAttacker *self);
+int fn_801F58CC(cAIRangedAttacker *self);
+int fn_801F5914(cAIRangedAttacker *self);
+void fn_801F1DF4(cAIRangedAttacker *self);
+void fn_801F1F08(cAIRangedAttacker *self);
+void fn_80133948(int h);
+int fn_8046BD30(void *ev);
+void fn_8007B8CC(int h, int v);
+void fn_8007B7FC(int h, int v);
+float fn_8007C3EC(void *ev);
+float fn_8007C52C(void *ev);
+float fn_8007C594(void *ev, float dmg, int type, int kind, int src, unsigned int flags);
+float fn_8007C114(void *ev, float v);
+float fn_8007C244(void *ev);
+float fn_8007C2AC(void *ev);
+float fn_8007C314(void *ev, float v);
+float fn_801F5A04(cActorSetHealth *self);
+unsigned int fn_801F5A4C(cActorSetHealth *self);
+int fn_801F5A94(cActorSetHealth *self);
+int fn_801F5AEC(cActorSetHealth *self);
+float fn_801F5B44(cActorSetHealth *self);
+int fn_801F5B8C(cActorSetHealth *self);
+void fn_801F25B4(cActorSetHealth *self);
+void fn_8046BBE8();
+void fn_800863AC(int actor, int flags);
+void fn_8007B998(int h, float v);
+void fn_80131768(void);
+void fn_801317A0(void);
+void fn_80081470(char *name);
+void fn_80435238(void *p, int v);
+void fn_80083A90(void);
+void fn_8046C9F0(int h);
+int fn_8046C96C(void *ev);
+extern char lbl_805723F4[];
+extern char lbl_8057220C[];
+int fn_801F5C28(cPlayerBonusMissions *self);
+int fn_801F5C80(cPlayerBonusMissions *self);
+int fn_801F5CC8(cPlayerBonusMissions *self);
+int fn_801F5D10(cPlayerBonusMissions *self);
+float fn_801F5D68(cPlayerBonusMissions *self);
+unsigned int fn_801F5DB0(cPlayerBonusMissions *self);
+int fn_801F5DF8(cPlayerBonusMissions *self);
+int fn_801F5E40(cPlayerBonusMissions *self);
+int fn_801F5E88(cPlayerBonusMissions *self);
+int fn_801F5EE0(cPlayerBonusMissions *self);
+void fn_8007B6A4(int on);
+void fn_8007B77C(float v);
+void fn_8007B7BC(float v);
+void fn_80070228(int actor, int b, float f, int c, int d, int e);
+int fn_801F5FD0(cAITeleportationToggle *self);
+float fn_801F6028(cAITeleportationToggle *self);
+int fn_801F60C4(cAIEnemyVictoryScene *self);
+unsigned int fn_801F6170(cTemporaryAIPossession *self);
+float fn_801F61B8(cTemporaryAIPossession *self);
+float fn_801F6254(cAISetTeleportDistance *self);
+float fn_801F629C(cAISetTeleportDistance *self);
+unsigned int fn_800791C8(cScript *self, unsigned int i);
+int fn_80079068(cScript *self, unsigned int i);
+float fn_8007935C(cScript *self, unsigned int i);
+char *fn_800794FC(cScript *self, unsigned int i);
 
 cScript *fn_801EAA38(register cPathnodeToggle *self)
 {
@@ -1565,4 +1693,771 @@ int fn_801F111C(register cActorPlayPath *self)
     }
     return 0;
 }
+
+__asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.text"); // 0x804A0AF0-0x804A0B14
+
+inline int sn_return_decl2(int a) { return a; }
+
+void fn_801F12C4(register cAIRangedAttacker *self) // slot 5
+{
+    fn_8046B710(&self->actor, fn_800797D4(self));
+    fn_8007A448(fn_804425F8(&self->actor));
+    fn_8007B4D8(fn_804425F8(&self->actor), 4);
+    fn_8007B6E4(fn_804425F8(&self->actor), 0, 0, 0);
+    self->inRange[0] = 0;
+    self->inRange[1] = 0;
+    self->inRange[2] = 0;
+    self->inRange[3] = 0;
+    self->inRange[4] = 0;
+    self->effect = 0;
+    self->unk78 = 0;
+    self->unk7C = 0;
+    self->unk80 = 0;
+    self->unk6C = 0;
+    if (fn_801F57F4(self))
+        self->active = 1;
+    else
+        self->active = 0;
+    fn_8007CF00(self, fn_801F55FC(self), 0);
+    if (fn_801F5644(self)) {
+        fn_8046B710(&self->targets[0], fn_801F5644(self));
+        self->inRange[0] = 1;
+    }
+    if (fn_801F568C(self)) {
+        fn_8046B710(&self->targets[1], fn_801F568C(self));
+        self->inRange[1] = 1;
+    }
+    if (fn_801F56D4(self)) {
+        fn_8046B710(&self->targets[2], fn_801F56D4(self));
+        self->inRange[2] = 1;
+    }
+    if (fn_801F571C(self)) {
+        fn_8046B710(&self->targets[3], fn_801F571C(self));
+        self->inRange[3] = 1;
+    }
+    if (fn_801F5764(self)) {
+        fn_8046B710(&self->targets[4], fn_801F5764(self));
+        self->inRange[4] = 1;
+    }
+    if (fn_801F58CC(self))
+        fn_80082F30(&self->actor);
+}
+
+void fn_801F1534(register cAIRangedAttacker *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    switch (kind) {
+    case 0:
+        if (self->unk7C == 1)
+            return;
+        self->unk7C = 1;
+        if (fn_801F58CC(self)) {
+            fn_80082FA4(&self->actor);
+            if (fn_8007C034(&self->actor))
+                self->effect = fn_80082E90(&self->actor, "peonTeleport", 0xff, 0xff);
+        }
+        if (fn_801F5884(self)) {
+            fn_8007A448(fn_804425F8(&self->actor));
+            fn_80082720(&self->actor, fn_80080B34());
+            if (fn_8007C034(&self->actor))
+                fn_8006645CR(*fn_8007C034S(&self->actor), 1);
+            fn_8007AA8C(fn_804425F8(&self->actor), fn_80080B34());
+        }
+        if (fn_801F5914(self))
+            fn_8007D404(self, 3.0f, 13, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        break;
+    case 6:
+        if (!self->unk6C) {
+            self->unk6C = 1;
+            if (fn_801F57AC(self))
+                fn_8007A818(fn_800797D4(self), self->unk80 + 1);
+            else
+                fn_8007D404(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        }
+        break;
+    case 7:
+        fn_8007D8B0(self);
+        fn_8007A4FC(fn_800797D4(self));
+        break;
+    }
+}
+
+float fn_801F17C0(register cAIRangedAttacker *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
+{
+    if (self->active == 1) {
+    } else {
+        fn_8007D8B0(self);
+        fn_8007A4FC(fn_800797D4(self));
+    }
+    return dmg;
+}
+
+void fn_801F1844(register cAIRangedAttacker *self, int h, int other, int value) // slot 14
+{
+    if (other == fn_804425F8(&self->targets[0]))
+        self->inRange[0] = 1;
+    else if (other == fn_804425F8(&self->targets[1]))
+        self->inRange[1] = 1;
+    else if (other == fn_804425F8(&self->targets[2]))
+        self->inRange[2] = 1;
+    else if (other == fn_804425F8(&self->targets[3]))
+        self->inRange[3] = 1;
+    else if (other == fn_804425F8(&self->targets[4]))
+        self->inRange[4] = 1;
+}
+
+void fn_801F1944(register cAIRangedAttacker *self, int h, int other, int value) // slot 15
+{
+    if (other == fn_804425F8(&self->targets[0]))
+        self->inRange[0] = 0;
+    else if (other == fn_804425F8(&self->targets[1]))
+        self->inRange[1] = 0;
+    else if (other == fn_804425F8(&self->targets[2]))
+        self->inRange[2] = 0;
+    else if (other == fn_804425F8(&self->targets[3]))
+        self->inRange[3] = 0;
+    else if (other == fn_804425F8(&self->targets[4]))
+        self->inRange[4] = 0;
+}
+
+#define ABS(x) ((x) < 0.0f ? -(x) : (x))
+
+void fn_801F1A44(register cAIRangedAttacker *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
+{
+    fn_8007D7C4(self, 11);
+    fn_8007D7C4(self, 10);
+    fn_8007D7C4(self, 12);
+    switch (kind) {
+    case 13: {
+        Vector at;
+        Vector to;
+        char ev[8];
+        fn_8046B638(ev, fn_80080B34());
+        fn_80082440(&self->actor, &at);
+        fn_80082440(ev, &to);
+        float dist = fn_804290F8(&to, &at);
+        if (ABS(dist) <= 5.0f) {
+            fn_8007D8B0(self);
+            if (fn_8007C034(&self->actor))
+                fn_8006645CR(*fn_8007C034S(&self->actor), 0);
+            fn_8007A4FC(fn_804425F8(&self->actor));
+        } else
+            fn_8007D404(self, 1.0f, 13, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        break;
+    }
+    case 10:
+        fn_8007D404(self, 0.25f, 11, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        break;
+    case 11:
+        fn_801F1F08(self);
+        break;
+    case 12:
+        fn_801F1DF4(self);
+        if (self->inRange[0] || self->inRange[1] || self->inRange[2] || self->inRange[3] || self->inRange[4])
+            fn_8007D404(self, 0.25f, 11, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        else {
+            fn_8007B0EC(fn_804425F8(&self->actor), 0x14a, 0, 0);
+            fn_8007D404(self, 8.0f, 12, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        }
+        break;
+    }
+}
+
+void fn_801F1D78(register cAIRangedAttacker *self, int h, int other, int value) // slot 38
+{
+    fn_8007D404(self, 2.0f, 11, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+}
+
+void fn_801F1DF4(register cAIRangedAttacker *self)
+{
+    if (!fn_800ACFA8(fn_804425F8(&self->targets[0])))
+        self->inRange[0] = 0;
+    if (!fn_800ACFA8(fn_804425F8(&self->targets[1])))
+        self->inRange[1] = 0;
+    if (!fn_800ACFA8(fn_804425F8(&self->targets[2])))
+        self->inRange[2] = 0;
+    if (!fn_800ACFA8(fn_804425F8(&self->targets[3])))
+        self->inRange[3] = 0;
+    if (!fn_800ACFA8(fn_804425F8(&self->targets[4])))
+        self->inRange[4] = 0;
+}
+
+void fn_801F1F08(register cAIRangedAttacker *self)
+{
+    fn_801F1DF4(self);
+    if (self->inRange[0] == 1) {
+        fn_8007AD0C(fn_804425F8(&self->actor), fn_804425F8(&self->targets[0]), fn_80080B34());
+        return;
+    } else if (self->inRange[1] == 1) {
+        fn_8007AD0C(fn_804425F8(&self->actor), fn_804425F8(&self->targets[1]), fn_80080B34());
+        return;
+    } else if (self->inRange[2] == 1) {
+        fn_8007AD0C(fn_804425F8(&self->actor), fn_804425F8(&self->targets[2]), fn_80080B34());
+        return;
+    } else if (self->inRange[3] == 1) {
+        fn_8007AD0C(fn_804425F8(&self->actor), fn_804425F8(&self->targets[3]), fn_80080B34());
+        return;
+    } else if (self->inRange[4] == 1) {
+        fn_8007AD0C(fn_804425F8(&self->actor), fn_804425F8(&self->targets[4]), fn_80080B34());
+        return;
+    } else if (fn_801F583C(self) == 1) {
+        fn_8007B0EC(fn_804425F8(&self->actor), 0x13d, 0, 1);
+        fn_8007D404(self, 8.0f, 12, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    } else {
+        fn_8007D8B0(self);
+        self->active = 0;
+        fn_8007A4FC(fn_804425F8(&self->actor));
+    }
+}
+
+void fn_801F2160(register cAIRangedAttacker *self, int h, int other, int a, int b, float dmg, int value) // slot 22
+{
+    if (h == fn_804425F8(&self->actor)) {
+        fn_8007D8B0(self);
+        fn_8007A4FC(h);
+    }
+}
+
+void fn_801F21DC(register cBossRingOut *self) // slot 5
+{
+    fn_80133948(fn_800797D4(self));
+}
+
+void fn_801F2228(register cBossRingOut *self, int h, int other, int value) // slot 15
+{
+    char ev[8];
+    fn_8046B638(ev, other);
+    if (fn_80080A44(ev) || !fn_8046BD30(ev))
+        return;
+    fn_8007B8CC(fn_804425F8(ev), h);
+}
+
+void fn_801F22D0(register cBossRingOut *self, int h, int other, int value) // slot 14
+{
+    char ev[8];
+    fn_8046B638(ev, other);
+    if (fn_80080A44(ev) || !fn_8046BD30(ev))
+        return;
+    float health = fn_8007C3EC(ev) / fn_8007C52C(ev);
+    if (health < 0.15f)
+        return;
+    fn_8007B7FC(fn_804425F8(ev), h);
+}
+
+void fn_801F23C0(register cActorSetHealth *self) // slot 4
+{
+    self->done = 0;
+    if (!fn_801F5B8C(self) || !fn_801F5B8C(self)) {
+        self->done = 1;
+        fn_801F25B4(self);
+    }
+}
+
+void fn_801F243C(register cActorSetHealth *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
+{
+    switch (kind) {
+    case 10: {
+        char ev[8];
+        fn_8046B5A8(ev, fn_80080B34());
+        fn_8007C594(ev, 15.0f, 0, 0, 0, 2);
+        fn_8007D404(self, 5.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        break;
+    }
+    }
+}
+
+void fn_801F251C(register cActorSetHealth *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    if (fn_801F5B8C(self) == 1 && !self->done) {
+        self->done = 1;
+        fn_801F25B4(self);
+        return;
+    } else
+        fn_8007D8B0(self);
+}
+
+void fn_801F25B4(register cActorSetHealth *self)
+{
+    char ev[8];
+
+    fn_8046B5A8(ev, 0);
+    if (fn_801F5A4C(self))
+        fn_8046B710((Ref8 *)ev, fn_801F5A4C(self));
+    else if (fn_801F5A94(self)) {
+        fn_8046B710((Ref8 *)ev, fn_80080B34());
+        if (fn_801F5AEC(self)) {
+            fn_8007D404(self, fn_801F5B44(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            return;
+        }
+    } else
+        fn_8046B710((Ref8 *)ev, fn_800797D4(self));
+    fn_8007C114(ev, fn_801F5A04(self) * fn_8007C244(ev));
+    fn_8007C314(ev, fn_801F5A04(self) * fn_8007C2AC(ev));
+}
+
+void fn_801F271C(register cPlayerBonusMissions *self) // slot 3
+{
+    self->count = 0;
+    self->stopped = 0;
+}
+
+void fn_801F2754(register cPlayerBonusMissions *self) // slot 4
+{
+    char ev[8];
+
+    if (fn_801F5E88(self)) {
+        fn_8046BBE8();
+        return;
+    }
+    if (fn_801F5C28(self))
+        fn_8007CF00(self, fn_80080B34(), 0);
+    fn_8046B5A8(ev, fn_80080B34());
+    if (fn_801F5D10(self))
+        fn_800863AC(fn_8007C034(ev), 0x20000);
+    if (fn_801F5D68(self) != 0.0f)
+        fn_8007B998(fn_804425F8(ev), fn_801F5D68(self));
+    if (fn_801F5CC8(self) > 0) {
+        fn_80131724(0, fn_801F5CC8(self));
+        fn_80131768();
+    }
+}
+
+float fn_801F2884(register cPlayerBonusMissions *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
+{
+    if (h != fn_80080B34() || fn_801F5E88(self))
+        return dmg;
+    fn_80081470("damage");
+    return dmg;
+}
+
+void fn_801F2920(register cPlayerBonusMissions *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    switch (kind) {
+    case 12:
+        if (fn_801F5C80(self) == (int)x || fn_801F5C80(self) == 4 || (fn_801F5C80(self) == 3 && (int)x != 4)) {
+            if (self->count < fn_801F5CC8(self)) {
+                fn_80131724(++self->count, fn_801F5CC8(self));
+                if (!fn_801F5C80(self) && fn_801F5EE0(self) > 0)
+                    fn_80435238(lbl_805723F4, fn_801F5EE0(self));
+            }
+            if (self->count == fn_801F5CC8(self) && !self->stopped && fn_801F5DB0(self)) {
+                fn_801317A0();
+                char ev[8];
+                fn_8046B6C8(ev, fn_801F5DB0(self));
+                fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), fn_801F5DF8(self), 0.0f, 0.0f, 0.0f, 0.0f);
+            }
+        }
+        break;
+    case 7:
+        self->stopped = 1;
+        if (fn_801F5E40(self))
+            fn_80083A90();
+        break;
+    }
+}
+
+void fn_801F2B64(register cGlobalPeonCounter *self) // slot 4
+{
+    fn_8046C9F0(fn_800797D4(self));
+}
+
+void fn_801F2BB0(register cGlobalPeonCounter *self) // slot 5
+{
+}
+
+void fn_801F2BD8(register cGlobalPeonCounter *self, int h, int other, int a, int b, float dmg, int value) // slot 22
+{
+    char ev[8];
+    fn_8046B5A8(ev, h);
+    if (!fn_8046C96C(ev))
+        return;
+    fn_80435238(lbl_8057220C, h);
+}
+
+void fn_801F2C64(register cGlobalPeonCounter *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    switch (kind) {
+    case 999:
+        break;
+    }
+}
+
+void fn_801F2CC0(register cAITeleportationToggle *self) // slot 4
+{
+    if (fn_801F5FD0(self)) {
+        fn_8007B6A4(1);
+        self->on = 1;
+    } else {
+        fn_8007B6A4(0);
+        self->on = 0;
+    }
+    if (fn_801F6028(self) > 0.0f)
+        fn_8007B77C(fn_801F6028(self));
+}
+
+void fn_801F2D60(register cAITeleportationToggle *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    switch (kind) {
+    case 4:
+        self->on = !self->on;
+        fn_8007B6A4(self->on);
+        break;
+    }
+}
+
+void fn_801F2DE8(register cAIEnemyVictoryScene *self) // slot 5
+{
+    char ev[8];
+
+    fn_8046B638(ev, fn_80080B34());
+    fn_8007CF00(self, fn_804425F8(ev), 0);
+    self->done = 0;
+}
+
+void fn_801F2E58(register cAIEnemyVictoryScene *self, int h, int other, int a, int b, float dmg, int value) // slot 22
+{
+}
+
+int fn_801F2E98(register cAIEnemyVictoryScene *self, int h, int other, int a, int b, float dmg, int value) // slot 20
+{
+    if (h == fn_80080B34() && !self->done) {
+        self->done = 1;
+        char ev[8];
+        fn_8046B638(ev, fn_80080B34());
+        fn_8007D8B0(self);
+        fn_8007A448(fn_804425F8(ev));
+        fn_80070228(fn_8007C034(ev), 0, 0.0f, 0, 0, 0);
+        fn_8007D404(self, 3.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        return 0;
+    }
+    return 1;
+}
+
+void fn_801F2FC0(register cAIEnemyVictoryScene *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
+{
+    switch (kind) {
+    case 10: {
+        char ev[8];
+        fn_8046B6C8(ev, fn_801F60C4(self));
+        fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    }
+    }
+}
+
+void fn_801F3098(register cTemporaryAIPossession *self) // slot 5
+{
+    fn_8046B710(&self->actor, fn_801F6170(self));
+    fn_8007CF00(self, fn_804425F8(&self->actor), 0);
+}
+
+void fn_801F310C(register cTemporaryAIPossession *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    fn_8007A448(fn_804425F8(&self->actor));
+    fn_8007D404(self, fn_801F61B8(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+}
+
+void fn_801F31BC(register cTemporaryAIPossession *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
+{
+    switch (kind) {
+    case 10:
+        fn_8007A4FC(fn_804425F8(&self->actor));
+        break;
+    }
+}
+
+float fn_801F3240(register cTemporaryAIPossession *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
+{
+    fn_8007D7C4(self, 10);
+    fn_8007A4FC(fn_804425F8(&self->actor));
+    return dmg;
+}
+
+void fn_801F32BC(register cAISetTeleportDistance *self, int h, int other, int value) // slot 14
+{
+    if (fn_801F6254(self) > 0.0f)
+        fn_8007B7BC(fn_801F6254(self));
+}
+
+void fn_801F3328(register cAISetTeleportDistance *self, int h, int other, int value) // slot 15
+{
+    if (fn_801F629C(self) > 0.0f)
+        fn_8007B7BC(fn_801F629C(self));
+}
+
+#define PARAM(T, cls, name, reader, i) \
+    T name(register cls *self)         \
+    {                                  \
+        return reader(self, i);        \
+    }
+#define FLAG(cls, name, reader, i)       \
+    int name(register cls *self)         \
+    {                                    \
+        return reader(self, i) != 0;     \
+    }
+
+PARAM(int, cPathnodeToggle, fn_801F3394, fn_80079068, 0)
+
+cScript *fn_801F33DC(register cActorMoveToPos *self)
+{
+    return new cActorMoveToPos;
+}
+
+int fn_801F3430(register cActorMoveToPos *self)
+{
+    return fn_800797D4(self);
+}
+
+FLAG(cActorMoveToPos, fn_801F3474, fn_80079068, 0)
+FLAG(cActorMoveToPos, fn_801F34CC, fn_80079068, 1)
+PARAM(unsigned int, cActorMoveToPos, fn_801F3524, fn_800791C8, 2)
+PARAM(unsigned int, cActorMoveToPos, fn_801F356C, fn_800791C8, 3)
+PARAM(unsigned int, cActorMoveToPos, fn_801F35B4, fn_800791C8, 4)
+PARAM(int, cActorMoveToPos, fn_801F35FC, fn_80079068, 5)
+PARAM(int, cActorMoveToPos, fn_801F3644, fn_80079068, 6)
+
+cScript *fn_801F368C(register cActorWalk *self)
+{
+    return new cActorWalk;
+}
+
+int fn_801F36E0(register cActorWalk *self)
+{
+    return fn_800797D4(self);
+}
+
+PARAM(int, cActorWalk, fn_801F3724, fn_80079068, 0)
+PARAM(int, cActorWalk, fn_801F376C, fn_80079068, 1)
+FLAG(cActorWalk, fn_801F37B4, fn_80079068, 2)
+PARAM(float, cActorWalk, fn_801F380C, fn_8007935C, 3)
+FLAG(cActorWalk, fn_801F3854, fn_80079068, 4)
+FLAG(cActorWalk, fn_801F38AC, fn_80079068, 5)
+
+cScript *fn_801F3904(register cActorAIPause *self)
+{
+    return new cActorAIPause;
+}
+
+int fn_801F3958(register cActorAIPause *self)
+{
+    return fn_800797D4(self);
+}
+
+PARAM(int, cActorAIPause, fn_801F399C, fn_80079068, 0)
+FLAG(cActorAIPause, fn_801F39E4, fn_80079068, 1)
+FLAG(cActorAIPause, fn_801F3A3C, fn_80079068, 2)
+
+cScript *fn_801F3A94(register cActorControlState *self)
+{
+    return new cActorControlState;
+}
+
+int fn_801F3AE8(register cActorControlState *self)
+{
+    return fn_800797D4(self);
+}
+
+PARAM(int, cActorControlState, fn_801F3B2C, fn_80079068, 0)
+PARAM(int, cActorControlState, fn_801F3B74, fn_80079068, 2)
+PARAM(int, cActorControlState, fn_801F3BBC, fn_80079068, 3)
+
+cScript *fn_801F3C04(register cSpawnPeon *self)
+{
+    return new cSpawnPeon;
+}
+
+int fn_801F3C58(register cSpawnPeon *self)
+{
+    return fn_800797D4(self);
+}
+
+PARAM(char *, cSpawnPeon, fn_801F3C9C, fn_800794FC, 0)
+PARAM(int, cSpawnPeon, fn_801F3CE4, fn_80079068, 1)
+PARAM(int, cSpawnPeon, fn_801F3D2C, fn_80079068, 2)
+PARAM(unsigned int, cSpawnPeon, fn_801F3D74, fn_800791C8, 3)
+FLAG(cSpawnPeon, fn_801F3DBC, fn_80079068, 4)
+PARAM(unsigned int, cSpawnPeon, fn_801F3E14, fn_800791C8, 5)
+PARAM(int, cSpawnPeon, fn_801F3E5C, fn_80079068, 6)
+PARAM(float, cSpawnPeon, fn_801F3EA4, fn_8007935C, 7)
+PARAM(unsigned int, cSpawnPeon, fn_801F3EEC, fn_800791C8, 8)
+PARAM(unsigned int, cSpawnPeon, fn_801F3F34, fn_800791C8, 9)
+PARAM(unsigned int, cSpawnPeon, fn_801F3F7C, fn_800791C8, 10)
+PARAM(int, cSpawnPeon, fn_801F3FC4, fn_80079068, 11)
+PARAM(unsigned int, cSpawnPeon, fn_801F400C, fn_800791C8, 12)
+FLAG(cSpawnPeon, fn_801F4054, fn_80079068, 13)
+PARAM(float, cSpawnPeon, fn_801F40AC, fn_8007935C, 14)
+PARAM(float, cSpawnPeon, fn_801F40F4, fn_8007935C, 15)
+PARAM(float, cSpawnPeon, fn_801F413C, fn_8007935C, 16)
+PARAM(float, cSpawnPeon, fn_801F4184, fn_8007935C, 17)
+PARAM(float, cSpawnPeon, fn_801F41CC, fn_8007935C, 18)
+PARAM(float, cSpawnPeon, fn_801F4214, fn_8007935C, 19)
+PARAM(float, cSpawnPeon, fn_801F425C, fn_8007935C, 20)
+PARAM(float, cSpawnPeon, fn_801F42A4, fn_8007935C, 21)
+PARAM(float, cSpawnPeon, fn_801F42EC, fn_8007935C, 22)
+PARAM(float, cSpawnPeon, fn_801F4334, fn_8007935C, 23)
+PARAM(float, cSpawnPeon, fn_801F437C, fn_8007935C, 24)
+PARAM(float, cSpawnPeon, fn_801F43C4, fn_8007935C, 25)
+FLAG(cSpawnPeon, fn_801F440C, fn_80079068, 26)
+PARAM(char *, cSpawnPeon, fn_801F4464, fn_800794FC, 27)
+
+cScript *fn_801F44AC(register cSpawnGroup *self)
+{
+    return new cSpawnGroup;
+}
+
+PARAM(unsigned int, cSpawnGroup, fn_801F4500, fn_800791C8, 0)
+PARAM(unsigned int, cSpawnGroup, fn_801F4548, fn_800791C8, 1)
+PARAM(unsigned int, cSpawnGroup, fn_801F4590, fn_800791C8, 2)
+PARAM(unsigned int, cSpawnGroup, fn_801F45D8, fn_800791C8, 3)
+PARAM(unsigned int, cSpawnGroup, fn_801F4620, fn_800791C8, 4)
+PARAM(unsigned int, cSpawnGroup, fn_801F4668, fn_800791C8, 5)
+PARAM(unsigned int, cSpawnGroup, fn_801F46B0, fn_800791C8, 6)
+PARAM(unsigned int, cSpawnGroup, fn_801F46F8, fn_800791C8, 7)
+FLAG(cSpawnGroup, fn_801F4740, fn_80079068, 8)
+FLAG(cSpawnGroup, fn_801F4798, fn_80079068, 9)
+
+cScript *fn_801F47F0(register cSpawnController *self)
+{
+    return new cSpawnController;
+}
+
+FLAG(cSpawnController, fn_801F4844, fn_80079068, 0)
+PARAM(unsigned int, cSpawnController, fn_801F489C, fn_800791C8, 1)
+PARAM(int, cSpawnController, fn_801F48E4, fn_80079068, 2)
+PARAM(unsigned int, cSpawnController, fn_801F492C, fn_800791C8, 3)
+PARAM(int, cSpawnController, fn_801F4974, fn_80079068, 4)
+PARAM(int, cSpawnController, fn_801F49BC, fn_80079068, 5)
+PARAM(unsigned int, cSpawnController, fn_801F4A04, fn_800791C8, 6)
+PARAM(int, cSpawnController, fn_801F4A4C, fn_80079068, 7)
+PARAM(int, cSpawnController, fn_801F4A94, fn_80079068, 8)
+PARAM(unsigned int, cSpawnController, fn_801F4ADC, fn_800791C8, 9)
+PARAM(int, cSpawnController, fn_801F4B24, fn_80079068, 10)
+PARAM(int, cSpawnController, fn_801F4B6C, fn_80079068, 11)
+PARAM(unsigned int, cSpawnController, fn_801F4BB4, fn_800791C8, 12)
+PARAM(int, cSpawnController, fn_801F4BFC, fn_80079068, 13)
+PARAM(int, cSpawnController, fn_801F4C44, fn_80079068, 14)
+PARAM(unsigned int, cSpawnController, fn_801F4C8C, fn_800791C8, 15)
+PARAM(int, cSpawnController, fn_801F4CD4, fn_80079068, 16)
+PARAM(int, cSpawnController, fn_801F4D1C, fn_80079068, 17)
+PARAM(unsigned int, cSpawnController, fn_801F4D64, fn_800791C8, 18)
+PARAM(int, cSpawnController, fn_801F4DAC, fn_80079068, 19)
+PARAM(int, cSpawnController, fn_801F4DF4, fn_80079068, 20)
+PARAM(unsigned int, cSpawnController, fn_801F4E3C, fn_800791C8, 21)
+PARAM(int, cSpawnController, fn_801F4E84, fn_80079068, 22)
+PARAM(int, cSpawnController, fn_801F4ECC, fn_80079068, 23)
+PARAM(unsigned int, cSpawnController, fn_801F4F14, fn_800791C8, 24)
+PARAM(int, cSpawnController, fn_801F4F5C, fn_80079068, 25)
+PARAM(int, cSpawnController, fn_801F4FA4, fn_80079068, 26)
+PARAM(unsigned int, cSpawnController, fn_801F4FEC, fn_800791C8, 27)
+PARAM(int, cSpawnController, fn_801F5034, fn_80079068, 28)
+PARAM(int, cSpawnController, fn_801F507C, fn_80079068, 29)
+PARAM(unsigned int, cSpawnController, fn_801F50C4, fn_800791C8, 30)
+PARAM(int, cSpawnController, fn_801F510C, fn_80079068, 31)
+PARAM(int, cSpawnController, fn_801F5154, fn_80079068, 32)
+PARAM(unsigned int, cSpawnController, fn_801F519C, fn_800791C8, 34)
+PARAM(unsigned int, cSpawnController, fn_801F51E4, fn_800791C8, 35)
+PARAM(unsigned int, cSpawnController, fn_801F522C, fn_800791C8, 36)
+PARAM(unsigned int, cSpawnController, fn_801F5274, fn_800791C8, 37)
+PARAM(unsigned int, cSpawnController, fn_801F52BC, fn_800791C8, 38)
+PARAM(unsigned int, cSpawnController, fn_801F5304, fn_800791C8, 39)
+PARAM(unsigned int, cSpawnController, fn_801F534C, fn_800791C8, 40)
+PARAM(unsigned int, cSpawnController, fn_801F5394, fn_800791C8, 41)
+PARAM(unsigned int, cSpawnController, fn_801F53DC, fn_800791C8, 42)
+PARAM(unsigned int, cSpawnController, fn_801F5424, fn_800791C8, 43)
+
+cScript *fn_801F546C(register cActorPlayPath *self)
+{
+    return new cActorPlayPath;
+}
+
+PARAM(int, cActorPlayPath, fn_801F54C0, fn_80079068, 0)
+PARAM(int, cActorPlayPath, fn_801F5508, fn_80079068, 2)
+FLAG(cActorPlayPath, fn_801F5550, fn_80079068, 3)
+
+cScript *fn_801F55A8(register cAIRangedAttacker *self)
+{
+    return new cAIRangedAttacker;
+}
+
+PARAM(unsigned int, cAIRangedAttacker, fn_801F55FC, fn_800791C8, 0)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F5644, fn_800791C8, 1)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F568C, fn_800791C8, 2)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F56D4, fn_800791C8, 3)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F571C, fn_800791C8, 4)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F5764, fn_800791C8, 5)
+PARAM(int, cAIRangedAttacker, fn_801F57AC, fn_80079068, 6)
+PARAM(int, cAIRangedAttacker, fn_801F57F4, fn_80079068, 7)
+PARAM(int, cAIRangedAttacker, fn_801F583C, fn_80079068, 8)
+PARAM(int, cAIRangedAttacker, fn_801F5884, fn_80079068, 9)
+PARAM(int, cAIRangedAttacker, fn_801F58CC, fn_80079068, 10)
+PARAM(int, cAIRangedAttacker, fn_801F5914, fn_80079068, 11)
+
+cScript *fn_801F595C(register cBossRingOut *self)
+{
+    return new cBossRingOut;
+}
+
+
+cScript *fn_801F59B0(register cActorSetHealth *self)
+{
+    return new cActorSetHealth;
+}
+
+PARAM(float, cActorSetHealth, fn_801F5A04, fn_8007935C, 0)
+PARAM(unsigned int, cActorSetHealth, fn_801F5A4C, fn_800791C8, 1)
+FLAG(cActorSetHealth, fn_801F5A94, fn_80079068, 2)
+FLAG(cActorSetHealth, fn_801F5AEC, fn_80079068, 3)
+PARAM(float, cActorSetHealth, fn_801F5B44, fn_8007935C, 4)
+PARAM(int, cActorSetHealth, fn_801F5B8C, fn_80079068, 5)
+
+cScript *fn_801F5BD4(register cPlayerBonusMissions *self)
+{
+    return new cPlayerBonusMissions;
+}
+
+FLAG(cPlayerBonusMissions, fn_801F5C28, fn_80079068, 0)
+PARAM(int, cPlayerBonusMissions, fn_801F5C80, fn_80079068, 1)
+PARAM(int, cPlayerBonusMissions, fn_801F5CC8, fn_80079068, 2)
+FLAG(cPlayerBonusMissions, fn_801F5D10, fn_80079068, 3)
+PARAM(float, cPlayerBonusMissions, fn_801F5D68, fn_8007935C, 4)
+PARAM(unsigned int, cPlayerBonusMissions, fn_801F5DB0, fn_800791C8, 5)
+PARAM(int, cPlayerBonusMissions, fn_801F5DF8, fn_80079068, 6)
+PARAM(int, cPlayerBonusMissions, fn_801F5E40, fn_80079068, 7)
+FLAG(cPlayerBonusMissions, fn_801F5E88, fn_80079068, 8)
+PARAM(int, cPlayerBonusMissions, fn_801F5EE0, fn_80079068, 9)
+
+cScript *fn_801F5F28(register cGlobalPeonCounter *self)
+{
+    return new cGlobalPeonCounter;
+}
+
+
+cScript *fn_801F5F7C(register cAITeleportationToggle *self)
+{
+    return new cAITeleportationToggle;
+}
+
+FLAG(cAITeleportationToggle, fn_801F5FD0, fn_80079068, 0)
+PARAM(float, cAITeleportationToggle, fn_801F6028, fn_8007935C, 1)
+
+cScript *fn_801F6070(register cAIEnemyVictoryScene *self)
+{
+    return new cAIEnemyVictoryScene;
+}
+
+FLAG(cAIEnemyVictoryScene, fn_801F60C4, fn_800791C8, 0)
+
+cScript *fn_801F611C(register cTemporaryAIPossession *self)
+{
+    return new cTemporaryAIPossession;
+}
+
+PARAM(unsigned int, cTemporaryAIPossession, fn_801F6170, fn_800791C8, 0)
+PARAM(float, cTemporaryAIPossession, fn_801F61B8, fn_8007935C, 1)
+
+cScript *fn_801F6200(register cAISetTeleportDistance *self)
+{
+    return new cTemporaryAIPossession; // sic, docs/story.md section 4.2
+}
+
+PARAM(float, cAISetTeleportDistance, fn_801F6254, fn_8007935C, 0)
+PARAM(float, cAISetTeleportDistance, fn_801F629C, fn_8007935C, 1)
 }
