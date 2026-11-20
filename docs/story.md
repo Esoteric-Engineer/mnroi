@@ -120,9 +120,9 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 8 | `(unsigned char kind, float, float, float, float, int)` | a delivered script message (`fn_8007E0C0`); `kind` is what `fn_8007D404` queued (`cCountDown` queues 10 for its 1-second tick) |
   | 12, 13 | `(h)`, `(h, value)` | hooks; 12 only for the entity's own script |
   | 14-16, 18, 30, 38 | `(h, h other, value)` | hooks; the region classes treat 14 as `other` entering `h`'s region and 15 as it leaving |
-  | 20 | `(h, h other, int, int, float, value)` returning int | hook; a 0 stops the chain and the caller gets 0 (`fn_8007E84C`) |
+  | 20 | `(h, h other, int, int, float, value)` returning int | hook; a 0 stops the chain and the caller gets 0 (`fn_8007E84C`). The boss classes mark `h` when the first `int` is 8 and the float is over 90000 (guess: a finishing move) |
   | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`). A damage filter: `cPlayerBonusMissions` passes `"damage"` to `fn_80081470` when `h` is the player |
-  | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894`; `cSpawnPeon` treats it as its peon `h` dying to `other`, the float as the damage (guess) |
+  | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894`; `h` died. `cSpawnPeon` treats it as its peon dying to `other`, the float as the damage (guess); the boss classes end the fight when `h` is the boss or the player (section 5) |
   | 23 | `(int, int, int kind, float x4, value)` | hook without handles; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7 |
   | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts (callers not traced) |
   | 17 | `(h, h other, value)` returning int | not traced; `cTriggerOnAction` fires on it |
@@ -210,7 +210,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 ## 5. Notes
 
-(None yet.)
+- **Boss fight ending** (row 15's three bosses, e.g. `fn_801DB5C0`; probably rows 16-21 too). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and `fn_80082AFC` on a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
 
 ---
 
@@ -234,7 +234,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 12 | Objects, props and triggers | 0x801FCEBC-0x8020C28C | `Game/fn_801FCEBC.cpp` | Done |
 | 13 | Cutscene play | 0x801F654C-0x801FBD90 | `Game/fn_801F654C.cpp` | Done |
 | 14 | Scene loader | 0x800A3588-0x800A90B0 | three units (section 2) | Done. The `.nsd` format is in `tools/nsdtool.py` |
-| 15 | NYC Streets classes | 0x801DB2BC-0x801DD29C | `Game/fn_801DB2BC.cpp` | 45 functions |
+| 15 | NYC Streets classes | 0x801DB2BC-0x801DD29C | `Game/fn_801DB2BC.cpp` | Done |
 | 16 | Daily Bugle classes | 0x801D1BFC-0x801D5320 | `Game/fn_801D1BFC.cpp` | 61 functions |
 | 17 | Avengers Mansion classes | 0x801C55F8-0x801CA72C | `Game/fn_801C55F8.cpp` | 79 functions; check the edge with row 6 |
 | 18 | Grand Central classes | 0x801D5320-0x801DB2BC | `Game/fn_801D5320.cpp` | 96 functions |
