@@ -233,7 +233,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | Done |
 | 12 | Objects, props and triggers | 0x801FCEBC-0x8020C28C | `Game/fn_801FCEBC.cpp` | Done |
 | 13 | Cutscene play | 0x801F654C-0x801FBD90 | `Game/fn_801F654C.cpp` | Done |
-| 14 | Scene loader | 0x800A3588-0x800A90B0 | three units (section 2) | Code done. Next a `tools/nsdtool.py` (`dump`, `check`) like `tools/nottool.py`. All 118 `.nsd` in `CLASH.BIG` are version 12 (the reader's non-11 branch), little-endian, and their first word is not a fixed magic (14 values). A byte-exact `check` needs the per-object records after the u16 id that the unmatched `fn_8022302C`/`fn_80222B8C` read (`fn_800A837C`), and the model blob of `fn_801A0FA4` (`fn_800A6F80`) |
+| 14 | Scene loader | 0x800A3588-0x800A90B0 | three units (section 2) | Done. The `.nsd` format is in `tools/nsdtool.py` |
 | 15 | NYC Streets classes | 0x801DB2BC-0x801DD29C | `Game/fn_801DB2BC.cpp` | 45 functions |
 | 16 | Daily Bugle classes | 0x801D1BFC-0x801D5320 | `Game/fn_801D1BFC.cpp` | 61 functions |
 | 17 | Avengers Mansion classes | 0x801C55F8-0x801CA72C | `Game/fn_801C55F8.cpp` | 79 functions; check the edge with row 6 |
