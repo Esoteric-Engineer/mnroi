@@ -124,10 +124,10 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`). A damage filter: `cPlayerBonusMissions` passes `"damage"` to `fn_80081470` when `h` is the player |
   | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894`; `h` died. `cSpawnPeon` treats it as its peon dying to `other`, the float as the damage (guess); the boss classes end the fight when `h` is the boss or the player (section 5) |
   | 23 | `(int, int, int kind, float x4, value)` | hook with no `h` first; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7; `cAvengersMansion_IronManSAC` compares the second `int` with an entity handle |
-  | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts (callers not traced) |
+  | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts (callers not traced); `cBrooklynBridge_VM2_Start` reads 24's second float as an entity handle to replace with the first |
   | 17 | `(h, h other, value)` returning int | not traced; `cTriggerOnAction` fires on it |
   | 19 | `(h, value)` | hook (`fn_800801F0`) |
-  | 25 | `(h, int node, value)` | not traced; `cObjectMove` takes it as its object `h` reaching path node `node` (guess) |
+  | 25 | `(h, int node, value)` | not traced; `cObjectMove` takes it as its object `h` reaching path node `node` (guess); `cBrooklynBridge_heliCrash` explodes when `h` is its helicopter |
   | 27, 29 | `(h, h other, int, int, value)`, `(h, int, int, int, value)` | hooks (`fn_8007EE5C`, `fn_8007FC00`). `cVehicleBreak` reads 27's first `int` as a hit record whose `float +0x18` is the force, and 29's second as the break stage (0-1) |
   | 37 | `(h, int, value)` returning float | hook for `cAIMessages` kind 0. The base returns -1.0f; the caller keeps the minimum, and any 0 wins. `cActorWalk` takes the `int` as the path node actor `h` reached |
   | 43 | `(h, int, value)` | hook for `cAIMessages` kind 2 (kind 1 goes to slot 38) |
@@ -210,7 +210,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 ## 5. Notes
 
-- **Boss fight ending** (the bosses of rows 15-19, e.g. `fn_801DB5C0`; probably rows 20-21 too). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and `fn_80082AFC` on a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
+- **Boss fight ending** (the bosses of rows 15-20, e.g. `fn_801DB5C0`; probably row 21 too; `cBrooklynBridge_BruteFight` ends from slots 20 and 21 instead). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and `fn_80082AFC` on a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
 
 ---
 
@@ -239,8 +239,8 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 17 | Avengers Mansion classes | 0x801C55F8-0x801CA72C | `Game/fn_801C55F8.cpp` | Done |
 | 18 | Grand Central classes | 0x801D5320-0x801DB2BC | `Game/fn_801D5320.cpp` | Done |
 | 19 | Roekel Facility classes | 0x801E4870-0x801EAA38 | `Game/fn_801E4870.cpp` | Done |
-| 20 | Brooklyn Bridge classes | 0x801CA72C-0x801D1BFC | `Game/fn_801CA72C.cpp` | 139 functions |
-| 21 | Power Plant classes | 0x801DD29C-0x801E4870 | `Game/fn_801DD29C.cpp` | 122 functions |
+| 20 | Brooklyn Bridge classes | 0x801CA72C-0x801D1BFC | `Game/fn_801CA72C.cpp` | Done |
+| 21 | Power Plant classes | 0x801DD29C-0x801E4870 | `Game/fn_801DD29C.cpp` | 122 functions. Many have instruction-identical twins in rows 15-20 (e.g. `fn_801DE1C8` is `fn_801CB448`, `fn_801E22C4` nearly `fn_801CDD08`): compare normalized asm first |
 | 22 | Rest of the script base file | 0x8007608C-0x8007891C | `Game/fn_8007608C.cpp` | Identify the edges first (section 2). Havok, `ShapeRepository`, the `.nhg` loader `fn_800777C4`; merge with row 4's unit if it is one file |
 | 23 | Memory-card handlers | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp` | 68 functions, 58 of them 0x80 bytes or less, over row 3's profile. Whole file, like row 1 |
 
