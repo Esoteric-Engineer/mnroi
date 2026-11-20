@@ -122,10 +122,10 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 14-16, 18, 30, 38 | `(h, h other, value)` | hooks; the region classes treat 14 as `other` entering `h`'s region and 15 as it leaving |
   | 20 | `(h, h other, int, int, float, value)` returning int | hook; a 0 stops the chain and the caller gets 0 (`fn_8007E84C`) |
   | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`; guess: a damage filter) |
-  | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894` |
+  | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894`; `cSpawnPeon` treats it as its peon `h` dying to `other`, the float as the damage (guess) |
   | 23 | `(int, int, int kind, float x4, value)` | hook without handles; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7 |
   | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts (callers not traced) |
-  | 37 | `(h, int, value)` returning float | hook for `cAIMessages` kind 0. The base returns -1.0f; the caller keeps the minimum, and any 0 wins |
+  | 37 | `(h, int, value)` returning float | hook for `cAIMessages` kind 0. The base returns -1.0f; the caller keeps the minimum, and any 0 wins. `cActorWalk` takes the `int` as the path node actor `h` reached |
   | 43 | `(h, int, value)` | hook for `cAIMessages` kind 2 (kind 1 goes to slot 38) |
   | 47, 48 | `(h, value)` returning int | hooks that stop at the first 0 |
   | 51 | `(int, int kind, int, float x3)` | not traced; `cRingOut` acts on kinds 3-4, `cCameraEvent` on 0 and 3 |
@@ -133,6 +133,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 60 | `(h)` | all live scripts, from `fn_800ED448` with the actor's handle (guess: an actor is defeated) |
   | 63 | `()` | every frame after message delivery, for scripts with +0x20 bit 0 |
 - **Entity links.** Entity +0x14C is its own script, +0x150 the list of 0x1C-byte nodes `{script, entity, value, entity prev/next, script prev/next}` that tie other scripts to it. `fn_8007CF00(script, handle, value)` adds or updates a node, `fn_8007D070` removes one.
+- **Spawn counters.** `cSpawnPeon` counts peons spawned in `lbl_8066C72C` and killed in `lbl_8066C728`; while `lbl_8066C730` is set it passes both to `fn_80131724`.
 - **Script messages.** 128 slots of 0x20 bytes at `lbl_8054DD80`, kept in a time-sorted list by byte index (+0x1D prev, +0x1E next, +0x1F in use; head `lbl_8066B8B0`, 0xFF = none). `fn_8007D404(script, seconds, kind, 4 floats, int)` and `fn_8007D4F4` (milliseconds) queue one, at most 600 s ahead. `fn_8007D7C4(script, kind)` cancels a kind, and `fn_8007C910` delivers the due ones each frame.
 - **Which slots the classes override** (count out of 102):
 
@@ -224,7 +225,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | Done |
 | 9 | Effects | 0x801FBD90-0x801FCEBC | `Game/fn_801FBD90.cpp` | Done |
 | 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | Done |
-| 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | 18 classes, 250 functions, 185 of them 0x80 bytes or less. AI facts go in [`ai.md`](ai.md) |
+| 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | 18 classes, 250 functions. Each class's clone and parameter accessors are at 0x801F3394-0x801F62E4, after all the classes' slots. AI facts go in [`ai.md`](ai.md) |
 | 12 | Objects, props and triggers | 0x801FCEBC-0x8020C28C | `Game/fn_801FCEBC.cpp` | 25 classes, 382 functions, 293 of them 0x80 bytes or less; most of the arena classes |
 | 13 | Cutscene play | 0x801F654C-0x801FBD90 | `Game/fn_801F654C.cpp` | `cCutscenePlay`, the name tables and their 0x58-byte functions (97 functions). The player it drives is `cCutPlayer` ([`versus.md`](versus.md) section 5, row 8) |
 | 14 | Scene loader | 0x800A3810-0x800A90B0 | extend `Game/fn_800A3588.cpp` | 72 functions, among them `fn_800A4DF8`. Then record the `.nsd` format in a `tools/nsdtool.py` (`dump`, `check`) like `tools/nottool.py` |
