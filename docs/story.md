@@ -119,7 +119,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 4, 5, 6 | `()` | all live scripts, at level load (`fn_8002D110`), on the first frame after it (`fn_8002BD34`), and from `fn_8002D5F8` (guess: unload; `cRegionSuck` frees in 6 what it allocates in 3) |
   | 8 | `(unsigned char kind, float, float, float, float, int)` | a delivered script message (`fn_8007E0C0`); `kind` is what `fn_8007D404` queued (`cCountDown` queues 10 for its 1-second tick) |
   | 12, 13 | `(h)`, `(h, value)` | hooks; 12 only for the entity's own script |
-  | 14-16, 18, 30, 38 | `(h, h other, value)` | hooks; the region classes treat 14 as `other` entering `h`'s region and 15 as it leaving |
+  | 14-16, 18, 30, 38 | `(h, h other, value)` | hooks; the region classes treat 14 as `other` entering `h`'s region and 15 as it leaving; `cPowerPlant_CoilArc` handles 18 like 22, on its coil `h` (guess: `h` broke) |
   | 20 | `(h, h other, int, int, float, value)` returning int | hook; a 0 stops the chain and the caller gets 0 (`fn_8007E84C`). The boss classes mark `h` when the first `int` is 8 and the float is over 90000 (guess: a finishing move) |
   | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`). A damage filter: `cPlayerBonusMissions` passes `"damage"` to `fn_80081470` when `h` is the player |
   | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894`; `h` died. `cSpawnPeon` treats it as its peon dying to `other`, the float as the damage (guess); the boss classes end the fight when `h` is the boss or the player (section 5) |
@@ -210,7 +210,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 ## 5. Notes
 
-- **Boss fight ending** (the bosses of rows 15-20, e.g. `fn_801DB5C0`; probably row 21 too; `cBrooklynBridge_BruteFight` ends from slots 20 and 21 instead). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and `fn_80082AFC` on a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
+- **Boss fight ending** (the bosses of rows 15-21, e.g. `fn_801DB5C0`; `cBrooklynBridge_BruteFight` ends from slots 20 and 21 instead, and `cPowerPlant_HumanTorchSAC`, `_IronMan_3` and `_Venom_3` skip `lbl_8066C724`). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and `fn_80082AFC` on a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
 
 ---
 
@@ -240,7 +240,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 18 | Grand Central classes | 0x801D5320-0x801DB2BC | `Game/fn_801D5320.cpp` | Done |
 | 19 | Roekel Facility classes | 0x801E4870-0x801EAA38 | `Game/fn_801E4870.cpp` | Done |
 | 20 | Brooklyn Bridge classes | 0x801CA72C-0x801D1BFC | `Game/fn_801CA72C.cpp` | Done |
-| 21 | Power Plant classes | 0x801DD29C-0x801E4870 | `Game/fn_801DD29C.cpp` | 122 functions. Many have instruction-identical twins in rows 15-20 (e.g. `fn_801DE1C8` is `fn_801CB448`, `fn_801E22C4` nearly `fn_801CDD08`): compare normalized asm first |
+| 21 | Power Plant classes | 0x801DD29C-0x801E4870 | `Game/fn_801DD29C.cpp` | Done |
 | 22 | Rest of the script base file | 0x8007608C-0x8007891C | `Game/fn_8007608C.cpp` | Identify the edges first (section 2). Havok, `ShapeRepository`, the `.nhg` loader `fn_800777C4`; merge with row 4's unit if it is one file |
 | 23 | Memory-card handlers | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp` | 68 functions, 58 of them 0x80 bytes or less, over row 3's profile. Whole file, like row 1 |
 
