@@ -59,7 +59,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801F654C-0x801FBD90 | `cCutscenePlay`, its cutscene-name tables (`fn_801F7C68`, 0x2CDC) and about 90 0x58-byte functions they call | 13 |
 | 0x801FBD90-0x801FCEBC | `cParticleToggle`, `cDummyProjectile`, `cEffectSpawn`, `cCrystalDetonate` | 9 |
 | 0x801FCEBC-0x8020C28C | `cObjectExplosion`, `cObjectSetCollision`, `cTriggerRelay`, `cObjectMove`, `cObjectRumbleShake`, `cTimerTrigger`, `cTriggerOnAction`, `cSetAnimFrame`, `cDebrisFall`, `cVehicleBreak`, `cVehicleBarrier`, `cGenBreakProp`, `cDamagePropOnTrigger`, `cPortalControl`, `cPropRespawn`, `cRemoveObjects`, `cCrystalBreak`, `cCrystalBreak_Phase2`, `cCameraMPToggle`, `cLabConsole`, `cWieldableToggle`, `cReverseWallRenderToggle`, `cPropGroupFade`, `cMP_MatchTrigger`, `cCameraSet` | 12 |
-| 0x8020C28C-0x80211334 | `cRegionDamage`, `cRegionTrigger`, `cRegionSound`, `cRegionSuck`, `cRegionDefend`, `cRegionLightProbeSwap`. `Game/fn_8020C508.cpp` and `Game/fn_8020D104.cpp` are matched inside | 10 |
+| 0x8020C28C-0x80211334 | `cRegionDamage`, `cRegionTrigger`, `cRegionSound`, `cRegionSuck`, `cRegionDefend`, `cRegionLightProbeSwap` | 10 |
 | 0x80211334-0x80211494 | `cRingOut` | 8 |
 | 0x80211494-0x802126F8 | `cEndMission`, `cHelpText`, `cCountDown`; static init `fn_80212380`, `_GLOBAL_.I` 0x80212670, `_GLOBAL_.D` 0x802126B4 | 8 |
 | 0x802126F8-0x80212970 | `cSoundEvent`. End: `fn_80212970` and `fn_80212994` are called only from graphics code (0x80219BB8, 0x801A0168), while everything before is reached from the vtable `lbl_80503760` or the class's own methods; the file has no `.rodata` | 8 |
@@ -116,14 +116,14 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   |---|---|---|
   | 1, 2 | destructor, clone | |
   | 3 | `()` | by `fn_80078FDC` once the instance is registered (guess: on start) |
-  | 4, 5, 6 | `()` | all live scripts, at level load (`fn_8002D110`), on the first frame after it (`fn_8002BD34`), and from `fn_8002D5F8` (guess: unload) |
+  | 4, 5, 6 | `()` | all live scripts, at level load (`fn_8002D110`), on the first frame after it (`fn_8002BD34`), and from `fn_8002D5F8` (guess: unload; `cRegionSuck` frees in 6 what it allocates in 3) |
   | 8 | `(unsigned char kind, float, float, float, float, int)` | a delivered script message (`fn_8007E0C0`); `kind` is what `fn_8007D404` queued (`cCountDown` queues 10 for its 1-second tick) |
   | 12, 13 | `(h)`, `(h, value)` | hooks; 12 only for the entity's own script |
-  | 14-16, 18, 30, 38 | `(h, h other, value)` | hooks |
+  | 14-16, 18, 30, 38 | `(h, h other, value)` | hooks; the region classes treat 14 as `other` entering `h`'s region and 15 as it leaving |
   | 20 | `(h, h other, int, int, float, value)` returning int | hook; a 0 stops the chain and the caller gets 0 (`fn_8007E84C`) |
   | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`; guess: a damage filter) |
   | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894` |
-  | 23 | `(int, int, int kind, float x4, value)` | hook without handles; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999 |
+  | 23 | `(int, int, int kind, float x4, value)` | hook without handles; `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7 |
   | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts (callers not traced) |
   | 37 | `(h, int, value)` returning float | hook for `cAIMessages` kind 0. The base returns -1.0f; the caller keeps the minimum, and any 0 wins |
   | 43 | `(h, int, value)` | hook for `cAIMessages` kind 2 (kind 1 goes to slot 38) |
@@ -223,7 +223,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 7 | Script inline functions | 0x80468974-0x8046DCD4 | `Game/fn_80468974.cpp`, `Game/fn_8046B530.cpp`, `Game/fn_8046B738.cpp`, `Game/fn_8046D6C0.cpp` | Done. 0x8046DCD4 on is render code |
 | 8 | Small class files | `cRingOut` 0x80211334, `cCameraEvent` 0x801F62E4, mission classes 0x80211494, `cSoundEvent` 0x802126F8 (section 2) | one unit per file | Done |
 | 9 | Effects | 0x801FBD90-0x801FCEBC | `Game/fn_801FBD90.cpp` | Done |
-| 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | 6 classes, 101 functions. Absorb `Game/fn_8020C508.cpp` and `Game/fn_8020D104.cpp`. `cRegionDamage` uses the damage volumes ([`ai.md`](ai.md) section 4.5) |
+| 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | Done |
 | 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | 18 classes, 250 functions, 185 of them 0x80 bytes or less. AI facts go in [`ai.md`](ai.md) |
 | 12 | Objects, props and triggers | 0x801FCEBC-0x8020C28C | `Game/fn_801FCEBC.cpp` | 25 classes, 382 functions, 293 of them 0x80 bytes or less; most of the arena classes |
 | 13 | Cutscene play | 0x801F654C-0x801FBD90 | `Game/fn_801F654C.cpp` | `cCutscenePlay`, the name tables and their 0x58-byte functions (97 functions). The player it drives is `cCutPlayer` ([`versus.md`](versus.md) section 5, row 8) |

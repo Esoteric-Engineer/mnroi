@@ -34,6 +34,7 @@ compile_commands.json
 # Miscellaneous
 /*.txt
 *.exe
+.directory
 
 # Vendor-Specific Agentic Folders (intentionally tracking vendor-neutral .agents/)
 .claude/

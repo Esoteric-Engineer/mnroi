@@ -180,6 +180,9 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A count that is `cmpw` against an `int` index in one function but `cmplwi` against a constant in
   another is still `int`:** the constant is an array's capacity, `n < sizeof a / sizeof a[0]`, whose
   `size_t` makes the test unsigned (`Game/fn_80147DE4.cpp`, `fn_80148178` against `fn_80147F20`).
+- **`li r9, -1` / `cmpw r0, r9` where you expect `cmpwi r0, -1` is a plain `x == -1` or `!= -1` on an
+  `int`.** cc1plus loads `-1` into a register for the compare; no cast or named constant is needed
+  (`Game/fn_8020C28C.cpp`, `fn_8020F7D8` and `fn_8020F848`).
 
 - **A field load off a global array that the DOL does as `add rX, <variable>, <base>` plus a load
   displacement, where ours folds the field offset into the symbol and uses `lwzx`/`lfsx`, means the
