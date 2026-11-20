@@ -56,7 +56,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801E4870-0x801EAA38 | `cRoekelFacility_StormBoss`, `_ThingBoss`, `_RockBomb`, `_BlastDoor`, `_RoekelBoss`, `_PlasmaMine`, `_Lasers` | 19 |
 | 0x801EAA38-0x801F62E4 | `cPathnodeToggle`, `cActorMoveToPos`, `cActorWalk`, `cActorAIPause`, `cActorControlState`, `cSpawnPeon`, `cSpawnGroup`, `cSpawnController`, `cActorPlayPath`, `cAIRangedAttacker`, `cBossRingOut`, `cActorSetHealth`, `cPlayerBonusMissions`, `cGlobalPeonCounter`, `cAITeleportationToggle`, `cAIEnemyVictoryScene`, `cTemporaryAIPossession`, `cAISetTeleportDistance` | 11 |
 | 0x801F62E4-0x801F654C | `cCameraEvent` | 8 |
-| 0x801F654C-0x801FBD90 | `cCutscenePlay`, its cutscene-name tables (`fn_801F7C68`, 0x2CDC) and about 90 0x58-byte functions they call | 13 |
+| 0x801F654C-0x801FBD90 | `cCutscenePlay`, its per-character cutscene-name table `fn_801F7C68` and its 81 parameter accessors (0x48 bytes each) | 13 |
 | 0x801FBD90-0x801FCEBC | `cParticleToggle`, `cDummyProjectile`, `cEffectSpawn`, `cCrystalDetonate` | 9 |
 | 0x801FCEBC-0x8020C28C | `cObjectExplosion`, `cObjectSetCollision`, `cTriggerRelay`, `cObjectMove`, `cObjectRumbleShake`, `cTimerTrigger`, `cTriggerOnAction`, `cSetAnimFrame`, `cDebrisFall`, `cVehicleBreak`, `cVehicleBarrier`, `cGenBreakProp`, `cDamagePropOnTrigger`, `cPortalControl`, `cPropRespawn`, `cRemoveObjects`, `cCrystalBreak`, `cCrystalBreak_Phase2`, `cCameraMPToggle`, `cLabConsole`, `cWieldableToggle`, `cReverseWallRenderToggle`, `cPropGroupFade`, `cMP_MatchTrigger`, `cCameraSet` | 12 |
 | 0x8020C28C-0x80211334 | `cRegionDamage`, `cRegionTrigger`, `cRegionSound`, `cRegionSuck`, `cRegionDefend`, `cRegionLightProbeSwap` | 10 |
@@ -132,8 +132,9 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 37 | `(h, int, value)` returning float | hook for `cAIMessages` kind 0. The base returns -1.0f; the caller keeps the minimum, and any 0 wins. `cActorWalk` takes the `int` as the path node actor `h` reached |
   | 43 | `(h, int, value)` | hook for `cAIMessages` kind 2 (kind 1 goes to slot 38) |
   | 47, 48 | `(h, value)` returning int | hooks that stop at the first 0 |
-  | 51 | `(int, int kind, int, float x3)` | not traced; `cRingOut` acts on kinds 3-4, `cCameraEvent` on 0 and 3 |
-  | 54 | `(float, unsigned event, int)` | not traced; `cCameraEvent` acts on 0x63, 0x14D and 0x309 |
+  | 51 | `(int, int kind, int, float x3)` | not traced; `cRingOut` acts on kinds 3-4, `cCameraEvent` on 0 and 3, `cCutscenePlay` on 3-4, 8 and 10-11 |
+  | 53 | `(int, float, int event, int)` | not traced; `cCutscenePlay` looks `event` up in its 20 event-to-hook parameter triples, as for slot 54 |
+  | 54 | `(float, unsigned event, int)` | not traced; `cCameraEvent` acts on 0x63, 0x14D and 0x309, `cCutscenePlay` on 0x309 and its event triples |
   | 60 | `(h)` | all live scripts, from `fn_800ED448` with the actor's handle (guess: an actor is defeated) |
   | 63 | `()` | every frame after message delivery, for scripts with +0x20 bit 0 |
 - **Entity links.** Entity +0x14C is its own script, +0x150 the list of 0x1C-byte nodes `{script, entity, value, entity prev/next, script prev/next}` that tie other scripts to it. `fn_8007CF00(script, handle, value)` adds or updates a node, `fn_8007D070` removes one.
@@ -231,7 +232,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 10 | Regions | 0x8020C28C-0x80211334 | `Game/fn_8020C28C.cpp` | Done |
 | 11 | Actor and AI classes | 0x801EAA38-0x801F62E4 | `Game/fn_801EAA38.cpp` | Done |
 | 12 | Objects, props and triggers | 0x801FCEBC-0x8020C28C | `Game/fn_801FCEBC.cpp` | Done |
-| 13 | Cutscene play | 0x801F654C-0x801FBD90 | `Game/fn_801F654C.cpp` | `cCutscenePlay`, the name tables and their 0x58-byte functions (97 functions). The player it drives is `cCutPlayer` ([`versus.md`](versus.md) section 5, row 8) |
+| 13 | Cutscene play | 0x801F654C-0x801FBD90 | `Game/fn_801F654C.cpp` | Done |
 | 14 | Scene loader | 0x800A3810-0x800A90B0 | extend `Game/fn_800A3588.cpp` | 72 functions, among them `fn_800A4DF8`. Then record the `.nsd` format in a `tools/nsdtool.py` (`dump`, `check`) like `tools/nottool.py` |
 | 15 | NYC Streets classes | 0x801DB2BC-0x801DD29C | `Game/fn_801DB2BC.cpp` | 45 functions |
 | 16 | Daily Bugle classes | 0x801D1BFC-0x801D5320 | `Game/fn_801D1BFC.cpp` | 61 functions |
@@ -255,4 +256,3 @@ Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O fr
 - What do the slots with no caller traced do (7, 9-11, 17, 25, 26, 28, 34-36, 39-42, 44-46, 50, 51, 55-58, 62)? Look at the overrides: the base stubs' copies undercount their parameters ([`matching_notes.md`](matching_notes.md)).
 - Where exactly are the edges at 0x8007C8B0 and 0x8007DC60 (section 2)?
 - Are the tables the profile saves at +0x1A0 (`fn_8044D4F0`, `fn_8044D454`, `fn_8044D3B8`) the ones the `REWARDS` setters (`fn_8044374C`, `fn_80443608`, `fn_80443640`) write?
-- What are the 0x58-byte functions in the cutscene file?

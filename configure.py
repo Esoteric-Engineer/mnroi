@@ -414,6 +414,7 @@ config.libs = [
             Object(Matching, "Game/fn_801BEE2C.cpp", extern_pool=0x8049ED7C),
             Object(Matching, "Game/fn_801EAA38.cpp", extern_pool=0x804A09B4),
             Object(Matching, "Game/fn_801F62E4.cpp"),
+            Object(Matching, "Game/fn_801F654C.cpp", extern_pool=0x804A0C88),
             Object(Matching, "Game/fn_801FBD90.cpp", extern_pool=0x804A15A8),
             Object(Matching, "Game/fn_801FCEBC.cpp", extern_pool=0x804A1740),
             Object(Matching, "Game/fn_80220980.cpp"),
