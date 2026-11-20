@@ -1,4 +1,4 @@
-// The object, prop and trigger script classes, from cObjectExplosion on (docs/story.md row 12).
+// The object, prop and trigger script classes, their clones and parameter accessors (docs/story.md row 12).
 // Pool read from 0x804A1740 (extern_pool).
 
 inline int sn_return_decl(int a) { return a; }
@@ -6,6 +6,15 @@ inline int sn_return_decl(int a) { return a; }
 struct cScript {
     char d[0x24];
     char *vptr; // +0x24
+};
+
+struct cScriptV { // cScript's virtual slots, for calls on self
+    char d[0x24];
+    virtual void s1(); virtual void s2(); virtual void s3(); virtual void s4(); virtual void s5(); virtual void s6();
+    virtual void s7(); virtual void s8(); virtual void s9(); virtual void s10(); virtual void s11(); virtual void s12();
+    virtual void s13(); virtual void s14(); virtual void s15(); virtual void s16(); virtual void s17(); virtual void s18();
+    virtual void s19(); virtual void s20(); virtual void s21(); virtual void s22();
+    virtual void s23(int a, int b, int kind, float x, float y, float z, float w, int value); // +0xB8
 };
 
 struct Ref8 {
@@ -156,6 +165,90 @@ struct cVehicleBreak : cScript { // 0x48
     int sound;  // +0x40
     int volume; // +0x44
     cVehicleBreak() __asm__("fn_80469020");
+};
+
+struct cVehicleBarrier : cScript { // 0x50
+    char pad28[8];
+    Vector unk30; // +0x30
+    int hit;      // +0x40
+    char pad44[0xC];
+    cVehicleBarrier() __asm__("fn_8046907C");
+};
+
+struct cGenBreakProp : cScript { // 0x30
+    int off;     // +0x28
+    int hasName; // +0x2C
+    cGenBreakProp() __asm__("fn_804690D4");
+};
+
+struct cDamagePropOnTrigger : cScript { // 0x4C
+    int done[8]; // +0x28
+    int count;   // +0x48
+    cDamagePropOnTrigger() __asm__("fn_80469120");
+};
+
+struct cPortalControl : cScript { // 0x2C
+    int on; // +0x28
+    cPortalControl() __asm__("fn_8046916C");
+};
+
+struct cPropRespawn : cScript { // 0x30
+    int enabled; // +0x28
+    int ready;   // +0x2C
+    cPropRespawn() __asm__("fn_804691B8");
+};
+
+struct cRemoveObjects : cScript { // 0x28
+    cRemoveObjects() __asm__("fn_80469204");
+};
+
+struct cCrystalBreak : cScript { // 0x30
+    int hit;    // +0x28
+    int immune; // +0x2C
+    cCrystalBreak() __asm__("fn_80469250");
+};
+
+struct cCrystalBreak_Phase2 : cScript { // 0x30
+    int unk28;  // +0x28
+    int immune; // +0x2C
+    cCrystalBreak_Phase2() __asm__("fn_8046929C");
+};
+
+struct cCameraMPToggle : cScript { // 0x2C
+    int on; // +0x28
+    cCameraMPToggle() __asm__("fn_804692E8");
+};
+
+struct cLabConsole : cScript { // 0x2C
+    int used; // +0x28
+    cLabConsole() __asm__("fn_80469334");
+};
+
+struct cWieldableToggle : cScript { // 0x30
+    int enabled; // +0x28
+    int locked;  // +0x2C
+    cWieldableToggle() __asm__("fn_80469380");
+};
+
+struct cReverseWallRenderToggle : cScript { // 0x28
+    cReverseWallRenderToggle() __asm__("fn_804693CC");
+};
+
+struct cPropGroupFade : cScript { // 0x28
+    cPropGroupFade() __asm__("fn_80469418");
+};
+
+struct cMP_MatchTrigger : cScript { // 0x28
+    cMP_MatchTrigger() __asm__("fn_80469464");
+};
+
+struct cCameraSet : cScript { // 0x28
+    cCameraSet() __asm__("fn_804694B0");
+};
+
+struct SObjList {
+    char pad0[0x130];
+    SObj *first; // +0x130
 };
 
 extern "C" {
@@ -368,6 +461,150 @@ SObj *fn_80080300P(void *ev) __asm__("fn_80080300");
 SWorld *fn_8043289C(void *g);
 extern char lbl_80552110[]; // the game-state object
 int fn_801B90A8(void *a, void *b, void *c);
+int fn_8020A1E0(cVehicleBarrier *self);
+unsigned int fn_8020A228(cVehicleBarrier *self);
+unsigned int fn_8020A270(cVehicleBarrier *self);
+unsigned int fn_8020A2B8(cVehicleBarrier *self);
+unsigned int fn_8020A300(cVehicleBarrier *self);
+void fn_802037B0(cVehicleBarrier *self);
+void fn_80082124(void *ev);
+int fn_8020A39C(cGenBreakProp *self);
+int fn_8020A3F4(cGenBreakProp *self);
+char *fn_8020A44C(cGenBreakProp *self);
+unsigned int fn_8020A494(cGenBreakProp *self);
+unsigned int fn_8020A4DC(cGenBreakProp *self);
+unsigned int fn_8020A524(cGenBreakProp *self);
+unsigned int fn_8020A56C(cGenBreakProp *self);
+unsigned int fn_8020A5B4(cGenBreakProp *self);
+unsigned int fn_8020A5FC(cGenBreakProp *self);
+int fn_8020A644(cGenBreakProp *self);
+float fn_8020A68C(cGenBreakProp *self);
+char *fn_8020A6D4(cGenBreakProp *self);
+int fn_8020A71C(cGenBreakProp *self);
+void fn_8046CE70(void *ev, int h);
+int fn_80080BA8(void *ev);
+SActor *fn_80080BA8S(void *ev) __asm__("fn_80080BA8");
+int fn_8009AC94R(SObj &a) __asm__("fn_8009AC94");
+float fn_8020A7C8(cDamagePropOnTrigger *self);
+float fn_8020A810(cDamagePropOnTrigger *self);
+float fn_8020A858(cDamagePropOnTrigger *self);
+unsigned int fn_8020A8A0(cDamagePropOnTrigger *self);
+unsigned int fn_8020A8E8(cDamagePropOnTrigger *self);
+unsigned int fn_8020A930(cDamagePropOnTrigger *self);
+unsigned int fn_8020A978(cDamagePropOnTrigger *self);
+unsigned int fn_8020A9C0(cDamagePropOnTrigger *self);
+unsigned int fn_8020AA08(cDamagePropOnTrigger *self);
+unsigned int fn_8020AA50(cDamagePropOnTrigger *self);
+unsigned int fn_8020AA98(cDamagePropOnTrigger *self);
+int fn_8020AAE0(cDamagePropOnTrigger *self);
+unsigned int fn_80204560(cDamagePropOnTrigger *self);
+int fn_8020486C(cDamagePropOnTrigger *self);
+int fn_8020AB8C(cPortalControl *self);
+unsigned int fn_8020ABE4(cPortalControl *self);
+unsigned int fn_8020AC2C(cPortalControl *self);
+unsigned int fn_8020AC74(cPortalControl *self);
+unsigned int fn_8020ACBC(cPortalControl *self);
+unsigned int fn_8020AD04(cPortalControl *self);
+unsigned int fn_8020AD4C(cPortalControl *self);
+unsigned int fn_8020AD94(cPortalControl *self);
+unsigned int fn_8020ADDC(cPortalControl *self);
+int fn_8020AE24(cPortalControl *self);
+void fn_80204B1C(cPortalControl *self, int on);
+void fn_80083B74(int owner, int h, int on);
+float fn_8020AED0(cPropRespawn *self);
+char *fn_8020AF18(cPropRespawn *self);
+int fn_8020AF60(cPropRespawn *self);
+int fn_8020AFB8(cPropRespawn *self);
+int fn_8020B010(cPropRespawn *self);
+int fn_80205B98(cPropRespawn *self, int force);
+SActor *fn_80080EFCS(void *ev) __asm__("fn_80080EFC");
+int fn_800B1138R(SObj &a) __asm__("fn_800B1138");
+float fn_800A4080(int actor);
+void fn_800806E0(void *ev, char *name, int a, float f, float g, float h, int b);
+void fn_8006645CR(SObj &a, int b) __asm__("fn_8006645C");
+void fn_80066DC4R(SObj &a, Vector *v, int b, int c, int d) __asm__("fn_80066DC4");
+void fn_80066794R(SObj &a, int on) __asm__("fn_80066794");
+extern char lbl_8052F060[];
+SObjList &fn_80430050(void *w);
+SObj *fn_800B1AC4(SObj *o);
+int fn_800B13D8(SObj *o);
+int fn_8009AC94P(SObj *o) __asm__("fn_8009AC94");
+int fn_800B0CC0(SObj *o);
+void *fn_800B1478(SObj *o);
+int fn_800A46E8(void *b);
+int fn_800489BC(Placement *p);
+unsigned int fn_8020B0BC(cRemoveObjects *self);
+unsigned int fn_8020B104(cRemoveObjects *self);
+unsigned int fn_8020B14C(cRemoveObjects *self);
+unsigned int fn_8020B194(cRemoveObjects *self);
+unsigned int fn_8020B1DC(cRemoveObjects *self);
+unsigned int fn_8020B224(cRemoveObjects *self);
+unsigned int fn_8020B26C(cRemoveObjects *self);
+int fn_8020B2B4(cRemoveObjects *self);
+int fn_8020B2FC(cRemoveObjects *self);
+void fn_802061C8(cRemoveObjects *self);
+unsigned int fn_8020B398(cCrystalBreak *self);
+int fn_8020B3DC(cCrystalBreak *self);
+float fn_8020B434(cCrystalBreak *self);
+int fn_80393D0C(SObj *o, char *name, int a, int b);
+unsigned int fn_8009AC94U(SObj *o) __asm__("fn_8009AC94");
+void fn_80083D08(int a, int b, int c, float x, float y, float z, float w);
+void fn_80083230(void *ev, char *name);
+int fn_8020B524(cCameraMPToggle *self);
+void fn_8046B838(void *g, int on);
+unsigned int fn_8020B5D0(cLabConsole *self);
+unsigned int fn_8020B618(cLabConsole *self);
+unsigned int fn_8020B660(cLabConsole *self);
+void fn_80206E18(cLabConsole *self);
+int fn_8020B6FC(cWieldableToggle *self);
+int fn_8020B754(cWieldableToggle *self);
+void fn_80080FF4(void *ev, int a);
+void fn_80080F74(void *ev, int a);
+int fn_8020B7F0(cReverseWallRenderToggle *self);
+int fn_8046C160(void *ev);
+void fn_8046C1E8(void *ev, int x);
+int fn_80081338(void *ev);
+void fn_800813AC(void *ev, int on);
+unsigned int fn_8020B89C(cPropGroupFade *self);
+unsigned int fn_8020B8E4(cPropGroupFade *self);
+unsigned int fn_8020B92C(cPropGroupFade *self);
+unsigned int fn_8020B974(cPropGroupFade *self);
+unsigned int fn_8020B9BC(cPropGroupFade *self);
+unsigned int fn_8020BA04(cPropGroupFade *self);
+unsigned int fn_8020BA4C(cPropGroupFade *self);
+unsigned int fn_8020BA94(cPropGroupFade *self);
+unsigned int fn_8020BADC(cPropGroupFade *self);
+unsigned int fn_8020BB24(cPropGroupFade *self);
+void fn_8008065C(void *ev, int a);
+int fn_8020BBC0(cMP_MatchTrigger *self);
+int fn_8020BC08(cMP_MatchTrigger *self);
+void fn_80207600(cMP_MatchTrigger *self);
+unsigned int fn_8020BC50(cMP_MatchTrigger *self);
+int fn_8020BC98(cMP_MatchTrigger *self);
+unsigned int fn_8020BCE0(cMP_MatchTrigger *self);
+int fn_8020BD28(cMP_MatchTrigger *self);
+unsigned int fn_8020BD70(cMP_MatchTrigger *self);
+int fn_8020BDB8(cMP_MatchTrigger *self);
+unsigned int fn_8020BE00(cMP_MatchTrigger *self);
+int fn_8020BE48(cMP_MatchTrigger *self);
+unsigned int fn_8020BE90(cMP_MatchTrigger *self);
+int fn_8020BED8(cMP_MatchTrigger *self);
+unsigned int fn_8020BF20(cMP_MatchTrigger *self);
+int fn_8020BF68(cMP_MatchTrigger *self);
+unsigned int fn_8020BFB0(cMP_MatchTrigger *self);
+int fn_8020BFF8(cMP_MatchTrigger *self);
+unsigned int fn_8020C040(cMP_MatchTrigger *self);
+int fn_8020C088(cMP_MatchTrigger *self);
+unsigned int fn_8020C0D0(cMP_MatchTrigger *self);
+int fn_8020C118(cMP_MatchTrigger *self);
+unsigned int fn_8020C160(cMP_MatchTrigger *self);
+int fn_8020C1A8(cMP_MatchTrigger *self);
+float fn_8020C244(cCameraSet *self);
+void fn_8007C830(float f);
+unsigned int fn_800791C8(cScript *self, unsigned int i);
+int fn_80079068(cScript *self, unsigned int i);
+float fn_8007935C(cScript *self, unsigned int i);
+char *fn_800794FC(cScript *self, unsigned int i);
 int fn_80048DD0(SBody *body, Vector *pos, int a, int b, int c, float f, Placement *out);
 void fn_80080928(void *ev, int a);
 void fn_80082F30(void *ev);
@@ -1559,4 +1796,1208 @@ int fn_802031DC(register cVehicleBreak *self, int force)
     fn_8007D404(self, 2.0f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return 0;
 }
+
+void fn_80203398(register cVehicleBarrier *self) // slot 4
+{
+    self->hit = 0;
+    if (fn_8020A1E0(self) == 1) {
+        char ev[8];
+        fn_8046B6C8(ev, fn_800797D4(self));
+        fn_80082F30(ev);
+    }
+}
+
+void fn_8020340C(register cVehicleBarrier *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    if (fn_8020A1E0(self) == 1) {
+        char ev[8];
+        fn_8046B6C8(ev, fn_800797D4(self));
+        fn_80082FA4(ev);
+    }
+}
+
+#define SEND_ALL(ev, get, kind)                                                        \
+    if (get(self)) {                                                                   \
+        fn_8046B710((Ref8 *)ev, get(self));                                            \
+        fn_80082AFC(ev, get(self), fn_800797D4(self), kind, 0.0f, 0.0f, 0.0f, 0.0f);   \
+    }
+
+void fn_802034A0(register cVehicleBarrier *self, int h, int other, int a, int b, float dmg, int value) // slot 22
+{
+    if (self->hit)
+        return;
+    self->hit = 1;
+    char ev[8];
+    fn_8046B530(ev);
+    SEND_ALL(ev, fn_8020A228, 0)
+    SEND_ALL(ev, fn_8020A270, 0)
+    SEND_ALL(ev, fn_8020A2B8, 0)
+    SEND_ALL(ev, fn_8020A300, 0)
+    fn_802037B0(self);
+}
+
+void fn_8020371C(register cVehicleBarrier *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
+{
+    switch (kind) {
+    case 10: {
+        char ev[8];
+        fn_8046B530(ev);
+        fn_8046B710((Ref8 *)ev, e);
+        fn_80082124(ev);
+        break;
+    }
+    }
+}
+
+void fn_802037B0(register cVehicleBarrier *self)
+{
+    char ev[8];
+
+    fn_8046B680(ev, fn_800797D4(self));
+    Vector pos;
+    fn_80082440(ev, &pos);
+    fn_800838E0(&pos);
+}
+
+void fn_80203828(register cGenBreakProp *self) // slot 3
+{
+    self->off = 0;
+    self->hasName = 0;
+}
+
+void fn_80203860(register cGenBreakProp *self) // slot 4
+{
+    char ev[8];
+
+    fn_8046B5F0(ev, fn_800797D4(self));
+    if (fn_8020A68C(self) > 0.0f)
+        fn_800810DC(ev, fn_8020A68C(self), 0, 0, 0, 1);
+    else if (fn_8020A68C(self) < 0.0f && !fn_8020A71C(self))
+        self->off = 1;
+    if (fn_8020A39C(self))
+        fn_80082F30(ev);
+    if (stricmp("", fn_8020A6D4(self)))
+        self->hasName = 1;
+}
+
+void fn_8020397C(register cGenBreakProp *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    char ev[8];
+    fn_8046B5F0(ev, fn_800797D4(self));
+    switch (kind) {
+    case 0:
+        if (fn_8020A39C(self))
+            fn_80082FA4(ev);
+        break;
+    case 4:
+        self->off = !self->off;
+        break;
+    case 16:
+        fn_800810DC(ev, fn_8020A68C(self) * -1.0f, 0, 0, 0, 0);
+        break;
+    case 17: {
+        int actor = fn_80080EFC(ev);
+        if (!actor)
+            return;
+        fn_800A2B3C(actor, 1, 0, 0, 0);
+        fn_8006645C((void *)actor, 0);
+        fn_80066794((void *)actor, 1);
+        break;
+    }
+    }
+}
+
+void fn_80203AF4(register cGenBreakProp *self, int h, int other, int a, int b, float dmg, int value) // slot 22
+{
+    char ev[8];
+    fn_8046B6C8(ev, fn_800797D4(self));
+    char out[8];
+    fn_8046B530(out);
+    if (fn_8020A3F4(self)) {
+        Vector pos;
+        fn_80082440(ev, &pos);
+        fn_800838E0(&pos);
+    }
+    if (!stricmp("", fn_8020A44C(self)))
+        fn_80082E90(ev, fn_8020A44C(self), 0xff, 0xff);
+    SEND_ALL(out, fn_8020A494, fn_8020A644(self))
+    SEND_ALL(out, fn_8020A4DC, fn_8020A644(self))
+    SEND_ALL(out, fn_8020A524, fn_8020A644(self))
+    SEND_ALL(out, fn_8020A56C, fn_8020A644(self))
+    SEND_ALL(out, fn_8020A5B4, fn_8020A644(self))
+    SEND_ALL(out, fn_8020A5FC, fn_8020A644(self))
+}
+
+float fn_80203F40(register cGenBreakProp *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
+{
+    if (self->hasName) {
+        char ev[8];
+        fn_8046B5A8(ev, fn_80083734(fn_8020A6D4(self)));
+        if (other == fn_804425F8(ev))
+            return 0.0f;
+        char by[8];
+        fn_8046CE70(by, other);
+        if (fn_80080BA8(by) && fn_8009AC94R(*fn_80080BA8S(by)) == fn_804425F8(ev))
+            return 0.0f;
+    }
+    if (self->off)
+        return 0.0f;
+    else
+        return dmg;
+}
+
+void fn_80204080(register cGenBreakProp *self, int h, int other, int value) // slot 16
+{
+    if (!fn_8020A71C(self))
+        return;
+    ((cScriptV *)self)->s23(fn_800797D4(self), fn_800797D4(self), 16, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+}
+
+void fn_80204150(register cDamagePropOnTrigger *self) // slot 3
+{
+    self->done[0] = 0;
+    self->done[1] = 0;
+    self->done[2] = 0;
+    self->done[3] = 0;
+    self->done[4] = 0;
+    self->done[5] = 0;
+    self->done[6] = 0;
+    self->done[7] = 0;
+}
+
+void fn_802041B8(register cDamagePropOnTrigger *self) // slot 5
+{
+    self->count = fn_8020486C(self);
+    if (self->count > 0)
+        fn_8007D404(self, fn_8020A810(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_8020A858(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+}
+
+void fn_802042A0(register cDamagePropOnTrigger *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    char ev[8];
+    fn_8046B5F0(ev, fn_800797D4(self));
+    fn_800810DC(ev, fn_8020A7C8(self), 0, 0, 0, 0);
+}
+
+void fn_80204340(register cDamagePropOnTrigger *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
+{
+    unsigned int h = fn_80204560(self);
+    switch (kind) {
+    case 10:
+        if (h) {
+            char ev[8];
+            fn_8046B5F0(ev, h);
+            fn_800810DC(ev, fn_8020A7C8(self), 0, 0, 0, 0);
+            if (fn_8020AAE0(self))
+                fn_8007D8B0(self);
+            else
+                fn_8007D404(self, fn_8020A810(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_8020A858(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        } else if (self->done[0] && self->done[1] && self->done[2] && self->done[3] && self->done[4] && self->done[5] && self->done[6] && self->done[7])
+            fn_8007D8B0(self);
+        else
+            fn_8007D404(self, 5.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        break;
+    }
+}
+
+#define PICK(i, get)                           \
+    case i:                                    \
+        if (get(self) && !self->done[i]) {     \
+            self->done[i] = 1;                 \
+            return get(self);                  \
+        }                                      \
+        break;
+
+unsigned int fn_80204560(register cDamagePropOnTrigger *self)
+{
+    int pick = fn_80171F8C() * 4.656612873077392578125e-10f * self->count;
+    switch (pick) {
+    PICK(0, fn_8020A8A0)
+    PICK(1, fn_8020A8E8)
+    PICK(2, fn_8020A930)
+    PICK(3, fn_8020A978)
+    PICK(4, fn_8020A9C0)
+    PICK(5, fn_8020AA08)
+    PICK(6, fn_8020AA50)
+    PICK(7, fn_8020AA98)
+    }
+    return 0;
+}
+
+#define COUNT(i, get)       \
+    if (get(self))          \
+        n++;                \
+    else                    \
+        self->done[i] = 1;
+
+int fn_8020486C(register cDamagePropOnTrigger *self)
+{
+    int n = 0;
+    COUNT(0, fn_8020A8A0)
+    COUNT(1, fn_8020A8E8)
+    COUNT(2, fn_8020A930)
+    COUNT(3, fn_8020A978)
+    COUNT(4, fn_8020A9C0)
+    COUNT(5, fn_8020AA08)
+    COUNT(6, fn_8020AA50)
+    COUNT(7, fn_8020AA98)
+    return n;
+}
+
+void fn_80204A10(register cPortalControl *self) // slot 3
+{
+    self->on = 1;
+}
+
+void fn_80204A38(register cPortalControl *self) // slot 4
+{
+    if (fn_8020AB8C(self))
+        fn_80204B1C(self, 0);
+}
+
+void fn_80204A88(register cPortalControl *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    switch (kind) {
+    case 4:
+        if (self->on)
+            fn_80204B1C(self, 0);
+        else
+            fn_80204B1C(self, 1);
+        break;
+    }
+}
+
+#define PORTAL_SET(ev)                                          \
+    if (on)                                                     \
+        fn_800A90F4(fn_800B1CC8(fn_80081E6C(ev)));              \
+    else                                                        \
+        fn_800A916C(fn_800B1CC8(fn_80081E6C(ev)));
+#define PORTAL(get)                                             \
+    if (get(self)) {                                            \
+        fn_8046B710((Ref8 *)ev, get(self));                     \
+        if (fn_8020AE24(self))                                  \
+            fn_80083B74(fn_800797D4(self), get(self), on);      \
+        else                                                    \
+            PORTAL_SET(ev)                                      \
+    }
+
+void fn_80204B1C(register cPortalControl *self, int on)
+{
+    char ev[8];
+    fn_8046B530(ev);
+    if (on)
+        self->on = 1;
+    else
+        self->on = 0;
+    fn_8046B710((Ref8 *)ev, fn_800797D4(self));
+    if (!fn_8020AE24(self))
+        PORTAL_SET(ev)
+    PORTAL(fn_8020ABE4)
+    PORTAL(fn_8020AC2C)
+    PORTAL(fn_8020AC74)
+    PORTAL(fn_8020ACBC)
+    PORTAL(fn_8020AD04)
+    PORTAL(fn_8020AD4C)
+    PORTAL(fn_8020AD94)
+    PORTAL(fn_8020ADDC)
+}
+
+void fn_8020524C(register cPropRespawn *self) // slot 3
+{
+    self->enabled = 1;
+    self->ready = 0;
+}
+
+void fn_80205284(register cPropRespawn *self) // slot 5
+{
+    self->ready = 1;
+    if (fn_8020AFB8(self) && (fn_8020B010(self) == 1 || fn_8020B010(self) == 1))
+        fn_8007D404(self, fn_8020AED0(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    char ev[8];
+    fn_8046B6C8(ev, fn_800797D4(self));
+    if (fn_80081E6C(ev) && !strnicmp(fn_80081E6C(ev)->name, "prp_rl_mine", 0xb))
+        fn_8007D404(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+}
+
+void fn_802053D8(register cPropRespawn *self) // slot 31
+{
+    char ev[8];
+
+    if (!self->enabled || fn_8020AFB8(self))
+        return;
+    fn_8046B5F0(ev, fn_800797D4(self));
+    if (fn_80081074(ev) && fn_80205B98(self, 1)) {
+        char e2[8];
+        fn_8046B6C8(e2, fn_800797D4(self));
+        if (fn_8046C8FC(e2))
+            fn_80082FA4(e2);
+    }
+}
+
+int fn_802054BC(register cPropRespawn *self, int h, int value) // slot 47
+{
+    if (!self->enabled || !self->ready)
+        return 1;
+    if (fn_8020AED0(self) > 0.0f)
+        fn_8007D404(self, fn_8020AED0(self) >= 5.0f ? (fn_8020AED0(self) <= 30.0f ? fn_8020AED0(self) : 30.0f) : 5.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    return 1;
+}
+
+void fn_802055DC(register cPropRespawn *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
+{
+    if (!self->enabled)
+        return;
+    switch (kind) {
+    case 10:
+        if (fn_80205B98(self, 0)) {
+            char ev[8];
+            fn_8046B6C8(ev, fn_800797D4(self));
+            fn_80082FA4(ev);
+            if (stricmp("", fn_8020AF18(self)))
+                fn_80082E90(ev, fn_8020AF18(self), 0xff, 0xff);
+        }
+        break;
+    case 20: {
+        char ev[8];
+        fn_8046B5F0(ev, fn_800797D4(self));
+        if (!fn_80080EFC(ev))
+            return;
+        if (fn_800B1138R(*fn_80080EFCS(ev))) {
+            fn_8007D404(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            return;
+        }
+        float health = fn_800A4054((void *)fn_80080EFC(ev)) / fn_800A4080(fn_80080EFC(ev));
+        if (health <= 0.0f)
+            return;
+        if (health == 1.0f) {
+            fn_8007D404(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            return;
+        }
+        char light[8];
+        fn_8046B680(light, fn_800797D4(self));
+        fn_800806E0(light, "MineCoreLight", 0, 1.0f / health, 0.0f, 0.0f, -1);
+        fn_8007D404(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        break;
+    }
+    }
+}
+
+void fn_802058D0(register cPropRespawn *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    switch (kind) {
+    case 0:
+        fn_8007D404(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        break;
+    case 18:
+        fn_8007D404(self, 2.0f * (fn_80171F8C() * 4.656612873077392578125e-10f), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        break;
+    case 7:
+        fn_8007D8B0(self);
+        self->enabled = 0;
+        break;
+    case 17: {
+        char ev[8];
+        fn_8046B5F0(ev, fn_800797D4(self));
+        if (!fn_80080EFC(ev))
+            return;
+        fn_800A2B3C(fn_80080EFC(ev), 1, 0, 0, 0);
+        fn_8006645CR(*fn_80080EFCS(ev), 0);
+        Vector dir;
+        Vector to;
+        char src[8];
+        fn_8046B6C8(src, b);
+        fn_80082440(src, &to);
+        Vector from;
+        fn_80082440(ev, &from);
+        fn_80429038(&dir, &from, &to);
+        fn_8042F76C(&dir);
+        fn_80435530(&dir, 5.0f);
+        fn_80066DC4R(*fn_80080EFCS(ev), &dir, 1, 0, 0);
+        fn_80066794R(*fn_80080EFCS(ev), 1);
+        fn_8007D8B0(self);
+        self->enabled = 0;
+        break;
+    }
+    }
+}
+
+int fn_80205B98(register cPropRespawn *self, int force)
+{
+    int found = 0;
+    char ev[8];
+    fn_8046B680(ev, fn_800797D4(self));
+    SObj *o = fn_80080300P(ev);
+    if (!o)
+        return 0;
+    unsigned char seen = fn_801B90A8(fn_8043289C(lbl_80552110)->unk3A0 + 0x1d0, o->unk50, o->unk78);
+    if (!seen || force || fn_8020AF60(self)) {
+        Placement at;
+        if (!fn_80048DD0(fn_800B24AC(o), fn_800B1724(o), 4, 0, o->v21(), -0.1f, &at)) {
+            SObj *p;
+            SObj *next;
+            char e2[8];
+            fn_8046B680(e2, 0);
+            p = fn_80430050(lbl_8052F060).first;
+            while (p) {
+                next = fn_800B1AC4(p);
+                fn_8046B710((Ref8 *)e2, fn_800B13D8(p));
+                SObj *a = fn_80080300P(e2);
+                if (a && (fn_8009AC94P(a) == fn_800797D4(self) || (fn_800B0CC0(a) && fn_800A46E8(fn_800B1478(a)) == fn_800797D4(self)))) {
+                    p->v1();
+                    found = 1;
+                }
+                p = next;
+            }
+            if (!found)
+                return 1;
+            else {
+                fn_8007D404(self, 0.1f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                return 0;
+            }
+        } else if (fn_800489BC(&at)) {
+            char e2[8];
+            fn_8046B680(e2, fn_800489BC(&at));
+            SObj *a = fn_80080300P(e2);
+            if (a && (fn_8009AC94P(a) == fn_800797D4(self) || (fn_800B0CC0(a) && fn_800A46E8(fn_800B1478(a)) == fn_800797D4(self))))
+                fn_80082124(e2);
+            fn_8007D404(self, 0.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            return 0;
+        }
+    }
+    fn_8007D404(self, 2.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    return 0;
+}
+
+void fn_80205FFC(register cRemoveObjects *self) // slot 4
+{
+    if (!fn_8020B2FC(self))
+        fn_802061C8(self);
+}
+
+void fn_80206050(register cRemoveObjects *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    if (fn_8020B2FC(self) == 1)
+        fn_802061C8(self);
+}
+
+void fn_802060C4(register cRemoveObjects *self, int h, int other, int value) // slot 14
+{
+    if (fn_8020B2FC(self) == 3 && h == fn_800797D4(self))
+        fn_802061C8(self);
+}
+
+float fn_8020613C(register cRemoveObjects *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
+{
+    if (fn_8020B2FC(self) == 2 && h == fn_800797D4(self))
+        fn_802061C8(self);
+    return dmg;
+}
+
+#define REMOVE(get)                     \
+    if (get(self)) {                    \
+        fn_8046B710((Ref8 *)ev, get(self)); \
+        if (!fn_8020B2B4(self))         \
+            fn_80082124(ev);            \
+        else                            \
+            fn_80082F30(ev);            \
+    }
+
+void fn_802061C8(register cRemoveObjects *self)
+{
+    char ev[8];
+
+    fn_8046B530(ev);
+    REMOVE(fn_8020B0BC)
+    REMOVE(fn_8020B104)
+    REMOVE(fn_8020B14C)
+    REMOVE(fn_8020B194)
+    REMOVE(fn_8020B1DC)
+    REMOVE(fn_8020B224)
+    REMOVE(fn_8020B26C)
+}
+
+void fn_8020644C(register cCrystalBreak *self) // slot 3
+{
+    self->hit = 0;
+    self->immune = 0;
+}
+
+void fn_8020647C(register cCrystalBreak *self) // slot 5
+{
+    if (fn_8020B3DC(self)) {
+        char ev[8];
+        fn_8046B5A8(ev, fn_8020B398(self));
+        fn_80082A44(ev, 1, fn_8020B434(self), 0);
+    }
+}
+
+void fn_802064F8(register cCrystalBreak *self, int h, int node, int value) // slot 25
+{
+    if (fn_8020B3DC(self)) {
+        char ev[8];
+        fn_8046B5A8(ev, fn_8020B398(self));
+        fn_80082A44(ev, !node, fn_8020B434(self), 0);
+    }
+}
+
+float fn_80206598(register cCrystalBreak *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
+{
+    if (self->immune)
+        return 0.0f;
+    if (self->hit)
+        return dmg;
+    self->hit = 1;
+    char ev[8];
+    fn_8046B5A8(ev, fn_8020B398(self));
+    fn_80393D0C(fn_80081E6C(ev), "ambientSpark", 0x19, 0);
+    return dmg;
+}
+
+void fn_8020666C(register cCrystalBreak *self, int h, int a, int b, int c, int d) // slot 29
+{
+    char ev[8];
+    fn_8046B5A8(ev, fn_8020B398(self));
+    switch (b) {
+    case 0:
+        fn_80393D0C(fn_80081E6C(ev), "crystalSmoke", 0xff, 0xff);
+        break;
+    case 1: {
+        fn_8007D404(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        char e2[8];
+        fn_8046B5F0(e2, fn_804425F8(ev));
+        fn_800A46A0(fn_80080EFC(e2), 1);
+        break;
+    }
+    }
+}
+
+void fn_80206790(register cCrystalBreak *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
+{
+    switch (kind) {
+    case 10: {
+        char ev[8];
+        fn_8046B6C8(ev, fn_8020B398(self));
+        fn_800838E0(fn_800B1724(fn_80081E6C(ev)));
+        fn_80082190(ev, "exp_LargeFake");
+        fn_80082124(ev);
+        break;
+    }
+    }
+}
+
+void fn_8020685C(register cCrystalBreak *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    switch (kind) {
+    case 0:
+        self->immune = 1;
+        break;
+    }
+}
+
+void fn_802068C0(register cCrystalBreak_Phase2 *self, unsigned int h) // slot 12
+{
+    self->immune = 1;
+    char ev[8];
+    fn_8046B680(ev, h);
+    if (!fn_80080300(ev))
+        return;
+    fn_80083D08(fn_800797D4(self), fn_800797D4(self), 0, h, fn_8009AC94U(fn_80080300P(ev)), 0.0f, 0.0f);
+    char e2[8];
+    fn_8046B6C8(e2, fn_8009AC94P(fn_80080300P(ev)));
+    fn_800836A8(e2, "crystalGlow");
+    fn_80083230(e2, "turlinDamFXCtrl");
+    fn_8007D404(self, 1.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+}
+
+float fn_80206A64(register cCrystalBreak_Phase2 *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
+{
+    if (self->immune)
+        return 0.0f;
+    else
+        return dmg;
+}
+
+void fn_80206AD0(register cCrystalBreak_Phase2 *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
+{
+    switch (kind) {
+    case 10:
+        self->immune = 0;
+        break;
+    }
+}
+
+__asm__(".section .rodata\n\t.long 0x6F727068\n\t.text"); // 0x804A1B34
+
+void fn_80206B34(register cCameraMPToggle *self) // slot 5
+{
+    self->on = 0;
+    if (fn_8020B524(self)) {
+        fn_8046B838(lbl_80552110, 1);
+        self->on = 1;
+    }
+}
+
+void fn_80206BA0(register cCameraMPToggle *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    switch (kind) {
+    case 4:
+        if (self->on)
+            return;
+        else {
+            fn_8046B838(lbl_80552110, 1);
+            self->on = 1;
+        }
+        break;
+    }
+}
+
+void fn_80206C38(register cLabConsole *self) // slot 4
+{
+    self->used = 0;
+    fn_8007CF00(self, fn_8020B5D0(self), 0);
+    fn_8007CF00(self, fn_8020B618(self), 0);
+    fn_8007CF00(self, fn_8020B660(self), 0);
+}
+
+void fn_80206CCC(register cLabConsole *self, int h, int other, int value) // slot 18
+{
+    if (self->used == 1)
+        return;
+    if (h == fn_8020B618(self) || h == fn_8020B660(self)) {
+        self->used = 1;
+        fn_80206E18(self);
+    }
+}
+
+float fn_80206D64(register cLabConsole *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
+{
+    if (self->used == 1)
+        return dmg;
+    if (h == fn_8020B618(self) || h == fn_8020B660(self)) {
+        self->used = 1;
+        fn_80206E18(self);
+    }
+    return dmg;
+}
+
+void fn_80206E18(register cLabConsole *self)
+{
+    char ev[8];
+
+    fn_8046B5F0(ev, fn_8020B5D0(self));
+    fn_800810DC(ev, 10.0f, 0, 0, 0, 0);
+}
+
+void fn_80206E80(register cWieldableToggle *self) // slot 5
+{
+    if (!fn_8020B6FC(self)) {
+        self->enabled = 0;
+        char ev[8];
+        fn_8046B5F0(ev, fn_800797D4(self));
+        fn_80080FF4(ev, 2);
+    } else
+        self->enabled = 1;
+    if (fn_8020B754(self))
+        self->locked = 1;
+    else
+        self->locked = 0;
+}
+
+float fn_80206F24(register cWieldableToggle *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
+{
+    if (self->locked == 1)
+        return -1.0f;
+    else
+        return dmg;
+}
+
+void fn_80206F88(register cWieldableToggle *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    char ev[8];
+    fn_8046B5F0(ev, fn_800797D4(self));
+    if (self->enabled == 1) {
+        self->enabled = 0;
+        fn_80080FF4(ev, 2);
+    } else if (self->enabled == 0) {
+        self->enabled = 1;
+        fn_80080F74(ev, 2);
+    }
+}
+
+void fn_80207040(register cWieldableToggle *self, int h, int other, int value) // slot 18
+{
+    if (self->enabled == 1 && self->locked == 1)
+        self->locked = 0;
+}
+
+void fn_8020708C(register cReverseWallRenderToggle *self) // slot 4
+{
+    if (!fn_8020B7F0(self)) {
+        char ev[8];
+        fn_8046B6C8(ev, fn_800797D4(self));
+        char wall[8];
+        fn_8046C1E8(wall, fn_8046C160(ev));
+        fn_800813AC(wall, 0);
+    }
+}
+
+void fn_80207114(register cReverseWallRenderToggle *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
+{
+    switch (kind) {
+    case 4: {
+        char ev[8];
+        fn_8046B6C8(ev, fn_800797D4(self));
+        char wall[8];
+        fn_8046C1E8(wall, fn_8046C160(ev));
+        fn_800813AC(wall, !fn_80081338(wall));
+        break;
+    }
+    }
+}
+
+void fn_802071E8(register cPropGroupFade *self) // slot 4
+{
+    fn_8007CF00(self, fn_8020B89C(self), 0);
+    fn_8007CF00(self, fn_8020B8E4(self), 0);
+    fn_8007CF00(self, fn_8020B92C(self), 0);
+    fn_8007CF00(self, fn_8020B974(self), 0);
+    fn_8007CF00(self, fn_8020B9BC(self), 0);
+    fn_8007CF00(self, fn_8020BA04(self), 0);
+    fn_8007CF00(self, fn_8020BA4C(self), 0);
+    fn_8007CF00(self, fn_8020BA94(self), 0);
+    fn_8007CF00(self, fn_8020BADC(self), 0);
+    fn_8007CF00(self, fn_8020BB24(self), 0);
+}
+
+void fn_80207338(register cPropGroupFade *self, int h, int value) // slot 19
+{
+    char e0[8];
+    char e1[8];
+    char e2[8];
+    char e3[8];
+    char e4[8];
+    char e5[8];
+    char e6[8];
+    char e7[8];
+    char e8[8];
+    char e9[8];
+
+    fn_8046B680(e0, fn_8020B89C(self));
+    fn_8046B680(e1, fn_8020B8E4(self));
+    fn_8046B680(e2, fn_8020B92C(self));
+    fn_8046B680(e3, fn_8020B974(self));
+    fn_8046B680(e4, fn_8020B9BC(self));
+    fn_8046B680(e5, fn_8020BA04(self));
+    fn_8046B680(e6, fn_8020BA4C(self));
+    fn_8046B680(e7, fn_8020BA94(self));
+    fn_8046B680(e8, fn_8020BADC(self));
+    fn_8046B680(e9, fn_8020BB24(self));
+    fn_8008065C(e0, 1);
+    fn_8008065C(e1, 1);
+    fn_8008065C(e2, 1);
+    fn_8008065C(e3, 1);
+    fn_8008065C(e4, 1);
+    fn_8008065C(e5, 1);
+    fn_8008065C(e6, 1);
+    fn_8008065C(e7, 1);
+    fn_8008065C(e8, 1);
+    fn_8008065C(e9, 1);
+}
+
+void fn_80207530(register cMP_MatchTrigger *self) // slot 5
+{
+}
+
+void fn_80207558(register cMP_MatchTrigger *self) // slot 32
+{
+    if (fn_8020BBC0(self))
+        fn_80207600(self);
+}
+
+void fn_802075AC(register cMP_MatchTrigger *self) // slot 33
+{
+    if (fn_8020BC08(self))
+        fn_80207600(self);
+}
+
+#define MATCH_SEND(get, kind)                                                                   \
+    if (get(self)) {                                                                            \
+        fn_8046B710((Ref8 *)ev, get(self));                                                     \
+        fn_80082AFC(ev, get(self), fn_800797D4(self), kind(self), 0.0f, 0.0f, 0.0f, 0.0f);      \
+    }
+
+void fn_80207600(register cMP_MatchTrigger *self)
+{
+    char ev[8];
+
+    fn_8046B530(ev);
+    MATCH_SEND(fn_8020BC50, fn_8020BC98)
+    MATCH_SEND(fn_8020BCE0, fn_8020BD28)
+    MATCH_SEND(fn_8020BD70, fn_8020BDB8)
+    MATCH_SEND(fn_8020BE00, fn_8020BE48)
+    MATCH_SEND(fn_8020BE90, fn_8020BED8)
+    MATCH_SEND(fn_8020BF20, fn_8020BF68)
+    MATCH_SEND(fn_8020BFB0, fn_8020BFF8)
+    MATCH_SEND(fn_8020C040, fn_8020C088)
+    MATCH_SEND(fn_8020C0D0, fn_8020C118)
+    MATCH_SEND(fn_8020C160, fn_8020C1A8)
+}
+
+void fn_80207B68(register cCameraSet *self) // slot 4
+{
+    fn_8007C830(fn_8020C244(self));
+}
+
+inline int sn_return_decl10(int a) { return a; }
+
+#define PARAM(T, cls, name, reader, i) \
+    T name(register cls *self)         \
+    {                                  \
+        return reader(self, i);        \
+    }
+#define FLAG(cls, name, reader, i)       \
+    int name(register cls *self)         \
+    {                                    \
+        return reader(self, i) != 0;     \
+    }
+#define IS_ONE(cls, name, reader, i)     \
+    int name(register cls *self)         \
+    {                                    \
+        return reader(self, i) == 1;     \
+    }
+
+PARAM(float, cObjectExplosion, fn_80207BB4, fn_8007935C, 0)
+PARAM(float, cObjectExplosion, fn_80207BFC, fn_8007935C, 1)
+PARAM(int, cObjectExplosion, fn_80207C44, fn_80079068, 2)
+PARAM(char *, cObjectExplosion, fn_80207C8C, fn_800794FC, 3)
+PARAM(int, cObjectSetCollision, fn_80207CD4, fn_80079068, 0)
+PARAM(int, cObjectSetCollision, fn_80207D1C, fn_80079068, 1)
+PARAM(float, cObjectSetCollision, fn_80207D64, fn_8007935C, 2)
+PARAM(float, cObjectSetCollision, fn_80207DAC, fn_8007935C, 3)
+PARAM(float, cObjectSetCollision, fn_80207DF4, fn_8007935C, 4)
+FLAG(cObjectSetCollision, fn_80207E3C, fn_80079068, 5)
+PARAM(int, cObjectMove, fn_80207E94, fn_80079068, 0)
+PARAM(float, cObjectMove, fn_80207EDC, fn_8007935C, 1)
+PARAM(float, cObjectMove, fn_80207F24, fn_8007935C, 2)
+PARAM(float, cObjectMove, fn_80207F6C, fn_8007935C, 3)
+PARAM(int, cObjectMove, fn_80207FB4, fn_80079068, 4)
+IS_ONE(cObjectMove, fn_80207FFC, fn_80079068, 5)
+IS_ONE(cObjectMove, fn_80208050, fn_80079068, 6)
+PARAM(unsigned int, cObjectMove, fn_802080A4, fn_800791C8, 7)
+PARAM(unsigned int, cObjectMove, fn_802080EC, fn_800791C8, 8)
+PARAM(unsigned int, cObjectMove, fn_80208134, fn_800791C8, 9)
+PARAM(unsigned int, cObjectMove, fn_8020817C, fn_800791C8, 10)
+PARAM(int, cObjectMove, fn_802081C4, fn_80079068, 11)
+FLAG(cObjectRumbleShake, fn_8020820C, fn_80079068, 0)
+PARAM(float, cObjectRumbleShake, fn_80208264, fn_8007935C, 1)
+PARAM(float, cObjectRumbleShake, fn_802082AC, fn_8007935C, 2)
+PARAM(float, cObjectRumbleShake, fn_802082F4, fn_8007935C, 3)
+PARAM(int, cObjectRumbleShake, fn_8020833C, fn_80079068, 4)
+FLAG(cObjectRumbleShake, fn_80208384, fn_80079068, 5)
+PARAM(float, cObjectRumbleShake, fn_802083DC, fn_8007935C, 6)
+PARAM(float, cObjectRumbleShake, fn_80208424, fn_8007935C, 7)
+PARAM(float, cObjectRumbleShake, fn_8020846C, fn_8007935C, 8)
+PARAM(float, cObjectRumbleShake, fn_802084B4, fn_8007935C, 9)
+PARAM(float, cObjectRumbleShake, fn_802084FC, fn_8007935C, 10)
+PARAM(float, cTimerTrigger, fn_80208544, fn_8007935C, 0)
+PARAM(float, cTimerTrigger, fn_8020858C, fn_8007935C, 1)
+PARAM(int, cTimerTrigger, fn_802085D4, fn_80079068, 2)
+PARAM(unsigned int, cTimerTrigger, fn_8020861C, fn_800791C8, 3)
+PARAM(unsigned int, cTimerTrigger, fn_80208664, fn_800791C8, 4)
+PARAM(unsigned int, cTimerTrigger, fn_802086AC, fn_800791C8, 5)
+PARAM(unsigned int, cTimerTrigger, fn_802086F4, fn_800791C8, 6)
+PARAM(unsigned int, cTimerTrigger, fn_8020873C, fn_800791C8, 7)
+PARAM(unsigned int, cTimerTrigger, fn_80208784, fn_800791C8, 8)
+PARAM(unsigned int, cTimerTrigger, fn_802087CC, fn_800791C8, 9)
+PARAM(unsigned int, cTimerTrigger, fn_80208814, fn_800791C8, 10)
+PARAM(int, cTimerTrigger, fn_8020885C, fn_80079068, 11)
+PARAM(int, cTriggerOnAction, fn_802088A4, fn_80079068, 0)
+PARAM(float, cTriggerOnAction, fn_802088EC, fn_8007935C, 1)
+PARAM(int, cTriggerOnAction, fn_80208934, fn_80079068, 2)
+PARAM(int, cTriggerOnAction, fn_8020897C, fn_80079068, 3)
+PARAM(int, cTriggerOnAction, fn_802089C4, fn_80079068, 4)
+PARAM(int, cTriggerOnAction, fn_80208A0C, fn_80079068, 5)
+PARAM(int, cTriggerOnAction, fn_80208A54, fn_80079068, 6)
+PARAM(int, cTriggerOnAction, fn_80208A9C, fn_80079068, 7)
+PARAM(unsigned int, cTriggerOnAction, fn_80208AE4, fn_800791C8, 8)
+PARAM(unsigned int, cTriggerOnAction, fn_80208B2C, fn_800791C8, 9)
+PARAM(unsigned int, cTriggerOnAction, fn_80208B74, fn_800791C8, 10)
+PARAM(unsigned int, cTriggerOnAction, fn_80208BBC, fn_800791C8, 11)
+PARAM(unsigned int, cTriggerOnAction, fn_80208C04, fn_800791C8, 12)
+PARAM(float, cTriggerOnAction, fn_80208C4C, fn_8007935C, 13)
+PARAM(unsigned int, cTriggerOnAction, fn_80208C94, fn_800791C8, 14)
+PARAM(float, cTriggerOnAction, fn_80208CDC, fn_8007935C, 15)
+PARAM(unsigned int, cTriggerOnAction, fn_80208D24, fn_800791C8, 16)
+PARAM(float, cTriggerOnAction, fn_80208D6C, fn_8007935C, 17)
+PARAM(unsigned int, cTriggerOnAction, fn_80208DB4, fn_800791C8, 18)
+PARAM(float, cTriggerOnAction, fn_80208DFC, fn_8007935C, 19)
+PARAM(int, cTriggerOnAction, fn_80208E44, fn_80079068, 20)
+PARAM(int, cTriggerOnAction, fn_80208E8C, fn_80079068, 21)
+PARAM(float, cTriggerOnAction, fn_80208ED4, fn_8007935C, 22)
+PARAM(int, cTriggerOnAction, fn_80208F1C, fn_80079068, 23)
+PARAM(unsigned int, cTriggerRelay, fn_80208F64, fn_800791C8, 0)
+PARAM(float, cTriggerRelay, fn_80208FAC, fn_8007935C, 1)
+PARAM(char *, cTriggerRelay, fn_80208FF4, fn_800794FC, 2)
+PARAM(unsigned int, cTriggerRelay, fn_8020903C, fn_800791C8, 3)
+PARAM(float, cTriggerRelay, fn_80209084, fn_8007935C, 4)
+PARAM(char *, cTriggerRelay, fn_802090CC, fn_800794FC, 5)
+PARAM(unsigned int, cTriggerRelay, fn_80209114, fn_800791C8, 6)
+PARAM(float, cTriggerRelay, fn_8020915C, fn_8007935C, 7)
+PARAM(char *, cTriggerRelay, fn_802091A4, fn_800794FC, 8)
+PARAM(unsigned int, cTriggerRelay, fn_802091EC, fn_800791C8, 9)
+PARAM(float, cTriggerRelay, fn_80209234, fn_8007935C, 10)
+PARAM(char *, cTriggerRelay, fn_8020927C, fn_800794FC, 11)
+PARAM(unsigned int, cTriggerRelay, fn_802092C4, fn_800791C8, 12)
+PARAM(float, cTriggerRelay, fn_8020930C, fn_8007935C, 13)
+PARAM(char *, cTriggerRelay, fn_80209354, fn_800794FC, 14)
+PARAM(unsigned int, cTriggerRelay, fn_8020939C, fn_800791C8, 15)
+PARAM(float, cTriggerRelay, fn_802093E4, fn_8007935C, 16)
+PARAM(char *, cTriggerRelay, fn_8020942C, fn_800794FC, 17)
+PARAM(unsigned int, cTriggerRelay, fn_80209474, fn_800791C8, 18)
+PARAM(float, cTriggerRelay, fn_802094BC, fn_8007935C, 19)
+PARAM(char *, cTriggerRelay, fn_80209504, fn_800794FC, 20)
+PARAM(unsigned int, cTriggerRelay, fn_8020954C, fn_800791C8, 21)
+PARAM(float, cTriggerRelay, fn_80209594, fn_8007935C, 22)
+PARAM(char *, cTriggerRelay, fn_802095DC, fn_800794FC, 23)
+PARAM(unsigned int, cTriggerRelay, fn_80209624, fn_800791C8, 24)
+PARAM(float, cTriggerRelay, fn_8020966C, fn_8007935C, 25)
+PARAM(char *, cTriggerRelay, fn_802096B4, fn_800794FC, 26)
+PARAM(unsigned int, cTriggerRelay, fn_802096FC, fn_800791C8, 27)
+PARAM(float, cTriggerRelay, fn_80209744, fn_8007935C, 28)
+PARAM(char *, cTriggerRelay, fn_8020978C, fn_800794FC, 29)
+PARAM(unsigned int, cTriggerRelay, fn_802097D4, fn_800791C8, 30)
+PARAM(float, cTriggerRelay, fn_8020981C, fn_8007935C, 31)
+PARAM(char *, cTriggerRelay, fn_80209864, fn_800794FC, 32)
+PARAM(unsigned int, cTriggerRelay, fn_802098AC, fn_800791C8, 33)
+PARAM(float, cTriggerRelay, fn_802098F4, fn_8007935C, 34)
+PARAM(char *, cTriggerRelay, fn_8020993C, fn_800794FC, 35)
+PARAM(int, cTriggerRelay, fn_80209984, fn_80079068, 36)
+PARAM(char *, cTriggerRelay, fn_802099CC, fn_800794FC, 37)
+PARAM(float, cTriggerRelay, fn_80209A14, fn_8007935C, 38)
+PARAM(float, cSetAnimFrame, fn_80209A5C, fn_8007935C, 1)
+PARAM(float, cSetAnimFrame, fn_80209AA4, fn_8007935C, 2)
+PARAM(float, cSetAnimFrame, fn_80209AEC, fn_8007935C, 3)
+PARAM(float, cSetAnimFrame, fn_80209B34, fn_8007935C, 4)
+PARAM(float, cSetAnimFrame, fn_80209B7C, fn_8007935C, 5)
+PARAM(float, cSetAnimFrame, fn_80209BC4, fn_8007935C, 6)
+PARAM(float, cSetAnimFrame, fn_80209C0C, fn_8007935C, 7)
+PARAM(float, cSetAnimFrame, fn_80209C54, fn_8007935C, 8)
+PARAM(char *, cDebrisFall, fn_80209C9C, fn_800794FC, 0)
+PARAM(int, cDebrisFall, fn_80209CE4, fn_80079068, 1)
+PARAM(char *, cDebrisFall, fn_80209D2C, fn_800794FC, 2)
+PARAM(int, cDebrisFall, fn_80209D74, fn_80079068, 3)
+PARAM(char *, cDebrisFall, fn_80209DBC, fn_800794FC, 4)
+PARAM(int, cDebrisFall, fn_80209E04, fn_80079068, 5)
+FLAG(cDebrisFall, fn_80209E4C, fn_80079068, 6)
+PARAM(int, cDebrisFall, fn_80209EA4, fn_80079068, 7)
+PARAM(char *, cDebrisFall, fn_80209EEC, fn_800794FC, 8)
+PARAM(float, cDebrisFall, fn_80209F34, fn_8007935C, 9)
+
+cScript *fn_80209F7C(register cVehicleBreak *self)
+{
+    return new cVehicleBreak;
+}
+
+
+int fn_80209FD0(register cVehicleBreak *self)
+{
+    return fn_800797D4(self);
+}
+
+PARAM(unsigned int, cVehicleBreak, fn_8020A014, fn_80079068, 0)
+FLAG(cVehicleBreak, fn_8020A05C, fn_80079068, 1)
+PARAM(float, cVehicleBreak, fn_8020A0B4, fn_8007935C, 2)
+PARAM(float, cVehicleBreak, fn_8020A0FC, fn_8007935C, 3)
+PARAM(char *, cVehicleBreak, fn_8020A144, fn_800794FC, 4)
+
+cScript *fn_8020A18C(register cVehicleBarrier *self)
+{
+    return new cVehicleBarrier;
+}
+
+PARAM(int, cVehicleBarrier, fn_8020A1E0, fn_80079068, 0)
+PARAM(unsigned int, cVehicleBarrier, fn_8020A228, fn_800791C8, 1)
+PARAM(unsigned int, cVehicleBarrier, fn_8020A270, fn_800791C8, 2)
+PARAM(unsigned int, cVehicleBarrier, fn_8020A2B8, fn_800791C8, 3)
+PARAM(unsigned int, cVehicleBarrier, fn_8020A300, fn_800791C8, 4)
+
+cScript *fn_8020A348(register cGenBreakProp *self)
+{
+    return new cGenBreakProp;
+}
+
+FLAG(cGenBreakProp, fn_8020A39C, fn_80079068, 0)
+FLAG(cGenBreakProp, fn_8020A3F4, fn_80079068, 1)
+PARAM(char *, cGenBreakProp, fn_8020A44C, fn_800794FC, 2)
+PARAM(unsigned int, cGenBreakProp, fn_8020A494, fn_800791C8, 3)
+PARAM(unsigned int, cGenBreakProp, fn_8020A4DC, fn_800791C8, 4)
+PARAM(unsigned int, cGenBreakProp, fn_8020A524, fn_800791C8, 5)
+PARAM(unsigned int, cGenBreakProp, fn_8020A56C, fn_800791C8, 6)
+PARAM(unsigned int, cGenBreakProp, fn_8020A5B4, fn_800791C8, 7)
+PARAM(unsigned int, cGenBreakProp, fn_8020A5FC, fn_800791C8, 8)
+PARAM(int, cGenBreakProp, fn_8020A644, fn_80079068, 9)
+PARAM(float, cGenBreakProp, fn_8020A68C, fn_8007935C, 10)
+PARAM(char *, cGenBreakProp, fn_8020A6D4, fn_800794FC, 11)
+FLAG(cGenBreakProp, fn_8020A71C, fn_80079068, 12)
+
+cScript *fn_8020A774(register cDamagePropOnTrigger *self)
+{
+    return new cDamagePropOnTrigger;
+}
+
+PARAM(float, cDamagePropOnTrigger, fn_8020A7C8, fn_8007935C, 0)
+PARAM(float, cDamagePropOnTrigger, fn_8020A810, fn_8007935C, 1)
+PARAM(float, cDamagePropOnTrigger, fn_8020A858, fn_8007935C, 2)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A8A0, fn_800791C8, 3)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A8E8, fn_800791C8, 4)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A930, fn_800791C8, 5)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A978, fn_800791C8, 6)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A9C0, fn_800791C8, 7)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020AA08, fn_800791C8, 8)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020AA50, fn_800791C8, 9)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020AA98, fn_800791C8, 10)
+FLAG(cDamagePropOnTrigger, fn_8020AAE0, fn_80079068, 11)
+
+cScript *fn_8020AB38(register cPortalControl *self)
+{
+    return new cPortalControl;
+}
+
+FLAG(cPortalControl, fn_8020AB8C, fn_80079068, 0)
+PARAM(unsigned int, cPortalControl, fn_8020ABE4, fn_800791C8, 1)
+PARAM(unsigned int, cPortalControl, fn_8020AC2C, fn_800791C8, 2)
+PARAM(unsigned int, cPortalControl, fn_8020AC74, fn_800791C8, 3)
+PARAM(unsigned int, cPortalControl, fn_8020ACBC, fn_800791C8, 4)
+PARAM(unsigned int, cPortalControl, fn_8020AD04, fn_800791C8, 5)
+PARAM(unsigned int, cPortalControl, fn_8020AD4C, fn_800791C8, 6)
+PARAM(unsigned int, cPortalControl, fn_8020AD94, fn_800791C8, 7)
+PARAM(unsigned int, cPortalControl, fn_8020ADDC, fn_800791C8, 8)
+FLAG(cPortalControl, fn_8020AE24, fn_80079068, 9)
+
+cScript *fn_8020AE7C(register cPropRespawn *self)
+{
+    return new cPropRespawn;
+}
+
+PARAM(float, cPropRespawn, fn_8020AED0, fn_8007935C, 0)
+PARAM(char *, cPropRespawn, fn_8020AF18, fn_800794FC, 1)
+FLAG(cPropRespawn, fn_8020AF60, fn_80079068, 2)
+FLAG(cPropRespawn, fn_8020AFB8, fn_80079068, 3)
+FLAG(cPropRespawn, fn_8020B010, fn_80079068, 4)
+
+cScript *fn_8020B068(register cRemoveObjects *self)
+{
+    return new cRemoveObjects;
+}
+
+PARAM(unsigned int, cRemoveObjects, fn_8020B0BC, fn_800791C8, 0)
+PARAM(unsigned int, cRemoveObjects, fn_8020B104, fn_800791C8, 1)
+PARAM(unsigned int, cRemoveObjects, fn_8020B14C, fn_800791C8, 2)
+PARAM(unsigned int, cRemoveObjects, fn_8020B194, fn_800791C8, 3)
+PARAM(unsigned int, cRemoveObjects, fn_8020B1DC, fn_800791C8, 4)
+PARAM(unsigned int, cRemoveObjects, fn_8020B224, fn_800791C8, 5)
+PARAM(unsigned int, cRemoveObjects, fn_8020B26C, fn_800791C8, 6)
+PARAM(int, cRemoveObjects, fn_8020B2B4, fn_80079068, 7)
+PARAM(int, cRemoveObjects, fn_8020B2FC, fn_80079068, 8)
+
+cScript *fn_8020B344(register cCrystalBreak *self)
+{
+    return new cCrystalBreak;
+}
+
+
+unsigned int fn_8020B398(register cCrystalBreak *self)
+{
+    return fn_800797D4(self);
+}
+
+FLAG(cCrystalBreak, fn_8020B3DC, fn_80079068, 0)
+PARAM(float, cCrystalBreak, fn_8020B434, fn_8007935C, 1)
+
+cScript *fn_8020B47C(register cCrystalBreak_Phase2 *self)
+{
+    return new cCrystalBreak_Phase2;
+}
+
+cScript *fn_8020B4D0(register cCameraMPToggle *self)
+{
+    return new cCameraMPToggle;
+}
+
+FLAG(cCameraMPToggle, fn_8020B524, fn_80079068, 0)
+
+cScript *fn_8020B57C(register cLabConsole *self)
+{
+    return new cLabConsole;
+}
+
+PARAM(unsigned int, cLabConsole, fn_8020B5D0, fn_800791C8, 0)
+PARAM(unsigned int, cLabConsole, fn_8020B618, fn_800791C8, 1)
+PARAM(unsigned int, cLabConsole, fn_8020B660, fn_800791C8, 2)
+
+cScript *fn_8020B6A8(register cWieldableToggle *self)
+{
+    return new cWieldableToggle;
+}
+
+FLAG(cWieldableToggle, fn_8020B6FC, fn_80079068, 0)
+PARAM(int, cWieldableToggle, fn_8020B754, fn_80079068, 1)
+
+cScript *fn_8020B79C(register cReverseWallRenderToggle *self)
+{
+    return new cReverseWallRenderToggle;
+}
+
+FLAG(cReverseWallRenderToggle, fn_8020B7F0, fn_80079068, 0)
+
+cScript *fn_8020B848(register cPropGroupFade *self)
+{
+    return new cPropGroupFade;
+}
+
+PARAM(unsigned int, cPropGroupFade, fn_8020B89C, fn_800791C8, 0)
+PARAM(unsigned int, cPropGroupFade, fn_8020B8E4, fn_800791C8, 1)
+PARAM(unsigned int, cPropGroupFade, fn_8020B92C, fn_800791C8, 2)
+PARAM(unsigned int, cPropGroupFade, fn_8020B974, fn_800791C8, 3)
+PARAM(unsigned int, cPropGroupFade, fn_8020B9BC, fn_800791C8, 4)
+PARAM(unsigned int, cPropGroupFade, fn_8020BA04, fn_800791C8, 5)
+PARAM(unsigned int, cPropGroupFade, fn_8020BA4C, fn_800791C8, 6)
+PARAM(unsigned int, cPropGroupFade, fn_8020BA94, fn_800791C8, 7)
+PARAM(unsigned int, cPropGroupFade, fn_8020BADC, fn_800791C8, 8)
+PARAM(unsigned int, cPropGroupFade, fn_8020BB24, fn_800791C8, 9)
+
+cScript *fn_8020BB6C(register cMP_MatchTrigger *self)
+{
+    return new cMP_MatchTrigger;
+}
+
+PARAM(int, cMP_MatchTrigger, fn_8020BBC0, fn_80079068, 0)
+PARAM(int, cMP_MatchTrigger, fn_8020BC08, fn_80079068, 1)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BC50, fn_800791C8, 2)
+PARAM(int, cMP_MatchTrigger, fn_8020BC98, fn_80079068, 3)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BCE0, fn_800791C8, 4)
+PARAM(int, cMP_MatchTrigger, fn_8020BD28, fn_80079068, 5)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BD70, fn_800791C8, 6)
+PARAM(int, cMP_MatchTrigger, fn_8020BDB8, fn_80079068, 7)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BE00, fn_800791C8, 8)
+PARAM(int, cMP_MatchTrigger, fn_8020BE48, fn_80079068, 9)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BE90, fn_800791C8, 10)
+PARAM(int, cMP_MatchTrigger, fn_8020BED8, fn_80079068, 11)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BF20, fn_800791C8, 12)
+PARAM(int, cMP_MatchTrigger, fn_8020BF68, fn_80079068, 13)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BFB0, fn_800791C8, 14)
+PARAM(int, cMP_MatchTrigger, fn_8020BFF8, fn_80079068, 15)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020C040, fn_800791C8, 16)
+PARAM(int, cMP_MatchTrigger, fn_8020C088, fn_80079068, 17)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020C0D0, fn_800791C8, 18)
+PARAM(int, cMP_MatchTrigger, fn_8020C118, fn_80079068, 19)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020C160, fn_800791C8, 20)
+PARAM(int, cMP_MatchTrigger, fn_8020C1A8, fn_80079068, 21)
+
+cScript *fn_8020C1F0(register cCameraSet *self)
+{
+    return new cCameraSet;
+}
+
+PARAM(float, cCameraSet, fn_8020C244, fn_8007935C, 0)
 }

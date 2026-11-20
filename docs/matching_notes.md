@@ -374,7 +374,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   `__attribute__((section(".sbss")))` is what gives a nobits `.sbss` contribution
   (`Game/fn_800B7094.c`). C++ units are unaffected: C++ has no tentative definitions.
 
-- **`cmpwi cr7, rX, 0` / `mfcr r0` / `extrwi r0, r0, 1, 30` feeding an argument register is `!x`.**
+- **`cmpwi cr7, rX, 0` / `mfcr r0` / `extrwi r0, r0, 1, 30` feeding an argument register is `!x`.** With `cmpwi cr7, rX, 1` it is `x == 1` (`return fn_80079068(self, 5) == 1;`, `fn_80207FFC` in `Game/fn_801FCEBC.cpp`).
   GCC 2.95 materialises a logical negation as a value through the CR rather than a branch, and
   `extrwi ..., 1, 30` picks cr7's EQ bit. The call it belongs to still evaluates this argument ahead
   of the earlier ones, so argument 1 is loaded after the sequence
