@@ -220,8 +220,11 @@ Game/fn_80046B4C.cpp:
 Game/fn_80048EBC.cpp:
 	.text       start:0x80048EBC end:0x800495F8
 
-Game/fn_80057AE8.c:
-	.text       start:0x80057AE8 end:0x80058A48
+Game/fn_80057AE8.cpp:
+	.text       start:0x80057AE8 end:0x80058C2C
+	.ctors      start:0x804825F4 end:0x804825F8
+	.dtors      start:0x80482874 end:0x80482878
+	.bss        start:0x80543260 end:0x80544ED0
 
 Game/fn_80058C94.cpp:
 	.text       start:0x80058C94 end:0x8005A534
@@ -230,36 +233,37 @@ Game/fn_80067050.cpp:
 	.text       start:0x80067050 end:0x80067148
 	.rodata     start:0x804874D4 end:0x804874E0
 
+Game/fn_8007608C.cpp:
+	.text       start:0x8007608C end:0x8007A3A0
+	.ctors      start:0x80482600 end:0x80482604
+	.dtors      start:0x80482878 end:0x8048287C
+
 Game/fn_8007A3A0.cpp:
-	.text       start:0x8007A3A0 end:0x8007C034
+	.text       start:0x8007A3A0 end:0x8007C8B0
 
-Game/fn_8007C830.c:
-	.text       start:0x8007C830 end:0x8007C8B0
+Game/fn_8007C8B0.cpp:
+	.text       start:0x8007C8B0 end:0x8007DC60
 
-Game/fn_80084498.cpp:
-	.text       start:0x80084498 end:0x80084734
+Game/fn_8007DC60.cpp:
+	.text       start:0x8007DC60 end:0x800808D0
 
-Game/fn_80084B68.cpp:
-	.text       start:0x80084B68 end:0x80084C80
+Game/fn_800808D0.cpp:
+	.text       start:0x800808D0 end:0x80081E08
+	.ctors      start:0x80482604 end:0x80482608
 
-Game/fn_80085954.cpp:
-	.text       start:0x80085954 end:0x80085980
+Game/fn_80081E08.cpp:
+	.text       start:0x80081E08 end:0x80084030
 
-Game/fn_80085F7C.cpp:
-	.text       start:0x80085F7C end:0x800863AC
+Game/fn_80084030.cpp:
+	.text       start:0x80084030 end:0x80087040
 
-Game/fn_80086C80.c:
-	.text       start:0x80086C80 end:0x80086CDC
-
-Game/fn_80086D54.c:
-	.text       start:0x80086D54 end:0x80086E2C
-
-Game/fn_80088740.c:
-	.text       start:0x80088740 end:0x800887AC
-
-Game/fn_800887AC.cpp:
-	.text       start:0x800887AC end:0x80089710
-	.rodata     start:0x804887C4 end:0x80488984
+Game/fn_80087040.cpp:
+	.text       start:0x80087040 end:0x8008995C
+	.ctors      start:0x80482608 end:0x8048260C
+	.dtors      start:0x8048287C end:0x80482880
+	.rodata     start:0x80488798 end:0x80488984
+	.bss        start:0x8054ED80 end:0x8054F0F0
+	.sdata      start:0x8066B8D0 end:0x8066B8D8
 
 Game/fn_8008A8A4.cpp:
 	.text       start:0x8008A8A4 end:0x8008F3B8
@@ -370,8 +374,17 @@ Game/fn_800A22CC.cpp:
 	.rodata     start:0x8048B260 end:0x8048B27C
 
 Game/fn_800A3588.cpp:
-	.text       start:0x800A3588 end:0x800A3810
-	.rodata     start:0x8048B2B0 end:0x8048B2BC
+	.text       start:0x800A3588 end:0x800A473C
+	.rodata     start:0x8048B2B0 end:0x8048B2F0
+
+Game/fn_800A473C.cpp:
+	.text       start:0x800A473C end:0x800A4DF8
+	.rodata     start:0x8048B4E4 end:0x8048B508
+
+Game/fn_800A4DF8.cpp:
+	.text       start:0x800A4DF8 end:0x800A90F4
+	.ctors      start:0x8048261C end:0x80482620
+	.rodata     start:0x8048B508 end:0x8048B678
 
 Game/fn_800AC37C.cpp:
 	.text       start:0x800AC37C end:0x800AC6A8
@@ -720,8 +733,17 @@ Game/handlers/mainmenu.cpp:
 	.ctors      start:0x80482658 end:0x8048265C
 	.sbss       start:0x8066D778 end:0x8066D77C
 
-Game/fn_8010B7F8.cpp:
-	.text       start:0x8010B7F8 end:0x8010B904
+Game/handlers/memcard.cpp:
+	.text       start:0x80107244 end:0x8010A448
+	.ctors      start:0x8048265C end:0x80482660
+	.rodata     start:0x80491960 end:0x80491970
+	.sbss       start:0x8066D77C end:0x8066D7D0
+
+Game/handlers/mission.cpp:
+	.text       start:0x8010A448 end:0x8010BED8
+	.ctors      start:0x80482660 end:0x80482664
+	.rodata     start:0x80491DD8 end:0x80491DE8
+	.sbss       start:0x8066D7D0 end:0x8066D7F0
 
 Game/handlers/venuetable.cpp:
 	.text       start:0x8010BED8 end:0x8010BFFC
@@ -791,6 +813,10 @@ Game/fn_8011AC88.cpp:
 
 Game/fn_8011B768.cpp:
 	.text       start:0x8011B768 end:0x8011BD34
+
+Game/fn_8011C55C.cpp:
+	.text       start:0x8011C55C end:0x8011EDE0
+	.rodata     start:0x804993D0 end:0x80499430
 
 Game/fn_8013086C.c:
 	.text       start:0x8013086C end:0x80130914
@@ -3065,11 +3091,58 @@ Game/fn_801BE3C4.c:
 	.text       start:0x801BE3C4 end:0x801BE5A8
 	.rodata     start:0x8049EBA4 end:0x8049EBC4
 
-Game/fn_8020C508.cpp:
-	.text       start:0x8020C508 end:0x8020CAD0
+Game/fn_801BEE2C.cpp:
+	.text       start:0x801BEE2C end:0x801C55F8
 
-Game/fn_8020D104.cpp:
-	.text       start:0x8020D104 end:0x8020D228
+Game/fn_801C55F8.cpp:
+	.text       start:0x801C55F8 end:0x801CA72C
+
+Game/fn_801CA72C.cpp:
+	.text       start:0x801CA72C end:0x801D1BFC
+
+Game/fn_801D1BFC.cpp:
+	.text       start:0x801D1BFC end:0x801D5320
+
+Game/fn_801D5320.cpp:
+	.text       start:0x801D5320 end:0x801DB2BC
+
+Game/fn_801DB2BC.cpp:
+	.text       start:0x801DB2BC end:0x801DD29C
+
+Game/fn_801DD29C.cpp:
+	.text       start:0x801DD29C end:0x801E4870
+
+Game/fn_801E4870.cpp:
+	.text       start:0x801E4870 end:0x801EAA38
+
+Game/fn_801EAA38.cpp:
+	.text       start:0x801EAA38 end:0x801F62E4
+
+Game/fn_801F62E4.cpp:
+	.text       start:0x801F62E4 end:0x801F654C
+
+Game/fn_801F654C.cpp:
+	.text       start:0x801F654C end:0x801FBD90
+
+Game/fn_801FBD90.cpp:
+	.text       start:0x801FBD90 end:0x801FCEBC
+
+Game/fn_801FCEBC.cpp:
+	.text       start:0x801FCEBC end:0x8020C28C
+
+Game/fn_8020C28C.cpp:
+	.text       start:0x8020C28C end:0x80211334
+
+Game/fn_80211334.cpp:
+	.text       start:0x80211334 end:0x80211494
+
+Game/fn_80211494.cpp:
+	.text       start:0x80211494 end:0x802126F8
+	.ctors      start:0x804826C0 end:0x804826C4
+	.dtors      start:0x804828B8 end:0x804828BC
+
+Game/fn_802126F8.cpp:
+	.text       start:0x802126F8 end:0x80212970
 
 Game/fn_80220980.cpp:
 	.text       start:0x80220980 end:0x80220BBC
@@ -5503,6 +5576,18 @@ Game/fn_80466268.cpp:
 
 Game/fn_80468888.cpp:
 	.text       start:0x80468888 end:0x80468934
+
+Game/fn_80468974.cpp:
+	.text       start:0x80468974 end:0x8046B530
+
+Game/fn_8046B530.cpp:
+	.text       start:0x8046B530 end:0x8046B738
+
+Game/fn_8046B738.cpp:
+	.text       start:0x8046B738 end:0x8046D6C0
+
+Game/fn_8046D6C0.cpp:
+	.text       start:0x8046D6C0 end:0x8046DCD4
 
 Game/fn_804708F8.c:
 	.text       start:0x804708F8 end:0x80470A80

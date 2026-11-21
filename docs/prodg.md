@@ -206,7 +206,7 @@ B baseline, and 7 of those 12 contain a switch.
 
 **Matching a pair-less unit.** Put a flag-setter ahead of the unit's first function, for example
 `inline int sn_return_decl(int a) { return a; }` or a header class's in-class constructor. It emits no code.
-`Game/fn_800887AC.cpp`, `Game/handlers/characterselect.cpp` and `Game/fn_8002623C.cpp` use that line, and
+`Game/fn_80087040.cpp`, `Game/handlers/characterselect.cpp` and `Game/fn_8002623C.cpp` use that line, and
 without it each is 8 bytes over per function. Order matters inside a unit: a function that comes before the
 first setter, or after a `switch`/label, keeps the pair, so use a real constructor or header function when
 the original's is known.
@@ -237,6 +237,14 @@ ordinary functions go to `.text`. Compiling `class V { public: float x; float ha
 with a caller gives `.text` (the caller) and `.gnu.linkonce.t.half__1V`. The function's float pool does
 **not** follow it: all pools go to the file's one `.rodata`, in the order the compiler wrote the functions
 out, and it writes the linkonce ones last.
+
+**Except the virtual ones of a class whose vtable the file emits.** Those go to the file's `.text` as ordinary
+functions, in vtable order, *after* the file's `__sti` and before `_GLOBAL_.I`; the class's non-virtual inlines
+(its constructor) still go to the tail. The script base class shows it: `__sti` 0x800796A4, then the
+destructor and slots 3-63 at 0x8007975C-0x8007A318 (`Game/fn_8007608C.cpp`, which hand-writes them in that
+order). The mechanism (`import_export_decl` keying virtual inlines to the vtable) is a guess.
+
+**A header's file-scope `static const` data comes after all of a file's function pools**, once per file that includes the header. So a block that recurs in `.rodata` marks where one file's pool ends. The ten words 1.2, 0.8, 2.0, 0.5, 0.8, 0.8, 1.0, 1.25, 0.75, 2000 are one such block, and they put three edges inside what looked like a single script command file ([`story.md`](story.md) section 2). This is observed, not measured.
 
 A linker keeps one copy of each linkonce function, and SN's placed them after the ordinary `.text`. The
 game's shared classes are there, from `Color` and `Vector` (0x80426EC4, 0x80428F74) through the `String` class

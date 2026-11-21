@@ -691,3 +691,187 @@ int fn_8007BF40(int handle, int a, int hb, int hc)
 }
 
 }
+
+__asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.text"); // 0x80487EAC-0x80487EC8, five zeros and "invalid"
+
+extern "C" {
+
+struct ScriptHActor { // the actor behind a script handle
+    char pad[0x31C];
+    float health; // +0x31C
+    float f320;   // +0x320
+    float f324;   // +0x324
+    float f328;   // +0x328
+    float f32c;   // +0x32C
+};
+
+class ScriptObj
+{
+public:
+    char d[0x3ac];
+    virtual void s0(); virtual void s1(); virtual void s2(); virtual void s3(); virtual void s4();
+    virtual void s5(); virtual void s6(); virtual void s7(); virtual void s8(); virtual void s9();
+    virtual void s10(); virtual void s11(); virtual void s12(); virtual void s13(); virtual void s14();
+    virtual void s15(); virtual void s16(); virtual void s17(); virtual void s18(); virtual void s19();
+    virtual void s20(); virtual void s21(); virtual void s22(); virtual void s23(); virtual void s24();
+    virtual void s25(); virtual void s26(); virtual void s27(); virtual void s28(); virtual void s29();
+    virtual void s30(); virtual void s31(); virtual void s32(); virtual void s33(); virtual void s34();
+    virtual void s35(); virtual void s36();
+    virtual int s37(int a, int b, int c, float f, int d, int e, int g, int h); // +0x130
+};
+
+ScriptHActor *fn_80081E6C(int handle);
+void fn_80030930(void *a, int b, int c, int d, float f1, int e, int f, int g, int h, float f2);
+float fn_80086640(void *a);
+float fn_80086614(void *a);
+float fn_8008677C(void *a);
+void *fn_800B14C8(void *a);
+void *fn_80085954V(void *a) __asm__("fn_80085954");
+ScriptObj *fn_80085954O(void *a) __asm__("fn_80085954");
+unsigned int fn_800CC514(void *a);
+float fn_8002FD50(void *self, void *src, int kind, int type, float dmg, int p20, int p24, unsigned int flags, int p2C,
+                  float f30, int *blocked, int pBC, int pC0, int pC4);
+int fn_80030894(void *a, float v);
+
+ScriptHActor *fn_8007C034(register int handle)
+{
+    ScriptHActor *actor = fn_80081E6C(handle);
+    if (!actor || !fn_800B0C58(actor))
+        return 0;
+    return actor;
+}
+
+float fn_8007C0AC(register int handle)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (actor == 0)
+        return -1.0f;
+    return actor->health;
+}
+
+float fn_8007C114(register int handle, float v)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (actor == 0)
+        return -1.0f;
+    float old = actor->health;
+    if (v < 1.0) {
+        fn_80030930(actor, 0, 0, 0, 0.0f, 0, 0, 0, 1, 0.0f);
+        return old;
+    }
+    actor->health = v >= 1.0f ? (v <= fn_80086640(actor) ? v : fn_80086640(actor)) : 1.0f;
+    return old;
+}
+
+float fn_8007C244(register int handle)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (actor == 0)
+        return -1.0f;
+    return actor->f320;
+}
+
+}
+
+__asm__(".section .rodata\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.long 0x6F727068\n\t.text");
+
+extern "C" {
+
+float fn_8007C2AC(register int handle)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (actor == 0)
+        return -1.0f;
+    return actor->f32c;
+}
+
+float fn_8007C314(register int handle, float v)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (actor == 0)
+        return -1.0f;
+    float old = actor->f32c;
+    actor->f32c = v >= 1.0f ? (v <= fn_80086614(actor) ? v : fn_80086614(actor)) : 1.0f;
+    return old;
+}
+
+float fn_8007C3EC(register int handle)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (actor == 0)
+        return -1.0f;
+    return actor->f324;
+}
+
+float fn_8007C454(register int handle, float v)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (actor == 0)
+        return -1.0f;
+    float old = actor->f324;
+    actor->f324 = v >= 1.0f ? (v <= fn_8008677C(actor) ? v : fn_8008677C(actor)) : 1.0f;
+    return old;
+}
+
+float fn_8007C52C(register int handle)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (actor == 0)
+        return -1.0f;
+    return actor->f328;
+}
+
+}
+
+__asm__(".section .rodata\n\t.long 0x6F727068\n\t.text");
+
+extern "C" {
+
+float fn_8007C594(register int handle, float dmg, int type, int kind, int src, unsigned int flags)
+{
+    ScriptHActor *actor;
+    void *act;
+    void *obj;
+
+    actor = fn_8007C034(handle);
+    if (actor == 0)
+        return -1.0f;
+    if (fn_800B0C1C(actor)) {
+        act = fn_800B14C8(actor);
+        obj = fn_80085954V(act);
+        if (obj && (fn_800CC514(obj) & 0x20000000))
+            return -1.0f;
+    }
+    obj = fn_800ACFA8(src);
+    return fn_8002FD50(actor, obj, kind, type, dmg, 0, 0, flags, 1, 0.0f, 0, 0, 0xFF, 0xFF);
+}
+
+int fn_8007C6D0(register int handle, float v)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (actor == 0)
+        return 0;
+    return fn_80030894(actor, v);
+}
+
+int fn_8007C740(register int handle, int a, int b, int c, float f, int d)
+{
+    ScriptHActor *actor = fn_8007C034(handle);
+    if (!actor || !fn_80085954V(actor))
+        return 0;
+    int ret = fn_80085954O(actor)->s37(a, c, b, f, 0, 0, d, 0);
+    return ret;
+}
+
+float fn_80433D20(void *record, int id, int slot);
+extern void *lbl_8066C6C8;
+extern float lbl_8066D5C0;
+
+void fn_8007C830(float f)
+{
+    if (f > fn_80433D20(lbl_8066C6C8, 0x10, 0) || f < fn_80433D20(lbl_8066C6C8, 0xF, 0))
+        return;
+    lbl_8066D5C0 = f;
+}
+
+}

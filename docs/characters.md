@@ -51,7 +51,7 @@ Rows 0 and 2 are both Wolverine, and 19 repeats the Thing; the order table start
 
 Readers: the per-field accessors `fn_8044B1D4`-`fn_8044B48C` that `clashCharSelect_GetCharList` calls (`Game/fn_8044B1D4.c`), `fn_80443678` (the whole record), `fn_804436D4` (writes `+0x48` in *both* tables, so unlocking a character unlocks its alternate costume), `fn_80461288(name, alt)` (name to localisation key, or the name itself when there is no match), `fn_804316B0`, and `fn_8044F070` (`Game/fn_8044EEF4.c`), the inverse of the order table, which searches `i <= 0x13`.
 
-The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int unlocked}`: 0x804CB14C `Rec[7]` venues (`BrooklynBridge` to `RoekelFacility`, the first three unlocked), 0x804CB328 `Rec[43]` cards and 0x804CBEB8 `Rec[25]` comics, all locked. 0x804CBE94 is an `int[9]` of zeros (meaning unknown).
+The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int unlocked}`: 0x804CB14C `Rec[7]` venues (`BrooklynBridge` to `RoekelFacility`, the first three unlocked), 0x804CB328 `Rec[43]` cards and 0x804CBEB8 `Rec[25]` comics, all locked. 0x804CBE94 is an `int[9]` of zeros, the trailer unlocks (`Reward_GetTrailerInfo`).
 
 **Saves.** No `memcard.cpp` function reads the roster tables, and only `clashMemcard_ResetStoryMode` reaches them through one more call, so the save does not appear to store the records (guess: unlocks are rebuilt from story progress; access through a stored pointer is unchecked).
 
@@ -107,9 +107,9 @@ The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int 
   | 0x70 | `OBJECT_SOUNDID` | 1 (Storm: 7) | **Type ID**, `actor+0x1AC` (section 1) |
   | 0x75 | `SHADOWMODEL` | `Wolverine_shadow.nod` | `+0x22C` |
 
-  The other `ACTOR_*` properties and the kind-0 entity properties (`ORIENTATION`, `POSITION`, `SECTORID`, `TIMER`, `MOVETYPE`, `COLLIDETYPE`, `RADIUS`, `HEIGHT`, `THINGFLAGS`, `RENDERFLAGS`, `DROPITEM`, ...) are not character-specific; `Game/fn_80084498.cpp` and `Game/fn_800AE534.cpp` say where each goes. The editor's 5 and 0x1A-0x1E are accepted and ignored.
+  The other `ACTOR_*` properties and the kind-0 entity properties (`ORIENTATION`, `POSITION`, `SECTORID`, `TIMER`, `MOVETYPE`, `COLLIDETYPE`, `RADIUS`, `HEIGHT`, `THINGFLAGS`, `RENDERFLAGS`, `DROPITEM`, ...) are not character-specific; `Game/fn_80084030.cpp` (`fn_80084498`) and `Game/fn_800AE534.cpp` say where each goes. The editor's 5 and 0x1A-0x1E are accepted and ignored.
 
-- **`ACTOR_ABILITIES` bits** (`actor+0x308`). One accessor per bit at 0x80085F7C-0x80086374 (`Game/fn_80085F7C.cpp`, each a one-line `abilities & mask`). The meanings come from reading their callers and from tests in modded builds; only rows marked **tested** were run. `nottool.py dump act_<Name>` gives each character's value. The AI (`0x80132480`-`0x80158BBC`) reads most of these bits too, and its callers were not all read.
+- **`ACTOR_ABILITIES` bits** (`actor+0x308`). One accessor per bit at 0x80085F7C-0x80086374 (`Game/fn_80084030.cpp`, each a one-line `f308 & mask`). The meanings come from reading their callers and from tests in modded builds; only rows marked **tested** were run. `nottool.py dump act_<Name>` gives each character's value. The AI (`0x80132480`-`0x80158BBC`) reads most of these bits too, and its callers were not all read.
 
   | Bit | Read by | Meaning |
   |---|---|---|
@@ -305,7 +305,7 @@ The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<
 
 ### Cutscenes (`.cut`)
 
-`python3 tools/cuttool.py` lists a cutscene; its docstring holds the format, and `check` rebuilds all 388 playable `.cut` files byte for byte. A cutscene is a header with its audio stream names (`.asf`), the actors (name and placement matrix), and chunks streamed one at a time. Each chunk holds one `.ngb`-format animation and event list per actor. `Game/fn_80057AE8.c` swaps and lays them out.
+`python3 tools/cuttool.py` lists a cutscene; its docstring holds the format, and `check` rebuilds all 388 playable `.cut` files byte for byte. A cutscene is a header with its audio stream names (`.asf`), the actors (name and placement matrix), and chunks streamed one at a time. Each chunk holds one `.ngb`-format animation and event list per actor. `Game/fn_80057AE8.cpp` swaps and lays them out.
 
 - **Versus intros** are `mp_<xx>_int_1` and `_2` (`mp_a_<xx>_int_*` for the alternate), named by a string tuning field (section 4, "Tuning records"). Each has two cameras, `nis_camera` and `nis_camera2`, and one actor named after the character (`wolverine`), with the streams `MP_<XX>_INT_1.asf` and `_2`. The actor's name does not pick the character: `fn_800939C4` starts the intro with the character as the cutscene's target and flag 0x10000 set, so every actor not named `nis_camera*` plays on that character (the `.cut` header flags in `tools/cuttool.py`). Without that flag an actor named `victim` gets the target and any other the entity whose lowercased `CASTID` (`+0xDC`) is its name, through the `simCastList` map (`fn_80048628`).
 - **Limits.** `cCutPlayer` queues a file only if its magic is 0x2715 and every chunk is at most 0x4B001 bytes. 17 shipped files fail the magic and 6 have a larger chunk (`check` lists them).
@@ -341,7 +341,7 @@ The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<
 
 ### The script record (`.nsc`)
 
-`fn_800887AC` (`Game/fn_800887AC.cpp`) parses an `.nsc` mission or arena script (`Misc/clashMP.nsc` is the versus arena list) into 0x5C8-byte records, one per `mission` ... `endmission` block; the accessors are `Game/fn_804428E0.c`. Every `char[0x20]` field is `strncpy`'d with 0x20 and terminated by hand.
+`fn_800887AC` (`Game/fn_80087040.cpp`, the chronicle file) parses an `.nsc` mission or arena script (`Misc/clashMP.nsc` is the versus arena list) into 0x5C8-byte records, one per `mission` ... `endmission` block; the accessors are `Game/fn_804428E0.c`. Every `char[0x20]` field is `strncpy`'d with 0x20 and terminated by hand.
 
 | Offset | Type | Keyword | Accessors |
 |---|---|---|---|
@@ -365,11 +365,11 @@ The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<
 | +0x478 | `unsigned char` | `character`, rejected unless <= 19 (a roster index) | `fn_80442F98`, getter `fn_80442FC4` |
 | +0x479 | `unsigned char` | `unlockchar`, rejected unless <= 18 | `fn_80442FF4`, getter `fn_80443020` |
 | +0x47A | `unsigned char` | `sacrifice`, rejected unless <= 19 | `fn_80443050`, getter `fn_8044307C` |
-| +0x480 | `int[4]` | `rewards` | `fn_80442BC0`, `fn_80442C00(record, i)` |
+| +0x480 | `int[4]` | `rewards`: an ID over 9999 is reward type 3 (ID - 10000), over 999 type 2 (- 1000), over 99 type 1 (- 100), 0-99 type 0; negative or over 99999 is no reward (`clashMission_GetRewardInfo`). `fn_800877F4` grants them: type 0, a character, through `fn_804436D4`; 1, a venue, `fn_8044374C`; 2, a card, `fn_80443608`; 3, a comic, `fn_80443640`; and over 99999 a fifth kind, a trailer (ID - 100000, `fn_804435D0`). The save profile keeps all five ([`story.md`](story.md) section 4.4) | `fn_80442BC0`, `fn_80442C00(record, i)` |
 | +0x4A4-+0x5A4 | `char[0x20]` x9 | `soundbanks`, up to nine | `fn_804430FC` |
 | +0x5C4 | int | `maxblessed` | `fn_80442F70` |
 
-`precutscene`, `postcutscene`, `unlocked` and `unlock` parse and do nothing. `profileid` (clamped to 0-5) and `gametype` are file-level settings on the owning table. Lines starting with `;`, `#` or `//` are comments. The owning table is `{profileid +0x0, gametype +0x4, count +0x8, records +0xC, current index +0x1A4}`; its int flags at `+0x1AC` (`fn_80443518`-`fn_804435A4`) are not `actor+0x1AC`.
+`precutscene`, `postcutscene`, `unlocked` and `unlock` parse and do nothing. `profileid` (clamped to 0-5) and `gametype` are file-level settings on the owning table. Lines starting with `;`, `#` or `//` are comments. The owning table (0x1B8 bytes) is `{profileid +0x0, gametype +0x4, count +0x8, records +0xC, current index +0x1A4}`, plus `+0x19C` (its low byte a character, the record's `unlockchar` for some record types), `+0x1A0` four `unsigned char` character slots, `+0x1B0` the master-script instance and `+0x1B4` the current record's index (its `+0x460`); its int flags at `+0x1AC` (`fn_80443518`-`fn_804435A4`) are not `actor+0x1AC`.
 
 **Physics** is Havok (`hk*`, the `hkRagdollConstraintData` ragdolls, `RagdollRecover_*`). No character-specific physics code has turned up; per-character physical tuning is most likely in the tuning fields.
 
