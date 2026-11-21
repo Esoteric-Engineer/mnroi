@@ -1,6 +1,6 @@
 ---
 name: decomp-story
-description: Run decomp-next aimed at story mode and the level script system in this GameCube decomp (mnroi, GVLE69). It picks the next open target in docs/story.md's target order (the mission handlers, the chronicle, the save profile, the script class table and base class, and the 102 script classes) and byte-matches it. Use when asked to run "/decomp-story" or to decompile story mode, missions or level scripts.
+description: Run decomp-next aimed at story mode and the level script system in this GameCube decomp (mnroi, GVLE69). It picks the next open target in docs/story.md's target order (the mission handlers, the chronicle, the save profile, the script class table and base class, the 102 script classes, the entity commands the classes call, the cut file's static init) and byte-matches it. Use when asked to run "/decomp-story" or to decompile story mode, missions or level scripts.
 ---
 
 # decomp-story: decomp-next, aimed at story mode
@@ -20,7 +20,7 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
   function after the unit's current `.text` end, so that the unit grows as one contiguous range
   from the row's first function. This replaces decomp-next's "next to an already-matched unit"
   rule. Some rows have a different shape:
-  - **Rows that say "identify first"** (2, 3 and 22): settle the file edge from the code, its
+  - **Rows that say "identify first"** (2, 3, 22 and 24): settle the file edge from the code, its
     `.rodata` and its callers, and write the edge and its evidence into `docs/story.md` section 2
     before matching.
   - **The linkonce row** (7, the inline functions): one small unit per run of neighbours, like
@@ -28,7 +28,11 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
   - **The handler files** (rows 1 and 23): one unit for the whole file, grown from its first
     function. It claims `.ctors` and `.sbss` with the static initializer, as
     `Game/handlers/mainmenu.cpp` does.
-  - **Rows with several files** (8): one unit per file, in the order the row lists them.
+  - **Rows with several files** (8 and 24): one unit per file, in the order the row lists them.
+  - **Row 25** (the cut file's tail): first rename `Game/fn_80057AE8.c` to `.cpp` (wrap it in
+    `extern "C"`, add `sn_return_decl` if `tools/pair_map.py` says the flag was set, fix C-only casts)
+    and get `main.dol: OK`, then add the tail. It claims `.ctors`, `.dtors` and the `.bss` range its
+    static initializer's objects settle, as the handler files claim theirs.
 
   Still skip anything in `docs/nonmatching.md`. If the target is stuck, record it there and take the
   next function, then the next row, instead of leaving a gap in a unit.
@@ -36,8 +40,9 @@ preconditions, loop, rules, notes and report all apply. Only the steps below cha
   handler file keeps its source path (`Game/handlers/mission.cpp`). If the unit already exists,
   extend its range rather than starting a new one. **When the range reaches an already-matched
   unit, merge it in:** move that unit's source into this one, delete its `splits.txt` block, its
-  `configure.py` entry and its source file, and require `main.dol: OK` as for any match. The rows
-  name the units they absorb.
+  `configure.py` entry and its source file, repoint the docs and tool docstrings that cite it
+  (`grep -rn` its path in `docs/` and `tools/`), and require `main.dol: OK` as for any match. The
+  rows name the units they absorb.
 - **Names:**
   - The class names in `docs/story.md` are the DOL's registration strings. Use them as struct type
     names in source (`struct cSpawnPeon`).

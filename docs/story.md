@@ -33,9 +33,11 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 
 | Range | Contents | Row |
 |---|---|---|
+| 0x800520CC-0x80058C2C | **Cut file**, one `.ctors` file. Start: simCutPlayer's `_GLOBAL_.D` 0x80052088 ends the previous file ([`versus.md`](versus.md) section 2). End: static init `fn_80058AD8`, `_GLOBAL_.I` 0x80058BB4 (`.ctors` 0x804825F4), `_GLOBAL_.D` 0x80058BF0 (`.dtors` 0x80482874); `fn_80058C2C`, which registers `fn_80058C94` and `fn_8005A6A8`, starts the next file. The static init constructs `.bss` objects from 0x80543260 to 0x80544E40 at least: `lbl_805432E0` (the cut player, 0x14B8) and `lbl_80544864` (0x59C), which `fn_80058A48` and `fn_80058A98` forward to (`fn_800522E8`, `fn_800523F4`); `lbl_805432A8` and `lbl_80544798` between them are not constructed. `Game/fn_80057AE8.c` (the `.cut` swaps) is from its middle | 25 |
 | 0x80074814-0x8007608C | A file of its own: its `.rodata` ends with the header tail at 0x80487BE8 (the debris names `deb_*`, `cel_ConcreteChunk_*` before it), and `fn_80076004`/`fn_80076060` at its end are reached from the entity code (0x800B08BC) | |
 | 0x8007608C-0x8007A3A0 | **Script base file**, one `.ctors` file, `Game/fn_8007608C.cpp`. Start: `fn_8007608C` reads the first literal after the previous file's header tail (0x80487BF0). One `.rodata` run 0x80487BF0-0x80487CD4 for the whole file (`"Havok"`, the memory-stats message, `"ShapeRepository"`, `"nhg"`, `"rb"`, then the class-table pool from 0x80487C80); vtables 0x804F46C0-0x804F47E8 precede the base vtable 0x804F4810. Havok glue (an entity listener, the `hkMemory` pool allocator, `ShapeRepository`, the `.nhg` loader `fn_800777C4`, a body-listener class); from 0x8007891C the class table and the base class (section 4.1), static init `fn_800796A4`, the base class's inline virtuals ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)), `_GLOBAL_.I` 0x8007A318 and `_GLOBAL_.D` 0x8007A35C | 4, 22 |
 | 0x8007A3A0-0x80081E08 | **Script command files**, four of them (edges below): the AI script API and handle commands (`Game/fn_8007A3A0.cpp`); script init, the `SCRIPT` property, `Scripts:Params`, entity links and the message queue (`Game/fn_8007C8B0.cpp`); the broadcasts to live scripts and the entity event hooks, among them the `cAIMessages` targets (`Game/fn_8007DC60.cpp`); more handle commands and the static init `fn_80081D00` (`Game/fn_800808D0.cpp`) | 5 |
+| 0x80081E08-0x80087040 | **Entity command files**, two of them (edge below), with no `.ctors` entry: the `_GLOBAL_.I` before is 0x80081DCC and the next is 0x800898E4, the chronicle's. The first holds commands on an entity by handle that the classes call (`fn_80082AFC` resolves it through `fn_80081E6C`/`fn_800ACFA8` and calls the hook `fn_8007ED18`). The second holds actor methods: the property handler `fn_80084498`, the `ACTOR_ABILITIES` accessors and the PLAYER tuning readers | 24 |
 | 0x80087040-0x8008995C | **Chronicle file**, `Game/fn_80087040.cpp`, with the `.nsc` parser and the static init `fn_80089854` that constructs both tables. Start edge: the two functions before it work on entity fields, and its `.rodata` opens with `GAME:CHRONS` right after the entity code's pool (0x80488758, read by `fn_80086C80`) | 2 |
 | 0x800A3588-0x800A90B0 | Three files, not one ([`versus.md`](versus.md) section 5's template file is wider than one `.ctors` file). **Prop file** to 0x800A473C, `Game/fn_800A3588.cpp`: its `.rodata` ends with the debris-header tail (`deb_*` ... `"invalid"`, 0x8048B2EC-0x8048B4E4, unclaimed), and its accessors from 0x800A3E54 are the deferred inlines whose pools sit in that tail. **Kind-3 class file** 0x800A473C-0x800A4DF8, `Game/fn_800A473C.cpp`, from its constructor (vtable `lbl_804F5080`). **Scene reader file** 0x800A4DF8 to `_GLOBAL_.I` 0x800A90B0: `fn_800A4DF8` (0x1D30) and its helpers `fn_800A7208`, `fn_800A7A0C`, `fn_800A82B8`; `.rodata` 0x8048B508 (`CAsyncLoader:Instance`) to the header tail ending 0x8048B678; the next file's `.rodata` starts with an unreferenced double there | 14 |
 | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp`: 66 handlers, wrappers over the save profile and the memory-card singleton `fn_80122228` (`lbl_8066BE40`, 0x5F48 bytes; its `fn_80124xxx(slot)` accessors read a save slot's title, description, date, play time and mission ID). Static init 0x801099E8, `_GLOBAL_.I` 0x8010A40C | 23 |
@@ -74,6 +76,11 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 - 0x8007C8B0: the edge is after `fn_8007C594` (last literal 0x80487F18) and at or before `fn_8007CABC` (first literal `"Scripts:Params"` 0x80488028). 0x8007C8B0, script init, is a guess within that range.
 - 0x8007DC60: after `fn_8007D404` (0x80488038) and at or before `fn_8007E698` (0x80488070). The guess is where the queue code ends.
 - 0x800808D0: confirmed. `fn_800808D0` is a byte-for-byte copy of the static helper `fn_80080300`, and the pool resumes at 0x80488190 after the third block.
+
+**How the entity command file edge was found.** It is after `fn_80083A90` and at or before `fn_800840F8`:
+- `.rodata`: `fn_8008379C`-`fn_80083A90` read 0x804882B8-0x804882DC, and the debris names and header tail after that pool (static block 0x804884C8, then `0.5, 1.5, "invalid"`) end the first file at 0x80488500. A second copy of the debris names opens the second file's `.rodata` there; `fn_800840F8`-`fn_80086C80` read its pool 0x804886AC-0x80488758, and its tail (static block 0x80488768) runs to the chronicle's 0x80488798. `fn_80083B74`-`fn_80084030` read no `.rodata`, and neither do the first file's functions before `fn_8008379C`.
+- `tools/pair_map.py`: run B runs to 0x80083B74 and run A starts at 0x80084498, so the flag clears in between, as at the start of a file. The first file needs `sn_return_decl`, as `Game/fn_800808D0.cpp` does.
+- 0x8048824C-0x804882B7, unreferenced, with the static block at 0x8048827C, follows `fn_80081D00`'s literals: probably the script command file's tail (a guess).
 
 **The registration is a file of its own.** Every class file's `.rodata` ends with the same unreferenced header tail, `... 0.5, 1.5, "invalid"`, and 0x8049F5F8-0x8049F617 (`0.0, 1.0, 1.0, 1.0, 0.5, 1.5, "invalid"`) is that tail between `fn_801BEE2C`'s name pool (to 0x8049F5F5) and `fn_801C55F8`'s pool (from 0x8049F618, `"PARADOX"`).
 
@@ -154,7 +161,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 - **The outside functions the class files call most:**
   - from the base: `fn_800797D4` (440 calls, +0x8), the parameter readers `fn_800791C8` (398), `fn_80079068` (220), `fn_8007935C` (93);
   - from the command files: `fn_8007D404` (351, queue a message), `fn_80080B34` (175, the handle of `fn_80432924`'s entity; guess: the player), `fn_8007CF00` (124, link to an entity), `fn_8007D7C4` (104, cancel messages), `fn_800809CC` (92) and `fn_8007C034` (83, handle to actor);
-  - from the entity code: `fn_80082AFC` (270).
+  - from the entity command files (row 24): `fn_80082AFC` (270), `fn_80081E6C` (59), `fn_80082440` (57), `fn_8008379C` (48).
 
 ### 4.2 Class table and prototypes
 
@@ -246,8 +253,10 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 21 | Power Plant classes | 0x801DD29C-0x801E4870 | `Game/fn_801DD29C.cpp` | Done |
 | 22 | Rest of the script base file | 0x8007608C-0x8007891C | `Game/fn_8007608C.cpp` | Done |
 | 23 | Memory-card handlers | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp` | Done |
+| 24 | Entity command files | 0x80081E08-0x80087040 | `Game/fn_80081E08.cpp`, then one unit for the second file | Identify first: settle the edge in `fn_80083B74`-`fn_800840F8` (section 2). The second file absorbs `Game/fn_80084498.cpp`, `fn_80084B68.cpp`, `fn_80085954.cpp`, `fn_80085F7C.cpp`, `fn_80086C80.c` and `fn_80086D54.c` |
+| 25 | Cut file tail | 0x80058A48-0x80058C2C | `Game/fn_80057AE8.c`, renamed to `.cpp` | The two wrappers, the static init and `_GLOBAL_.I`/`.D`; claims `.ctors`, `.dtors` and the file's `.bss` (section 2) |
 
-Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O from 0x8011F2B0, the APT glue, the entity code 0x80081E08-0x80087040 that the classes call (unless a row needs a callee's meaning), and third-party code.
+Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O from 0x8011F2B0, the APT glue, the cut file's head 0x800520CC-0x80057AE8 and `fn_80058C2C` (the next file's, with `Game/fn_80058C94.cpp`), other entity code the classes call (unless a row needs a callee's meaning), and third-party code.
 
 ---
 
