@@ -35,7 +35,8 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801ABA18-0x801AD588 | **Memory manager** (section 4.3). Starts at `fn_801ABA18`, the empty callback the init passes to `VMSetLogStatsCallback` and its only reference. `.rodata` 0x8049D960-0x8049DAF0, ending with `"new[]"`; the rest of the file reads none | 2 |
 | 0x801AD588-0x801AF394 | **System monitor** (`CSysMon`): drive status, reset button, system font, pad recalibration, language, a 2D text draw (`C_MTXOrtho`, `OSGetFontWidth`). `_GLOBAL_.I` 0x801AF358 | 13 |
 | 0x801AF394-0x801AFEC0 | Unknown: `OSGetTime`/`OSTicksToCalendarTime`, calls into 0x8023EA4C. `_GLOBAL_.I` 0x801AFE84 | 14 |
-| 0x801AFEC0-0x801B104C | **`Std/BufferAllocator.cpp`** (assert path, `fn_801B0C90`). Vtable 0x804F67D0; constructor `fn_801B0B40` (`"BuffMan"`). Before it, 0x801AFEC0-0x801B0B40 is the file layer's back end (`fn_801B01D4` is the read `fn_801A8B60` calls, `__4Attrii`): same file or not, identify. `_GLOBAL_.I` 0x801B0FD4, `_GLOBAL_.D` 0x801B1010 | 5 |
+| 0x801AFEC0-0x801B0B40 | **File back end**, its own file: the open-file record's methods (`fn_801AFEE8` constructor, `fn_801AFFDC` open, `fn_801B00AC` close, `fn_801B01D4` read, `fn_801B0380` line read, `__4Attrii`). No `.rodata`. Start: the time file's `_GLOBAL_.I` `fn_801AFE84` ends the file before. End: `Std/BufferAllocator.cpp` asserts at line 140 in its third function `fn_801B0C90`, which leaves no room for these 0xC80 bytes ahead of it; the back end reaches the allocator only through the `.sdata` pointer `lbl_8066C6B8` (set by `fn_801AFEC0`) with virtual calls | 5 |
+| 0x801B0B40-0x801B104C | **`Std/BufferAllocator.cpp`** (the default allocation path in `fn_801B0C90`). `.rodata` 0x8049E3AC-0x8049E3F4. The object is `lbl_80593C58` (`.bss`, 0x18), which the file layer's init hands to the back end | 5 |
 | 0x801B104C-0x801B2620 | **`Std/stdBigHashedVFS.cpp`** (assert paths in `fn_801B1270` and `fn_801B1D74`). Its `.rodata` starts with its own `"bf:"` at 0x8049E3F4 and ends with `"Decompession Buffer"`. The VFS class: constructor `fn_801B24A0` (vtable 0x804F6808 at `+0x10`, base constructor `fn_802407A8` in RealCore), destructor `fn_801B2530` | 6 |
 | 0x801B2620-0x801B26DC | **`stdBitmap`** (`.rodata` 0x8049E4DC). The matched tuning init `Game/fn_801B26DC.cpp` follows | 7 |
 | 0x801B26DC-0x801B4F40 | Tuning and the `Game:Hashtables` registry, mostly matched ([`characters.md`](characters.md) section 4); several units are C. Gaps: path-string helpers 0x801B3E6C-0x801B4284 and small ones up to 0x801B4E84 | 16 |
@@ -98,7 +99,7 @@ The calls callers need: open `fn_801A8500(path, mode)`, open through the search 
 
 | Vtable | Class | Constructor |
 |---|---|---|
-| 0x804F67D0 | BufferAllocator | `fn_801B0B40` |
+| 0x804F67D0 (`_vt.15BufferAllocator`) | BufferAllocator, a `Sink` (base vtable 0x804F5868, all four slots `__pure_virtual`). Slots: `+0x8` alloc(size, attrs), `+0x10` free(p, attrs), `+0x18` add a reference, `+0x20` release, `+0x28` destructor. The alloc attributes are RealCore `Attr` entries `{key, value, next}`: 1 tag, 2 alignment, 3 the fourth `fn_8023F2D4` argument, 4 heap flag 0x100 when positive, 5 file, 6 line | `fn_801B0B40` |
 | 0x804F6808 | the VFS | `fn_801B24A0` |
 | 0x804F6908, 0x804F6978 | `KVList`, `KSList` (which is which: identify) | |
 | 0x804F69B8 | `Game:List` | `fn_801B5BA8` |
@@ -137,7 +138,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 2 | Memory manager | 0x801ABA18-0x801AD588 | Done |
 | 3 | File layer | 0x801A7BF8-0x801A9974 | Done |
 | 4 | Memory-card device | 0x801A9974-0x801AA1E8 | Done |
-| 5 | BufferAllocator file | 0x801AFEC0-0x801B104C | Identify whether 0x801AFEC0-0x801B0B40 is the same file, then match |
+| 5 | BufferAllocator and the file back end | 0x801B0B40-0x801B104C, then 0x801AFEC0-0x801B0B40 | Match the back end (`Game/fn_801AFEC0.cpp`) |
 | 6 | VFS | 0x801B104C-0x801B2620 | Match; cross-check the `.BIG`/`.BH` reads against `tools/bigtool.py` |
 | 7 | `stdBitmap` | 0x801B2620-0x801B26DC | Match |
 | 8 | `KVList` and `KSList` | 0x801B4F40-0x801B5BA8 | Match |
@@ -158,6 +159,5 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 
 ## 7. Open Questions
 
-- Whether 0x801AFEC0-0x801B0B40 (the file back end, `__4Attrii`) is part of `Std/BufferAllocator.cpp`.
 - What the files at 0x801AF394 and 0x801B6AF0 are.
 - What the 100 (0x64) that the file layer passes to close, open and the RealCore reads and writes means (a timeout or a priority: a guess).

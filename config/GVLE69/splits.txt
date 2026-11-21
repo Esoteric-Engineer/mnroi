@@ -3067,6 +3067,13 @@ Game/fn_801ABA18.cpp:
 	.rodata     start:0x8049D960 end:0x8049DAF0
 	.sbss       start:0x8066F4F4 end:0x8066F4FC
 
+Std/BufferAllocator.cpp:
+	.text       start:0x801B0B40 end:0x801B104C
+	.ctors      start:0x804826B4 end:0x804826B8
+	.dtors      start:0x804828B4 end:0x804828B8
+	.rodata     start:0x8049E3AC end:0x8049E3F4
+	.bss        start:0x80593C58 end:0x80593C70
+
 Game/fn_801B26DC.cpp:
 	.text       start:0x801B26DC end:0x801B301C
 
