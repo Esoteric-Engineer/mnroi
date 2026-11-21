@@ -11,7 +11,7 @@ and rebuild a file; build_cut() recomputes every count and size from the parts.
 The streamer, cCutPlayer (Game/fn_80438044.cpp to Game/fn_80439E94.c), reads the header, then one chunk at a
 time; fn_80439778 swaps the header (fn_80057FF8) and records (fn_80057AE8) and drops a file whose
 magic is not 0x2715 or whose chunk sizes go over 0x4B001, and fn_80058284 lays out and swaps each
-chunk (all in Game/fn_80057AE8.c except the streamer). Little-endian:
+chunk (all in Game/fn_80057AE8.cpp except the streamer). Little-endian:
   +0x0   u32 magic 0x2715 (10 shipped files have 0x2714 and 7 are something else; the streamer
          does not queue them)
   +0x4   u32 flags (0, 16, 32, 48, 16384 or 32816 on disc). The starter fn_800578E4(name, ?, owner,

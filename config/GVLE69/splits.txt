@@ -220,8 +220,11 @@ Game/fn_80046B4C.cpp:
 Game/fn_80048EBC.cpp:
 	.text       start:0x80048EBC end:0x800495F8
 
-Game/fn_80057AE8.c:
-	.text       start:0x80057AE8 end:0x80058A48
+Game/fn_80057AE8.cpp:
+	.text       start:0x80057AE8 end:0x80058C2C
+	.ctors      start:0x804825F4 end:0x804825F8
+	.dtors      start:0x80482874 end:0x80482878
+	.bss        start:0x80543260 end:0x80544ED0
 
 Game/fn_80058C94.cpp:
 	.text       start:0x80058C94 end:0x8005A534
