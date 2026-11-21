@@ -35,7 +35,7 @@ public:
     char name[0x100];      // +0x018
     int open;              // +0x118
     unsigned int readPos;  // +0x11C
-    long long time;        // +0x120
+    long long disc;        // +0x120, from fn_80242244 (the disc position: a guess)
     unsigned int fsize;    // +0x128
     unsigned int pos;      // +0x12C
     int cur;               // +0x130
@@ -96,7 +96,7 @@ int fn_801AFFDC(register FileRec *self, const char *path, int a, int b)
     if (self->handle != 0) {
         long long size;
         strcpy(self->name, path + strlen(fn_801A7C30()));
-        fn_80242244(self->handle, &self->time, &size);
+        fn_80242244(self->handle, &self->disc, &size);
         self->fsize = size;
         self->pos = 0;
         self->readPos = 0;

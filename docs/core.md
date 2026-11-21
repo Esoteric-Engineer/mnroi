@@ -37,7 +37,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801AF394-0x801AFEC0 | Unknown: `OSGetTime`/`OSTicksToCalendarTime`, calls into 0x8023EA4C. `_GLOBAL_.I` 0x801AFE84 | 14 |
 | 0x801AFEC0-0x801B0B40 | **File back end**, its own file: the open-file record's methods. No `.rodata`. Start: the time file's `_GLOBAL_.I` `fn_801AFE84` ends the file before. End: `Std/BufferAllocator.cpp` asserts at line 140 in its third function `fn_801B0C90`, which leaves no room for these 0xC80 bytes ahead of it; the back end reaches the allocator only through the `.sdata` pointer `lbl_8066C6B8` (set by `fn_801AFEC0`) with virtual calls | 5 |
 | 0x801B0B40-0x801B104C | **`Std/BufferAllocator.cpp`** (the default allocation path in `fn_801B0C90`). `.rodata` 0x8049E3AC-0x8049E3F4. The object is `lbl_80593C58` (`.bss`, 0x18), which the file layer's init hands to the back end | 5 |
-| 0x801B104C-0x801B2620 | **`Std/stdBigHashedVFS.cpp`** (assert paths in `fn_801B1270` and `fn_801B1D74`). Its `.rodata` starts with its own `"bf:"` at 0x8049E3F4 and ends with `"Decompession Buffer"`. The VFS class: constructor `fn_801B24A0` (vtable 0x804F6808 at `+0x10`, base constructor `fn_802407A8` in RealCore), destructor `fn_801B2530` | 6 |
+| 0x801B104C-0x801B2620 | **`Std/stdBigHashedVFS.cpp`** (assert paths in `fn_801B1270` and `fn_801B1D74`). `.rodata` 0x8049E3F4-0x8049E4DC, from its own `"bf:"` (the constructor's, emitted first) to `"Decompession Buffer"` | 6 |
 | 0x801B2620-0x801B26DC | **`stdBitmap`** (`.rodata` 0x8049E4DC). The matched tuning init `Game/fn_801B26DC.cpp` follows | 7 |
 | 0x801B26DC-0x801B4F40 | Tuning and the `Game:Hashtables` registry, mostly matched ([`characters.md`](characters.md) section 4); several units are C. Gaps: path-string helpers 0x801B3E6C-0x801B4284 and small ones up to 0x801B4E84 | 16 |
 | 0x801B4F40-0x801B5BA8 | **`KVList` and `KSList`** (`Game:KVList` `fn_801B5400`, `Game:KSList` `fn_801B59F0`); vtables 0x804F6908, 0x804F6978. Start: the C unit `Game/fn_801B4E84.c` ends at 0x801B4F40 | 8 |
@@ -99,7 +99,7 @@ The calls callers need: open `fn_801A8500(path, mode)`, open through the search 
 | Vtable | Class | Constructor |
 |---|---|---|
 | 0x804F67D0 (`_vt.15BufferAllocator`) | BufferAllocator, a `Sink` (base vtable 0x804F5868, all four slots `__pure_virtual`). Slots: `+0x8` alloc(size, attrs), `+0x10` free(p, attrs), `+0x18` add a reference, `+0x20` release, `+0x28` destructor. The alloc attributes are RealCore `Attr` entries `{key, value, next}`: 1 tag, 2 alignment, 3 the fourth `fn_8023F2D4` argument, 4 heap flag 0x100 when positive, 5 file, 6 line | `fn_801B0B40` |
-| 0x804F6808 | the VFS | `fn_801B24A0` |
+| 0x804F6808 (`_vt.15stdBigHashedVFS`, the class name a guess) | the VFS, a RealCore file system: base constructor `fn_802407A8(this, prefix)`, base vtable 0x804F6888, base destructor the tail inline `fn_80467100`; vptr at `+0x10`. Slots: `+0x20` open(path, mode, `int *dev`), `+0x28` close(h), `+0x30` read(h, buf, size, dev, devh), `+0x40` seek(h, `s64` off, whence, dev, devh), `+0x48` size(h), `+0x50` disc position(h); the rest are the base's tail inlines. `dev` is the file system that holds the archive | `fn_801B24A0` |
 | 0x804F6908, 0x804F6978 | `KVList`, `KSList` (which is which: identify) | |
 | 0x804F69B8 | `Game:List` | `fn_801B5BA8` |
 | 0x804F2DE0-0x804F2E40 | Five list-wrapper classes: the vtable at `+0x4`, a `new`ed object at `+0x0`. Each has a 0x70 constructor, a 0x98 add that appends to a `Game:List` through `fn_801B6040`, and a 0x140 clear at 0x804288AC-0x80428DAC. Called from the HUD, versus and the frontend | 0x80428314, then every 0x108 bytes to 0x80428734; `fn_8042883C` reuses 0x804F2E28 |
@@ -138,7 +138,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 3 | File layer | 0x801A7BF8-0x801A9974 | Done |
 | 4 | Memory-card device | 0x801A9974-0x801AA1E8 | Done |
 | 5 | BufferAllocator and the file back end | 0x801B0B40-0x801B104C, then 0x801AFEC0-0x801B0B40 | Done |
-| 6 | VFS | 0x801B104C-0x801B2620 | Match; cross-check the `.BIG`/`.BH` reads against `tools/bigtool.py` |
+| 6 | VFS | 0x801B104C-0x801B2620 | Done |
 | 7 | `stdBitmap` | 0x801B2620-0x801B26DC | Match |
 | 8 | `KVList` and `KSList` | 0x801B4F40-0x801B5BA8 | Match |
 | 9 | `Game:List` and the list wrappers | 0x801B5BA8-0x801B6AF0, then the tail's 0x80428314-0x80428F74 | Match |
