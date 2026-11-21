@@ -7,7 +7,7 @@
 # Checks each literal against the original from the given address on, retargets the pool's relocations to dtk's lbl_<address> symbols, and empties the section.
 # Literals loaded with lfs or lfd are supported, and string literals whose address is formed with addi (4-aligned in both copies).
 # A pool entry of the original that no code in the unit loads is written in the source as the word 0x6F727068 ("orph"), one per 4 bytes;
-# zero padding on either side of a run of them is skipped.
+# zero padding on either side of a run of them is skipped, so an unreferenced 0.0f is written as "orph" too.
 #
 # Usage:
 #   python3 tools/extern_pool.py build/GVLE69/src/file.o orig/GVLE69/sys/main.dol 0x8048DEA8

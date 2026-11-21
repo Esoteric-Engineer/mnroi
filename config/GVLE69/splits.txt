@@ -251,23 +251,8 @@ Game/fn_800808D0.cpp:
 Game/fn_80081E08.cpp:
 	.text       start:0x80081E08 end:0x80084030
 
-Game/fn_80084498.cpp:
-	.text       start:0x80084498 end:0x80084734
-
-Game/fn_80084B68.cpp:
-	.text       start:0x80084B68 end:0x80084C80
-
-Game/fn_80085954.cpp:
-	.text       start:0x80085954 end:0x80085980
-
-Game/fn_80085F7C.cpp:
-	.text       start:0x80085F7C end:0x800863AC
-
-Game/fn_80086C80.c:
-	.text       start:0x80086C80 end:0x80086CDC
-
-Game/fn_80086D54.c:
-	.text       start:0x80086D54 end:0x80086E2C
+Game/fn_80084030.cpp:
+	.text       start:0x80084030 end:0x80087040
 
 Game/fn_80087040.cpp:
 	.text       start:0x80087040 end:0x8008995C

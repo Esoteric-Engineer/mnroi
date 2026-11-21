@@ -107,9 +107,9 @@ The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int 
   | 0x70 | `OBJECT_SOUNDID` | 1 (Storm: 7) | **Type ID**, `actor+0x1AC` (section 1) |
   | 0x75 | `SHADOWMODEL` | `Wolverine_shadow.nod` | `+0x22C` |
 
-  The other `ACTOR_*` properties and the kind-0 entity properties (`ORIENTATION`, `POSITION`, `SECTORID`, `TIMER`, `MOVETYPE`, `COLLIDETYPE`, `RADIUS`, `HEIGHT`, `THINGFLAGS`, `RENDERFLAGS`, `DROPITEM`, ...) are not character-specific; `Game/fn_80084498.cpp` and `Game/fn_800AE534.cpp` say where each goes. The editor's 5 and 0x1A-0x1E are accepted and ignored.
+  The other `ACTOR_*` properties and the kind-0 entity properties (`ORIENTATION`, `POSITION`, `SECTORID`, `TIMER`, `MOVETYPE`, `COLLIDETYPE`, `RADIUS`, `HEIGHT`, `THINGFLAGS`, `RENDERFLAGS`, `DROPITEM`, ...) are not character-specific; `Game/fn_80084030.cpp` (`fn_80084498`) and `Game/fn_800AE534.cpp` say where each goes. The editor's 5 and 0x1A-0x1E are accepted and ignored.
 
-- **`ACTOR_ABILITIES` bits** (`actor+0x308`). One accessor per bit at 0x80085F7C-0x80086374 (`Game/fn_80085F7C.cpp`, each a one-line `abilities & mask`). The meanings come from reading their callers and from tests in modded builds; only rows marked **tested** were run. `nottool.py dump act_<Name>` gives each character's value. The AI (`0x80132480`-`0x80158BBC`) reads most of these bits too, and its callers were not all read.
+- **`ACTOR_ABILITIES` bits** (`actor+0x308`). One accessor per bit at 0x80085F7C-0x80086374 (`Game/fn_80084030.cpp`, each a one-line `f308 & mask`). The meanings come from reading their callers and from tests in modded builds; only rows marked **tested** were run. `nottool.py dump act_<Name>` gives each character's value. The AI (`0x80132480`-`0x80158BBC`) reads most of these bits too, and its callers were not all read.
 
   | Bit | Read by | Meaning |
   |---|---|---|
