@@ -248,6 +248,9 @@ Game/fn_800808D0.cpp:
 	.text       start:0x800808D0 end:0x80081E08
 	.ctors      start:0x80482604 end:0x80482608
 
+Game/fn_80081E08.cpp:
+	.text       start:0x80081E08 end:0x80084030
+
 Game/fn_80084498.cpp:
 	.text       start:0x80084498 end:0x80084734
 
