@@ -230,8 +230,8 @@ Game/fn_80067050.cpp:
 	.text       start:0x80067050 end:0x80067148
 	.rodata     start:0x804874D4 end:0x804874E0
 
-Game/fn_8007891C.cpp:
-	.text       start:0x8007891C end:0x8007A3A0
+Game/fn_8007608C.cpp:
+	.text       start:0x8007608C end:0x8007A3A0
 	.ctors      start:0x80482600 end:0x80482604
 	.dtors      start:0x80482878 end:0x8048287C
 

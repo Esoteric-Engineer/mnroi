@@ -241,7 +241,7 @@ out, and it writes the linkonce ones last.
 **Except the virtual ones of a class whose vtable the file emits.** Those go to the file's `.text` as ordinary
 functions, in vtable order, *after* the file's `__sti` and before `_GLOBAL_.I`; the class's non-virtual inlines
 (its constructor) still go to the tail. The script base class shows it: `__sti` 0x800796A4, then the
-destructor and slots 3-63 at 0x8007975C-0x8007A318 (`Game/fn_8007891C.cpp`, which hand-writes them in that
+destructor and slots 3-63 at 0x8007975C-0x8007A318 (`Game/fn_8007608C.cpp`, which hand-writes them in that
 order). The mechanism (`import_export_decl` keying virtual inlines to the vtable) is a guess.
 
 **A header's file-scope `static const` data comes after all of a file's function pools**, once per file that includes the header. So a block that recurs in `.rodata` marks where one file's pool ends. The ten words 1.2, 0.8, 2.0, 0.5, 0.8, 0.8, 1.0, 1.25, 0.75, 2000 are one such block, and they put three edges inside what looked like a single script command file ([`story.md`](story.md) section 2). This is observed, not measured.

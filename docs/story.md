@@ -33,7 +33,8 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 
 | Range | Contents | Row |
 |---|---|---|
-| 0x80074814-0x8007A3A0 | **Script base file**, one `.ctors` file. It has an inner edge near 0x8007608C: the pair-carrying run ends at 0x80076004, a pair-less run starts at 0x8007608C, and a second `"invalid"` (0x80487BE8) ends the first part's `.rodata` (the debris names `deb_*`, `cel_ConcreteChunk_*`). From 0x8007608C: Havok and `ShapeRepository`, the `.nhg` loader `fn_800777C4`. From 0x8007891C: the class table and the base class (section 4.1). Then static init `fn_800796A4`, the base class's inline virtuals ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)), `_GLOBAL_.I` 0x8007A318 and `_GLOBAL_.D` 0x8007A35C | 4, 22 |
+| 0x80074814-0x8007608C | A file of its own: its `.rodata` ends with the header tail at 0x80487BE8 (the debris names `deb_*`, `cel_ConcreteChunk_*` before it), and `fn_80076004`/`fn_80076060` at its end are reached from the entity code (0x800B08BC) | |
+| 0x8007608C-0x8007A3A0 | **Script base file**, one `.ctors` file, `Game/fn_8007608C.cpp`. Start: `fn_8007608C` reads the first literal after the previous file's header tail (0x80487BF0). One `.rodata` run 0x80487BF0-0x80487CD4 for the whole file (`"Havok"`, the memory-stats message, `"ShapeRepository"`, `"nhg"`, `"rb"`, then the class-table pool from 0x80487C80); vtables 0x804F46C0-0x804F47E8 precede the base vtable 0x804F4810. Havok glue (an entity listener, the `hkMemory` pool allocator, `ShapeRepository`, the `.nhg` loader `fn_800777C4`, a body-listener class); from 0x8007891C the class table and the base class (section 4.1), static init `fn_800796A4`, the base class's inline virtuals ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)), `_GLOBAL_.I` 0x8007A318 and `_GLOBAL_.D` 0x8007A35C | 4, 22 |
 | 0x8007A3A0-0x80081E08 | **Script command files**, four of them (edges below): the AI script API and handle commands (`Game/fn_8007A3A0.cpp`); script init, the `SCRIPT` property, `Scripts:Params`, entity links and the message queue (`Game/fn_8007C8B0.cpp`); the broadcasts to live scripts and the entity event hooks, among them the `cAIMessages` targets (`Game/fn_8007DC60.cpp`); more handle commands and the static init `fn_80081D00` (`Game/fn_800808D0.cpp`) | 5 |
 | 0x80087040-0x8008995C | **Chronicle file**, `Game/fn_80087040.cpp`, with the `.nsc` parser and the static init `fn_80089854` that constructs both tables. Start edge: the two functions before it work on entity fields, and its `.rodata` opens with `GAME:CHRONS` right after the entity code's pool (0x80488758, read by `fn_80086C80`) | 2 |
 | 0x800A3588-0x800A90B0 | Three files, not one ([`versus.md`](versus.md) section 5's template file is wider than one `.ctors` file). **Prop file** to 0x800A473C, `Game/fn_800A3588.cpp`: its `.rodata` ends with the debris-header tail (`deb_*` ... `"invalid"`, 0x8048B2EC-0x8048B4E4, unclaimed), and its accessors from 0x800A3E54 are the deferred inlines whose pools sit in that tail. **Kind-3 class file** 0x800A473C-0x800A4DF8, `Game/fn_800A473C.cpp`, from its constructor (vtable `lbl_804F5080`). **Scene reader file** 0x800A4DF8 to `_GLOBAL_.I` 0x800A90B0: `fn_800A4DF8` (0x1D30) and its helpers `fn_800A7208`, `fn_800A7A0C`, `fn_800A82B8`; `.rodata` 0x8048B508 (`CAsyncLoader:Instance`) to the header tail ending 0x8048B678; the next file's `.rodata` starts with an unreferenced double there | 14 |
@@ -223,7 +224,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 1 | Story handlers | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp` | Done |
 | 2 | Chronicle | 0x80087040-0x8008995C | `Game/fn_80087040.cpp` | Done |
 | 3 | Save profile | 0x8011C55C-0x8011EDE0 | `Game/fn_8011C55C.cpp` | Done |
-| 4 | Class table and base class | 0x8007891C-0x8007A3A0 | `Game/fn_8007891C.cpp` | Done |
+| 4 | Class table and base class | 0x8007891C-0x8007A3A0 | `Game/fn_8007608C.cpp` | Done |
 | 5 | Rest of the script command files | 0x8007C034-0x80081E08 | `Game/fn_8007A3A0.cpp`, `Game/fn_8007C8B0.cpp`, `Game/fn_8007DC60.cpp`, `Game/fn_800808D0.cpp` | Done |
 | 6 | Class registration | 0x801BEE2C-0x801C55F8 | `Game/fn_801BEE2C.cpp` | Done |
 | 7 | Script inline functions | 0x80468974-0x8046DCD4 | `Game/fn_80468974.cpp`, `Game/fn_8046B530.cpp`, `Game/fn_8046B738.cpp`, `Game/fn_8046D6C0.cpp` | Done. 0x8046DCD4 on is render code |
@@ -241,7 +242,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 19 | Roekel Facility classes | 0x801E4870-0x801EAA38 | `Game/fn_801E4870.cpp` | Done |
 | 20 | Brooklyn Bridge classes | 0x801CA72C-0x801D1BFC | `Game/fn_801CA72C.cpp` | Done |
 | 21 | Power Plant classes | 0x801DD29C-0x801E4870 | `Game/fn_801DD29C.cpp` | Done |
-| 22 | Rest of the script base file | 0x8007608C-0x8007891C | `Game/fn_8007608C.cpp` | Identify the edges first (section 2). Havok, `ShapeRepository`, the `.nhg` loader `fn_800777C4`; merge with row 4's unit if it is one file |
+| 22 | Rest of the script base file | 0x8007608C-0x8007891C | `Game/fn_8007608C.cpp` | Done |
 | 23 | Memory-card handlers | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp` | 68 functions, 58 of them 0x80 bytes or less, over row 3's profile. Whole file, like row 1 |
 
 Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O from 0x8011F2B0, the APT glue, the entity code 0x80081E08-0x80087040 that the classes call (unless a row needs a callee's meaning), and third-party code.
@@ -250,8 +251,7 @@ Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O fr
 
 ## 7. Open Questions
 
-- What does `<name>.nhg` hold? No loose `.nhg` is in `CLASH.BIG`.
-- Where are the edges inside 0x80074814-0x8007891C?
+- Where do the `.nhg` files live? No loose one is in `CLASH.BIG`. The layout is `fn_800781FC`'s and `fn_8007810C`'s; the Havok shape that ends each record is `fn_8006EEDC`'s, unread.
 - What do the slots with no caller traced do (7, 9-11, 17, 25, 26, 28, 34-36, 39-42, 44-46, 50, 51, 55-58, 62)? Look at the overrides: the base stubs' copies undercount their parameters ([`matching_notes.md`](matching_notes.md)).
 - Where exactly are the edges at 0x8007C8B0 and 0x8007DC60 (section 2)?
 - Are the tables the profile saves at +0x1A0 (`fn_8044D4F0`, `fn_8044D454`, `fn_8044D3B8`) the ones the `REWARDS` setters (`fn_8044374C`, `fn_80443608`, `fn_80443640`) write?
