@@ -38,7 +38,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x8007A3A0-0x80081E08 | **Script command files**, four of them (edges below): the AI script API and handle commands (`Game/fn_8007A3A0.cpp`); script init, the `SCRIPT` property, `Scripts:Params`, entity links and the message queue (`Game/fn_8007C8B0.cpp`); the broadcasts to live scripts and the entity event hooks, among them the `cAIMessages` targets (`Game/fn_8007DC60.cpp`); more handle commands and the static init `fn_80081D00` (`Game/fn_800808D0.cpp`) | 5 |
 | 0x80087040-0x8008995C | **Chronicle file**, `Game/fn_80087040.cpp`, with the `.nsc` parser and the static init `fn_80089854` that constructs both tables. Start edge: the two functions before it work on entity fields, and its `.rodata` opens with `GAME:CHRONS` right after the entity code's pool (0x80488758, read by `fn_80086C80`) | 2 |
 | 0x800A3588-0x800A90B0 | Three files, not one ([`versus.md`](versus.md) section 5's template file is wider than one `.ctors` file). **Prop file** to 0x800A473C, `Game/fn_800A3588.cpp`: its `.rodata` ends with the debris-header tail (`deb_*` ... `"invalid"`, 0x8048B2EC-0x8048B4E4, unclaimed), and its accessors from 0x800A3E54 are the deferred inlines whose pools sit in that tail. **Kind-3 class file** 0x800A473C-0x800A4DF8, `Game/fn_800A473C.cpp`, from its constructor (vtable `lbl_804F5080`). **Scene reader file** 0x800A4DF8 to `_GLOBAL_.I` 0x800A90B0: `fn_800A4DF8` (0x1D30) and its helpers `fn_800A7208`, `fn_800A7A0C`, `fn_800A82B8`; `.rodata` 0x8048B508 (`CAsyncLoader:Instance`) to the header tail ending 0x8048B678; the next file's `.rodata` starts with an unreferenced double there | 14 |
-| 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp`: 66 handlers, mostly wrappers over the save profile. Static init 0x801099E8, `_GLOBAL_.I` 0x8010A40C | 23 |
+| 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp`: 66 handlers, wrappers over the save profile and the memory-card singleton `fn_80122228` (`lbl_8066BE40`, 0x5F48 bytes; its `fn_80124xxx(slot)` accessors read a save slot's title, description, date, play time and mission ID). Static init 0x801099E8, `_GLOBAL_.I` 0x8010A40C | 23 |
 | 0x8010A448-0x8010BED8 | `Game/handlers/mission.cpp`: 16 handlers and the static init | 1 |
 | 0x8011C55C-0x8011EDE0 | **Save profile**, `Game/fn_8011C55C.cpp`. Start: every caller of the empty `fn_8011C55C` is a profile function, and the save-buffer constructor `fn_8011C578` sets the pair flag for the pair-less run after it; the previous file's `.rodata` ends at 0x804993D4 with its own copy of the memory-card header strings. End: the memory-card manager follows (singleton `lbl_8066BE2C`, init `fn_8011EDE0`, vtable 0x804F59B8), and its `.rodata` (from 0x80499568) repeats the strings that end the profile's. The profile's 0x80499430-0x80499568 (ten floats, then `MemCard:General` ... `EAS SansCondensed`) is read by no code and stays unclaimed: probably header inlines (a guess). The memory-card file runs to `_GLOBAL_.I` 0x8012D9F0, the APT glue (`Game/HUD/glueApt.cpp`) from about 0x80126F0C | 3 |
 | 0x801BEE2C-0x801C55F8 | `fn_801BEE2C`, the class registration (section 4.2) | 6 |
@@ -190,15 +190,17 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
   | Offset | Field |
   |---|---|
-  | +0x18 | flag, mirrored in `lbl_8066C640` |
-  | +0x1C, +0x20, +0x24 | volumes 0-10, scaled to 0-127 for `fn_80119224` channels 2, 1, 0 |
-  | +0x28 | rumble (guess: goes to the pad manager `fn_80122228`) |
+  | +0x18 | vibration, mirrored in `lbl_8066C640` |
+  | +0x1C, +0x20, +0x24 | volumes 0-10, scaled to 0-127 for `fn_80119224` channels 2, 1, 0; +0x20 is music, +0x24 sfx |
+  | +0x28 | autosave; the settings screen also shows it on when the memory-card singleton's `fn_801224D0` is set |
+  | +0x2C | widescreen |
   | +0x30 | sound mode -1-2 (`fn_80118F18`) |
-  | +0x34 | 0-2, `fn_80131878` |
+  | +0x34 | difficulty 0-2, `fn_80131878` |
   | +0x38-+0x58 | snapshot of +0x18-+0x34 and the pad setting, for cancelling an options screen |
   | +0x5C | bitmask over the 20 roster characters (`fn_8044B48C`) |
   | +0x60 | bitmask over 7 entries (`fn_8044D58C`), probably the versus arenas |
   | +0x64 | `lbl_8066BF0C` |
+  | +0x68 | last save slot index |
   | +0x78, +0x80 | chronicle flag word (`fn_804435A4`), `fn_8046120C` of the chronicle |
   | +0x84, +0x88 | the chronicle's current record, and a record ID or 0 |
   | +0x8C | `int[65]`, one per chronicle record (`fn_80461144`); a story reset clears bits 0xC000 |
@@ -243,7 +245,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 20 | Brooklyn Bridge classes | 0x801CA72C-0x801D1BFC | `Game/fn_801CA72C.cpp` | Done |
 | 21 | Power Plant classes | 0x801DD29C-0x801E4870 | `Game/fn_801DD29C.cpp` | Done |
 | 22 | Rest of the script base file | 0x8007608C-0x8007891C | `Game/fn_8007608C.cpp` | Done |
-| 23 | Memory-card handlers | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp` | 68 functions, 58 of them 0x80 bytes or less, over row 3's profile. Whole file, like row 1 |
+| 23 | Memory-card handlers | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp` | Done |
 
 Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O from 0x8011F2B0, the APT glue, the entity code 0x80081E08-0x80087040 that the classes call (unless a row needs a callee's meaning), and third-party code.
 
