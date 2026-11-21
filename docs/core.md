@@ -38,7 +38,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801AFEC0-0x801B0B40 | **File back end**, its own file: the open-file record's methods. No `.rodata`. Start: the time file's `_GLOBAL_.I` `fn_801AFE84` ends the file before. End: `Std/BufferAllocator.cpp` asserts at line 140 in its third function `fn_801B0C90`, which leaves no room for these 0xC80 bytes ahead of it; the back end reaches the allocator only through the `.sdata` pointer `lbl_8066C6B8` (set by `fn_801AFEC0`) with virtual calls | 5 |
 | 0x801B0B40-0x801B104C | **`Std/BufferAllocator.cpp`** (the default allocation path in `fn_801B0C90`). `.rodata` 0x8049E3AC-0x8049E3F4. The object is `lbl_80593C58` (`.bss`, 0x18), which the file layer's init hands to the back end | 5 |
 | 0x801B104C-0x801B2620 | **`Std/stdBigHashedVFS.cpp`** (assert paths in `fn_801B1270` and `fn_801B1D74`). `.rodata` 0x8049E3F4-0x8049E4DC, from its own `"bf:"` (the constructor's, emitted first) to `"Decompession Buffer"` | 6 |
-| 0x801B2620-0x801B26DC | **`stdBitmap`** (`.rodata` 0x8049E4DC). The matched tuning init `Game/fn_801B26DC.cpp` follows | 7 |
+| 0x801B2620-0x801B26DC | **`stdBitmap`** (`.rodata` 0x8049E4DC, the registry name; the DOL gives no path). Its class table `lbl_80593C70` (`.bss`, 32 slots, count `lbl_8066C6CC`) is filled by the tuning init `Game/fn_801B26DC.cpp`, which follows | 7 |
 | 0x801B26DC-0x801B4F40 | Tuning and the `Game:Hashtables` registry, mostly matched ([`characters.md`](characters.md) section 4); several units are C. Gaps: path-string helpers 0x801B3E6C-0x801B4284 and small ones up to 0x801B4E84 | 16 |
 | 0x801B4F40-0x801B5BA8 | **`KVList` and `KSList`** (`Game:KVList` `fn_801B5400`, `Game:KSList` `fn_801B59F0`); vtables 0x804F6908, 0x804F6978. Start: the C unit `Game/fn_801B4E84.c` ends at 0x801B4F40 | 8 |
 | 0x801B5BA8-0x801B6AF0 | **`Game:List`** (`fn_801B5E38`), an array container: constructor `fn_801B5BA8` (vtable 0x804F69B8, 26 calling functions), helpers `fn_801B5D3C` (62), `fn_801B6040` (30), `fn_801B6A44` (59) | 9 |
@@ -139,7 +139,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 4 | Memory-card device | 0x801A9974-0x801AA1E8 | Done |
 | 5 | BufferAllocator and the file back end | 0x801B0B40-0x801B104C, then 0x801AFEC0-0x801B0B40 | Done |
 | 6 | VFS | 0x801B104C-0x801B2620 | Done |
-| 7 | `stdBitmap` | 0x801B2620-0x801B26DC | Match |
+| 7 | `stdBitmap` | 0x801B2620-0x801B26DC | Done |
 | 8 | `KVList` and `KSList` | 0x801B4F40-0x801B5BA8 | Match |
 | 9 | `Game:List` and the list wrappers | 0x801B5BA8-0x801B6AF0, then the tail's 0x80428314-0x80428F74 | Match |
 | 10 | String utilities and `stdVar` | 0x801B738C-0x801B8E78 | Identify the edge between them, then match |
