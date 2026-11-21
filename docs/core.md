@@ -103,7 +103,7 @@ The calls callers need: open `fn_801A8500(path, mode)`, open through the search 
 | 0x804F6978 | `KVList`, a `Game:List` of `{char *key, void *value}` nodes (vptr `+0x20`, object 0x24). Slots: `+0x10`-`+0x20` the List's, stubbed to return -1; `+0x28` set(key, value); `+0x30` remove(key) | `fn_801B50BC(this, n, grow)` |
 | 0x804F6908 | `KSList` : `KVList`, string values. Adds `+0x38` set(key, string), then setters that format and call it: `+0x40` float, `+0x48` unsigned, `+0x50` int, `+0x58` vector (`"%f %f %f"`), `+0x60` bool (`"1"`/`"0"`). Its destructor is the tail inline `_._5Sub24` (0x80467428) | `fn_801B54E8(this, n, grow)` |
 | 0x804F69B8 | `Game:List`, 0x24 bytes: items `+0x0`, growth factor `+0x4`, capacity `+0x8`, count `+0xC`, flags `+0x10` (bit 0 sorted), item callback `+0x14` (`(op, item)`, op 0 added, 1 removed), match `+0x18` (`(item, key)`), compare `+0x1C`, vptr `+0x20`. Slots: `+0x10` add(item), `+0x18` insert(i, item), `+0x20` remove(item) | `fn_801B5BA8(this, capacity, grow)` |
-| 0x804F2DE0-0x804F2E40 | Five list-wrapper classes: the vtable at `+0x4`, a `new`ed object at `+0x0`. Each has a 0x70 constructor, a 0x98 add that appends to a `Game:List` through `fn_801B6040`, and a 0x140 clear at 0x804288AC-0x80428DAC. Called from the HUD, versus and the frontend | 0x80428314, then every 0x108 bytes to 0x80428734; `fn_8042883C` reuses 0x804F2E28 |
+| 0x804F2DE0-0x804F2E40 | Five callback handles `{Impl *impl; vptr}`, one virtual slot each (the destructor). Placeholder names, shared with the other units that build them: 0x804F2DE0 `HandleD`, 0x804F2DF8 `HandleG`, 0x804F2E10 `Cue`, 0x804F2E28 `HandleA`, 0x804F2E40 `HandleC`; destructors `_._7HandleD` etc. The 0x18-byte impl is built from (owner, a pointer to member `{0, 0xFFFF, fn}`). Still open in the tail (row 19), per handle: copy constructor, `get` (the list key), destructor, at 0x80429470-0x80429BB8 | 0x80428314, then every 0x108 bytes to 0x80428734; `fn_8042883C` is a second `HandleA` constructor |
 
 
 ### 4.5 Memory-card slots (`lbl_80589260`)
@@ -142,7 +142,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 6 | VFS | 0x801B104C-0x801B2620 | Done |
 | 7 | `stdBitmap` | 0x801B2620-0x801B26DC | Done |
 | 8 | `KVList` and `KSList` | 0x801B4F40-0x801B5BA8 | Done |
-| 9 | `Game:List` and the list wrappers | 0x801B5BA8-0x801B6AF0 (done), then the tail's 0x80428314-0x80428F74 | Match the tail's wrappers |
+| 9 | `Game:List` and the list wrappers | 0x801B5BA8-0x801B6AF0, then the tail's 0x80428314-0x80428F74 | Done |
 | 10 | String utilities and `stdVar` | 0x801B738C-0x801B8E78 | Identify the edge between them, then match |
 | 11 | Geometry | 0x801B8E78-0x801BC9DC | Match |
 | 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Match |
