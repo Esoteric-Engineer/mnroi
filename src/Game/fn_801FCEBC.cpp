@@ -252,8 +252,8 @@ struct SObjList {
 };
 
 extern "C" {
-int fn_800797D4(cScript *self);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+int Script_GetOwner(cScript *self);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
 int fn_80171F8C(void);
 void fn_8046B6C8(void *ev, int x);
 void fn_8046B680(void *ev, int x);
@@ -406,8 +406,8 @@ int fn_80208E44(cTriggerOnAction *self);
 int fn_80208E8C(cTriggerOnAction *self);
 float fn_80208ED4(cTriggerOnAction *self);
 int fn_80208F1C(cTriggerOnAction *self);
-int fn_8007CF00(cScript *script, int handle, int value);
-int fn_8007D070(cScript *script, int handle);
+int Script_LinkEntity(cScript *script, int handle, int value);
+int Script_UnlinkEntity(cScript *script, int handle);
 int fn_80201558(cTriggerOnAction *self, int h);
 void fn_8020105C(cTriggerOnAction *self, int h);
 void fn_802012CC(cTriggerOnAction *self);
@@ -601,10 +601,10 @@ unsigned int fn_8020C160(cMP_MatchTrigger *self);
 int fn_8020C1A8(cMP_MatchTrigger *self);
 float fn_8020C244(cCameraSet *self);
 void fn_8007C830(float f);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-int fn_80079068(cScript *self, unsigned int i);
-float fn_8007935C(cScript *self, unsigned int i);
-char *fn_800794FC(cScript *self, unsigned int i);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+int Script_GetParamInt(cScript *self, unsigned int i);
+float Script_GetParamFloat(cScript *self, unsigned int i);
+char *Script_GetParamString(cScript *self, unsigned int i);
 int fn_80048DD0(SBody *body, Vector *pos, int a, int b, int c, float f, Placement *out);
 void fn_80080928(void *ev, int a);
 void fn_80082F30(void *ev);
@@ -629,9 +629,9 @@ void fn_80065CB0(SObj *o, Vector *v);
 void fn_8042F76C(Vector *v);
 void fn_80435530(Vector *v, float f);
 void fn_800A2B3C(int actor, int a, int b, int c, int d);
-int fn_8007D7C4(cScript *self, unsigned char kind);
+int Script_CancelMessages(cScript *self, unsigned char kind);
 void fn_8046B710(Ref8 *self, int value);
-void fn_80082AFC(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
 void fn_801FD8D8(cObjectSetCollision *self);
 
 cScript *fn_801FCEBC(register cObjectExplosion *self)
@@ -642,20 +642,20 @@ cScript *fn_801FCEBC(register cObjectExplosion *self)
 void fn_801FCF10(register cObjectExplosion *self) // slot 4
 {
     if (!fn_80207C44(self))
-        fn_8007D404(self, fn_80207BB4(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_80207BFC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_80207BB4(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_80207BFC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801FCFE8(register cObjectExplosion *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
 {
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     switch (kind) {
     case 10:
         if (fn_80207C8C(self))
             fn_80082190(ev, fn_80207C8C(self));
         else
             fn_80082190(ev, "exp_large");
-        fn_8007D404(self, fn_80207BB4(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_80207BFC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_80207BB4(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_80207BFC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
 }
@@ -663,7 +663,7 @@ void fn_801FCFE8(register cObjectExplosion *self, unsigned char kind, float a, f
 void fn_801FD14C(register cObjectExplosion *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     if (fn_80207C8C(self))
         fn_80082190(ev, fn_80207C8C(self));
     else
@@ -674,7 +674,7 @@ void fn_801FD208(register cObjectExplosion *self) // slot 7
 {
     char ev[8];
 
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     fn_80082190(ev, "exp_large");
 }
 
@@ -698,7 +698,7 @@ void fn_801FD2FC(register cObjectSetCollision *self) // slot 5
     char ev[8];
     int flags;
 
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     flags = fn_80081F28(ev);
     if (flags & 2)
         self->unk30 = 1;
@@ -706,13 +706,13 @@ void fn_801FD2FC(register cObjectSetCollision *self) // slot 5
         fn_801FD8D8(self);
     if (!fn_80207D1C(self))
         fn_801FD8D8(self);
-    fn_8007D404(self, fn_80207D64(self), 5, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, fn_80207D64(self), 5, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801FD3E8(register cObjectSetCollision *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     switch (kind) {
     case 2:
         self->count++;
@@ -733,7 +733,7 @@ void fn_801FD3E8(register cObjectSetCollision *self, int a, int b, int kind, flo
             fn_801FD788(self);
         else if (fn_80081E6C(ev) && (!strnicmp(fn_80081E6C(ev)->name, "prp_rl_energywall_stand", 0x17) || !strnicmp(fn_80081E6C(ev)->name, "prp_rl_forcefield", 0x11))) {
             fn_80066794(fn_80081E6C(ev), 1);
-            fn_8007D404(self, 0.1f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.1f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         } else
             fn_801FD8D8(self);
         break;
@@ -756,9 +756,9 @@ void fn_801FD63C(register cObjectSetCollision *self, unsigned char kind, float a
     case 5:
         if (!fn_80207CD4(self)) {
             if (fn_80207D1C(self))
-                fn_8007D404(self, fn_80207DAC(self), 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, fn_80207DAC(self), 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             else
-                fn_8007D404(self, fn_80207DF4(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, fn_80207DF4(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     case 20:
@@ -774,7 +774,7 @@ void fn_801FD788(register cObjectSetCollision *self)
 {
     char ev[8];
 
-    fn_8046B680(ev, fn_800797D4(self));
+    fn_8046B680(ev, Script_GetOwner(self));
     if (!fn_8009AD80(fn_80080300(ev)))
         return;
     fn_800820A0(ev, 1);
@@ -786,14 +786,14 @@ void fn_801FD788(register cObjectSetCollision *self)
     if (fn_80207DAC(self) == 0.0f)
         return;
     if (!fn_80207CD4(self))
-        fn_8007D404(self, fn_80207DAC(self), 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_80207DAC(self), 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801FD8D8(register cObjectSetCollision *self)
 {
     char ev[8];
 
-    fn_8046B680(ev, fn_800797D4(self));
+    fn_8046B680(ev, Script_GetOwner(self));
     if (!fn_8009AD80(fn_80080300(ev)))
         return;
     fn_800820A0(ev, 0);
@@ -806,7 +806,7 @@ void fn_801FD8D8(register cObjectSetCollision *self)
     if (fn_80207DF4(self) == 0.0f)
         return;
     if (!fn_80207CD4(self))
-        fn_8007D404(self, fn_80207DF4(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_80207DF4(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 inline int sn_return_decl3(int a) { return a; }
@@ -823,7 +823,7 @@ void fn_801FDA84(register cTriggerRelay *self) // slot 3
 
 #define RELAY_QUEUE(on, delay, i) \
     if (on(self))                 \
-        fn_8007D404(self, delay(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, i);
+        Script_QueueMessage(self, delay(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, i);
 
 void fn_801FDABC(register cTriggerRelay *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
@@ -840,13 +840,13 @@ void fn_801FDABC(register cTriggerRelay *self, int a, int b, int kind, float x, 
     RELAY_QUEUE(fn_802097D4, fn_8020981C, 11)
     RELAY_QUEUE(fn_802098AC, fn_802098F4, 12)
     if (stricmp("", fn_802099CC(self)))
-        fn_8007D404(self, fn_80209A14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 13);
+        Script_QueueMessage(self, fn_80209A14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 13);
 }
 
 #define RELAY_SEND(i, out, vec)                                                                       \
     case i:                                                                                           \
         fn_8046B710((Ref8 *)ev, out(self));                                                           \
-        fn_80082AFC(ev, out(self), fn_800797D4(self), fn_80209984(self), fn_8008379C(vec(self), 0),   \
+        Script_TriggerEntity(ev, out(self), Script_GetOwner(self), fn_80209984(self), fn_8008379C(vec(self), 0),   \
                     fn_8008379C(vec(self), 1), fn_8008379C(vec(self), 2), fn_8008379C(vec(self), 3)); \
         break;
 
@@ -869,7 +869,7 @@ void fn_801FDF64(register cTriggerRelay *self, unsigned char kind, float a, floa
     RELAY_SEND(12, fn_802098AC, fn_8020993C)
     case 13:
         fn_8046B710((Ref8 *)ev, fn_80083734(fn_802099CC(self)));
-        fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), fn_80209984(self), 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(ev, fn_804425F8(ev), Script_GetOwner(self), fn_80209984(self), 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     }
 }
@@ -896,7 +896,7 @@ void fn_801FEBDC(register cObjectMove *self) // slot 4
         if (!fn_802081C4(self))
             fn_801FF210(self, 0);
     } else
-        fn_8007D404(self, fn_80207EDC(self) + 1.0f, 0, (float)self->node, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_80207EDC(self) + 1.0f, 0, (float)self->node, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801FECC0(register cObjectMove *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
@@ -920,7 +920,7 @@ void fn_801FED90(register cObjectMove *self, int h, int node, int value) // slot
     if (node == fn_802081C4(self))
         fn_801FF210(self, 0);
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     if (h == fn_804425F8(ev)) {
         if (node == fn_80081E6C(ev)->unk144 - 1)
             self->node = 0;
@@ -933,7 +933,7 @@ void fn_801FED90(register cObjectMove *self, int h, int node, int value) // slot
             self->busy = 0;
             return;
         }
-        fn_8007D404(self, fn_80207F6C(self), 0, (float)self->node, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_80207F6C(self), 0, (float)self->node, 0.0f, 0.0f, 0.0f, 0);
     }
 }
 
@@ -950,7 +950,7 @@ void fn_801FEF80(register cObjectMove *self, int h, int other, int value) // slo
 #define MOVE_SEND(get)                                                         \
     if (get(self)) {                                                           \
         fn_8046B710((Ref8 *)ev, get(self));                                    \
-        fn_80082AFC(ev, h, fn_800797D4(self), kind, x, 0.0f, 0.0f, 0.0f);      \
+        Script_TriggerEntity(ev, h, Script_GetOwner(self), kind, x, 0.0f, 0.0f, 0.0f);      \
     }
 
 void fn_801FEFF4(register cObjectMove *self, int h, int kind, float x, float y, float z, float w)
@@ -966,7 +966,7 @@ void fn_801FEFF4(register cObjectMove *self, int h, int kind, float x, float y, 
 void fn_801FF210(register cObjectMove *self, int on)
 {
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     if (on)
         fn_800A90F4(fn_800B1CC8(fn_80081E6C(ev)));
     else
@@ -977,7 +977,7 @@ void fn_801FF210(register cObjectMove *self, int on)
 void fn_801FF2D4(register cObjectMove *self, int node)
 {
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     if (!self->node && !fn_80207FB4(self))
         self->stop = 1;
     if (self->unk28)
@@ -1001,26 +1001,26 @@ void fn_801FF400(register cObjectRumbleShake *self) // slot 4
     self->rumble = fn_8020820C(self);
     self->shake = fn_80208384(self);
     if (self->rumble || self->shake)
-        fn_8007D404(self, fn_801FFA14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_801FFA14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801FF4BC(register cObjectRumbleShake *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
 {
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     SObj *obj = fn_80081E6C(ev);
     char player[8];
     fn_8046B638(player, fn_80080B34());
     Vector delta;
     fn_80429038(&delta, fn_800B1724(obj), fn_800B1724R(*fn_8007C034S(player)));
     if (fn_80434040(&delta) > fn_802084FC(self))
-        fn_8007D404(self, fn_801FFA14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_801FFA14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     else {
         if (self->rumble)
             fn_801FF7E4(self);
         if (self->shake)
             fn_801FF970(self);
-        fn_8007D404(self, fn_801FFA14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_801FFA14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
 }
 
@@ -1052,7 +1052,7 @@ void fn_801FF670(register cObjectRumbleShake *self, int a, int b, int kind, floa
     case 4:
         self->rumble = 1;
         self->shake = 1;
-        fn_8007D404(self, fn_801FFA14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_801FFA14(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
 }
@@ -1093,7 +1093,7 @@ void fn_801FFB30(register cTimerTrigger *self) // slot 4
 {
     if (!fn_8020885C(self)) {
         self->running = 1;
-        fn_8007D404(self, fn_80208544(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_80208544(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
 }
 
@@ -1103,11 +1103,11 @@ void fn_801FFBBC(register cTimerTrigger *self, unsigned char kind, float a, floa
     case 10:
         fn_801FFDA0(self);
         if (fn_8020858C(self) != 0.0f)
-            fn_8007D404(self, fn_8020858C(self), 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_8020858C(self), 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 20:
         fn_801FFDA0(self);
-        fn_8007D404(self, fn_80208544(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_80208544(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
 }
@@ -1116,7 +1116,7 @@ void fn_801FFCE0(register cTimerTrigger *self, int a, int b, int kind, float x, 
 {
     if (!self->running) {
         self->running = 1;
-        fn_8007D404(self, fn_80208544(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_80208544(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     } else {
         self->running = 0;
         fn_8007D8B0(self);
@@ -1126,7 +1126,7 @@ void fn_801FFCE0(register cTimerTrigger *self, int a, int b, int kind, float x, 
 #define TIMER_SEND(get)                                                                       \
     if (get(self)) {                                                                          \
         fn_8046B710((Ref8 *)ev, get(self));                                                   \
-        fn_80082AFC(ev, get(self), fn_800797D4(self), fn_802085D4(self), 0.0f, 0.0f, 0.0f, 0.0f); \
+        Script_TriggerEntity(ev, get(self), Script_GetOwner(self), fn_802085D4(self), 0.0f, 0.0f, 0.0f, 0.0f); \
     }
 
 void fn_801FFDA0(register cTimerTrigger *self)
@@ -1180,39 +1180,39 @@ void fn_80200254(register cTriggerOnAction *self) // slot 3
 void fn_80200314(register cTriggerOnAction *self) // slot 4
 {
     if (fn_80208ED4(self) > 0.0)
-        fn_8007D404(self, 0.5f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    if (!fn_8007CF00(self, fn_80208AE4(self), 0))
+        Script_QueueMessage(self, 0.5f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    if (!Script_LinkEntity(self, fn_80208AE4(self), 0))
         self->hit[0] = 1;
-    if (!fn_8007CF00(self, fn_80208B2C(self), 0))
+    if (!Script_LinkEntity(self, fn_80208B2C(self), 0))
         self->hit[1] = 1;
-    if (!fn_8007CF00(self, fn_80208B74(self), 0))
+    if (!Script_LinkEntity(self, fn_80208B74(self), 0))
         self->hit[2] = 1;
-    if (!fn_8007CF00(self, fn_80208BBC(self), 0))
+    if (!Script_LinkEntity(self, fn_80208BBC(self), 0))
         self->hit[3] = 1;
     if (fn_80201558(self, fn_80208AE4(self))) {
         self->handles[0] = fn_80208AE4(self);
         self->linked[0] = 1;
-        fn_8007D070(self, fn_80208AE4(self));
+        Script_UnlinkEntity(self, fn_80208AE4(self));
     }
     if (fn_80201558(self, fn_80208B2C(self))) {
         self->handles[1] = fn_80208B2C(self);
         self->linked[1] = 1;
-        fn_8007D070(self, fn_80208B2C(self));
+        Script_UnlinkEntity(self, fn_80208B2C(self));
     }
     if (fn_80201558(self, fn_80208B74(self))) {
         self->handles[2] = fn_80208B74(self);
         self->linked[2] = 1;
-        fn_8007D070(self, fn_80208B74(self));
+        Script_UnlinkEntity(self, fn_80208B74(self));
     }
     if (fn_80201558(self, fn_80208BBC(self))) {
         self->handles[3] = fn_80208BBC(self);
         self->linked[3] = 1;
-        fn_8007D070(self, fn_80208BBC(self));
+        Script_UnlinkEntity(self, fn_80208BBC(self));
     }
     if (fn_80208E8C(self)) {
         char ev[8];
-        fn_8046B6C8(ev, fn_800797D4(self));
-        fn_80082AFC(ev, fn_800797D4(self), fn_800797D4(self), fn_80208E44(self), fn_80208C4C(self), 0.0f, 0.0f, 0.0f);
+        fn_8046B6C8(ev, Script_GetOwner(self));
+        Script_TriggerEntity(ev, Script_GetOwner(self), Script_GetOwner(self), fn_80208E44(self), fn_80208C4C(self), 0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -1228,7 +1228,7 @@ void fn_80200638(register cTriggerOnAction *self, unsigned char kind, float a, f
         if (fn_800809CC(player) && fn_80086730(fn_800B14A0R(*fn_800809CCS(player))) < fn_80208ED4(self))
             fn_8020105C(self, 0);
         else
-            fn_8007D404(self, 0.5f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.5f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
     case 30: {
@@ -1261,7 +1261,7 @@ float fn_80200860(register cTriggerOnAction *self, int h, int other, int a, int 
     if (!self->fired && fn_80208934(self) == 2 && fn_800A4054(fn_800B1540(fn_80081E6C(ev))) < 10.0f) {
         self->fired = 1;
         fn_8020105C(self, h);
-        fn_8007D404(self, 2.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, h);
+        Script_QueueMessage(self, 2.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, h);
         return 0.0f;
     }
     if (!fn_8020897C(self))
@@ -1296,7 +1296,7 @@ void fn_80200B0C(register cTriggerOnAction *self, int a, int b, int kind, float 
 {
     switch (kind) {
     case 7:
-        if (a == fn_800797D4(self))
+        if (a == Script_GetOwner(self))
             self->armed = 0;
         break;
     case 0:
@@ -1319,19 +1319,19 @@ void fn_80200BFC(register cTriggerOnAction *self, int a, int b, int c, float x, 
         return;
     if (self->handles[0] == (unsigned int)y) {
         self->alt[0] = (unsigned int)x;
-        fn_8007CF00(self, self->alt[0], 0);
+        Script_LinkEntity(self, self->alt[0], 0);
     }
     else if (self->handles[1] == (unsigned int)y) {
         self->alt[1] = (unsigned int)x;
-        fn_8007CF00(self, self->alt[1], 0);
+        Script_LinkEntity(self, self->alt[1], 0);
     }
     else if (self->handles[2] == (unsigned int)y) {
         self->alt[2] = (unsigned int)x;
-        fn_8007CF00(self, self->alt[2], 0);
+        Script_LinkEntity(self, self->alt[2], 0);
     }
     else if (self->handles[3] == (unsigned int)y) {
         self->alt[3] = (unsigned int)x;
-        fn_8007CF00(self, self->alt[3], 0);
+        Script_LinkEntity(self, self->alt[3], 0);
     }
 }
 
@@ -1357,14 +1357,14 @@ void fn_8020105C(register cTriggerOnAction *self, int h)
             self->hit[3] = 1;
         if (self->hit[0] && self->hit[1] && self->hit[2] && self->hit[3]) {
             if (fn_802088EC(self) != 0.0f)
-                fn_8007D404(self, fn_802088EC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, fn_802088EC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             else
                 fn_802012CC(self);
             self->done = 1;
         }
     } else {
         if (fn_802088EC(self) != 0.0f)
-            fn_8007D404(self, fn_802088EC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_802088EC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         else
             fn_802012CC(self);
     }
@@ -1372,7 +1372,7 @@ void fn_8020105C(register cTriggerOnAction *self, int h)
 
 #define ACTION_SEND(ev, get, value)                                                                         \
     if (get(self))                                                                                          \
-        fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), fn_80208E44(self), value(self), 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(ev, fn_804425F8(ev), Script_GetOwner(self), fn_80208E44(self), value(self), 0.0f, 0.0f, 0.0f);
 
 void fn_802012CC(register cTriggerOnAction *self)
 {
@@ -1414,21 +1414,21 @@ void fn_80201660(register cSetAnimFrame *self) // slot 4
 {
     char ev[8];
 
-    fn_8046B5A8(ev, fn_800797D4(self));
+    fn_8046B5A8(ev, Script_GetOwner(self));
     self->health = fn_8007C0AC(ev);
 }
 
 void fn_802016B8(register cSetAnimFrame *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     char ev[8];
-    fn_8046B5A8(ev, fn_800797D4(self));
+    fn_8046B5A8(ev, Script_GetOwner(self));
     fn_8008059C(ev, x);
 }
 
 float fn_80201734(register cSetAnimFrame *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
 {
     char ev[8];
-    fn_8046B5A8(ev, fn_800797D4(self));
+    fn_8046B5A8(ev, Script_GetOwner(self));
     if (fn_8007C0AC(ev) < fn_80209C54(self))
         fn_8008059C(ev, fn_80209C0C(self));
     else if (fn_8007C0AC(ev) < fn_80209BC4(self))
@@ -1473,7 +1473,7 @@ void fn_80201948(register cDebrisFall *self, int a, int b, int kind, float x, fl
         int i;
         n = 2.0f * (fn_80171F8C() * 4.656612873077392578125e-10f) + 3.0f;
         for (i = 0; i < n; i++)
-            fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f + 0.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f + 0.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     } else {
         switch (kind) {
         DEBRIS_COUNT(17, count17, fn_80209CE4)
@@ -1481,10 +1481,10 @@ void fn_80201948(register cDebrisFall *self, int a, int b, int kind, float x, fl
         DEBRIS_COUNT(19, count19, fn_80209E04)
         case 0:
             if (fn_80209EA4(self)) {
-                fn_8007D404(self, 0.0f, 5, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-                fn_8007D404(self, 1.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, 0.0f, 5, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, 1.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             } else
-                fn_8007D404(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             break;
         }
     }
@@ -1499,7 +1499,7 @@ void fn_80201948(register cDebrisFall *self, int a, int b, int kind, float x, fl
 void fn_80201CB0(register cDebrisFall *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
 {
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     float r = fn_80171F8C() * 4.656612873077392578125e-10f;
     switch (kind) {
     case 5:
@@ -1570,10 +1570,10 @@ void fn_80202238(register cVehicleBreak *self) // slot 31
 
     if (fn_8020A05C(self))
         return;
-    fn_8046B5F0(ev, fn_800797D4(self));
+    fn_8046B5F0(ev, Script_GetOwner(self));
     if (fn_80081074(ev) && fn_802031DC(self, 1)) {
         char e2[8];
-        fn_8046B6C8(e2, fn_800797D4(self));
+        fn_8046B6C8(e2, Script_GetOwner(self));
         if (fn_8046C8FC(e2))
             fn_80082FA4(e2);
     }
@@ -1594,7 +1594,7 @@ void fn_8020230C(register cVehicleBreak *self, int a, int b, int kind, float x, 
         break;
     case 16: {
         char ev[8];
-        fn_8046B5F0(ev, fn_800797D4(self));
+        fn_8046B5F0(ev, Script_GetOwner(self));
         fn_800810DC(ev, 10.0f, 0, 0, 0, 0);
         break;
     }
@@ -1611,7 +1611,7 @@ float fn_80202418(register cVehicleBreak *self, int h, int other, int a, int b, 
     if (self->unk34)
         return 0.0f;
     fn_8007D8B0(self);
-    fn_8007D404(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return dmg;
 }
 
@@ -1627,19 +1627,19 @@ void fn_8020251C(register cVehicleBreak *self, int h, int a, int b, int c, int d
         if (self->unk3C)
             return;
         self->unk3C = 1;
-        fn_8007D404(self, 1.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 1.75f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 3.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 4.25f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.75f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 3.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 4.25f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         fn_80082E90(&self->actor, "windscreenSmash", 0x19, 0);
-        fn_8007D404(self, 3.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 3.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         self->armed = 1;
         char ev[8];
         fn_8046B5F0(ev, fn_804425F8(&self->actor));
         fn_800A46A0(fn_80080EFC(ev), 1);
         self->sound = fn_80114950(fn_804425F8(&self->actor), 0x38);
-        fn_8007D404(self, 0.0f, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 0.5f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.0f, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.5f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         SObj *o = fn_80081E6C(&self->actor);
         if (o) {
             if (!stricmp("brk_db_watertower", o->name))
@@ -1668,8 +1668,8 @@ void fn_8020285C(register cVehicleBreak *self, unsigned char kind, float a, floa
         fn_80082440(&self->actor, &pos);
         fn_800838E0(&pos);
         fn_80202DDC(self);
-        fn_8007D404(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D7C4(self, 70);
+        Script_QueueMessage(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_CancelMessages(self, 70);
         break;
     case 20:
         BREAK_EFFECT()
@@ -1680,7 +1680,7 @@ void fn_8020285C(register cVehicleBreak *self, unsigned char kind, float a, floa
         else {
             self->broken = 1;
             char ev[8];
-            fn_8046B5F0(ev, fn_800797D4(self));
+            fn_8046B5F0(ev, Script_GetOwner(self));
             fn_800810DC(ev, 50000.0f, 0, 0, 0, 0);
         }
         break;
@@ -1703,7 +1703,7 @@ void fn_8020285C(register cVehicleBreak *self, unsigned char kind, float a, floa
         if (self->volume <= 1000) {
             self->volume += 28;
             fn_80114D70(self->sound, self->volume);
-            fn_8007D404(self, 0.1f, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.1f, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         } else
             fn_80114D70(self->sound, 1000);
         break;
@@ -1714,7 +1714,7 @@ int fn_80202C4C(register cVehicleBreak *self, int h, int value) // slot 47
 {
     fn_8007D8B0(self);
     if (fn_8020A0B4(self) > 0.0f)
-        fn_8007D404(self, fn_8020A0B4(self), 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_8020A0B4(self), 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     self->armed = 0;
     self->unk34 = 1;
     self->unk3C = 0;
@@ -1771,7 +1771,7 @@ void fn_8020311C(register cVehicleBreak *self)
     if (fn_8020A05C(self))
         fn_80082FA4(&self->actor);
     char ev[8];
-    fn_8046B5F0(ev, fn_800797D4(self));
+    fn_8046B5F0(ev, Script_GetOwner(self));
     int actor = fn_80080EFC(ev);
     if (!actor)
         return;
@@ -1783,7 +1783,7 @@ void fn_8020311C(register cVehicleBreak *self)
 int fn_802031DC(register cVehicleBreak *self, int force)
 {
     char ev[8];
-    fn_8046B680(ev, fn_800797D4(self));
+    fn_8046B680(ev, Script_GetOwner(self));
     SObj *o = fn_80080300P(ev);
     if (!o)
         return 0;
@@ -1793,7 +1793,7 @@ int fn_802031DC(register cVehicleBreak *self, int force)
         if (!fn_80048DD0(fn_800B24AC(o), fn_800B1724(o), 4, 0, o->v21(), -0.1f, &at))
             return 1;
     }
-    fn_8007D404(self, 2.0f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return 0;
 }
 
@@ -1802,7 +1802,7 @@ void fn_80203398(register cVehicleBarrier *self) // slot 4
     self->hit = 0;
     if (fn_8020A1E0(self) == 1) {
         char ev[8];
-        fn_8046B6C8(ev, fn_800797D4(self));
+        fn_8046B6C8(ev, Script_GetOwner(self));
         fn_80082F30(ev);
     }
 }
@@ -1811,7 +1811,7 @@ void fn_8020340C(register cVehicleBarrier *self, int a, int b, int kind, float x
 {
     if (fn_8020A1E0(self) == 1) {
         char ev[8];
-        fn_8046B6C8(ev, fn_800797D4(self));
+        fn_8046B6C8(ev, Script_GetOwner(self));
         fn_80082FA4(ev);
     }
 }
@@ -1819,7 +1819,7 @@ void fn_8020340C(register cVehicleBarrier *self, int a, int b, int kind, float x
 #define SEND_ALL(ev, get, kind)                                                        \
     if (get(self)) {                                                                   \
         fn_8046B710((Ref8 *)ev, get(self));                                            \
-        fn_80082AFC(ev, get(self), fn_800797D4(self), kind, 0.0f, 0.0f, 0.0f, 0.0f);   \
+        Script_TriggerEntity(ev, get(self), Script_GetOwner(self), kind, 0.0f, 0.0f, 0.0f, 0.0f);   \
     }
 
 void fn_802034A0(register cVehicleBarrier *self, int h, int other, int a, int b, float dmg, int value) // slot 22
@@ -1853,7 +1853,7 @@ void fn_802037B0(register cVehicleBarrier *self)
 {
     char ev[8];
 
-    fn_8046B680(ev, fn_800797D4(self));
+    fn_8046B680(ev, Script_GetOwner(self));
     Vector pos;
     fn_80082440(ev, &pos);
     fn_800838E0(&pos);
@@ -1869,7 +1869,7 @@ void fn_80203860(register cGenBreakProp *self) // slot 4
 {
     char ev[8];
 
-    fn_8046B5F0(ev, fn_800797D4(self));
+    fn_8046B5F0(ev, Script_GetOwner(self));
     if (fn_8020A68C(self) > 0.0f)
         fn_800810DC(ev, fn_8020A68C(self), 0, 0, 0, 1);
     else if (fn_8020A68C(self) < 0.0f && !fn_8020A71C(self))
@@ -1883,7 +1883,7 @@ void fn_80203860(register cGenBreakProp *self) // slot 4
 void fn_8020397C(register cGenBreakProp *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     char ev[8];
-    fn_8046B5F0(ev, fn_800797D4(self));
+    fn_8046B5F0(ev, Script_GetOwner(self));
     switch (kind) {
     case 0:
         if (fn_8020A39C(self))
@@ -1910,7 +1910,7 @@ void fn_8020397C(register cGenBreakProp *self, int a, int b, int kind, float x, 
 void fn_80203AF4(register cGenBreakProp *self, int h, int other, int a, int b, float dmg, int value) // slot 22
 {
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     char out[8];
     fn_8046B530(out);
     if (fn_8020A3F4(self)) {
@@ -1950,7 +1950,7 @@ void fn_80204080(register cGenBreakProp *self, int h, int other, int value) // s
 {
     if (!fn_8020A71C(self))
         return;
-    ((cScriptV *)self)->s23(fn_800797D4(self), fn_800797D4(self), 16, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    ((cScriptV *)self)->s23(Script_GetOwner(self), Script_GetOwner(self), 16, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_80204150(register cDamagePropOnTrigger *self) // slot 3
@@ -1969,13 +1969,13 @@ void fn_802041B8(register cDamagePropOnTrigger *self) // slot 5
 {
     self->count = fn_8020486C(self);
     if (self->count > 0)
-        fn_8007D404(self, fn_8020A810(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_8020A858(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_8020A810(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_8020A858(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_802042A0(register cDamagePropOnTrigger *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     char ev[8];
-    fn_8046B5F0(ev, fn_800797D4(self));
+    fn_8046B5F0(ev, Script_GetOwner(self));
     fn_800810DC(ev, fn_8020A7C8(self), 0, 0, 0, 0);
 }
 
@@ -1991,11 +1991,11 @@ void fn_80204340(register cDamagePropOnTrigger *self, unsigned char kind, float 
             if (fn_8020AAE0(self))
                 fn_8007D8B0(self);
             else
-                fn_8007D404(self, fn_8020A810(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_8020A858(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, fn_8020A810(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_8020A858(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         } else if (self->done[0] && self->done[1] && self->done[2] && self->done[3] && self->done[4] && self->done[5] && self->done[6] && self->done[7])
             fn_8007D8B0(self);
         else
-            fn_8007D404(self, 5.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 5.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
 }
@@ -2076,7 +2076,7 @@ void fn_80204A88(register cPortalControl *self, int a, int b, int kind, float x,
     if (get(self)) {                                            \
         fn_8046B710((Ref8 *)ev, get(self));                     \
         if (fn_8020AE24(self))                                  \
-            fn_80083B74(fn_800797D4(self), get(self), on);      \
+            fn_80083B74(Script_GetOwner(self), get(self), on);      \
         else                                                    \
             PORTAL_SET(ev)                                      \
     }
@@ -2089,7 +2089,7 @@ void fn_80204B1C(register cPortalControl *self, int on)
         self->on = 1;
     else
         self->on = 0;
-    fn_8046B710((Ref8 *)ev, fn_800797D4(self));
+    fn_8046B710((Ref8 *)ev, Script_GetOwner(self));
     if (!fn_8020AE24(self))
         PORTAL_SET(ev)
     PORTAL(fn_8020ABE4)
@@ -2112,11 +2112,11 @@ void fn_80205284(register cPropRespawn *self) // slot 5
 {
     self->ready = 1;
     if (fn_8020AFB8(self) && (fn_8020B010(self) == 1 || fn_8020B010(self) == 1))
-        fn_8007D404(self, fn_8020AED0(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_8020AED0(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     char ev[8];
-    fn_8046B6C8(ev, fn_800797D4(self));
+    fn_8046B6C8(ev, Script_GetOwner(self));
     if (fn_80081E6C(ev) && !strnicmp(fn_80081E6C(ev)->name, "prp_rl_mine", 0xb))
-        fn_8007D404(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_802053D8(register cPropRespawn *self) // slot 31
@@ -2125,10 +2125,10 @@ void fn_802053D8(register cPropRespawn *self) // slot 31
 
     if (!self->enabled || fn_8020AFB8(self))
         return;
-    fn_8046B5F0(ev, fn_800797D4(self));
+    fn_8046B5F0(ev, Script_GetOwner(self));
     if (fn_80081074(ev) && fn_80205B98(self, 1)) {
         char e2[8];
-        fn_8046B6C8(e2, fn_800797D4(self));
+        fn_8046B6C8(e2, Script_GetOwner(self));
         if (fn_8046C8FC(e2))
             fn_80082FA4(e2);
     }
@@ -2139,7 +2139,7 @@ int fn_802054BC(register cPropRespawn *self, int h, int value) // slot 47
     if (!self->enabled || !self->ready)
         return 1;
     if (fn_8020AED0(self) > 0.0f)
-        fn_8007D404(self, fn_8020AED0(self) >= 5.0f ? (fn_8020AED0(self) <= 30.0f ? fn_8020AED0(self) : 30.0f) : 5.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_8020AED0(self) >= 5.0f ? (fn_8020AED0(self) <= 30.0f ? fn_8020AED0(self) : 30.0f) : 5.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return 1;
 }
 
@@ -2151,7 +2151,7 @@ void fn_802055DC(register cPropRespawn *self, unsigned char kind, float a, float
     case 10:
         if (fn_80205B98(self, 0)) {
             char ev[8];
-            fn_8046B6C8(ev, fn_800797D4(self));
+            fn_8046B6C8(ev, Script_GetOwner(self));
             fn_80082FA4(ev);
             if (stricmp("", fn_8020AF18(self)))
                 fn_80082E90(ev, fn_8020AF18(self), 0xff, 0xff);
@@ -2159,24 +2159,24 @@ void fn_802055DC(register cPropRespawn *self, unsigned char kind, float a, float
         break;
     case 20: {
         char ev[8];
-        fn_8046B5F0(ev, fn_800797D4(self));
+        fn_8046B5F0(ev, Script_GetOwner(self));
         if (!fn_80080EFC(ev))
             return;
         if (fn_800B1138R(*fn_80080EFCS(ev))) {
-            fn_8007D404(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             return;
         }
         float health = fn_800A4054((void *)fn_80080EFC(ev)) / fn_800A4080(fn_80080EFC(ev));
         if (health <= 0.0f)
             return;
         if (health == 1.0f) {
-            fn_8007D404(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             return;
         }
         char light[8];
-        fn_8046B680(light, fn_800797D4(self));
+        fn_8046B680(light, Script_GetOwner(self));
         fn_800806E0(light, "MineCoreLight", 0, 1.0f / health, 0.0f, 0.0f, -1);
-        fn_8007D404(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
     }
@@ -2186,10 +2186,10 @@ void fn_802058D0(register cPropRespawn *self, int a, int b, int kind, float x, f
 {
     switch (kind) {
     case 0:
-        fn_8007D404(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 18:
-        fn_8007D404(self, 2.0f * (fn_80171F8C() * 4.656612873077392578125e-10f), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.0f * (fn_80171F8C() * 4.656612873077392578125e-10f), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 7:
         fn_8007D8B0(self);
@@ -2197,7 +2197,7 @@ void fn_802058D0(register cPropRespawn *self, int a, int b, int kind, float x, f
         break;
     case 17: {
         char ev[8];
-        fn_8046B5F0(ev, fn_800797D4(self));
+        fn_8046B5F0(ev, Script_GetOwner(self));
         if (!fn_80080EFC(ev))
             return;
         fn_800A2B3C(fn_80080EFC(ev), 1, 0, 0, 0);
@@ -2225,7 +2225,7 @@ int fn_80205B98(register cPropRespawn *self, int force)
 {
     int found = 0;
     char ev[8];
-    fn_8046B680(ev, fn_800797D4(self));
+    fn_8046B680(ev, Script_GetOwner(self));
     SObj *o = fn_80080300P(ev);
     if (!o)
         return 0;
@@ -2242,7 +2242,7 @@ int fn_80205B98(register cPropRespawn *self, int force)
                 next = fn_800B1AC4(p);
                 fn_8046B710((Ref8 *)e2, fn_800B13D8(p));
                 SObj *a = fn_80080300P(e2);
-                if (a && (fn_8009AC94P(a) == fn_800797D4(self) || (fn_800B0CC0(a) && fn_800A46E8(fn_800B1478(a)) == fn_800797D4(self)))) {
+                if (a && (fn_8009AC94P(a) == Script_GetOwner(self) || (fn_800B0CC0(a) && fn_800A46E8(fn_800B1478(a)) == Script_GetOwner(self)))) {
                     p->v1();
                     found = 1;
                 }
@@ -2251,20 +2251,20 @@ int fn_80205B98(register cPropRespawn *self, int force)
             if (!found)
                 return 1;
             else {
-                fn_8007D404(self, 0.1f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, 0.1f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
                 return 0;
             }
         } else if (fn_800489BC(&at)) {
             char e2[8];
             fn_8046B680(e2, fn_800489BC(&at));
             SObj *a = fn_80080300P(e2);
-            if (a && (fn_8009AC94P(a) == fn_800797D4(self) || (fn_800B0CC0(a) && fn_800A46E8(fn_800B1478(a)) == fn_800797D4(self))))
+            if (a && (fn_8009AC94P(a) == Script_GetOwner(self) || (fn_800B0CC0(a) && fn_800A46E8(fn_800B1478(a)) == Script_GetOwner(self))))
                 fn_80082124(e2);
-            fn_8007D404(self, 0.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             return 0;
         }
     }
-    fn_8007D404(self, 2.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return 0;
 }
 
@@ -2282,13 +2282,13 @@ void fn_80206050(register cRemoveObjects *self, int a, int b, int kind, float x,
 
 void fn_802060C4(register cRemoveObjects *self, int h, int other, int value) // slot 14
 {
-    if (fn_8020B2FC(self) == 3 && h == fn_800797D4(self))
+    if (fn_8020B2FC(self) == 3 && h == Script_GetOwner(self))
         fn_802061C8(self);
 }
 
 float fn_8020613C(register cRemoveObjects *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
 {
-    if (fn_8020B2FC(self) == 2 && h == fn_800797D4(self))
+    if (fn_8020B2FC(self) == 2 && h == Script_GetOwner(self))
         fn_802061C8(self);
     return dmg;
 }
@@ -2362,7 +2362,7 @@ void fn_8020666C(register cCrystalBreak *self, int h, int a, int b, int c, int d
         fn_80393D0C(fn_80081E6C(ev), "crystalSmoke", 0xff, 0xff);
         break;
     case 1: {
-        fn_8007D404(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         char e2[8];
         fn_8046B5F0(e2, fn_804425F8(ev));
         fn_800A46A0(fn_80080EFC(e2), 1);
@@ -2401,12 +2401,12 @@ void fn_802068C0(register cCrystalBreak_Phase2 *self, unsigned int h) // slot 12
     fn_8046B680(ev, h);
     if (!fn_80080300(ev))
         return;
-    fn_80083D08(fn_800797D4(self), fn_800797D4(self), 0, h, fn_8009AC94U(fn_80080300P(ev)), 0.0f, 0.0f);
+    fn_80083D08(Script_GetOwner(self), Script_GetOwner(self), 0, h, fn_8009AC94U(fn_80080300P(ev)), 0.0f, 0.0f);
     char e2[8];
     fn_8046B6C8(e2, fn_8009AC94P(fn_80080300P(ev)));
     fn_800836A8(e2, "crystalGlow");
     fn_80083230(e2, "turlinDamFXCtrl");
-    fn_8007D404(self, 1.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 1.5f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 float fn_80206A64(register cCrystalBreak_Phase2 *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
@@ -2454,9 +2454,9 @@ void fn_80206BA0(register cCameraMPToggle *self, int a, int b, int kind, float x
 void fn_80206C38(register cLabConsole *self) // slot 4
 {
     self->used = 0;
-    fn_8007CF00(self, fn_8020B5D0(self), 0);
-    fn_8007CF00(self, fn_8020B618(self), 0);
-    fn_8007CF00(self, fn_8020B660(self), 0);
+    Script_LinkEntity(self, fn_8020B5D0(self), 0);
+    Script_LinkEntity(self, fn_8020B618(self), 0);
+    Script_LinkEntity(self, fn_8020B660(self), 0);
 }
 
 void fn_80206CCC(register cLabConsole *self, int h, int other, int value) // slot 18
@@ -2493,7 +2493,7 @@ void fn_80206E80(register cWieldableToggle *self) // slot 5
     if (!fn_8020B6FC(self)) {
         self->enabled = 0;
         char ev[8];
-        fn_8046B5F0(ev, fn_800797D4(self));
+        fn_8046B5F0(ev, Script_GetOwner(self));
         fn_80080FF4(ev, 2);
     } else
         self->enabled = 1;
@@ -2514,7 +2514,7 @@ float fn_80206F24(register cWieldableToggle *self, int h, int other, int a, int 
 void fn_80206F88(register cWieldableToggle *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     char ev[8];
-    fn_8046B5F0(ev, fn_800797D4(self));
+    fn_8046B5F0(ev, Script_GetOwner(self));
     if (self->enabled == 1) {
         self->enabled = 0;
         fn_80080FF4(ev, 2);
@@ -2534,7 +2534,7 @@ void fn_8020708C(register cReverseWallRenderToggle *self) // slot 4
 {
     if (!fn_8020B7F0(self)) {
         char ev[8];
-        fn_8046B6C8(ev, fn_800797D4(self));
+        fn_8046B6C8(ev, Script_GetOwner(self));
         char wall[8];
         fn_8046C1E8(wall, fn_8046C160(ev));
         fn_800813AC(wall, 0);
@@ -2546,7 +2546,7 @@ void fn_80207114(register cReverseWallRenderToggle *self, int a, int b, int kind
     switch (kind) {
     case 4: {
         char ev[8];
-        fn_8046B6C8(ev, fn_800797D4(self));
+        fn_8046B6C8(ev, Script_GetOwner(self));
         char wall[8];
         fn_8046C1E8(wall, fn_8046C160(ev));
         fn_800813AC(wall, !fn_80081338(wall));
@@ -2557,16 +2557,16 @@ void fn_80207114(register cReverseWallRenderToggle *self, int a, int b, int kind
 
 void fn_802071E8(register cPropGroupFade *self) // slot 4
 {
-    fn_8007CF00(self, fn_8020B89C(self), 0);
-    fn_8007CF00(self, fn_8020B8E4(self), 0);
-    fn_8007CF00(self, fn_8020B92C(self), 0);
-    fn_8007CF00(self, fn_8020B974(self), 0);
-    fn_8007CF00(self, fn_8020B9BC(self), 0);
-    fn_8007CF00(self, fn_8020BA04(self), 0);
-    fn_8007CF00(self, fn_8020BA4C(self), 0);
-    fn_8007CF00(self, fn_8020BA94(self), 0);
-    fn_8007CF00(self, fn_8020BADC(self), 0);
-    fn_8007CF00(self, fn_8020BB24(self), 0);
+    Script_LinkEntity(self, fn_8020B89C(self), 0);
+    Script_LinkEntity(self, fn_8020B8E4(self), 0);
+    Script_LinkEntity(self, fn_8020B92C(self), 0);
+    Script_LinkEntity(self, fn_8020B974(self), 0);
+    Script_LinkEntity(self, fn_8020B9BC(self), 0);
+    Script_LinkEntity(self, fn_8020BA04(self), 0);
+    Script_LinkEntity(self, fn_8020BA4C(self), 0);
+    Script_LinkEntity(self, fn_8020BA94(self), 0);
+    Script_LinkEntity(self, fn_8020BADC(self), 0);
+    Script_LinkEntity(self, fn_8020BB24(self), 0);
 }
 
 void fn_80207338(register cPropGroupFade *self, int h, int value) // slot 19
@@ -2623,7 +2623,7 @@ void fn_802075AC(register cMP_MatchTrigger *self) // slot 33
 #define MATCH_SEND(get, kind)                                                                   \
     if (get(self)) {                                                                            \
         fn_8046B710((Ref8 *)ev, get(self));                                                     \
-        fn_80082AFC(ev, get(self), fn_800797D4(self), kind(self), 0.0f, 0.0f, 0.0f, 0.0f);      \
+        Script_TriggerEntity(ev, get(self), Script_GetOwner(self), kind(self), 0.0f, 0.0f, 0.0f, 0.0f);      \
     }
 
 void fn_80207600(register cMP_MatchTrigger *self)
@@ -2666,132 +2666,132 @@ inline int sn_return_decl10(int a) { return a; }
         return reader(self, i) == 1;     \
     }
 
-PARAM(float, cObjectExplosion, fn_80207BB4, fn_8007935C, 0)
-PARAM(float, cObjectExplosion, fn_80207BFC, fn_8007935C, 1)
-PARAM(int, cObjectExplosion, fn_80207C44, fn_80079068, 2)
-PARAM(char *, cObjectExplosion, fn_80207C8C, fn_800794FC, 3)
-PARAM(int, cObjectSetCollision, fn_80207CD4, fn_80079068, 0)
-PARAM(int, cObjectSetCollision, fn_80207D1C, fn_80079068, 1)
-PARAM(float, cObjectSetCollision, fn_80207D64, fn_8007935C, 2)
-PARAM(float, cObjectSetCollision, fn_80207DAC, fn_8007935C, 3)
-PARAM(float, cObjectSetCollision, fn_80207DF4, fn_8007935C, 4)
-FLAG(cObjectSetCollision, fn_80207E3C, fn_80079068, 5)
-PARAM(int, cObjectMove, fn_80207E94, fn_80079068, 0)
-PARAM(float, cObjectMove, fn_80207EDC, fn_8007935C, 1)
-PARAM(float, cObjectMove, fn_80207F24, fn_8007935C, 2)
-PARAM(float, cObjectMove, fn_80207F6C, fn_8007935C, 3)
-PARAM(int, cObjectMove, fn_80207FB4, fn_80079068, 4)
-IS_ONE(cObjectMove, fn_80207FFC, fn_80079068, 5)
-IS_ONE(cObjectMove, fn_80208050, fn_80079068, 6)
-PARAM(unsigned int, cObjectMove, fn_802080A4, fn_800791C8, 7)
-PARAM(unsigned int, cObjectMove, fn_802080EC, fn_800791C8, 8)
-PARAM(unsigned int, cObjectMove, fn_80208134, fn_800791C8, 9)
-PARAM(unsigned int, cObjectMove, fn_8020817C, fn_800791C8, 10)
-PARAM(int, cObjectMove, fn_802081C4, fn_80079068, 11)
-FLAG(cObjectRumbleShake, fn_8020820C, fn_80079068, 0)
-PARAM(float, cObjectRumbleShake, fn_80208264, fn_8007935C, 1)
-PARAM(float, cObjectRumbleShake, fn_802082AC, fn_8007935C, 2)
-PARAM(float, cObjectRumbleShake, fn_802082F4, fn_8007935C, 3)
-PARAM(int, cObjectRumbleShake, fn_8020833C, fn_80079068, 4)
-FLAG(cObjectRumbleShake, fn_80208384, fn_80079068, 5)
-PARAM(float, cObjectRumbleShake, fn_802083DC, fn_8007935C, 6)
-PARAM(float, cObjectRumbleShake, fn_80208424, fn_8007935C, 7)
-PARAM(float, cObjectRumbleShake, fn_8020846C, fn_8007935C, 8)
-PARAM(float, cObjectRumbleShake, fn_802084B4, fn_8007935C, 9)
-PARAM(float, cObjectRumbleShake, fn_802084FC, fn_8007935C, 10)
-PARAM(float, cTimerTrigger, fn_80208544, fn_8007935C, 0)
-PARAM(float, cTimerTrigger, fn_8020858C, fn_8007935C, 1)
-PARAM(int, cTimerTrigger, fn_802085D4, fn_80079068, 2)
-PARAM(unsigned int, cTimerTrigger, fn_8020861C, fn_800791C8, 3)
-PARAM(unsigned int, cTimerTrigger, fn_80208664, fn_800791C8, 4)
-PARAM(unsigned int, cTimerTrigger, fn_802086AC, fn_800791C8, 5)
-PARAM(unsigned int, cTimerTrigger, fn_802086F4, fn_800791C8, 6)
-PARAM(unsigned int, cTimerTrigger, fn_8020873C, fn_800791C8, 7)
-PARAM(unsigned int, cTimerTrigger, fn_80208784, fn_800791C8, 8)
-PARAM(unsigned int, cTimerTrigger, fn_802087CC, fn_800791C8, 9)
-PARAM(unsigned int, cTimerTrigger, fn_80208814, fn_800791C8, 10)
-PARAM(int, cTimerTrigger, fn_8020885C, fn_80079068, 11)
-PARAM(int, cTriggerOnAction, fn_802088A4, fn_80079068, 0)
-PARAM(float, cTriggerOnAction, fn_802088EC, fn_8007935C, 1)
-PARAM(int, cTriggerOnAction, fn_80208934, fn_80079068, 2)
-PARAM(int, cTriggerOnAction, fn_8020897C, fn_80079068, 3)
-PARAM(int, cTriggerOnAction, fn_802089C4, fn_80079068, 4)
-PARAM(int, cTriggerOnAction, fn_80208A0C, fn_80079068, 5)
-PARAM(int, cTriggerOnAction, fn_80208A54, fn_80079068, 6)
-PARAM(int, cTriggerOnAction, fn_80208A9C, fn_80079068, 7)
-PARAM(unsigned int, cTriggerOnAction, fn_80208AE4, fn_800791C8, 8)
-PARAM(unsigned int, cTriggerOnAction, fn_80208B2C, fn_800791C8, 9)
-PARAM(unsigned int, cTriggerOnAction, fn_80208B74, fn_800791C8, 10)
-PARAM(unsigned int, cTriggerOnAction, fn_80208BBC, fn_800791C8, 11)
-PARAM(unsigned int, cTriggerOnAction, fn_80208C04, fn_800791C8, 12)
-PARAM(float, cTriggerOnAction, fn_80208C4C, fn_8007935C, 13)
-PARAM(unsigned int, cTriggerOnAction, fn_80208C94, fn_800791C8, 14)
-PARAM(float, cTriggerOnAction, fn_80208CDC, fn_8007935C, 15)
-PARAM(unsigned int, cTriggerOnAction, fn_80208D24, fn_800791C8, 16)
-PARAM(float, cTriggerOnAction, fn_80208D6C, fn_8007935C, 17)
-PARAM(unsigned int, cTriggerOnAction, fn_80208DB4, fn_800791C8, 18)
-PARAM(float, cTriggerOnAction, fn_80208DFC, fn_8007935C, 19)
-PARAM(int, cTriggerOnAction, fn_80208E44, fn_80079068, 20)
-PARAM(int, cTriggerOnAction, fn_80208E8C, fn_80079068, 21)
-PARAM(float, cTriggerOnAction, fn_80208ED4, fn_8007935C, 22)
-PARAM(int, cTriggerOnAction, fn_80208F1C, fn_80079068, 23)
-PARAM(unsigned int, cTriggerRelay, fn_80208F64, fn_800791C8, 0)
-PARAM(float, cTriggerRelay, fn_80208FAC, fn_8007935C, 1)
-PARAM(char *, cTriggerRelay, fn_80208FF4, fn_800794FC, 2)
-PARAM(unsigned int, cTriggerRelay, fn_8020903C, fn_800791C8, 3)
-PARAM(float, cTriggerRelay, fn_80209084, fn_8007935C, 4)
-PARAM(char *, cTriggerRelay, fn_802090CC, fn_800794FC, 5)
-PARAM(unsigned int, cTriggerRelay, fn_80209114, fn_800791C8, 6)
-PARAM(float, cTriggerRelay, fn_8020915C, fn_8007935C, 7)
-PARAM(char *, cTriggerRelay, fn_802091A4, fn_800794FC, 8)
-PARAM(unsigned int, cTriggerRelay, fn_802091EC, fn_800791C8, 9)
-PARAM(float, cTriggerRelay, fn_80209234, fn_8007935C, 10)
-PARAM(char *, cTriggerRelay, fn_8020927C, fn_800794FC, 11)
-PARAM(unsigned int, cTriggerRelay, fn_802092C4, fn_800791C8, 12)
-PARAM(float, cTriggerRelay, fn_8020930C, fn_8007935C, 13)
-PARAM(char *, cTriggerRelay, fn_80209354, fn_800794FC, 14)
-PARAM(unsigned int, cTriggerRelay, fn_8020939C, fn_800791C8, 15)
-PARAM(float, cTriggerRelay, fn_802093E4, fn_8007935C, 16)
-PARAM(char *, cTriggerRelay, fn_8020942C, fn_800794FC, 17)
-PARAM(unsigned int, cTriggerRelay, fn_80209474, fn_800791C8, 18)
-PARAM(float, cTriggerRelay, fn_802094BC, fn_8007935C, 19)
-PARAM(char *, cTriggerRelay, fn_80209504, fn_800794FC, 20)
-PARAM(unsigned int, cTriggerRelay, fn_8020954C, fn_800791C8, 21)
-PARAM(float, cTriggerRelay, fn_80209594, fn_8007935C, 22)
-PARAM(char *, cTriggerRelay, fn_802095DC, fn_800794FC, 23)
-PARAM(unsigned int, cTriggerRelay, fn_80209624, fn_800791C8, 24)
-PARAM(float, cTriggerRelay, fn_8020966C, fn_8007935C, 25)
-PARAM(char *, cTriggerRelay, fn_802096B4, fn_800794FC, 26)
-PARAM(unsigned int, cTriggerRelay, fn_802096FC, fn_800791C8, 27)
-PARAM(float, cTriggerRelay, fn_80209744, fn_8007935C, 28)
-PARAM(char *, cTriggerRelay, fn_8020978C, fn_800794FC, 29)
-PARAM(unsigned int, cTriggerRelay, fn_802097D4, fn_800791C8, 30)
-PARAM(float, cTriggerRelay, fn_8020981C, fn_8007935C, 31)
-PARAM(char *, cTriggerRelay, fn_80209864, fn_800794FC, 32)
-PARAM(unsigned int, cTriggerRelay, fn_802098AC, fn_800791C8, 33)
-PARAM(float, cTriggerRelay, fn_802098F4, fn_8007935C, 34)
-PARAM(char *, cTriggerRelay, fn_8020993C, fn_800794FC, 35)
-PARAM(int, cTriggerRelay, fn_80209984, fn_80079068, 36)
-PARAM(char *, cTriggerRelay, fn_802099CC, fn_800794FC, 37)
-PARAM(float, cTriggerRelay, fn_80209A14, fn_8007935C, 38)
-PARAM(float, cSetAnimFrame, fn_80209A5C, fn_8007935C, 1)
-PARAM(float, cSetAnimFrame, fn_80209AA4, fn_8007935C, 2)
-PARAM(float, cSetAnimFrame, fn_80209AEC, fn_8007935C, 3)
-PARAM(float, cSetAnimFrame, fn_80209B34, fn_8007935C, 4)
-PARAM(float, cSetAnimFrame, fn_80209B7C, fn_8007935C, 5)
-PARAM(float, cSetAnimFrame, fn_80209BC4, fn_8007935C, 6)
-PARAM(float, cSetAnimFrame, fn_80209C0C, fn_8007935C, 7)
-PARAM(float, cSetAnimFrame, fn_80209C54, fn_8007935C, 8)
-PARAM(char *, cDebrisFall, fn_80209C9C, fn_800794FC, 0)
-PARAM(int, cDebrisFall, fn_80209CE4, fn_80079068, 1)
-PARAM(char *, cDebrisFall, fn_80209D2C, fn_800794FC, 2)
-PARAM(int, cDebrisFall, fn_80209D74, fn_80079068, 3)
-PARAM(char *, cDebrisFall, fn_80209DBC, fn_800794FC, 4)
-PARAM(int, cDebrisFall, fn_80209E04, fn_80079068, 5)
-FLAG(cDebrisFall, fn_80209E4C, fn_80079068, 6)
-PARAM(int, cDebrisFall, fn_80209EA4, fn_80079068, 7)
-PARAM(char *, cDebrisFall, fn_80209EEC, fn_800794FC, 8)
-PARAM(float, cDebrisFall, fn_80209F34, fn_8007935C, 9)
+PARAM(float, cObjectExplosion, fn_80207BB4, Script_GetParamFloat, 0)
+PARAM(float, cObjectExplosion, fn_80207BFC, Script_GetParamFloat, 1)
+PARAM(int, cObjectExplosion, fn_80207C44, Script_GetParamInt, 2)
+PARAM(char *, cObjectExplosion, fn_80207C8C, Script_GetParamString, 3)
+PARAM(int, cObjectSetCollision, fn_80207CD4, Script_GetParamInt, 0)
+PARAM(int, cObjectSetCollision, fn_80207D1C, Script_GetParamInt, 1)
+PARAM(float, cObjectSetCollision, fn_80207D64, Script_GetParamFloat, 2)
+PARAM(float, cObjectSetCollision, fn_80207DAC, Script_GetParamFloat, 3)
+PARAM(float, cObjectSetCollision, fn_80207DF4, Script_GetParamFloat, 4)
+FLAG(cObjectSetCollision, fn_80207E3C, Script_GetParamInt, 5)
+PARAM(int, cObjectMove, fn_80207E94, Script_GetParamInt, 0)
+PARAM(float, cObjectMove, fn_80207EDC, Script_GetParamFloat, 1)
+PARAM(float, cObjectMove, fn_80207F24, Script_GetParamFloat, 2)
+PARAM(float, cObjectMove, fn_80207F6C, Script_GetParamFloat, 3)
+PARAM(int, cObjectMove, fn_80207FB4, Script_GetParamInt, 4)
+IS_ONE(cObjectMove, fn_80207FFC, Script_GetParamInt, 5)
+IS_ONE(cObjectMove, fn_80208050, Script_GetParamInt, 6)
+PARAM(unsigned int, cObjectMove, fn_802080A4, Script_GetParamUInt, 7)
+PARAM(unsigned int, cObjectMove, fn_802080EC, Script_GetParamUInt, 8)
+PARAM(unsigned int, cObjectMove, fn_80208134, Script_GetParamUInt, 9)
+PARAM(unsigned int, cObjectMove, fn_8020817C, Script_GetParamUInt, 10)
+PARAM(int, cObjectMove, fn_802081C4, Script_GetParamInt, 11)
+FLAG(cObjectRumbleShake, fn_8020820C, Script_GetParamInt, 0)
+PARAM(float, cObjectRumbleShake, fn_80208264, Script_GetParamFloat, 1)
+PARAM(float, cObjectRumbleShake, fn_802082AC, Script_GetParamFloat, 2)
+PARAM(float, cObjectRumbleShake, fn_802082F4, Script_GetParamFloat, 3)
+PARAM(int, cObjectRumbleShake, fn_8020833C, Script_GetParamInt, 4)
+FLAG(cObjectRumbleShake, fn_80208384, Script_GetParamInt, 5)
+PARAM(float, cObjectRumbleShake, fn_802083DC, Script_GetParamFloat, 6)
+PARAM(float, cObjectRumbleShake, fn_80208424, Script_GetParamFloat, 7)
+PARAM(float, cObjectRumbleShake, fn_8020846C, Script_GetParamFloat, 8)
+PARAM(float, cObjectRumbleShake, fn_802084B4, Script_GetParamFloat, 9)
+PARAM(float, cObjectRumbleShake, fn_802084FC, Script_GetParamFloat, 10)
+PARAM(float, cTimerTrigger, fn_80208544, Script_GetParamFloat, 0)
+PARAM(float, cTimerTrigger, fn_8020858C, Script_GetParamFloat, 1)
+PARAM(int, cTimerTrigger, fn_802085D4, Script_GetParamInt, 2)
+PARAM(unsigned int, cTimerTrigger, fn_8020861C, Script_GetParamUInt, 3)
+PARAM(unsigned int, cTimerTrigger, fn_80208664, Script_GetParamUInt, 4)
+PARAM(unsigned int, cTimerTrigger, fn_802086AC, Script_GetParamUInt, 5)
+PARAM(unsigned int, cTimerTrigger, fn_802086F4, Script_GetParamUInt, 6)
+PARAM(unsigned int, cTimerTrigger, fn_8020873C, Script_GetParamUInt, 7)
+PARAM(unsigned int, cTimerTrigger, fn_80208784, Script_GetParamUInt, 8)
+PARAM(unsigned int, cTimerTrigger, fn_802087CC, Script_GetParamUInt, 9)
+PARAM(unsigned int, cTimerTrigger, fn_80208814, Script_GetParamUInt, 10)
+PARAM(int, cTimerTrigger, fn_8020885C, Script_GetParamInt, 11)
+PARAM(int, cTriggerOnAction, fn_802088A4, Script_GetParamInt, 0)
+PARAM(float, cTriggerOnAction, fn_802088EC, Script_GetParamFloat, 1)
+PARAM(int, cTriggerOnAction, fn_80208934, Script_GetParamInt, 2)
+PARAM(int, cTriggerOnAction, fn_8020897C, Script_GetParamInt, 3)
+PARAM(int, cTriggerOnAction, fn_802089C4, Script_GetParamInt, 4)
+PARAM(int, cTriggerOnAction, fn_80208A0C, Script_GetParamInt, 5)
+PARAM(int, cTriggerOnAction, fn_80208A54, Script_GetParamInt, 6)
+PARAM(int, cTriggerOnAction, fn_80208A9C, Script_GetParamInt, 7)
+PARAM(unsigned int, cTriggerOnAction, fn_80208AE4, Script_GetParamUInt, 8)
+PARAM(unsigned int, cTriggerOnAction, fn_80208B2C, Script_GetParamUInt, 9)
+PARAM(unsigned int, cTriggerOnAction, fn_80208B74, Script_GetParamUInt, 10)
+PARAM(unsigned int, cTriggerOnAction, fn_80208BBC, Script_GetParamUInt, 11)
+PARAM(unsigned int, cTriggerOnAction, fn_80208C04, Script_GetParamUInt, 12)
+PARAM(float, cTriggerOnAction, fn_80208C4C, Script_GetParamFloat, 13)
+PARAM(unsigned int, cTriggerOnAction, fn_80208C94, Script_GetParamUInt, 14)
+PARAM(float, cTriggerOnAction, fn_80208CDC, Script_GetParamFloat, 15)
+PARAM(unsigned int, cTriggerOnAction, fn_80208D24, Script_GetParamUInt, 16)
+PARAM(float, cTriggerOnAction, fn_80208D6C, Script_GetParamFloat, 17)
+PARAM(unsigned int, cTriggerOnAction, fn_80208DB4, Script_GetParamUInt, 18)
+PARAM(float, cTriggerOnAction, fn_80208DFC, Script_GetParamFloat, 19)
+PARAM(int, cTriggerOnAction, fn_80208E44, Script_GetParamInt, 20)
+PARAM(int, cTriggerOnAction, fn_80208E8C, Script_GetParamInt, 21)
+PARAM(float, cTriggerOnAction, fn_80208ED4, Script_GetParamFloat, 22)
+PARAM(int, cTriggerOnAction, fn_80208F1C, Script_GetParamInt, 23)
+PARAM(unsigned int, cTriggerRelay, fn_80208F64, Script_GetParamUInt, 0)
+PARAM(float, cTriggerRelay, fn_80208FAC, Script_GetParamFloat, 1)
+PARAM(char *, cTriggerRelay, fn_80208FF4, Script_GetParamString, 2)
+PARAM(unsigned int, cTriggerRelay, fn_8020903C, Script_GetParamUInt, 3)
+PARAM(float, cTriggerRelay, fn_80209084, Script_GetParamFloat, 4)
+PARAM(char *, cTriggerRelay, fn_802090CC, Script_GetParamString, 5)
+PARAM(unsigned int, cTriggerRelay, fn_80209114, Script_GetParamUInt, 6)
+PARAM(float, cTriggerRelay, fn_8020915C, Script_GetParamFloat, 7)
+PARAM(char *, cTriggerRelay, fn_802091A4, Script_GetParamString, 8)
+PARAM(unsigned int, cTriggerRelay, fn_802091EC, Script_GetParamUInt, 9)
+PARAM(float, cTriggerRelay, fn_80209234, Script_GetParamFloat, 10)
+PARAM(char *, cTriggerRelay, fn_8020927C, Script_GetParamString, 11)
+PARAM(unsigned int, cTriggerRelay, fn_802092C4, Script_GetParamUInt, 12)
+PARAM(float, cTriggerRelay, fn_8020930C, Script_GetParamFloat, 13)
+PARAM(char *, cTriggerRelay, fn_80209354, Script_GetParamString, 14)
+PARAM(unsigned int, cTriggerRelay, fn_8020939C, Script_GetParamUInt, 15)
+PARAM(float, cTriggerRelay, fn_802093E4, Script_GetParamFloat, 16)
+PARAM(char *, cTriggerRelay, fn_8020942C, Script_GetParamString, 17)
+PARAM(unsigned int, cTriggerRelay, fn_80209474, Script_GetParamUInt, 18)
+PARAM(float, cTriggerRelay, fn_802094BC, Script_GetParamFloat, 19)
+PARAM(char *, cTriggerRelay, fn_80209504, Script_GetParamString, 20)
+PARAM(unsigned int, cTriggerRelay, fn_8020954C, Script_GetParamUInt, 21)
+PARAM(float, cTriggerRelay, fn_80209594, Script_GetParamFloat, 22)
+PARAM(char *, cTriggerRelay, fn_802095DC, Script_GetParamString, 23)
+PARAM(unsigned int, cTriggerRelay, fn_80209624, Script_GetParamUInt, 24)
+PARAM(float, cTriggerRelay, fn_8020966C, Script_GetParamFloat, 25)
+PARAM(char *, cTriggerRelay, fn_802096B4, Script_GetParamString, 26)
+PARAM(unsigned int, cTriggerRelay, fn_802096FC, Script_GetParamUInt, 27)
+PARAM(float, cTriggerRelay, fn_80209744, Script_GetParamFloat, 28)
+PARAM(char *, cTriggerRelay, fn_8020978C, Script_GetParamString, 29)
+PARAM(unsigned int, cTriggerRelay, fn_802097D4, Script_GetParamUInt, 30)
+PARAM(float, cTriggerRelay, fn_8020981C, Script_GetParamFloat, 31)
+PARAM(char *, cTriggerRelay, fn_80209864, Script_GetParamString, 32)
+PARAM(unsigned int, cTriggerRelay, fn_802098AC, Script_GetParamUInt, 33)
+PARAM(float, cTriggerRelay, fn_802098F4, Script_GetParamFloat, 34)
+PARAM(char *, cTriggerRelay, fn_8020993C, Script_GetParamString, 35)
+PARAM(int, cTriggerRelay, fn_80209984, Script_GetParamInt, 36)
+PARAM(char *, cTriggerRelay, fn_802099CC, Script_GetParamString, 37)
+PARAM(float, cTriggerRelay, fn_80209A14, Script_GetParamFloat, 38)
+PARAM(float, cSetAnimFrame, fn_80209A5C, Script_GetParamFloat, 1)
+PARAM(float, cSetAnimFrame, fn_80209AA4, Script_GetParamFloat, 2)
+PARAM(float, cSetAnimFrame, fn_80209AEC, Script_GetParamFloat, 3)
+PARAM(float, cSetAnimFrame, fn_80209B34, Script_GetParamFloat, 4)
+PARAM(float, cSetAnimFrame, fn_80209B7C, Script_GetParamFloat, 5)
+PARAM(float, cSetAnimFrame, fn_80209BC4, Script_GetParamFloat, 6)
+PARAM(float, cSetAnimFrame, fn_80209C0C, Script_GetParamFloat, 7)
+PARAM(float, cSetAnimFrame, fn_80209C54, Script_GetParamFloat, 8)
+PARAM(char *, cDebrisFall, fn_80209C9C, Script_GetParamString, 0)
+PARAM(int, cDebrisFall, fn_80209CE4, Script_GetParamInt, 1)
+PARAM(char *, cDebrisFall, fn_80209D2C, Script_GetParamString, 2)
+PARAM(int, cDebrisFall, fn_80209D74, Script_GetParamInt, 3)
+PARAM(char *, cDebrisFall, fn_80209DBC, Script_GetParamString, 4)
+PARAM(int, cDebrisFall, fn_80209E04, Script_GetParamInt, 5)
+FLAG(cDebrisFall, fn_80209E4C, Script_GetParamInt, 6)
+PARAM(int, cDebrisFall, fn_80209EA4, Script_GetParamInt, 7)
+PARAM(char *, cDebrisFall, fn_80209EEC, Script_GetParamString, 8)
+PARAM(float, cDebrisFall, fn_80209F34, Script_GetParamFloat, 9)
 
 cScript *fn_80209F7C(register cVehicleBreak *self)
 {
@@ -2801,104 +2801,104 @@ cScript *fn_80209F7C(register cVehicleBreak *self)
 
 int fn_80209FD0(register cVehicleBreak *self)
 {
-    return fn_800797D4(self);
+    return Script_GetOwner(self);
 }
 
-PARAM(unsigned int, cVehicleBreak, fn_8020A014, fn_80079068, 0)
-FLAG(cVehicleBreak, fn_8020A05C, fn_80079068, 1)
-PARAM(float, cVehicleBreak, fn_8020A0B4, fn_8007935C, 2)
-PARAM(float, cVehicleBreak, fn_8020A0FC, fn_8007935C, 3)
-PARAM(char *, cVehicleBreak, fn_8020A144, fn_800794FC, 4)
+PARAM(unsigned int, cVehicleBreak, fn_8020A014, Script_GetParamInt, 0)
+FLAG(cVehicleBreak, fn_8020A05C, Script_GetParamInt, 1)
+PARAM(float, cVehicleBreak, fn_8020A0B4, Script_GetParamFloat, 2)
+PARAM(float, cVehicleBreak, fn_8020A0FC, Script_GetParamFloat, 3)
+PARAM(char *, cVehicleBreak, fn_8020A144, Script_GetParamString, 4)
 
 cScript *fn_8020A18C(register cVehicleBarrier *self)
 {
     return new cVehicleBarrier;
 }
 
-PARAM(int, cVehicleBarrier, fn_8020A1E0, fn_80079068, 0)
-PARAM(unsigned int, cVehicleBarrier, fn_8020A228, fn_800791C8, 1)
-PARAM(unsigned int, cVehicleBarrier, fn_8020A270, fn_800791C8, 2)
-PARAM(unsigned int, cVehicleBarrier, fn_8020A2B8, fn_800791C8, 3)
-PARAM(unsigned int, cVehicleBarrier, fn_8020A300, fn_800791C8, 4)
+PARAM(int, cVehicleBarrier, fn_8020A1E0, Script_GetParamInt, 0)
+PARAM(unsigned int, cVehicleBarrier, fn_8020A228, Script_GetParamUInt, 1)
+PARAM(unsigned int, cVehicleBarrier, fn_8020A270, Script_GetParamUInt, 2)
+PARAM(unsigned int, cVehicleBarrier, fn_8020A2B8, Script_GetParamUInt, 3)
+PARAM(unsigned int, cVehicleBarrier, fn_8020A300, Script_GetParamUInt, 4)
 
 cScript *fn_8020A348(register cGenBreakProp *self)
 {
     return new cGenBreakProp;
 }
 
-FLAG(cGenBreakProp, fn_8020A39C, fn_80079068, 0)
-FLAG(cGenBreakProp, fn_8020A3F4, fn_80079068, 1)
-PARAM(char *, cGenBreakProp, fn_8020A44C, fn_800794FC, 2)
-PARAM(unsigned int, cGenBreakProp, fn_8020A494, fn_800791C8, 3)
-PARAM(unsigned int, cGenBreakProp, fn_8020A4DC, fn_800791C8, 4)
-PARAM(unsigned int, cGenBreakProp, fn_8020A524, fn_800791C8, 5)
-PARAM(unsigned int, cGenBreakProp, fn_8020A56C, fn_800791C8, 6)
-PARAM(unsigned int, cGenBreakProp, fn_8020A5B4, fn_800791C8, 7)
-PARAM(unsigned int, cGenBreakProp, fn_8020A5FC, fn_800791C8, 8)
-PARAM(int, cGenBreakProp, fn_8020A644, fn_80079068, 9)
-PARAM(float, cGenBreakProp, fn_8020A68C, fn_8007935C, 10)
-PARAM(char *, cGenBreakProp, fn_8020A6D4, fn_800794FC, 11)
-FLAG(cGenBreakProp, fn_8020A71C, fn_80079068, 12)
+FLAG(cGenBreakProp, fn_8020A39C, Script_GetParamInt, 0)
+FLAG(cGenBreakProp, fn_8020A3F4, Script_GetParamInt, 1)
+PARAM(char *, cGenBreakProp, fn_8020A44C, Script_GetParamString, 2)
+PARAM(unsigned int, cGenBreakProp, fn_8020A494, Script_GetParamUInt, 3)
+PARAM(unsigned int, cGenBreakProp, fn_8020A4DC, Script_GetParamUInt, 4)
+PARAM(unsigned int, cGenBreakProp, fn_8020A524, Script_GetParamUInt, 5)
+PARAM(unsigned int, cGenBreakProp, fn_8020A56C, Script_GetParamUInt, 6)
+PARAM(unsigned int, cGenBreakProp, fn_8020A5B4, Script_GetParamUInt, 7)
+PARAM(unsigned int, cGenBreakProp, fn_8020A5FC, Script_GetParamUInt, 8)
+PARAM(int, cGenBreakProp, fn_8020A644, Script_GetParamInt, 9)
+PARAM(float, cGenBreakProp, fn_8020A68C, Script_GetParamFloat, 10)
+PARAM(char *, cGenBreakProp, fn_8020A6D4, Script_GetParamString, 11)
+FLAG(cGenBreakProp, fn_8020A71C, Script_GetParamInt, 12)
 
 cScript *fn_8020A774(register cDamagePropOnTrigger *self)
 {
     return new cDamagePropOnTrigger;
 }
 
-PARAM(float, cDamagePropOnTrigger, fn_8020A7C8, fn_8007935C, 0)
-PARAM(float, cDamagePropOnTrigger, fn_8020A810, fn_8007935C, 1)
-PARAM(float, cDamagePropOnTrigger, fn_8020A858, fn_8007935C, 2)
-PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A8A0, fn_800791C8, 3)
-PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A8E8, fn_800791C8, 4)
-PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A930, fn_800791C8, 5)
-PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A978, fn_800791C8, 6)
-PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A9C0, fn_800791C8, 7)
-PARAM(unsigned int, cDamagePropOnTrigger, fn_8020AA08, fn_800791C8, 8)
-PARAM(unsigned int, cDamagePropOnTrigger, fn_8020AA50, fn_800791C8, 9)
-PARAM(unsigned int, cDamagePropOnTrigger, fn_8020AA98, fn_800791C8, 10)
-FLAG(cDamagePropOnTrigger, fn_8020AAE0, fn_80079068, 11)
+PARAM(float, cDamagePropOnTrigger, fn_8020A7C8, Script_GetParamFloat, 0)
+PARAM(float, cDamagePropOnTrigger, fn_8020A810, Script_GetParamFloat, 1)
+PARAM(float, cDamagePropOnTrigger, fn_8020A858, Script_GetParamFloat, 2)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A8A0, Script_GetParamUInt, 3)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A8E8, Script_GetParamUInt, 4)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A930, Script_GetParamUInt, 5)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A978, Script_GetParamUInt, 6)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020A9C0, Script_GetParamUInt, 7)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020AA08, Script_GetParamUInt, 8)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020AA50, Script_GetParamUInt, 9)
+PARAM(unsigned int, cDamagePropOnTrigger, fn_8020AA98, Script_GetParamUInt, 10)
+FLAG(cDamagePropOnTrigger, fn_8020AAE0, Script_GetParamInt, 11)
 
 cScript *fn_8020AB38(register cPortalControl *self)
 {
     return new cPortalControl;
 }
 
-FLAG(cPortalControl, fn_8020AB8C, fn_80079068, 0)
-PARAM(unsigned int, cPortalControl, fn_8020ABE4, fn_800791C8, 1)
-PARAM(unsigned int, cPortalControl, fn_8020AC2C, fn_800791C8, 2)
-PARAM(unsigned int, cPortalControl, fn_8020AC74, fn_800791C8, 3)
-PARAM(unsigned int, cPortalControl, fn_8020ACBC, fn_800791C8, 4)
-PARAM(unsigned int, cPortalControl, fn_8020AD04, fn_800791C8, 5)
-PARAM(unsigned int, cPortalControl, fn_8020AD4C, fn_800791C8, 6)
-PARAM(unsigned int, cPortalControl, fn_8020AD94, fn_800791C8, 7)
-PARAM(unsigned int, cPortalControl, fn_8020ADDC, fn_800791C8, 8)
-FLAG(cPortalControl, fn_8020AE24, fn_80079068, 9)
+FLAG(cPortalControl, fn_8020AB8C, Script_GetParamInt, 0)
+PARAM(unsigned int, cPortalControl, fn_8020ABE4, Script_GetParamUInt, 1)
+PARAM(unsigned int, cPortalControl, fn_8020AC2C, Script_GetParamUInt, 2)
+PARAM(unsigned int, cPortalControl, fn_8020AC74, Script_GetParamUInt, 3)
+PARAM(unsigned int, cPortalControl, fn_8020ACBC, Script_GetParamUInt, 4)
+PARAM(unsigned int, cPortalControl, fn_8020AD04, Script_GetParamUInt, 5)
+PARAM(unsigned int, cPortalControl, fn_8020AD4C, Script_GetParamUInt, 6)
+PARAM(unsigned int, cPortalControl, fn_8020AD94, Script_GetParamUInt, 7)
+PARAM(unsigned int, cPortalControl, fn_8020ADDC, Script_GetParamUInt, 8)
+FLAG(cPortalControl, fn_8020AE24, Script_GetParamInt, 9)
 
 cScript *fn_8020AE7C(register cPropRespawn *self)
 {
     return new cPropRespawn;
 }
 
-PARAM(float, cPropRespawn, fn_8020AED0, fn_8007935C, 0)
-PARAM(char *, cPropRespawn, fn_8020AF18, fn_800794FC, 1)
-FLAG(cPropRespawn, fn_8020AF60, fn_80079068, 2)
-FLAG(cPropRespawn, fn_8020AFB8, fn_80079068, 3)
-FLAG(cPropRespawn, fn_8020B010, fn_80079068, 4)
+PARAM(float, cPropRespawn, fn_8020AED0, Script_GetParamFloat, 0)
+PARAM(char *, cPropRespawn, fn_8020AF18, Script_GetParamString, 1)
+FLAG(cPropRespawn, fn_8020AF60, Script_GetParamInt, 2)
+FLAG(cPropRespawn, fn_8020AFB8, Script_GetParamInt, 3)
+FLAG(cPropRespawn, fn_8020B010, Script_GetParamInt, 4)
 
 cScript *fn_8020B068(register cRemoveObjects *self)
 {
     return new cRemoveObjects;
 }
 
-PARAM(unsigned int, cRemoveObjects, fn_8020B0BC, fn_800791C8, 0)
-PARAM(unsigned int, cRemoveObjects, fn_8020B104, fn_800791C8, 1)
-PARAM(unsigned int, cRemoveObjects, fn_8020B14C, fn_800791C8, 2)
-PARAM(unsigned int, cRemoveObjects, fn_8020B194, fn_800791C8, 3)
-PARAM(unsigned int, cRemoveObjects, fn_8020B1DC, fn_800791C8, 4)
-PARAM(unsigned int, cRemoveObjects, fn_8020B224, fn_800791C8, 5)
-PARAM(unsigned int, cRemoveObjects, fn_8020B26C, fn_800791C8, 6)
-PARAM(int, cRemoveObjects, fn_8020B2B4, fn_80079068, 7)
-PARAM(int, cRemoveObjects, fn_8020B2FC, fn_80079068, 8)
+PARAM(unsigned int, cRemoveObjects, fn_8020B0BC, Script_GetParamUInt, 0)
+PARAM(unsigned int, cRemoveObjects, fn_8020B104, Script_GetParamUInt, 1)
+PARAM(unsigned int, cRemoveObjects, fn_8020B14C, Script_GetParamUInt, 2)
+PARAM(unsigned int, cRemoveObjects, fn_8020B194, Script_GetParamUInt, 3)
+PARAM(unsigned int, cRemoveObjects, fn_8020B1DC, Script_GetParamUInt, 4)
+PARAM(unsigned int, cRemoveObjects, fn_8020B224, Script_GetParamUInt, 5)
+PARAM(unsigned int, cRemoveObjects, fn_8020B26C, Script_GetParamUInt, 6)
+PARAM(int, cRemoveObjects, fn_8020B2B4, Script_GetParamInt, 7)
+PARAM(int, cRemoveObjects, fn_8020B2FC, Script_GetParamInt, 8)
 
 cScript *fn_8020B344(register cCrystalBreak *self)
 {
@@ -2908,11 +2908,11 @@ cScript *fn_8020B344(register cCrystalBreak *self)
 
 unsigned int fn_8020B398(register cCrystalBreak *self)
 {
-    return fn_800797D4(self);
+    return Script_GetOwner(self);
 }
 
-FLAG(cCrystalBreak, fn_8020B3DC, fn_80079068, 0)
-PARAM(float, cCrystalBreak, fn_8020B434, fn_8007935C, 1)
+FLAG(cCrystalBreak, fn_8020B3DC, Script_GetParamInt, 0)
+PARAM(float, cCrystalBreak, fn_8020B434, Script_GetParamFloat, 1)
 
 cScript *fn_8020B47C(register cCrystalBreak_Phase2 *self)
 {
@@ -2924,80 +2924,80 @@ cScript *fn_8020B4D0(register cCameraMPToggle *self)
     return new cCameraMPToggle;
 }
 
-FLAG(cCameraMPToggle, fn_8020B524, fn_80079068, 0)
+FLAG(cCameraMPToggle, fn_8020B524, Script_GetParamInt, 0)
 
 cScript *fn_8020B57C(register cLabConsole *self)
 {
     return new cLabConsole;
 }
 
-PARAM(unsigned int, cLabConsole, fn_8020B5D0, fn_800791C8, 0)
-PARAM(unsigned int, cLabConsole, fn_8020B618, fn_800791C8, 1)
-PARAM(unsigned int, cLabConsole, fn_8020B660, fn_800791C8, 2)
+PARAM(unsigned int, cLabConsole, fn_8020B5D0, Script_GetParamUInt, 0)
+PARAM(unsigned int, cLabConsole, fn_8020B618, Script_GetParamUInt, 1)
+PARAM(unsigned int, cLabConsole, fn_8020B660, Script_GetParamUInt, 2)
 
 cScript *fn_8020B6A8(register cWieldableToggle *self)
 {
     return new cWieldableToggle;
 }
 
-FLAG(cWieldableToggle, fn_8020B6FC, fn_80079068, 0)
-PARAM(int, cWieldableToggle, fn_8020B754, fn_80079068, 1)
+FLAG(cWieldableToggle, fn_8020B6FC, Script_GetParamInt, 0)
+PARAM(int, cWieldableToggle, fn_8020B754, Script_GetParamInt, 1)
 
 cScript *fn_8020B79C(register cReverseWallRenderToggle *self)
 {
     return new cReverseWallRenderToggle;
 }
 
-FLAG(cReverseWallRenderToggle, fn_8020B7F0, fn_80079068, 0)
+FLAG(cReverseWallRenderToggle, fn_8020B7F0, Script_GetParamInt, 0)
 
 cScript *fn_8020B848(register cPropGroupFade *self)
 {
     return new cPropGroupFade;
 }
 
-PARAM(unsigned int, cPropGroupFade, fn_8020B89C, fn_800791C8, 0)
-PARAM(unsigned int, cPropGroupFade, fn_8020B8E4, fn_800791C8, 1)
-PARAM(unsigned int, cPropGroupFade, fn_8020B92C, fn_800791C8, 2)
-PARAM(unsigned int, cPropGroupFade, fn_8020B974, fn_800791C8, 3)
-PARAM(unsigned int, cPropGroupFade, fn_8020B9BC, fn_800791C8, 4)
-PARAM(unsigned int, cPropGroupFade, fn_8020BA04, fn_800791C8, 5)
-PARAM(unsigned int, cPropGroupFade, fn_8020BA4C, fn_800791C8, 6)
-PARAM(unsigned int, cPropGroupFade, fn_8020BA94, fn_800791C8, 7)
-PARAM(unsigned int, cPropGroupFade, fn_8020BADC, fn_800791C8, 8)
-PARAM(unsigned int, cPropGroupFade, fn_8020BB24, fn_800791C8, 9)
+PARAM(unsigned int, cPropGroupFade, fn_8020B89C, Script_GetParamUInt, 0)
+PARAM(unsigned int, cPropGroupFade, fn_8020B8E4, Script_GetParamUInt, 1)
+PARAM(unsigned int, cPropGroupFade, fn_8020B92C, Script_GetParamUInt, 2)
+PARAM(unsigned int, cPropGroupFade, fn_8020B974, Script_GetParamUInt, 3)
+PARAM(unsigned int, cPropGroupFade, fn_8020B9BC, Script_GetParamUInt, 4)
+PARAM(unsigned int, cPropGroupFade, fn_8020BA04, Script_GetParamUInt, 5)
+PARAM(unsigned int, cPropGroupFade, fn_8020BA4C, Script_GetParamUInt, 6)
+PARAM(unsigned int, cPropGroupFade, fn_8020BA94, Script_GetParamUInt, 7)
+PARAM(unsigned int, cPropGroupFade, fn_8020BADC, Script_GetParamUInt, 8)
+PARAM(unsigned int, cPropGroupFade, fn_8020BB24, Script_GetParamUInt, 9)
 
 cScript *fn_8020BB6C(register cMP_MatchTrigger *self)
 {
     return new cMP_MatchTrigger;
 }
 
-PARAM(int, cMP_MatchTrigger, fn_8020BBC0, fn_80079068, 0)
-PARAM(int, cMP_MatchTrigger, fn_8020BC08, fn_80079068, 1)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020BC50, fn_800791C8, 2)
-PARAM(int, cMP_MatchTrigger, fn_8020BC98, fn_80079068, 3)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020BCE0, fn_800791C8, 4)
-PARAM(int, cMP_MatchTrigger, fn_8020BD28, fn_80079068, 5)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020BD70, fn_800791C8, 6)
-PARAM(int, cMP_MatchTrigger, fn_8020BDB8, fn_80079068, 7)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020BE00, fn_800791C8, 8)
-PARAM(int, cMP_MatchTrigger, fn_8020BE48, fn_80079068, 9)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020BE90, fn_800791C8, 10)
-PARAM(int, cMP_MatchTrigger, fn_8020BED8, fn_80079068, 11)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020BF20, fn_800791C8, 12)
-PARAM(int, cMP_MatchTrigger, fn_8020BF68, fn_80079068, 13)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020BFB0, fn_800791C8, 14)
-PARAM(int, cMP_MatchTrigger, fn_8020BFF8, fn_80079068, 15)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020C040, fn_800791C8, 16)
-PARAM(int, cMP_MatchTrigger, fn_8020C088, fn_80079068, 17)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020C0D0, fn_800791C8, 18)
-PARAM(int, cMP_MatchTrigger, fn_8020C118, fn_80079068, 19)
-PARAM(unsigned int, cMP_MatchTrigger, fn_8020C160, fn_800791C8, 20)
-PARAM(int, cMP_MatchTrigger, fn_8020C1A8, fn_80079068, 21)
+PARAM(int, cMP_MatchTrigger, fn_8020BBC0, Script_GetParamInt, 0)
+PARAM(int, cMP_MatchTrigger, fn_8020BC08, Script_GetParamInt, 1)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BC50, Script_GetParamUInt, 2)
+PARAM(int, cMP_MatchTrigger, fn_8020BC98, Script_GetParamInt, 3)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BCE0, Script_GetParamUInt, 4)
+PARAM(int, cMP_MatchTrigger, fn_8020BD28, Script_GetParamInt, 5)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BD70, Script_GetParamUInt, 6)
+PARAM(int, cMP_MatchTrigger, fn_8020BDB8, Script_GetParamInt, 7)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BE00, Script_GetParamUInt, 8)
+PARAM(int, cMP_MatchTrigger, fn_8020BE48, Script_GetParamInt, 9)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BE90, Script_GetParamUInt, 10)
+PARAM(int, cMP_MatchTrigger, fn_8020BED8, Script_GetParamInt, 11)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BF20, Script_GetParamUInt, 12)
+PARAM(int, cMP_MatchTrigger, fn_8020BF68, Script_GetParamInt, 13)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020BFB0, Script_GetParamUInt, 14)
+PARAM(int, cMP_MatchTrigger, fn_8020BFF8, Script_GetParamInt, 15)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020C040, Script_GetParamUInt, 16)
+PARAM(int, cMP_MatchTrigger, fn_8020C088, Script_GetParamInt, 17)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020C0D0, Script_GetParamUInt, 18)
+PARAM(int, cMP_MatchTrigger, fn_8020C118, Script_GetParamInt, 19)
+PARAM(unsigned int, cMP_MatchTrigger, fn_8020C160, Script_GetParamUInt, 20)
+PARAM(int, cMP_MatchTrigger, fn_8020C1A8, Script_GetParamInt, 21)
 
 cScript *fn_8020C1F0(register cCameraSet *self)
 {
     return new cCameraSet;
 }
 
-PARAM(float, cCameraSet, fn_8020C244, fn_8007935C, 0)
+PARAM(float, cCameraSet, fn_8020C244, Script_GetParamFloat, 0)
 }

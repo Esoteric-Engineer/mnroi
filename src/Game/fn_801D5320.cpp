@@ -167,12 +167,12 @@ extern int lbl_8066C724;
 
 extern "C" {
 
-int fn_800797D4(cScript *self);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
-int fn_8007D7C4(cScript *self, unsigned char kind);
+int Script_GetOwner(cScript *self);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+int Script_CancelMessages(cScript *self, unsigned char kind);
 int fn_8007D8B0(cScript *self);
-int fn_8007CF00(cScript *script, int handle, int value);
+int Script_LinkEntity(cScript *script, int handle, int value);
 int fn_80080B34();
 int fn_804425F8(void *ev);
 void fn_8046B5A8(void *ev, int x);
@@ -202,7 +202,7 @@ void fn_80065D60(SObj *o, Vector *v);
 int fn_80393B28(int actor, Arc *a);
 void fn_80393938(int actor, Arc *a, int flag);
 Arc *fn_803A20D8(char *tbl, char *name, int actor, int b, int c, int d, int e, float f);
-void fn_80082AFC(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
 void fn_80082440(void *ev, Vector *out);
 void fn_800826A8(void *ev, Mat *m);
 void fn_800825D0(void *ev, Mat *m);
@@ -311,7 +311,7 @@ unsigned int fn_801DB274(cGrandCentral_RockBomb *self);
 void fn_801D5320(register cGrandCentral_VenomBoss *self) // slot 5
 {
     fn_8046B710(&self->boss, fn_801DA8FC(self));
-    fn_8007CF00(self, fn_804425F8(&self->boss), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->boss), 0);
     self->f40 = 0;
     self->armored = 0;
     self->f58 = fn_8007C244(&self->boss);
@@ -322,7 +322,7 @@ void fn_801D5320(register cGrandCentral_VenomBoss *self) // slot 5
     self->bossHit = 0;
     self->playerHit = 0;
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     fn_801D58F4(self);
 }
 
@@ -349,7 +349,7 @@ void fn_801D5444(register cGrandCentral_VenomBoss *self, unsigned char kind, flo
 
 float fn_801D5514(register cGrandCentral_VenomBoss *self, int h, int other, int kind, int b, float damage, int c, int value) // slot 21
 {
-    fn_8007D404(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return damage;
 }
 
@@ -458,7 +458,7 @@ void fn_801D5AEC(register cGrandCentral_VenomBoss *self)
 
 void fn_801D5D58(register cGrandCentral_VenomBoss *self)
 {
-    fn_8007D404(self, 2.0f, 71, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 71, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_8057230C, 1);
@@ -471,12 +471,12 @@ void fn_801D5E00(register cGrandCentral_VenomBoss *self)
     fn_80081918(fn_804425F8(&self->player));
     lbl_8066C71C = fn_804425F8(&self->player);
     fn_8046B6C8(&ev, fn_801DA98C(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D5EC0(register cGrandCentral_VenomBoss *self)
 {
-    fn_8007D404(self, 2.0f, 73, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 73, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D5F28(register cGrandCentral_VenomBoss *self)
@@ -486,7 +486,7 @@ void fn_801D5F28(register cGrandCentral_VenomBoss *self)
     fn_800816A0(fn_804425F8(&self->boss));
     lbl_8066C71C = fn_804425F8(&self->boss);
     fn_8046B6C8(&ev, fn_801DA944(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D5FE8(register cGrandCentral_OhmBoss *self) // slot 4
@@ -503,11 +503,11 @@ void fn_801D5FE8(register cGrandCentral_OhmBoss *self) // slot 4
     self->done = 0;
     self->bossHit = 0;
     self->playerHit = 0;
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8046B710(&self->r38, fn_801DAA28(self));
     fn_8046B710(&self->r70, fn_801DAC68(self));
     fn_8046B710(&self->r78, fn_801DACB0(self));
-    fn_8007CF00(self, fn_804425F8(&self->r38), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r38), 0);
     fn_8046B710(&self->r50, fn_801DAAB8(self));
     fn_8046B710(&self->r40, fn_801DAA70(self));
     fn_800826A8(&self->boss, &self->mB0);
@@ -515,7 +515,7 @@ void fn_801D5FE8(register cGrandCentral_OhmBoss *self) // slot 4
     fn_8046B710(&self->r60, fn_801DAB48(self));
     fn_8046B710(&self->r68, fn_801DAB90(self));
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
 }
 
 void fn_801D61E0(register cGrandCentral_OhmBoss *self) // slot 5
@@ -530,16 +530,16 @@ void fn_801D6220(register cGrandCentral_OhmBoss *self, int a, int b, int kind, f
         self->f94 = 2;
         fn_801D728C(self);
         if (self->charging == 0)
-            fn_8007D404(self, 0.1f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.1f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     } else if (kind == 17) {
         if (self->f94 == 1) {
             self->f94 = 2;
             self->f90 = 1;
-            fn_8007D404(self, 0.1f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.1f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             fn_80083428(&self->boss, "gcJohmCharge");
         } else if (self->f94 == 0) {
             self->f94 = 1;
-            fn_8007D404(self, 0.1f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.1f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             fn_80082E24(&self->boss, "gcJohmCharge");
             return;
         }
@@ -596,7 +596,7 @@ void fn_801D6444(register cGrandCentral_OhmBoss *self, unsigned char kind, float
             fn_80083428(&self->boss, "gcJohmCharge");
         }
         if (self->f94 == 2 && self->done == 0)
-            fn_8007D404(self, 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 10:
         self->charging = 1;
@@ -626,7 +626,7 @@ void fn_801D6444(register cGrandCentral_OhmBoss *self, unsigned char kind, float
         hp = hp + 50.0f;
         fn_8007C454(&self->boss, hp);
         if (self->f94 == 2)
-            fn_8007D404(self, 3.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 3.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 50:
         actor = fn_8007C034(&self->boss);
@@ -762,7 +762,7 @@ void fn_801D728C(register cGrandCentral_OhmBoss *self)
 {
     self->f84 = 1;
     self->f88 = 1;
-    fn_8007D404(self, 5.0f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 5.0f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_80082E24(&self->r38, "gcclockFX");
     fn_8007B288(fn_804425F8(&self->boss));
     fn_8007B2E8(fn_804425F8(&self->boss), 0, 90.0f);
@@ -781,7 +781,7 @@ void fn_801D728C(register cGrandCentral_OhmBoss *self)
 
 void fn_801D74E8(register cGrandCentral_OhmBoss *self)
 {
-    fn_8007D404(self, 2.0f, 71, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 71, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_80572278, 1);
@@ -793,12 +793,12 @@ void fn_801D7598(register cGrandCentral_OhmBoss *self)
 
     fn_80081918(fn_804425F8(&self->player));
     fn_8046B6C8(&ev, fn_801DABD8(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D764C(register cGrandCentral_OhmBoss *self)
 {
-    fn_8007D404(self, 2.0f, 73, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 73, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D76BC(register cGrandCentral_OhmBoss *self)
@@ -807,7 +807,7 @@ void fn_801D76BC(register cGrandCentral_OhmBoss *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801DAC20(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D7770(register cGrandCentral_HazmatBoss *self) // slot 4
@@ -816,11 +816,11 @@ void fn_801D7770(register cGrandCentral_HazmatBoss *self) // slot 4
 
     self->armored = 0;
     self->f4C = 0;
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8046B710(&self->r30, fn_801DAD4C(self));
     fn_8046B710(&self->r38, fn_801DAD94(self));
     fn_8046B5A8(&p, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&p), 0);
+    Script_LinkEntity(self, fn_804425F8(&p), 0);
     self->done = 0;
     self->bossHit = 0;
     self->playerHit = 0;
@@ -839,9 +839,9 @@ void fn_801D792C(register cGrandCentral_HazmatBoss *self, int a, int b, int kind
 {
     if (self->f4C == 0) {
         self->f4C = 1;
-        fn_8007D404(self, 1.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 2.0f, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 7.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.0f, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 7.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
 }
 
@@ -862,23 +862,23 @@ void fn_801D7B30(register cGrandCentral_HazmatBoss *self, unsigned char kind, fl
 {
     switch (kind) {
     case 10:
-        fn_80082AFC(&self->r30, fn_804425F8(&self->r30), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r30, fn_804425F8(&self->r30), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 30:
-        fn_80082AFC(&self->r30, fn_804425F8(&self->r30), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r30, fn_804425F8(&self->r30), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 15:
-        fn_80082AFC(&self->r38, fn_804425F8(&self->r38), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r38, fn_804425F8(&self->r38), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 20:
-        fn_80082AFC(&self->r38, fn_804425F8(&self->r38), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r38, fn_804425F8(&self->r38), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 40: {
         Ref8 p;
 
         fn_8046B638(&p, fn_80080B34());
         fn_8007C594(&p, 1.0f, 4, 0, 0, 2);
-        fn_8007D404(self, 1.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
     case 42:
@@ -900,7 +900,7 @@ int fn_801D7E04(register cGrandCentral_HazmatBoss *self, int h, int other, int k
 {
     Ref8 r;
 
-    fn_8007D7C4(self, 40);
+    Script_CancelMessages(self, 40);
     if (h == fn_804425F8(&self->boss)) {
         fn_8046B638(&r, fn_80080B34());
         if (fn_800809CC(&r) && fn_80086D24(fn_800809CC(&r)))
@@ -928,7 +928,7 @@ void fn_801D7FC0(register cGrandCentral_HazmatBoss *self, int h, int other, int 
         return;
     }
     self->done = 1;
-    fn_8007D7C4(self, 40);
+    Script_CancelMessages(self, 40);
     lbl_8066C724 = 1;
     fn_80081C68();
     fn_80081C94();
@@ -963,7 +963,7 @@ void fn_801D8100(register cGrandCentral_HazmatBoss *self)
 
 void fn_801D8248(register cGrandCentral_HazmatBoss *self)
 {
-    fn_8007D404(self, 2.0f, 44, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 44, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_8057230C, 1);
@@ -972,12 +972,12 @@ void fn_801D8248(register cGrandCentral_HazmatBoss *self)
 void fn_801D82F8(register cGrandCentral_HazmatBoss *self)
 {
     fn_80081918(fn_80080B34());
-    fn_80082AFC(&self->r30, fn_804425F8(&self->r30), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r30, fn_804425F8(&self->r30), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D8394(register cGrandCentral_HazmatBoss *self)
 {
-    fn_8007D404(self, 2.0f, 48, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 48, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D8404(register cGrandCentral_HazmatBoss *self)
@@ -986,7 +986,7 @@ void fn_801D8404(register cGrandCentral_HazmatBoss *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801DADDC(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D84B8(register cGrandCentral_MagnetoBoss *self) // slot 4
@@ -1001,17 +1001,17 @@ void fn_801D84B8(register cGrandCentral_MagnetoBoss *self) // slot 4
     self->done = 0;
     self->bossHit = 0;
     self->playerHit = 0;
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     fn_8046B710(&self->r58, fn_801DAF08(self));
     fn_8046B710(&self->r60, fn_801DAF50(self));
     fn_8046B710(&self->r48, fn_801DAEC0(self));
     fn_8046B710(&self->r40, fn_801DAE78(self));
     fn_8046B710(&self->r50, fn_801DAF98(self));
     fn_8046B710(&self->r38, fn_801DB190(self));
-    fn_8007CF00(self, fn_804425F8(&self->r58), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r60), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r58), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r60), 0);
     fn_8046B710(&self->r68[0], fn_801DAFE0(self));
     fn_8046B710(&self->r68[1], fn_801DB028(self));
     fn_8046B710(&self->r68[2], fn_801DB070(self));
@@ -1101,35 +1101,35 @@ void fn_801D8C98(register cGrandCentral_MagnetoBoss *self, unsigned char kind, f
         fn_801D9708(self);
         break;
     case 30:
-        fn_80082AFC(&self->r68[0], fn_804425F8(&self->r68[0]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r68[0], fn_804425F8(&self->r68[0]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 31:
-        fn_80082AFC(&self->r68[1], fn_804425F8(&self->r68[1]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r68[1], fn_804425F8(&self->r68[1]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 32:
-        fn_80082AFC(&self->r68[2], fn_804425F8(&self->r68[2]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r68[2], fn_804425F8(&self->r68[2]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 33:
-        fn_80082AFC(&self->r68[3], fn_804425F8(&self->r68[3]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r68[3], fn_804425F8(&self->r68[3]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 34:
-        fn_80082AFC(&self->r68[4], fn_804425F8(&self->r68[4]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r68[4], fn_804425F8(&self->r68[4]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 35:
-        fn_80082AFC(&self->r68[5], fn_804425F8(&self->r68[5]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r68[5], fn_804425F8(&self->r68[5]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 40: {
         Ref8 ev;
 
         fn_8046B6C8(&ev, fn_801DB190(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     }
     case 50: {
         Ref8 ev;
 
         fn_8046B6C8(&ev, fn_801DB190(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     }
     case 60:
@@ -1157,7 +1157,7 @@ float fn_801D90D0(register cGrandCentral_MagnetoBoss *self, int h, int node, int
     } else if ((self->f9C == 2 || self->f9C == 3) && self->fB4 == 1) {
         fn_8007B618(fn_804425F8(&self->boss), 1);
         fn_8007BCC8(fn_804425F8(&self->boss), 1);
-        fn_8007D404(self, self->fA4 * 6.0f + 6.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, self->fA4 * 6.0f + 6.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         fn_801D9708(self);
     }
     return -1.0f;
@@ -1203,7 +1203,7 @@ void fn_801D9490(register cGrandCentral_MagnetoBoss *self, int h, int other, int
             return;
         return;
     }
-    fn_8007D7C4(self, 10);
+    Script_CancelMessages(self, 10);
     self->done = 1;
     lbl_8066C724 = 1;
     fn_80081C68();
@@ -1247,17 +1247,17 @@ void fn_801D95E4(register cGrandCentral_MagnetoBoss *self)
 void fn_801D9708(register cGrandCentral_MagnetoBoss *self)
 {
     fn_800803DC(&self->boss, 30, 30.0f);
-    fn_8007D404(self, self->fA4 + 1.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007D404(self, self->fA4 + 2.0f, 31, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007D404(self, self->fA4 + 3.0f, 32, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007D404(self, self->fA4 + 4.0f, 33, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007D404(self, self->fA4 + 5.0f, 34, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007D404(self, self->fA4 + 6.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fA4 + 1.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fA4 + 2.0f, 31, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fA4 + 3.0f, 32, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fA4 + 4.0f, 33, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fA4 + 5.0f, 34, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fA4 + 6.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D98F0(register cGrandCentral_MagnetoBoss *self)
 {
-    fn_8007D404(self, 2.0f, 61, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 61, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_8057230C, 1);
@@ -1270,12 +1270,12 @@ void fn_801D99A0(register cGrandCentral_MagnetoBoss *self)
     fn_80081918(fn_804425F8(&self->player));
     lbl_8066C71C = fn_804425F8(&self->player);
     fn_8046B6C8(&ev, fn_801DB1D8(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D9A68(register cGrandCentral_MagnetoBoss *self)
 {
-    fn_8007D404(self, 2.0f, 63, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 63, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D9AD8(register cGrandCentral_MagnetoBoss *self)
@@ -1285,13 +1285,13 @@ void fn_801D9AD8(register cGrandCentral_MagnetoBoss *self)
     fn_80081918(fn_804425F8(&self->boss));
     lbl_8066C71C = fn_804425F8(&self->boss);
     fn_8046B6C8(&ev, fn_801DB190(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D9BA0(register cGrandCentral_RockBomb *self) // slot 4
 {
-    fn_8046B710(&self->obj, fn_800797D4(self));
-    fn_8007CF00(self, fn_801DB274(self), 0);
+    fn_8046B710(&self->obj, Script_GetOwner(self));
+    Script_LinkEntity(self, fn_801DB274(self), 0);
 }
 
 void fn_801D9C10(register cGrandCentral_RockBomb *self) // slot 5
@@ -1338,12 +1338,12 @@ void fn_801D9D04(register cGrandCentral_RockBomb *self, unsigned char kind, floa
 void fn_801D9EC8(register cGrandCentral_RockBomb *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     fn_801DA2B0(self);
-    fn_8007D404(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D9F60(register cGrandCentral_RockBomb *self, int h, int other, int value) // slot 15
 {
-    if (h == fn_801DB274(self) && other == fn_800797D4(self))
+    if (h == fn_801DB274(self) && other == Script_GetOwner(self))
         fn_801DA1E8(self);
 }
 
@@ -1357,7 +1357,7 @@ void fn_801D9FDC(register cGrandCentral_RockBomb *self, int h, int other, int a,
         int actor = fn_8007C034(&p);
         if (actor && fn_8009B04C(actor) != 0x6c)
             fn_800803DC(&p, 0x6c, 30.0f);
-        fn_8007D404(self, 0.01f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.01f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         return;
     }
     Vector a1;
@@ -1369,7 +1369,7 @@ void fn_801D9FDC(register cGrandCentral_RockBomb *self, int h, int other, int a,
         fn_8007C594(&p, 10.0f, 0, 0, 0, 0);
         fn_800803DC(&p, 0x69, 30.0f);
     }
-    fn_8007D404(self, 0.01f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.01f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801DA1E8(register cGrandCentral_RockBomb *self)
@@ -1380,7 +1380,7 @@ void fn_801DA1E8(register cGrandCentral_RockBomb *self)
     fn_800825D0(&self->obj, &self->m60);
     fn_80080928(&self->obj, 0);
     fn_800820A0(&self->obj, 0);
-    fn_8046B5F0(&r, fn_800797D4(self));
+    fn_8046B5F0(&r, Script_GetOwner(self));
     SObj *o = fn_80080EFC(&r);
     if (!o)
         return;
@@ -1400,7 +1400,7 @@ void fn_801DA2B0(register cGrandCentral_RockBomb *self)
     fn_800825D0(&self->obj, &m);
     fn_80082014(&self->obj, 2);
     Ref8 r;
-    fn_8046B5F0(&r, fn_800797D4(self));
+    fn_8046B5F0(&r, Script_GetOwner(self));
     SObj *o1 = fn_80080EFC(&r);
     if (o1) {
         fn_8006645C(o1, 0);
@@ -1467,59 +1467,59 @@ cScript *fn_801DA8A8(register cGrandCentral_VenomBoss *self)
     return new cGrandCentral_VenomBoss;
 }
 
-unsigned int fn_801DA8FC(register cGrandCentral_VenomBoss *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801DA944(register cGrandCentral_VenomBoss *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801DA98C(register cGrandCentral_VenomBoss *self) { return fn_800791C8(self, 2); }
+unsigned int fn_801DA8FC(register cGrandCentral_VenomBoss *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801DA944(register cGrandCentral_VenomBoss *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801DA98C(register cGrandCentral_VenomBoss *self) { return Script_GetParamUInt(self, 2); }
 
 cScript *fn_801DA9D4(register cGrandCentral_OhmBoss *self)
 {
     return new cGrandCentral_OhmBoss;
 }
 
-unsigned int fn_801DAA28(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801DAA70(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801DAAB8(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801DAB00(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 4); }
-unsigned int fn_801DAB48(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 5); }
-unsigned int fn_801DAB90(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 6); }
-unsigned int fn_801DABD8(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 10); }
-unsigned int fn_801DAC20(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 11); }
-unsigned int fn_801DAC68(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 13); }
-unsigned int fn_801DACB0(register cGrandCentral_OhmBoss *self) { return fn_800791C8(self, 14); }
+unsigned int fn_801DAA28(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801DAA70(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801DAAB8(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801DAB00(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 4); }
+unsigned int fn_801DAB48(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 5); }
+unsigned int fn_801DAB90(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 6); }
+unsigned int fn_801DABD8(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 10); }
+unsigned int fn_801DAC20(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 11); }
+unsigned int fn_801DAC68(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 13); }
+unsigned int fn_801DACB0(register cGrandCentral_OhmBoss *self) { return Script_GetParamUInt(self, 14); }
 
 cScript *fn_801DACF8(register cGrandCentral_HazmatBoss *self)
 {
     return new cGrandCentral_HazmatBoss;
 }
 
-unsigned int fn_801DAD4C(register cGrandCentral_HazmatBoss *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801DAD94(register cGrandCentral_HazmatBoss *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801DADDC(register cGrandCentral_HazmatBoss *self) { return fn_800791C8(self, 2); }
+unsigned int fn_801DAD4C(register cGrandCentral_HazmatBoss *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801DAD94(register cGrandCentral_HazmatBoss *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801DADDC(register cGrandCentral_HazmatBoss *self) { return Script_GetParamUInt(self, 2); }
 
 cScript *fn_801DAE24(register cGrandCentral_MagnetoBoss *self)
 {
     return new cGrandCentral_MagnetoBoss;
 }
 
-unsigned int fn_801DAE78(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801DAEC0(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801DAF08(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801DAF50(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801DAF98(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 4); }
-unsigned int fn_801DAFE0(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 6); }
-unsigned int fn_801DB028(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 7); }
-unsigned int fn_801DB070(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 8); }
-unsigned int fn_801DB0B8(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 9); }
-unsigned int fn_801DB100(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 10); }
-unsigned int fn_801DB148(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 11); }
-unsigned int fn_801DB190(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 12); }
-unsigned int fn_801DB1D8(register cGrandCentral_MagnetoBoss *self) { return fn_800791C8(self, 14); }
+unsigned int fn_801DAE78(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801DAEC0(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801DAF08(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801DAF50(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801DAF98(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 4); }
+unsigned int fn_801DAFE0(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 6); }
+unsigned int fn_801DB028(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 7); }
+unsigned int fn_801DB070(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 8); }
+unsigned int fn_801DB0B8(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 9); }
+unsigned int fn_801DB100(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 10); }
+unsigned int fn_801DB148(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 11); }
+unsigned int fn_801DB190(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 12); }
+unsigned int fn_801DB1D8(register cGrandCentral_MagnetoBoss *self) { return Script_GetParamUInt(self, 14); }
 
 cScript *fn_801DB220(register cGrandCentral_RockBomb *self)
 {
     return new cGrandCentral_RockBomb;
 }
 
-unsigned int fn_801DB274(register cGrandCentral_RockBomb *self) { return fn_800791C8(self, 0); }
+unsigned int fn_801DB274(register cGrandCentral_RockBomb *self) { return Script_GetParamUInt(self, 0); }
 
 }

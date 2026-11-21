@@ -77,12 +77,12 @@ extern char lbl_8052F060[];
 
 extern "C" {
 
-int fn_800797D4(cScript *self);
-int fn_80079068(cScript *self, unsigned int i);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-float fn_8007935C(cScript *self, unsigned int i);
-char *fn_800794FC(cScript *self, unsigned int i);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+int Script_GetOwner(cScript *self);
+int Script_GetParamInt(cScript *self, unsigned int i);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+float Script_GetParamFloat(cScript *self, unsigned int i);
+char *Script_GetParamString(cScript *self, unsigned int i);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
 void fn_8046CA94(int value);
 void fn_8046B638(Ref8 *ev, int h);
 void fn_8046B6C8(Ref8 *ev, int h);
@@ -97,7 +97,7 @@ int fn_80081E6C(Ref8 *ev);
 void fn_80081F8C(Ref8 *ev, int v);
 void fn_80082014(Ref8 *ev, int v);
 void fn_80082720(Ref8 *ev, int v);
-void fn_80082AFC(Ref8 *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(Ref8 *ev, int h, int owner, int kind, float a, float b, float c, float d);
 void fn_80082FA4(Ref8 *ev);
 void fn_80082F30(Ref8 *ev);
 void fn_80082124(Ref8 *ev);
@@ -243,7 +243,7 @@ void fn_801F65F0(register cCutscenePlay *self) // slot 5
     fn_801F7C68(self);
     if (fn_801FA728(self) && self->done == 0) {
         fn_8046CA94(0x1e);
-        fn_8007D404(self, 0.1f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.1f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
 }
 
@@ -255,7 +255,7 @@ void fn_801F6688(register cCutscenePlay *self, int a, int b, int kind, float x, 
         if (fn_801FBB78(self) == 0.0f)
             fn_801F6B30(self);
         else if (fn_801FBB78(self) > 0.0f)
-            fn_8007D404(self, fn_801FBB78(self), 0x1e, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_801FBB78(self), 0x1e, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
 }
 
@@ -309,7 +309,7 @@ void fn_801F69E4(register cCutscenePlay *self, int a, int kind, int c, float x, 
         if (fn_801FBAA0(self) == a) {
             self->sent = 1;
             fn_8046B6C8(&ev, fn_801FBAE8(self));
-            fn_80082AFC(&ev, fn_801FBAE8(self), fn_800797D4(self), fn_801FBB30(self), 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&ev, fn_801FBAE8(self), Script_GetOwner(self), fn_801FBB30(self), 0.0f, 0.0f, 0.0f, 0.0f);
         }
         break;
     case 3:
@@ -442,7 +442,7 @@ void fn_801F76B4(register cCutscenePlay *self, int h, int value)
     Ref8 ev;
 
     fn_8046B6C8(&ev, h);
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), value, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), value, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801F7758(register cCutscenePlay *self)
@@ -469,10 +469,10 @@ void fn_801F7758(register cCutscenePlay *self)
     }
     if (fn_801FA848(self)) {
         fn_8046B6C8(&ev, fn_801FA848(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), fn_801FA890(self), 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), fn_801FA890(self), 0.0f, 0.0f, 0.0f, 0.0f);
     }
     if (fn_801FBC08(self) > 0)
-        fn_8007D404(self, 0.33f, 0x28, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.33f, 0x28, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     if (fn_801FA7B8(self) && fn_801FA770(self) == 1) {
         self->nLinked = fn_80081528(self->linked, 0x20);
         fn_8046B638(&ev, 0);
@@ -814,85 +814,85 @@ inline int sn_return_decl2(int a) { return a; }
         return reader(self, i) != 0;       \
     }
 
-PARAM(char *, fn_801FA698, fn_800794FC, 0)
-PARAM(int, fn_801FA6E0, fn_80079068, 1)
-PARAM(int, fn_801FA728, fn_80079068, 2)
-PARAM(int, fn_801FA770, fn_80079068, 3)
-PARAM(int, fn_801FA7B8, fn_80079068, 4)
-PARAM(int, fn_801FA800, fn_80079068, 6)
-PARAM(unsigned int, fn_801FA848, fn_800791C8, 7)
-PARAM(int, fn_801FA890, fn_80079068, 8)
-PARAM(unsigned int, fn_801FA8D8, fn_800791C8, 10)
-PARAM(int, fn_801FA920, fn_80079068, 11)
-PARAM(unsigned int, fn_801FA968, fn_800791C8, 12)
-PARAM(int, fn_801FA9B0, fn_80079068, 13)
-PARAM(int, fn_801FA9F8, fn_80079068, 14)
-PARAM(unsigned int, fn_801FAA40, fn_800791C8, 15)
-PARAM(int, fn_801FAA88, fn_80079068, 16)
-PARAM(int, fn_801FAAD0, fn_80079068, 17)
-PARAM(unsigned int, fn_801FAB18, fn_800791C8, 18)
-PARAM(int, fn_801FAB60, fn_80079068, 19)
-PARAM(int, fn_801FABA8, fn_80079068, 20)
-PARAM(unsigned int, fn_801FABF0, fn_800791C8, 21)
-PARAM(int, fn_801FAC38, fn_80079068, 22)
-PARAM(int, fn_801FAC80, fn_80079068, 23)
-PARAM(unsigned int, fn_801FACC8, fn_800791C8, 24)
-PARAM(int, fn_801FAD10, fn_80079068, 25)
-PARAM(int, fn_801FAD58, fn_80079068, 26)
-PARAM(unsigned int, fn_801FADA0, fn_800791C8, 27)
-PARAM(int, fn_801FADE8, fn_80079068, 28)
-PARAM(int, fn_801FAE30, fn_80079068, 29)
-PARAM(unsigned int, fn_801FAE78, fn_800791C8, 30)
-PARAM(int, fn_801FAEC0, fn_80079068, 31)
-PARAM(int, fn_801FAF08, fn_80079068, 32)
-PARAM(unsigned int, fn_801FAF50, fn_800791C8, 33)
-PARAM(int, fn_801FAF98, fn_80079068, 34)
-PARAM(int, fn_801FAFE0, fn_80079068, 35)
-PARAM(unsigned int, fn_801FB028, fn_800791C8, 36)
-PARAM(int, fn_801FB070, fn_80079068, 37)
-PARAM(int, fn_801FB0B8, fn_80079068, 38)
-PARAM(unsigned int, fn_801FB100, fn_800791C8, 39)
-PARAM(int, fn_801FB148, fn_80079068, 40)
-PARAM(int, fn_801FB190, fn_80079068, 41)
-PARAM(unsigned int, fn_801FB1D8, fn_800791C8, 42)
-PARAM(int, fn_801FB220, fn_80079068, 43)
-PARAM(int, fn_801FB268, fn_80079068, 44)
-PARAM(unsigned int, fn_801FB2B0, fn_800791C8, 45)
-PARAM(int, fn_801FB2F8, fn_80079068, 46)
-PARAM(int, fn_801FB340, fn_80079068, 47)
-PARAM(unsigned int, fn_801FB388, fn_800791C8, 48)
-PARAM(int, fn_801FB3D0, fn_80079068, 49)
-PARAM(int, fn_801FB418, fn_80079068, 50)
-PARAM(unsigned int, fn_801FB460, fn_800791C8, 51)
-PARAM(int, fn_801FB4A8, fn_80079068, 52)
-PARAM(int, fn_801FB4F0, fn_80079068, 53)
-PARAM(unsigned int, fn_801FB538, fn_800791C8, 54)
-PARAM(int, fn_801FB580, fn_80079068, 55)
-PARAM(int, fn_801FB5C8, fn_80079068, 56)
-PARAM(unsigned int, fn_801FB610, fn_800791C8, 57)
-PARAM(int, fn_801FB658, fn_80079068, 58)
-PARAM(int, fn_801FB6A0, fn_80079068, 59)
-PARAM(unsigned int, fn_801FB6E8, fn_800791C8, 60)
-PARAM(int, fn_801FB730, fn_80079068, 61)
-PARAM(int, fn_801FB778, fn_80079068, 62)
-PARAM(unsigned int, fn_801FB7C0, fn_800791C8, 63)
-PARAM(int, fn_801FB808, fn_80079068, 64)
-PARAM(int, fn_801FB850, fn_80079068, 65)
-PARAM(unsigned int, fn_801FB898, fn_800791C8, 66)
-PARAM(int, fn_801FB8E0, fn_80079068, 67)
-PARAM(int, fn_801FB928, fn_80079068, 68)
-PARAM(unsigned int, fn_801FB970, fn_800791C8, 69)
-PARAM(int, fn_801FB9B8, fn_80079068, 70)
-PARAM(unsigned int, fn_801FBA00, fn_800791C8, 71)
-FLAG(fn_801FBA48, fn_80079068, 72)
-PARAM(int, fn_801FBAA0, fn_80079068, 73)
-PARAM(unsigned int, fn_801FBAE8, fn_800791C8, 74)
-PARAM(int, fn_801FBB30, fn_80079068, 75)
-PARAM(float, fn_801FBB78, fn_8007935C, 76)
-PARAM(int, fn_801FBBC0, fn_80079068, 77)
-PARAM(int, fn_801FBC08, fn_80079068, 78)
-PARAM(char *, fn_801FBC50, fn_800794FC, 79)
-PARAM(int, fn_801FBC98, fn_80079068, 80)
-FLAG(fn_801FBCE0, fn_80079068, 81)
-FLAG(fn_801FBD38, fn_80079068, 82)
+PARAM(char *, fn_801FA698, Script_GetParamString, 0)
+PARAM(int, fn_801FA6E0, Script_GetParamInt, 1)
+PARAM(int, fn_801FA728, Script_GetParamInt, 2)
+PARAM(int, fn_801FA770, Script_GetParamInt, 3)
+PARAM(int, fn_801FA7B8, Script_GetParamInt, 4)
+PARAM(int, fn_801FA800, Script_GetParamInt, 6)
+PARAM(unsigned int, fn_801FA848, Script_GetParamUInt, 7)
+PARAM(int, fn_801FA890, Script_GetParamInt, 8)
+PARAM(unsigned int, fn_801FA8D8, Script_GetParamUInt, 10)
+PARAM(int, fn_801FA920, Script_GetParamInt, 11)
+PARAM(unsigned int, fn_801FA968, Script_GetParamUInt, 12)
+PARAM(int, fn_801FA9B0, Script_GetParamInt, 13)
+PARAM(int, fn_801FA9F8, Script_GetParamInt, 14)
+PARAM(unsigned int, fn_801FAA40, Script_GetParamUInt, 15)
+PARAM(int, fn_801FAA88, Script_GetParamInt, 16)
+PARAM(int, fn_801FAAD0, Script_GetParamInt, 17)
+PARAM(unsigned int, fn_801FAB18, Script_GetParamUInt, 18)
+PARAM(int, fn_801FAB60, Script_GetParamInt, 19)
+PARAM(int, fn_801FABA8, Script_GetParamInt, 20)
+PARAM(unsigned int, fn_801FABF0, Script_GetParamUInt, 21)
+PARAM(int, fn_801FAC38, Script_GetParamInt, 22)
+PARAM(int, fn_801FAC80, Script_GetParamInt, 23)
+PARAM(unsigned int, fn_801FACC8, Script_GetParamUInt, 24)
+PARAM(int, fn_801FAD10, Script_GetParamInt, 25)
+PARAM(int, fn_801FAD58, Script_GetParamInt, 26)
+PARAM(unsigned int, fn_801FADA0, Script_GetParamUInt, 27)
+PARAM(int, fn_801FADE8, Script_GetParamInt, 28)
+PARAM(int, fn_801FAE30, Script_GetParamInt, 29)
+PARAM(unsigned int, fn_801FAE78, Script_GetParamUInt, 30)
+PARAM(int, fn_801FAEC0, Script_GetParamInt, 31)
+PARAM(int, fn_801FAF08, Script_GetParamInt, 32)
+PARAM(unsigned int, fn_801FAF50, Script_GetParamUInt, 33)
+PARAM(int, fn_801FAF98, Script_GetParamInt, 34)
+PARAM(int, fn_801FAFE0, Script_GetParamInt, 35)
+PARAM(unsigned int, fn_801FB028, Script_GetParamUInt, 36)
+PARAM(int, fn_801FB070, Script_GetParamInt, 37)
+PARAM(int, fn_801FB0B8, Script_GetParamInt, 38)
+PARAM(unsigned int, fn_801FB100, Script_GetParamUInt, 39)
+PARAM(int, fn_801FB148, Script_GetParamInt, 40)
+PARAM(int, fn_801FB190, Script_GetParamInt, 41)
+PARAM(unsigned int, fn_801FB1D8, Script_GetParamUInt, 42)
+PARAM(int, fn_801FB220, Script_GetParamInt, 43)
+PARAM(int, fn_801FB268, Script_GetParamInt, 44)
+PARAM(unsigned int, fn_801FB2B0, Script_GetParamUInt, 45)
+PARAM(int, fn_801FB2F8, Script_GetParamInt, 46)
+PARAM(int, fn_801FB340, Script_GetParamInt, 47)
+PARAM(unsigned int, fn_801FB388, Script_GetParamUInt, 48)
+PARAM(int, fn_801FB3D0, Script_GetParamInt, 49)
+PARAM(int, fn_801FB418, Script_GetParamInt, 50)
+PARAM(unsigned int, fn_801FB460, Script_GetParamUInt, 51)
+PARAM(int, fn_801FB4A8, Script_GetParamInt, 52)
+PARAM(int, fn_801FB4F0, Script_GetParamInt, 53)
+PARAM(unsigned int, fn_801FB538, Script_GetParamUInt, 54)
+PARAM(int, fn_801FB580, Script_GetParamInt, 55)
+PARAM(int, fn_801FB5C8, Script_GetParamInt, 56)
+PARAM(unsigned int, fn_801FB610, Script_GetParamUInt, 57)
+PARAM(int, fn_801FB658, Script_GetParamInt, 58)
+PARAM(int, fn_801FB6A0, Script_GetParamInt, 59)
+PARAM(unsigned int, fn_801FB6E8, Script_GetParamUInt, 60)
+PARAM(int, fn_801FB730, Script_GetParamInt, 61)
+PARAM(int, fn_801FB778, Script_GetParamInt, 62)
+PARAM(unsigned int, fn_801FB7C0, Script_GetParamUInt, 63)
+PARAM(int, fn_801FB808, Script_GetParamInt, 64)
+PARAM(int, fn_801FB850, Script_GetParamInt, 65)
+PARAM(unsigned int, fn_801FB898, Script_GetParamUInt, 66)
+PARAM(int, fn_801FB8E0, Script_GetParamInt, 67)
+PARAM(int, fn_801FB928, Script_GetParamInt, 68)
+PARAM(unsigned int, fn_801FB970, Script_GetParamUInt, 69)
+PARAM(int, fn_801FB9B8, Script_GetParamInt, 70)
+PARAM(unsigned int, fn_801FBA00, Script_GetParamUInt, 71)
+FLAG(fn_801FBA48, Script_GetParamInt, 72)
+PARAM(int, fn_801FBAA0, Script_GetParamInt, 73)
+PARAM(unsigned int, fn_801FBAE8, Script_GetParamUInt, 74)
+PARAM(int, fn_801FBB30, Script_GetParamInt, 75)
+PARAM(float, fn_801FBB78, Script_GetParamFloat, 76)
+PARAM(int, fn_801FBBC0, Script_GetParamInt, 77)
+PARAM(int, fn_801FBC08, Script_GetParamInt, 78)
+PARAM(char *, fn_801FBC50, Script_GetParamString, 79)
+PARAM(int, fn_801FBC98, Script_GetParamInt, 80)
+FLAG(fn_801FBCE0, Script_GetParamInt, 81)
+FLAG(fn_801FBD38, Script_GetParamInt, 82)
 }

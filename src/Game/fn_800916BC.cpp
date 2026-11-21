@@ -35,7 +35,7 @@ void fn_80095304(GameState *g);
 void fn_80114010();
 void fn_80443C24(void *slot, int index);
 void fn_80096268(void *slot, int a, int b);
-void *fn_800789DC(const char *name, int a);
+void *Script_Create(const char *name, int a);
 int fn_80430910(void *x);
 void fn_80428EEC(void *x, int v);
 
@@ -70,8 +70,8 @@ void fn_800916BC(register GameState *self, int a, int unused, int b)
             fn_80096268(slot, a, b);
         }
     }
-    lbl_8066D650 = fn_800789DC(lbl_8048A334, 1);
-    lbl_8066D654 = fn_800789DC(lbl_8048A340, 1);
+    lbl_8066D650 = Script_Create(lbl_8048A334, 1);
+    lbl_8066D654 = Script_Create(lbl_8048A340, 1);
     lbl_8066B92C = fn_80430910(lbl_8057E430);
     fn_80428EEC(lbl_80572230, 0);
 }

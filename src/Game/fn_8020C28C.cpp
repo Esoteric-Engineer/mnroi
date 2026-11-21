@@ -146,8 +146,8 @@ extern void *lbl_8066B834;
 extern char lbl_805028D8[]; // Suck's vtable
 
 extern "C" {
-int fn_800797D4(cScript *self);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+int Script_GetOwner(cScript *self);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
 void fn_8046B710(Ref8 *self, int value);
 void fn_8046B638(void *ev, int x);
 int fn_8046CBB8(void *ev);
@@ -259,7 +259,7 @@ int fn_80210A54(cRegionTrigger *self);
 int fn_80210B74(cRegionTrigger *self);
 int fn_800839B0(Vector *v);
 void fn_8020EA3C(cRegionTrigger *self, int h, int kind);
-void fn_80082AFC(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
 int fn_802106AC(cRegionTrigger *self);
 int fn_802106F4(cRegionTrigger *self);
 int fn_8021073C(cRegionTrigger *self);
@@ -319,16 +319,16 @@ unsigned int fn_802111F8(cRegionDefend *self);
 int fn_80211240(cRegionDefend *self);
 int fn_80211084(cRegionDefend *self);
 void fn_8020FF40(cRegionDefend *self, int on);
-void fn_80082AFCR(Ref8 *ev, int h, int owner, int kind, float a, float b, float c, float d) __asm__("fn_80082AFC");
+void Script_TriggerEntityR(Ref8 *ev, int h, int owner, int kind, float a, float b, float c, float d) __asm__("Script_TriggerEntity");
 void fn_8007B01C(unsigned int id, int a);
 void fn_8007B064(unsigned int id, int a);
 char *fn_802112EC(cRegionLightProbeSwap *self);
 void fn_80081654(char *name, int a);
 void fn_80081610(int a);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-int fn_80079068(cScript *self, unsigned int i);
-float fn_8007935C(cScript *self, unsigned int i);
-char *fn_800794FC(cScript *self, unsigned int i);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+int Script_GetParamInt(cScript *self, unsigned int i);
+float Script_GetParamFloat(cScript *self, unsigned int i);
+char *Script_GetParamString(cScript *self, unsigned int i);
 void fn_8046D92C(void *self);
 void fn_8046D9B8(IntArray *self);
 void fn_80030930(int id, int a, int b, int c, float f1, int d, int e, int f, int g, float f2);
@@ -364,17 +364,17 @@ void fn_8020C380(register cRegionDamage *self) // slot 5
     if (fn_80210234(self)) {
         self->unk28 = 1;
         if (fn_8021027C(self) != 0.0f)
-            fn_8007D404(self, fn_8021027C(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_8021027C(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         if (fn_80210404(self) == 1)
-            fn_801337F0(fn_800797D4(self), 0);
+            fn_801337F0(Script_GetOwner(self), 0);
         else if (fn_80210404(self) == 2)
-            fn_8007B0AC(fn_800797D4(self));
+            fn_8007B0AC(Script_GetOwner(self));
         return;
     } else {
         self->unk28 = 0;
     }
     if (fn_802102C4(self) != 0.0f)
-        fn_8007D404(self, fn_802102C4(self), 0xa, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_802102C4(self), 0xa, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_8020C508(register cRegionDamage *self, int a, int id, int c) // slot 14
@@ -491,9 +491,9 @@ void fn_8020CC38(register cRegionDamage *self, int a, int b, int kind, float x, 
     case 2:
         self->unk28 = !self->unk28;
         if (self->unk28 == 1 && fn_80210404(self) == 1)
-            fn_801337F0(fn_800797D4(self), 0);
+            fn_801337F0(Script_GetOwner(self), 0);
         else if (self->unk28 == 0 && fn_80210404(self) == 1)
-            fn_80133838(fn_800797D4(self));
+            fn_80133838(Script_GetOwner(self));
         fn_8020E058(self);
         if (self->unk28 && self->unk2C)
             fn_8020D31C(self, self->unk40, 0);
@@ -501,9 +501,9 @@ void fn_8020CC38(register cRegionDamage *self, int a, int b, int kind, float x, 
     case 7:
         self->unk28 = 0;
         if (fn_80210404(self) == 1)
-            fn_80133838(fn_800797D4(self));
+            fn_80133838(Script_GetOwner(self));
         if (fn_80210494(self) > 0)
-            fn_80114CC0(fn_800797D4(self));
+            fn_80114CC0(Script_GetOwner(self));
         break;
     }
 }
@@ -536,13 +536,13 @@ void fn_8020CDD0(register cRegionDamage *self, unsigned char kind, float a, floa
         fn_8007C594(ev, 9999.0f, 0, 0, 0, 0);
         break;
     case 10:
-        fn_8007D404(self, fn_8021027C(self) + 0.1f, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_8021027C(self) + 0.1f, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         self->unk28 = 1;
         if (self->unk2C)
             fn_8020D31C(self, fn_80080B34(), 0);
         break;
     case 0x14:
-        fn_8007D404(self, fn_802102C4(self) + 0.1f, 0xa, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_802102C4(self) + 0.1f, 0xa, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         self->unk28 = 0;
         break;
     }
@@ -601,13 +601,13 @@ void fn_8020D31C(register cRegionDamage *self, int id, int y)
     char ev2[8];
     fn_8046B638(ev2, self->unk44);
     char ev3[8];
-    fn_8046BBA0(ev3, fn_800797D4(self));
+    fn_8046BBA0(ev3, Script_GetOwner(self));
     if (fn_802104DC(self) && fn_80080A44(ev1))
         return;
     if (y) {
-        if ((id && !fn_800827D0(ev1, fn_800797D4(self))) || fn_8046C8FC(ev1))
+        if ((id && !fn_800827D0(ev1, Script_GetOwner(self))) || fn_8046C8FC(ev1))
             id = 0;
-        if ((self->unk44 && !fn_800827D0(ev2, fn_800797D4(self))) || fn_8046C8FC(ev2))
+        if ((self->unk44 && !fn_800827D0(ev2, Script_GetOwner(self))) || fn_8046C8FC(ev2))
             self->unk44 = 0;
         if (id == 0 && self->unk44 == 0)
             return;
@@ -734,7 +734,7 @@ void fn_8020D31C(register cRegionDamage *self, int id, int y)
             break;
         }
     }
-    fn_8007D404(self, 0.25f, 0x1e, (float)(unsigned int)id, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.25f, 0x1e, (float)(unsigned int)id, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_8020E058(register cRegionDamage *self)
@@ -745,13 +745,13 @@ void fn_8020E058(register cRegionDamage *self)
     fn_8046B638(ev, 0);
     for (node = fn_80430050(lbl_8052F060).head; node; node = fn_800B1AC4(node)) {
         fn_8046B710((Ref8 *)ev, fn_800B13D8(node));
-        if (fn_800809CC(ev) && fn_8046C96C(ev) && fn_800827D0(ev, fn_800797D4(self))) {
+        if (fn_800809CC(ev) && fn_8046C96C(ev) && fn_800827D0(ev, Script_GetOwner(self))) {
             Vector pos;
             char owner[8];
-            fn_8046B6C8(owner, fn_800797D4(self));
+            fn_8046B6C8(owner, Script_GetOwner(self));
             fn_80082440(owner, &pos);
             ((Obj *)fn_80085954(fn_800809CC(ev)))->s37(0x6f, &pos, 1, 1.0f, 0, 0, 1, 0);
-            fn_8007D404(self, 0.5f, 0x28, 0.0f, 0.0f, 0.0f, 0.0f, fn_804425F8((Ref8 *)ev));
+            Script_QueueMessage(self, 0.5f, 0x28, 0.0f, 0.0f, 0.0f, 0.0f, fn_804425F8((Ref8 *)ev));
         }
     }
 }
@@ -809,7 +809,7 @@ void fn_8020E32C(register cRegionTrigger *self, int a, int id, int c) // slot 14
         else
             self->unk28 = 1;
     }
-    fn_8007D404(self, fn_80210B2C(self), 0xa, 0.0f, 0.0f, 0.0f, 0.0f, id);
+    Script_QueueMessage(self, fn_80210B2C(self), 0xa, 0.0f, 0.0f, 0.0f, 0.0f, id);
 }
 
 void fn_8020E544(register cRegionTrigger *self, int a, int id, int c) // slot 15
@@ -843,13 +843,13 @@ void fn_8020E544(register cRegionTrigger *self, int a, int id, int c) // slot 15
     Vector p2;
     fn_8008291C(owner, 1, &p2, &p1, 0);
     if (!fn_80210BBC(self)) {
-        fn_8007D404(self, fn_80210B2C(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, id);
+        Script_QueueMessage(self, fn_80210B2C(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, id);
     } else if (!self->unk34 && fn_800839B0(&p1)) {
         self->unk34 = 1;
-        fn_8007D404(self, fn_80210B2C(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, id);
+        Script_QueueMessage(self, fn_80210B2C(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, id);
     } else if (self->unk34 && !fn_800839B0(&p1)) {
         self->unk34 = 0;
-        fn_8007D404(self, fn_80210B2C(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, id);
+        Script_QueueMessage(self, fn_80210B2C(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, id);
     }
 }
 
@@ -863,7 +863,7 @@ void fn_8020E864(register cRegionTrigger *self, int a, int b, int kind, float x,
         else
             self->unk2C = 0;
         if (self->unk30)
-            ((cScriptV *)self)->s14(fn_800797D4(self), fn_80080B34(), 0);
+            ((cScriptV *)self)->s14(Script_GetOwner(self), fn_80080B34(), 0);
         break;
     case 7:
         self->unk2C = 0;
@@ -886,7 +886,7 @@ void fn_8020E970(register cRegionTrigger *self, unsigned char kind, float a, flo
 #define SEND_TARGET(get)                                                                              \
     if (get(self)) {                                                                                  \
         fn_8046B710((Ref8 *)ev, get(self));                                                           \
-        fn_80082AFC(ev, h, fn_800797D4(self), kind, fn_802108EC(self), fn_80210934(self), fn_8021097C(self), \
+        Script_TriggerEntity(ev, h, Script_GetOwner(self), kind, fn_802108EC(self), fn_80210934(self), fn_8021097C(self), \
                     fn_802109C4(self));                                                               \
     }
 
@@ -935,7 +935,7 @@ void fn_8020F014(register cRegionSound *self, int a, int id, int c) // slot 15
 
 void fn_8020F0E8(register cRegionSuck *self) // slot 3
 {
-    self->obj = new Suck(fn_800797D4(self), fn_80210EE0(self));
+    self->obj = new Suck(Script_GetOwner(self), fn_80210EE0(self));
     self->unk2C = 0;
 }
 
@@ -969,7 +969,7 @@ void fn_8020F274(register cRegionSuck *self, int a, int id, int c) // slot 14
     if (self->unk2C && fn_80210F28(self)) {
         Ent *e = fn_800ACFA8(id);
         if (e && fn_800B0C58(e) && fn_80085D6C(fn_800B14A0(e))) {
-            Ent *o = fn_800ACFA8(fn_800797D4(self));
+            Ent *o = fn_800ACFA8(Script_GetOwner(self));
             if (o)
                 fn_80030930(fn_800B14A0(e), (int)o, 3, 0, 0.0f, 0, 0, 0, 1, 0.0f);
         }
@@ -1001,7 +1001,7 @@ void fn_8020F454(register cRegionSuck *self, int a, int b, int kind, float x, fl
         break;
     case 999:
         fn_8020F5DC(self);
-        fn_8007D404(self, x, 0xa, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, x, 0xa, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
 }
@@ -1022,7 +1022,7 @@ void fn_8020F5DC(register cRegionSuck *self)
     if (self->unk2C)
         return;
     if (fn_80210F28(self)) {
-        Ent *o = fn_800ACFA8(fn_800797D4(self));
+        Ent *o = fn_800ACFA8(Script_GetOwner(self));
         IntArray *list = (IntArray *)fn_80210DB0(self->obj);
         Ent *e;
         int i;
@@ -1115,7 +1115,7 @@ void fn_8020FB88(register cRegionDefend *self) // slot 3
 #define DEFEND_SEND(i)                                                                              \
     if (self->ids[i]) {                                                                             \
         ev.set(self->ids[i]);                                                                       \
-        fn_80082AFCR(&ev, ev.handle(), fn_800797D4(self), 999, 0.0f, 0.0f, 0.0f, 0.0f);            \
+        Script_TriggerEntityR(&ev, ev.handle(), Script_GetOwner(self), 999, 0.0f, 0.0f, 0.0f, 0.0f);            \
     }
 
 void fn_8020FBB8(register cRegionDefend *self) // slot 5
@@ -1218,50 +1218,50 @@ inline int sn_return_decl3(int a) { return a; }
         return reader(self, i) != 0;     \
     }
 
-PARAM(float, cRegionDamage, fn_802101EC, fn_8007935C, 0)
-PARAM(int, cRegionDamage, fn_80210234, fn_80079068, 1)
-PARAM(float, cRegionDamage, fn_8021027C, fn_8007935C, 2)
-PARAM(float, cRegionDamage, fn_802102C4, fn_8007935C, 3)
-FLAG(cRegionDamage, fn_8021030C, fn_80079068, 4)
-FLAG(cRegionDamage, fn_80210364, fn_80079068, 5)
-PARAM(int, cRegionDamage, fn_802103BC, fn_80079068, 6)
-PARAM(int, cRegionDamage, fn_80210404, fn_80079068, 7)
-PARAM(int, cRegionDamage, fn_8021044C, fn_80079068, 8)
-PARAM(int, cRegionDamage, fn_80210494, fn_80079068, 9)
-PARAM(int, cRegionDamage, fn_802104DC, fn_80079068, 10)
-FLAG(cRegionDamage, fn_80210524, fn_80079068, 11)
-PARAM(unsigned int, cRegionDamage, fn_8021057C, fn_800791C8, 12)
-FLAG(cRegionDamage, fn_802105C4, fn_80079068, 13)
-PARAM(char *, cRegionDamage, fn_8021061C, fn_800794FC, 14)
+PARAM(float, cRegionDamage, fn_802101EC, Script_GetParamFloat, 0)
+PARAM(int, cRegionDamage, fn_80210234, Script_GetParamInt, 1)
+PARAM(float, cRegionDamage, fn_8021027C, Script_GetParamFloat, 2)
+PARAM(float, cRegionDamage, fn_802102C4, Script_GetParamFloat, 3)
+FLAG(cRegionDamage, fn_8021030C, Script_GetParamInt, 4)
+FLAG(cRegionDamage, fn_80210364, Script_GetParamInt, 5)
+PARAM(int, cRegionDamage, fn_802103BC, Script_GetParamInt, 6)
+PARAM(int, cRegionDamage, fn_80210404, Script_GetParamInt, 7)
+PARAM(int, cRegionDamage, fn_8021044C, Script_GetParamInt, 8)
+PARAM(int, cRegionDamage, fn_80210494, Script_GetParamInt, 9)
+PARAM(int, cRegionDamage, fn_802104DC, Script_GetParamInt, 10)
+FLAG(cRegionDamage, fn_80210524, Script_GetParamInt, 11)
+PARAM(unsigned int, cRegionDamage, fn_8021057C, Script_GetParamUInt, 12)
+FLAG(cRegionDamage, fn_802105C4, Script_GetParamInt, 13)
+PARAM(char *, cRegionDamage, fn_8021061C, Script_GetParamString, 14)
 
-PARAM(int, cRegionTrigger, fn_80210664, fn_80079068, 0)
-PARAM(int, cRegionTrigger, fn_802106AC, fn_800791C8, 1)
-PARAM(int, cRegionTrigger, fn_802106F4, fn_800791C8, 2)
-PARAM(int, cRegionTrigger, fn_8021073C, fn_800791C8, 3)
-PARAM(int, cRegionTrigger, fn_80210784, fn_800791C8, 4)
-PARAM(int, cRegionTrigger, fn_802107CC, fn_800791C8, 5)
-PARAM(int, cRegionTrigger, fn_80210814, fn_800791C8, 6)
-PARAM(int, cRegionTrigger, fn_8021085C, fn_800791C8, 7)
-PARAM(int, cRegionTrigger, fn_802108A4, fn_800791C8, 8)
-PARAM(float, cRegionTrigger, fn_802108EC, fn_8007935C, 9)
-PARAM(float, cRegionTrigger, fn_80210934, fn_8007935C, 10)
-PARAM(float, cRegionTrigger, fn_8021097C, fn_8007935C, 11)
-PARAM(float, cRegionTrigger, fn_802109C4, fn_8007935C, 12)
-PARAM(int, cRegionTrigger, fn_80210A0C, fn_80079068, 13)
-PARAM(int, cRegionTrigger, fn_80210A54, fn_80079068, 14)
-PARAM(int, cRegionTrigger, fn_80210A9C, fn_80079068, 15)
-PARAM(int, cRegionTrigger, fn_80210AE4, fn_80079068, 16)
-PARAM(float, cRegionTrigger, fn_80210B2C, fn_8007935C, 17)
-PARAM(int, cRegionTrigger, fn_80210B74, fn_80079068, 18)
-FLAG(cRegionTrigger, fn_80210BBC, fn_80079068, 19)
+PARAM(int, cRegionTrigger, fn_80210664, Script_GetParamInt, 0)
+PARAM(int, cRegionTrigger, fn_802106AC, Script_GetParamUInt, 1)
+PARAM(int, cRegionTrigger, fn_802106F4, Script_GetParamUInt, 2)
+PARAM(int, cRegionTrigger, fn_8021073C, Script_GetParamUInt, 3)
+PARAM(int, cRegionTrigger, fn_80210784, Script_GetParamUInt, 4)
+PARAM(int, cRegionTrigger, fn_802107CC, Script_GetParamUInt, 5)
+PARAM(int, cRegionTrigger, fn_80210814, Script_GetParamUInt, 6)
+PARAM(int, cRegionTrigger, fn_8021085C, Script_GetParamUInt, 7)
+PARAM(int, cRegionTrigger, fn_802108A4, Script_GetParamUInt, 8)
+PARAM(float, cRegionTrigger, fn_802108EC, Script_GetParamFloat, 9)
+PARAM(float, cRegionTrigger, fn_80210934, Script_GetParamFloat, 10)
+PARAM(float, cRegionTrigger, fn_8021097C, Script_GetParamFloat, 11)
+PARAM(float, cRegionTrigger, fn_802109C4, Script_GetParamFloat, 12)
+PARAM(int, cRegionTrigger, fn_80210A0C, Script_GetParamInt, 13)
+PARAM(int, cRegionTrigger, fn_80210A54, Script_GetParamInt, 14)
+PARAM(int, cRegionTrigger, fn_80210A9C, Script_GetParamInt, 15)
+PARAM(int, cRegionTrigger, fn_80210AE4, Script_GetParamInt, 16)
+PARAM(float, cRegionTrigger, fn_80210B2C, Script_GetParamFloat, 17)
+PARAM(int, cRegionTrigger, fn_80210B74, Script_GetParamInt, 18)
+FLAG(cRegionTrigger, fn_80210BBC, Script_GetParamInt, 19)
 
 cScript *fn_80210C14(register cRegionSound *self)
 {
     return new cRegionSound;
 }
 
-PARAM(int, cRegionSound, fn_80210C68, fn_80079068, 0)
-PARAM(char *, cRegionSound, fn_80210CB0, fn_800794FC, 1)
+PARAM(int, cRegionSound, fn_80210C68, Script_GetParamInt, 0)
+PARAM(char *, cRegionSound, fn_80210CB0, Script_GetParamString, 1)
 
 Suck *fn_80210CF8(register Suck *self, register int owner, register float strength)
 {
@@ -1289,12 +1289,12 @@ cScript *fn_80210DDC(register cRegionSuck *self)
     return new cRegionSuck;
 }
 
-FLAG(cRegionSuck, fn_80210E30, fn_80079068, 0)
-FLAG(cRegionSuck, fn_80210E88, fn_80079068, 1)
-PARAM(float, cRegionSuck, fn_80210EE0, fn_8007935C, 2)
-FLAG(cRegionSuck, fn_80210F28, fn_80079068, 3)
-FLAG(cRegionSuck, fn_80210F80, fn_80079068, 4)
-FLAG(cRegionSuck, fn_80210FD8, fn_80079068, 5)
+FLAG(cRegionSuck, fn_80210E30, Script_GetParamInt, 0)
+FLAG(cRegionSuck, fn_80210E88, Script_GetParamInt, 1)
+PARAM(float, cRegionSuck, fn_80210EE0, Script_GetParamFloat, 2)
+FLAG(cRegionSuck, fn_80210F28, Script_GetParamInt, 3)
+FLAG(cRegionSuck, fn_80210F80, Script_GetParamInt, 4)
+FLAG(cRegionSuck, fn_80210FD8, Script_GetParamInt, 5)
 
 cScript *fn_80211030(register cRegionDefend *self)
 {
@@ -1303,20 +1303,20 @@ cScript *fn_80211030(register cRegionDefend *self)
 
 int fn_80211084(register cRegionDefend *self)
 {
-    return fn_800797D4(self);
+    return Script_GetOwner(self);
 }
 
-FLAG(cRegionDefend, fn_802110C8, fn_80079068, 0)
-PARAM(unsigned int, cRegionDefend, fn_80211120, fn_800791C8, 1)
-PARAM(unsigned int, cRegionDefend, fn_80211168, fn_800791C8, 2)
-PARAM(unsigned int, cRegionDefend, fn_802111B0, fn_800791C8, 3)
-PARAM(unsigned int, cRegionDefend, fn_802111F8, fn_800791C8, 4)
-FLAG(cRegionDefend, fn_80211240, fn_800791C8, 5)
+FLAG(cRegionDefend, fn_802110C8, Script_GetParamInt, 0)
+PARAM(unsigned int, cRegionDefend, fn_80211120, Script_GetParamUInt, 1)
+PARAM(unsigned int, cRegionDefend, fn_80211168, Script_GetParamUInt, 2)
+PARAM(unsigned int, cRegionDefend, fn_802111B0, Script_GetParamUInt, 3)
+PARAM(unsigned int, cRegionDefend, fn_802111F8, Script_GetParamUInt, 4)
+FLAG(cRegionDefend, fn_80211240, Script_GetParamUInt, 5)
 
 cScript *fn_80211298(register cRegionLightProbeSwap *self)
 {
     return new cRegionLightProbeSwap;
 }
 
-PARAM(char *, cRegionLightProbeSwap, fn_802112EC, fn_800794FC, 0)
+PARAM(char *, cRegionLightProbeSwap, fn_802112EC, Script_GetParamString, 0)
 }

@@ -157,12 +157,12 @@ extern int lbl_8066C724;
 extern "C" {
 
 int stricmp(const char *a, const char *b);
-int fn_800797D4(cScript *self);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
-int fn_8007D7C4(cScript *self, unsigned char kind);
+int Script_GetOwner(cScript *self);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+int Script_CancelMessages(cScript *self, unsigned char kind);
 int fn_8007D8B0(cScript *self);
-int fn_8007CF00(cScript *script, int handle, int value);
+int Script_LinkEntity(cScript *script, int handle, int value);
 int fn_80080B34();
 int fn_804425F8(void *ev);
 void fn_8046B638(void *ev, int x);
@@ -191,7 +191,7 @@ int fn_80097CE8(SObj &actor, int a, int mode, float speed, void *set, float blen
 void fn_800F9754(EBase &e);
 void fn_8008643C(int actor);
 void fn_80086410(int actor);
-void fn_80082AFC(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
 void fn_80082720(void *ev, int h);
 void fn_80082F30(void *ev);
 void fn_80082440(void *ev, Vector *out);
@@ -305,12 +305,12 @@ void fn_801C55F8(register cAvengersMansion_ParadoxBoss *self) // slot 4
     fn_8046B710(&self->pt[9], fn_801C9FB8(self));
     fn_8046B710(&self->pt[10], fn_801CA000(self));
     fn_8046B710(&self->r98, fn_801CA048(self));
-    fn_8007CF00(self, fn_804425F8(&self->boss), 0);
-    fn_8007CF00(self, fn_804425F8(&self->pt[2]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->pt[4]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->pt[6]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->pt[8]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->pt[10]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->boss), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->pt[2]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->pt[4]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->pt[6]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->pt[8]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->pt[10]), 0);
     self->zone = 0;
     self->fB4 = 0;
     self->fC0 = 0;
@@ -321,7 +321,7 @@ void fn_801C55F8(register cAvengersMansion_ParadoxBoss *self) // slot 4
     self->bossHit = 0;
     self->playerHit = 0;
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     self->fA4 = 4;
     self->teleports = 0;
     self->fAC = 0;
@@ -350,7 +350,7 @@ void fn_801C5918(register cAvengersMansion_ParadoxBoss *self, int h, int other, 
         self->zone = 5;
         self->fBC = 1;
         if (self->fB4)
-            fn_8007D404(self, 10.0f, 85, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 10.0f, 85, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
 }
 
@@ -364,7 +364,7 @@ void fn_801C5A80(register cAvengersMansion_ParadoxBoss *self, int h, int other, 
     self->zone = 0;
     if (h == fn_804425F8(&self->pt[2])) {
         self->fBC = 0;
-        fn_8007D7C4(self, 30);
+        Script_CancelMessages(self, 30);
     }
 }
 
@@ -382,7 +382,7 @@ float fn_801C5B20(register cAvengersMansion_ParadoxBoss *self, int h, int other,
             return 0.0f;
         if (fn_800CD0EC(fn_80085928((void *)fn_8007C034(&self->boss))) || fn_800CD21C(fn_80085928((void *)fn_8007C034(&self->boss)))
             || fn_8009AFC8(*fn_8007C034S(&self->boss)) == 0x158)
-            fn_8007D404(self, 2.0f, 86, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 2.0f, 86, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         else
             fn_801C5E0C(self);
         return 0.0f;
@@ -427,7 +427,7 @@ void fn_801C5E0C(register cAvengersMansion_ParadoxBoss *self)
     }
     fn_80082E90(&self->boss, "winkTeleportIn", 0xff, 0xff);
     fn_800825D0(&self->boss, &m);
-    fn_8007D404(self, 0.1f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.1f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 int fn_801C5FF8(register cAvengersMansion_ParadoxBoss *self, int h, int other, int kind, int b, float damage, int value) // slot 20
@@ -466,14 +466,14 @@ void fn_801C60E4(register cAvengersMansion_ParadoxBoss *self, unsigned char kind
         Ref8 ev;
 
         fn_8046B6C8(&ev, fn_801CA090(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     }
     case 80: {
         Ref8 ev;
 
         fn_8046B6C8(&ev, fn_801CA0D8(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     }
     case 45:
@@ -483,7 +483,7 @@ void fn_801C60E4(register cAvengersMansion_ParadoxBoss *self, unsigned char kind
         }
         fn_8007ABE8(fn_804425F8(&self->boss), fn_80080B34());
         fn_8007AB50(fn_804425F8(&self->boss));
-        fn_8007D404(self, 2.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, (int)a);
+        Script_QueueMessage(self, 2.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, (int)a);
         break;
     case 60:
         fn_80082E90(&self->boss, "winkTeleportIn", 0xff, 0xff);
@@ -518,19 +518,19 @@ void fn_801C60E4(register cAvengersMansion_ParadoxBoss *self, unsigned char kind
                 fn_80097CE8(*fn_8007C034S(&self->boss), 0x158, 0, 30.0f, 0, 7.5f, -1.0f);
                 fn_8006668C(*fn_8007C034S(&self->boss), 250.0f);
             }
-            fn_8007D404(self, 30.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 30.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             return;
         } else if (fn_804425F8(&self->barrel)) {
             fn_8007AC68(fn_804425F8(&self->boss), fn_804425F8(&self->barrel), 1);
-            fn_8007D404(self, 1.0f, 45, a + 1.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 1.0f, 45, a + 1.0f, 0.0f, 0.0f, 0.0f, 0);
         } else
-            fn_8007D404(self, 2.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, e + 1);
-        fn_8007D404(self, 0.1f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 2.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, e + 1);
+        Script_QueueMessage(self, 0.1f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
     case 70:
         fn_800803DC(&self->boss, 0x158, 30.0f);
-        fn_8007D404(self, 1.0f, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 81:
         fn_801C77DC(self);
@@ -563,7 +563,7 @@ void fn_801C60E4(register cAvengersMansion_ParadoxBoss *self, unsigned char kind
         if (fn_8007C034(&self->boss) == 0)
             return;
         if (fn_800CD0EC(fn_80085928((void *)fn_8007C034(&self->boss))) || fn_800CD21C(fn_80085928((void *)fn_8007C034(&self->boss))))
-            fn_8007D404(self, 0.25f, 86, 0.0f, 0.0f, 0.0f, 0.0f, e);
+            Script_QueueMessage(self, 0.25f, 86, 0.0f, 0.0f, 0.0f, 0.0f, e);
         else if (e)
             fn_801C6D4C(self, e);
         else
@@ -646,7 +646,7 @@ void fn_801C6D4C(register cAvengersMansion_ParadoxBoss *self, int n)
         return;
     }
     if (fn_800CD0EC(fn_80085928((void *)fn_8007C034(&self->boss))) || fn_800CD21C(fn_80085928((void *)fn_8007C034(&self->boss)))) {
-        fn_8007D404(self, 1.0f, 86, 0.0f, 0.0f, 0.0f, 0.0f, n);
+        Script_QueueMessage(self, 1.0f, 86, 0.0f, 0.0f, 0.0f, 0.0f, n);
         return;
     }
     fn_80085954(fn_8007C034(&self->boss))->s5(2);
@@ -678,25 +678,25 @@ void fn_801C6D4C(register cAvengersMansion_ParadoxBoss *self, int n)
     }
     switch (n) {
     case 1:
-        fn_8007D404(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[3]));
+        Script_QueueMessage(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[3]));
         break;
     case 2:
-        fn_8007D404(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[5]));
+        Script_QueueMessage(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[5]));
         break;
     case 3:
-        fn_8007D404(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[7]));
+        Script_QueueMessage(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[7]));
         break;
     case 4:
-        fn_8007D404(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[9]));
+        Script_QueueMessage(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[9]));
         break;
     case 5:
-        fn_8007D404(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[1]));
+        Script_QueueMessage(self, 1.0f, 40, n, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[1]));
         break;
     }
     if (n <= 4) {
         Ref8 ev;
 
-        fn_8046B6C8(&ev, fn_800797D4(self));
+        fn_8046B6C8(&ev, Script_GetOwner(self));
         fn_8046B710(&self->barrel, fn_80082190(&ev, "prp_barrel_explode"));
     }
 }
@@ -723,16 +723,16 @@ int fn_801C7400(register cAvengersMansion_ParadoxBoss *self, Vector *at)
         self->teleports++;
         switch (self->fAC) {
         case 1:
-            fn_8007D404(self, 1.0f, 40, ++self->fAC, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[5]));
+            Script_QueueMessage(self, 1.0f, 40, ++self->fAC, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[5]));
             break;
         case 2:
-            fn_8007D404(self, 1.0f, 40, ++self->fAC, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[7]));
+            Script_QueueMessage(self, 1.0f, 40, ++self->fAC, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[7]));
             break;
         case 3:
-            fn_8007D404(self, 1.0f, 40, ++self->fAC, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[9]));
+            Script_QueueMessage(self, 1.0f, 40, ++self->fAC, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[9]));
             break;
         case 4:
-            fn_8007D404(self, 1.0f, 40, ++self->fAC, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[1]));
+            Script_QueueMessage(self, 1.0f, 40, ++self->fAC, 0.0f, 0.0f, 0.0f, fn_804425F8(&self->pt[1]));
             break;
         case 5:
             fn_801C5E0C(self);
@@ -756,7 +756,7 @@ void fn_801C77DC(register cAvengersMansion_ParadoxBoss *self)
 {
     fn_8007D8B0(self);
     fn_80082F30(&self->barrel);
-    fn_8007D404(self, 2.0f, 82, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 82, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_80572278, 1);
@@ -769,14 +769,14 @@ void fn_801C78A0(register cAvengersMansion_ParadoxBoss *self)
     fn_80081918(fn_804425F8(&self->player));
     fn_80082014(&self->boss, 2);
     fn_8046B6C8(&ev, fn_801CA090(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801C7964(register cAvengersMansion_ParadoxBoss *self)
 {
     fn_8007D8B0(self);
     fn_80082F30(&self->barrel);
-    fn_8007D404(self, 2.0f, 84, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 84, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801C79E8(register cAvengersMansion_ParadoxBoss *self)
@@ -786,7 +786,7 @@ void fn_801C79E8(register cAvengersMansion_ParadoxBoss *self)
     fn_80081918(fn_804425F8(&self->boss));
     fn_80082014(&self->boss, 2);
     fn_8046B6C8(&ev, fn_801CA0D8(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801C7AAC(register cAvengersMansion_ParadoxBoss *self)
@@ -794,7 +794,7 @@ void fn_801C7AAC(register cAvengersMansion_ParadoxBoss *self)
     if (fn_8007C034(&self->boss) == 0)
         return;
     if (fn_800CD0EC(fn_80085928((void *)fn_8007C034(&self->boss))) || fn_800CD21C(fn_80085928((void *)fn_8007C034(&self->boss)))) {
-        fn_8007D404(self, 2.0f, 91, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.0f, 91, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         return;
     }
     if (self->zone == 1) {
@@ -809,25 +809,25 @@ void fn_801C7AAC(register cAvengersMansion_ParadoxBoss *self)
 void fn_801C7C80(register cAvengersMansion_IM1_Start *self) // slot 4
 {
     fn_8046B710(&self->r28, fn_801CA174(self));
-    fn_8007CF00(self, fn_804425F8(&self->r28), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r28), 0);
     fn_8046B710(&self->r30, fn_801CA1BC(self));
-    fn_8007CF00(self, fn_804425F8(&self->r30), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r30), 0);
     fn_8046B710(&self->r48[0], fn_801CA204(self));
-    fn_8007CF00(self, fn_804425F8(&self->r48[0]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r48[0]), 0);
     fn_8046B710(&self->r48[1], fn_801CA24C(self));
-    fn_8007CF00(self, fn_804425F8(&self->r48[1]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r48[1]), 0);
     fn_8046B710(&self->r48[2], fn_801CA294(self));
-    fn_8007CF00(self, fn_804425F8(&self->r48[2]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r48[2]), 0);
     fn_8046B710(&self->r48[3], fn_801CA2DC(self));
-    fn_8007CF00(self, fn_804425F8(&self->r48[3]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r48[3]), 0);
     fn_8046B710(&self->rA8[0], fn_801CA324(self));
-    fn_8007CF00(self, fn_804425F8(&self->rA8[0]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->rA8[0]), 0);
     fn_8046B710(&self->rA8[1], fn_801CA36C(self));
-    fn_8007CF00(self, fn_804425F8(&self->rA8[1]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->rA8[1]), 0);
     fn_8046B710(&self->rA8[2], fn_801CA3B4(self));
-    fn_8007CF00(self, fn_804425F8(&self->rA8[2]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->rA8[2]), 0);
     fn_8046B710(&self->rA8[3], fn_801CA3FC(self));
-    fn_8007CF00(self, fn_804425F8(&self->rA8[3]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->rA8[3]), 0);
     fn_8046B710(&self->rC8, fn_801CA444(self));
     self->fD0 = 0;
     self->fD4 = 0;
@@ -892,26 +892,26 @@ void fn_801C81F8(register cAvengersMansion_IM1_Start *self, int h, int other, in
         return;
     if (h == fn_804425F8(&self->r28)) {
         self->fD8 = 1;
-        fn_8007D7C4(self, 20);
-        fn_8007D404(self, 3.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_CancelMessages(self, 20);
+        Script_QueueMessage(self, 3.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         if (self->fD8 && self->fDC)
-            fn_80082AFC(&self->rC8, fn_804425F8(&self->rC8), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&self->rC8, fn_804425F8(&self->rC8), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     } else if (h == fn_804425F8(&self->r30)) {
         self->fDC = 1;
-        fn_8007D7C4(self, 10);
-        fn_8007D404(self, 3.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_CancelMessages(self, 10);
+        Script_QueueMessage(self, 3.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         if (self->fD8 && self->fDC)
-            fn_80082AFC(&self->rC8, fn_804425F8(&self->rC8), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&self->rC8, fn_804425F8(&self->rC8), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     } else {
         if (self->fD0 == 0 && self->fD4 == 0) {
             float r = fn_80171F8C() * 4.656612873077392578125e-10f;
 
             if (r < 0.5) {
-                fn_8007D7C4(self, 10);
-                fn_8007D404(self, 3.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_CancelMessages(self, 10);
+                Script_QueueMessage(self, 3.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             } else {
-                fn_8007D7C4(self, 20);
-                fn_8007D404(self, 3.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_CancelMessages(self, 20);
+                Script_QueueMessage(self, 3.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             }
         }
         return;
@@ -922,10 +922,10 @@ void fn_801C8564(register cAvengersMansion_IM1_Start *self)
 {
     if (self->fD0 == 0) {
         self->fD0 = 1;
-        fn_8007D7C4(self, 10);
-        fn_80082AFC(&self->r28, fn_804425F8(&self->r28), fn_800797D4(self), 0, 0.0f, 1.0f, 0.0f, 0.0f);
-        fn_80082AFC(&self->r48[0], fn_804425F8(&self->r48[0]), fn_800797D4(self), 0, 0.0f, 1.0f, 0.0f, 0.0f);
-        fn_80082AFC(&self->r48[1], fn_804425F8(&self->r48[1]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_CancelMessages(self, 10);
+        Script_TriggerEntity(&self->r28, fn_804425F8(&self->r28), Script_GetOwner(self), 0, 0.0f, 1.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r48[0], fn_804425F8(&self->r48[0]), Script_GetOwner(self), 0, 0.0f, 1.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r48[1], fn_804425F8(&self->r48[1]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -933,18 +933,18 @@ void fn_801C86B0(register cAvengersMansion_IM1_Start *self)
 {
     if (self->fD4 == 0) {
         self->fD4 = 1;
-        fn_8007D7C4(self, 20);
-        fn_80082AFC(&self->r30, fn_804425F8(&self->r30), fn_800797D4(self), 0, 0.0f, 1.0f, 0.0f, 0.0f);
-        fn_80082AFC(&self->r48[2], fn_804425F8(&self->r48[2]), fn_800797D4(self), 0, 0.0f, 1.0f, 0.0f, 0.0f);
-        fn_80082AFC(&self->r48[3], fn_804425F8(&self->r48[3]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_CancelMessages(self, 20);
+        Script_TriggerEntity(&self->r30, fn_804425F8(&self->r30), Script_GetOwner(self), 0, 0.0f, 1.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r48[2], fn_804425F8(&self->r48[2]), Script_GetOwner(self), 0, 0.0f, 1.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r48[3], fn_804425F8(&self->r48[3]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     }
 }
 
 void fn_801C87FC(register cAvengersMansion_IronManSAC *self) // slot 5
 {
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8007A448(fn_804425F8(&self->boss));
-    fn_8007CF00(self, fn_80080B34(), 0);
+    Script_LinkEntity(self, fn_80080B34(), 0);
     fn_8046B710(&self->r30, fn_801CA4E0(self));
     fn_8046B710(&self->r38, fn_801CA528(self));
     fn_8046B710(&self->r48, fn_801CA570(self));
@@ -993,21 +993,21 @@ void fn_801C89A0(register cAvengersMansion_IronManSAC *self, unsigned char kind,
         if (ratio < 0.25f)
             fn_801C95F0(self);
         else
-            fn_8007D404(self, self->f88, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->f88, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 20:
-        fn_80082AFC(&self->r30, fn_804425F8(&self->r30), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r30, fn_804425F8(&self->r30), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 30:
         self->charge += 0.2f;
         if (self->charge < 4.0f) {
             fn_801C98A4(self);
-            fn_8007D404(self, 0.2f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.2f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         } else {
             fn_80083428(&self->boss, "ppMegCharge");
             if (self->f78 == 1) {
                 self->f78 = 0;
-                fn_80082AFC(&self->r58, fn_804425F8(&self->r58), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(&self->r58, fn_804425F8(&self->r58), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             }
             self->f80++;
             self->f6C = 0;
@@ -1017,7 +1017,7 @@ void fn_801C89A0(register cAvengersMansion_IronManSAC *self, unsigned char kind,
     case 40:
         if (self->state == 3 && self->f64 == 0) {
             fn_801C95F0(self);
-            fn_8007D404(self, self->f98, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->f98, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     case 50:
@@ -1050,34 +1050,34 @@ float fn_801C8E28(register cAvengersMansion_IronManSAC *self, int h, int other, 
 {
     if (h == fn_804425F8(&self->boss)) {
         if (self->state == 1) {
-            fn_8007D7C4(self, 15);
-            fn_8007D7C4(self, 60);
+            Script_CancelMessages(self, 15);
+            Script_CancelMessages(self, 60);
             fn_801C95F0(self);
         }
         if (self->state == 2)
-            fn_8007D404(self, self->f84, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->f84, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         if (self->state == 3) {
-            fn_8007D7C4(self, 40);
+            Script_CancelMessages(self, 40);
             fn_801C95F0(self);
-            fn_8007D404(self, self->f98, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->f98, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         if (self->state == 4) {
-            fn_8007D7C4(self, 30);
+            Script_CancelMessages(self, 30);
             if (self->charge > 1.0f) {
                 self->f80++;
                 self->f6C = 0;
             } else
-                fn_8007D404(self, self->f98, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, self->f98, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             fn_80083428(&self->boss, "ppMegCharge");
             if (self->f78 == 1) {
                 self->f78 = 0;
-                fn_80082AFC(&self->r58, fn_804425F8(&self->r58), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(&self->r58, fn_804425F8(&self->r58), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             }
             fn_801C95F0(self);
         }
     }
     if (h == fn_80080B34() && self->f6C == 1 && self->state == 2 && fn_8007BEA8(fn_80080B34())) {
-        fn_8007D7C4(self, 70);
+        Script_CancelMessages(self, 70);
         fn_801C96C8(self);
     }
     return damage;
@@ -1086,24 +1086,24 @@ float fn_801C8E28(register cAvengersMansion_IronManSAC *self, int h, int other, 
 float fn_801C90B4(register cAvengersMansion_IronManSAC *self, int h, int node, int value) // slot 37
 {
     if (self->state == 3 && self->f60 == 1) {
-        fn_8007D7C4(self, 40);
+        Script_CancelMessages(self, 40);
         self->f64 = 1;
-        fn_8007D404(self, self->f90, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, self->f90, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
     return -1.0f;
 }
 
 int fn_801C915C(register cAvengersMansion_IronManSAC *self, int h, int other, int kind, int b, float damage, int value) // slot 20
 {
-    fn_8007D7C4(self, 10);
-    fn_8007D7C4(self, 15);
-    fn_8007D7C4(self, 70);
-    fn_8007D7C4(self, 30);
-    fn_8007D7C4(self, 50);
+    Script_CancelMessages(self, 10);
+    Script_CancelMessages(self, 15);
+    Script_CancelMessages(self, 70);
+    Script_CancelMessages(self, 30);
+    Script_CancelMessages(self, 50);
     fn_80083428(&self->boss, "ppMegCharge");
     if (self->f78 == 1) {
         self->f78 = 0;
-        fn_80082AFC(&self->r58, fn_804425F8(&self->r58), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r58, fn_804425F8(&self->r58), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     }
     return 1;
 }
@@ -1114,15 +1114,15 @@ void fn_801C9264(register cAvengersMansion_IronManSAC *self, int h, int other, i
         if (self->done && h != fn_80080B34())
             return;
         self->done = 1;
-        fn_8007D7C4(self, 10);
-        fn_8007D7C4(self, 15);
-        fn_8007D7C4(self, 70);
-        fn_8007D7C4(self, 30);
-        fn_8007D7C4(self, 50);
+        Script_CancelMessages(self, 10);
+        Script_CancelMessages(self, 15);
+        Script_CancelMessages(self, 70);
+        Script_CancelMessages(self, 30);
+        Script_CancelMessages(self, 50);
         fn_80083428(&self->boss, "ppMegCharge");
         if (self->f78 == 1) {
             self->f78 = 0;
-            fn_80082AFC(&self->r58, fn_804425F8(&self->r58), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&self->r58, fn_804425F8(&self->r58), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         }
         fn_80081C68();
         fn_80081C94();
@@ -1140,7 +1140,7 @@ void fn_801C9264(register cAvengersMansion_IronManSAC *self, int h, int other, i
 void fn_801C942C(register cAvengersMansion_IronManSAC *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     if (b == fn_804425F8(&self->r48))
-        fn_8007D404(self, 2.0f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.0f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return;
 }
 
@@ -1156,7 +1156,7 @@ void fn_801C94D4(register cAvengersMansion_IronManSAC *self)
     fn_8046B638(&r, fn_804425F8(&self->boss));
     if (fn_800809CC(&r))
         fn_800CD6C4(fn_80085928(fn_800809CC(&r)), 1);
-    fn_8007D404(self, self->f88, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->f88, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801C95F0(register cAvengersMansion_IronManSAC *self)
@@ -1183,7 +1183,7 @@ void fn_801C96C8(register cAvengersMansion_IronManSAC *self)
     fn_8007A448(fn_804425F8(&self->boss));
     fn_8007A738(fn_804425F8(&self->boss), &at);
     self->f60 = 1;
-    fn_8007D404(self, self->f94, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->f94, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801C9790(register cAvengersMansion_IronManSAC *self)
@@ -1193,11 +1193,11 @@ void fn_801C9790(register cAvengersMansion_IronManSAC *self)
     fn_80082E24(&self->boss, "ppMegCharge");
     if (self->f78 == 0) {
         self->f78 = 1;
-        fn_80082AFC(&self->r58, fn_804425F8(&self->r58), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r58, fn_804425F8(&self->r58), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     }
     fn_8007A448(fn_804425F8(&self->boss));
     fn_801C98A4(self);
-    fn_8007D404(self, 0.2f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.2f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801C98A4(register cAvengersMansion_IronManSAC *self)
@@ -1209,7 +1209,7 @@ void fn_801C98A4(register cAvengersMansion_IronManSAC *self)
 
 void fn_801C9948(register cAvengersMansion_IronManSAC *self)
 {
-    fn_8007D404(self, 2.0f, 74, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 74, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8046B860(lbl_8057230C, 1);
@@ -1219,12 +1219,12 @@ void fn_801C99F0(register cAvengersMansion_IronManSAC *self)
 {
     fn_80081918(fn_80080B34());
     lbl_8066C71C = fn_80080B34();
-    fn_80082AFC(&self->r30, fn_804425F8(&self->r30), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r30, fn_804425F8(&self->r30), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801C9A90(register cAvengersMansion_IronManSAC *self)
 {
-    fn_8007D404(self, 2.0f, 78, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 78, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801C9AF8(register cAvengersMansion_IronManSAC *self)
@@ -1234,7 +1234,7 @@ void fn_801C9AF8(register cAvengersMansion_IronManSAC *self)
     fn_80081918(fn_804425F8(&self->boss));
     lbl_8066C71C = fn_804425F8(&self->boss);
     fn_8046B6C8(&ev, fn_801CA5B8(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801C9BB8(register cAvengersMansion_HideSkirt *self) // slot 5
@@ -1245,8 +1245,8 @@ void fn_801C9BB8(register cAvengersMansion_HideSkirt *self) // slot 5
 
         fn_8046B6C8(&a, fn_801CA69C(self));
         fn_8046B6C8(&b, fn_801CA6E4(self));
-        fn_80082AFC(&a, fn_804425F8(&a), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
-        fn_80082AFC(&b, fn_804425F8(&b), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&a, fn_804425F8(&a), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&b, fn_804425F8(&b), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -1255,55 +1255,55 @@ cScript *fn_801C9CDC(register cAvengersMansion_ParadoxBoss *self)
     return new cAvengersMansion_ParadoxBoss;
 }
 
-unsigned int fn_801C9D30(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801C9D78(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801C9DC0(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801C9E08(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801C9E50(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 4); }
-unsigned int fn_801C9E98(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 5); }
-unsigned int fn_801C9EE0(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 6); }
-unsigned int fn_801C9F28(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 7); }
-unsigned int fn_801C9F70(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 8); }
-unsigned int fn_801C9FB8(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 9); }
-unsigned int fn_801CA000(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 10); }
-unsigned int fn_801CA048(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 11); }
-unsigned int fn_801CA090(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 12); }
-unsigned int fn_801CA0D8(register cAvengersMansion_ParadoxBoss *self) { return fn_800791C8(self, 13); }
+unsigned int fn_801C9D30(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801C9D78(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801C9DC0(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801C9E08(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801C9E50(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 4); }
+unsigned int fn_801C9E98(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 5); }
+unsigned int fn_801C9EE0(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 6); }
+unsigned int fn_801C9F28(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 7); }
+unsigned int fn_801C9F70(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 8); }
+unsigned int fn_801C9FB8(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 9); }
+unsigned int fn_801CA000(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 10); }
+unsigned int fn_801CA048(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 11); }
+unsigned int fn_801CA090(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 12); }
+unsigned int fn_801CA0D8(register cAvengersMansion_ParadoxBoss *self) { return Script_GetParamUInt(self, 13); }
 
 cScript *fn_801CA120(register cAvengersMansion_IM1_Start *self)
 {
     return new cAvengersMansion_IM1_Start;
 }
 
-unsigned int fn_801CA174(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801CA1BC(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801CA204(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801CA24C(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801CA294(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 4); }
-unsigned int fn_801CA2DC(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 5); }
-unsigned int fn_801CA324(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 6); }
-unsigned int fn_801CA36C(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 7); }
-unsigned int fn_801CA3B4(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 8); }
-unsigned int fn_801CA3FC(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 9); }
-unsigned int fn_801CA444(register cAvengersMansion_IM1_Start *self) { return fn_800791C8(self, 10); }
+unsigned int fn_801CA174(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801CA1BC(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801CA204(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801CA24C(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801CA294(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 4); }
+unsigned int fn_801CA2DC(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 5); }
+unsigned int fn_801CA324(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 6); }
+unsigned int fn_801CA36C(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 7); }
+unsigned int fn_801CA3B4(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 8); }
+unsigned int fn_801CA3FC(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 9); }
+unsigned int fn_801CA444(register cAvengersMansion_IM1_Start *self) { return Script_GetParamUInt(self, 10); }
 
 cScript *fn_801CA48C(register cAvengersMansion_IronManSAC *self)
 {
     return new cAvengersMansion_IronManSAC;
 }
 
-unsigned int fn_801CA4E0(register cAvengersMansion_IronManSAC *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801CA528(register cAvengersMansion_IronManSAC *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801CA570(register cAvengersMansion_IronManSAC *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801CA5B8(register cAvengersMansion_IronManSAC *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801CA600(register cAvengersMansion_IronManSAC *self) { return fn_800791C8(self, 4); }
+unsigned int fn_801CA4E0(register cAvengersMansion_IronManSAC *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801CA528(register cAvengersMansion_IronManSAC *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801CA570(register cAvengersMansion_IronManSAC *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801CA5B8(register cAvengersMansion_IronManSAC *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801CA600(register cAvengersMansion_IronManSAC *self) { return Script_GetParamUInt(self, 4); }
 
 cScript *fn_801CA648(register cAvengersMansion_HideSkirt *self)
 {
     return new cAvengersMansion_HideSkirt;
 }
 
-unsigned int fn_801CA69C(register cAvengersMansion_HideSkirt *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801CA6E4(register cAvengersMansion_HideSkirt *self) { return fn_800791C8(self, 1); }
+unsigned int fn_801CA69C(register cAvengersMansion_HideSkirt *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801CA6E4(register cAvengersMansion_HideSkirt *self) { return Script_GetParamUInt(self, 1); }
 
 }

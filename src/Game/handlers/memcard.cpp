@@ -63,7 +63,7 @@ long mktime(struct tm *t);
 struct tm *fn_80172D78(const long *t); // localtime
 char *fn_80172CC4(const struct tm *t); // asctime
 
-void *fn_8011CA74();
+void *Profile_Get();
 MemcardMgr *fn_80122228();
 Unk8011EE90 *fn_8011EE90();
 void *fn_80427400();
@@ -215,55 +215,55 @@ void clashMemCard_Operation(int a, int b, int c)
 void clashMemcard_SetSettings(int vibrate, int b, int c, int d, int autosave, int difficulty)
 {
     if (vibrate == 1) {
-        fn_8011CD60(fn_8011CA74(), 1);
+        fn_8011CD60(Profile_Get(), 1);
     } else {
-        fn_8011CD60(fn_8011CA74(), 0);
+        fn_8011CD60(Profile_Get(), 0);
     }
-    fn_8011D4E4(fn_8011CA74(), difficulty);
+    fn_8011D4E4(Profile_Get(), difficulty);
     if (autosave == 1) {
-        fn_8011CFD8(fn_8011CA74(), 1);
+        fn_8011CFD8(Profile_Get(), 1);
     } else {
-        fn_8011CFD8(fn_8011CA74(), 0);
+        fn_8011CFD8(Profile_Get(), 0);
     }
 }
 
 void clashMemcard_SetSettings7(int vibrate, int b, int c, int d, int autosave, int difficulty, int widescreen)
 {
     if (vibrate == 1) {
-        fn_8011CD60(fn_8011CA74(), 1);
+        fn_8011CD60(Profile_Get(), 1);
     } else {
-        fn_8011CD60(fn_8011CA74(), 0);
+        fn_8011CD60(Profile_Get(), 0);
     }
-    fn_8011D4E4(fn_8011CA74(), difficulty);
+    fn_8011D4E4(Profile_Get(), difficulty);
     if (autosave == 1) {
-        fn_8011CFD8(fn_8011CA74(), 1);
+        fn_8011CFD8(Profile_Get(), 1);
     } else {
-        fn_8011CFD8(fn_8011CA74(), 0);
+        fn_8011CFD8(Profile_Get(), 0);
     }
     if (widescreen == 1) {
-        fn_8011D0C0(fn_8011CA74(), 1);
+        fn_8011D0C0(Profile_Get(), 1);
     } else {
-        fn_8011D0C0(fn_8011CA74(), 0);
+        fn_8011D0C0(Profile_Get(), 0);
     }
 }
 
 void clashMemcard_SetAudioSetting(int mode)
 {
-    fn_8011D120(fn_8011CA74(), mode, 0);
+    fn_8011D120(Profile_Get(), mode, 0);
 }
 
 AptObject clashMemcard_GetSettings()
 {
     AptObject settings;
-    if (fn_8011CD30(fn_8011CA74())) {
+    if (fn_8011CD30(Profile_Get())) {
         settings[lbl_80491068].SetLit2(*(char (*)[2])lbl_80491070);
     } else {
         settings[lbl_80491068].SetLit2(*(char (*)[2])lbl_80491074);
     }
-    settings[lbl_80491078] = fn_8011CD98(fn_8011CA74());
-    settings[lbl_80491080] = fn_8011CEA0(fn_8011CA74());
-    settings[lbl_80491084] = fn_8011D4AC(fn_8011CA74());
-    if (fn_8011CFA8(fn_8011CA74()) || fn_801224D0(fn_80122228())) {
+    settings[lbl_80491078] = fn_8011CD98(Profile_Get());
+    settings[lbl_80491080] = fn_8011CEA0(Profile_Get());
+    settings[lbl_80491084] = fn_8011D4AC(Profile_Get());
+    if (fn_8011CFA8(Profile_Get()) || fn_801224D0(fn_80122228())) {
         settings[lbl_80491090].SetLit2(*(char (*)[2])lbl_80491070);
     } else {
         settings[lbl_80491090].SetLit2(*(char (*)[2])lbl_80491074);
@@ -274,45 +274,45 @@ AptObject clashMemcard_GetSettings()
 AptObject clashMemcard_GetSettings8()
 {
     AptObject settings;
-    if (fn_8011CD30(fn_8011CA74())) {
+    if (fn_8011CD30(Profile_Get())) {
         settings[lbl_80491068].SetLit2(*(char (*)[2])lbl_80491070);
     } else {
         settings[lbl_80491068].SetLit2(*(char (*)[2])lbl_80491074);
     }
-    settings[lbl_80491078] = fn_8011CD98(fn_8011CA74());
-    settings[lbl_80491080] = fn_8011CEA0(fn_8011CA74());
-    settings[lbl_80491084] = fn_8011D4AC(fn_8011CA74());
-    if (fn_8011CFA8(fn_8011CA74()) || fn_801224D0(fn_80122228())) {
+    settings[lbl_80491078] = fn_8011CD98(Profile_Get());
+    settings[lbl_80491080] = fn_8011CEA0(Profile_Get());
+    settings[lbl_80491084] = fn_8011D4AC(Profile_Get());
+    if (fn_8011CFA8(Profile_Get()) || fn_801224D0(fn_80122228())) {
         settings[lbl_80491090].SetLit2(*(char (*)[2])lbl_80491070);
     } else {
         settings[lbl_80491090].SetLit2(*(char (*)[2])lbl_80491074);
     }
-    if (fn_8011D090(fn_8011CA74())) {
+    if (fn_8011D090(Profile_Get())) {
         settings[lbl_8049109C].SetLit2(*(char (*)[2])lbl_80491070);
     } else {
         settings[lbl_8049109C].SetLit2(*(char (*)[2])lbl_80491074);
     }
-    settings[lbl_804910A8] = fn_8011D0F0(fn_8011CA74());
+    settings[lbl_804910A8] = fn_8011D0F0(Profile_Get());
     return settings;
 }
 
 void clashMemcard_DefaultSettings()
 {
-    fn_8011E59C(fn_8011CA74());
+    fn_8011E59C(Profile_Get());
 }
 
 AptObject clashMemcard_GetCurrentGame()
 {
     AptObject game;
-    int year = fn_8011D854(fn_8011CA74()) - 2000;
+    int year = fn_8011D854(Profile_Get()) - 2000;
     if (year < 0) {
         year = 0;
     }
-    int month = fn_8011D8A4(fn_8011CA74());
-    int day = fn_8011D918(fn_8011CA74());
-    int hours = fn_8011D9F8(fn_8011CA74());
-    int minutes = fn_8011DAA0(fn_8011CA74());
-    int seconds = fn_8011DB78(fn_8011CA74());
+    int month = fn_8011D8A4(Profile_Get());
+    int day = fn_8011D918(Profile_Get());
+    int hours = fn_8011D9F8(Profile_Get());
+    int minutes = fn_8011DAA0(Profile_Get());
+    int seconds = fn_8011DB78(Profile_Get());
     char date[50];
     char time[50];
     memset(date, 0, 50);
@@ -349,9 +349,9 @@ AptObject clashMemcard_GetFileInformation(int slot)
     month = tm.tm_mon + 1;
     day = tm.tm_mday + 1;
     int played = fn_80124B58(fn_80122228(), slot);
-    hours = fn_8011DA4C(fn_8011CA74(), played);
-    minutes = fn_8011DAF4(fn_8011CA74(), played);
-    seconds = fn_8011DBCC(fn_8011CA74(), played);
+    hours = fn_8011DA4C(Profile_Get(), played);
+    minutes = fn_8011DAF4(Profile_Get(), played);
+    seconds = fn_8011DBCC(Profile_Get(), played);
     info[lbl_804910B0].SetLit1(*(char (*)[1])lbl_804910F4);
     info[lbl_804910BC].SetLit1(*(char (*)[1])lbl_804910F4);
     info[lbl_804910E4] = -1;
@@ -390,28 +390,28 @@ AptObject clashMemcard_GetFileInformation(int slot)
 void clashMemcard_ResetStoryMode(int keep)
 {
     fn_801300B4();
-    fn_8011EA2C(fn_8011CA74(), keep);
+    fn_8011EA2C(Profile_Get(), keep);
     fn_801304E0();
 }
 
 void clashMemcard_PlayTimerStart()
 {
-    fn_8011ED0C(fn_8011CA74());
+    fn_8011ED0C(Profile_Get());
 }
 
 void clashMemcard_PlayTimerStop()
 {
-    fn_8011ED50(fn_8011CA74());
+    fn_8011ED50(Profile_Get());
 }
 
 void clashMemcard_ResetBackupSettings()
 {
-    fn_8011EB68(fn_8011CA74());
+    fn_8011EB68(Profile_Get());
 }
 
 void clashMemcard_ResetSettings()
 {
-    fn_8011EBF8(fn_8011CA74());
+    fn_8011EBF8(Profile_Get());
 }
 
 int clashMemcard_CheckSettings(int vibrate, int b, int c, int d, int autosave, int difficulty, int widescreen)
@@ -429,20 +429,20 @@ int clashMemcard_CheckSettings(int vibrate, int b, int c, int d, int autosave, i
     if (widescreen == 1) {
         wide = 1;
     }
-    if (vib != fn_8011CD30(fn_8011CA74())) {
+    if (vib != fn_8011CD30(Profile_Get())) {
         changed = 1;
     }
     int newSave = save;
-    int oldSave = fn_8011CFA8(fn_8011CA74());
+    int oldSave = fn_8011CFA8(Profile_Get());
     int check = fn_801224D0(fn_80122228());
-    int e = fn_8011E9C4(fn_8011CA74());
-    int f = fn_8011E9F8(fn_8011CA74());
+    int e = fn_8011E9C4(Profile_Get());
+    int f = fn_8011E9F8(Profile_Get());
     if (newSave == oldSave && check != f) {
         changed = 1;
     } else if (check != newSave && newSave == oldSave && e == f) {
         changed = 1;
     }
-    if (difficulty != fn_8011D4AC(fn_8011CA74())) {
+    if (difficulty != fn_8011D4AC(Profile_Get())) {
         changed = 1;
     }
     return changed;
@@ -451,7 +451,7 @@ int clashMemcard_CheckSettings(int vibrate, int b, int c, int d, int autosave, i
 int clashMemcard_CheckAudio(int mode)
 {
     int changed = 0;
-    if (mode != fn_8011D0F0(fn_8011CA74())) {
+    if (mode != fn_8011D0F0(Profile_Get())) {
         changed = 1;
     }
     return changed;
@@ -549,7 +549,7 @@ int clashMemcard_GetContinueOverride()
 
 void clashMemcard_SetAutosaveParam(int value)
 {
-    fn_8011D474(fn_8011CA74(), value);
+    fn_8011D474(Profile_Get(), value);
 }
 
 int clashMemcard_GetPS2NoCardFlag()
@@ -563,7 +563,7 @@ int clashMemcard_GetPS2NoCardFlag()
 
 void clashMemcard_SetLastSaveGameParam(int value)
 {
-    fn_8011D474(fn_8011CA74(), value);
+    fn_8011D474(Profile_Get(), value);
 }
 
 int clashMemcard_GetOverwriteSettingsFlag()
@@ -664,7 +664,7 @@ void clashMemcard_SetCardRemoved(int on)
 
 void clashMemcard_CardRemoved_AutoOff()
 {
-    fn_8011CFD8(fn_8011CA74(), 0);
+    fn_8011CFD8(Profile_Get(), 0);
     fn_801224FC(fn_80122228(), 0);
     fn_801231BC(fn_80122228(), 0);
     fn_80123214(fn_80122228(), 0);
@@ -715,7 +715,7 @@ void clashMemcard_ResetFilesPresent()
 
 int clashMemcard_GetLastSaveIndex()
 {
-    int index = fn_8011D43C(fn_8011CA74());
+    int index = fn_8011D43C(Profile_Get());
     return index;
 }
 

@@ -394,7 +394,7 @@ int fn_80082A44(register int handle, unsigned int i, float f, int c)
     return fn_8007613C(a, i, f, 0, c);
 }
 
-int fn_80082AFC(register int handle, int b, int c, int d, float x, float y, float z, float w)
+int Script_TriggerEntity(register int handle, int b, int c, int d, float x, float y, float z, float w)
 {
     SActor *a = fn_80081E6C(handle);
     if (a == 0)

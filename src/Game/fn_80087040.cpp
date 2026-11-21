@@ -72,7 +72,7 @@ extern void __builtin_delete(void *p);
 extern void fn_801ACE74(const char *name);
 extern int fn_800887AC(register ScriptTable *table, const char *path);
 extern int fn_80087938(ScriptTable *table, int index);
-extern void fn_80078B10(void *script);
+extern void Script_Destroy(void *script);
 
 extern int fn_80433E08(NameTable *rec);
 extern int fn_80443398(NameTable *rec);
@@ -110,7 +110,7 @@ extern int fn_80443458(NameTable *rec);
 extern char *fn_80442A54(NameTable *rec);
 extern char *fn_8043265C(NameTable *rec);
 extern char *fn_80432688(NameTable *rec);
-extern void *fn_800789DC(char *name, int a);
+extern void *Script_Create(char *name, int a);
 extern int stricmp(const char *a, const char *b);
 extern int sscanf(const char *str, const char *fmt, ...);
 extern int sprintf(char *dst, const char *fmt, ...);
@@ -310,7 +310,7 @@ extern "C" void fn_80087580(register ScriptTable *table)
         }
     }
     if (fn_804425CC(table)) {
-        fn_80078B10(fn_804425CC(table));
+        Script_Destroy(fn_804425CC(table));
         table->unk1B0 = 0;
     }
 }
@@ -618,11 +618,11 @@ extern "C" int fn_8008856C(register ScriptTable *table, int index, int flag)
     NameTable *rec = fn_804332C4(table, index);
 
     if (fn_804425CC(table)) {
-        fn_80078B10(fn_804425CC(table));
+        Script_Destroy(fn_804425CC(table));
         table->unk1B0 = 0;
     }
     if (*fn_80442A54(rec) != 0) {
-        table->unk1B0 = fn_800789DC(fn_80442A54(rec), 1);
+        table->unk1B0 = Script_Create(fn_80442A54(rec), 1);
     }
     table->unk1A4 = index;
     strncpy(lbl_805526EC, fn_8043265C(rec), 0x20);

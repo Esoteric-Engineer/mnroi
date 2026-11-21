@@ -91,11 +91,11 @@ extern int lbl_8066C724;
 
 extern "C" {
 
-int fn_800797D4(cScript *self);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
-int fn_8007D7C4(cScript *self, unsigned char kind);
-int fn_8007CF00(cScript *script, int handle, int value);
+int Script_GetOwner(cScript *self);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+int Script_CancelMessages(cScript *self, unsigned char kind);
+int Script_LinkEntity(cScript *script, int handle, int value);
 int fn_80080B34();
 int fn_804425F8(void *ev);
 void fn_8046B5A8(void *ev, int x);
@@ -109,7 +109,7 @@ int fn_800809CC(void *ev);
 int fn_80086D24(int p);
 void *fn_80085928(void *p);
 void fn_800CD6C4(void *c, int on);
-void fn_80082AFC(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
 void fn_80082720(void *ev, int h);
 void fn_80082F30(void *ev);
 void fn_80082440(void *ev, Vector *out);
@@ -197,21 +197,21 @@ void fn_801D1BFC(register cDailyBugle_VenomBoss *self) // slot 4
     self->done = 0;
     self->bossHit = 0;
     self->playerHit = 0;
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     fn_8046B710(&self->r38[0], fn_801D4D14(self));
     fn_8046B710(&self->r38[1], fn_801D4D5C(self));
     fn_8046B710(&self->r38[2], fn_801D4DA4(self));
     fn_8046B710(&self->r38[3], fn_801D4DEC(self));
     fn_8046B710(&self->r58, fn_801D4EC4(self));
     fn_8046B710(&self->r60, fn_801D4F0C(self));
-    fn_8007CF00(self, fn_804425F8(&self->r38[0]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r38[1]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r38[2]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r38[3]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r58), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r60), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r38[0]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r38[1]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r38[2]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r38[3]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r58), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r60), 0);
     self->used[0] = 0;
     self->used[1] = 0;
     self->used[2] = 0;
@@ -368,7 +368,7 @@ void fn_801D26F0(register cDailyBugle_VenomBoss *self)
     fn_8007B2E8(fn_804425F8(&self->boss), 2, 80.0f);
     fn_8007B2E8(fn_804425F8(&self->boss), 11, 80.0f);
     fn_8007B998(fn_804425F8(&self->boss), self->scale * 2.0f);
-    fn_8007D404(self, 30.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 30.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D2848(register cDailyBugle_VenomBoss *self)
@@ -401,7 +401,7 @@ void fn_801D2848(register cDailyBugle_VenomBoss *self)
 
 void fn_801D29E8(register cDailyBugle_VenomBoss *self)
 {
-    fn_8007D404(self, 3.0f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 3.0f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_80572278, 1);
@@ -413,14 +413,14 @@ void fn_801D2A98(register cDailyBugle_VenomBoss *self)
 
     fn_80081918(fn_80080B34());
     fn_8046B6C8(&ev, fn_801D4E34(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     fn_80082F30(&self->boss);
     fn_80082F30(&self->player);
 }
 
 void fn_801D2B5C(register cDailyBugle_VenomBoss *self)
 {
-    fn_8007D404(self, 2.0f, 80, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 80, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D2BCC(register cDailyBugle_VenomBoss *self)
@@ -429,14 +429,14 @@ void fn_801D2BCC(register cDailyBugle_VenomBoss *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801D4E7C(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D2C80(register cDailyBugle_SpidermanSac *self) // slot 5
 {
     fn_8046B710(&self->r30, fn_801D4FA8(self));
-    fn_8046B710(&self->boss, fn_800797D4(self));
-    fn_8007CF00(self, fn_80080B34(), 0);
+    fn_8046B710(&self->boss, Script_GetOwner(self));
+    Script_LinkEntity(self, fn_80080B34(), 0);
     self->f38 = 0;
     self->done = 0;
     self->bossHit = 0;
@@ -536,7 +536,7 @@ void fn_801D3298(register cDailyBugle_SpidermanSac *self, unsigned char kind, fl
 
 void fn_801D3354(register cDailyBugle_SpidermanSac *self)
 {
-    fn_8007D404(self, 2.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_8057230C, 1);
@@ -545,12 +545,12 @@ void fn_801D3354(register cDailyBugle_SpidermanSac *self)
 void fn_801D3404(register cDailyBugle_SpidermanSac *self)
 {
     fn_80081918(fn_80080B34());
-    fn_80082AFC(&self->r30, fn_804425F8(&self->r30), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r30, fn_804425F8(&self->r30), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D34A0(register cDailyBugle_SpidermanSac *self)
 {
-    fn_8007D404(self, 2.0f, 45, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 45, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D3510(register cDailyBugle_SpidermanSac *self)
@@ -559,20 +559,20 @@ void fn_801D3510(register cDailyBugle_SpidermanSac *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801D4FF0(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D35C4(register cDailyBugle_LetterEffects *self, int h, int a, int stage, int b, int value) // slot 29
 {
     Ref8 ev;
 
-    fn_8046B6C8(&ev, fn_800797D4(self));
+    fn_8046B6C8(&ev, Script_GetOwner(self));
     switch (stage) {
     case 1: {
         Ref8 t;
 
         fn_8046B6C8(&t, fn_801D508C(self));
-        fn_80082AFC(&t, fn_804425F8(&t), fn_800797D4(self), 999, 1.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&t, fn_804425F8(&t), Script_GetOwner(self), 999, 1.0f, 0.0f, 0.0f, 0.0f);
     }
     case 0:
         fn_80083018(&ev, "elecLetterSprks", 27, 0);
@@ -590,8 +590,8 @@ extern "C" {
 
 void fn_801D370C(register cDailyBugle_DaredevilBoss *self) // slot 5
 {
-    fn_8007CF00(self, fn_80080B34(), 0);
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    Script_LinkEntity(self, fn_80080B34(), 0);
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     self->f90 = 0;
     self->f94 = 0;
     self->done = 0;
@@ -622,7 +622,7 @@ void fn_801D38BC(register cDailyBugle_DaredevilBoss *self, unsigned char kind, f
 
     switch (kind) {
     case 10:
-        fn_80082AFC(&self->r60, fn_804425F8(&self->r60), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r60, fn_804425F8(&self->r60), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 20:
         ratio = fn_8007C3EC(&self->boss) / fn_8007C52C(&self->boss);
@@ -703,7 +703,7 @@ void fn_801D38BC(register cDailyBugle_DaredevilBoss *self, unsigned char kind, f
                 fn_8007BBB4(fn_804425F8(&self->boss));
             }
         }
-        fn_8007D404(self, self->f8C, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, self->f8C, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 60:
         fn_801D4738(self);
@@ -735,12 +735,12 @@ float fn_801D3F1C(register cDailyBugle_DaredevilBoss *self, int h, int other, in
         float ratio = fn_8007C3EC(&self->boss) / fn_8007C52C(&self->boss);
 
         if (self->state == 0 && ratio < 0.25f && fn_8007BEA8(fn_80080B34())) {
-            fn_8007D7C4(self, 50);
-            fn_8007D7C4(self, 60);
-            fn_8007D7C4(self, 20);
-            fn_8007D7C4(self, 30);
+            Script_CancelMessages(self, 50);
+            Script_CancelMessages(self, 60);
+            Script_CancelMessages(self, 20);
+            Script_CancelMessages(self, 30);
             fn_801D4520(self);
-            fn_8007D404(self, 0.25f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.25f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
     }
     return damage;
@@ -748,7 +748,7 @@ float fn_801D3F1C(register cDailyBugle_DaredevilBoss *self, int h, int other, in
 
 float fn_801D40C0(register cDailyBugle_DaredevilBoss *self, int h, int node, int value) // slot 37
 {
-    fn_8007D7C4(self, 30);
+    Script_CancelMessages(self, 30);
     if (self->state != 2)
         fn_801D49D8(self);
     return -1.0f;
@@ -758,11 +758,11 @@ int fn_801D4128(register cDailyBugle_DaredevilBoss *self, int h, int other, int 
 {
     Ref8 r;
 
-    fn_8007D7C4(self, 50);
-    fn_8007D7C4(self, 30);
-    fn_8007D7C4(self, 20);
-    fn_8007D7C4(self, 40);
-    fn_8007D7C4(self, 60);
+    Script_CancelMessages(self, 50);
+    Script_CancelMessages(self, 30);
+    Script_CancelMessages(self, 20);
+    Script_CancelMessages(self, 40);
+    Script_CancelMessages(self, 60);
     if (h == fn_804425F8(&self->boss)) {
         fn_8046B638(&r, fn_80080B34());
         if (fn_800809CC(&r) && fn_80086D24(fn_800809CC(&r)))
@@ -790,11 +790,11 @@ void fn_801D430C(register cDailyBugle_DaredevilBoss *self, int h, int other, int
         return;
     }
     self->done = 1;
-    fn_8007D7C4(self, 50);
-    fn_8007D7C4(self, 30);
-    fn_8007D7C4(self, 20);
-    fn_8007D7C4(self, 40);
-    fn_8007D7C4(self, 60);
+    Script_CancelMessages(self, 50);
+    Script_CancelMessages(self, 30);
+    Script_CancelMessages(self, 20);
+    Script_CancelMessages(self, 40);
+    Script_CancelMessages(self, 60);
     lbl_8066C724 = 1;
     fn_80081C68();
     fn_80081C94();
@@ -818,7 +818,7 @@ void fn_801D430C(register cDailyBugle_DaredevilBoss *self, int h, int other, int
 void fn_801D4474(register cDailyBugle_DaredevilBoss *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     if (self->f90 == 0 && self->f94 == 0 && self->state == 0)
-        fn_8007D404(self, 2.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D4520(register cDailyBugle_DaredevilBoss *self)
@@ -851,14 +851,14 @@ void fn_801D4738(register cDailyBugle_DaredevilBoss *self)
     Ref8 r;
 
     self->state = 0;
-    fn_8007D7C4(self, 50);
-    fn_8007D7C4(self, 60);
-    fn_8007D7C4(self, 20);
-    fn_8007D7C4(self, 30);
+    Script_CancelMessages(self, 50);
+    Script_CancelMessages(self, 60);
+    Script_CancelMessages(self, 20);
+    Script_CancelMessages(self, 30);
     fn_8007BC38(fn_804425F8(&self->boss));
     fn_8007A4FC(fn_804425F8(&self->boss));
     fn_801D4520(self);
-    fn_8007D404(self, self->delay, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->delay, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_8046B638(&r, fn_804425F8(&self->boss));
     if (fn_800809CC(&r))
         fn_800CD6C4(fn_80085928((void *)fn_800809CC(&r)), 0);
@@ -881,7 +881,7 @@ void fn_801D4860(register cDailyBugle_DaredevilBoss *self)
     fn_8007A4FC(fn_804425F8(&self->boss));
     Vector to;
     fn_80082440(&self->chosen, &to);
-    fn_8007D404(self, self->f84, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->f84, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_8007A448(fn_804425F8(&self->boss));
     fn_8007A738(fn_804425F8(&self->boss), &to);
 }
@@ -890,13 +890,13 @@ void fn_801D49D8(register cDailyBugle_DaredevilBoss *self)
 {
     self->f74 = 0;
     self->state = 2;
-    fn_8007D404(self, self->f8C, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007D404(self, self->f88, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->f8C, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->f88, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D4A80(register cDailyBugle_DaredevilBoss *self)
 {
-    fn_8007D404(self, 3.0f, 64, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 3.0f, 64, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_80572278, 1);
@@ -905,18 +905,18 @@ void fn_801D4A80(register cDailyBugle_DaredevilBoss *self)
 void fn_801D4B28(register cDailyBugle_DaredevilBoss *self)
 {
     fn_80081918(fn_80080B34());
-    fn_80082AFC(&self->r60, fn_804425F8(&self->r60), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r60, fn_804425F8(&self->r60), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801D4BBC(register cDailyBugle_DaredevilBoss *self)
 {
-    fn_8007D404(self, 2.0f, 68, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 68, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801D4C24(register cDailyBugle_DaredevilBoss *self)
 {
     fn_80081918(fn_804425F8(&self->boss));
-    fn_80082AFC(&self->r68, fn_804425F8(&self->r68), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r68, fn_804425F8(&self->r68), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 cScript *fn_801D4CC0(register cDailyBugle_VenomBoss *self)
@@ -926,42 +926,42 @@ cScript *fn_801D4CC0(register cDailyBugle_VenomBoss *self)
 
 unsigned int fn_801D4D14(register cDailyBugle_VenomBoss *self)
 {
-    return fn_800791C8(self, 0);
+    return Script_GetParamUInt(self, 0);
 }
 
 unsigned int fn_801D4D5C(register cDailyBugle_VenomBoss *self)
 {
-    return fn_800791C8(self, 1);
+    return Script_GetParamUInt(self, 1);
 }
 
 unsigned int fn_801D4DA4(register cDailyBugle_VenomBoss *self)
 {
-    return fn_800791C8(self, 2);
+    return Script_GetParamUInt(self, 2);
 }
 
 unsigned int fn_801D4DEC(register cDailyBugle_VenomBoss *self)
 {
-    return fn_800791C8(self, 3);
+    return Script_GetParamUInt(self, 3);
 }
 
 unsigned int fn_801D4E34(register cDailyBugle_VenomBoss *self)
 {
-    return fn_800791C8(self, 4);
+    return Script_GetParamUInt(self, 4);
 }
 
 unsigned int fn_801D4E7C(register cDailyBugle_VenomBoss *self)
 {
-    return fn_800791C8(self, 5);
+    return Script_GetParamUInt(self, 5);
 }
 
 unsigned int fn_801D4EC4(register cDailyBugle_VenomBoss *self)
 {
-    return fn_800791C8(self, 6);
+    return Script_GetParamUInt(self, 6);
 }
 
 unsigned int fn_801D4F0C(register cDailyBugle_VenomBoss *self)
 {
-    return fn_800791C8(self, 7);
+    return Script_GetParamUInt(self, 7);
 }
 
 cScript *fn_801D4F54(register cDailyBugle_SpidermanSac *self)
@@ -971,12 +971,12 @@ cScript *fn_801D4F54(register cDailyBugle_SpidermanSac *self)
 
 unsigned int fn_801D4FA8(register cDailyBugle_SpidermanSac *self)
 {
-    return fn_800791C8(self, 0);
+    return Script_GetParamUInt(self, 0);
 }
 
 unsigned int fn_801D4FF0(register cDailyBugle_SpidermanSac *self)
 {
-    return fn_800791C8(self, 1);
+    return Script_GetParamUInt(self, 1);
 }
 
 cScript *fn_801D5038(register cDailyBugle_LetterEffects *self)
@@ -986,7 +986,7 @@ cScript *fn_801D5038(register cDailyBugle_LetterEffects *self)
 
 unsigned int fn_801D508C(register cDailyBugle_LetterEffects *self)
 {
-    return fn_800791C8(self, 0);
+    return Script_GetParamUInt(self, 0);
 }
 
 cScript *fn_801D50D4(register cDailyBugle_DaredevilBoss *self)
@@ -996,37 +996,37 @@ cScript *fn_801D50D4(register cDailyBugle_DaredevilBoss *self)
 
 unsigned int fn_801D5128(register cDailyBugle_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 0);
+    return Script_GetParamUInt(self, 0);
 }
 
 unsigned int fn_801D5170(register cDailyBugle_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 1);
+    return Script_GetParamUInt(self, 1);
 }
 
 unsigned int fn_801D51B8(register cDailyBugle_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 2);
+    return Script_GetParamUInt(self, 2);
 }
 
 unsigned int fn_801D5200(register cDailyBugle_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 3);
+    return Script_GetParamUInt(self, 3);
 }
 
 unsigned int fn_801D5248(register cDailyBugle_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 4);
+    return Script_GetParamUInt(self, 4);
 }
 
 unsigned int fn_801D5290(register cDailyBugle_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 5);
+    return Script_GetParamUInt(self, 5);
 }
 
 unsigned int fn_801D52D8(register cDailyBugle_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 6);
+    return Script_GetParamUInt(self, 6);
 }
 
 }

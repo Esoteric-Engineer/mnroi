@@ -159,15 +159,15 @@ extern int lbl_8066C724;
 
 extern "C" {
 
-int fn_800797D4(cScript *self);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-int fn_80079068(cScript *self, unsigned int i);
-char *fn_800794FC(cScript *self, unsigned int i);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
-void fn_8007D4F4(cScript *self, int ms, int kind, float a, float b, float c, float d, int e);
-int fn_8007D7C4(cScript *self, unsigned char kind);
+int Script_GetOwner(cScript *self);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+int Script_GetParamInt(cScript *self, unsigned int i);
+char *Script_GetParamString(cScript *self, unsigned int i);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+void Script_QueueMessageMs(cScript *self, int ms, int kind, float a, float b, float c, float d, int e);
+int Script_CancelMessages(cScript *self, unsigned char kind);
 int fn_8007D8B0(cScript *self);
-int fn_8007CF00(cScript *script, int handle, int value);
+int Script_LinkEntity(cScript *script, int handle, int value);
 int fn_80080B34();
 int fn_804425F8(void *ev);
 void fn_8046B5A8(void *ev, int x);
@@ -187,7 +187,7 @@ void fn_80066794(SObj *o, int v);
 int fn_80393D0C(SObj *o, char *name, int a, int b);
 void *fn_80085928(void *p);
 void fn_800CD6C4(void *c, int on);
-void fn_80082AFC(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
 void fn_80082440(void *ev, Vector *out);
 void fn_800824AC(void *ev, Vector *at);
 void fn_800826A8(void *ev, Mat *m);
@@ -321,9 +321,9 @@ unsigned int fn_801EA9F0(cRoekelFacility_Lasers *self);
 
 void fn_801E4870(register cRoekelFacility_StormBoss *self) // slot 4
 {
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     fn_8046B710(&self->r38, fn_801E9AC0(self));
     fn_800826A8(&self->r38, &self->m68);
     self->f48 = 0;
@@ -398,11 +398,11 @@ void fn_801E4B8C(register cRoekelFacility_StormBoss *self, unsigned char kind, f
         break;
     case 20:
         fn_8046B6C8(&ev, fn_801E9B08(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 25:
         fn_8046B6C8(&ev, fn_801E9B08(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 40:
         hp = fn_8007C0AC(&self->boss);
@@ -412,7 +412,7 @@ void fn_801E4B8C(register cRoekelFacility_StormBoss *self, unsigned char kind, f
             x = x + 10.0f;
             fn_8007C454(&self->boss, x);
         }
-        fn_8007D404(self, 1.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
 }
@@ -439,7 +439,7 @@ void fn_801E4F34(register cRoekelFacility_StormBoss *self, int h, int other, int
             return;
         return;
     }
-    fn_8007D7C4(self, 10);
+    Script_CancelMessages(self, 10);
     self->done = 1;
     lbl_8066C724 = 1;
     fn_80081C68();
@@ -478,8 +478,8 @@ float fn_801E5110(register cRoekelFacility_StormBoss *self, int h, int node, int
         fn_8007B618(fn_804425F8(&self->boss), 1);
         fn_8007BCC8(fn_804425F8(&self->boss), 1);
         fn_8046B710(&self->core, fn_80082190(&self->r38, "pwrplantsupcorefx"));
-        fn_8007D404(self, 8.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 1.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 8.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
     return -1.0f;
 }
@@ -493,13 +493,13 @@ void fn_801E5260(register cRoekelFacility_StormBoss *self)
     fn_8007BD7C(fn_804425F8(&self->boss));
     fn_8007A4FC(fn_804425F8(&self->boss));
     fn_8007B288(fn_804425F8(&self->boss));
-    fn_8007D404(self, 10.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 10.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     self->f58 = 1;
 }
 
 void fn_801E5358(register cRoekelFacility_StormBoss *self)
 {
-    fn_8007D404(self, 2.0f, 47, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 47, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_8057230C, 1);
@@ -512,12 +512,12 @@ void fn_801E5408(register cRoekelFacility_StormBoss *self)
     fn_80081918(fn_804425F8(&self->player));
     lbl_8066C71C = fn_804425F8(&self->player);
     fn_8046B6C8(&ev, fn_801E9B08(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801E54D0(register cRoekelFacility_StormBoss *self)
 {
-    fn_8007D404(self, 2.0f, 49, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 49, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E5540(register cRoekelFacility_StormBoss *self)
@@ -527,7 +527,7 @@ void fn_801E5540(register cRoekelFacility_StormBoss *self)
     fn_80081918(fn_804425F8(&self->boss));
     lbl_8066C71C = fn_804425F8(&self->boss);
     fn_8046B6C8(&ev, fn_801E9B50(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801E5608(register cRoekelFacility_ThingBoss *self) // slot 4
@@ -546,9 +546,9 @@ void fn_801E5608(register cRoekelFacility_ThingBoss *self) // slot 4
 
 void fn_801E5680(register cRoekelFacility_ThingBoss *self) // slot 5
 {
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     fn_8046B710(&self->r98, fn_801E9FDC(self));
     fn_800826A8(&self->r98, &self->mF0);
     fn_8046B710(&self->r38[0], fn_801E9BEC(self));
@@ -564,7 +564,7 @@ void fn_801E5680(register cRoekelFacility_ThingBoss *self) // slot 5
     fn_8046B710(&self->r38[10], fn_801E9EBC(self));
     fn_8046B710(&self->r38[11], fn_801E9F04(self));
     fn_8046B838(lbl_80552110, 1);
-    fn_8007D404(self, 20.0f, 1, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 20.0f, 1, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 float fn_801E58D4(register cRoekelFacility_ThingBoss *self, int h, int other, int kind, int b, float damage, int c, int value) // slot 21
@@ -583,7 +583,7 @@ float fn_801E58D4(register cRoekelFacility_ThingBoss *self, int h, int other, in
     return damage;
 }
 
-#define THING_LINK(i) fn_80082AFC(&self->r38[i], fn_804425F8(&self->r38[i]), fn_800797D4(self), 0, self->target.x, self->target.y, self->target.z, 0.0f)
+#define THING_LINK(i) Script_TriggerEntity(&self->r38[i], fn_804425F8(&self->r38[i]), Script_GetOwner(self), 0, self->target.x, self->target.y, self->target.z, 0.0f)
 
 void fn_801E59F8(register cRoekelFacility_ThingBoss *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
 {
@@ -602,7 +602,7 @@ void fn_801E59F8(register cRoekelFacility_ThingBoss *self, unsigned char kind, f
         break;
     case 26:
         fn_8007C6D0(&self->boss, 5.0f);
-        fn_8007D404(self, 1.0f, 26, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 26, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 1:
         self->fB8 = 1;
@@ -674,9 +674,9 @@ void fn_801E605C(register cRoekelFacility_ThingBoss *self, int h, int other, int
             return;
         return;
     }
-    fn_8007D7C4(self, 10);
-    fn_8007D7C4(self, 15);
-    fn_8007D7C4(self, 1);
+    Script_CancelMessages(self, 10);
+    Script_CancelMessages(self, 15);
+    Script_CancelMessages(self, 1);
     self->done = 1;
     lbl_8066C724 = 1;
     fn_80081C68();
@@ -716,10 +716,10 @@ float fn_801E623C(register cRoekelFacility_ThingBoss *self, int h, int node, int
 
             self->fBC = 1;
             fn_8046B6C8(&ev, fn_801EA024(self));
-            fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         }
         fn_8046B710(&self->core, fn_80082190(&self->r98, "pwrplantsupcorefx"));
-        fn_8007D404(self, 1.0f, 26, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 26, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         if (fn_8007C034(&self->boss))
             fn_800CD6C4(fn_80085928((void *)fn_8007C034(&self->boss)), 1);
         fn_801E6544(self);
@@ -735,13 +735,13 @@ void fn_801E63E8(register cRoekelFacility_ThingBoss *self)
         Ref8 ev;
 
         fn_8046B6C8(&ev, fn_801EA024(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     }
     if (fn_8007C034(&self->boss))
         fn_800CD6C4(fn_80085928((void *)fn_8007C034(&self->boss)), 0);
     fn_8007A4FC(fn_804425F8(&self->boss));
     self->fB8 = 0;
-    fn_8007D404(self, 20.0f, 1, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 20.0f, 1, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     self->fB0 = 0;
 }
 
@@ -753,46 +753,46 @@ void fn_801E6544(register cRoekelFacility_ThingBoss *self)
     fn_8046B5A8(&p, fn_80080B34());
     fn_80082440(&p, &self->target);
     if (self->phase == 3) {
-        fn_8007D404(self, 1.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         self->phase = 0;
         return;
     } else if (self->phase == 2) {
-        fn_8007D404(self, 1.5f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 2.0f, 31, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 2.5f, 32, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 3.0f, 33, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 3.5f, 34, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 4.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 4.5f, 36, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 5.0f, 37, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 5.5f, 38, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 6.0f, 39, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 6.5f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 7.5f, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.5f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.0f, 31, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.5f, 32, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 3.0f, 33, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 3.5f, 34, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 4.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 4.5f, 36, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 5.0f, 37, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 5.5f, 38, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 6.0f, 39, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 6.5f, 40, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 7.5f, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         self->phase = 3;
         return;
     } else if (self->phase == 1) {
-        fn_8007D404(self, 1.5f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 2.0f, 31, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 2.5f, 32, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 3.0f, 33, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 3.5f, 34, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 4.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 4.5f, 36, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 5.0f, 37, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 5.5f, 38, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 6.5f, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.5f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.0f, 31, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.5f, 32, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 3.0f, 33, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 3.5f, 34, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 4.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 4.5f, 36, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 5.0f, 37, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 5.5f, 38, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 6.5f, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         self->phase = 2;
         return;
     } else if (self->phase == 0) {
-        fn_8007D404(self, 1.5f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 2.0f, 31, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 2.5f, 32, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 3.0f, 33, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 3.5f, 34, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 4.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 4.5f, 36, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_8007D404(self, 5.5f, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.5f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.0f, 31, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.5f, 32, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 3.0f, 33, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 3.5f, 34, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 4.0f, 35, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 4.5f, 36, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 5.5f, 15, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         self->phase = 1;
         return;
     }
@@ -800,7 +800,7 @@ void fn_801E6544(register cRoekelFacility_ThingBoss *self)
 
 void fn_801E6CF8(register cRoekelFacility_ThingBoss *self)
 {
-    fn_8007D404(self, 2.0f, 47, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 47, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_80572278, 1);
@@ -815,21 +815,21 @@ void fn_801E6DA8(register cRoekelFacility_ThingBoss *self)
 
     fn_80081918(fn_804425F8(&self->player));
     fn_8046B6C8(&a, fn_801EA06C(self));
-    fn_80082AFC(&a, fn_804425F8(&a), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&a, fn_804425F8(&a), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
     fn_8046B6C8(&b, fn_801EA0B4(self));
-    fn_80082AFC(&b, fn_804425F8(&b), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&b, fn_804425F8(&b), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
     fn_8046B6C8(&c, fn_801EA0FC(self));
-    fn_80082AFC(&c, fn_804425F8(&c), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&c, fn_804425F8(&c), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
     fn_80082F30(&a);
     fn_80082F30(&b);
     fn_80082F30(&c);
     fn_8046B6C8(&d, fn_801E9F4C(self));
-    fn_80082AFC(&d, fn_804425F8(&d), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&d, fn_804425F8(&d), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801E6FCC(register cRoekelFacility_ThingBoss *self)
 {
-    fn_8007D404(self, 2.0f, 49, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 49, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E703C(register cRoekelFacility_ThingBoss *self)
@@ -838,12 +838,12 @@ void fn_801E703C(register cRoekelFacility_ThingBoss *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801E9F94(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801E70F0(register cRoekelFacility_RockBomb *self) // slot 4
 {
-    fn_8046B710(&self->obj, fn_800797D4(self));
+    fn_8046B710(&self->obj, Script_GetOwner(self));
     fn_8046B710(&self->thing, fn_80083734("THING"));
 }
 
@@ -909,13 +909,13 @@ void fn_801E7504(register cRoekelFacility_RockBomb *self, int a, int b, int kind
     fn_800824AC(&self->obj, &self->aim);
     fn_80082014(&self->obj, 2);
     Ref8 r;
-    fn_8046B5F0(&r, fn_800797D4(self));
+    fn_8046B5F0(&r, Script_GetOwner(self));
     SObj *o = fn_80080EFC(&r);
     if (o) {
         fn_8006645C(o, 0);
         fn_80066794(o, 1);
     }
-    fn_8007D404(self, 0.25f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.25f, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E76F0(register cRoekelFacility_RockBomb *self, int h, int other, int a, int b, int value) // slot 27
@@ -929,7 +929,7 @@ void fn_801E76F0(register cRoekelFacility_RockBomb *self, int h, int other, int 
         if (actor && fn_8009B04C(actor) != 0x6c)
             fn_8007C740(&p, 0x6c, 0, 0, 1.0f, 0);
     }
-    fn_8007D404(self, 0.01f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.01f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E7824(register cRoekelFacility_RockBomb *self)
@@ -940,7 +940,7 @@ void fn_801E7824(register cRoekelFacility_RockBomb *self)
     fn_800825D0(&self->obj, &self->m50);
     fn_80080928(&self->obj, 0);
     fn_800820A0(&self->obj, 0);
-    fn_8046B5F0(&r, fn_800797D4(self));
+    fn_8046B5F0(&r, Script_GetOwner(self));
     SObj *o = fn_80080EFC(&r);
     if (!o)
         return;
@@ -950,7 +950,7 @@ void fn_801E7824(register cRoekelFacility_RockBomb *self)
 
 void fn_801E78EC(register cRoekelFacility_BlastDoor *self) // slot 4
 {
-    fn_8046B710(&self->door, fn_800797D4(self));
+    fn_8046B710(&self->door, Script_GetOwner(self));
     self->done = 0;
     self->f38 = 0;
 }
@@ -981,14 +981,14 @@ void fn_801E79F4(register cRoekelFacility_BlastDoor *self, int a, int b, int kin
         self->ms = fn_8008046C(&self->door, 0x17, 30.0f);
         fn_80080358(&self->door, 0x31);
         if (self->ms > 0)
-            fn_8007D4F4(self, self->ms, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessageMs(self, self->ms, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         return;
     } else if (self->open == 1) {
         self->open = 0;
         self->ms = fn_8008046C(&self->door, 0x16, 30.0f);
         fn_80080358(&self->door, 0x32);
         if (self->ms > 0)
-            fn_8007D4F4(self, self->ms, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessageMs(self, self->ms, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         return;
     }
 }
@@ -1040,10 +1040,10 @@ void fn_801E7D5C(register cRoekelFacility_RoekelBoss *self) // slot 4
 
 void fn_801E7DCC(register cRoekelFacility_RoekelBoss *self) // slot 5
 {
-    fn_8046B710(&self->boss, fn_800797D4(self));
-    fn_8007BA24(fn_800797D4(self), 4);
+    fn_8046B710(&self->boss, Script_GetOwner(self));
+    fn_8007BA24(Script_GetOwner(self), 4);
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     fn_8046B710(&self->r48, fn_801EA2D0(self));
     fn_800826A8(&self->r48, &self->m68);
     fn_8046B710(&self->r50, fn_801EA318(self));
@@ -1072,7 +1072,7 @@ float fn_801E7FCC(register cRoekelFacility_RoekelBoss *self, int h, int other, i
         return -1.0f;
     if (h == fn_804425F8(&self->boss)) {
         if (self->fB4 == 1 && self->fC0 == 0) {
-            fn_8007D404(self, 0.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             return damage;
         } else if (self->fB4 == 0 && self->fC0 == 0 && self->fD0 == 1) {
             float r = fn_8007C0AC(&self->boss) / fn_8007C244(&self->boss) - damage;
@@ -1126,11 +1126,11 @@ void fn_801E822C(register cRoekelFacility_RoekelBoss *self, unsigned char kind, 
         self->fB4 = 0;
         self->fBC = 0;
         fn_8007A4FC(fn_804425F8(&self->boss));
-        fn_80082AFC(&self->r50, fn_804425F8(&self->r50), fn_800797D4(self), 18, 0.0f, 0.0f, 0.0f, 0.0f);
-        fn_80082AFC(&self->r58, fn_804425F8(&self->r58), fn_800797D4(self), 18, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r50, fn_804425F8(&self->r50), Script_GetOwner(self), 18, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r58, fn_804425F8(&self->r58), Script_GetOwner(self), 18, 0.0f, 0.0f, 0.0f, 0.0f);
         fn_8007B288(fn_804425F8(&self->boss));
         self->fD0 = 0;
-        fn_8007D404(self, 20.0f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 20.0f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 40:
         break;
@@ -1143,7 +1143,7 @@ void fn_801E822C(register cRoekelFacility_RoekelBoss *self, unsigned char kind, 
             x = x + 60.0f;
             fn_8007C454(&self->boss, x);
         }
-        fn_8007D404(self, 1.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 50:
         self->fD0 = 1;
@@ -1168,8 +1168,8 @@ float fn_801E85E0(register cRoekelFacility_RoekelBoss *self, int h, int node, in
     fn_8007BAA0(fn_804425F8(&self->boss));
     fn_8046B710(&self->core, fn_80082190(&self->r48, "pwrplantsupcorefx"));
     fn_801E872C(self);
-    fn_8007D404(self, 6.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007D404(self, 1.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 6.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 1.0f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return -1.0f;
 }
 
@@ -1177,8 +1177,8 @@ void fn_801E872C(register cRoekelFacility_RoekelBoss *self)
 {
     float f = 0.5f;
 
-    fn_80082AFC(&self->r50, fn_804425F8(&self->r50), fn_800797D4(self), 0, f, 0.0f, 0.0f, 0.0f);
-    fn_80082AFC(&self->r58, fn_804425F8(&self->r58), fn_800797D4(self), 0, f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r50, fn_804425F8(&self->r50), Script_GetOwner(self), 0, f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r58, fn_804425F8(&self->r58), Script_GetOwner(self), 0, f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801E8810(register cRoekelFacility_RoekelBoss *self, int h, int other, int kind, int b, float damage, int value) // slot 22
@@ -1188,8 +1188,8 @@ void fn_801E8810(register cRoekelFacility_RoekelBoss *self, int h, int other, in
             return;
         return;
     }
-    fn_8007D7C4(self, 20);
-    fn_8007D7C4(self, 30);
+    Script_CancelMessages(self, 20);
+    Script_CancelMessages(self, 30);
     self->done = 1;
     lbl_8066C724 = 1;
     fn_80081C68();
@@ -1212,9 +1212,9 @@ void fn_801E8810(register cRoekelFacility_RoekelBoss *self, int h, int other, in
 
 void fn_801E8970(register cRoekelFacility_RoekelBoss *self)
 {
-    fn_80082AFC(&self->r50, fn_804425F8(&self->r50), fn_800797D4(self), 18, 0.0f, 0.0f, 0.0f, 0.0f);
-    fn_80082AFC(&self->r58, fn_804425F8(&self->r58), fn_800797D4(self), 18, 0.0f, 0.0f, 0.0f, 0.0f);
-    fn_8007D404(self, 2.0f, 47, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_TriggerEntity(&self->r50, fn_804425F8(&self->r50), Script_GetOwner(self), 18, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r58, fn_804425F8(&self->r58), Script_GetOwner(self), 18, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_QueueMessage(self, 2.0f, 47, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_80572278, 1);
@@ -1226,12 +1226,12 @@ void fn_801E8AC8(register cRoekelFacility_RoekelBoss *self)
 
     fn_80081918(fn_804425F8(&self->player));
     fn_8046B6C8(&ev, fn_801EA3A8(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801E8B7C(register cRoekelFacility_RoekelBoss *self)
 {
-    fn_8007D404(self, 2.0f, 49, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 49, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E8BEC(register cRoekelFacility_RoekelBoss *self)
@@ -1240,7 +1240,7 @@ void fn_801E8BEC(register cRoekelFacility_RoekelBoss *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801EA3F0(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 }
@@ -1257,11 +1257,11 @@ void fn_801E8CA0(register cRoekelFacility_PlasmaMine *self) // slot 4
 
 void fn_801E8CD0(register cRoekelFacility_PlasmaMine *self) // slot 5
 {
-    fn_8046B710(&self->mine, fn_800797D4(self));
+    fn_8046B710(&self->mine, Script_GetOwner(self));
     fn_8046B710(&self->player, fn_80080B34());
     fn_80082440(&self->mine, &self->pos);
     fn_8046B710(&self->r30, fn_801EA48C(self));
-    fn_8007CF00(self, fn_804425F8(&self->r30), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r30), 0);
 }
 
 void fn_801E8D84(register cRoekelFacility_PlasmaMine *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
@@ -1274,7 +1274,7 @@ void fn_801E8D84(register cRoekelFacility_PlasmaMine *self, unsigned char kind, 
         if (self->sparks <= 14) {
             fn_80082190(&self->mine, "sprk_elecA");
             float t = fn_80171F8C() * 4.656612873077392578125e-10f * 0.25f + 0.1f;
-            fn_8007D404(self, t, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, t, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             self->sparks++;
         }
         break;
@@ -1303,8 +1303,8 @@ void fn_801E8FEC(register cRoekelFacility_PlasmaMine *self)
     fn_8007D8B0(self);
     self->armed = 1;
     fn_80082190(&self->mine, "sprk_elecA");
-    fn_8007D404(self, 4.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007D404(self, 0.2f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 4.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.2f, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E90B0(register cRoekelFacility_PlasmaMine *self)
@@ -1326,7 +1326,7 @@ void fn_801E918C(register cRoekelFacility_Lasers *self) // slot 5
     if (fn_801EA528(self) != 0)
         return;
     if (self->count > 0)
-        fn_8007D404(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E9234(register cRoekelFacility_Lasers *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
@@ -1338,7 +1338,7 @@ void fn_801E9234(register cRoekelFacility_Lasers *self, int a, int b, int kind, 
         if (x > 0.0f)
             self->delay = x;
         if (self->count > 0)
-            fn_8007D404(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 17:
         self->delay = self->delay * 0.75f;
@@ -1410,7 +1410,7 @@ void fn_801E9358(register cRoekelFacility_Lasers *self, unsigned char kind, floa
         }
         fn_801E99A0(self, fn_804425F8(&ev));
         fn_80082E90(&ev, fn_801EA570(self), 0xff, 0xff);
-        fn_8007D404(self, self->delay, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, self->delay, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
     }
@@ -1472,34 +1472,34 @@ cScript *fn_801E9A6C(register cRoekelFacility_StormBoss *self)
     return new cRoekelFacility_StormBoss;
 }
 
-unsigned int fn_801E9AC0(register cRoekelFacility_StormBoss *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801E9B08(register cRoekelFacility_StormBoss *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801E9B50(register cRoekelFacility_StormBoss *self) { return fn_800791C8(self, 2); }
+unsigned int fn_801E9AC0(register cRoekelFacility_StormBoss *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801E9B08(register cRoekelFacility_StormBoss *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801E9B50(register cRoekelFacility_StormBoss *self) { return Script_GetParamUInt(self, 2); }
 
 cScript *fn_801E9B98(register cRoekelFacility_ThingBoss *self)
 {
     return new cRoekelFacility_ThingBoss;
 }
 
-unsigned int fn_801E9BEC(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801E9C34(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801E9C7C(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801E9CC4(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801E9D0C(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 4); }
-unsigned int fn_801E9D54(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 5); }
-unsigned int fn_801E9D9C(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 6); }
-unsigned int fn_801E9DE4(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 7); }
-unsigned int fn_801E9E2C(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 8); }
-unsigned int fn_801E9E74(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 9); }
-unsigned int fn_801E9EBC(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 10); }
-unsigned int fn_801E9F04(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 11); }
-unsigned int fn_801E9F4C(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 12); }
-unsigned int fn_801E9F94(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 13); }
-unsigned int fn_801E9FDC(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 14); }
-unsigned int fn_801EA024(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 15); }
-unsigned int fn_801EA06C(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 16); }
-unsigned int fn_801EA0B4(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 17); }
-unsigned int fn_801EA0FC(register cRoekelFacility_ThingBoss *self) { return fn_800791C8(self, 18); }
+unsigned int fn_801E9BEC(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801E9C34(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801E9C7C(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801E9CC4(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801E9D0C(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 4); }
+unsigned int fn_801E9D54(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 5); }
+unsigned int fn_801E9D9C(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 6); }
+unsigned int fn_801E9DE4(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 7); }
+unsigned int fn_801E9E2C(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 8); }
+unsigned int fn_801E9E74(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 9); }
+unsigned int fn_801E9EBC(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 10); }
+unsigned int fn_801E9F04(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 11); }
+unsigned int fn_801E9F4C(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 12); }
+unsigned int fn_801E9F94(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 13); }
+unsigned int fn_801E9FDC(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 14); }
+unsigned int fn_801EA024(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 15); }
+unsigned int fn_801EA06C(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 16); }
+unsigned int fn_801EA0B4(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 17); }
+unsigned int fn_801EA0FC(register cRoekelFacility_ThingBoss *self) { return Script_GetParamUInt(self, 18); }
 
 cScript *fn_801EA144(register cRoekelFacility_RockBomb *self)
 {
@@ -1511,49 +1511,49 @@ cScript *fn_801EA198(register cRoekelFacility_BlastDoor *self)
     return new cRoekelFacility_BlastDoor;
 }
 
-int fn_801EA1EC(register cRoekelFacility_BlastDoor *self) { return fn_80079068(self, 0); }
-int fn_801EA234(register cRoekelFacility_BlastDoor *self) { return fn_80079068(self, 1); }
+int fn_801EA1EC(register cRoekelFacility_BlastDoor *self) { return Script_GetParamInt(self, 0); }
+int fn_801EA234(register cRoekelFacility_BlastDoor *self) { return Script_GetParamInt(self, 1); }
 
 cScript *fn_801EA27C(register cRoekelFacility_RoekelBoss *self)
 {
     return new cRoekelFacility_RoekelBoss;
 }
 
-unsigned int fn_801EA2D0(register cRoekelFacility_RoekelBoss *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801EA318(register cRoekelFacility_RoekelBoss *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801EA360(register cRoekelFacility_RoekelBoss *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801EA3A8(register cRoekelFacility_RoekelBoss *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801EA3F0(register cRoekelFacility_RoekelBoss *self) { return fn_800791C8(self, 4); }
+unsigned int fn_801EA2D0(register cRoekelFacility_RoekelBoss *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801EA318(register cRoekelFacility_RoekelBoss *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801EA360(register cRoekelFacility_RoekelBoss *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801EA3A8(register cRoekelFacility_RoekelBoss *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801EA3F0(register cRoekelFacility_RoekelBoss *self) { return Script_GetParamUInt(self, 4); }
 
 cScript *fn_801EA438(register cRoekelFacility_PlasmaMine *self)
 {
     return new cRoekelFacility_PlasmaMine;
 }
 
-unsigned int fn_801EA48C(register cRoekelFacility_PlasmaMine *self) { return fn_800791C8(self, 1); }
+unsigned int fn_801EA48C(register cRoekelFacility_PlasmaMine *self) { return Script_GetParamUInt(self, 1); }
 
 cScript *fn_801EA4D4(register cRoekelFacility_Lasers *self)
 {
     return new cRoekelFacility_Lasers;
 }
 
-int fn_801EA528(register cRoekelFacility_Lasers *self) { return fn_80079068(self, 0); }
-char *fn_801EA570(register cRoekelFacility_Lasers *self) { return fn_800794FC(self, 1); }
-unsigned int fn_801EA5B8(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801EA600(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801EA648(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 4); }
-unsigned int fn_801EA690(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 5); }
-unsigned int fn_801EA6D8(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 6); }
-unsigned int fn_801EA720(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 7); }
-unsigned int fn_801EA768(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 8); }
-unsigned int fn_801EA7B0(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 9); }
-unsigned int fn_801EA7F8(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 10); }
-unsigned int fn_801EA840(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 11); }
-unsigned int fn_801EA888(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 12); }
-unsigned int fn_801EA8D0(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 13); }
-unsigned int fn_801EA918(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 14); }
-unsigned int fn_801EA960(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 15); }
-unsigned int fn_801EA9A8(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 16); }
-unsigned int fn_801EA9F0(register cRoekelFacility_Lasers *self) { return fn_800791C8(self, 17); }
+int fn_801EA528(register cRoekelFacility_Lasers *self) { return Script_GetParamInt(self, 0); }
+char *fn_801EA570(register cRoekelFacility_Lasers *self) { return Script_GetParamString(self, 1); }
+unsigned int fn_801EA5B8(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801EA600(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801EA648(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 4); }
+unsigned int fn_801EA690(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 5); }
+unsigned int fn_801EA6D8(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 6); }
+unsigned int fn_801EA720(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 7); }
+unsigned int fn_801EA768(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 8); }
+unsigned int fn_801EA7B0(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 9); }
+unsigned int fn_801EA7F8(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 10); }
+unsigned int fn_801EA840(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 11); }
+unsigned int fn_801EA888(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 12); }
+unsigned int fn_801EA8D0(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 13); }
+unsigned int fn_801EA918(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 14); }
+unsigned int fn_801EA960(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 15); }
+unsigned int fn_801EA9A8(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 16); }
+unsigned int fn_801EA9F0(register cRoekelFacility_Lasers *self) { return Script_GetParamUInt(self, 17); }
 
 }

@@ -14,7 +14,7 @@ extern char lbl_805722C4[];
 extern int lbl_8066B92C;
 
 extern "C" {
-void fn_80078B10(void *x);
+void Script_Destroy(void *x);
 void fn_800967A0(void *slot);
 void *fn_8042FF2C(void *slot);
 int fn_80086B6C(void *actor);
@@ -30,8 +30,8 @@ void fn_800918E0(register State *self)
     void *slot;
     void *actor;
 
-    fn_80078B10(lbl_8066D654);
-    fn_80078B10(lbl_8066D650);
+    Script_Destroy(lbl_8066D654);
+    Script_Destroy(lbl_8066D650);
     for (i = 0; i < self->slotCount; i++) {
         slot = (char *)self + 0x10 + i * 0xB0;
         if (slot != 0) {

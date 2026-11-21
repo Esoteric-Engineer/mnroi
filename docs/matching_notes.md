@@ -330,7 +330,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   `{ }`, so the empty body is 4 bytes short; `register T *this` supplies the `mr r0, r3` copy
   (`Game/fn_800B4CF8.c`, `fn_800B5524`). A pair-less `.cpp` unit (flag set) gives the same, and there a
   loop exit that lands on a lone `b` to the epilogue is a `return;` after the loop (`Game/fn_8007608C.cpp`,
-  `fn_80078CE0`).
+  `Script_RemoveLive`).
 
 - **A parameter spilled as `mr r0, rN` / `mr r9, r0` / `sth r9` is 16-bit, and `clrlwi`-on-read makes
   it unsigned.** Arguments arrive promoted to a word, so a 16-bit parameter needs the two copies to
@@ -375,7 +375,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   `__attribute__((section(".sbss")))` is what gives a nobits `.sbss` contribution
   (`Game/fn_800B7094.c`). C++ units are unaffected: C++ has no tentative definitions.
 
-- **`cmpwi cr7, rX, 0` / `mfcr r0` / `extrwi r0, r0, 1, 30` feeding an argument register is `!x`.** With `cmpwi cr7, rX, 1` it is `x == 1` (`return fn_80079068(self, 5) == 1;`, `fn_80207FFC` in `Game/fn_801FCEBC.cpp`).
+- **`cmpwi cr7, rX, 0` / `mfcr r0` / `extrwi r0, r0, 1, 30` feeding an argument register is `!x`.** With `cmpwi cr7, rX, 1` it is `x == 1` (`return Script_GetParamInt(self, 5) == 1;`, `fn_80207FFC` in `Game/fn_801FCEBC.cpp`).
   GCC 2.95 materialises a logical negation as a value through the CR rather than a branch, and
   `extrwi ..., 1, 30` picks cr7's EQ bit. The call it belongs to still evaluates this argument ahead
   of the earlier ones, so argument 1 is loaded after the sequence

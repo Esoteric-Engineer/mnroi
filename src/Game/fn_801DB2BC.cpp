@@ -68,12 +68,12 @@ extern int lbl_8066C724;
 extern "C" {
 
 int stricmp(const char *a, const char *b);
-int fn_800797D4(cScript *self);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
-int fn_8007D7C4(cScript *self, unsigned char kind);
+int Script_GetOwner(cScript *self);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+int Script_CancelMessages(cScript *self, unsigned char kind);
 int fn_8007D8B0(cScript *self);
-int fn_8007CF00(cScript *script, int handle, int value);
+int Script_LinkEntity(cScript *script, int handle, int value);
 int fn_80080B34();
 int fn_804425F8(void *ev);
 void fn_8046B638(void *ev, int x);
@@ -83,7 +83,7 @@ void fn_8046B710(void *ev, int x);
 int fn_800809CC(void *ev);
 void *fn_80085928(void *p);
 void fn_800CD6C4(void *c, int on);
-void fn_80082AFC(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
 void fn_80082720(void *ev, int h);
 void fn_80082F30(void *ev);
 float fn_8007C244(void *ev);
@@ -134,9 +134,9 @@ unsigned int fn_801DD254(cNYCStreets_TorchBoss *self);
 
 void fn_801DB2BC(register cNYCStreets_DaredevilBoss *self) // slot 5
 {
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     fn_8046B710(&self->target, fn_801DCF18(self));
     self->f74 = 0;
     self->f7C = 0;
@@ -196,7 +196,7 @@ void fn_801DB5C0(register cNYCStreets_DaredevilBoss *self, int h, int other, int
             return;
         return;
     }
-    fn_8007D7C4(self, 20);
+    Script_CancelMessages(self, 20);
     self->done = 1;
     lbl_8066C724 = 1;
     fn_80081C68();
@@ -229,7 +229,7 @@ float fn_801DB714(register cNYCStreets_DaredevilBoss *self, int h, int node, int
         fn_8046B638(&r, fn_804425F8(&self->boss));
         if (fn_800809CC(&r))
             fn_800CD6C4(fn_80085928((void *)fn_800809CC(&r)), 1);
-        fn_8007D404(self, 6.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 6.0f, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
     return -1.0f;
 }
@@ -249,7 +249,7 @@ void fn_801DB884(register cNYCStreets_DaredevilBoss *self)
 
 void fn_801DB954(register cNYCStreets_DaredevilBoss *self)
 {
-    fn_8007D404(self, 2.0f, 47, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 47, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_8057230C, 1);
@@ -262,12 +262,12 @@ void fn_801DBA04(register cNYCStreets_DaredevilBoss *self)
     fn_80081918(fn_804425F8(&self->player));
     lbl_8066C71C = fn_804425F8(&self->player);
     fn_8046B6C8(&ev, fn_801DCF60(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801DBACC(register cNYCStreets_DaredevilBoss *self)
 {
-    fn_8007D404(self, 2.0f, 49, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 49, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801DBB3C(register cNYCStreets_DaredevilBoss *self)
@@ -277,7 +277,7 @@ void fn_801DBB3C(register cNYCStreets_DaredevilBoss *self)
     fn_80081918(fn_804425F8(&self->boss));
     lbl_8066C71C = fn_804425F8(&self->boss);
     fn_8046B6C8(&ev, fn_801DCFA8(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801DBC04(register cNYCStreetsMP_SegmentControl *self) // slot 5
@@ -288,7 +288,7 @@ void fn_801DBC04(register cNYCStreetsMP_SegmentControl *self) // slot 5
 
         fn_8046B680(&ev, 0);
         fn_8046B710(&ev, fn_801DD044(self));
-        fn_80082AFC(&ev, fn_801DD044(self), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_801DD044(self), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -296,8 +296,8 @@ void fn_801DBD30(register cNYCStreets_ThingBoss *self) // slot 5
 {
     fn_8046B710(&self->player, fn_80080B34());
     fn_8046B710(&self->boss, fn_801DD0E0(self));
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
-    fn_8007CF00(self, fn_804425F8(&self->boss), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->boss), 0);
     fn_8046B710(&self->r30, fn_801DD128(self));
     self->f40 = 0;
     self->armored = 0;
@@ -334,13 +334,13 @@ float fn_801DBF2C(register cNYCStreets_ThingBoss *self, int h, int other, int ki
 {
     if (h != fn_804425F8(&self->boss))
         return damage;
-    fn_8007D404(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return damage;
 }
 
 int fn_801DBFE4(register cNYCStreets_ThingBoss *self, int h, int other, int kind, int b, float damage, int value) // slot 20
 {
-    fn_8007D7C4(self, 10);
+    Script_CancelMessages(self, 10);
     if (h == fn_804425F8(&self->boss)) {
         if (damage > 90000.0f && kind == 8)
             self->bossHit = 1;
@@ -362,7 +362,7 @@ void fn_801DC0D8(register cNYCStreets_ThingBoss *self, int h, int other, int kin
         return;
     }
     self->done = 1;
-    fn_8007D7C4(self, 10);
+    Script_CancelMessages(self, 10);
     lbl_8066C724 = 1;
     fn_80081C68();
     fn_80081C94();
@@ -427,7 +427,7 @@ void fn_801DC438(register cNYCStreets_ThingBoss *self)
 
 void fn_801DC644(register cNYCStreets_ThingBoss *self)
 {
-    fn_8007D404(self, 2.0f, 45, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 45, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_8057230C, 1);
@@ -436,12 +436,12 @@ void fn_801DC644(register cNYCStreets_ThingBoss *self)
 void fn_801DC6EC(register cNYCStreets_ThingBoss *self)
 {
     fn_80081918(fn_80080B34());
-    fn_80082AFC(&self->r30, fn_804425F8(&self->r30), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r30, fn_804425F8(&self->r30), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801DC780(register cNYCStreets_ThingBoss *self)
 {
-    fn_8007D404(self, 2.0f, 55, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 55, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801DC7E8(register cNYCStreets_ThingBoss *self)
@@ -450,15 +450,15 @@ void fn_801DC7E8(register cNYCStreets_ThingBoss *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801DD170(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801DC894(register cNYCStreets_TorchBoss *self) // slot 4
 {
-    fn_8046B710(&self->boss, fn_800797D4(self));
-    fn_8007BA24(fn_800797D4(self), 4);
+    fn_8046B710(&self->boss, Script_GetOwner(self));
+    fn_8007BA24(Script_GetOwner(self), 4);
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     self->done = 0;
     self->bossHit = 0;
     self->playerHit = 0;
@@ -526,7 +526,7 @@ void fn_801DCB74(register cNYCStreets_TorchBoss *self, unsigned char kind, float
 
 void fn_801DCC30(register cNYCStreets_TorchBoss *self)
 {
-    fn_8007D404(self, 2.0f, 2, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 2, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_8057230C, 1);
@@ -539,12 +539,12 @@ void fn_801DCCE0(register cNYCStreets_TorchBoss *self)
     fn_80081918(fn_804425F8(&self->player));
     fn_80082F30(&self->boss);
     fn_8046B6C8(&ev, fn_801DD20C(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801DCDA0(register cNYCStreets_TorchBoss *self)
 {
-    fn_8007D404(self, 2.0f, 4, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 4, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801DCE10(register cNYCStreets_TorchBoss *self)
@@ -553,7 +553,7 @@ void fn_801DCE10(register cNYCStreets_TorchBoss *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801DD254(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 }
@@ -569,17 +569,17 @@ cScript *fn_801DCEC4(register cNYCStreets_DaredevilBoss *self)
 
 unsigned int fn_801DCF18(register cNYCStreets_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 3);
+    return Script_GetParamUInt(self, 3);
 }
 
 unsigned int fn_801DCF60(register cNYCStreets_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 6);
+    return Script_GetParamUInt(self, 6);
 }
 
 unsigned int fn_801DCFA8(register cNYCStreets_DaredevilBoss *self)
 {
-    return fn_800791C8(self, 7);
+    return Script_GetParamUInt(self, 7);
 }
 
 cScript *fn_801DCFF0(register cNYCStreetsMP_SegmentControl *self)
@@ -589,7 +589,7 @@ cScript *fn_801DCFF0(register cNYCStreetsMP_SegmentControl *self)
 
 unsigned int fn_801DD044(register cNYCStreetsMP_SegmentControl *self)
 {
-    return fn_800791C8(self, 0);
+    return Script_GetParamUInt(self, 0);
 }
 
 cScript *fn_801DD08C(register cNYCStreets_ThingBoss *self)
@@ -599,17 +599,17 @@ cScript *fn_801DD08C(register cNYCStreets_ThingBoss *self)
 
 unsigned int fn_801DD0E0(register cNYCStreets_ThingBoss *self)
 {
-    return fn_800791C8(self, 0);
+    return Script_GetParamUInt(self, 0);
 }
 
 unsigned int fn_801DD128(register cNYCStreets_ThingBoss *self)
 {
-    return fn_800791C8(self, 1);
+    return Script_GetParamUInt(self, 1);
 }
 
 unsigned int fn_801DD170(register cNYCStreets_ThingBoss *self)
 {
-    return fn_800791C8(self, 2);
+    return Script_GetParamUInt(self, 2);
 }
 
 cScript *fn_801DD1B8(register cNYCStreets_TorchBoss *self)
@@ -619,12 +619,12 @@ cScript *fn_801DD1B8(register cNYCStreets_TorchBoss *self)
 
 unsigned int fn_801DD20C(register cNYCStreets_TorchBoss *self)
 {
-    return fn_800791C8(self, 0);
+    return Script_GetParamUInt(self, 0);
 }
 
 unsigned int fn_801DD254(register cNYCStreets_TorchBoss *self)
 {
-    return fn_800791C8(self, 1);
+    return Script_GetParamUInt(self, 1);
 }
 
 }

@@ -1085,19 +1085,19 @@ int fn_8007891C()
     return 1;
 }
 
-ScriptClass *fn_80078994(char *name)
+ScriptClass *ScriptClass_Find(char *name)
 {
     return (ScriptClass *)fn_801B48AC(lbl_8066D614, name);
 }
 
-cScript *fn_800789DC(char *name, int init)
+cScript *Script_Create(char *name, int init)
 {
     cScript *copy;
     ScriptClass *entry;
     cScript *proto;
 
     copy = 0;
-    entry = fn_80078994(name);
+    entry = ScriptClass_Find(name);
     if (entry == 0)
         return 0;
     proto = entry->prototype;
@@ -1117,16 +1117,16 @@ cScript *fn_800789DC(char *name, int init)
     return copy;
 }
 
-void fn_80078CE0(cScript *self);
+void Script_RemoveLive(cScript *self);
 
-void fn_80078B10(cScript *self)
+void Script_Destroy(cScript *self)
 {
     unsigned int i;
     ScriptLink *link;
 
     fn_8007D1B0(self);
     fn_8007D8B0(self);
-    fn_80078CE0(self);
+    Script_RemoveLive(self);
     if (self->links != 0) {
         for (i = 0; i < self->nlinks; i++) {
             link = &self->links[i];
@@ -1138,14 +1138,14 @@ void fn_80078B10(cScript *self)
     delete self;
 }
 
-void fn_80078C58(cScript *self)
+void Script_AddLive(cScript *self)
 {
     lbl_8054D554[lbl_8066D618++] = self;
     if (fn_8007A2C4(self) != 0)
         fn_8007A2C4(self)->count++;
 }
 
-void fn_80078CE0(cScript *self)
+void Script_RemoveLive(cScript *self)
 {
     unsigned int i;
 
@@ -1206,11 +1206,11 @@ void fn_80078FDC(register cScript *self, cScript *owner)
 {
     self->id = lbl_8066D61C++;
     self->owner = owner;
-    fn_80078C58(self);
+    Script_AddLive(self);
     self->slot3();
 }
 
-int fn_80079068(register cScript *self, unsigned int i)
+int Script_GetParamInt(register cScript *self, unsigned int i)
 {
     if (i >= self->nlinks)
         return 0;
@@ -1235,7 +1235,7 @@ int fn_80079068(register cScript *self, unsigned int i)
     }
 }
 
-unsigned int fn_800791C8(register cScript *self, unsigned int i)
+unsigned int Script_GetParamUInt(register cScript *self, unsigned int i)
 {
     if (i >= self->nlinks)
         return 0;
@@ -1260,7 +1260,7 @@ unsigned int fn_800791C8(register cScript *self, unsigned int i)
     }
 }
 
-float fn_8007935C(register cScript *self, unsigned int i)
+float Script_GetParamFloat(register cScript *self, unsigned int i)
 {
     if (i >= self->nlinks)
         return 0.0f;
@@ -1285,7 +1285,7 @@ float fn_8007935C(register cScript *self, unsigned int i)
     }
 }
 
-char *fn_800794FC(register cScript *self, unsigned int i)
+char *Script_GetParamString(register cScript *self, unsigned int i)
 {
     if (i >= self->nlinks)
         return "Invalid Param";
@@ -1354,7 +1354,7 @@ void fn_800797B4(register cScript *self) // slot 3
 {
 }
 
-cScript *fn_800797D4(register cScript *self)
+cScript *Script_GetOwner(register cScript *self)
 {
     return self->owner;
 }

@@ -52,12 +52,12 @@ extern "C" {
 
 int stricmp(const char *a, const char *b);
 char *strncpy(char *dst, const char *src, unsigned n);
-int fn_800797D4(cScript *self);
-int fn_80079068(cScript *self, unsigned int i);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-float fn_8007935C(cScript *self, unsigned int i);
-char *fn_800794FC(cScript *self, unsigned int i);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+int Script_GetOwner(cScript *self);
+int Script_GetParamInt(cScript *self, unsigned int i);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+float Script_GetParamFloat(cScript *self, unsigned int i);
+char *Script_GetParamString(cScript *self, unsigned int i);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
 void fn_8046B6C8(Ref8 *ev, int x);
 void fn_8046B5A8(Ref8 *ev, int x);
 void fn_8046CE70(Ref8 *ev, int x);
@@ -107,7 +107,7 @@ void fn_801FBDE4(register cParticleToggle *self) // slot 4
 {
     Ref8 ev;
 
-    fn_8046B6C8(&ev, fn_800797D4(self));
+    fn_8046B6C8(&ev, Script_GetOwner(self));
     if (fn_801FC924(self))
         self->cur = fn_801FC96C(self);
     if (fn_801FC894(self) == 0)
@@ -115,7 +115,7 @@ void fn_801FBDE4(register cParticleToggle *self) // slot 4
     else if (stricmp(fn_801FCA54(self), "ffRoekel") == 0 || stricmp(fn_801FCA54(self), "ffRoekelGrn") == 0)
         fn_80082E90(&ev, fn_801FCA54(self), 0xff, 0xff);
     else if (fn_801FC8DC(self) != 0.0f)
-        fn_8007D404(self, fn_801FC8DC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_801FC8DC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     if (stricmp("", fn_801FCA54(self)) == 0)
         strncpy(self->effect, fn_80082CC8(&ev, 0), 0x20);
     else
@@ -126,7 +126,7 @@ void fn_801FBFB4(register cParticleToggle *self, int a, int b, int kind, float x
 {
     Ref8 ev;
 
-    fn_8046B6C8(&ev, fn_800797D4(self));
+    fn_8046B6C8(&ev, Script_GetOwner(self));
     if (fn_8046CC28(&ev) == 0 && fn_801FC9FC(self) == 0)
         return;
     switch (kind) {
@@ -154,7 +154,7 @@ void fn_801FBFB4(register cParticleToggle *self, int a, int b, int kind, float x
                 fn_800830A0(&ev, 0);
         }
         if (fn_801FC8DC(self) != 0.0f)
-            fn_8007D404(self, fn_801FC8DC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_801FC8DC(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 17:
         if (self->cur == fn_801FC96C(self)) {
@@ -175,7 +175,7 @@ void fn_801FC320(register cParticleToggle *self, unsigned char kind, float a, fl
     case 10: {
         Ref8 ev;
 
-        fn_8046B6C8(&ev, fn_800797D4(self));
+        fn_8046B6C8(&ev, Script_GetOwner(self));
         fn_8046CC94(&ev);
         break;
     }
@@ -193,7 +193,7 @@ void fn_801FC3B4(register cDummyProjectile *self) // slot 4
     Ref8 a;
     Ref8 b;
 
-    fn_8007D404(self, fn_801FCC54(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_801FCC9C(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, fn_801FCC54(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_801FCC9C(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_8046B6C8(&a, fn_801FCB38(self));
     fn_80082440(&a, &self->from);
     fn_8046B6C8(&b, fn_801FCBC4(self));
@@ -204,9 +204,9 @@ void fn_801FC4D8(register cDummyProjectile *self, unsigned char kind, float a, f
 {
     switch (kind) {
     case 10:
-        fn_80080C88(fn_801FCB7C(self), &self->from, &self->to, fn_801FCC0C(self), fn_800797D4(self));
+        fn_80080C88(fn_801FCB7C(self), &self->from, &self->to, fn_801FCC0C(self), Script_GetOwner(self));
         if (fn_801FCCE4(self) == 0)
-            fn_8007D404(self, fn_801FCC54(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_801FCC9C(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_801FCC54(self) + fn_80171F8C() * 4.656612873077392578125e-10f * fn_801FCC9C(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
 }
@@ -268,42 +268,42 @@ extern "C" {
 
 int fn_801FC894(register cParticleToggle *self)
 {
-    return fn_80079068(self, 0);
+    return Script_GetParamInt(self, 0);
 }
 
 float fn_801FC8DC(register cParticleToggle *self)
 {
-    return fn_8007935C(self, 1);
+    return Script_GetParamFloat(self, 1);
 }
 
 int fn_801FC924(register cParticleToggle *self)
 {
-    return fn_80079068(self, 2);
+    return Script_GetParamInt(self, 2);
 }
 
 float fn_801FC96C(register cParticleToggle *self)
 {
-    return fn_8007935C(self, 3);
+    return Script_GetParamFloat(self, 3);
 }
 
 float fn_801FC9B4(register cParticleToggle *self)
 {
-    return fn_8007935C(self, 4);
+    return Script_GetParamFloat(self, 4);
 }
 
 int fn_801FC9FC(register cParticleToggle *self)
 {
-    return fn_80079068(self, 5) != 0;
+    return Script_GetParamInt(self, 5) != 0;
 }
 
 char *fn_801FCA54(register cParticleToggle *self)
 {
-    return fn_800794FC(self, 6);
+    return Script_GetParamString(self, 6);
 }
 
 char *fn_801FCA9C(register cParticleToggle *self)
 {
-    return fn_800794FC(self, 7);
+    return Script_GetParamString(self, 7);
 }
 
 cScript *fn_801FCAE4(register cDummyProjectile *self)
@@ -313,37 +313,37 @@ cScript *fn_801FCAE4(register cDummyProjectile *self)
 
 int fn_801FCB38(register cDummyProjectile *self)
 {
-    return fn_800797D4(self);
+    return Script_GetOwner(self);
 }
 
 char *fn_801FCB7C(register cDummyProjectile *self)
 {
-    return fn_800794FC(self, 0);
+    return Script_GetParamString(self, 0);
 }
 
 unsigned int fn_801FCBC4(register cDummyProjectile *self)
 {
-    return fn_800791C8(self, 1);
+    return Script_GetParamUInt(self, 1);
 }
 
 float fn_801FCC0C(register cDummyProjectile *self)
 {
-    return fn_8007935C(self, 2);
+    return Script_GetParamFloat(self, 2);
 }
 
 float fn_801FCC54(register cDummyProjectile *self)
 {
-    return fn_8007935C(self, 3);
+    return Script_GetParamFloat(self, 3);
 }
 
 float fn_801FCC9C(register cDummyProjectile *self)
 {
-    return fn_8007935C(self, 4);
+    return Script_GetParamFloat(self, 4);
 }
 
 int fn_801FCCE4(register cDummyProjectile *self)
 {
-    return fn_80079068(self, 5) != 0;
+    return Script_GetParamInt(self, 5) != 0;
 }
 
 cScript *fn_801FCD3C(register cEffectSpawn *self)
@@ -353,17 +353,17 @@ cScript *fn_801FCD3C(register cEffectSpawn *self)
 
 unsigned int fn_801FCD90(register cEffectSpawn *self)
 {
-    return fn_800791C8(self, 0);
+    return Script_GetParamUInt(self, 0);
 }
 
 char *fn_801FCDD8(register cEffectSpawn *self)
 {
-    return fn_800794FC(self, 1);
+    return Script_GetParamString(self, 1);
 }
 
 int fn_801FCE20(register cEffectSpawn *self)
 {
-    return fn_80079068(self, 2);
+    return Script_GetParamInt(self, 2);
 }
 
 cScript *fn_801FCE68(register cCrystalDetonate *self)

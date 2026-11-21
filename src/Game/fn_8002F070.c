@@ -48,7 +48,7 @@ void fn_801B2620(void);
 void fn_801AF6C4(void *p);
 void fn_8039E22C(void *p);
 void fn_80118FF8(void);
-int fn_8011CA74(void);
+int Profile_Get(void);
 int fn_80122228(void);
 
 extern char lbl_8066D568[8];
@@ -138,7 +138,7 @@ int fn_8002F070(register void *self)
     lbl_8066C600 = 0;
     fn_80118FF8();
     lbl_8066B6C4 = fn_80427400();
-    lbl_8066B6C8 = fn_8011CA74();
+    lbl_8066B6C8 = Profile_Get();
     lbl_8066B6CC = fn_80122228();
     return 1;
 }

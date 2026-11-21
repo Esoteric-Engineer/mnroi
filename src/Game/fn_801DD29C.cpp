@@ -183,8 +183,8 @@ extern "C" {
 
 void fn_8004E4B4(Query *q, void *pos, float r, void *world);
 void fn_8004E9C8(Query *q);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-int fn_800797D4(cScript *self);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+int Script_GetOwner(cScript *self);
 void fn_8007A448(int h);
 void fn_8007A4FC(int h);
 void fn_8007A738(int h, Vector *to);
@@ -204,9 +204,9 @@ void fn_8007C454(void *ev, float v);
 float fn_8007C52C(void *ev);
 float fn_8007C594(void *ev, float dmg, int type, int kind, int src, unsigned int flags);
 void fn_8007C6D0(void *ev, float v);
-int fn_8007CF00(cScript *script, int handle, int value);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
-int fn_8007D7C4(cScript *self, unsigned char kind);
+int Script_LinkEntity(cScript *script, int handle, int value);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+int Script_CancelMessages(cScript *self, unsigned char kind);
 int fn_800809CC(void *ev);
 int fn_80080B34();
 SObj *fn_80080EFC(void *ev);
@@ -221,7 +221,7 @@ void fn_80081C94();
 void fn_80081CC4();
 SObj *fn_80081E6C(void *ev);
 void fn_80082440(void *ev, Vector *out);
-void fn_80082AFC(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
 void fn_80082BB0(void *ev, char *name, int h);
 void fn_80082E24(void *ev, char *name);
 void fn_80083428(void *ev, char *name);
@@ -327,8 +327,8 @@ unsigned int fn_801E4828(cPowerPlant_CoilArc *self);
 void fn_801DD29C(register cPowerPlant_HumanTorchSAC *self) // slot 5
 {
     fn_8046B710(&self->boss, fn_801E3B48(self));
-    fn_8007CF00(self, fn_804425F8(&self->boss), 0);
-    fn_8007CF00(self, fn_80080B34(), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->boss), 0);
+    Script_LinkEntity(self, fn_80080B34(), 0);
     fn_8046B710(&self->r30, fn_801E3B90(self));
     fn_8046B710(&self->r38, fn_801E3BD8(self));
     self->f48 = 0;
@@ -363,13 +363,13 @@ void fn_801DD3A0(register cPowerPlant_HumanTorchSAC *self, unsigned char kind, f
 float fn_801DD470(register cPowerPlant_HumanTorchSAC *self, int h, int other, int kind, int b, float damage, int c, int value) // slot 21
 {
     if (h == fn_804425F8(&self->boss))
-        fn_8007D404(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return damage;
 }
 
 int fn_801DD51C(register cPowerPlant_HumanTorchSAC *self, int h, int other, int kind, int b, float damage, int value) // slot 20
 {
-    fn_8007D7C4(self, 10);
+    Script_CancelMessages(self, 10);
     return 1;
 }
 
@@ -379,7 +379,7 @@ void fn_801DD578(register cPowerPlant_HumanTorchSAC *self, int h, int other, int
         if (self->done && h != fn_80080B34())
             return;
         self->done = 1;
-        fn_8007D7C4(self, 10);
+        Script_CancelMessages(self, 10);
         fn_80081C68();
         fn_80081C94();
         fn_80081CC4();
@@ -442,7 +442,7 @@ void fn_801DD8EC(register cPowerPlant_HumanTorchSAC *self)
 
 void fn_801DDB14(register cPowerPlant_HumanTorchSAC *self)
 {
-    fn_8007D404(self, 2.0f, 74, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 74, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8046B860(lbl_8057230C, 1);
@@ -452,12 +452,12 @@ void fn_801DDBBC(register cPowerPlant_HumanTorchSAC *self)
 {
     fn_80081918(fn_80080B34());
     lbl_8066C71C = fn_80080B34();
-    fn_80082AFC(&self->r30, fn_804425F8(&self->r30), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r30, fn_804425F8(&self->r30), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801DDC5C(register cPowerPlant_HumanTorchSAC *self)
 {
-    fn_8007D404(self, 2.0f, 78, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 78, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801DDCC4(register cPowerPlant_HumanTorchSAC *self)
@@ -467,18 +467,18 @@ void fn_801DDCC4(register cPowerPlant_HumanTorchSAC *self)
     fn_80081918(fn_804425F8(&self->boss));
     lbl_8066C71C = fn_804425F8(&self->boss);
     fn_8046B6C8(&ev, fn_801E3BD8(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 
 void fn_801DDD84(register cPowerPlant_ElektraSAC *self) // slot 5
 {
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     self->done = 0;
     self->bossHit = 0;
     self->playerHit = 0;
     fn_8046B710(&self->player, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(&self->player), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->player), 0);
     fn_8046B710(&self->r38, fn_801E3C74(self));
     self->armored = 0;
     self->f40 = 0;
@@ -492,14 +492,14 @@ void fn_801DDE54(register cPowerPlant_ElektraSAC *self, unsigned char kind, floa
         Ref8 ev;
 
         fn_8046B6C8(&ev, fn_801E3C74(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     }
     case 40: {
         Ref8 ev;
 
         fn_8046B6C8(&ev, fn_801E3C74(self));
-        fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 7, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     }
     case 81:
@@ -609,7 +609,7 @@ void fn_801DE500(register cPowerPlant_ElektraSAC *self)
 
 void fn_801DE718(register cPowerPlant_ElektraSAC *self)
 {
-    fn_8007D404(self, 2.0f, 82, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 82, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_8057230C, 1);
@@ -621,12 +621,12 @@ void fn_801DE7C0(register cPowerPlant_ElektraSAC *self)
 
     fn_80081918(fn_804425F8(&self->player));
     fn_8046B6C8(&ev, fn_801E3CBC(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801DE86C(register cPowerPlant_ElektraSAC *self)
 {
-    fn_8007D404(self, 2.0f, 84, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 84, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801DE8D4(register cPowerPlant_ElektraSAC *self)
@@ -635,13 +635,13 @@ void fn_801DE8D4(register cPowerPlant_ElektraSAC *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801E3C74(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 
 void fn_801DE980(register cPowerPlant_IronMan_3 *self) // slot 5
 {
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8046B710(&self->r30[0], fn_801E3D58(self));
     fn_8046B710(&self->r30[1], fn_801E3DA0(self));
     fn_8046B710(&self->r30[2], fn_801E3DE8(self));
@@ -652,11 +652,11 @@ void fn_801DE980(register cPowerPlant_IronMan_3 *self) // slot 5
     fn_8046B710(&self->r30[7], fn_801E3F50(self));
     fn_8046B710(&self->r30[8], fn_801E3F98(self));
     fn_8046B710(&self->r30[9], fn_801E3FE0(self));
-    fn_8007CF00(self, fn_804425F8(&self->r30[2]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r30[4]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r30[5]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r30[6]), 0);
-    fn_8007CF00(self, fn_80080B34(), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r30[2]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r30[4]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r30[5]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r30[6]), 0);
+    Script_LinkEntity(self, fn_80080B34(), 0);
     self->done = 0;
     self->active = 0;
     self->f84 = 0;
@@ -682,7 +682,7 @@ void fn_801DE980(register cPowerPlant_IronMan_3 *self) // slot 5
     self->fC8 = self->fBC * 10.0f;
     self->active = 1;
     fn_8007A448(fn_804425F8(&self->boss));
-    fn_8007D404(self, 2.0f, 100, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 100, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801DECF0(register cPowerPlant_IronMan_3 *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
@@ -707,7 +707,7 @@ void fn_801DECF0(register cPowerPlant_IronMan_3 *self, unsigned char kind, float
             fn_801DFED8(self);
             break;
         }
-        fn_8007D404(self, self->fB4, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, self->fB4, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 50:
         self->f8C = 0;
@@ -722,7 +722,7 @@ void fn_801DECF0(register cPowerPlant_IronMan_3 *self, unsigned char kind, float
             fn_80082440(&self->r30[2], &at);
             if (fn_800809CC(&p))
                 fn_80085954(fn_800809CC(&p))->s37(0x6c, &at, 1, 1.0f, 0, 0, 1, 0);
-            fn_8007D404(self, self->fD4, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->fD4, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     case 70:
@@ -732,7 +732,7 @@ void fn_801DECF0(register cPowerPlant_IronMan_3 *self, unsigned char kind, float
                 fn_8007C454(&self->boss, fn_8007C3EC(&self->boss) + 5.0f);
             if (fn_8007C244(&self->boss) > fn_8007C2AC(&self->boss))
                 fn_8007C314(&self->boss, fn_8007C2AC(&self->boss) + 5.0f);
-            fn_8007D404(self, self->fD4, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->fD4, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     case 80:
@@ -745,17 +745,17 @@ void fn_801DECF0(register cPowerPlant_IronMan_3 *self, unsigned char kind, float
                     fn_801E00EC(self);
                     break;
                 }
-                fn_8007D404(self, self->fD4, 90, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, self->fD4, 90, 0.0f, 0.0f, 0.0f, 0.0f, 0);
                 break;
             }
-            fn_8007D404(self, self->fD4, 90, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->fD4, 90, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             break;
         }
         break;
     case 95:
         break;
     case 85:
-        fn_80082AFC(&self->r30[3], fn_801E3E30(self), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(&self->r30[3], fn_801E3E30(self), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     case 75:
         fn_801DFDCC(self);
@@ -790,10 +790,10 @@ void fn_801DECF0(register cPowerPlant_IronMan_3 *self, unsigned char kind, float
             self->fA0 = 1;
         if (self->f98 && self->f9C && self->fA0) {
             self->fA4 = 1;
-            fn_8007D7C4(self, 75);
-            fn_8007D404(self, 2.0f, 75, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_CancelMessages(self, 75);
+            Script_QueueMessage(self, 2.0f, 75, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         } else
-            fn_8007D404(self, 2.0f, 100, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 2.0f, 100, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
         break;
     }
@@ -803,17 +803,17 @@ void fn_801DECF0(register cPowerPlant_IronMan_3 *self, unsigned char kind, float
 float fn_801DF4BC(register cPowerPlant_IronMan_3 *self, int h, int other, int kind, int b, float damage, int c, int value) // slot 21
 {
     if (h == fn_804425F8(&self->boss))
-        fn_8007D404(self, self->fB0, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, self->fB0, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return damage;
 }
 
 int fn_801DF564(register cPowerPlant_IronMan_3 *self, int h, int other, int kind, int b, float damage, int value) // slot 20
 {
-    fn_8007D7C4(self, 10);
-    fn_8007D7C4(self, 20);
-    fn_8007D7C4(self, 90);
-    fn_8007D7C4(self, 60);
-    fn_8007D7C4(self, 70);
+    Script_CancelMessages(self, 10);
+    Script_CancelMessages(self, 20);
+    Script_CancelMessages(self, 90);
+    Script_CancelMessages(self, 60);
+    Script_CancelMessages(self, 70);
     return 1;
 }
 
@@ -823,11 +823,11 @@ void fn_801DF5F0(register cPowerPlant_IronMan_3 *self, int h, int other, int kin
         if (self->done && h != fn_80080B34())
             return;
         self->done = 1;
-        fn_8007D7C4(self, 10);
-        fn_8007D7C4(self, 20);
-        fn_8007D7C4(self, 90);
-        fn_8007D7C4(self, 60);
-        fn_8007D7C4(self, 70);
+        Script_CancelMessages(self, 10);
+        Script_CancelMessages(self, 20);
+        Script_CancelMessages(self, 90);
+        Script_CancelMessages(self, 60);
+        Script_CancelMessages(self, 70);
         fn_80081C68();
         fn_80081C94();
         fn_80081CC4();
@@ -845,8 +845,8 @@ void fn_801DF5F0(register cPowerPlant_IronMan_3 *self, int h, int other, int kin
     if (h == fn_804425F8(&self->r30[6]))
         self->fA0 = 1;
     if (self->f98 == 1 && self->f9C == 1 && self->fA0 == 1 && self->fA4 == 0) {
-        fn_8007D7C4(self, 100);
-        fn_8007D404(self, 2.0f, 75, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_CancelMessages(self, 100);
+        Script_QueueMessage(self, 2.0f, 75, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
     return;
 }
@@ -860,8 +860,8 @@ void fn_801DF81C(register cPowerPlant_IronMan_3 *self, int h, int other, int val
     if (h == fn_804425F8(&self->r30[6]))
         self->fA0 = 1;
     if (self->f98 == 1 && self->f9C == 1 && self->fA0 == 1 && self->fA4 == 0) {
-        fn_8007D7C4(self, 100);
-        fn_8007D404(self, 2.0f, 75, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_CancelMessages(self, 100);
+        Script_QueueMessage(self, 2.0f, 75, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
     return;
 }
@@ -892,7 +892,7 @@ void fn_801DF93C(register cPowerPlant_IronMan_3 *self, int h, int other, int val
             fn_80082440(&self->r30[2], &at);
             if (fn_800809CC(&q))
                 fn_80085954(fn_800809CC(&q))->s37(0x6c, &at, 1, 1.0f, 0, 0, 1, 0);
-            fn_8007D404(self, self->fD4, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->fD4, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
     }
 }
@@ -915,8 +915,8 @@ void fn_801DFBD8(register cPowerPlant_IronMan_3 *self, int h, int other, int val
 float fn_801DFC98(register cPowerPlant_IronMan_3 *self, int h, int node, int value) // slot 37
 {
     if (h == fn_804425F8(&self->boss) && self->f90 == 1) {
-        fn_8007D7C4(self, 20);
-        fn_8007D7C4(self, 80);
+        Script_CancelMessages(self, 20);
+        Script_CancelMessages(self, 80);
         self->f90 = 0;
         self->f94 = 1;
         fn_801E0004(self);
@@ -927,18 +927,18 @@ float fn_801DFC98(register cPowerPlant_IronMan_3 *self, int h, int node, int val
 void fn_801DFD38(register cPowerPlant_IronMan_3 *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     if (self->state == 0)
-        fn_8007D404(self, 2.0f, 80, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 2.0f, 80, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801DFDCC(register cPowerPlant_IronMan_3 *self)
 {
-    fn_8007D7C4(self, 100);
+    Script_CancelMessages(self, 100);
     self->fA4 = 1;
     if (self->active == 1) {
-        fn_8007D404(self, 2.0f, 85, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-        fn_80082AFC(&self->r30[8], fn_801E3F98(self), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_QueueMessage(self, 2.0f, 85, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_TriggerEntity(&self->r30[8], fn_801E3F98(self), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     }
-    fn_8007D7C4(self, 20);
+    Script_CancelMessages(self, 20);
     fn_801E00EC(self);
     self->active = 0;
     self->f84 = 0;
@@ -952,10 +952,10 @@ void fn_801DFED8(register cPowerPlant_IronMan_3 *self)
     Vector at;
 
     fn_80082440(&self->r30[1], &at);
-    fn_8007D7C4(self, 20);
-    fn_8007D7C4(self, 10);
-    fn_8007D404(self, self->fD8, 80, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007D404(self, self->fCC, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_CancelMessages(self, 20);
+    Script_CancelMessages(self, 10);
+    Script_QueueMessage(self, self->fD8, 80, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fCC, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     self->f8C = 1;
     self->f90 = 1;
     self->state = 2;
@@ -967,9 +967,9 @@ void fn_801E0004(register cPowerPlant_IronMan_3 *self)
 {
     fn_8007B618(fn_804425F8(&self->boss), 1);
     fn_80082E24(&self->boss, "ppMegCharge");
-    fn_8007D404(self, self->fD4, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fD4, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_8007BAA0(fn_804425F8(&self->boss));
-    fn_8007D404(self, self->fD4, 90, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fD4, 90, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     self->state = 3;
 }
 
@@ -979,18 +979,18 @@ void fn_801E00EC(register cPowerPlant_IronMan_3 *self)
     fn_8007BB24(fn_804425F8(&self->boss));
     fn_8007B618(fn_804425F8(&self->boss), 0);
     fn_80083428(&self->boss, "ppMegCharge");
-    fn_8007D7C4(self, 80);
+    Script_CancelMessages(self, 80);
     self->f94 = 0;
     self->f90 = 0;
     self->state = 1;
-    fn_8007D7C4(self, 20);
+    Script_CancelMessages(self, 20);
     if (self->active == 1)
-        fn_8007D404(self, self->fB4, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, self->fB4, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E01EC(register cPowerPlant_IronMan_3 *self)
 {
-    fn_8007D404(self, 3.0f, 54, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 3.0f, 54, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8046B860(lbl_8057230C, 1);
@@ -999,12 +999,12 @@ void fn_801E01EC(register cPowerPlant_IronMan_3 *self)
 void fn_801E0294(register cPowerPlant_IronMan_3 *self)
 {
     fn_80081918(fn_80080B34());
-    fn_80082AFC(&self->r30[0], fn_804425F8(&self->r30[0]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r30[0], fn_804425F8(&self->r30[0]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801E0328(register cPowerPlant_IronMan_3 *self)
 {
-    fn_8007D404(self, 2.0f, 58, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 58, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E0390(register cPowerPlant_IronMan_3 *self)
@@ -1013,13 +1013,13 @@ void fn_801E0390(register cPowerPlant_IronMan_3 *self)
 
     fn_80081918(fn_804425F8(&self->boss));
     fn_8046B6C8(&ev, fn_801E3FE0(self));
-    fn_80082AFC(&ev, fn_804425F8(&ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&ev, fn_804425F8(&ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 
 void fn_801E043C(register cPowerPlant_Venom_3 *self) // slot 5
 {
-    fn_8046B710(&self->boss, fn_800797D4(self));
+    fn_8046B710(&self->boss, Script_GetOwner(self));
     fn_8046B710(&self->r30[0], fn_801E407C(self));
     fn_8046B710(&self->rB0, fn_801E44B4(self));
     fn_8046B710(&self->r30[1], fn_801E40C4(self));
@@ -1036,11 +1036,11 @@ void fn_801E043C(register cPowerPlant_Venom_3 *self) // slot 5
     fn_8046B710(&self->r30[12], fn_801E43DC(self));
     fn_8046B710(&self->rA0, fn_801E4424(self));
     fn_8046B710(&self->rA8, fn_801E446C(self));
-    fn_8007CF00(self, fn_804425F8(&self->boss), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r30[2]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r30[6]), 0);
-    fn_8007CF00(self, fn_804425F8(&self->r30[10]), 0);
-    fn_8007CF00(self, fn_80080B34(), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->boss), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r30[2]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r30[6]), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->r30[10]), 0);
+    Script_LinkEntity(self, fn_80080B34(), 0);
     self->fC0 = 0.5f;
     self->fC4 = -1.0f;
     self->fBC = 10.0f;
@@ -1072,7 +1072,7 @@ void fn_801E043C(register cPowerPlant_Venom_3 *self) // slot 5
     self->b[4] = 0;
     self->c[4] = 0;
     self->done = 0;
-    fn_8007D404(self, self->fB8, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fB8, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E0828(register cPowerPlant_Venom_3 *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
@@ -1104,7 +1104,7 @@ void fn_801E0828(register cPowerPlant_Venom_3 *self, unsigned char kind, float a
                 }
             }
         }
-        fn_8007D404(self, self->fB8, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, self->fB8, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
     case 20:
@@ -1121,7 +1121,7 @@ void fn_801E0828(register cPowerPlant_Venom_3 *self, unsigned char kind, float a
             if (fn_8007C244(&self->boss) >= fn_8007C2AC(&self->boss))
                 fn_8007C314(&self->boss, fn_8007C2AC(&self->boss) + 1.25f);
             self->count++;
-            fn_8007D404(self, self->fC8, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->fC8, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         } else {
             self->count = 0;
             self->fE8 = 0;
@@ -1167,15 +1167,15 @@ void fn_801E0828(register cPowerPlant_Venom_3 *self, unsigned char kind, float a
         fn_8046B638(&p, fn_80080B34());
         if (self->a[2] == 1 && self->a[0] == 1) {
             fn_8007C594(&p, 10.0f, 2, 0, 0, 2);
-            fn_8007D404(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         if (self->b[2] == 1 && self->b[0] == 1) {
             fn_8007C594(&p, 10.0f, 2, 0, 0, 2);
-            fn_8007D404(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         if (self->c[2] == 1 && self->c[0] == 1) {
             fn_8007C594(&p, 10.0f, 2, 0, 0, 2);
-            fn_8007D404(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     }
@@ -1183,7 +1183,7 @@ void fn_801E0828(register cPowerPlant_Venom_3 *self, unsigned char kind, float a
         self->prevZone = self->zone;
         fn_801E1D0C(self);
         fn_801E1EF4(self);
-        fn_8007D404(self, self->fC8, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, self->fC8, 30, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 72:
         fn_801E22C4(self);
@@ -1203,18 +1203,18 @@ void fn_801E0828(register cPowerPlant_Venom_3 *self, unsigned char kind, float a
 float fn_801E0F98(register cPowerPlant_Venom_3 *self, int h, int other, int kind, int b, float damage, int c, int value) // slot 21
 {
     if (h == fn_804425F8(&self->boss))
-        fn_8007D404(self, 0.1f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.1f, 50, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     return damage;
 }
 
 int fn_801E1044(register cPowerPlant_Venom_3 *self, int h, int other, int kind, int b, float damage, int value) // slot 20
 {
     if (h == fn_804425F8(&self->boss) || h == fn_80080B34()) {
-        fn_8007D7C4(self, 60);
-        fn_8007D7C4(self, 50);
-        fn_8007D7C4(self, 30);
-        fn_8007D7C4(self, 10);
-        fn_8007D7C4(self, 20);
+        Script_CancelMessages(self, 60);
+        Script_CancelMessages(self, 50);
+        Script_CancelMessages(self, 30);
+        Script_CancelMessages(self, 10);
+        Script_CancelMessages(self, 20);
     }
     return 1;
 }
@@ -1225,11 +1225,11 @@ void fn_801E1104(register cPowerPlant_Venom_3 *self, int h, int other, int kind,
         if (self->done == 1 && h != fn_80080B34())
             return;
         self->done = 1;
-        fn_8007D7C4(self, 60);
-        fn_8007D7C4(self, 50);
-        fn_8007D7C4(self, 30);
-        fn_8007D7C4(self, 10);
-        fn_8007D7C4(self, 20);
+        Script_CancelMessages(self, 60);
+        Script_CancelMessages(self, 50);
+        Script_CancelMessages(self, 30);
+        Script_CancelMessages(self, 10);
+        Script_CancelMessages(self, 20);
         fn_80081C68();
         fn_80081C94();
         fn_80081CC4();
@@ -1255,7 +1255,7 @@ void fn_801E1250(register cPowerPlant_Venom_3 *self, int h, int other, int value
                 float ar = fn_8007C3EC(&self->boss) / fn_8007C52C(&self->boss);
 
                 if (hp <= self->fC0 || ar <= self->fC4) {
-                    fn_8007D7C4(self, 20);
+                    Script_CancelMessages(self, 20);
                     fn_8046B710(&self->r98, fn_804425F8(&self->r30[1]));
                     fn_801E1A94(self);
                 }
@@ -1266,7 +1266,7 @@ void fn_801E1250(register cPowerPlant_Venom_3 *self, int h, int other, int value
             self->b[2] = 0;
             self->c[2] = 0;
             if (self->a[0] == 1)
-                fn_8007D404(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
     }
     if (h == fn_804425F8(&self->r30[6])) {
@@ -1279,7 +1279,7 @@ void fn_801E1250(register cPowerPlant_Venom_3 *self, int h, int other, int value
                 float ar = fn_8007C3EC(&self->boss) / fn_8007C52C(&self->boss);
 
                 if (hp <= self->fC0 || ar <= self->fC4) {
-                    fn_8007D7C4(self, 20);
+                    Script_CancelMessages(self, 20);
                     fn_8046B710(&self->r98, fn_804425F8(&self->r30[5]));
                     fn_801E1A94(self);
                 }
@@ -1290,7 +1290,7 @@ void fn_801E1250(register cPowerPlant_Venom_3 *self, int h, int other, int value
             self->b[2] = 1;
             self->c[2] = 0;
             if (self->b[0] == 1)
-                fn_8007D404(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
     }
     if (h == fn_804425F8(&self->r30[10])) {
@@ -1303,7 +1303,7 @@ void fn_801E1250(register cPowerPlant_Venom_3 *self, int h, int other, int value
                 float ar = fn_8007C3EC(&self->boss) / fn_8007C52C(&self->boss);
 
                 if (hp <= self->fC0 || ar <= self->fC4) {
-                    fn_8007D7C4(self, 20);
+                    Script_CancelMessages(self, 20);
                     fn_8046B710(&self->r98, fn_804425F8(&self->r30[9]));
                     fn_801E1A94(self);
                 }
@@ -1314,7 +1314,7 @@ void fn_801E1250(register cPowerPlant_Venom_3 *self, int h, int other, int value
             self->b[2] = 0;
             self->c[2] = 1;
             if (self->c[0] == 1)
-                fn_8007D404(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
     }
 }
@@ -1344,7 +1344,7 @@ void fn_801E1738(register cPowerPlant_Venom_3 *self, int h, int other, int value
 float fn_801E1888(register cPowerPlant_Venom_3 *self, int h, int node, int value) // slot 37
 {
     if (self->mode == 1) {
-        fn_8007D7C4(self, 20);
+        Script_CancelMessages(self, 20);
         if (self->a[1] == 1 || self->b[1] == 1 || self->c[1] == 1)
             fn_801E1B7C(self);
     }
@@ -1367,8 +1367,8 @@ void fn_801E1918(register cPowerPlant_Venom_3 *self, int a, int b, int kind, flo
 void fn_801E19F8(register cPowerPlant_Venom_3 *self)
 {
     self->mode = 0;
-    fn_8007D7C4(self, 20);
-    fn_8007D7C4(self, 30);
+    Script_CancelMessages(self, 20);
+    Script_CancelMessages(self, 30);
     fn_8007B618(fn_804425F8(&self->boss), 0);
     fn_8007A4FC(fn_804425F8(&self->boss));
     fn_8007BB24(fn_804425F8(&self->boss));
@@ -1385,7 +1385,7 @@ void fn_801E1A94(register cPowerPlant_Venom_3 *self)
     Vector at;
 
     fn_80082440(&self->r98, &at);
-    fn_8007D404(self, self->fBC, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fBC, 20, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_8007A448(fn_804425F8(&self->boss));
     fn_8007A738(fn_804425F8(&self->boss), &at);
 }
@@ -1393,12 +1393,12 @@ void fn_801E1A94(register cPowerPlant_Venom_3 *self)
 void fn_801E1B7C(register cPowerPlant_Venom_3 *self)
 {
     self->mode = 2;
-    fn_8007D7C4(self, 20);
+    Script_CancelMessages(self, 20);
     fn_8007A4FC(fn_804425F8(&self->boss));
     fn_8007B618(fn_804425F8(&self->boss), 1);
     fn_8007A448(fn_804425F8(&self->boss));
     fn_8007BAA0(fn_804425F8(&self->boss));
-    fn_8007D404(self, self->fD0, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, self->fD0, 70, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E1C58(register cPowerPlant_Venom_3 *self)
@@ -1419,21 +1419,21 @@ void fn_801E1D0C(register cPowerPlant_Venom_3 *self)
             break;
         case 1:
             self->a[0] = 0;
-            fn_80082AFC(&self->r30[3], fn_804425F8(&self->r30[3]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&self->r30[3], fn_804425F8(&self->r30[3]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             if (self->a[2] == 1)
-                fn_8007D7C4(self, 60);
+                Script_CancelMessages(self, 60);
             break;
         case 2:
             self->b[0] = 0;
-            fn_80082AFC(&self->r30[7], fn_804425F8(&self->r30[7]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&self->r30[7], fn_804425F8(&self->r30[7]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             if (self->b[2] == 1)
-                fn_8007D7C4(self, 60);
+                Script_CancelMessages(self, 60);
             break;
         case 3:
             self->c[0] = 0;
-            fn_80082AFC(&self->r30[11], fn_804425F8(&self->r30[11]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&self->r30[11], fn_804425F8(&self->r30[11]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             if (self->c[2] == 1)
-                fn_8007D7C4(self, 60);
+                Script_CancelMessages(self, 60);
             break;
         }
     }
@@ -1447,37 +1447,37 @@ void fn_801E1EF4(register cPowerPlant_Venom_3 *self)
     case 1:
         if (self->a[0] == 0 && self->a[4] == 0) {
             if (self->a[3] == 0) {
-                fn_80082AFC(&self->r30[4], fn_804425F8(&self->r30[4]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(&self->r30[4], fn_804425F8(&self->r30[4]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
                 self->a[3] = 1;
             }
-            fn_80082AFC(&self->r30[3], fn_804425F8(&self->r30[3]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&self->r30[3], fn_804425F8(&self->r30[3]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             self->a[0] = 1;
             if (self->a[2] == 1)
-                fn_8007D404(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     case 2:
         if (self->b[0] == 0 && self->b[4] == 0) {
             if (self->b[3] == 0) {
-                fn_80082AFC(&self->r30[8], fn_804425F8(&self->r30[8]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(&self->r30[8], fn_804425F8(&self->r30[8]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
                 self->b[3] = 1;
             }
-            fn_80082AFC(&self->r30[7], fn_804425F8(&self->r30[7]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&self->r30[7], fn_804425F8(&self->r30[7]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             self->b[0] = 1;
             if (self->b[2] == 1)
-                fn_8007D404(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     case 3:
         if (self->c[0] == 0 && self->c[4] == 0) {
             if (self->c[3] == 0) {
-                fn_80082AFC(&self->r30[12], fn_804425F8(&self->r30[12]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(&self->r30[12], fn_804425F8(&self->r30[12]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
                 self->c[3] = 1;
             }
-            fn_80082AFC(&self->r30[11], fn_804425F8(&self->r30[11]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(&self->r30[11], fn_804425F8(&self->r30[11]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             self->c[0] = 1;
             if (self->c[2] == 1)
-                fn_8007D404(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, self->fC8, 60, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     }
@@ -1485,7 +1485,7 @@ void fn_801E1EF4(register cPowerPlant_Venom_3 *self)
 
 void fn_801E22C4(register cPowerPlant_Venom_3 *self)
 {
-    fn_8007D404(self, 3.0f, 74, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 3.0f, 74, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     fn_800816A0(fn_804425F8(&self->boss));
     fn_80081BD4(fn_804425F8(&self->boss));
     fn_8043323C(lbl_80572278, 1);
@@ -1494,18 +1494,18 @@ void fn_801E22C4(register cPowerPlant_Venom_3 *self)
 void fn_801E2374(register cPowerPlant_Venom_3 *self)
 {
     fn_80081918(fn_80080B34());
-    fn_80082AFC(&self->r30[0], fn_804425F8(&self->r30[0]), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->r30[0], fn_804425F8(&self->r30[0]), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void fn_801E2410(register cPowerPlant_Venom_3 *self)
 {
-    fn_8007D404(self, 2.0f, 78, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 78, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801E2480(register cPowerPlant_Venom_3 *self)
 {
     fn_80081918(fn_804425F8(&self->boss));
-    fn_80082AFC(&self->rB0, fn_804425F8(&self->rB0), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+    Script_TriggerEntity(&self->rB0, fn_804425F8(&self->rB0), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 
@@ -1525,13 +1525,13 @@ void fn_801E255C(register cPowerPlant_CoilToggle *self) // slot 4
 
 void fn_801E25BC(register cPowerPlant_CoilToggle *self, int h, int other, int value) // slot 18
 {
-    if (h == fn_800797D4(self))
+    if (h == Script_GetOwner(self))
         self->hit = 1;
 }
 
 float fn_801E2620(register cPowerPlant_CoilToggle *self, int h, int other, int kind, int b, float damage, int c, int value) // slot 21
 {
-    if (h != fn_800797D4(self) || self->hit != 0)
+    if (h != Script_GetOwner(self) || self->hit != 0)
         return damage;
     Ref8 ev;
 
@@ -1545,7 +1545,7 @@ float fn_801E2620(register cPowerPlant_CoilToggle *self, int h, int other, int k
 
 void fn_801E2718(register cPowerPlant_CoilToggle *self, int h, int other, int kind, int b, float damage, int value) // slot 22
 {
-    if (h == fn_800797D4(self))
+    if (h == Script_GetOwner(self))
         self->hit = 1;
 }
 
@@ -1588,44 +1588,44 @@ void fn_801E28D8(register cPowerPlant_CoilArc *self) // slot 3
 void fn_801E2938(register cPowerPlant_CoilArc *self) // slot 4
 {
     if (fn_801E4630(self)) {
-        fn_8007CF00(self, fn_801E4630(self), 0);
+        Script_LinkEntity(self, fn_801E4630(self), 0);
         fn_8046B710(&self->coil[0], fn_801E4630(self));
-        fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4630(self));
+        Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4630(self));
     }
     if (fn_801E4678(self)) {
-        fn_8007CF00(self, fn_801E4678(self), 0);
+        Script_LinkEntity(self, fn_801E4678(self), 0);
         fn_8046B710(&self->coil[1], fn_801E4678(self));
-        fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4678(self));
+        Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4678(self));
     }
     if (fn_801E46C0(self)) {
-        fn_8007CF00(self, fn_801E46C0(self), 0);
+        Script_LinkEntity(self, fn_801E46C0(self), 0);
         fn_8046B710(&self->coil[2], fn_801E46C0(self));
-        fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E46C0(self));
+        Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E46C0(self));
     }
     if (fn_801E4708(self)) {
-        fn_8007CF00(self, fn_801E4708(self), 0);
+        Script_LinkEntity(self, fn_801E4708(self), 0);
         fn_8046B710(&self->coil[3], fn_801E4708(self));
-        fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4708(self));
+        Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4708(self));
     }
     if (fn_801E4750(self)) {
-        fn_8007CF00(self, fn_801E4750(self), 0);
+        Script_LinkEntity(self, fn_801E4750(self), 0);
         fn_8046B710(&self->coil[4], fn_801E4750(self));
-        fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4750(self));
+        Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4750(self));
     }
     if (fn_801E4798(self)) {
-        fn_8007CF00(self, fn_801E4798(self), 0);
+        Script_LinkEntity(self, fn_801E4798(self), 0);
         fn_8046B710(&self->coil[5], fn_801E4798(self));
-        fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4798(self));
+        Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4798(self));
     }
     if (fn_801E47E0(self)) {
-        fn_8007CF00(self, fn_801E47E0(self), 0);
+        Script_LinkEntity(self, fn_801E47E0(self), 0);
         fn_8046B710(&self->coil[6], fn_801E47E0(self));
-        fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E47E0(self));
+        Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E47E0(self));
     }
     if (fn_801E4828(self)) {
-        fn_8007CF00(self, fn_801E4828(self), 0);
+        Script_LinkEntity(self, fn_801E4828(self), 0);
         fn_8046B710(&self->coil[7], fn_801E4828(self));
-        fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4828(self));
+        Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f * 15.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, fn_801E4828(self));
     }
 }
 
@@ -1683,14 +1683,14 @@ void fn_801E3364(register cPowerPlant_CoilArc *self, unsigned char kind, float a
         int target = fn_801E37AC(self, e);
 
         if (!target)
-            fn_8007D404(self, 2.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, e);
+            Script_QueueMessage(self, 2.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, e);
         if (fn_801E365C(self, e, target))
-            fn_8007D404(self, 1.5f, 20, 0.0f, 0.0f, 0.0f, 0.0f, e);
+            Script_QueueMessage(self, 1.5f, 20, 0.0f, 0.0f, 0.0f, 0.0f, e);
         break;
     }
     case 20:
         fn_801E3A24(self, e);
-        fn_8007D404(self, fn_80171F8C() * 4.656612873077392578125e-10f * 10.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, e);
+        Script_QueueMessage(self, fn_80171F8C() * 4.656612873077392578125e-10f * 10.0f + 10.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, e);
         break;
     }
 }
@@ -1770,55 +1770,55 @@ cScript *fn_801E3AF4(register cPowerPlant_HumanTorchSAC *self)
     return new cPowerPlant_HumanTorchSAC;
 }
 
-unsigned int fn_801E3B48(register cPowerPlant_HumanTorchSAC *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801E3B90(register cPowerPlant_HumanTorchSAC *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801E3BD8(register cPowerPlant_HumanTorchSAC *self) { return fn_800791C8(self, 2); }
+unsigned int fn_801E3B48(register cPowerPlant_HumanTorchSAC *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801E3B90(register cPowerPlant_HumanTorchSAC *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801E3BD8(register cPowerPlant_HumanTorchSAC *self) { return Script_GetParamUInt(self, 2); }
 
 cScript *fn_801E3C20(register cPowerPlant_ElektraSAC *self)
 {
     return new cPowerPlant_ElektraSAC;
 }
 
-unsigned int fn_801E3C74(register cPowerPlant_ElektraSAC *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801E3CBC(register cPowerPlant_ElektraSAC *self) { return fn_800791C8(self, 1); }
+unsigned int fn_801E3C74(register cPowerPlant_ElektraSAC *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801E3CBC(register cPowerPlant_ElektraSAC *self) { return Script_GetParamUInt(self, 1); }
 
 cScript *fn_801E3D04(register cPowerPlant_IronMan_3 *self)
 {
     return new cPowerPlant_IronMan_3;
 }
 
-unsigned int fn_801E3D58(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801E3DA0(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801E3DE8(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801E3E30(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801E3E78(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 4); }
-unsigned int fn_801E3EC0(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 5); }
-unsigned int fn_801E3F08(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 6); }
-unsigned int fn_801E3F50(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 7); }
-unsigned int fn_801E3F98(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 8); }
-unsigned int fn_801E3FE0(register cPowerPlant_IronMan_3 *self) { return fn_800791C8(self, 9); }
+unsigned int fn_801E3D58(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801E3DA0(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801E3DE8(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801E3E30(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801E3E78(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 4); }
+unsigned int fn_801E3EC0(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 5); }
+unsigned int fn_801E3F08(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 6); }
+unsigned int fn_801E3F50(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 7); }
+unsigned int fn_801E3F98(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 8); }
+unsigned int fn_801E3FE0(register cPowerPlant_IronMan_3 *self) { return Script_GetParamUInt(self, 9); }
 
 cScript *fn_801E4028(register cPowerPlant_Venom_3 *self)
 {
     return new cPowerPlant_Venom_3;
 }
 
-unsigned int fn_801E407C(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801E40C4(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801E410C(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801E4154(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801E419C(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 4); }
-unsigned int fn_801E41E4(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 5); }
-unsigned int fn_801E422C(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 6); }
-unsigned int fn_801E4274(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 7); }
-unsigned int fn_801E42BC(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 8); }
-unsigned int fn_801E4304(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 9); }
-unsigned int fn_801E434C(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 10); }
-unsigned int fn_801E4394(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 11); }
-unsigned int fn_801E43DC(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 12); }
-unsigned int fn_801E4424(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 13); }
-unsigned int fn_801E446C(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 14); }
-unsigned int fn_801E44B4(register cPowerPlant_Venom_3 *self) { return fn_800791C8(self, 15); }
+unsigned int fn_801E407C(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801E40C4(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801E410C(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801E4154(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801E419C(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 4); }
+unsigned int fn_801E41E4(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 5); }
+unsigned int fn_801E422C(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 6); }
+unsigned int fn_801E4274(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 7); }
+unsigned int fn_801E42BC(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 8); }
+unsigned int fn_801E4304(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 9); }
+unsigned int fn_801E434C(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 10); }
+unsigned int fn_801E4394(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 11); }
+unsigned int fn_801E43DC(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 12); }
+unsigned int fn_801E4424(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 13); }
+unsigned int fn_801E446C(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 14); }
+unsigned int fn_801E44B4(register cPowerPlant_Venom_3 *self) { return Script_GetParamUInt(self, 15); }
 
 cScript *fn_801E44FC(register cPowerPlant_CoilToggle *self)
 {
@@ -1826,21 +1826,21 @@ cScript *fn_801E44FC(register cPowerPlant_CoilToggle *self)
 }
 
 
-int fn_801E4550(register cPowerPlant_CoilToggle *self) { return fn_800797D4(self); }
-unsigned int fn_801E4594(register cPowerPlant_CoilToggle *self) { return fn_800791C8(self, 0); }
+int fn_801E4550(register cPowerPlant_CoilToggle *self) { return Script_GetOwner(self); }
+unsigned int fn_801E4594(register cPowerPlant_CoilToggle *self) { return Script_GetParamUInt(self, 0); }
 
 cScript *fn_801E45DC(register cPowerPlant_CoilArc *self)
 {
     return new cPowerPlant_CoilArc;
 }
 
-unsigned int fn_801E4630(register cPowerPlant_CoilArc *self) { return fn_800791C8(self, 0); }
-unsigned int fn_801E4678(register cPowerPlant_CoilArc *self) { return fn_800791C8(self, 1); }
-unsigned int fn_801E46C0(register cPowerPlant_CoilArc *self) { return fn_800791C8(self, 2); }
-unsigned int fn_801E4708(register cPowerPlant_CoilArc *self) { return fn_800791C8(self, 3); }
-unsigned int fn_801E4750(register cPowerPlant_CoilArc *self) { return fn_800791C8(self, 4); }
-unsigned int fn_801E4798(register cPowerPlant_CoilArc *self) { return fn_800791C8(self, 5); }
-unsigned int fn_801E47E0(register cPowerPlant_CoilArc *self) { return fn_800791C8(self, 6); }
-unsigned int fn_801E4828(register cPowerPlant_CoilArc *self) { return fn_800791C8(self, 7); }
+unsigned int fn_801E4630(register cPowerPlant_CoilArc *self) { return Script_GetParamUInt(self, 0); }
+unsigned int fn_801E4678(register cPowerPlant_CoilArc *self) { return Script_GetParamUInt(self, 1); }
+unsigned int fn_801E46C0(register cPowerPlant_CoilArc *self) { return Script_GetParamUInt(self, 2); }
+unsigned int fn_801E4708(register cPowerPlant_CoilArc *self) { return Script_GetParamUInt(self, 3); }
+unsigned int fn_801E4750(register cPowerPlant_CoilArc *self) { return Script_GetParamUInt(self, 4); }
+unsigned int fn_801E4798(register cPowerPlant_CoilArc *self) { return Script_GetParamUInt(self, 5); }
+unsigned int fn_801E47E0(register cPowerPlant_CoilArc *self) { return Script_GetParamUInt(self, 6); }
+unsigned int fn_801E4828(register cPowerPlant_CoilArc *self) { return Script_GetParamUInt(self, 7); }
 
 }

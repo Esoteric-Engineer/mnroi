@@ -27,7 +27,7 @@ void fn_80052924();
 void fn_8003E5C4();
 void fn_80094F98(void *g);
 void fn_80094ED0(void *g);
-void fn_8007C910();
+void Script_DeliverMessages();
 int fn_80095B24(void *g);
 int fn_80095B74(void *g);
 void *fn_800945B0(void *g);
@@ -229,7 +229,7 @@ extern "C" void fn_8002E6DC(register FrameCtx *self)
     } else {
         fn_80094ED0(lbl_80552110);
     }
-    fn_8007C910();
+    Script_DeliverMessages();
 }
 
 extern "C" void fn_8002E7F4(register FrameCtx *self)

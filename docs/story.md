@@ -15,12 +15,12 @@ See also:
 ## 1. Entry Points
 
 - **Startup.** `fn_8002F3A8` calls `fn_8007C8B0`, which creates the class table (`fn_8007891C`) and then registers all 102 classes (`fn_801BEE2C`, section 4.2).
-- **Story frontend.** The APT handlers in `Game/handlers/mission.cpp` (registered as [`versus.md`](versus.md) section 1 describes) call the chronicle (0x80087040, section 4.4) and the save profile `fn_8011CA74`.
-- **Mission start.** `fn_8008856C` (chronicle file) creates the record's master script (`+0x2A0`, the 4th `MISSION` argument) through `fn_800789DC`. No mission in `clashsp.nsc` or `clashMP.nsc` names one.
+- **Story frontend.** The APT handlers in `Game/handlers/mission.cpp` (registered as [`versus.md`](versus.md) section 1 describes) call the chronicle (0x80087040, section 4.4) and the save profile `Profile_Get`.
+- **Mission start.** `fn_8008856C` (chronicle file) creates the record's master script (`+0x2A0`, the 4th `MISSION` argument) through `Script_Create`. No mission in `clashsp.nsc` or `clashMP.nsc` names one.
 - **Level load.** `fn_8002CE78` (`Game/fn_8002CE78.cpp`) calls:
   - `fn_800777C4("global", 1)` and `fn_800777C4(scene, 0)`, which open `<name>.nhg`. No `.nhg` ships (none on the disc, in `CLASH.BIG` or in its nested archives), so both return 0, the `ShapeRepository` stays empty, and `lbl_8066B888`, which the `"global"` load sets, stays 0 for the entity code that tests it (`fn_800AD9A4`);
   - `fn_800A4DF8(name, level, 0)`, the `.nsd` scene reader (allocator tags `Game:Scene:tScene`, `tPlayerStart`, `tInterestSpot`).
-- **Instances.** `fn_800789DC(name, flag)` finds a class (`fn_80078994`) and clones its prototype (slot 2, section 4.1). Its callers:
+- **Instances.** `Script_Create(name, flag)` finds a class (`ScriptClass_Find`) and clones its prototype (slot 2, section 4.1). Its callers:
   - the entity property 0x10 `SCRIPT` (`fn_8007CA10`, [`characters.md`](characters.md) section 3);
   - mission start, above;
   - the versus setup `fn_800916BC`, which creates `cRingOut` and `cCameraEvent`, the two classes no scene places.
@@ -74,7 +74,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 
 **How the script command file edges were found.** One header's static block (ten words: 1.2, 0.8, 2.0, 0.5, 0.8, 0.8, 1.0, 1.25, 0.75, 2000) is written after the pools of every file that includes it (the base file's ends at 0x80487CD4, the profile's at 0x80499430). In 0x80487E88-0x80488758 it sits at 0x80487F5C, 0x80488048 and 0x80488118, with the font names (`UI/eafont0`...) after the first one:
 - 0x8007C8B0: the edge is after `fn_8007C594` (last literal 0x80487F18) and at or before `fn_8007CABC` (first literal `"Scripts:Params"` 0x80488028). 0x8007C8B0, script init, is a guess within that range.
-- 0x8007DC60: after `fn_8007D404` (0x80488038) and at or before `fn_8007E698` (0x80488070). The guess is where the queue code ends.
+- 0x8007DC60: after `Script_QueueMessage` at 0x8007D404 (literal 0x80488038) and at or before `fn_8007E698` (0x80488070). The guess is where the queue code ends.
 - 0x800808D0: confirmed. `fn_800808D0` is a byte-for-byte copy of the static helper `fn_80080300`, and the pool resumes at 0x80488190 after the third block.
 - Nothing else in the DOL narrows the first two. The function-end pair flag ([`prodg.md`](prodg.md#the-function-end-branch-pair)) stays set from `fn_8007D220` to `fn_8007E84C`, and `fn_8007CA10`'s `switch` explains its one change near 0x8007C8B0. `.sdata` (the queue's `lbl_8066B8AC` and `lbl_8066B8B0`, then 0x800808D0's `lbl_8066B8B8`) and `.bss` fit either guess, and no function in either range has a copy in another file.
 
@@ -92,7 +92,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 ```
 Frontend (APT)          mission.cpp, memcard.cpp handlers
   chronicle             the .nsc mission tables, the current mission, mission start
-  save profile          story progress and settings (fn_8011CA74)
+  save profile          story progress and settings (Profile_Get)
 Level load              <name>.nhg, then the .nsd scene: entities with a SCRIPT property
 Class table             "ScriptClasses": name -> 0x28-byte entry -> prototype
   base class            64 virtual slots, the parameter readers (script base file)
@@ -112,13 +112,13 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   |---|---|
   | +0x0 | class entry (section 4.2) |
   | +0x4 | instance ID, from the counter `lbl_8066D61C` (starts at 1) |
-  | +0x8 | what `fn_80078FDC` was given (guess: the owning entity); `fn_800797D4` returns it |
+  | +0x8 | the owner that `fn_80078FDC` was given, which `Script_GetOwner` returns: the handle of the entity whose `SCRIPT` property made it (`fn_800AD9A4` starts those with `fn_800B13D8(entity)`), and 0 for one `Script_Create` starts itself |
   | +0xC, +0x10 | parameter count (unsigned) and array of 8-byte `{type, value}` |
   | +0x14 | messages queued for this script (`fn_8007D594` increments, delivery decrements) |
 | +0x18, +0x1C | count and list of the entity links this script owns (`ScriptNode`, below) |
 | +0x20 | flags; bit 0: gets slot 63 every frame (`fn_8007DFC4`) |
-- **Parameters.** Types: 1 int, 2 float, 7-9 string (owned, freed on destroy), 3, 5 and 10-13 a scene index that `fn_80078E28` turns into a handle (`fn_800B13D8`; -1 and -2 become 0). Readers `(this, i)`: `fn_80079068` int, `fn_800791C8` unsigned, `fn_8007935C` float, `fn_800794FC` string (numbers printed into the shared buffer `lbl_8054DD54`). Past the count they return 0, 0.0f or `"Invalid Param"`.
-- **Vtable.** 0x208 bytes: an 8-byte header, then 64 entries of 8 bytes, so slot `n` is the entry at `vt + 8n`; slot 64 is null. Slot 2's base is `fn_80078DD4`; slots 1 and 3-63 are 0x8007975C-0x8007A2A0 in slot order, all stubs but the destructor (plus `fn_800797D4` after slot 3, not virtual).
+- **Parameters.** Types: 1 int, 2 float, 7-9 string (owned, freed on destroy), 3, 5 and 10-13 a scene index that `fn_80078E28` turns into a handle (`fn_800B13D8`; -1 and -2 become 0). Readers `(this, i)`: `Script_GetParamInt` int, `Script_GetParamUInt` unsigned, `Script_GetParamFloat` float, `Script_GetParamString` string (numbers printed into the shared buffer `lbl_8054DD54`). Past the count they return 0, 0.0f or `"Invalid Param"`.
+- **Vtable.** 0x208 bytes: an 8-byte header, then 64 entries of 8 bytes, so slot `n` is the entry at `vt + 8n`; slot 64 is null. Slot 2's base is `fn_80078DD4`; slots 1 and 3-63 are 0x8007975C-0x8007A2A0 in slot order, all stubs but the destructor (plus `Script_GetOwner` after slot 3, not virtual).
 - **Known slots.** The callers are in `Game/fn_8007DC60.cpp` unless a row names another. "Hook" means the call goes to the entity's own script with value 0, then to each linked script with its link value. `h` is an entity handle.
 
   | Slot | Signature | Called |
@@ -126,13 +126,13 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 1, 2 | destructor, clone | |
   | 3 | `()` | by `fn_80078FDC` once the instance is registered (guess: on start) |
   | 4, 5, 6 | `()` | all live scripts, at level load (`fn_8002D110`), on the first frame after it (`fn_8002BD34`), and from `fn_8002D5F8` (guess: unload; `cRegionSuck` frees in 6 what it allocates in 3) |
-  | 8 | `(unsigned char kind, float, float, float, float, int)` | a delivered script message (`fn_8007E0C0`); `kind` is what `fn_8007D404` queued (`cCountDown` queues 10 for its 1-second tick) |
+  | 8 | `(unsigned char kind, float, float, float, float, int)` | a delivered script message (`fn_8007E0C0`); `kind` is what `Script_QueueMessage` queued (`cCountDown` queues 10 for its 1-second tick) |
   | 12, 13 | `(h)`, `(h, value)` | hooks; 12 only for the entity's own script |
   | 14-16, 18, 30, 38 | `(h, h other, value)` | hooks; the region classes treat 14 as `other` entering `h`'s region and 15 as it leaving; `cPowerPlant_CoilArc` handles 18 like 22, on its coil `h` (guess: `h` broke) |
   | 20 | `(h, h other, int, int, float, value)` returning int | hook; a 0 stops the chain and the caller gets 0 (`fn_8007E84C`). The boss classes mark `h` when the first `int` is 8 and the float is over 90000 (guess: a finishing move) |
   | 21 | `(h, h other, int, int, float, int, value)` returning float | hook; the float goes on to the next script, and below 0 the result is 0 (`fn_8007E698`). A damage filter: `cPlayerBonusMissions` passes `"damage"` to `fn_80081470` when `h` is the player |
   | 22 | `(h, h other, int, int, float, value)` | hook, then the script of entity `lbl_8066B894`; `h` died. `cSpawnPeon` treats it as its peon dying to `other`, the float as the damage (guess); the boss classes end the fight when `h` is the boss or the player (section 5) |
-  | 23 | `(int, int, int kind, float x4, value)` | hook with no `h` first. Its only sender is `fn_80082AFC(h, ...)`, which sends it to entity `h`'s scripts. `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7; `cAvengersMansion_IronManSAC` compares the second `int` with an entity handle |
+  | 23 | `(int, int, int kind, float x4, value)` | hook with no `h` first. Its only sender is `Script_TriggerEntity(h, ...)`, which sends it to entity `h`'s scripts. `cEndMission` acts on kinds 0, 7, 13, 17-19, `cCountDown` on 0, 7, 999; the region classes toggle on 0 and switch off on 7; `cAvengersMansion_IronManSAC` compares the second `int` with an entity handle |
   | 24, 31-33 | `(int, int, int, float x4)`, `()` | all live scripts. 24 is sent only from `cCrystalBreak_Phase2`'s slot 12 (through `fn_80083D08`), a class no scene places, so it never fires; `cBrooklynBridge_VM2_Start` reads its second float as an entity handle to replace with the first. 31 is sent from the versus round reset `fn_80092550`, 32 from the versus phase update `fn_80091C84` and 33 from `fn_8009717C` ([`versus.md`](versus.md)) |
   | 17, 25 | `(h, h other, value)` returning int, `(h, int node, value)` | never called (below), so these overrides are dead: `cTriggerOnAction`'s 17, and the 25 of `cObjectMove` (its object `h` reaching path node `node`, a guess) and `cBrooklynBridge_heliCrash` (explodes when `h` is its helicopter) |
   | 19 | `(h, value)` | hook (`fn_800801F0`) |
@@ -146,9 +146,9 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 60 | `(h)` | all live scripts, from `fn_800ED448` with the actor's handle (guess: an actor is defeated) |
   | 63 | `()` | every frame after message delivery, for scripts with +0x20 bit 0 |
 - **Never called.** Slots 7, 9-11, 17, 25, 26, 28, 34-36, 39-42, 44-46, 50, 55-58 and 62 have no call site in the DOL. Every slot call loads the vptr from +0x24 and adds 8 × slot (as `fn_8007DC60` does); a scan of all of `.text` for that shape finds a caller for every slot in the table and none for these.
-- **Entity links.** Entity +0x14C is its own script, +0x150 the list of 0x1C-byte nodes `{script, entity, value, entity prev/next, script prev/next}` that tie other scripts to it. `fn_8007CF00(script, handle, value)` adds or updates a node, `fn_8007D070` removes one.
+- **Entity links.** Entity +0x14C is its own script, +0x150 the list of 0x1C-byte nodes `{script, entity, value, entity prev/next, script prev/next}` that tie other scripts to it. `Script_LinkEntity(script, handle, value)` adds or updates a node, `Script_UnlinkEntity` removes one.
 - **Spawn counters.** `cSpawnPeon` counts peons spawned in `lbl_8066C72C` and killed in `lbl_8066C728`; while `lbl_8066C730` is set it passes both to `fn_80131724`.
-- **Script messages.** 128 slots of 0x20 bytes at `lbl_8054DD80`, kept in a time-sorted list by byte index (+0x1D prev, +0x1E next, +0x1F in use; head `lbl_8066B8B0`, 0xFF = none). `fn_8007D404(script, seconds, kind, 4 floats, int)` and `fn_8007D4F4` (milliseconds) queue one, at most 600 s ahead. `fn_8007D7C4(script, kind)` cancels a kind, and `fn_8007C910` delivers the due ones each frame.
+- **Script messages.** 128 slots of 0x20 bytes at `lbl_8054DD80`, kept in a time-sorted list by byte index (+0x1D prev, +0x1E next, +0x1F in use; head `lbl_8066B8B0`, 0xFF = none). `Script_QueueMessage(script, seconds, kind, 4 floats, int)` and `Script_QueueMessageMs` (milliseconds) queue one, at most 600 s ahead. `Script_CancelMessages(script, kind)` cancels a kind, and `Script_DeliverMessages` delivers the due ones each frame.
 - **Which slots the classes override** (count out of 102):
 
   | Slots | Overridden by |
@@ -160,16 +160,16 @@ Script command file     helpers the classes call, the AI script API (ai.md)
   | 22 more slots | 6 or fewer each |
   | the other 29 slots | none |
 - **The outside functions the class files call most:**
-  - from the base: `fn_800797D4` (440 calls, +0x8), the parameter readers `fn_800791C8` (398), `fn_80079068` (220), `fn_8007935C` (93);
-  - from the command files: `fn_8007D404` (351, queue a message), `fn_80080B34` (175, the handle of `fn_80432924`'s entity; guess: the player), `fn_8007CF00` (124, link to an entity), `fn_8007D7C4` (104, cancel messages), `fn_800809CC` (92) and `fn_8007C034` (83, handle to actor);
-  - from the entity command files (row 24): `fn_80082AFC` (270, slot 23 to an entity's scripts), `fn_80081E6C` (59), `fn_80082440` (57), `fn_8008379C` (48).
+  - from the base: `Script_GetOwner` (440 calls, +0x8), the parameter readers `Script_GetParamUInt` (398), `Script_GetParamInt` (220), `Script_GetParamFloat` (93);
+  - from the command files: `Script_QueueMessage` (351), `fn_80080B34` (175, the handle of `fn_80432924`'s entity; guess: the player), `Script_LinkEntity` (124), `Script_CancelMessages` (104), `fn_800809CC` (92) and `fn_8007C034` (83, handle to actor);
+  - from the entity command files (row 24): `Script_TriggerEntity` (270, slot 23 to an entity's scripts), `fn_80081E6C` (59), `fn_80082440` (57), `fn_8008379C` (48).
 
 ### 4.2 Class table and prototypes
 
 - **Registration.** `fn_801BEE2C` fills `lbl_8054D154[lbl_8066B890]` (`.bss`, 256 slots) with one 0x28-byte entry `{char name[0x20]; void *prototype; int count}` per class and adds it to the table. Its source lists each class's size and prototype constructor.
-- **The table.** `lbl_8066D614` is a hash with 0x3F buckets, named `"ScriptClasses"`. `fn_8007891C` creates it (`fn_801B4284`; flag `lbl_8066B898`). `fn_80078994` finds a class (`fn_801B48AC`).
-- **Creating an instance.** `fn_800789DC` calls the prototype's slot 2, then `fn_8007A2F0(copy, entry)` and `fn_80078FDC(copy)`. `cAISetTeleportDistance`'s slot 2 builds a `cTemporaryAIPossession` (0x30), so that class's own slots never run.
-- **Live instances.** `fn_80078C58` adds an instance to `lbl_8054D554` (512 slots, count `lbl_8066D618`) and increments its entry's `+0x24`; `fn_80078CE0` undoes both. Destroying an instance is `fn_80078B10`.
+- **The table.** `lbl_8066D614` is a hash with 0x3F buckets, named `"ScriptClasses"`. `fn_8007891C` creates it (`fn_801B4284`; flag `lbl_8066B898`). `ScriptClass_Find` finds a class (`fn_801B48AC`).
+- **Creating an instance.** `Script_Create` calls the prototype's slot 2, then `fn_8007A2F0(copy, entry)` and, when its flag is set, `fn_80078FDC(copy, 0)`. `cAISetTeleportDistance`'s slot 2 builds a `cTemporaryAIPossession` (0x30), so that class's own slots never run.
+- **Live instances.** `Script_AddLive` adds an instance to `lbl_8054D554` (512 slots, count `lbl_8066D618`) and increments its entry's `+0x24`; `Script_RemoveLive` undoes both. Destroying an instance is `Script_Destroy`.
 
 ### 4.3 Missions and scenes
 
@@ -194,7 +194,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 ### 4.4 Chronicle and save profile
 
 - **Chronicle.** Two `.nsc` tables (layout in [`characters.md`](characters.md) section 4): `lbl_8054ED80` holds `clashsp.nsc`, `lbl_8054EF38` `clashMP.nsc`. [`ai.md`](ai.md) section 3 reads the AI settings from an entry of the story list.
-- **Save profile.** `fn_8011CA74` returns the 0x2E0-byte profile (`lbl_8066BE20`), `new`ing it on the first call. Two save buffers `{cursor, base, size}` at +0x0 (settings, 0x30 bytes) and +0xC (progress, 0x280 bytes). `fn_801300B4` fills the progress fields from the game state and the chronicle; the meanings below come from it.
+- **Save profile.** `Profile_Get` returns the 0x2E0-byte profile (`lbl_8066BE20`), `new`ing it on the first call. Two save buffers `{cursor, base, size}` at +0x0 (settings, 0x30 bytes) and +0xC (progress, 0x280 bytes). `fn_801300B4` fills the progress fields from the game state and the chronicle; the meanings below come from it.
 
   | Offset | Field |
   |---|---|
@@ -221,7 +221,7 @@ Script command file     helpers the classes call, the AI script API (ai.md)
 
 ## 5. Notes
 
-- **Boss fight ending** (the bosses of rows 15-21, e.g. `fn_801DB5C0`; `cBrooklynBridge_BruteFight` ends from slots 20 and 21 instead, and `cPowerPlant_HumanTorchSAC`, `_IronMan_3` and `_Venom_3` skip `lbl_8066C724`). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and slot 23 (`fn_80082AFC`) to a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
+- **Boss fight ending** (the bosses of rows 15-21, e.g. `fn_801DB5C0`; `cBrooklynBridge_BruteFight` ends from slots 20 and 21 instead, and `cPowerPlant_HumanTorchSAC`, `_IronMan_3` and `_Venom_3` skip `lbl_8066C724`). On the first slot-22 death of the boss or the player: set `lbl_8066C724`, call `fn_80081C68`, `fn_80081C94`, `fn_80081CC4` and `fn_80081B40(boss)`, and if the boss died `fn_80081A54(player)`. Then the ending: `fn_80081918` on the survivor, its handle into `lbl_8066C71C`, and slot 23 (`Script_TriggerEntity`) to a scene entity named by a parameter (guess: the victory scene). Without the slot-20 mark on the one who died, the ending is queued 2-3 s later through slot 8 instead, and a boss death first calls `fn_800816A0` and `fn_80081BD4` on the boss and `fn_8043323C(lbl_8057230C, 1)`.
 
 ---
 
@@ -256,6 +256,6 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 23 | Memory-card handlers | 0x80107244-0x8010A448 | `Game/handlers/memcard.cpp` | Done |
 | 24 | Entity command files | 0x80081E08-0x80087040 | `Game/fn_80081E08.cpp`, `Game/fn_80084030.cpp` | Done |
 | 25 | Cut file tail | 0x80058A48-0x80058C2C | `Game/fn_80057AE8.cpp` | Done |
-| 26 | Rename pass | the helpers section 4 documents | rows 3-5, 22 and 24's units, and their callers | Rename only what section 4 records the meaning of: the parameter readers, `fn_800797D4`, the class table and instances (`fn_80078994`, `fn_800789DC`, `fn_80078B10`, `fn_80078C58`, `fn_80078CE0`), the message queue (`fn_8007D404`, `fn_8007D4F4`, `fn_8007D7C4`, `fn_8007C910`), the entity links (`fn_8007CF00`, `fn_8007D070`), `fn_80082AFC` and `fn_8011CA74`. Use C names kept `extern "C"`, as [`ai.md`](ai.md) row 14 did, so nothing needs mangling; repoint the docs and `tools/` docstrings that cite them, and the rest keep `fn_`. Then change the story bullet in [`workflow.md`](workflow.md) to "Story mode is mapped" |
+| 26 | Rename pass | the helpers section 4 documents | rows 3-5, 22 and 24's units, and their callers | Done. Names (`Script_*`, `ScriptClass_Find`, `Profile_Get`) only where section 4 records what a function does; the rest keep `fn_`, among them `fn_80078FDC` (its slot-3 call is a guess), `fn_80078E28` and the command files' other helpers. Symbols stay `extern "C"`; `Script_TriggerEntityR` in `Game/fn_8020C28C.cpp` is an `__asm__` alias of `Script_TriggerEntity` |
 
 Out of scope: `Game/handlers/feonline.cpp` (online only), the memory-card I/O from 0x8011F2B0, the APT glue, the cut file's head 0x800520CC-0x80057AE8 and `fn_80058C2C` (the next file's, with `Game/fn_80058C94.cpp`), other entity code the classes call (unless a row needs a callee's meaning), and third-party code.

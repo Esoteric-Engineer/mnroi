@@ -76,7 +76,7 @@ void fn_8042AC7C(Text *text, unsigned int color);
 void fn_8042AC20(Text *text, float x, float y);
 void fn_800FEB38(Text *text, int a, int b, float c, int d, int e, int f, int g);
 void fn_80426DF0(Text *text);
-void fn_8007CF00(cScript *self, int handle, int value);
+void Script_LinkEntity(cScript *self, int handle, int value);
 void fn_80100C08(Text *text, int a);
 void fn_8042E894(Text *text, int a);
 char *fn_802124A4(cHelpText *self);
@@ -86,7 +86,7 @@ int fn_800FE284(int a);
 void fn_80426E88(Text *text, int a);
 void fn_80101188(Text *text, float a);
 void fn_80426D90(Text *text);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
 void fn_800FE7E0(Text *text, int inChrg);
 float fn_80212540(cCountDown *self);
 int fn_80212588(cCountDown *self);
@@ -102,14 +102,14 @@ void fn_80086410(int actor);
 void fn_80428EEC(void *p, int v);
 void fn_801B5BA8(void *list, int capacity, float grow);
 void fn_801B5C74(void *list, int inChrg);
-char *fn_800794FC(cScript *self, unsigned int i);
-float fn_8007935C(cScript *self, unsigned int i);
-int fn_80079068(cScript *self, unsigned int i);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
+char *Script_GetParamString(cScript *self, unsigned int i);
+float Script_GetParamFloat(cScript *self, unsigned int i);
+int Script_GetParamInt(cScript *self, unsigned int i);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
 int fn_804425F8(void *ev);
-int fn_800797D4(cScript *self);
+int Script_GetOwner(cScript *self);
 int fn_80212628(cCountDown *self);
-void fn_80082AFC(void *ev, int a, int b, int c, float d, float e, float f, float g);
+void Script_TriggerEntity(void *ev, int a, int b, int c, float d, float e, float f, float g);
 
 void fn_80211494(register cEndMission *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
@@ -229,7 +229,7 @@ void fn_80211ABC(register cHelpText *self) // slot 3
 
 void fn_80211AFC(register cHelpText *self) // slot 4
 {
-    fn_8007CF00(self, fn_80080B34(), 0);
+    Script_LinkEntity(self, fn_80080B34(), 0);
     if (self->text == 0) {
         self->text = new Text("THIS IS HELP TEXT.", lbl_8066C76C, lbl_8066C770, 0xFFD6AB3A, 0x200);
         if (self->text) {
@@ -252,7 +252,7 @@ void fn_80211BB4(register cHelpText *self, int a, int b, int kind, float x, floa
             fn_80101188(self->text, 20.0f);
             fn_80426D90(self->text);
             self->shown = 1;
-            fn_8007D404(self, 120.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 120.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
     } else if (self->text) {
         fn_80426DF0(self->text);
@@ -303,8 +303,8 @@ void fn_80211E4C(register cCountDown *self) // slot 5
     self->started = 1;
     fn_80131654();
     fn_801316BC(self->ms);
-    fn_8007D404(self, 1.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
-    fn_8007CF00(self, fn_80080B34(), 0);
+    Script_QueueMessage(self, 1.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_LinkEntity(self, fn_80080B34(), 0);
 }
 
 void fn_80211F90(register cCountDown *self, int h, int other, int c, int d, float e, int value) // slot 22
@@ -324,7 +324,7 @@ void fn_80211FF8(register cCountDown *self, int a, int b, int kind, float x, flo
         self->started = 1;
         fn_80131654();
         fn_801316BC(self->ms);
-        fn_8007D404(self, 1.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 1.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 7:
         fn_80131688();
@@ -336,7 +336,7 @@ void fn_80211FF8(register cCountDown *self, int a, int b, int kind, float x, flo
             self->unk30 = 1;
             self->started = !self->started;
         } else if (self->unk30) {
-            fn_8007D404(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             self->started = !self->started;
         }
         break;
@@ -359,12 +359,12 @@ void fn_8021219C(register cCountDown *self, unsigned char kind, float a, float b
 
                 fn_80086410(fn_8007C034(ev));
                 fn_8046B6C8(target, fn_802125E0(self));
-                fn_80082AFC(target, fn_804425F8(target), fn_800797D4(self), fn_80212628(self), 0.0f, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(target, fn_804425F8(target), Script_GetOwner(self), fn_80212628(self), 0.0f, 0.0f, 0.0f, 0.0f);
             } else {
                 fn_80081470("TOOMUCHTIME");
             }
         } else {
-            fn_8007D404(self, 1.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 1.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     }
@@ -393,12 +393,12 @@ cScript *fn_80212408(register cEndMission *self)
 
 char *fn_8021245C(register cEndMission *self)
 {
-    return fn_800794FC(self, 0);
+    return Script_GetParamString(self, 0);
 }
 
 char *fn_802124A4(register cHelpText *self)
 {
-    return fn_800794FC(self, 0);
+    return Script_GetParamString(self, 0);
 }
 
 cScript *fn_802124EC(register cCountDown *self)
@@ -408,22 +408,22 @@ cScript *fn_802124EC(register cCountDown *self)
 
 float fn_80212540(register cCountDown *self)
 {
-    return fn_8007935C(self, 0);
+    return Script_GetParamFloat(self, 0);
 }
 
 int fn_80212588(register cCountDown *self)
 {
-    return fn_80079068(self, 1) != 0;
+    return Script_GetParamInt(self, 1) != 0;
 }
 
 unsigned int fn_802125E0(register cCountDown *self)
 {
-    return fn_800791C8(self, 2);
+    return Script_GetParamUInt(self, 2);
 }
 
 int fn_80212628(register cCountDown *self)
 {
-    return fn_80079068(self, 3);
+    return Script_GetParamInt(self, 3);
 }
 
 }

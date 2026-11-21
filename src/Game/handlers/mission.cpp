@@ -173,7 +173,7 @@ AptObject clashMission_SetUpSpecialMission()
 
 extern "C" {
 void fn_8012D400(int a);
-int fn_8011CA74();
+int Profile_Get();
 void fn_8011ED0C(int a);
 void fn_8011ED50(int a);
 void fn_80432AF8(void *level);
@@ -194,7 +194,7 @@ extern char lbl_8052F060[]; // level object
 void clashMission_Start()
 {
     fn_8012D400(0);
-    fn_8011ED0C(fn_8011CA74());
+    fn_8011ED0C(Profile_Get());
     fn_80432AF8(lbl_8052F060);
 }
 
@@ -208,7 +208,7 @@ void clashMission_StartNewGame()
 {
     fn_800876D4(lbl_8054ED80);
     fn_8012D400(0);
-    fn_8011ED0C(fn_8011CA74());
+    fn_8011ED0C(Profile_Get());
     fn_80432AF8(lbl_8052F060);
 }
 
@@ -246,7 +246,7 @@ int clashMission_IsEndOfGame()
 
 void clashMission_CompleteMission(int index)
 {
-    fn_8011ED50(fn_8011CA74());
+    fn_8011ED50(Profile_Get());
     void *rec = 0;
     if (fn_8042D444(lbl_8054ED80)) {
         rec = fn_80088374(lbl_8054ED80, index);
@@ -364,7 +364,7 @@ void clashMission_StartLevel(String name)
         fn_800944C0(&lbl_80552110, lbl_80491B88, 0);
     }
     lbl_80552110.unk61C = 1;
-    fn_8011ED0C(fn_8011CA74());
+    fn_8011ED0C(Profile_Get());
     fn_80432AF8(lbl_8052F060);
 }
 

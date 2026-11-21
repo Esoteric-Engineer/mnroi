@@ -17,7 +17,7 @@ extern char lbl_805723F4[];
 extern "C" {
 
 void fn_80435238(void *p, int v);
-int fn_80079068(cScript *self, unsigned int i);
+int Script_GetParamInt(cScript *self, unsigned int i);
 int fn_802128E0(cSoundEvent *self);
 int fn_80212928(cSoundEvent *self);
 
@@ -54,12 +54,12 @@ cScript *fn_8021288C(register cSoundEvent *self)
 
 int fn_802128E0(register cSoundEvent *self)
 {
-    return fn_80079068(self, 0);
+    return Script_GetParamInt(self, 0);
 }
 
 int fn_80212928(register cSoundEvent *self)
 {
-    return fn_80079068(self, 1);
+    return Script_GetParamInt(self, 1);
 }
 
 }

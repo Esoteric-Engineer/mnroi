@@ -1,4 +1,4 @@
-// The save profile (singleton fn_8011CA74) and the save buffers it serializes into; docs/story.md row 3.
+// The save profile (singleton Profile_Get) and the save buffers it serializes into; docs/story.md row 3.
 // Owns .rodata 0x804993D0-0x80499430; dtk's lbl_80499378 and lbl_80499428 are split at its edges.
 
 typedef struct SaveBuffer
@@ -231,7 +231,7 @@ extern "C" void fn_8011CA24(register Profile *self)
     fn_8011C5B0(&lbl_8066BE20->buf1, 0x280);
 }
 
-extern "C" Profile *fn_8011CA74(void)
+extern "C" Profile *Profile_Get(void)
 {
     if (!lbl_8066BE20) {
         lbl_8066BE20 = new Profile;

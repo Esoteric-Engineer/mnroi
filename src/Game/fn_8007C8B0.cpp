@@ -52,7 +52,7 @@ void fn_8007E0C0(ScriptInst *t, unsigned char kind, float a, float b, float c, f
 void fn_8007DB54(ScriptMsg *e);
 void fn_8007DFC4();
 
-int fn_8007C910()
+int Script_DeliverMessages()
 {
     ScriptMsg *e;
 
@@ -77,7 +77,7 @@ struct ScriptEntity {
     void *script; // +0x14C
 };
 
-void *fn_800789DC(char *name, int init);
+void *Script_Create(char *name, int init);
 
 int fn_8007CA10(ScriptEntity *ent, ScriptProp *prop, int x)
 {
@@ -85,7 +85,7 @@ int fn_8007CA10(ScriptEntity *ent, ScriptProp *prop, int x)
 
     switch (prop->type) {
     case 0x10:
-        script = fn_800789DC(prop->name, 0);
+        script = Script_Create(prop->name, 0);
         if (script == 0) {
             ent->script = 0;
             return 0;
@@ -223,7 +223,7 @@ void fn_8007CE84(NodeEnt *ent)
     }
 }
 
-int fn_8007CF00(register NodeScript *script, int handle, int value)
+int Script_LinkEntity(register NodeScript *script, int handle, int value)
 {
     if (handle == 0)
         return 0;
@@ -250,7 +250,7 @@ int fn_8007CF94(register NodeScript *script, NodeEnt *ent, int value)
     return 1;
 }
 
-int fn_8007D070(register NodeScript *script, int handle)
+int Script_UnlinkEntity(register NodeScript *script, int handle)
 {
     if (handle == 0)
         return 0;
@@ -340,12 +340,12 @@ unsigned char fn_8007DB7C();
 int fn_8007DC0C(register int idx);
 int fn_8007D594(register ScriptInst *target, unsigned int time, unsigned char kind, float a, float b, float c, float d, int e);
 
-int fn_8007D404(register ScriptInst *target, float delay, unsigned char kind, float a, float b, float c, float d, int e)
+int Script_QueueMessage(register ScriptInst *target, float delay, unsigned char kind, float a, float b, float c, float d, int e)
 {
     return fn_8007D594(target, fn_8042EFF8(lbl_80593BE8) + (unsigned int)(delay * 1000.0f), kind, a, b, c, d, e);
 }
 
-int fn_8007D4F4(register ScriptInst *target, unsigned int delay, unsigned char kind, float a, float b, float c, float d, int e)
+int Script_QueueMessageMs(register ScriptInst *target, unsigned int delay, unsigned char kind, float a, float b, float c, float d, int e)
 {
     return fn_8007D594(target, fn_8042EFF8(lbl_80593BE8) + delay, kind, a, b, c, d, e);
 }
@@ -399,7 +399,7 @@ int fn_8007D594(register ScriptInst *target, unsigned int time, unsigned char ki
     return 1;
 }
 
-int fn_8007D7C4(register ScriptInst *target, unsigned char kind)
+int Script_CancelMessages(register ScriptInst *target, unsigned char kind)
 {
     ScriptMsg *it;
     ScriptMsg *next;

@@ -194,7 +194,7 @@ extern int lbl_8066C72C;
 extern int lbl_8066C730;
 
 extern "C" {
-int fn_800797D4(cScript *self);
+int Script_GetOwner(cScript *self);
 void fn_8046BBA0(void *ev, int x);
 void fn_8046B5A8(void *ev, int x);
 void fn_8046B6C8(void *ev, int x);
@@ -215,7 +215,7 @@ void fn_8007A5DC(int h);
 void fn_8007A658(int h);
 void fn_8007A818(int h, int node);
 void fn_8007D8B0(cScript *self);
-void fn_8007D404(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
+void Script_QueueMessage(cScript *self, float seconds, int kind, float a, float b, float c, float d, int e);
 int fn_801F36E0(cActorWalk *self);
 int fn_801F3724(cActorWalk *self);
 int fn_801F376C(cActorWalk *self);
@@ -244,7 +244,7 @@ int fn_800861EC(int actor);
 void fn_8007BA24(int h, int state);
 void fn_8007B0EC(int h, int a, int b, int c);
 int fn_80171F8C(void);
-void fn_80082AFC(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
+void Script_TriggerEntity(void *ev, int h, int owner, int kind, float a, float b, float c, float d);
 int fn_801F3C58(cSpawnPeon *self);
 int fn_801F3CE4(cSpawnPeon *self);
 int fn_801F3D2C(cSpawnPeon *self);
@@ -273,7 +273,7 @@ int fn_80081E6C(void *ev);
 int fn_8046C8FC(void *ev);
 float fn_804290F8(Vector *a, Vector *b);
 void fn_8007AC68(int h, int target, int c);
-int fn_8007CF00(cScript *script, int handle, int value);
+int Script_LinkEntity(cScript *script, int handle, int value);
 void fn_8007A958(int h, int target);
 void fn_8046B5F0(void *ev, int x);
 int fn_80080EFC(void *ev);
@@ -343,7 +343,7 @@ unsigned int fn_801F489C(cSpawnController *self);
 int fn_801F48E4(cSpawnController *self);
 void fn_801F06BC(cSpawnController *self);
 unsigned int fn_801F0C60(cSpawnController *self, int wave);
-void fn_8007D4F4(cScript *self, int ms, int kind, float a, float b, float c, float d, int e);
+void Script_QueueMessageMs(cScript *self, int ms, int kind, float a, float b, float c, float d, int e);
 int fn_801F49BC(cSpawnController *self);
 int fn_801F4A94(cSpawnController *self);
 int fn_801F4B6C(cSpawnController *self);
@@ -382,7 +382,7 @@ int fn_801F35FC(cActorMoveToPos *self);
 int fn_801F3644(cActorMoveToPos *self);
 void fn_8007B4D8(int h, int v);
 void fn_8007B6E4(int h, int a, int b, int c);
-int fn_8007D7C4(cScript *self, unsigned char kind);
+int Script_CancelMessages(cScript *self, unsigned char kind);
 void *fn_800ACFA8(int h);
 int fn_8007AD0C(int h, int what, int at);
 unsigned int fn_801F55FC(cAIRangedAttacker *self);
@@ -450,10 +450,10 @@ unsigned int fn_801F6170(cTemporaryAIPossession *self);
 float fn_801F61B8(cTemporaryAIPossession *self);
 float fn_801F6254(cAISetTeleportDistance *self);
 float fn_801F629C(cAISetTeleportDistance *self);
-unsigned int fn_800791C8(cScript *self, unsigned int i);
-int fn_80079068(cScript *self, unsigned int i);
-float fn_8007935C(cScript *self, unsigned int i);
-char *fn_800794FC(cScript *self, unsigned int i);
+unsigned int Script_GetParamUInt(cScript *self, unsigned int i);
+int Script_GetParamInt(cScript *self, unsigned int i);
+float Script_GetParamFloat(cScript *self, unsigned int i);
+char *Script_GetParamString(cScript *self, unsigned int i);
 
 cScript *fn_801EAA38(register cPathnodeToggle *self)
 {
@@ -469,7 +469,7 @@ void fn_801EAAB4(register cPathnodeToggle *self) // slot 4
 {
     char ev[8];
 
-    fn_8046BBA0(ev, fn_800797D4(self));
+    fn_8046BBA0(ev, Script_GetOwner(self));
     if (!fn_801F3394(self) || !self->on) {
         self->on = 0;
         fn_80081208(ev, 0);
@@ -480,7 +480,7 @@ void fn_801EAB34(register cPathnodeToggle *self, int a, int b, int kind, float x
 {
     char ev[8];
 
-    fn_8046BBA0(ev, fn_800797D4(self));
+    fn_8046BBA0(ev, Script_GetOwner(self));
     if (self->on)
         fn_80081208(ev, 0);
     else
@@ -601,12 +601,12 @@ float fn_801EB16C(register cActorWalk *self, int h, int node, int value) // slot
     if (fn_801F38AC(self)) {
         fn_8007D8B0(self);
         char ev[8];
-        fn_8046B5A8(ev, fn_800797D4(self));
+        fn_8046B5A8(ev, Script_GetOwner(self));
         fn_80082F30(ev);
         return -1.0f;
     }
     if (fn_801F380C(self) > 0.0f) {
-        fn_8007D404(self, fn_801F380C(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_801F380C(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         return -1.0f;
     }
     fn_801EB508(self, self->node);
@@ -748,20 +748,20 @@ void fn_801EBA4C(register cActorControlState *self) // slot 5
 {
     if (fn_801F3BBC(self) > 0) {
         if (fn_801F3BBC(self) == 1)
-            fn_8007BA24(fn_800797D4(self), 0);
+            fn_8007BA24(Script_GetOwner(self), 0);
         else if (fn_801F3BBC(self) == 2)
-            fn_8007BA24(fn_800797D4(self), 1);
+            fn_8007BA24(Script_GetOwner(self), 1);
         else if (fn_801F3BBC(self) == 3)
-            fn_8007BA24(fn_800797D4(self), 2);
+            fn_8007BA24(Script_GetOwner(self), 2);
         else if (fn_801F3BBC(self) == 4)
-            fn_8007BA24(fn_800797D4(self), 3);
+            fn_8007BA24(Script_GetOwner(self), 3);
         else if (fn_801F3BBC(self) == 5)
-            fn_8007BA24(fn_800797D4(self), 4);
+            fn_8007BA24(Script_GetOwner(self), 4);
         return;
     }
     if (!fn_801F3B74(self)) {
         char ev[8];
-        fn_8046B5A8(ev, fn_800797D4(self));
+        fn_8046B5A8(ev, Script_GetOwner(self));
         fn_8007A448(fn_804425F8(ev));
         fn_8007B0EC(fn_801F3AE8(self), fn_801F3B2C(self), 0, 1);
     }
@@ -773,14 +773,14 @@ void fn_801EBBF4(register cActorControlState *self, int a, int b, int kind, floa
     case 0:
         if (fn_801F3B74(self) == 1) {
             char ev[8];
-            fn_8046B5A8(ev, fn_800797D4(self));
+            fn_8046B5A8(ev, Script_GetOwner(self));
             fn_8007A448(fn_804425F8(ev));
             fn_8007B0EC(fn_801F3AE8(self), fn_801F3B2C(self), 0, 1);
         }
         break;
     case 7: {
         char ev[8];
-        fn_8046B5A8(ev, fn_800797D4(self));
+        fn_8046B5A8(ev, Script_GetOwner(self));
         fn_8007A4FC(fn_804425F8(ev));
         break;
     }
@@ -827,20 +827,20 @@ void fn_801EBDEC(register cSpawnPeon *self) // slot 5
     if (!fn_801F3DBC(self)) {
         self->unk2C = 1;
         if (fn_801F3EA4(self) < 0.0f)
-            fn_8007D404(self, fn_80171F8C() * 4.6566128730773926e-10f * fn_801F3EA4(self) * -1.0f, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_80171F8C() * 4.6566128730773926e-10f * fn_801F3EA4(self) * -1.0f, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         else
-            fn_8007D404(self, fn_801F3EA4(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_801F3EA4(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     }
 }
 
 int fn_801EBFA4(register cSpawnPeon *self, int h, int value) // slot 47
 {
     if (self->count < fn_801F3D2C(self)) {
-        fn_8007D404(self, fn_801F3EA4(self) < 0.0f ? -fn_801F3EA4(self) : fn_801F3EA4(self), 0x14, (float)(unsigned int)h, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, fn_801F3EA4(self) < 0.0f ? -fn_801F3EA4(self) : fn_801F3EA4(self), 0x14, (float)(unsigned int)h, 0.0f, 0.0f, 0.0f, 0);
     } else if (self->unk54 == fn_801F3D2C(self) && !self->unk34) {
         char ev[8];
         fn_8046B6C8(ev, fn_801F3E14(self));
-        fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), fn_801F3E5C(self), 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(ev, fn_804425F8(ev), Script_GetOwner(self), fn_801F3E5C(self), 0.0f, 0.0f, 0.0f, 0.0f);
         self->unk34 = 1;
     }
     return 1;
@@ -856,7 +856,7 @@ void fn_801EC148(register cSpawnPeon *self, int h, int other, int a, int b, floa
     if (flags & 0x2000000)
         special = 1;
     if (fn_801F3D2C(self) == 1 && !special)
-        fn_8007D404(self, 4.0f, 0x32, 0.0f, 0.0f, 0.0f, 0.0f, h);
+        Script_QueueMessage(self, 4.0f, 0x32, 0.0f, 0.0f, 0.0f, 0.0f, h);
     if (h == fn_801F3F7C(self)) {
         if (fn_801F3FC4(self) == 0)
             fn_8007A4FC(fn_804425F8(&self->unk40));
@@ -869,7 +869,7 @@ void fn_801EC148(register cSpawnPeon *self, int h, int other, int a, int b, floa
         if (self->unk54 == fn_801F3D2C(self) && !self->unk34) {
             char done[8];
             fn_8046B6C8(done, fn_801F3E14(self));
-            fn_80082AFC(done, fn_804425F8(done), fn_800797D4(self), fn_801F3E5C(self), 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(done, fn_804425F8(done), Script_GetOwner(self), fn_801F3E5C(self), 0.0f, 0.0f, 0.0f, 0.0f);
             self->unk34 = 1;
         }
         if (fn_801F400C(self)) {
@@ -907,12 +907,12 @@ void fn_801EC148(register cSpawnPeon *self, int h, int other, int a, int b, floa
             }
             char report[8];
             fn_8046B6C8(report, fn_801F400C(self));
-            fn_80082AFC(report, fn_804425F8(report), fn_800797D4(self), 0xc, (float)kind, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(report, fn_804425F8(report), Script_GetOwner(self), 0xc, (float)kind, 0.0f, 0.0f, 0.0f);
         }
         fn_8007C034S(ev)->fn_800B1FA8(0xfa0);
         char died[8];
         fn_8046B6C8(died, fn_801F3EEC(self));
-        fn_80082AFC(died, fn_804425F8(died), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(died, fn_804425F8(died), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
         lbl_8066C728++;
         if (lbl_8066C730)
             fn_80131724(lbl_8066C728, lbl_8066C72C);
@@ -930,9 +930,9 @@ void fn_801EC6D4(register cSpawnPeon *self, unsigned char kind, float a, float b
             if (self->unk48 < self->max || a != 0.0f)
                 fn_801ED3A4(self, (unsigned int)a);
             if (self->unk48 < self->max)
-                fn_8007D404(self, 5.0f, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, 5.0f, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         } else if (self->unk58 <= 4) {
-            fn_8007D404(self, 5.0f, 0x14, a, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 5.0f, 0x14, a, 0.0f, 0.0f, 0.0f, 0);
             self->unk58++;
         } else {
             self->count++;
@@ -940,18 +940,18 @@ void fn_801EC6D4(register cSpawnPeon *self, unsigned char kind, float a, float b
             if (self->unk54 == fn_801F3D2C(self) && !self->unk34) {
                 char done[8];
                 fn_8046B6C8(done, fn_801F3E14(self));
-                fn_80082AFC(done, fn_804425F8(done), fn_800797D4(self), fn_801F3E5C(self), 0.0f, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(done, fn_804425F8(done), Script_GetOwner(self), fn_801F3E5C(self), 0.0f, 0.0f, 0.0f, 0.0f);
                 self->unk34 = 1;
             }
             if (fn_801F400C(self)) {
                 int kind = 4;
                 char report[8];
                 fn_8046B6C8(report, fn_801F400C(self));
-                fn_80082AFC(report, fn_804425F8(report), fn_800797D4(self), 0xc, (float)kind, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(report, fn_804425F8(report), Script_GetOwner(self), 0xc, (float)kind, 0.0f, 0.0f, 0.0f);
             }
             char died[8];
             fn_8046B6C8(died, fn_801F3EEC(self));
-            fn_80082AFC(died, fn_804425F8(died), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(died, fn_804425F8(died), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             self->unk58 = 0;
         }
         break;
@@ -1005,7 +1005,7 @@ float fn_801ECD2C(register cSpawnPeon *self, int h, int word, int value) // slot
         fn_8046B6C8(target, fn_801F3F7C(self));
         Vector at;
         Vector to;
-        fn_8007CF00(self, fn_801F3F7C(self), 0);
+        Script_LinkEntity(self, fn_801F3F7C(self), 0);
         fn_80082440(&self->unk40, &at);
         fn_80082440(target, &to);
         char ev[8];
@@ -1034,9 +1034,9 @@ void fn_801ECF7C(register cSpawnPeon *self, int a, int b, int kind, float x, flo
     case 2:
         if (!self->unk2C && fn_801F3DBC(self)) {
             if (fn_801F3EA4(self) < 0.0f)
-                fn_8007D404(self, fn_80171F8C() * 4.6566128730773926e-10f * fn_801F3EA4(self) * -1.0f, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, fn_80171F8C() * 4.6566128730773926e-10f * fn_801F3EA4(self) * -1.0f, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             else
-                fn_8007D404(self, fn_801F3EA4(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, fn_801F3EA4(self), 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             self->unk2C = 1;
         }
         break;
@@ -1054,7 +1054,7 @@ void fn_801ECF7C(register cSpawnPeon *self, int a, int b, int kind, float x, flo
             self->unk54 = 0;
             self->unk48 = 0;
             fn_8007D8B0(self);
-            fn_8007D404(self, 1.5f, 0x14, (float)self->unk84, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 1.5f, 0x14, (float)self->unk84, 0.0f, 0.0f, 0.0f, 0);
             break;
         }
         break;
@@ -1103,18 +1103,18 @@ void fn_801ED3A4(register cSpawnPeon *self, unsigned int h)
             if (self->unk54 == fn_801F3D2C(self) && !self->unk34) {
                 char done[8];
                 fn_8046B6C8(done, fn_801F3E14(self));
-                fn_80082AFC(done, fn_804425F8(done), fn_800797D4(self), fn_801F3E5C(self), 0.0f, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(done, fn_804425F8(done), Script_GetOwner(self), fn_801F3E5C(self), 0.0f, 0.0f, 0.0f, 0.0f);
                 self->unk34 = 1;
             }
             if (fn_801F400C(self)) {
                 int kind = 4;
                 char report[8];
                 fn_8046B6C8(report, fn_801F400C(self));
-                fn_80082AFC(report, fn_804425F8(report), fn_800797D4(self), 0xc, (float)kind, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(report, fn_804425F8(report), Script_GetOwner(self), 0xc, (float)kind, 0.0f, 0.0f, 0.0f);
             }
             char died[8];
             fn_8046B6C8(died, fn_801F3EEC(self));
-            fn_80082AFC(died, fn_804425F8(died), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(died, fn_804425F8(died), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
             return;
         }
         lbl_8066C72C++;
@@ -1124,7 +1124,7 @@ void fn_801ED3A4(register cSpawnPeon *self, unsigned int h)
         if (self->unk88) {
             char e[8];
             fn_8046B6C8(e, self->unk88);
-            fn_80082AFC(e, self->unk88, fn_800797D4(self), 999, (float)h, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(e, self->unk88, Script_GetOwner(self), 999, (float)h, 0.0f, 0.0f, 0.0f);
         }
         switch (self->unk48) {
         case 0:
@@ -1182,7 +1182,7 @@ void fn_801ED3A4(register cSpawnPeon *self, unsigned int h)
                 self->unk8C = fn_80393D0C(peon, "peonTeleport", 0xff, 0xff);
         }
         fn_8046B710(&self->unk40, h);
-        fn_8007CF00(self, h, 0);
+        Script_LinkEntity(self, h, 0);
         self->unk48++;
     }
     char e[8];
@@ -1209,7 +1209,7 @@ void fn_801ED3A4(register cSpawnPeon *self, unsigned int h)
     }
     self->unk28 = 0;
     self->count++;
-    fn_8007D404(self, 2.0f, 0x28, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 0x28, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     if (fn_801F4054(self))
         fn_801EDBAC(self, h);
 }
@@ -1256,7 +1256,7 @@ void fn_801EDF64(register cSpawnGroup *self) // slot 3
 #define ADD_SPAWNER(get, i)                         \
     if (get(self)) {                                \
         self->count++;                              \
-        fn_8007CF00(self, get(self), 0);            \
+        Script_LinkEntity(self, get(self), 0);            \
         fn_8046B710(&self->spawners[i], get(self)); \
     }
 
@@ -1303,7 +1303,7 @@ void fn_801EE398(register cSpawnGroup *self, int h, int other, int value) // slo
 
 void fn_801EE410(register cSpawnGroup *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
-    if (b == fn_800797D4(self))
+    if (b == Script_GetOwner(self))
         return;
     switch (kind) {
     case 7:
@@ -1316,7 +1316,7 @@ void fn_801EE410(register cSpawnGroup *self, int a, int b, int kind, float x, fl
         if (self->unk70 && self->unk74) {
             char ev[8];
             fn_8046B6C8(ev, b);
-            fn_80082AFC(ev, b, fn_800797D4(self), 999, 0.0f, 0.0f, 0.0f, 999.0f);
+            Script_TriggerEntity(ev, b, Script_GetOwner(self), 999, 0.0f, 0.0f, 0.0f, 999.0f);
             for (int i = 0; i < self->count; i++)
                 fn_801EE73C(self, i, 1, 0);
         }
@@ -1325,8 +1325,8 @@ void fn_801EE410(register cSpawnGroup *self, int a, int b, int kind, float x, fl
         if (!fn_801F4798(self)) {
             char ev[8];
             fn_8046B6C8(ev, (unsigned int)x);
-            fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), 999, 0.0f, 0.0f, 0.0f, 888.0f);
-            ((cScriptV *)self)->s14(fn_800797D4(self), fn_80080B34(), 0);
+            Script_TriggerEntity(ev, fn_804425F8(ev), Script_GetOwner(self), 999, 0.0f, 0.0f, 0.0f, 888.0f);
+            ((cScriptV *)self)->s14(Script_GetOwner(self), fn_80080B34(), 0);
         }
         break;
     case 999:
@@ -1340,7 +1340,7 @@ void fn_801EE410(register cSpawnGroup *self, int a, int b, int kind, float x, fl
 
 #define SPAWNER_SEND(i)                                                                                         \
     case i:                                                                                                     \
-        fn_80082AFC(&self->spawners[i], fn_804425F8(&self->spawners[i]), fn_800797D4(self), kind, on ? 1.0f : 0.0f, \
+        Script_TriggerEntity(&self->spawners[i], fn_804425F8(&self->spawners[i]), Script_GetOwner(self), kind, on ? 1.0f : 0.0f, \
                     0.0f, 0.0f, 999.0f);                                                                        \
         break;
 
@@ -1393,7 +1393,7 @@ void fn_801EEB6C(register cSpawnController *self) // slot 3
 }
 
 #define LINK_SPAWNER(get)                  \
-    if (fn_8007CF00(self, get(self), 0)) \
+    if (Script_LinkEntity(self, get(self), 0)) \
         self->count++;
 
 void fn_801EEC84(register cSpawnController *self) // slot 4
@@ -1452,14 +1452,14 @@ void fn_801EF380(register cSpawnController *self, int h, int other, int value) /
             fn_801F06BC(self);                                                                       \
             if (get(self)) {                                                                         \
                 fn_8046B710((Ref8 *)ev, get(self));                                                  \
-                fn_80082AFC(ev, get(self), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);            \
+                Script_TriggerEntity(ev, get(self), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);            \
             }                                                                                        \
         }                                                                                            \
         break;
 
 void fn_801EF3BC(register cSpawnController *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
-    if (b == fn_800797D4(self))
+    if (b == Script_GetOwner(self))
         return;
     char ev[8];
     fn_8046B530(ev);
@@ -1496,7 +1496,7 @@ void fn_801EF3BC(register cSpawnController *self, int a, int b, int kind, float 
         if (self->unk2C == self->count) {
             char e[8];
             fn_8046B6C8(e, fn_801F489C(self));
-            fn_80082AFC(e, fn_804425F8(e), fn_800797D4(self), fn_801F48E4(self), 0.0f, 0.0f, 0.0f, 0.0f);
+            Script_TriggerEntity(e, fn_804425F8(e), Script_GetOwner(self), fn_801F48E4(self), 0.0f, 0.0f, 0.0f, 0.0f);
             return;
         }
         int r = fn_801EFE8C(self, self->wave, 0, 0);
@@ -1507,7 +1507,7 @@ void fn_801EF3BC(register cSpawnController *self, int a, int b, int kind, float 
         }
         self->wave++;
         self->unk2C += fn_801EFE8C(self, self->wave, 1, 0);
-        fn_8007D404(self, 60.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 60.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
 }
@@ -1519,13 +1519,13 @@ void fn_801EFCFC(register cSpawnController *self, unsigned char kind, float a, f
         self->unk9C = fn_801F0C60(self, self->wave);
         char ev[8];
         fn_8046B6C8(ev, self->unk9C);
-        fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), 2, (float)(unsigned int)fn_800797D4(self), 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(ev, fn_804425F8(ev), Script_GetOwner(self), 2, (float)(unsigned int)Script_GetOwner(self), 0.0f, 0.0f, 0.0f);
         break;
     }
     case 20: {
         char ev[8];
         fn_8046B6C8(ev, fn_801F492C(self));
-        fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), 999, 0.0f, 0.0f, 0.0f, 999.0f);
+        Script_TriggerEntity(ev, fn_804425F8(ev), Script_GetOwner(self), 999, 0.0f, 0.0f, 0.0f, 999.0f);
         self->unk34 = 0;
         break;
     }
@@ -1535,7 +1535,7 @@ void fn_801EFCFC(register cSpawnController *self, unsigned char kind, float a, f
 #define WAVE_SEND(getH, getWave)                                                                                  \
     if (getWave(self) == wave && getH(self) != skip) {                                                            \
         fn_8046B710((Ref8 *)ev, getH(self));                                                                      \
-        fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), on ? 4 : 7, 0.0f, 0.0f, 0.0f, 0.0f);                   \
+        Script_TriggerEntity(ev, fn_804425F8(ev), Script_GetOwner(self), on ? 4 : 7, 0.0f, 0.0f, 0.0f, 0.0f);                   \
         n++;                                                                                                      \
     }
 
@@ -1563,10 +1563,10 @@ int fn_801EFE8C(register cSpawnController *self, int wave, int on, unsigned int 
 void fn_801F06BC(register cSpawnController *self)
 {
     if (self->unk68) {
-        fn_8007D4F4(self, 5000, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessageMs(self, 5000, 0x14, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         return;
     }
-    ((cScriptV *)self)->s23(fn_800797D4(self), 0, 7, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    ((cScriptV *)self)->s23(Script_GetOwner(self), 0, 7, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     if (self->unk98)
         ((cScriptV *)self)->s14(self->unk98, fn_80080B34(), 0);
     self->unk34 = 0;
@@ -1638,19 +1638,19 @@ void fn_801F0E84(register cActorPlayPath *self) // slot 4
 {
     if (fn_801F5508(self))
         return;
-    ((cScriptV *)self)->s23(fn_800797D4(self), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    ((cScriptV *)self)->s23(Script_GetOwner(self), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801F0F48(register cActorPlayPath *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     char ev[8];
-    fn_8046B5A8(ev, fn_800797D4(self));
+    fn_8046B5A8(ev, Script_GetOwner(self));
     char path[8];
-    fn_8046B5F0(path, fn_800797D4(self));
+    fn_8046B5F0(path, Script_GetOwner(self));
     fn_80080F74(path, 0x1000);
     int ms = fn_801F111C(self);
     if (fn_801F5550(self) && ms > 0)
-        fn_8007D4F4(self, ms, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessageMs(self, ms, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801F104C(register cActorPlayPath *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
@@ -1659,7 +1659,7 @@ void fn_801F104C(register cActorPlayPath *self, unsigned char kind, float a, flo
     case 10: {
         int ms = fn_801F111C(self);
         if (fn_801F5550(self) && ms > 0)
-            fn_8007D4F4(self, ms, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessageMs(self, ms, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
     }
@@ -1669,7 +1669,7 @@ int fn_801F111C(register cActorPlayPath *self)
 {
     char ev[8];
 
-    fn_8046B5A8(ev, fn_800797D4(self));
+    fn_8046B5A8(ev, Script_GetOwner(self));
     if (fn_801F5550(self)) {
         fn_800804FC(ev);
         ((VObj *)fn_80081E6C(ev))->s19();
@@ -1700,7 +1700,7 @@ inline int sn_return_decl2(int a) { return a; }
 
 void fn_801F12C4(register cAIRangedAttacker *self) // slot 5
 {
-    fn_8046B710(&self->actor, fn_800797D4(self));
+    fn_8046B710(&self->actor, Script_GetOwner(self));
     fn_8007A448(fn_804425F8(&self->actor));
     fn_8007B4D8(fn_804425F8(&self->actor), 4);
     fn_8007B6E4(fn_804425F8(&self->actor), 0, 0, 0);
@@ -1718,7 +1718,7 @@ void fn_801F12C4(register cAIRangedAttacker *self) // slot 5
         self->active = 1;
     else
         self->active = 0;
-    fn_8007CF00(self, fn_801F55FC(self), 0);
+    Script_LinkEntity(self, fn_801F55FC(self), 0);
     if (fn_801F5644(self)) {
         fn_8046B710(&self->targets[0], fn_801F5644(self));
         self->inRange[0] = 1;
@@ -1763,20 +1763,20 @@ void fn_801F1534(register cAIRangedAttacker *self, int a, int b, int kind, float
             fn_8007AA8C(fn_804425F8(&self->actor), fn_80080B34());
         }
         if (fn_801F5914(self))
-            fn_8007D404(self, 3.0f, 13, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 3.0f, 13, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 6:
         if (!self->unk6C) {
             self->unk6C = 1;
             if (fn_801F57AC(self))
-                fn_8007A818(fn_800797D4(self), self->unk80 + 1);
+                fn_8007A818(Script_GetOwner(self), self->unk80 + 1);
             else
-                fn_8007D404(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                Script_QueueMessage(self, 0.25f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     case 7:
         fn_8007D8B0(self);
-        fn_8007A4FC(fn_800797D4(self));
+        fn_8007A4FC(Script_GetOwner(self));
         break;
     }
 }
@@ -1786,7 +1786,7 @@ float fn_801F17C0(register cAIRangedAttacker *self, int h, int other, int a, int
     if (self->active == 1) {
     } else {
         fn_8007D8B0(self);
-        fn_8007A4FC(fn_800797D4(self));
+        fn_8007A4FC(Script_GetOwner(self));
     }
     return dmg;
 }
@@ -1823,9 +1823,9 @@ void fn_801F1944(register cAIRangedAttacker *self, int h, int other, int value) 
 
 void fn_801F1A44(register cAIRangedAttacker *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
 {
-    fn_8007D7C4(self, 11);
-    fn_8007D7C4(self, 10);
-    fn_8007D7C4(self, 12);
+    Script_CancelMessages(self, 11);
+    Script_CancelMessages(self, 10);
+    Script_CancelMessages(self, 12);
     switch (kind) {
     case 13: {
         Vector at;
@@ -1841,11 +1841,11 @@ void fn_801F1A44(register cAIRangedAttacker *self, unsigned char kind, float a, 
                 fn_8006645CR(*fn_8007C034S(&self->actor), 0);
             fn_8007A4FC(fn_804425F8(&self->actor));
         } else
-            fn_8007D404(self, 1.0f, 13, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 1.0f, 13, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
     case 10:
-        fn_8007D404(self, 0.25f, 11, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 0.25f, 11, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     case 11:
         fn_801F1F08(self);
@@ -1853,10 +1853,10 @@ void fn_801F1A44(register cAIRangedAttacker *self, unsigned char kind, float a, 
     case 12:
         fn_801F1DF4(self);
         if (self->inRange[0] || self->inRange[1] || self->inRange[2] || self->inRange[3] || self->inRange[4])
-            fn_8007D404(self, 0.25f, 11, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 0.25f, 11, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         else {
             fn_8007B0EC(fn_804425F8(&self->actor), 0x14a, 0, 0);
-            fn_8007D404(self, 8.0f, 12, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, 8.0f, 12, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         }
         break;
     }
@@ -1864,7 +1864,7 @@ void fn_801F1A44(register cAIRangedAttacker *self, unsigned char kind, float a, 
 
 void fn_801F1D78(register cAIRangedAttacker *self, int h, int other, int value) // slot 38
 {
-    fn_8007D404(self, 2.0f, 11, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, 2.0f, 11, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801F1DF4(register cAIRangedAttacker *self)
@@ -1901,7 +1901,7 @@ void fn_801F1F08(register cAIRangedAttacker *self)
         return;
     } else if (fn_801F583C(self) == 1) {
         fn_8007B0EC(fn_804425F8(&self->actor), 0x13d, 0, 1);
-        fn_8007D404(self, 8.0f, 12, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 8.0f, 12, 0.0f, 0.0f, 0.0f, 0.0f, 0);
     } else {
         fn_8007D8B0(self);
         self->active = 0;
@@ -1919,7 +1919,7 @@ void fn_801F2160(register cAIRangedAttacker *self, int h, int other, int a, int 
 
 void fn_801F21DC(register cBossRingOut *self) // slot 5
 {
-    fn_80133948(fn_800797D4(self));
+    fn_80133948(Script_GetOwner(self));
 }
 
 void fn_801F2228(register cBossRingOut *self, int h, int other, int value) // slot 15
@@ -1959,7 +1959,7 @@ void fn_801F243C(register cActorSetHealth *self, unsigned char kind, float a, fl
         char ev[8];
         fn_8046B5A8(ev, fn_80080B34());
         fn_8007C594(ev, 15.0f, 0, 0, 0, 2);
-        fn_8007D404(self, 5.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 5.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         break;
     }
     }
@@ -1985,11 +1985,11 @@ void fn_801F25B4(register cActorSetHealth *self)
     else if (fn_801F5A94(self)) {
         fn_8046B710((Ref8 *)ev, fn_80080B34());
         if (fn_801F5AEC(self)) {
-            fn_8007D404(self, fn_801F5B44(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+            Script_QueueMessage(self, fn_801F5B44(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
             return;
         }
     } else
-        fn_8046B710((Ref8 *)ev, fn_800797D4(self));
+        fn_8046B710((Ref8 *)ev, Script_GetOwner(self));
     fn_8007C114(ev, fn_801F5A04(self) * fn_8007C244(ev));
     fn_8007C314(ev, fn_801F5A04(self) * fn_8007C2AC(ev));
 }
@@ -2009,7 +2009,7 @@ void fn_801F2754(register cPlayerBonusMissions *self) // slot 4
         return;
     }
     if (fn_801F5C28(self))
-        fn_8007CF00(self, fn_80080B34(), 0);
+        Script_LinkEntity(self, fn_80080B34(), 0);
     fn_8046B5A8(ev, fn_80080B34());
     if (fn_801F5D10(self))
         fn_800863AC(fn_8007C034(ev), 0x20000);
@@ -2043,7 +2043,7 @@ void fn_801F2920(register cPlayerBonusMissions *self, int a, int b, int kind, fl
                 fn_801317A0();
                 char ev[8];
                 fn_8046B6C8(ev, fn_801F5DB0(self));
-                fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), fn_801F5DF8(self), 0.0f, 0.0f, 0.0f, 0.0f);
+                Script_TriggerEntity(ev, fn_804425F8(ev), Script_GetOwner(self), fn_801F5DF8(self), 0.0f, 0.0f, 0.0f, 0.0f);
             }
         }
         break;
@@ -2057,7 +2057,7 @@ void fn_801F2920(register cPlayerBonusMissions *self, int a, int b, int kind, fl
 
 void fn_801F2B64(register cGlobalPeonCounter *self) // slot 4
 {
-    fn_8046C9F0(fn_800797D4(self));
+    fn_8046C9F0(Script_GetOwner(self));
 }
 
 void fn_801F2BB0(register cGlobalPeonCounter *self) // slot 5
@@ -2109,7 +2109,7 @@ void fn_801F2DE8(register cAIEnemyVictoryScene *self) // slot 5
     char ev[8];
 
     fn_8046B638(ev, fn_80080B34());
-    fn_8007CF00(self, fn_804425F8(ev), 0);
+    Script_LinkEntity(self, fn_804425F8(ev), 0);
     self->done = 0;
 }
 
@@ -2126,7 +2126,7 @@ int fn_801F2E98(register cAIEnemyVictoryScene *self, int h, int other, int a, in
         fn_8007D8B0(self);
         fn_8007A448(fn_804425F8(ev));
         fn_80070228(fn_8007C034(ev), 0, 0.0f, 0, 0, 0);
-        fn_8007D404(self, 3.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+        Script_QueueMessage(self, 3.0f, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
         return 0;
     }
     return 1;
@@ -2138,7 +2138,7 @@ void fn_801F2FC0(register cAIEnemyVictoryScene *self, unsigned char kind, float 
     case 10: {
         char ev[8];
         fn_8046B6C8(ev, fn_801F60C4(self));
-        fn_80082AFC(ev, fn_804425F8(ev), fn_800797D4(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
+        Script_TriggerEntity(ev, fn_804425F8(ev), Script_GetOwner(self), 0, 0.0f, 0.0f, 0.0f, 0.0f);
     }
     }
 }
@@ -2146,13 +2146,13 @@ void fn_801F2FC0(register cAIEnemyVictoryScene *self, unsigned char kind, float 
 void fn_801F3098(register cTemporaryAIPossession *self) // slot 5
 {
     fn_8046B710(&self->actor, fn_801F6170(self));
-    fn_8007CF00(self, fn_804425F8(&self->actor), 0);
+    Script_LinkEntity(self, fn_804425F8(&self->actor), 0);
 }
 
 void fn_801F310C(register cTemporaryAIPossession *self, int a, int b, int kind, float x, float y, float z, float w, int value) // slot 23
 {
     fn_8007A448(fn_804425F8(&self->actor));
-    fn_8007D404(self, fn_801F61B8(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+    Script_QueueMessage(self, fn_801F61B8(self), 10, 0.0f, 0.0f, 0.0f, 0.0f, 0);
 }
 
 void fn_801F31BC(register cTemporaryAIPossession *self, unsigned char kind, float a, float b, float c, float d, int e) // slot 8
@@ -2166,7 +2166,7 @@ void fn_801F31BC(register cTemporaryAIPossession *self, unsigned char kind, floa
 
 float fn_801F3240(register cTemporaryAIPossession *self, int h, int other, int a, int b, float dmg, int c, int value) // slot 21
 {
-    fn_8007D7C4(self, 10);
+    Script_CancelMessages(self, 10);
     fn_8007A4FC(fn_804425F8(&self->actor));
     return dmg;
 }
@@ -2194,7 +2194,7 @@ void fn_801F3328(register cAISetTeleportDistance *self, int h, int other, int va
         return reader(self, i) != 0;     \
     }
 
-PARAM(int, cPathnodeToggle, fn_801F3394, fn_80079068, 0)
+PARAM(int, cPathnodeToggle, fn_801F3394, Script_GetParamInt, 0)
 
 cScript *fn_801F33DC(register cActorMoveToPos *self)
 {
@@ -2203,16 +2203,16 @@ cScript *fn_801F33DC(register cActorMoveToPos *self)
 
 int fn_801F3430(register cActorMoveToPos *self)
 {
-    return fn_800797D4(self);
+    return Script_GetOwner(self);
 }
 
-FLAG(cActorMoveToPos, fn_801F3474, fn_80079068, 0)
-FLAG(cActorMoveToPos, fn_801F34CC, fn_80079068, 1)
-PARAM(unsigned int, cActorMoveToPos, fn_801F3524, fn_800791C8, 2)
-PARAM(unsigned int, cActorMoveToPos, fn_801F356C, fn_800791C8, 3)
-PARAM(unsigned int, cActorMoveToPos, fn_801F35B4, fn_800791C8, 4)
-PARAM(int, cActorMoveToPos, fn_801F35FC, fn_80079068, 5)
-PARAM(int, cActorMoveToPos, fn_801F3644, fn_80079068, 6)
+FLAG(cActorMoveToPos, fn_801F3474, Script_GetParamInt, 0)
+FLAG(cActorMoveToPos, fn_801F34CC, Script_GetParamInt, 1)
+PARAM(unsigned int, cActorMoveToPos, fn_801F3524, Script_GetParamUInt, 2)
+PARAM(unsigned int, cActorMoveToPos, fn_801F356C, Script_GetParamUInt, 3)
+PARAM(unsigned int, cActorMoveToPos, fn_801F35B4, Script_GetParamUInt, 4)
+PARAM(int, cActorMoveToPos, fn_801F35FC, Script_GetParamInt, 5)
+PARAM(int, cActorMoveToPos, fn_801F3644, Script_GetParamInt, 6)
 
 cScript *fn_801F368C(register cActorWalk *self)
 {
@@ -2221,15 +2221,15 @@ cScript *fn_801F368C(register cActorWalk *self)
 
 int fn_801F36E0(register cActorWalk *self)
 {
-    return fn_800797D4(self);
+    return Script_GetOwner(self);
 }
 
-PARAM(int, cActorWalk, fn_801F3724, fn_80079068, 0)
-PARAM(int, cActorWalk, fn_801F376C, fn_80079068, 1)
-FLAG(cActorWalk, fn_801F37B4, fn_80079068, 2)
-PARAM(float, cActorWalk, fn_801F380C, fn_8007935C, 3)
-FLAG(cActorWalk, fn_801F3854, fn_80079068, 4)
-FLAG(cActorWalk, fn_801F38AC, fn_80079068, 5)
+PARAM(int, cActorWalk, fn_801F3724, Script_GetParamInt, 0)
+PARAM(int, cActorWalk, fn_801F376C, Script_GetParamInt, 1)
+FLAG(cActorWalk, fn_801F37B4, Script_GetParamInt, 2)
+PARAM(float, cActorWalk, fn_801F380C, Script_GetParamFloat, 3)
+FLAG(cActorWalk, fn_801F3854, Script_GetParamInt, 4)
+FLAG(cActorWalk, fn_801F38AC, Script_GetParamInt, 5)
 
 cScript *fn_801F3904(register cActorAIPause *self)
 {
@@ -2238,12 +2238,12 @@ cScript *fn_801F3904(register cActorAIPause *self)
 
 int fn_801F3958(register cActorAIPause *self)
 {
-    return fn_800797D4(self);
+    return Script_GetOwner(self);
 }
 
-PARAM(int, cActorAIPause, fn_801F399C, fn_80079068, 0)
-FLAG(cActorAIPause, fn_801F39E4, fn_80079068, 1)
-FLAG(cActorAIPause, fn_801F3A3C, fn_80079068, 2)
+PARAM(int, cActorAIPause, fn_801F399C, Script_GetParamInt, 0)
+FLAG(cActorAIPause, fn_801F39E4, Script_GetParamInt, 1)
+FLAG(cActorAIPause, fn_801F3A3C, Script_GetParamInt, 2)
 
 cScript *fn_801F3A94(register cActorControlState *self)
 {
@@ -2252,12 +2252,12 @@ cScript *fn_801F3A94(register cActorControlState *self)
 
 int fn_801F3AE8(register cActorControlState *self)
 {
-    return fn_800797D4(self);
+    return Script_GetOwner(self);
 }
 
-PARAM(int, cActorControlState, fn_801F3B2C, fn_80079068, 0)
-PARAM(int, cActorControlState, fn_801F3B74, fn_80079068, 2)
-PARAM(int, cActorControlState, fn_801F3BBC, fn_80079068, 3)
+PARAM(int, cActorControlState, fn_801F3B2C, Script_GetParamInt, 0)
+PARAM(int, cActorControlState, fn_801F3B74, Script_GetParamInt, 2)
+PARAM(int, cActorControlState, fn_801F3BBC, Script_GetParamInt, 3)
 
 cScript *fn_801F3C04(register cSpawnPeon *self)
 {
@@ -2266,129 +2266,129 @@ cScript *fn_801F3C04(register cSpawnPeon *self)
 
 int fn_801F3C58(register cSpawnPeon *self)
 {
-    return fn_800797D4(self);
+    return Script_GetOwner(self);
 }
 
-PARAM(char *, cSpawnPeon, fn_801F3C9C, fn_800794FC, 0)
-PARAM(int, cSpawnPeon, fn_801F3CE4, fn_80079068, 1)
-PARAM(int, cSpawnPeon, fn_801F3D2C, fn_80079068, 2)
-PARAM(unsigned int, cSpawnPeon, fn_801F3D74, fn_800791C8, 3)
-FLAG(cSpawnPeon, fn_801F3DBC, fn_80079068, 4)
-PARAM(unsigned int, cSpawnPeon, fn_801F3E14, fn_800791C8, 5)
-PARAM(int, cSpawnPeon, fn_801F3E5C, fn_80079068, 6)
-PARAM(float, cSpawnPeon, fn_801F3EA4, fn_8007935C, 7)
-PARAM(unsigned int, cSpawnPeon, fn_801F3EEC, fn_800791C8, 8)
-PARAM(unsigned int, cSpawnPeon, fn_801F3F34, fn_800791C8, 9)
-PARAM(unsigned int, cSpawnPeon, fn_801F3F7C, fn_800791C8, 10)
-PARAM(int, cSpawnPeon, fn_801F3FC4, fn_80079068, 11)
-PARAM(unsigned int, cSpawnPeon, fn_801F400C, fn_800791C8, 12)
-FLAG(cSpawnPeon, fn_801F4054, fn_80079068, 13)
-PARAM(float, cSpawnPeon, fn_801F40AC, fn_8007935C, 14)
-PARAM(float, cSpawnPeon, fn_801F40F4, fn_8007935C, 15)
-PARAM(float, cSpawnPeon, fn_801F413C, fn_8007935C, 16)
-PARAM(float, cSpawnPeon, fn_801F4184, fn_8007935C, 17)
-PARAM(float, cSpawnPeon, fn_801F41CC, fn_8007935C, 18)
-PARAM(float, cSpawnPeon, fn_801F4214, fn_8007935C, 19)
-PARAM(float, cSpawnPeon, fn_801F425C, fn_8007935C, 20)
-PARAM(float, cSpawnPeon, fn_801F42A4, fn_8007935C, 21)
-PARAM(float, cSpawnPeon, fn_801F42EC, fn_8007935C, 22)
-PARAM(float, cSpawnPeon, fn_801F4334, fn_8007935C, 23)
-PARAM(float, cSpawnPeon, fn_801F437C, fn_8007935C, 24)
-PARAM(float, cSpawnPeon, fn_801F43C4, fn_8007935C, 25)
-FLAG(cSpawnPeon, fn_801F440C, fn_80079068, 26)
-PARAM(char *, cSpawnPeon, fn_801F4464, fn_800794FC, 27)
+PARAM(char *, cSpawnPeon, fn_801F3C9C, Script_GetParamString, 0)
+PARAM(int, cSpawnPeon, fn_801F3CE4, Script_GetParamInt, 1)
+PARAM(int, cSpawnPeon, fn_801F3D2C, Script_GetParamInt, 2)
+PARAM(unsigned int, cSpawnPeon, fn_801F3D74, Script_GetParamUInt, 3)
+FLAG(cSpawnPeon, fn_801F3DBC, Script_GetParamInt, 4)
+PARAM(unsigned int, cSpawnPeon, fn_801F3E14, Script_GetParamUInt, 5)
+PARAM(int, cSpawnPeon, fn_801F3E5C, Script_GetParamInt, 6)
+PARAM(float, cSpawnPeon, fn_801F3EA4, Script_GetParamFloat, 7)
+PARAM(unsigned int, cSpawnPeon, fn_801F3EEC, Script_GetParamUInt, 8)
+PARAM(unsigned int, cSpawnPeon, fn_801F3F34, Script_GetParamUInt, 9)
+PARAM(unsigned int, cSpawnPeon, fn_801F3F7C, Script_GetParamUInt, 10)
+PARAM(int, cSpawnPeon, fn_801F3FC4, Script_GetParamInt, 11)
+PARAM(unsigned int, cSpawnPeon, fn_801F400C, Script_GetParamUInt, 12)
+FLAG(cSpawnPeon, fn_801F4054, Script_GetParamInt, 13)
+PARAM(float, cSpawnPeon, fn_801F40AC, Script_GetParamFloat, 14)
+PARAM(float, cSpawnPeon, fn_801F40F4, Script_GetParamFloat, 15)
+PARAM(float, cSpawnPeon, fn_801F413C, Script_GetParamFloat, 16)
+PARAM(float, cSpawnPeon, fn_801F4184, Script_GetParamFloat, 17)
+PARAM(float, cSpawnPeon, fn_801F41CC, Script_GetParamFloat, 18)
+PARAM(float, cSpawnPeon, fn_801F4214, Script_GetParamFloat, 19)
+PARAM(float, cSpawnPeon, fn_801F425C, Script_GetParamFloat, 20)
+PARAM(float, cSpawnPeon, fn_801F42A4, Script_GetParamFloat, 21)
+PARAM(float, cSpawnPeon, fn_801F42EC, Script_GetParamFloat, 22)
+PARAM(float, cSpawnPeon, fn_801F4334, Script_GetParamFloat, 23)
+PARAM(float, cSpawnPeon, fn_801F437C, Script_GetParamFloat, 24)
+PARAM(float, cSpawnPeon, fn_801F43C4, Script_GetParamFloat, 25)
+FLAG(cSpawnPeon, fn_801F440C, Script_GetParamInt, 26)
+PARAM(char *, cSpawnPeon, fn_801F4464, Script_GetParamString, 27)
 
 cScript *fn_801F44AC(register cSpawnGroup *self)
 {
     return new cSpawnGroup;
 }
 
-PARAM(unsigned int, cSpawnGroup, fn_801F4500, fn_800791C8, 0)
-PARAM(unsigned int, cSpawnGroup, fn_801F4548, fn_800791C8, 1)
-PARAM(unsigned int, cSpawnGroup, fn_801F4590, fn_800791C8, 2)
-PARAM(unsigned int, cSpawnGroup, fn_801F45D8, fn_800791C8, 3)
-PARAM(unsigned int, cSpawnGroup, fn_801F4620, fn_800791C8, 4)
-PARAM(unsigned int, cSpawnGroup, fn_801F4668, fn_800791C8, 5)
-PARAM(unsigned int, cSpawnGroup, fn_801F46B0, fn_800791C8, 6)
-PARAM(unsigned int, cSpawnGroup, fn_801F46F8, fn_800791C8, 7)
-FLAG(cSpawnGroup, fn_801F4740, fn_80079068, 8)
-FLAG(cSpawnGroup, fn_801F4798, fn_80079068, 9)
+PARAM(unsigned int, cSpawnGroup, fn_801F4500, Script_GetParamUInt, 0)
+PARAM(unsigned int, cSpawnGroup, fn_801F4548, Script_GetParamUInt, 1)
+PARAM(unsigned int, cSpawnGroup, fn_801F4590, Script_GetParamUInt, 2)
+PARAM(unsigned int, cSpawnGroup, fn_801F45D8, Script_GetParamUInt, 3)
+PARAM(unsigned int, cSpawnGroup, fn_801F4620, Script_GetParamUInt, 4)
+PARAM(unsigned int, cSpawnGroup, fn_801F4668, Script_GetParamUInt, 5)
+PARAM(unsigned int, cSpawnGroup, fn_801F46B0, Script_GetParamUInt, 6)
+PARAM(unsigned int, cSpawnGroup, fn_801F46F8, Script_GetParamUInt, 7)
+FLAG(cSpawnGroup, fn_801F4740, Script_GetParamInt, 8)
+FLAG(cSpawnGroup, fn_801F4798, Script_GetParamInt, 9)
 
 cScript *fn_801F47F0(register cSpawnController *self)
 {
     return new cSpawnController;
 }
 
-FLAG(cSpawnController, fn_801F4844, fn_80079068, 0)
-PARAM(unsigned int, cSpawnController, fn_801F489C, fn_800791C8, 1)
-PARAM(int, cSpawnController, fn_801F48E4, fn_80079068, 2)
-PARAM(unsigned int, cSpawnController, fn_801F492C, fn_800791C8, 3)
-PARAM(int, cSpawnController, fn_801F4974, fn_80079068, 4)
-PARAM(int, cSpawnController, fn_801F49BC, fn_80079068, 5)
-PARAM(unsigned int, cSpawnController, fn_801F4A04, fn_800791C8, 6)
-PARAM(int, cSpawnController, fn_801F4A4C, fn_80079068, 7)
-PARAM(int, cSpawnController, fn_801F4A94, fn_80079068, 8)
-PARAM(unsigned int, cSpawnController, fn_801F4ADC, fn_800791C8, 9)
-PARAM(int, cSpawnController, fn_801F4B24, fn_80079068, 10)
-PARAM(int, cSpawnController, fn_801F4B6C, fn_80079068, 11)
-PARAM(unsigned int, cSpawnController, fn_801F4BB4, fn_800791C8, 12)
-PARAM(int, cSpawnController, fn_801F4BFC, fn_80079068, 13)
-PARAM(int, cSpawnController, fn_801F4C44, fn_80079068, 14)
-PARAM(unsigned int, cSpawnController, fn_801F4C8C, fn_800791C8, 15)
-PARAM(int, cSpawnController, fn_801F4CD4, fn_80079068, 16)
-PARAM(int, cSpawnController, fn_801F4D1C, fn_80079068, 17)
-PARAM(unsigned int, cSpawnController, fn_801F4D64, fn_800791C8, 18)
-PARAM(int, cSpawnController, fn_801F4DAC, fn_80079068, 19)
-PARAM(int, cSpawnController, fn_801F4DF4, fn_80079068, 20)
-PARAM(unsigned int, cSpawnController, fn_801F4E3C, fn_800791C8, 21)
-PARAM(int, cSpawnController, fn_801F4E84, fn_80079068, 22)
-PARAM(int, cSpawnController, fn_801F4ECC, fn_80079068, 23)
-PARAM(unsigned int, cSpawnController, fn_801F4F14, fn_800791C8, 24)
-PARAM(int, cSpawnController, fn_801F4F5C, fn_80079068, 25)
-PARAM(int, cSpawnController, fn_801F4FA4, fn_80079068, 26)
-PARAM(unsigned int, cSpawnController, fn_801F4FEC, fn_800791C8, 27)
-PARAM(int, cSpawnController, fn_801F5034, fn_80079068, 28)
-PARAM(int, cSpawnController, fn_801F507C, fn_80079068, 29)
-PARAM(unsigned int, cSpawnController, fn_801F50C4, fn_800791C8, 30)
-PARAM(int, cSpawnController, fn_801F510C, fn_80079068, 31)
-PARAM(int, cSpawnController, fn_801F5154, fn_80079068, 32)
-PARAM(unsigned int, cSpawnController, fn_801F519C, fn_800791C8, 34)
-PARAM(unsigned int, cSpawnController, fn_801F51E4, fn_800791C8, 35)
-PARAM(unsigned int, cSpawnController, fn_801F522C, fn_800791C8, 36)
-PARAM(unsigned int, cSpawnController, fn_801F5274, fn_800791C8, 37)
-PARAM(unsigned int, cSpawnController, fn_801F52BC, fn_800791C8, 38)
-PARAM(unsigned int, cSpawnController, fn_801F5304, fn_800791C8, 39)
-PARAM(unsigned int, cSpawnController, fn_801F534C, fn_800791C8, 40)
-PARAM(unsigned int, cSpawnController, fn_801F5394, fn_800791C8, 41)
-PARAM(unsigned int, cSpawnController, fn_801F53DC, fn_800791C8, 42)
-PARAM(unsigned int, cSpawnController, fn_801F5424, fn_800791C8, 43)
+FLAG(cSpawnController, fn_801F4844, Script_GetParamInt, 0)
+PARAM(unsigned int, cSpawnController, fn_801F489C, Script_GetParamUInt, 1)
+PARAM(int, cSpawnController, fn_801F48E4, Script_GetParamInt, 2)
+PARAM(unsigned int, cSpawnController, fn_801F492C, Script_GetParamUInt, 3)
+PARAM(int, cSpawnController, fn_801F4974, Script_GetParamInt, 4)
+PARAM(int, cSpawnController, fn_801F49BC, Script_GetParamInt, 5)
+PARAM(unsigned int, cSpawnController, fn_801F4A04, Script_GetParamUInt, 6)
+PARAM(int, cSpawnController, fn_801F4A4C, Script_GetParamInt, 7)
+PARAM(int, cSpawnController, fn_801F4A94, Script_GetParamInt, 8)
+PARAM(unsigned int, cSpawnController, fn_801F4ADC, Script_GetParamUInt, 9)
+PARAM(int, cSpawnController, fn_801F4B24, Script_GetParamInt, 10)
+PARAM(int, cSpawnController, fn_801F4B6C, Script_GetParamInt, 11)
+PARAM(unsigned int, cSpawnController, fn_801F4BB4, Script_GetParamUInt, 12)
+PARAM(int, cSpawnController, fn_801F4BFC, Script_GetParamInt, 13)
+PARAM(int, cSpawnController, fn_801F4C44, Script_GetParamInt, 14)
+PARAM(unsigned int, cSpawnController, fn_801F4C8C, Script_GetParamUInt, 15)
+PARAM(int, cSpawnController, fn_801F4CD4, Script_GetParamInt, 16)
+PARAM(int, cSpawnController, fn_801F4D1C, Script_GetParamInt, 17)
+PARAM(unsigned int, cSpawnController, fn_801F4D64, Script_GetParamUInt, 18)
+PARAM(int, cSpawnController, fn_801F4DAC, Script_GetParamInt, 19)
+PARAM(int, cSpawnController, fn_801F4DF4, Script_GetParamInt, 20)
+PARAM(unsigned int, cSpawnController, fn_801F4E3C, Script_GetParamUInt, 21)
+PARAM(int, cSpawnController, fn_801F4E84, Script_GetParamInt, 22)
+PARAM(int, cSpawnController, fn_801F4ECC, Script_GetParamInt, 23)
+PARAM(unsigned int, cSpawnController, fn_801F4F14, Script_GetParamUInt, 24)
+PARAM(int, cSpawnController, fn_801F4F5C, Script_GetParamInt, 25)
+PARAM(int, cSpawnController, fn_801F4FA4, Script_GetParamInt, 26)
+PARAM(unsigned int, cSpawnController, fn_801F4FEC, Script_GetParamUInt, 27)
+PARAM(int, cSpawnController, fn_801F5034, Script_GetParamInt, 28)
+PARAM(int, cSpawnController, fn_801F507C, Script_GetParamInt, 29)
+PARAM(unsigned int, cSpawnController, fn_801F50C4, Script_GetParamUInt, 30)
+PARAM(int, cSpawnController, fn_801F510C, Script_GetParamInt, 31)
+PARAM(int, cSpawnController, fn_801F5154, Script_GetParamInt, 32)
+PARAM(unsigned int, cSpawnController, fn_801F519C, Script_GetParamUInt, 34)
+PARAM(unsigned int, cSpawnController, fn_801F51E4, Script_GetParamUInt, 35)
+PARAM(unsigned int, cSpawnController, fn_801F522C, Script_GetParamUInt, 36)
+PARAM(unsigned int, cSpawnController, fn_801F5274, Script_GetParamUInt, 37)
+PARAM(unsigned int, cSpawnController, fn_801F52BC, Script_GetParamUInt, 38)
+PARAM(unsigned int, cSpawnController, fn_801F5304, Script_GetParamUInt, 39)
+PARAM(unsigned int, cSpawnController, fn_801F534C, Script_GetParamUInt, 40)
+PARAM(unsigned int, cSpawnController, fn_801F5394, Script_GetParamUInt, 41)
+PARAM(unsigned int, cSpawnController, fn_801F53DC, Script_GetParamUInt, 42)
+PARAM(unsigned int, cSpawnController, fn_801F5424, Script_GetParamUInt, 43)
 
 cScript *fn_801F546C(register cActorPlayPath *self)
 {
     return new cActorPlayPath;
 }
 
-PARAM(int, cActorPlayPath, fn_801F54C0, fn_80079068, 0)
-PARAM(int, cActorPlayPath, fn_801F5508, fn_80079068, 2)
-FLAG(cActorPlayPath, fn_801F5550, fn_80079068, 3)
+PARAM(int, cActorPlayPath, fn_801F54C0, Script_GetParamInt, 0)
+PARAM(int, cActorPlayPath, fn_801F5508, Script_GetParamInt, 2)
+FLAG(cActorPlayPath, fn_801F5550, Script_GetParamInt, 3)
 
 cScript *fn_801F55A8(register cAIRangedAttacker *self)
 {
     return new cAIRangedAttacker;
 }
 
-PARAM(unsigned int, cAIRangedAttacker, fn_801F55FC, fn_800791C8, 0)
-PARAM(unsigned int, cAIRangedAttacker, fn_801F5644, fn_800791C8, 1)
-PARAM(unsigned int, cAIRangedAttacker, fn_801F568C, fn_800791C8, 2)
-PARAM(unsigned int, cAIRangedAttacker, fn_801F56D4, fn_800791C8, 3)
-PARAM(unsigned int, cAIRangedAttacker, fn_801F571C, fn_800791C8, 4)
-PARAM(unsigned int, cAIRangedAttacker, fn_801F5764, fn_800791C8, 5)
-PARAM(int, cAIRangedAttacker, fn_801F57AC, fn_80079068, 6)
-PARAM(int, cAIRangedAttacker, fn_801F57F4, fn_80079068, 7)
-PARAM(int, cAIRangedAttacker, fn_801F583C, fn_80079068, 8)
-PARAM(int, cAIRangedAttacker, fn_801F5884, fn_80079068, 9)
-PARAM(int, cAIRangedAttacker, fn_801F58CC, fn_80079068, 10)
-PARAM(int, cAIRangedAttacker, fn_801F5914, fn_80079068, 11)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F55FC, Script_GetParamUInt, 0)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F5644, Script_GetParamUInt, 1)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F568C, Script_GetParamUInt, 2)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F56D4, Script_GetParamUInt, 3)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F571C, Script_GetParamUInt, 4)
+PARAM(unsigned int, cAIRangedAttacker, fn_801F5764, Script_GetParamUInt, 5)
+PARAM(int, cAIRangedAttacker, fn_801F57AC, Script_GetParamInt, 6)
+PARAM(int, cAIRangedAttacker, fn_801F57F4, Script_GetParamInt, 7)
+PARAM(int, cAIRangedAttacker, fn_801F583C, Script_GetParamInt, 8)
+PARAM(int, cAIRangedAttacker, fn_801F5884, Script_GetParamInt, 9)
+PARAM(int, cAIRangedAttacker, fn_801F58CC, Script_GetParamInt, 10)
+PARAM(int, cAIRangedAttacker, fn_801F5914, Script_GetParamInt, 11)
 
 cScript *fn_801F595C(register cBossRingOut *self)
 {
@@ -2401,28 +2401,28 @@ cScript *fn_801F59B0(register cActorSetHealth *self)
     return new cActorSetHealth;
 }
 
-PARAM(float, cActorSetHealth, fn_801F5A04, fn_8007935C, 0)
-PARAM(unsigned int, cActorSetHealth, fn_801F5A4C, fn_800791C8, 1)
-FLAG(cActorSetHealth, fn_801F5A94, fn_80079068, 2)
-FLAG(cActorSetHealth, fn_801F5AEC, fn_80079068, 3)
-PARAM(float, cActorSetHealth, fn_801F5B44, fn_8007935C, 4)
-PARAM(int, cActorSetHealth, fn_801F5B8C, fn_80079068, 5)
+PARAM(float, cActorSetHealth, fn_801F5A04, Script_GetParamFloat, 0)
+PARAM(unsigned int, cActorSetHealth, fn_801F5A4C, Script_GetParamUInt, 1)
+FLAG(cActorSetHealth, fn_801F5A94, Script_GetParamInt, 2)
+FLAG(cActorSetHealth, fn_801F5AEC, Script_GetParamInt, 3)
+PARAM(float, cActorSetHealth, fn_801F5B44, Script_GetParamFloat, 4)
+PARAM(int, cActorSetHealth, fn_801F5B8C, Script_GetParamInt, 5)
 
 cScript *fn_801F5BD4(register cPlayerBonusMissions *self)
 {
     return new cPlayerBonusMissions;
 }
 
-FLAG(cPlayerBonusMissions, fn_801F5C28, fn_80079068, 0)
-PARAM(int, cPlayerBonusMissions, fn_801F5C80, fn_80079068, 1)
-PARAM(int, cPlayerBonusMissions, fn_801F5CC8, fn_80079068, 2)
-FLAG(cPlayerBonusMissions, fn_801F5D10, fn_80079068, 3)
-PARAM(float, cPlayerBonusMissions, fn_801F5D68, fn_8007935C, 4)
-PARAM(unsigned int, cPlayerBonusMissions, fn_801F5DB0, fn_800791C8, 5)
-PARAM(int, cPlayerBonusMissions, fn_801F5DF8, fn_80079068, 6)
-PARAM(int, cPlayerBonusMissions, fn_801F5E40, fn_80079068, 7)
-FLAG(cPlayerBonusMissions, fn_801F5E88, fn_80079068, 8)
-PARAM(int, cPlayerBonusMissions, fn_801F5EE0, fn_80079068, 9)
+FLAG(cPlayerBonusMissions, fn_801F5C28, Script_GetParamInt, 0)
+PARAM(int, cPlayerBonusMissions, fn_801F5C80, Script_GetParamInt, 1)
+PARAM(int, cPlayerBonusMissions, fn_801F5CC8, Script_GetParamInt, 2)
+FLAG(cPlayerBonusMissions, fn_801F5D10, Script_GetParamInt, 3)
+PARAM(float, cPlayerBonusMissions, fn_801F5D68, Script_GetParamFloat, 4)
+PARAM(unsigned int, cPlayerBonusMissions, fn_801F5DB0, Script_GetParamUInt, 5)
+PARAM(int, cPlayerBonusMissions, fn_801F5DF8, Script_GetParamInt, 6)
+PARAM(int, cPlayerBonusMissions, fn_801F5E40, Script_GetParamInt, 7)
+FLAG(cPlayerBonusMissions, fn_801F5E88, Script_GetParamInt, 8)
+PARAM(int, cPlayerBonusMissions, fn_801F5EE0, Script_GetParamInt, 9)
 
 cScript *fn_801F5F28(register cGlobalPeonCounter *self)
 {
@@ -2435,29 +2435,29 @@ cScript *fn_801F5F7C(register cAITeleportationToggle *self)
     return new cAITeleportationToggle;
 }
 
-FLAG(cAITeleportationToggle, fn_801F5FD0, fn_80079068, 0)
-PARAM(float, cAITeleportationToggle, fn_801F6028, fn_8007935C, 1)
+FLAG(cAITeleportationToggle, fn_801F5FD0, Script_GetParamInt, 0)
+PARAM(float, cAITeleportationToggle, fn_801F6028, Script_GetParamFloat, 1)
 
 cScript *fn_801F6070(register cAIEnemyVictoryScene *self)
 {
     return new cAIEnemyVictoryScene;
 }
 
-FLAG(cAIEnemyVictoryScene, fn_801F60C4, fn_800791C8, 0)
+FLAG(cAIEnemyVictoryScene, fn_801F60C4, Script_GetParamUInt, 0)
 
 cScript *fn_801F611C(register cTemporaryAIPossession *self)
 {
     return new cTemporaryAIPossession;
 }
 
-PARAM(unsigned int, cTemporaryAIPossession, fn_801F6170, fn_800791C8, 0)
-PARAM(float, cTemporaryAIPossession, fn_801F61B8, fn_8007935C, 1)
+PARAM(unsigned int, cTemporaryAIPossession, fn_801F6170, Script_GetParamUInt, 0)
+PARAM(float, cTemporaryAIPossession, fn_801F61B8, Script_GetParamFloat, 1)
 
 cScript *fn_801F6200(register cAISetTeleportDistance *self)
 {
     return new cTemporaryAIPossession; // sic, docs/story.md section 4.2
 }
 
-PARAM(float, cAISetTeleportDistance, fn_801F6254, fn_8007935C, 0)
-PARAM(float, cAISetTeleportDistance, fn_801F629C, fn_8007935C, 1)
+PARAM(float, cAISetTeleportDistance, fn_801F6254, Script_GetParamFloat, 0)
+PARAM(float, cAISetTeleportDistance, fn_801F629C, Script_GetParamFloat, 1)
 }
