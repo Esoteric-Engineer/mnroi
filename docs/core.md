@@ -29,8 +29,8 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | Range | Contents | Row |
 |---|---|---|
 | 0x801A6390-0x801A7BF8 | Not core: graphics. Two `.ctors` files ending at 0x801A6904 and 0x801A6C40, then the `Graphics:Terrain` segment classes (vtables 0x804F67A0, 0x804F67B8, `__7Segment`). They call the model code before them and the render code at 0x8021xxxx-0x8023xxxx | |
-| 0x801A7BF8-0x801A9974 | **File layer**, `.ctors` file with the next row. Start: identify (`fn_801A7BF8` and `fn_801A7C14` are 0x1C stubs; `fn_801A7C30` reads `"bf:"`, the first of the file's `.rodata`, 0x8049D6C4). Holds the stdio-style layer (section 4.1), the search folders (4.2), the `CLASH.BIG` mount and `stdFile:Find` over `DVDOpenDir` | 3 |
-| 0x801A9974-0x801AA1E8 | **Memory-card device**: `CARDInit`/`CARDMount`/`CARDRead`/`CARDWrite` wrappers and the `MemUnit:Buffer` reads and writes. Edge with the file layer: identify. Ends at `_GLOBAL_.I` 0x801AA1AC | 4 |
+| 0x801A7BF8-0x801A9974 | **File layer**. Start: the empty stubs `fn_801A7BF8` (startup calls it after the file layer's empty `fn_801A9564`) and `fn_801A7C14` (a per-frame hook), like the layer's other stubs `fn_801A9334`, `fn_801A953C`, `fn_801A9564`; the graphics file ends with the `Segment` destructor. `.rodata` 0x8049D6C4-0x8049D8C4 (`"bf:"` to `"."`); the `Memcard:*` header strings before it close the graphics file's. End: `fn_801A9748` (`DVDReadDir`); the card file's `"MemUnit:Buffer"` starts 0x8049D8C8, six bytes past `"."`, a section edge. Holds the stdio-style layer (section 4.1), the search folders (4.2), the `CLASH.BIG` mount and `stdFile:Find` over `DVDOpenDir`. The allocation line numbers run 475 to 2227 in `.text` order, then 87 in `fn_801A9584`: the three `stdFile:Find` functions are probably another source file included at the end (a guess) | 3 |
+| 0x801A9974-0x801AA1E8 | **Memory-card device**: `CARDInit`/`CARDMount`/`CARDRead`/`CARDWrite` wrappers and the `MemUnit:Buffer` reads and writes. `.rodata` 0x8049D8C8-0x8049D8F0. Ends at `_GLOBAL_.I` 0x801AA1AC | 4 |
 | 0x801AA1E8-0x801ABA18 | **Pad manager**: init, read, reset, rumble (`PADControlMotor`), stick math (`__ieee754_sqrtf`). `.rodata` 0x8049D8F0-0x8049D960, ending with the button-bit table 0x8049D950 | 12 |
 | 0x801ABA18-0x801AD588 | **Memory manager** (section 4.3). Starts at `fn_801ABA18`, the empty callback the init passes to `VMSetLogStatsCallback` and its only reference. `.rodata` 0x8049D960-0x8049DAF0, ending with `"new[]"`; the rest of the file reads none | 2 |
 | 0x801AD588-0x801AF394 | **System monitor** (`CSysMon`): drive status, reset button, system font, pad recalibration, language, a 2D text draw (`C_MTXOrtho`, `OSGetFontWidth`). `_GLOBAL_.I` 0x801AF358 | 13 |
@@ -66,36 +66,21 @@ Out of scope: the model code 0x8019F02C-0x801A6390 and the graphics files above;
 
 ### 4.1 Open-file table (`lbl_8066F4EC`)
 
-An `.sbss` pointer to an array of 0x158-byte records, allocated with `new[]` by `fn_801A7DF0`. A handle is a record's index + 1, and 0 is failure; every file function computes `lbl_8066F4EC + (handle - 1) * 0x158`.
+`Game/fn_801A7BF8.cpp`. An `.sbss` pointer to 12 records of 0x158 bytes (`new[]` with a cookie, constructor `fn_801AFEE8`). A handle is a record's index + 1, and 0 is failure. The record's fields, all set by the unmatched back end at 0x801AFEC0:
 
-| Function | What |
+| Offset | What |
 |---|---|
-| `fn_801A8500(path, mode)` | Open: builds the path (`"%s\%s"`, `"%s%s"`), returns a handle |
-| `fn_801A875C(handle)` | Close, through `fn_801B00AC(record, 0x64)` |
-| `fn_801A8B60(ptr, size, count, handle)` | Read: 0 when `size` or `count` is 0, else `fn_801B01D4(record, ptr, size, count)` |
-| `fn_801A8C08(…, handle)` | Through `fn_801B0380` (`memchr`): probably a line read (a guess) |
-| `fn_801A8E54` | `vsnprintf` to a file: probably a formatted write (a guess) |
-| `fn_801A8088(path)` | Exists: opens `"rb"`, closes, returns 1, or 0 when the open fails |
+| +0x00 | `int *`; the slot is free when `*f0 == 0` |
+| +0x04 | `int *`; `*f4` is the device handle the RealCore calls take (`fn_80244538`, `fn_802444A8`) |
+| +0x08 | `int *`; the formatted write `fn_801A8E54` writes only when `*f8 != 0` (open for writing: a guess) |
+| +0x0C | `char *`, the path |
+| +0x10 | `int *`, the write position |
 
-### 4.2 Search folders (`lbl_805864B0`, 0x238C bytes)
+The calls callers need: open `fn_801A8500(path, mode)`, open through the search folders `fn_801A8368(name, mode, type)` (23 calling functions), close `fn_801A875C(handle)`, read `fn_801A8B60(ptr, size, count, handle)`, line read `fn_801A8C08(buf, n, handle)`, formatted write `fn_801A8E54(handle, fmt, ...)`, exists `fn_801A8088(path)`. The mode string sets 0x11 for `r` and 0x6 for `w` (`fn_801A7CD8`).
 
-`fn_801A8FC4` clears it, then calls `fn_801A7F5C(folder, type, 0)` once per pair below, so a file type can search several folders. `fn_801A8368` (`"%s%c%s"`, 23 calling functions) builds a path from them.
+### 4.2 Search folders (`lbl_805864B0`)
 
-| Type | Folders |
-|---|---|
-| 0 | `Anims` |
-| 1 | `Levels`, `Materials`, `Materials/Effects`, `Materials/Levels`, `Materials/Models`, `Materials/Shaders`, `UI` |
-| 2 | `Models` |
-| 3, 8, 29, 30, 31 | `Levels` |
-| 4 | `UI` |
-| 6 | `Motions` |
-| 7, 9, 10, 12-16, 20, 21 | `Misc` |
-| 11, 24 | `Sound` |
-| 18, 19 | `Quests`, `Stores` |
-| 23, 25, 26 | `Video`, `Cutscenes`, `Terrains` |
-| 32, 33, 34 | `Profiles`, `Bundles`, `AnimTags` |
-
-Types 5, 17, 22, 27 and 28 have no folder.
+35 entries of `{ int count; char *paths[64]; }` (0x104 bytes), indexed by file type; `fn_801A8FC4` lists the folders of each type.
 
 ### 4.3 Memory manager
 
@@ -103,9 +88,9 @@ Types 5, 17, 22, 27 and 28 have no folder.
 
 | Entry | Arguments |
 |---|---|
-| `fn_801AC9EC` (26 calling functions) | `(size, tag, ?, kind, align, ?)`; `kind` 1 adds heap flag 0x100 |
-| `fn_801AC988` (48) | `(size, tag, ?, kind)`, the above with `align` 0; `operator new` passes `(size, "new", 0, 2)` |
-| `fn_801AD37C`, `fn_801AD324` | ARAM: `(size, tag, ?, align)` and `(size, tag, ?)` |
+| `fn_801AC9EC` (26 calling functions) | `(size, tag, line, kind, align, ?)`; `line` is the caller's source line; `kind` 1 adds heap flag 0x100 |
+| `fn_801AC988` (48) | `(size, tag, line, kind)`, the above with `align` 0; `operator new` passes `(size, "new", 0, 2)` |
+| `fn_801AD37C`, `fn_801AD324` | ARAM: `(size, tag, line, align)` and `(size, tag, line)` |
 | `fn_801ACC7C` | realloc: `(p, size, tag, kind)` |
 | `fn_801ACC0C` (68), `fn_801ACC44` | free: `(p)` |
 
@@ -138,7 +123,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 |---|---|---|---|
 | 1 | Generic tail inlines, first run | `fn_80426A2C`, `fn_80426A54`, `__5ColorUcUcUcUc`, `__6Vector`, `fn_80428FA8` | Done |
 | 2 | Memory manager | 0x801ABA18-0x801AD588 | Done |
-| 3 | File layer | 0x801A7BF8-0x801A9974 | Identify both edges, then match |
+| 3 | File layer | 0x801A7BF8-0x801A9974 | Done |
 | 4 | Memory-card device | 0x801A9974-0x801AA1E8 | Match; it claims the file's `.ctors` word |
 | 5 | BufferAllocator file | 0x801AFEC0-0x801B104C | Identify whether 0x801AFEC0-0x801B0B40 is the same file, then match |
 | 6 | VFS | 0x801B104C-0x801B2620 | Match; cross-check the `.BIG`/`.BH` reads against `tools/bigtool.py` |
@@ -161,7 +146,6 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 
 ## 7. Open Questions
 
-- Where the file layer starts (`fn_801A7BF8`, `fn_801A7C14`) and where it hands over to the memory-card device.
 - Whether 0x801AFEC0-0x801B0B40 (the file back end, `__4Attrii`) is part of `Std/BufferAllocator.cpp`.
 - What the files at 0x801AF394 and 0x801B6AF0 are.
-- What the 0x158-byte open-file record holds, and what the 0x64 that close passes means.
+- What the 100 (0x64) that the file layer passes to close, open and the RealCore reads and writes means (a timeout or a priority: a guess).

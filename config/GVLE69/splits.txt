@@ -3050,6 +3050,10 @@ Game/fn_801A479C.cpp:
 Game/fn_801A5F8C.cpp:
 	.text       start:0x801A5F8C end:0x801A6390
 
+Game/fn_801A7BF8.cpp:
+	.text       start:0x801A7BF8 end:0x801A9974
+	.rodata     start:0x8049D6C4 end:0x8049D8C4
+
 Game/fn_801ABA18.cpp:
 	.text       start:0x801ABA18 end:0x801AD588
 	.ctors      start:0x804826A8 end:0x804826AC
