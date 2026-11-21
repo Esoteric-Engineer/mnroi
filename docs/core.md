@@ -30,7 +30,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 |---|---|---|
 | 0x801A6390-0x801A7BF8 | Not core: graphics. Two `.ctors` files ending at 0x801A6904 and 0x801A6C40, then the `Graphics:Terrain` segment classes (vtables 0x804F67A0, 0x804F67B8, `__7Segment`). They call the model code before them and the render code at 0x8021xxxx-0x8023xxxx | |
 | 0x801A7BF8-0x801A9974 | **File layer**. Start: the empty stubs `fn_801A7BF8` (startup calls it after the file layer's empty `fn_801A9564`) and `fn_801A7C14` (a per-frame hook), like the layer's other stubs `fn_801A9334`, `fn_801A953C`, `fn_801A9564`; the graphics file ends with the `Segment` destructor. `.rodata` 0x8049D6C4-0x8049D8C4 (`"bf:"` to `"."`); the `Memcard:*` header strings before it close the graphics file's. End: `fn_801A9748` (`DVDReadDir`); the card file's `"MemUnit:Buffer"` starts 0x8049D8C8, six bytes past `"."`, a section edge. Holds the stdio-style layer (section 4.1), the search folders (4.2), the `CLASH.BIG` mount and `stdFile:Find` over `DVDOpenDir`. The allocation line numbers run 475 to 2227 in `.text` order, then 87 in `fn_801A9584`: the three `stdFile:Find` functions are probably another source file included at the end (a guess) | 3 |
-| 0x801A9974-0x801AA1E8 | **Memory-card device**: `CARDInit`/`CARDMount`/`CARDRead`/`CARDWrite` wrappers and the `MemUnit:Buffer` reads and writes. `.rodata` 0x8049D8C8-0x8049D8F0. Ends at `_GLOBAL_.I` 0x801AA1AC | 4 |
+| 0x801A9974-0x801AA1E8 | **Memory-card device** (section 4.5). `.rodata` 0x8049D8C8-0x8049D8F0: `"MemUnit:Buffer"`, then the pools of the tail inlines `fn_80466694` (0x8049D8D8) and `fn_80466764` (0x8049D8E0, 512.0f), which round a size up to a sector (row 18). Ends at `_GLOBAL_.I` 0x801AA1AC | 4 |
 | 0x801AA1E8-0x801ABA18 | **Pad manager**: init, read, reset, rumble (`PADControlMotor`), stick math (`__ieee754_sqrtf`). `.rodata` 0x8049D8F0-0x8049D960, ending with the button-bit table 0x8049D950 | 12 |
 | 0x801ABA18-0x801AD588 | **Memory manager** (section 4.3). Starts at `fn_801ABA18`, the empty callback the init passes to `VMSetLogStatsCallback` and its only reference. `.rodata` 0x8049D960-0x8049DAF0, ending with `"new[]"`; the rest of the file reads none | 2 |
 | 0x801AD588-0x801AF394 | **System monitor** (`CSysMon`): drive status, reset button, system font, pad recalibration, language, a 2D text draw (`C_MTXOrtho`, `OSGetFontWidth`). `_GLOBAL_.I` 0x801AF358 | 13 |
@@ -104,6 +104,18 @@ The calls callers need: open `fn_801A8500(path, mode)`, open through the search 
 | 0x804F69B8 | `Game:List` | `fn_801B5BA8` |
 | 0x804F2DE0-0x804F2E40 | Five list-wrapper classes: the vtable at `+0x4`, a `new`ed object at `+0x0`. Each has a 0x70 constructor, a 0x98 add that appends to a `Game:List` through `fn_801B6040`, and a 0x140 clear at 0x804288AC-0x80428DAC. Called from the HUD, versus and the frontend | 0x80428314, then every 0x108 bytes to 0x80428734; `fn_8042883C` reuses 0x804F2E28 |
 
+
+### 4.5 Memory-card slots (`lbl_80589260`)
+
+`Game/fn_801A9974.cpp`. A 0x40-byte object: two 0x18-byte slots, then 0x10 bytes nothing in the file touches. Its constructor is the tail inline `fn_804665F0`, the slot constructor `fn_80466664`, the slot accessor `fn_80431E9C`. Callers are the save code at 0x8002AC34-0x8002B490.
+
+| Offset | What |
+|---|---|
+| +0x00 | channel |
+| +0x04 | `u16` flags: 1 present (probe), 2 and 4 the mount results -6 and -13, 8 mounted |
+| +0x08, +0x0C | memory size and sector size, from `CARDProbeEx` |
+| +0x10 | 64-bit serial number |
+
 ---
 
 ## 5. Notes
@@ -124,7 +136,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 1 | Generic tail inlines, first run | `fn_80426A2C`, `fn_80426A54`, `__5ColorUcUcUcUc`, `__6Vector`, `fn_80428FA8` | Done |
 | 2 | Memory manager | 0x801ABA18-0x801AD588 | Done |
 | 3 | File layer | 0x801A7BF8-0x801A9974 | Done |
-| 4 | Memory-card device | 0x801A9974-0x801AA1E8 | Match; it claims the file's `.ctors` word |
+| 4 | Memory-card device | 0x801A9974-0x801AA1E8 | Done |
 | 5 | BufferAllocator file | 0x801AFEC0-0x801B104C | Identify whether 0x801AFEC0-0x801B0B40 is the same file, then match |
 | 6 | VFS | 0x801B104C-0x801B2620 | Match; cross-check the `.BIG`/`.BH` reads against `tools/bigtool.py` |
 | 7 | `stdBitmap` | 0x801B2620-0x801B26DC | Match |

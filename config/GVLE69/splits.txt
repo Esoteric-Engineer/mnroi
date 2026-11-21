@@ -3054,6 +3054,12 @@ Game/fn_801A7BF8.cpp:
 	.text       start:0x801A7BF8 end:0x801A9974
 	.rodata     start:0x8049D6C4 end:0x8049D8C4
 
+Game/fn_801A9974.cpp:
+	.text       start:0x801A9974 end:0x801AA1E8
+	.ctors      start:0x804826A4 end:0x804826A8
+	.rodata     start:0x8049D8C8 end:0x8049D8D8
+	.bss        start:0x80589260 end:0x805892A0
+
 Game/fn_801ABA18.cpp:
 	.text       start:0x801ABA18 end:0x801AD588
 	.ctors      start:0x804826A8 end:0x804826AC
