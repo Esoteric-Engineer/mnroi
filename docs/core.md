@@ -119,6 +119,17 @@ The calls callers need: open `fn_801A8500(path, mode)`, open through the search 
 | +0x08, +0x0C | memory size and sector size, from `CARDProbeEx` |
 | +0x10 | 64-bit serial number |
 
+### 4.6 Pad records (`lbl_805932A0`)
+
+Four 0x19C-byte records, one per channel; game code reads them through the current-pad pointer `lbl_8066C63C`. The frame counter is `lbl_8066C638`, rumble is enabled by `lbl_8066C640`, and `lbl_8066C644`/`lbl_8066C648` are the disconnect and connect callbacks `(u16 chan)`.
+
+| Offset | What |
+|---|---|
+| +0x00 | connected |
+| +0x08 | `u32` frame time the motor runs until, 0 when stopped |
+| +0x0C-+0x18 | stick x, y (y negated) over 56; C-stick x, y over 44 |
+| +0x1C | 16 key slots of 0x18: value (0-1), press frame, press time, release frame, release time, held time. Keys: 1 A, 2 B, 3 X, 4 Y, 5 Z, 6 and 7 the analog L and R, 8 L, 9 R, 10 Start, 11-14 left, right, up, down |
+
 ---
 
 ## 5. Notes
@@ -147,7 +158,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 9 | `Game:List` and the list wrappers | 0x801B5BA8-0x801B6AF0, then the tail's 0x80428314-0x80428F74 | Done |
 | 10 | String utilities and `stdVar` | 0x801B738C-0x801B8E78 | Done |
 | 11 | Geometry | 0x801B8E78-0x801BC9DC | Done |
-| 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Match |
+| 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Done |
 | 13 | System monitor | 0x801AD588-0x801AF394 | Match |
 | 14 | Unknown time file | 0x801AF394-0x801AFEC0 | Identify, then match |
 | 15 | Unknown wrappers | 0x801B6AF0-0x801B738C | Identify, then match; claims the two short tables (section 2) |
