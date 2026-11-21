@@ -51,7 +51,7 @@ Rows 0 and 2 are both Wolverine, and 19 repeats the Thing; the order table start
 
 Readers: the per-field accessors `fn_8044B1D4`-`fn_8044B48C` that `clashCharSelect_GetCharList` calls (`Game/fn_8044B1D4.c`), `fn_80443678` (the whole record), `fn_804436D4` (writes `+0x48` in *both* tables, so unlocking a character unlocks its alternate costume), `fn_80461288(name, alt)` (name to localisation key, or the name itself when there is no match), `fn_804316B0`, and `fn_8044F070` (`Game/fn_8044EEF4.c`), the inverse of the order table, which searches `i <= 0x13`.
 
-The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int unlocked}`: 0x804CB14C `Rec[7]` venues (`BrooklynBridge` to `RoekelFacility`, the first three unlocked), 0x804CB328 `Rec[43]` cards and 0x804CBEB8 `Rec[25]` comics, all locked. 0x804CBE94 is an `int[9]` of zeros (meaning unknown).
+The same unit holds three more arrays of `{char name[0x20]; char key[0x20]; int unlocked}`: 0x804CB14C `Rec[7]` venues (`BrooklynBridge` to `RoekelFacility`, the first three unlocked), 0x804CB328 `Rec[43]` cards and 0x804CBEB8 `Rec[25]` comics, all locked. 0x804CBE94 is an `int[9]` of zeros, the trailer unlocks (`Reward_GetTrailerInfo`).
 
 **Saves.** No `memcard.cpp` function reads the roster tables, and only `clashMemcard_ResetStoryMode` reaches them through one more call, so the save does not appear to store the records (guess: unlocks are rebuilt from story progress; access through a stored pointer is unchecked).
 
@@ -365,7 +365,7 @@ The file is CRLF text with `;` comments: 2,067 blocks of `<type> <name>`, one `<
 | +0x478 | `unsigned char` | `character`, rejected unless <= 19 (a roster index) | `fn_80442F98`, getter `fn_80442FC4` |
 | +0x479 | `unsigned char` | `unlockchar`, rejected unless <= 18 | `fn_80442FF4`, getter `fn_80443020` |
 | +0x47A | `unsigned char` | `sacrifice`, rejected unless <= 19 | `fn_80443050`, getter `fn_8044307C` |
-| +0x480 | `int[4]` | `rewards`: an ID over 9999 is reward type 3 (ID - 10000), over 999 type 2 (- 1000), over 99 type 1 (- 100), 0-99 type 0; negative or over 99999 is no reward (`clashMission_GetRewardInfo`). `fn_800877F4` grants them: type 0 through `fn_804436D4`, 1 `fn_8044374C`, 2 `fn_80443608`, 3 `fn_80443640`, and over 99999 a fifth kind (ID - 100000, `fn_804435D0`) | `fn_80442BC0`, `fn_80442C00(record, i)` |
+| +0x480 | `int[4]` | `rewards`: an ID over 9999 is reward type 3 (ID - 10000), over 999 type 2 (- 1000), over 99 type 1 (- 100), 0-99 type 0; negative or over 99999 is no reward (`clashMission_GetRewardInfo`). `fn_800877F4` grants them: type 0, a character, through `fn_804436D4`; 1, a venue, `fn_8044374C`; 2, a card, `fn_80443608`; 3, a comic, `fn_80443640`; and over 99999 a fifth kind, a trailer (ID - 100000, `fn_804435D0`). The save profile keeps all five ([`story.md`](story.md) section 4.4) | `fn_80442BC0`, `fn_80442C00(record, i)` |
 | +0x4A4-+0x5A4 | `char[0x20]` x9 | `soundbanks`, up to nine | `fn_804430FC` |
 | +0x5C4 | int | `maxblessed` | `fn_80442F70` |
 
