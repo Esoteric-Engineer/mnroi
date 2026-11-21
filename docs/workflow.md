@@ -166,6 +166,7 @@ Most of the 17,161 functions are still `fn_XXXXXXXX`. Naming is a large part of 
 
 - **Work outward from a matched unit.** Pick the unclaimed function right before or after one you've matched, which keeps each unit's range contiguous. A `_GLOBAL_.I.<name>` function marks the end of a source file ([`prodg.md`](prodg.md#c)).
 - **Expect `-O0` first.** Game code has `-O0`'s shape: arguments spilled through `r31` and `this` kept in `r30`. A function with no frame pointer is middleware (RealCore, Apt, Havok, ...), built at `-O2`: [`prodg.md`](prodg.md#flags) has the ranges and `python3 tools/flavor_map.py <address>` classifies one. For a C++ unit that is 8 bytes over per function, see the function-end branch pair in [`prodg.md`](prodg.md#the-function-end-branch-pair) and `python3 tools/pair_map.py <address>`.
+- **The core layer is mapped.** [`core.md`](core.md) maps the memory manager, the file layer and `CLASH.BIG`, the containers, `stdVar`, the geometry helpers and the shared classes' inline functions.
 - **Story mode is mapped.** [`story.md`](story.md) maps the story and level-script code.
 - **Enemy AI is mapped.** [`ai.md`](ai.md) maps the AI code.
 - **Versus mode is mapped.** [`versus.md`](versus.md) maps the versus code, and [`characters.md`](characters.md) the character data it loads.
