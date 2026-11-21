@@ -89,6 +89,18 @@ one-liners; an offset in a struct is a trailing `// +0xNN`.
 Keep them minimal: a function symbol (`// fn_801A8B60`), a struct offset, or a literal's text is fine; an
 explanation of *why* the source is shaped as it is belongs in `docs/matching_notes.md`, and a restatement of
 what the code does is not needed. Don't repeat a comment that another unit's header already carries.
+Before the report, reread every comment the run added or edited and cut the ones that fail these tests:
+
+- **Said twice in the file.** A fact the header states and a declaration's comment states again
+  (which vtable is which) keeps only the declaration's comment.
+- **Visible in the declaration.** No offset on a first field (`+0x0`), on a small struct whose
+  offsets are obvious, or on a field right after `char pad[N]`. Keep offsets that take thought:
+  vtable slots, fields deep in a large class.
+- **Why the scaffolding exists.** A never-defined class kept for its vtable, `sn_return_decl`, an
+  `__asm__` label or a `register` parameter gets no comment; `matching_notes.md` explains them.
+  A pointer to that doc (`// SN's free stub (docs/prodg.md)`) is the most it gets.
+- **What the code does.** The header names the file and its doc. It doesn't list each function's
+  behaviour or the details its body shows (`case-insensitive over 0x80 characters`).
 
 ## Report
 

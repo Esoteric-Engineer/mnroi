@@ -3111,7 +3111,11 @@ Game/fn_801B4CA0.c:
 	.text       start:0x801B4CA0 end:0x801B4D7C
 
 Game/fn_801B4E84.c:
-	.text       start:0x801B4E84 end:0x801B4F40
+	.text       start:0x801B4E84 end:0x801B50BC
+
+Game/fn_801B50BC.cpp:
+	.text       start:0x801B50BC end:0x801B5BA8
+	.rodata     start:0x8049E620 end:0x8049E660
 
 Game/fn_801BCE6C.cpp:
 	.text       start:0x801BCE6C end:0x801BD38C

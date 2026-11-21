@@ -28,6 +28,7 @@ The `prodg` rule in `tools/project.py`:
 - **`SN_NGC_PATH`:** `ngccc` refuses to start unless this points at the folder holding its `sn.ini`. The rule sets it.
 - **Language:** `ngccc` picks C or C++ from the extension (`.c`, `.cpp`), so no `-lang` flag is added.
 - **Dependencies:** `-MD`, not `-MMD`: GCC 2.95's `-MMD` leaves out every `<...>` include.
+- **A `cc1plus` crash is silent.** `ngccc` still exits 0 and writes an empty object (284 bytes), so objdiff prints `?% match` for every function. Run `ngccc -E`, then `cc1plus.exe -O0 -quiet` on the `.ii`, to see the segfault, and bisect from there. Declaring `realloc` with a one-argument signature is one trigger; reach SN's `free` stub (dtk's `realloc`) through `void fn_free(void *) __asm__("realloc");` (`Game/fn_801B50BC.cpp`).
 - **Small data:** `dtk elf bake-sda` runs afterwards, as for MWCC objects (see [`baseline.md`](baseline.md#small-data-r13-problem)). `.sdata`/`.sbss` references stay `R_PPC_EMB_SDA21` relocations, which mwld resolves through `r13` like SN's linker did.
 - **Literal pool:** a unit registered with `extern_pool=<address>` goes through `tools/extern_pool.py` between the compile and `bake-sda` (the `prodg_pool` rule).
 - **MWCC-only options:** `shift_jis` is ignored, and `extab_padding` is an error.
