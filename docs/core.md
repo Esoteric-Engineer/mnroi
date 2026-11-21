@@ -45,7 +45,8 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801B6AF0-0x801B738C | Unknown wrappers (calls into 0x800FE284-0x80101188 and 0x8023E850-0x8023E98C). Its `.rodata` holds two short tables, 0x8049E680 and 0x8049E71C, read only from the APT glue's `fn_80126F0C` | 15 |
 | 0x801B738C-0x801B7A48 | **String helpers and the string hash table**: in-place lowercase `fn_801B738C` and the seeded djb2 hash `fn_801B741C` (both called game-wide), then a table that only `stdVar` uses. No `.rodata`. The edge with `stdVar` is a guess from the code: before it, free functions over a table parameter; from it, `stdVar`'s singleton and methods, the first code to touch file data. `.rodata`, the pair map and the language (C++ on both sides) do not separate them | 10 |
 | 0x801B7A48-0x801B8E78 | **`stdVar`**, a singleton of named int, float and string variables read from INI-style text (`[section]`, `key = value`, `//` comments, `"` quoting; keys become `PREFIX/SECTION/KEY`, uppercased). Init `fn_801B8530` loads a file under the tag `"Game:stdVar"`. `.rodata` 0x8049E97C-0x8049E9A8; the floats before it, to 0x8049E8FC, are row 15's (read from 0x801B7018-0x801B7308) | 10 |
-| 0x801B8E78-0x801BC9DC | **Geometry**: helpers on `Vector` and the tail's vector operations (`__ieee754_sqrt`). `_GLOBAL_.I` 0x801BC9A0 | 11 |
+| 0x801B8E78-0x801BA090 | **View frustum**, called from the renderer (0x8039xxxx-0x803Bxxxx). `.rodata` 0x8049E9A8-0x8049E9BC, its last three zero words unread | 11 |
+| 0x801BA090-0x801BC9DC | **Geometry tests** on `Vector` (`__ieee754_sqrt`), called from game code (0x8004xxxx, 0x8014xxxx). `.rodata` from 0x8049E9BC; `.bss` `lbl_80593D14` and `.sbss` `lbl_8066F51C` are its own. `_GLOBAL_.I` 0x801BC9A0. Starts a file: `fn_801BA090` opens a pair-carrying run right after `fn_801B9D78`, a pair-less function with no branches (so no `case` or label cleared the flag) | 11 |
 | 0x801BC9DC-0x801BEE2C | Math, mostly matched (quaternions `Game/fn_801BCE6C.cpp`, arcsine `Game/fn_801BE3C4.c`). `_GLOBAL_.I` 0x801BEDE8 | 17 |
 | 0x80426A2C-0x80431788 | **Linkonce tail, start.** Mixed: generic class inlines (`Color` 0x80426EC4, the localization singleton's getter `fn_80427400` (`Loc:Instance`), five list-wrapper classes 0x80428314-0x80428F74 (section 4.4), `Vector` 0x80428F74, the vector and matrix operations), and inlines only the HUD or render code calls (section 5) | 1, 9, 19 |
 | 0x80465F68-0x80468888 | **Std inline functions** in the linkonce tail. From 0x80466298 they are called almost only from the rows above; before it they mix with the model instance's | 18 |
@@ -145,7 +146,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 8 | `KVList` and `KSList` | 0x801B4F40-0x801B5BA8 | Done |
 | 9 | `Game:List` and the list wrappers | 0x801B5BA8-0x801B6AF0, then the tail's 0x80428314-0x80428F74 | Done |
 | 10 | String utilities and `stdVar` | 0x801B738C-0x801B8E78 | Done |
-| 11 | Geometry | 0x801B8E78-0x801BC9DC | Match |
+| 11 | Geometry | 0x801B8E78-0x801BC9DC; the frustum file to 0x801BA090 is done | Match from 0x801BA090 |
 | 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Match |
 | 13 | System monitor | 0x801AD588-0x801AF394 | Match |
 | 14 | Unknown time file | 0x801AF394-0x801AFEC0 | Identify, then match |
