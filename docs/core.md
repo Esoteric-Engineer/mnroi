@@ -31,8 +31,8 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801A6390-0x801A7BF8 | Not core: graphics. Two `.ctors` files ending at 0x801A6904 and 0x801A6C40, then the `Graphics:Terrain` segment classes (vtables 0x804F67A0, 0x804F67B8, `__7Segment`). They call the model code before them and the render code at 0x8021xxxx-0x8023xxxx | |
 | 0x801A7BF8-0x801A9974 | **File layer**, `.ctors` file with the next row. Start: identify (`fn_801A7BF8` and `fn_801A7C14` are 0x1C stubs; `fn_801A7C30` reads `"bf:"`, the first of the file's `.rodata`, 0x8049D6C4). Holds the stdio-style layer (section 4.1), the search folders (4.2), the `CLASH.BIG` mount and `stdFile:Find` over `DVDOpenDir` | 3 |
 | 0x801A9974-0x801AA1E8 | **Memory-card device**: `CARDInit`/`CARDMount`/`CARDRead`/`CARDWrite` wrappers and the `MemUnit:Buffer` reads and writes. Edge with the file layer: identify. Ends at `_GLOBAL_.I` 0x801AA1AC | 4 |
-| 0x801AA1E8-0x801ABA48 | **Pad manager**: init, read, reset, rumble (`PADControlMotor`), stick math (`__ieee754_sqrtf`). `.rodata` 0x8049D8F0-0x8049D960, ending with the button-bit table 0x8049D950. End: identify (`fn_801ABA18` is an empty 5-argument function) | 12 |
-| 0x801ABA48-0x801AD588 | **Memory manager** (section 4.3). `.rodata` from `"MC:VM"` 0x8049D960. `_GLOBAL_.I` 0x801AD510, `_GLOBAL_.D` 0x801AD54C | 2 |
+| 0x801AA1E8-0x801ABA18 | **Pad manager**: init, read, reset, rumble (`PADControlMotor`), stick math (`__ieee754_sqrtf`). `.rodata` 0x8049D8F0-0x8049D960, ending with the button-bit table 0x8049D950 | 12 |
+| 0x801ABA18-0x801AD588 | **Memory manager** (section 4.3). Starts at `fn_801ABA18`, the empty callback the init passes to `VMSetLogStatsCallback` and its only reference. `.rodata` 0x8049D960-0x8049DAF0, ending with `"new[]"`; the rest of the file reads none | 2 |
 | 0x801AD588-0x801AF394 | **System monitor** (`CSysMon`): drive status, reset button, system font, pad recalibration, language, a 2D text draw (`C_MTXOrtho`, `OSGetFontWidth`). `_GLOBAL_.I` 0x801AF358 | 13 |
 | 0x801AF394-0x801AFEC0 | Unknown: `OSGetTime`/`OSTicksToCalendarTime`, calls into 0x8023EA4C. `_GLOBAL_.I` 0x801AFE84 | 14 |
 | 0x801AFEC0-0x801B104C | **`Std/BufferAllocator.cpp`** (assert path, `fn_801B0C90`). Vtable 0x804F67D0; constructor `fn_801B0B40` (`"BuffMan"`). Before it, 0x801AFEC0-0x801B0B40 is the file layer's back end (`fn_801B01D4` is the read `fn_801A8B60` calls, `__4Attrii`): same file or not, identify. `_GLOBAL_.I` 0x801B0FD4, `_GLOBAL_.D` 0x801B1010 | 5 |
@@ -99,10 +99,15 @@ Types 5, 17, 22, 27 and 28 have no folder.
 
 ### 4.3 Memory manager
 
-- **Init** `fn_801ABA48`: `VMInit`, the `MC:VM`, `default` and `MC:SMALL` heaps, `VMSetLogStatsCallback`.
-- **Reports**: `fn_801ABDB4` (ARAM classes), `fn_801ABFA4` (`Main Heap`, `Virt Heap`), `fn_801AC1E0` (per class), and the out-of-memory report `fn_801AC72C` (`"MALLOC requested name:%s size:%d"`).
-- **Allocate**: `fn_801AC9EC` (6 arguments, 26 calling functions) and its wrapper `fn_801AC988` (4 arguments, passes 0 for the last two, 48 calling functions). The first argument is a tag string such as `"Graphics:Terrain"`; `__builtin_new` and `__builtin_vec_new` use `"new"` and `"new[]"`.
-- **Free**: `fn_801ACC0C` (68 calling functions) and `fn_801ACC44`, both through `fn_8023F63C`.
+`Game/fn_801ABA18.cpp`. The argument order its callers need (the size comes first, then the tag string such as `"Graphics:Terrain"`):
+
+| Entry | Arguments |
+|---|---|
+| `fn_801AC9EC` (26 calling functions) | `(size, tag, ?, kind, align, ?)`; `kind` 1 adds heap flag 0x100 |
+| `fn_801AC988` (48) | `(size, tag, ?, kind)`, the above with `align` 0; `operator new` passes `(size, "new", 0, 2)` |
+| `fn_801AD37C`, `fn_801AD324` | ARAM: `(size, tag, ?, align)` and `(size, tag, ?)` |
+| `fn_801ACC7C` | realloc: `(p, size, tag, kind)` |
+| `fn_801ACC0C` (68), `fn_801ACC44` | free: `(p)` |
 
 ### 4.4 Vtables
 
@@ -127,12 +132,12 @@ Types 5, 17, 22, 27 and 28 have no folder.
 
 ## 6. Target Order
 
-Work the rows in order and skip whatever is done; `configure.py` is the authority on unit status. Within a file, take the next function after the unit's current `.text` end, so that the unit grows as one contiguous range from the file's first function. If a function is stuck, record it in [`nonmatching.md`](nonmatching.md) and move on to the next row rather than leave a gap. Name a unit after its file's first function (`Game/fn_801ABA48.cpp`), or after its source path once it is known (`Std/BufferAllocator.cpp`). Rows are numbered once; unit headers cite them (`docs/core.md row N`), so don't renumber.
+Work the rows in order and skip whatever is done; `configure.py` is the authority on unit status. Within a file, take the next function after the unit's current `.text` end, so that the unit grows as one contiguous range from the file's first function. If a function is stuck, record it in [`nonmatching.md`](nonmatching.md) and move on to the next row rather than leave a gap. Name a unit after its file's first function (`Game/fn_801ABA18.cpp`), or after its source path once it is known (`Std/BufferAllocator.cpp`). Rows are numbered once; unit headers cite them (`docs/core.md row N`), so don't renumber.
 
 | # | Target | Range | Next action |
 |---|---|---|---|
 | 1 | Generic tail inlines, first run | `fn_80426A2C`, `fn_80426A54`, `__5ColorUcUcUcUc`, `__6Vector`, `fn_80428FA8` | Done |
-| 2 | Memory manager | 0x801ABA48-0x801AD588 | Identify the start (`fn_801ABA18`), then match |
+| 2 | Memory manager | 0x801ABA18-0x801AD588 | Done |
 | 3 | File layer | 0x801A7BF8-0x801A9974 | Identify both edges, then match |
 | 4 | Memory-card device | 0x801A9974-0x801AA1E8 | Match; it claims the file's `.ctors` word |
 | 5 | BufferAllocator file | 0x801AFEC0-0x801B104C | Identify whether 0x801AFEC0-0x801B0B40 is the same file, then match |
@@ -142,7 +147,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 9 | `Game:List` and the list wrappers | 0x801B5BA8-0x801B6AF0, then the tail's 0x80428314-0x80428F74 | Match |
 | 10 | String utilities and `stdVar` | 0x801B738C-0x801B8E78 | Identify the edge between them, then match |
 | 11 | Geometry | 0x801B8E78-0x801BC9DC | Match |
-| 12 | Pad manager | 0x801AA1E8-0x801ABA48 | Match |
+| 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Match |
 | 13 | System monitor | 0x801AD588-0x801AF394 | Match |
 | 14 | Unknown time file | 0x801AF394-0x801AFEC0 | Identify, then match |
 | 15 | Unknown wrappers | 0x801B6AF0-0x801B738C | Identify, then match; claims the two short tables (section 2) |
@@ -157,7 +162,6 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 ## 7. Open Questions
 
 - Where the file layer starts (`fn_801A7BF8`, `fn_801A7C14`) and where it hands over to the memory-card device.
-- Whether `fn_801ABA18` ends the pad manager or starts the memory manager.
 - Whether 0x801AFEC0-0x801B0B40 (the file back end, `__4Attrii`) is part of `Std/BufferAllocator.cpp`.
 - What the files at 0x801AF394 and 0x801B6AF0 are.
 - What the 0x158-byte open-file record holds, and what the 0x64 that close passes means.
