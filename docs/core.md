@@ -119,7 +119,7 @@ Types 5, 17, 22, 27 and 28 have no folder.
 ## 5. Notes
 
 - **The tail is ordered by the first file that emitted each inline** ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)), so a tail run is not one class. 0x80426A2C-0x80428FE0 has its pools in the first kilobyte of `.rodata` (the HUD files at 0x80003808 on): it holds HUD-only inlines (`fn_80426F94` and `fn_80427214` call `fn_800098CC`, `fn_80426AB0` tests `G+0x770`) next to `Color`, `Vector` and the list wrappers. Claim a tail function for this map only if its callers are spread across the game or are in the rows above; leave the rest for the branch that owns their callers.
-- **The most-called generic inlines**: `__6Vector` (685 calling functions), `fn_80428FA8` (88, sets a vector's x, y, z), `fn_80426A54` (37, sets two floats), `fn_80426A2C` (55, returns its argument, like the matched `fn_8042FB28`), `__5ColorUcUcUcUc` (15), and the localization getter `fn_80427400` (31, row 19).
+- **The most-called generic inline still open** is the localization getter `fn_80427400` (31 calling functions, row 19).
 - **The two short tables in row 15's `.rodata`** (0x8049E680, 0x8049E71C) sit between `Game:List`'s pool and `fn_801B6FCC`'s, so they belong to that file even though only `fn_80126F0C` reads them.
 - **Call counts in this file are calling functions, not call sites**, counted once per function. `build/GVLE69/asm/` holds stale copies of split files, so a raw `grep -c` over it double-counts.
 
@@ -131,7 +131,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 
 | # | Target | Range | Next action |
 |---|---|---|---|
-| 1 | Generic tail inlines, first run | `fn_80426A2C`, `fn_80426A54`, `__5ColorUcUcUcUc`, `__6Vector`, `fn_80428FA8` | Match; one small unit per run of neighbours, `extern_pool` for pools in other files' `.rodata` (`__6Vector` reads 0x80482CC8) |
+| 1 | Generic tail inlines, first run | `fn_80426A2C`, `fn_80426A54`, `__5ColorUcUcUcUc`, `__6Vector`, `fn_80428FA8` | Done |
 | 2 | Memory manager | 0x801ABA48-0x801AD588 | Identify the start (`fn_801ABA18`), then match |
 | 3 | File layer | 0x801A7BF8-0x801A9974 | Identify both edges, then match |
 | 4 | Memory-card device | 0x801A9974-0x801AA1E8 | Match; it claims the file's `.ctors` word |

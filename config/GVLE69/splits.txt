@@ -4164,6 +4164,15 @@ Dolphin/texPalette/TEXGet.c:
 	.data       start:0x804F2D80 end:0x804F2DBC
 	.sdata2     start:0x80670970 end:0x80670978
 
+Game/fn_80426A2C.cpp:
+	.text       start:0x80426A2C end:0x80426A84
+
+Game/fn_80426EC4.cpp:
+	.text       start:0x80426EC4 end:0x80426F1C
+
+Game/fn_80428F74.cpp:
+	.text       start:0x80428F74 end:0x80428FE0
+
 Game/fn_80428FE0.c:
 	.text       start:0x80428FE0 end:0x80429090
 

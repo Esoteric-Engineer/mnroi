@@ -55,11 +55,10 @@ Plain `char` is signed. `cc1` sign-extends it (`extsb`), even though `ngccc`'s p
 
 `-O2 -fno-omit-frame-pointer` gives the same prologue but not the doubled branch or the spills. Checked on `fn_8000923C`, `fn_80009280` (member calls through `this+0x39C0`) and the static initializer in `Game/fn_800092CC.cpp`.
 
-**The doubled branch only shows up through `cc1plus`.** A plain C leaf function (no calls) compiled at `-O0` with `register` on its parameters and any never-reassigned local keeps them in registers for the whole function (no frame slot, no `stw`/`lwz` round-trip) and emits exactly one `b` per `return`. The same source compiled as C++ (even `extern "C"`) adds a redundant second `b .Lepilogue` after each `return`'s branch (both relocated `R_PPC_REL24`/`_REL14` to the same target). `register` parameters stay in registers in C++ too: `fn_80431CCC`'s source compiled as C++ has no spills, and so does `__5ColorUcUcUcUc` below. Symptom: a `NonMatching` unit stuck a few instructions over size with otherwise-perfect fuzzy%. Fix: if the function has no class/this and no C++-only construct, give its unit a `.c` extension instead of `.cpp`. Confirmed on `fn_80431CCC` (0x80431CCC, roster accessor, [`characters.md`](characters.md#2-roster-table)).
+**The doubled branch only shows up through `cc1plus`.** A plain C leaf function (no calls) compiled at `-O0` with `register` on its parameters and any never-reassigned local keeps them in registers for the whole function (no frame slot, no `stw`/`lwz` round-trip) and emits exactly one `b` per `return`. The same source compiled as C++ (even `extern "C"`) adds a redundant second `b .Lepilogue` after each `return`'s branch (both relocated `R_PPC_REL24`/`_REL14` to the same target). `register` parameters stay in registers in C++ too: `fn_80431CCC`'s source compiled as C++ has no spills, and so does `__5ColorUcUcUcUc` (`Game/fn_80426EC4.cpp`). Symptom: a `NonMatching` unit stuck a few instructions over size with otherwise-perfect fuzzy%. Fix: if the function has no class/this and no C++-only construct, give its unit a `.c` extension instead of `.cpp`. Confirmed on `fn_80431CCC` (0x80431CCC, roster accessor, [`characters.md`](characters.md#2-roster-table)).
 
-**The colour constructor is `-O0`.** `__5ColorUcUcUcUc` (0x80426EC4) keeps its arguments in registers
-because they are declared `register`: `Color::Color(register unsigned char r_, ...) { r = r_; g = g_;
-b = b_; a = a_; }` compiles byte for byte to it at `-O0` as C++, and without `register` it spills them.
+**The tail's inlines keep their parameters in registers because they are declared `register`**; without
+it they spill. The constructor and setters of `Game/fn_80426EC4.cpp` and `Game/fn_80428F74.cpp` are `-O0` C++.
 
 **Middleware: `-O2`, and one block with `-fno-strength-reduce -G0`.** Every function without a frame
 pointer in the game ranges is middleware: EA's RealCore, Apt, RealGraph/EAGL, an AV/MAD video player,
