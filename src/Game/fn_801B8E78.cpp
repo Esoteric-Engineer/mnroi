@@ -1,5 +1,5 @@
 // View frustum: built from a camera matrix, tested against boxes and spheres (docs/core.md row 11).
-// .rodata 0x8049E9A8-0x8049E9BC.
+// .rodata 0x8049E9A8-0x8049E9B8.
 
 class Vector
 {
@@ -270,4 +270,4 @@ extern "C" void fn_801B9D78(register Frustum *self, Mat4 *cam, float far, float 
     fn_8042FE08(&self->pts[4], &cam->row[1], far);
 }
 
-static const float sOrphans[3] __attribute__((section(".rodata"))) = { 0.0f, 0.0f, 0.0f };
+__asm__(".section .rodata\n\t.float 0.0\n\t.float 0.0\n\t.text");

@@ -3133,7 +3133,15 @@ Game/fn_801B7A48.cpp:
 
 Game/fn_801B8E78.cpp:
 	.text       start:0x801B8E78 end:0x801BA090
-	.rodata     start:0x8049E9A8 end:0x8049E9BC
+	.rodata     start:0x8049E9A8 end:0x8049E9B8
+
+Game/fn_801BA090.cpp:
+	.text       start:0x801BA090 end:0x801BC9DC
+	.ctors      start:0x804826B8 end:0x804826BC
+	.rodata     start:0x8049E9B8 end:0x8049EA68
+	.data       start:0x804D3A0C end:0x804D3A24
+	.bss        start:0x80593D14 end:0x80593DB4
+	.sbss       start:0x8066F51C end:0x8066F520
 
 Game/fn_801BCE6C.cpp:
 	.text       start:0x801BCE6C end:0x801BD38C
