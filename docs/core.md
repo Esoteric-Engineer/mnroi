@@ -35,7 +35,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801ABA18-0x801AD588 | **Memory manager** (section 4.3). Starts at `fn_801ABA18`, the empty callback the init passes to `VMSetLogStatsCallback` and its only reference. `.rodata` 0x8049D960-0x8049DAF0, ending with `"new[]"`; the rest of the file reads none | 2 |
 | 0x801AD588-0x801AF394 | **System monitor** (`CSysMon`): drive status, reset button, system font, pad recalibration, language, a 2D text draw (`C_MTXOrtho`, `OSGetFontWidth`). `_GLOBAL_.I` 0x801AF358 | 13 |
 | 0x801AF394-0x801AFEC0 | Unknown: `OSGetTime`/`OSTicksToCalendarTime`, calls into 0x8023EA4C. `_GLOBAL_.I` 0x801AFE84 | 14 |
-| 0x801AFEC0-0x801B0B40 | **File back end**, its own file: the open-file record's methods (`fn_801AFEE8` constructor, `fn_801AFFDC` open, `fn_801B00AC` close, `fn_801B01D4` read, `fn_801B0380` line read, `__4Attrii`). No `.rodata`. Start: the time file's `_GLOBAL_.I` `fn_801AFE84` ends the file before. End: `Std/BufferAllocator.cpp` asserts at line 140 in its third function `fn_801B0C90`, which leaves no room for these 0xC80 bytes ahead of it; the back end reaches the allocator only through the `.sdata` pointer `lbl_8066C6B8` (set by `fn_801AFEC0`) with virtual calls | 5 |
+| 0x801AFEC0-0x801B0B40 | **File back end**, its own file: the open-file record's methods. No `.rodata`. Start: the time file's `_GLOBAL_.I` `fn_801AFE84` ends the file before. End: `Std/BufferAllocator.cpp` asserts at line 140 in its third function `fn_801B0C90`, which leaves no room for these 0xC80 bytes ahead of it; the back end reaches the allocator only through the `.sdata` pointer `lbl_8066C6B8` (set by `fn_801AFEC0`) with virtual calls | 5 |
 | 0x801B0B40-0x801B104C | **`Std/BufferAllocator.cpp`** (the default allocation path in `fn_801B0C90`). `.rodata` 0x8049E3AC-0x8049E3F4. The object is `lbl_80593C58` (`.bss`, 0x18), which the file layer's init hands to the back end | 5 |
 | 0x801B104C-0x801B2620 | **`Std/stdBigHashedVFS.cpp`** (assert paths in `fn_801B1270` and `fn_801B1D74`). Its `.rodata` starts with its own `"bf:"` at 0x8049E3F4 and ends with `"Decompession Buffer"`. The VFS class: constructor `fn_801B24A0` (vtable 0x804F6808 at `+0x10`, base constructor `fn_802407A8` in RealCore), destructor `fn_801B2530` | 6 |
 | 0x801B2620-0x801B26DC | **`stdBitmap`** (`.rodata` 0x8049E4DC). The matched tuning init `Game/fn_801B26DC.cpp` follows | 7 |
@@ -67,15 +67,14 @@ Out of scope: the model code 0x8019F02C-0x801A6390 and the graphics files above;
 
 ### 4.1 Open-file table (`lbl_8066F4EC`)
 
-`Game/fn_801A7BF8.cpp`. An `.sbss` pointer to 12 records of 0x158 bytes (`new[]` with a cookie, constructor `fn_801AFEE8`). A handle is a record's index + 1, and 0 is failure. The record's fields, all set by the unmatched back end at 0x801AFEC0:
+`Game/fn_801A7BF8.cpp`. An `.sbss` pointer to 12 records of 0x158 bytes (`new[]` with a cookie, constructor `fn_801AFEE8`). A handle is a record's index + 1, and 0 is failure. The back end `Game/fn_801AFEC0.cpp` declares the whole record; what the file layer reads:
 
 | Offset | What |
 |---|---|
-| +0x00 | `int *`; the slot is free when `*f0 == 0` |
-| +0x04 | `int *`; `*f4` is the device handle the RealCore calls take (`fn_80244538`, `fn_802444A8`) |
-| +0x08 | `int *`; the formatted write `fn_801A8E54` writes only when `*f8 != 0` (open for writing: a guess) |
-| +0x0C | `char *`, the path |
-| +0x10 | `int *`, the write position |
+| +0x00 | `int *` to the open flag +0x118; the slot is free when `*f0 == 0` |
+| +0x04, +0x08 | `int *`, both to the device handle +0x14 that the RealCore calls take (`fn_80244538`, `fn_802444A8`); the formatted write `fn_801A8E54` writes only when `*f8 != 0` |
+| +0x0C | `char *` to the path +0x18, with the root prefix (`fn_801A7C30`) stripped |
+| +0x10 | `unsigned *` to the file size +0x128 |
 
 The calls callers need: open `fn_801A8500(path, mode)`, open through the search folders `fn_801A8368(name, mode, type)` (23 calling functions), close `fn_801A875C(handle)`, read `fn_801A8B60(ptr, size, count, handle)`, line read `fn_801A8C08(buf, n, handle)`, formatted write `fn_801A8E54(handle, fmt, ...)`, exists `fn_801A8088(path)`. The mode string sets 0x11 for `r` and 0x6 for `w` (`fn_801A7CD8`).
 
@@ -138,7 +137,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 2 | Memory manager | 0x801ABA18-0x801AD588 | Done |
 | 3 | File layer | 0x801A7BF8-0x801A9974 | Done |
 | 4 | Memory-card device | 0x801A9974-0x801AA1E8 | Done |
-| 5 | BufferAllocator and the file back end | 0x801B0B40-0x801B104C, then 0x801AFEC0-0x801B0B40 | Match the back end (`Game/fn_801AFEC0.cpp`) |
+| 5 | BufferAllocator and the file back end | 0x801B0B40-0x801B104C, then 0x801AFEC0-0x801B0B40 | Done |
 | 6 | VFS | 0x801B104C-0x801B2620 | Match; cross-check the `.BIG`/`.BH` reads against `tools/bigtool.py` |
 | 7 | `stdBitmap` | 0x801B2620-0x801B26DC | Match |
 | 8 | `KVList` and `KSList` | 0x801B4F40-0x801B5BA8 | Match |

@@ -942,6 +942,7 @@ config.libs = [
             Object(Matching, "Game/fn_801A7BF8.cpp"),
             Object(Matching, "Game/fn_801A9974.cpp"),
             Object(Matching, "Game/fn_801ABA18.cpp"),
+            Object(Matching, "Game/fn_801AFEC0.cpp"),
             Object(Matching, "Std/BufferAllocator.cpp"),
             Object(Matching, "Game/fn_801B26DC.cpp"),
             Object(Matching, "Game/fn_801B301C.c"),

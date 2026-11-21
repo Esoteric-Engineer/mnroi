@@ -156,6 +156,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   next register) is `f()->slot(...)` on a class with `char data[N]` plus virtuals, not a hand-made entry
   struct with `register` locals, which gets the copies and registers wrong (`Game/fn_80436D88.cpp`).
 
+- **A constant loaded into a call-saved register with no frame slot and never read (`lis r28, 0x2` ahead of a call that loads `lis r4, 0x2` again), which widens `stmw` by one:** a `register const unsigned int n = 0x20000;` local, whose uses fold to the constant; a plain `const` local gets a slot (`Game/fn_801AFEC0.cpp`, `fn_801B0558`).
 - **The DOL copies a call result through a non-volatile (`mr r30, r3` / `mr r3, r30`) with no frame
   slot for it, and its `stmw`/`lmw` range is one register wider than yours.** `obey_regdecls` is on at
   `-O0`, so GCC 2.95 honours the `register` keyword there and only there: `register` gives the local a
@@ -193,7 +194,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   whether a 16-byte member copy's address folds into the symbol (`Game/fn_8002623C.cpp`, `Vector`). The same holds for a byte field read through a pointer member (`p->tbl->e[i].kind`, DOL `add` then `lbz 0x2b`, ours `addi 0x2b` then `lbzx`): `__attribute__((aligned(4)))` on the element struct (`Game/fn_8043C1EC.cpp`, `fn_8043C3C0`). So a `u16` field in a struct cut down to `char` padding and 2-byte members folds (`addi 0x28` / `lhzx`) where the DOL has `add` / `lhz 0x28`: spell out the struct's word members instead of adding `aligned(8)`, which would move the array (`Game/fn_80223B50.cpp`).
 
 - **A field of a global array element that folds (`addi rB, base, off` / `lbzx`) where the DOL adds first (`add rX, off, base` / `lbz off(rX)`), while the element type is 4-aligned: the `extern` array was declared before its struct was complete.** An array of an incomplete type has no alignment yet, so the declaration keeps the folded path; move the struct definition above the `extern` (`Game/fn_8007C8B0.cpp`, `fn_8007DC0C`).
-- **A field of an indexed element that the DOL reads as `mulli` / `addi rB, self, off` / `lwzx rX, rB, product`, or as `mulli` / `add rX, self, product` / `lwz f(rX)`, where pointer arithmetic gives `add rX, product, self` (and an extra `addi`): the element is in a real array member.** `self[i].f` and every cast or `(self + i)->f` spelling of it is a pointer sum, expanded with the product first; `self->entries[i].f` is an array reference, which computes the index into a register by itself and then follows the alignment rule above: a 4-aligned element gives the `addi`/`lwzx` form (`Game/fn_804396F8.c`, `Slot slots[2]`), an `aligned(8)` one the `add` plus displacement (`Game/fn_8043E148.cpp`).
+- **A field of an indexed element that the DOL reads as `mulli` / `addi rB, self, off` / `lwzx rX, rB, product`, or as `mulli` / `add rX, self, product` / `lwz f(rX)`, where pointer arithmetic gives `add rX, product, self` (and an extra `addi`): the element is in a real array member.** `self[i].f` and every cast or `(self + i)->f` spelling of it is a pointer sum, expanded with the product first; `self->entries[i].f` is an array reference, which computes the index into a register by itself and then follows the alignment rule above: a 4-aligned element gives the `addi`/`lwzx` form (`Game/fn_804396F8.c`, `Slot slots[2]`), an `aligned(8)` one the `add` plus displacement (`Game/fn_8043E148.cpp`). The store form: `add rX, product, self` / `addi rY, rX, off+f` / `stw 0(rY)` is `*&self->a[i].f = v;`, while `(&self->a[i])->f` keeps `f` in the store displacement and the plain `self->a[i].f` gives `stwx` (`Game/fn_801AFEC0.cpp`, `fn_801B0558`).
 
 - **`addi r0, rX, N` / `mr r3, r0` instead of `addi r3, rX, N` before a call is only about the frame
   offset.** GCC targets r3 directly only when the object is the first local (offset 8); anywhere else
@@ -290,6 +291,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 
 - **A `default:` clause whose branch lands on the epilogue label, past the switch's end label (which holds its own `b`), is `default: return;` in a `void` function, not `default: break;`.** `break` targets the switch end and leaves the unit at 99.8% (`Game/fn_801317D8.cpp`, `fn_801319D4`).
 
+- **`mr r9, r0` / `slwi r0, r9, N` where yours is a bare `slwi r9, r0, N`, or `lwz r9` / `srwi r0, r9, N` where yours loads `r0`, is a multiply or divide by a power of two:** write `x * 0x10000` and `x / 0x10000` (unsigned), not `x << 16` and `x >> 16` (`Game/fn_801AFEC0.cpp`, `fn_801B0558`, `fn_801B0920`).
 - **`rlwinm rX, rY, 0, n, n` with no record bit is a single-bit mask, `x & (1 << (31 - n))`, and
   `clrlwi rX, rY, 31` is `x & 1`.** GCC 2.95 picks `rlwinm` over `andi.` for every single-bit `&`, so a
   run of near-identical small getters differing only in `n` is a flags word's bit testers
