@@ -43,7 +43,8 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801B50BC-0x801B5BA8 | **`KVList` and `KSList`** (`Game:KVList` `fn_801B5400`, `Game:KSList` `fn_801B59F0`). `.rodata` 0x8049E620-0x8049E660. Starts at the `KVList` constructor: 0x801B4F40-0x801B50BC are registry C (`register` parameters, called only from the registry at 0x801B4764-0x801B4D7C) | 8 |
 | 0x801B5BA8-0x801B6AF0 | **`Game:List`** (`fn_801B5E38`), a growable pointer array. `.rodata` 0x8049E660-0x8049E680 | 9 |
 | 0x801B6AF0-0x801B738C | Unknown wrappers (calls into 0x800FE284-0x80101188 and 0x8023E850-0x8023E98C). Its `.rodata` holds two short tables, 0x8049E680 and 0x8049E71C, read only from the APT glue's `fn_80126F0C` | 15 |
-| 0x801B738C-0x801B8E78 | **String utilities and `stdVar`**: lowercase copy `fn_801B738C`, parsing (`"0x%x"`, `sscanf`), `Game:stdVar` `fn_801B8530` | 10 |
+| 0x801B738C-0x801B7A48 | **String helpers and the string hash table**: in-place lowercase `fn_801B738C` and the seeded djb2 hash `fn_801B741C` (both called game-wide), then a table that only `stdVar` uses. No `.rodata`. The edge with `stdVar` is a guess from the code: before it, free functions over a table parameter; from it, `stdVar`'s singleton and methods, the first code to touch file data. `.rodata`, the pair map and the language (C++ on both sides) do not separate them | 10 |
+| 0x801B7A48-0x801B8E78 | **`stdVar`** (section 4.6; `Game:stdVar` init `fn_801B8530`). `.rodata` 0x8049E97C-0x8049E9A8 (formats `"%f"`, `"0x%x"`, `"%d"`, `"%.4f"`, `"/"`, the tag); the floats before it, to 0x8049E8FC, are row 15's (read from 0x801B7018-0x801B7308) | 10 |
 | 0x801B8E78-0x801BC9DC | **Geometry**: helpers on `Vector` and the tail's vector operations (`__ieee754_sqrt`). `_GLOBAL_.I` 0x801BC9A0 | 11 |
 | 0x801BC9DC-0x801BEE2C | Math, mostly matched (quaternions `Game/fn_801BCE6C.cpp`, arcsine `Game/fn_801BE3C4.c`). `_GLOBAL_.I` 0x801BEDE8 | 17 |
 | 0x80426A2C-0x80431788 | **Linkonce tail, start.** Mixed: generic class inlines (`Color` 0x80426EC4, the localization singleton's getter `fn_80427400` (`Loc:Instance`), five list-wrapper classes 0x80428314-0x80428F74 (section 4.4), `Vector` 0x80428F74, the vector and matrix operations), and inlines only the HUD or render code calls (section 5) | 1, 9, 19 |
@@ -117,6 +118,16 @@ The calls callers need: open `fn_801A8500(path, mode)`, open through the search 
 | +0x08, +0x0C | memory size and sector size, from `CARDProbeEx` |
 | +0x10 | 64-bit serial number |
 
+### 4.6 `stdVar` (`lbl_80593D00`)
+
+A 0x14-byte function-local static: `fn_801B7A48` returns it, built once by the tail constructor `fn_80468638` behind the `.sbss` guard `lbl_8066F518`. `fn_801B7AA0(this, n, bytes, x)` sets it up once.
+
+| Offset | What |
+|---|---|
+| +0x00 | set-up flag |
+| +0x04 | the variables' hash table (`Game/fn_801B738C.cpp`) from `fn_801B74AC`: 2n rounded up to a power of two buckets |
+| +0x08, +0x0C, +0x10 | string buffer of `bytes` (`new[]`): start, end, write cursor |
+
 ---
 
 ## 5. Notes
@@ -143,7 +154,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 7 | `stdBitmap` | 0x801B2620-0x801B26DC | Done |
 | 8 | `KVList` and `KSList` | 0x801B4F40-0x801B5BA8 | Done |
 | 9 | `Game:List` and the list wrappers | 0x801B5BA8-0x801B6AF0, then the tail's 0x80428314-0x80428F74 | Done |
-| 10 | String utilities and `stdVar` | 0x801B738C-0x801B8E78 | Identify the edge between them, then match |
+| 10 | String utilities and `stdVar` | 0x801B738C-0x801B8E78; the string file 0x801B738C-0x801B7A48 is done | Match `stdVar` from 0x801B7A48 |
 | 11 | Geometry | 0x801B8E78-0x801BC9DC | Match |
 | 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Match |
 | 13 | System monitor | 0x801AD588-0x801AF394 | Match |
