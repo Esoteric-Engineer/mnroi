@@ -5682,6 +5682,48 @@ Game/fn_80465C9C.cpp:
 Game/fn_80466268.cpp:
 	.text       start:0x80466268 end:0x80466298
 
+Game/fn_8046655C.cpp:
+	.text       start:0x8046655C end:0x804665F0
+
+Game/fn_804665F0.cpp:
+	.text       start:0x804665F0 end:0x80466828
+
+Game/fn_80466828.cpp:
+	.text       start:0x80466828 end:0x8046697C
+
+Game/fn_8046697C.cpp:
+	.text       start:0x8046697C end:0x80466A0C
+
+Game/fn_80466A0C.cpp:
+	.text       start:0x80466A0C end:0x80466A44
+
+Game/fn_80466A44.cpp:
+	.text       start:0x80466A44 end:0x80466BA0
+
+Game/fn_80466BA0.cpp:
+	.text       start:0x80466BA0 end:0x804673B8
+
+Game/fn_804673B8.cpp:
+	.text       start:0x804673B8 end:0x804673E0
+
+Game/fn_804673E0.cpp:
+	.text       start:0x804673E0 end:0x80467428
+
+Game/fn_80467428.cpp:
+	.text       start:0x80467428 end:0x80467494
+
+Game/fn_80467494.cpp:
+	.text       start:0x80467494 end:0x8046859C
+
+Game/fn_8046859C.cpp:
+	.text       start:0x8046859C end:0x80468638
+
+Game/fn_80468638.cpp:
+	.text       start:0x80468638 end:0x804686B8
+
+Game/fn_804686B8.cpp:
+	.text       start:0x804686B8 end:0x80468888
+
 Game/fn_80468888.cpp:
 	.text       start:0x80468888 end:0x80468934
 
