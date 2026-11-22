@@ -209,7 +209,9 @@ B baseline, and 7 of those 12 contain a switch.
 `Game/fn_80087040.cpp`, `Game/handlers/characterselect.cpp` and `Game/fn_8002623C.cpp` use that line, and
 without it each is 8 bytes over per function. Order matters inside a unit: a function that comes before the
 first setter, or after a `switch`/label, keeps the pair, so use a real constructor or header function when
-the original's is known.
+the original's is known. To alternate within one unit, give each pair-less function its own setter
+(`inline int sn_return_X(int a) { return a; }`) and each paired one its own clearer
+(`inline void sn_label_X() { clear:; }`) just ahead of it (`Game/fn_804293F4.cpp`).
 
 **Pair map.** `python3 tools/pair_map.py` classes every GCC function by its epilogue, and
 `python3 tools/pair_map.py 0x80103BAC` says which run an address is in. A = carries the pair (flag clear);

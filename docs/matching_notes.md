@@ -158,7 +158,10 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
   class (`struct Melee : Obj { char pad[...]; int f400; }`, `Game/fn_800DBF1C.cpp`). Writing it as a struct of pointers-to-member instead evaluates
   the entry address twice and does not match. The same shape on a call result (`mr r0, r3` / `mr r28, r0`, then the entry address in the
   next register) is `f()->slot(...)` on a class with `char data[N]` plus virtuals, not a hand-made entry
-  struct with `register` locals, which gets the copies and registers wrong (`Game/fn_80436D88.cpp`).
+  struct with `register` locals, which gets the copies and registers wrong (`Game/fn_80436D88.cpp`). The same
+  delta / pfn-to-temp / `blrl` read at fixed offsets off `this` (no vptr load, no index check) is a
+  stored `{short delta; short index; void (*fn)()}` called as `((T)e.fn)((char *)owner + e.delta, ...)`
+  (`Game/fn_804293F4.cpp`).
 
 - **A constant loaded into a call-saved register with no frame slot and never read (`lis r28, 0x2` ahead of a call that loads `lis r4, 0x2` again), which widens `stmw` by one:** a `register const unsigned int n = 0x20000;` local, whose uses fold to the constant; a plain `const` local gets a slot (`Game/fn_801AFEC0.cpp`, `fn_801B0558`).
 - **The DOL copies a call result through a non-volatile (`mr r30, r3` / `mr r3, r30`) with no frame
