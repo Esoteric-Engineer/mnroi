@@ -1388,7 +1388,7 @@ Runtime.PPCEABI.H/__sccl.c:
 Runtime.PPCEABI.H/vsprintf.c:
 	.text       start:0x80171088 end:0x80171158
 
-Runtime.PPCEABI.H/__register_atexit.c:
+Runtime.PPCEABI.H/atexit.c:
 	.text       start:0x80171158 end:0x801711F0
 
 Runtime.PPCEABI.H/atof.c:
@@ -3073,6 +3073,15 @@ Game/fn_801ABA18.cpp:
 	.dtors      start:0x804828B0 end:0x804828B4
 	.rodata     start:0x8049D960 end:0x8049DAF0
 	.sbss       start:0x8066F4F4 end:0x8066F4FC
+
+Game/fn_801AD588.cpp:
+	.text       start:0x801AD588 end:0x801AF394
+	.ctors      start:0x804826AC end:0x804826B0
+	.rodata     start:0x8049DAF0 end:0x8049E308
+	.data       start:0x804D39AC end:0x804D3A0C
+	.bss        start:0x80593B48 end:0x80593BE8
+	.sdata      start:0x8066C6A0 end:0x8066C6B8
+	.sbss       start:0x8066F4FC end:0x8066F518
 
 Game/fn_801AFEC0.cpp:
 	.text       start:0x801AFEC0 end:0x801B0B40

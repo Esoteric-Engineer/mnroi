@@ -1,7 +1,7 @@
 extern int lbl_8066C3B0;
 extern void free(void);
 
-asm int __register_atexit(void (*func)(void))
+asm int atexit(void (*func)(void))
 {
     // clang-format off
     nofralloc

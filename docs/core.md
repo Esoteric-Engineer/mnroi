@@ -18,7 +18,7 @@ See also:
 - **Allocation.** `__builtin_new` (295 calling functions), `__builtin_delete` (158), `__builtin_vec_new`, `__builtin_vec_delete`, and the tagged allocator (section 4.3). `__builtin_new` and `__builtin_vec_new` also run the memory init lazily.
 - **Files.** `fn_801A8500(path, mode)` opens, `fn_801A875C(handle)` closes (32 calling functions), `fn_801A8B60(ptr, size, count, handle)` reads (46). Callers include the tuning init `fn_801B26DC` and the model loaders.
 - **Pad.** `fn_801AA1E8` (`PADInit`, `SISetSamplingRate`) is called from the video and GX init `fn_80219900`.
-- **System monitor.** `fn_801AD768` runs `fn_801AD7BC` (drive status, reset, pad motors); `fn_801ADC04` loads the system font (`CSysMon::SysFont`).
+- **System monitor.** `fn_801AD6F0` registers `fn_801AD768` as its `CTask` callback (section 4.7), which polls the reset button (`fn_801AEAE8`) and the drive (`fn_801AD7BC`). `fn_801AEBFC` polls the reset button alone, for the memory-card manager (0x8011F270).
 
 ---
 
@@ -33,8 +33,8 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801A9974-0x801AA1E8 | **Memory-card device** (section 4.5). `.rodata` 0x8049D8C8-0x8049D8F0: `"MemUnit:Buffer"`, then the pools of the tail inlines `fn_80466694` (0x8049D8D8) and `fn_80466764` (0x8049D8E0, 512.0f), which round a size up to a sector (row 18). Ends at `_GLOBAL_.I` 0x801AA1AC | 4 |
 | 0x801AA1E8-0x801ABA18 | **Pad manager**: init, read, reset, rumble (`PADControlMotor`), stick math (`__ieee754_sqrtf`). `.rodata` 0x8049D8F0-0x8049D960, ending with the button-bit table 0x8049D950 | 12 |
 | 0x801ABA18-0x801AD588 | **Memory manager** (section 4.3). Starts at `fn_801ABA18`, the empty callback the init passes to `VMSetLogStatsCallback` and its only reference. `.rodata` 0x8049D960-0x8049DAF0, ending with `"new[]"`; the rest of the file reads none | 2 |
-| 0x801AD588-0x801AF394 | **System monitor** (`CSysMon`): drive status, reset button, system font, pad recalibration, language, a 2D text draw (`C_MTXOrtho`, `OSGetFontWidth`). `_GLOBAL_.I` 0x801AF358 | 13 |
-| 0x801AF394-0x801AFEC0 | Unknown: `OSGetTime`/`OSTicksToCalendarTime`, calls into 0x8023EA4C. `_GLOBAL_.I` 0x801AFE84 | 14 |
+| 0x801AD588-0x801AF394 | **System monitor** (`CSysMon`, `Game/fn_801AD588.cpp`). `.rodata` 0x8049DAF0-0x8049E308: first 0x148 bytes of strings no code reads (`"cMoviePlayer:Instance"`, `"Memcard:Thread"`, font names; inline functions' tags, a guess), then the localized drive messages that `.data` 0x804D39AC (`[4 languages][6]`) points to, then the pools; 0x8049E304 is padding before the time file's 8-aligned pool. The memory manager's `.data` 0x804D398C (0x20) sits just before. `_GLOBAL_.I` 0x801AF358 | 13 |
+| 0x801AF394-0x801AFEC0 | Unknown: `OSGetTime`/`OSTicksToCalendarTime`, calls into 0x8023EA4C. Its `_GLOBAL_.I` 0x801AFE84 constructs `lbl_80593BE8` (`.bss` 0x70, constructor `fn_801AF394`), the object whose counter `fn_8042D324` the system monitor reads and which it pauses with `fn_801AF754`. `.rodata` starts 0x8049E308 | 14 |
 | 0x801AFEC0-0x801B0B40 | **File back end**, its own file: the open-file record's methods. No `.rodata`. Start: the time file's `_GLOBAL_.I` `fn_801AFE84` ends the file before. End: `Std/BufferAllocator.cpp` asserts at line 140 in its third function `fn_801B0C90`, which leaves no room for these 0xC80 bytes ahead of it; the back end reaches the allocator only through the `.sdata` pointer `lbl_8066C6B8` (set by `fn_801AFEC0`) with virtual calls | 5 |
 | 0x801B0B40-0x801B104C | **`Std/BufferAllocator.cpp`** (the default allocation path in `fn_801B0C90`). `.rodata` 0x8049E3AC-0x8049E3F4. The object is `lbl_80593C58` (`.bss`, 0x18), which the file layer's init hands to the back end | 5 |
 | 0x801B104C-0x801B2620 | **`Std/stdBigHashedVFS.cpp`** (assert paths in `fn_801B1270` and `fn_801B1D74`). `.rodata` 0x8049E3F4-0x8049E4DC, from its own `"bf:"` (the constructor's, emitted first) to `"Decompession Buffer"` | 6 |
@@ -42,7 +42,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801B26DC-0x801B50BC | Tuning and the `Game:Hashtables` registry, mostly matched ([`characters.md`](characters.md) section 4); several units are C. Gaps: path-string helpers 0x801B3E6C-0x801B4284 and small ones up to 0x801B4E84 | 16 |
 | 0x801B50BC-0x801B5BA8 | **`KVList` and `KSList`** (`Game:KVList` `fn_801B5400`, `Game:KSList` `fn_801B59F0`). `.rodata` 0x8049E620-0x8049E660. Starts at the `KVList` constructor: 0x801B4F40-0x801B50BC are registry C (`register` parameters, called only from the registry at 0x801B4764-0x801B4D7C) | 8 |
 | 0x801B5BA8-0x801B6AF0 | **`Game:List`** (`fn_801B5E38`), a growable pointer array. `.rodata` 0x8049E660-0x8049E680 | 9 |
-| 0x801B6AF0-0x801B738C | Unknown wrappers (calls into 0x800FE284-0x80101188 and 0x8023E850-0x8023E98C). Its `.rodata` holds two short tables, 0x8049E680 and 0x8049E71C, read only from the APT glue's `fn_80126F0C` | 15 |
+| 0x801B6AF0-0x801B738C | Unknown wrappers (calls into 0x800FE284-0x80101188 and 0x8023E850-0x8023E98C). From 0x801B6D8C: `CSysMon`'s base class (section 4.7). Its `.rodata` holds two short tables, 0x8049E680 and 0x8049E71C, read only from the APT glue's `fn_80126F0C` | 15 |
 | 0x801B738C-0x801B7A48 | **String helpers and the string hash table**: in-place lowercase `fn_801B738C` and the seeded djb2 hash `fn_801B741C` (both called game-wide), then a table that only `stdVar` uses. No `.rodata`. The edge with `stdVar` is a guess from the code: before it, free functions over a table parameter; from it, `stdVar`'s singleton and methods, the first code to touch file data. `.rodata`, the pair map and the language (C++ on both sides) do not separate them | 10 |
 | 0x801B7A48-0x801B8E78 | **`stdVar`**, a singleton of named int, float and string variables read from INI-style text (`[section]`, `key = value`, `//` comments, `"` quoting; keys become `PREFIX/SECTION/KEY`, uppercased). Init `fn_801B8530` loads a file under the tag `"Game:stdVar"`. `.rodata` 0x8049E97C-0x8049E9A8; the floats before it, to 0x8049E8FC, are row 15's (read from 0x801B7018-0x801B7308) | 10 |
 | 0x801B8E78-0x801BA090 | **View frustum**, called from the renderer (0x8039xxxx-0x803Bxxxx). `.rodata` 0x8049E9A8-0x8049E9B8, its last two zero words unread | 11 |
@@ -130,6 +130,18 @@ Four 0x19C-byte records, one per channel; game code reads them through the curre
 | +0x0C-+0x18 | stick x, y (y negated) over 56; C-stick x, y over 44 |
 | +0x1C | 16 key slots of 0x18: value (0-1), press frame, press time, release frame, release time, held time. Keys: 1 A, 2 B, 3 X, 4 Y, 5 Z, 6 and 7 the analog L and R, 8 L, 9 R, 10 Start, 11-14 left, right, up, down |
 
+### 4.7 `CTask`, the system monitor's base (row 15)
+
+Only `CSysMon` (0xA0 bytes, `lbl_80593B48`) derives from it; the name is a guess. Layout of the base, 0x78 bytes:
+
+| Offset | What |
+|---|---|
+| +0x00 | `u8` flags: 1 registered (base); the monitor adds 4 reset pressed, 8 reset requested, 0x10 halted on a drive error |
+| +0x04 | member built by `fn_800FE6AC(p, 0xC8)`, destroyed by `fn_800FE7E0(p, 2)` |
+| +0x74 | handle from `fn_8023E850(cb, 0, 0, 0)`, a callback list at `lbl_8062D680`; `fn_8023E930` removes it |
+
+Methods: constructor `fn_801B6D8C`, destructor `_._5CTask`, `fn_801B6E44(cb)` registers, `fn_801B6EC0` unregisters, and `fn_801B6FCC`/`fn_801B71EC` measure and draw text in place of the monitor's own font code when `lbl_8066BB0C` and the tail getter `fn_804668A4` are set.
+
 ---
 
 ## 5. Notes
@@ -159,7 +171,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 10 | String utilities and `stdVar` | 0x801B738C-0x801B8E78 | Done |
 | 11 | Geometry | 0x801B8E78-0x801BC9DC | Done |
 | 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Done |
-| 13 | System monitor | 0x801AD588-0x801AF394 | Match |
+| 13 | System monitor | 0x801AD588-0x801AF394 | Done |
 | 14 | Unknown time file | 0x801AF394-0x801AFEC0 | Identify, then match |
 | 15 | Unknown wrappers | 0x801B6AF0-0x801B738C | Identify, then match; claims the two short tables (section 2) |
 | 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Extend the neighbouring units or merge into them |
