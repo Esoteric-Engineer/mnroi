@@ -3166,18 +3166,26 @@ Game/fn_801BA090.cpp:
 	.bss        start:0x80593D14 end:0x80593DB4
 	.sbss       start:0x8066F51C end:0x8066F520
 
+Game/fn_801BC9DC.cpp:
+	.text       start:0x801BC9DC end:0x801BCE6C
+
 Game/fn_801BCE6C.cpp:
 	.text       start:0x801BCE6C end:0x801BD38C
 
-Game/fn_801BD530.cpp:
-	.text       start:0x801BD530 end:0x801BD7B4
+Game/fn_801BD38C.cpp:
+	.text       start:0x801BD38C end:0x801BD7B4
 
-Game/fn_801BD9C4.c:
-	.text       start:0x801BD9C4 end:0x801BDA3C
+Game/fn_801BD7B4.cpp:
+	.text       start:0x801BD7B4 end:0x801BD9C4
 
-Game/fn_801BE3C4.c:
-	.text       start:0x801BE3C4 end:0x801BE5A8
-	.rodata     start:0x8049EBA4 end:0x8049EBC4
+Game/fn_801BD9C4.cpp:
+	.text       start:0x801BD9C4 end:0x801BEA34
+
+Game/fn_801BEA34.cpp:
+	.text       start:0x801BEA34 end:0x801BEE2C
+	.ctors      start:0x804826BC end:0x804826C0
+	.bss        start:0x80593DC0 end:0x80593E10
+	.sbss       start:0x8066F528 end:0x8066F530
 
 Game/fn_801BEE2C.cpp:
 	.text       start:0x801BEE2C end:0x801C55F8
