@@ -3083,6 +3083,12 @@ Game/fn_801AD588.cpp:
 	.sdata      start:0x8066C6A0 end:0x8066C6B8
 	.sbss       start:0x8066F4FC end:0x8066F518
 
+Game/fn_801AF394.cpp:
+	.text       start:0x801AF394 end:0x801AFEC0
+	.ctors      start:0x804826B0 end:0x804826B4
+	.rodata     start:0x8049E308 end:0x8049E350
+	.bss        start:0x80593BE8 end:0x80593C58
+
 Game/fn_801AFEC0.cpp:
 	.text       start:0x801AFEC0 end:0x801B0B40
 

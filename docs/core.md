@@ -34,7 +34,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801AA1E8-0x801ABA18 | **Pad manager**: init, read, reset, rumble (`PADControlMotor`), stick math (`__ieee754_sqrtf`). `.rodata` 0x8049D8F0-0x8049D960, ending with the button-bit table 0x8049D950 | 12 |
 | 0x801ABA18-0x801AD588 | **Memory manager** (section 4.3). Starts at `fn_801ABA18`, the empty callback the init passes to `VMSetLogStatsCallback` and its only reference. `.rodata` 0x8049D960-0x8049DAF0, ending with `"new[]"`; the rest of the file reads none | 2 |
 | 0x801AD588-0x801AF394 | **System monitor** (`CSysMon`, `Game/fn_801AD588.cpp`). `.rodata` 0x8049DAF0-0x8049E308: first 0x148 bytes of strings no code reads (`"cMoviePlayer:Instance"`, `"Memcard:Thread"`, font names; inline functions' tags, a guess), then the localized drive messages that `.data` 0x804D39AC (`[4 languages][6]`) points to, then the pools; 0x8049E304 is padding before the time file's 8-aligned pool. The memory manager's `.data` 0x804D398C (0x20) sits just before. `_GLOBAL_.I` 0x801AF358 | 13 |
-| 0x801AF394-0x801AFEC0 | Unknown: `OSGetTime`/`OSTicksToCalendarTime`, calls into 0x8023EA4C. Its `_GLOBAL_.I` 0x801AFE84 constructs `lbl_80593BE8` (`.bss` 0x70, constructor `fn_801AF394`), the object whose counter `fn_8042D324` the system monitor reads and which it pauses with `fn_801AF754`. `.rodata` starts 0x8049E308 | 14 |
+| 0x801AF394-0x801AFEC0 | **Frame clock** `lbl_80593BE8` (section 4.8). One file: it starts after the system monitor's `_GLOBAL_.I` and ends with its own at 0x801AFE84, which runs the constructor `fn_801AF394`; no function-end pairs, since the constructor sets the flag. `.rodata` 0x8049E308-0x8049E3AC: its pools to 0x8049E350, then `fn_8042CE28`'s pool copy and five `"Memcard:*"` tags that no code reads (left unclaimed: an 8-aligned 0xA4 section, which ngcas would pad to 0xA8) | 14 |
 | 0x801AFEC0-0x801B0B40 | **File back end**, its own file: the open-file record's methods. No `.rodata`. Start: the time file's `_GLOBAL_.I` `fn_801AFE84` ends the file before. End: `Std/BufferAllocator.cpp` asserts at line 140 in its third function `fn_801B0C90`, which leaves no room for these 0xC80 bytes ahead of it; the back end reaches the allocator only through the `.sdata` pointer `lbl_8066C6B8` (set by `fn_801AFEC0`) with virtual calls | 5 |
 | 0x801B0B40-0x801B104C | **`Std/BufferAllocator.cpp`** (the default allocation path in `fn_801B0C90`). `.rodata` 0x8049E3AC-0x8049E3F4. The object is `lbl_80593C58` (`.bss`, 0x18), which the file layer's init hands to the back end | 5 |
 | 0x801B104C-0x801B2620 | **`Std/stdBigHashedVFS.cpp`** (assert paths in `fn_801B1270` and `fn_801B1D74`). `.rodata` 0x8049E3F4-0x8049E4DC, from its own `"bf:"` (the constructor's, emitted first) to `"Decompession Buffer"` | 6 |
@@ -142,6 +142,22 @@ Only `CSysMon` (0xA0 bytes, `lbl_80593B48`) derives from it; the name is a guess
 
 Methods: constructor `fn_801B6D8C`, destructor `_._5CTask`, `fn_801B6E44(cb)` registers, `fn_801B6EC0` unregisters, and `fn_801B6FCC`/`fn_801B71EC` measure and draw text in place of the monitor's own font code when `lbl_8066BB0C` and the tail getter `fn_804668A4` are set.
 
+### 4.8 Frame clock (`lbl_80593BE8`)
+
+0x70 bytes, ticked once a frame by `fn_801AF790` from the ms counter `fn_8023EA4C` (the timer `fn_8023D994(1000)` starts). It has two counter blocks of 0x20, *real* at +0x20 and *game* at +0x40, each holding frames, `int` ms, `float` s, `unsigned` delta ms (clamped to 1-1000), `float` delta s, 1 / delta s, a `float` scale and an `int` pause count. The game block accumulates seconds rather than ms, and its scale ramps toward the target. Readers in the tail: `fn_8042EFF8` +0x44, `fn_8042F024` +0x4C, `fn_8043B3B0` +0x54, `fn_804669A4` +0x38, `fn_80435650` +0x58; `fn_80466828`/`fn_80466850` write +0x3C and `fn_804325CC` writes +0x5C.
+
+| Offset | What |
+|---|---|
+| +0x00 | started, set by `fn_801AF6C4` |
+| +0x04 | frames ticked |
+| +0x08 | `int` ms times the scale; `fn_8046697C` sets it |
+| +0x0C | the real block's delta before the clamp |
+| +0x10 | fixed step in ms, used instead of the measured delta when nonzero |
+| +0x14 | `float` scale on the measured delta |
+| +0x18 | `s64` last tick |
+| +0x60, +0x64 | `float` target game scale and its ramp rate per second (`fn_801AFC50(scale, seconds)`) |
+| +0x68, +0x6C | flag, `float` fixed delta in seconds that replaces the measured delta in both blocks |
+
 ---
 
 ## 5. Notes
@@ -172,7 +188,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 11 | Geometry | 0x801B8E78-0x801BC9DC | Done |
 | 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Done |
 | 13 | System monitor | 0x801AD588-0x801AF394 | Done |
-| 14 | Unknown time file | 0x801AF394-0x801AFEC0 | Identify, then match |
+| 14 | Frame clock | 0x801AF394-0x801AFEC0 | Done |
 | 15 | Unknown wrappers | 0x801B6AF0-0x801B738C | Identify, then match; claims the two short tables (section 2) |
 | 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Extend the neighbouring units or merge into them |
 | 17 | Math gaps | 0x801BC9DC-0x801BEE2C, the unclaimed functions | Extend the neighbouring units or merge into them |
@@ -184,5 +200,5 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 
 ## 7. Open Questions
 
-- What the files at 0x801AF394 and 0x801B6AF0 are.
+- What the file at 0x801B6AF0 is.
 - What the 100 (0x64) that the file layer passes to close, open and the RealCore reads and writes means (a timeout or a priority: a guess).

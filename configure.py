@@ -945,6 +945,7 @@ config.libs = [
             Object(Matching, "Game/fn_801AA1E8.cpp"),
             Object(Matching, "Game/fn_801ABA18.cpp"),
             Object(Matching, "Game/fn_801AD588.cpp"),
+            Object(Matching, "Game/fn_801AF394.cpp"),
             Object(Matching, "Game/fn_801AFEC0.cpp"),
             Object(Matching, "Std/BufferAllocator.cpp"),
             Object(Matching, "Std/stdBigHashedVFS.cpp"),
