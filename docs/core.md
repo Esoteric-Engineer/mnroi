@@ -195,7 +195,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Done |
 | 17 | Math gaps | 0x801BC9DC-0x801BEE2C, the unclaimed functions | Done |
 | 18 | Std inline functions | 0x8046655C-0x80468888 | Done; 0x80465F68-0x8046655C is the model's and graphics' (section 2) |
-| 19 | Rest of the generic tail inlines | the unclaimed functions in 0x8042A2B8-0x80431788 | Class each by its callers (section 5), match the generic ones. 0x804291A4-0x804293F4 is render- and HUD-only |
+| 19 | Rest of the generic tail inlines | the unclaimed functions in 0x8042A350-0x80431788 | Class each by its callers (section 5), match the generic ones. 0x804291A4-0x804293F4 is render- and HUD-only |
 | 20 | Rename pass | the functions section 4 describes | Names only where section 4 records what a function does; leaf accessors keep `fn_` |
 
 ---
