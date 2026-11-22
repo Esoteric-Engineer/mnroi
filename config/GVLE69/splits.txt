@@ -3120,20 +3120,13 @@ Game/fn_801B3638.c:
 	.text       start:0x801B3638 end:0x801B3E6C
 	.rodata     start:0x8049E53C end:0x8049E540
 
+Game/fn_801B3E6C.c:
+	.text       start:0x801B3E6C end:0x801B4284
+	.rodata     start:0x8049E55C end:0x8049E560
+
 Game/fn_801B4284.c:
-	.text       start:0x801B4284 end:0x801B4524
-
-Game/fn_801B4628.c:
-	.text       start:0x801B4628 end:0x801B4764
-
-Game/fn_801B48AC.c:
-	.text       start:0x801B48AC end:0x801B4938
-
-Game/fn_801B4CA0.c:
-	.text       start:0x801B4CA0 end:0x801B4D7C
-
-Game/fn_801B4E84.c:
-	.text       start:0x801B4E84 end:0x801B50BC
+	.text       start:0x801B4284 end:0x801B50BC
+	.rodata     start:0x8049E560 end:0x8049E620
 
 Game/fn_801B50BC.cpp:
 	.text       start:0x801B50BC end:0x801B5BA8

@@ -39,7 +39,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801B0B40-0x801B104C | **`Std/BufferAllocator.cpp`** (the default allocation path in `fn_801B0C90`). `.rodata` 0x8049E3AC-0x8049E3F4. The object is `lbl_80593C58` (`.bss`, 0x18), which the file layer's init hands to the back end | 5 |
 | 0x801B104C-0x801B2620 | **`Std/stdBigHashedVFS.cpp`** (assert paths in `fn_801B1270` and `fn_801B1D74`). `.rodata` 0x8049E3F4-0x8049E4DC, from its own `"bf:"` (the constructor's, emitted first) to `"Decompession Buffer"` | 6 |
 | 0x801B2620-0x801B26DC | **`stdBitmap`** (`.rodata` 0x8049E4DC, the registry name; the DOL gives no path). Its class table `lbl_80593C70` (`.bss`, 32 slots, count `lbl_8066C6CC`) is filled by the tuning init `Game/fn_801B26DC.cpp`, which follows | 7 |
-| 0x801B26DC-0x801B50BC | Tuning and the `Game:Hashtables` registry, mostly matched ([`characters.md`](characters.md) section 4); several units are C. Gaps: path-string helpers 0x801B3E6C-0x801B4284 and small ones up to 0x801B4E84 | 16 |
+| 0x801B26DC-0x801B50BC | Tuning ([`characters.md`](characters.md) section 4), then two C files. **Path-string helpers** 0x801B3E6C-0x801B4284 are called game-wide and by neither neighbour; their only `.rodata` is the `"."` at 0x8049E55C, between the NVB loader's strings and the registry's tag, so they are taken as their own file. **`Game:Hashtables` registry** 0x801B4284-0x801B50BC, `.rodata` 0x8049E560-0x8049E620 (tag, two unread dump formats, the bucket-count primes) | 16 |
 | 0x801B50BC-0x801B5BA8 | **`KVList` and `KSList`** (`Game:KVList` `fn_801B5400`, `Game:KSList` `fn_801B59F0`). `.rodata` 0x8049E620-0x8049E660. Starts at the `KVList` constructor: 0x801B4F40-0x801B50BC are registry C (`register` parameters, called only from the registry at 0x801B4764-0x801B4D7C) | 8 |
 | 0x801B5BA8-0x801B6AF0 | **`Game:List`** (`fn_801B5E38`), a growable pointer array. `.rodata` 0x8049E660-0x8049E680 | 9 |
 | 0x801B6AF0-0x801B6D8C | **Small-object allocator wrapper** over the tail's SOA class (0x80467494-0x80467894, row 18), built only by the APT glue (0x8011D244-0x8011EDE0) from one of the two 13-bin tables `lbl_8049E680` and `lbl_8049E71C` (`{u32 size; u16 ?, count, ?}`). `.rodata` 0x8049E680-0x8049E8FC: the tables, then unread SOA stats formats, `"[CPUSPAM]"`, a 1.0f, and the recurring font-name header block (`"UI/eafont0"` to `"EAS SansCondensed"`), which closes a file's `.rodata`. So `CTask`'s pool at 0x8049E8FC starts the next file. The empty startup stub `fn_801B6D70` is pair-less on either side; it is put at this file's end (a guess) | 15 |
@@ -191,7 +191,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 13 | System monitor | 0x801AD588-0x801AF394 | Done |
 | 14 | Frame clock | 0x801AF394-0x801AFEC0 | Done |
 | 15 | SOA wrapper and `CTask` | 0x801B6AF0-0x801B6D8C, then 0x801B6D8C-0x801B738C | Done |
-| 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Extend the neighbouring units or merge into them |
+| 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Done |
 | 17 | Math gaps | 0x801BC9DC-0x801BEE2C, the unclaimed functions | Extend the neighbouring units or merge into them |
 | 18 | Std inline functions | 0x80466298-0x80468888, and the ones in 0x80465F68-0x80466268 that the Std rows call | Match; one small unit per run of neighbours |
 | 19 | Rest of the generic tail inlines | the unclaimed functions in 0x80429090-0x80431788 | Class each by its callers (section 5), match the generic ones |
