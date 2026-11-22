@@ -43,7 +43,7 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801B50BC-0x801B5BA8 | **`KVList` and `KSList`** (`Game:KVList` `fn_801B5400`, `Game:KSList` `fn_801B59F0`). `.rodata` 0x8049E620-0x8049E660. Starts at the `KVList` constructor: 0x801B4F40-0x801B50BC are registry C (`register` parameters, called only from the registry at 0x801B4764-0x801B4D7C) | 8 |
 | 0x801B5BA8-0x801B6AF0 | **`Game:List`** (`fn_801B5E38`), a growable pointer array. `.rodata` 0x8049E660-0x8049E680 | 9 |
 | 0x801B6AF0-0x801B6D8C | **Small-object allocator wrapper** over the tail's SOA class (0x80467494-0x80467894, row 18), built only by the APT glue (0x8011D244-0x8011EDE0) from one of the two 13-bin tables `lbl_8049E680` and `lbl_8049E71C` (`{u32 size; u16 ?, count, ?}`). `.rodata` 0x8049E680-0x8049E8FC: the tables, then unread SOA stats formats, `"[CPUSPAM]"`, a 1.0f, and the recurring font-name header block (`"UI/eafont0"` to `"EAS SansCondensed"`), which closes a file's `.rodata`. So `CTask`'s pool at 0x8049E8FC starts the next file. The empty startup stub `fn_801B6D70` is pair-less on either side; it is put at this file's end (a guess) | 15 |
-| 0x801B6D8C-0x801B738C | **`CTask`**, `CSysMon`'s base class (section 4.7); calls into 0x800FE284-0x80101188 and 0x8023E850-0x8023E98C. `.rodata` from 0x8049E8FC: its pools to 0x8049E920, then `"Utils:Strings"`, `"rb"` and floats to 0x8049E97C that no code reads | 15 |
+| 0x801B6D8C-0x801B738C | **`CTask`**, `CSysMon`'s base class (section 4.7). `.rodata` from 0x8049E8FC: its pools to 0x8049E920, then `"Utils:Strings"`, `"rb"` and floats to 0x8049E97C that no code reads | 15 |
 | 0x801B738C-0x801B7A48 | **String helpers and the string hash table**: in-place lowercase `fn_801B738C` and the seeded djb2 hash `fn_801B741C` (both called game-wide), then a table that only `stdVar` uses. No `.rodata`. The edge with `stdVar` is a guess from the code: before it, free functions over a table parameter; from it, `stdVar`'s singleton and methods, the first code to touch file data. `.rodata`, the pair map and the language (C++ on both sides) do not separate them | 10 |
 | 0x801B7A48-0x801B8E78 | **`stdVar`**, a singleton of named int, float and string variables read from INI-style text (`[section]`, `key = value`, `//` comments, `"` quoting; keys become `PREFIX/SECTION/KEY`, uppercased). Init `fn_801B8530` loads a file under the tag `"Game:stdVar"`. `.rodata` 0x8049E97C-0x8049E9A8; the floats before it, to 0x8049E8FC, are row 15's (read from 0x801B7018-0x801B7308) | 10 |
 | 0x801B8E78-0x801BA090 | **View frustum**, called from the renderer (0x8039xxxx-0x803Bxxxx). `.rodata` 0x8049E9A8-0x8049E9B8, its last two zero words unread | 11 |
@@ -137,11 +137,12 @@ Only `CSysMon` (0xA0 bytes, `lbl_80593B48`) derives from it; the name is a guess
 
 | Offset | What |
 |---|---|
-| +0x00 | `u8` flags: 1 registered (base); the monitor adds 4 reset pressed, 8 reset requested, 0x10 halted on a drive error |
-| +0x04 | member built by `fn_800FE6AC(p, 0xC8)`, destroyed by `fn_800FE7E0(p, 2)` |
-| +0x74 | handle from `fn_8023E850(cb, 0, 0, 0)`, a callback list at `lbl_8062D680`; `fn_8023E930` removes it |
+| +0x00 | `u8` flags: 1 registered, 2 set on registering (read by the tail getter `fn_804685D0`); the monitor adds 4 reset pressed, 8 reset requested, 0x10 halted on a drive error |
+| +0x04 | text object (0x48), built by `fn_800FE6AC(p, 0xC8)`, destroyed by `fn_800FE7E0(p, 2)`; font `fn_800FE284(3)` at size 26 |
+| +0x4C | 0x28-byte line buffer for the text measure and draw |
+| +0x74 | the callback, added to the list at `lbl_8062D680` by `fn_8023E850(cb, 0, 0, 0)` and removed by `fn_8023E930(cb)` |
 
-Methods: constructor `fn_801B6D8C`, destructor `_._5CTask`, `fn_801B6E44(cb)` registers, `fn_801B6EC0` unregisters, and `fn_801B6FCC`/`fn_801B71EC` measure and draw text in place of the monitor's own font code when `lbl_8066BB0C` and the tail getter `fn_804668A4` are set.
+The monitor uses the base's text measure and draw in place of its own font code when `lbl_8066BB0C` and the tail getter `fn_804668A4` are set.
 
 ### 4.8 Frame clock (`lbl_80593BE8`)
 
@@ -189,7 +190,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Done |
 | 13 | System monitor | 0x801AD588-0x801AF394 | Done |
 | 14 | Frame clock | 0x801AF394-0x801AFEC0 | Done |
-| 15 | SOA wrapper and `CTask` | 0x801B6AF0-0x801B6D8C, then 0x801B6D8C-0x801B738C | SOA wrapper done; match `CTask` from `fn_801B6D8C` |
+| 15 | SOA wrapper and `CTask` | 0x801B6AF0-0x801B6D8C, then 0x801B6D8C-0x801B738C | Done |
 | 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Extend the neighbouring units or merge into them |
 | 17 | Math gaps | 0x801BC9DC-0x801BEE2C, the unclaimed functions | Extend the neighbouring units or merge into them |
 | 18 | Std inline functions | 0x80466298-0x80468888, and the ones in 0x80465F68-0x80466268 that the Std rows call | Match; one small unit per run of neighbours |

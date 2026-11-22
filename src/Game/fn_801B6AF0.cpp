@@ -1,5 +1,6 @@
 // Small-object allocator wrapper over the tail's SOA class (docs/core.md row 15).
-// Owns the .rodata 0x8049E680-0x8049E8FC: the two bin tables the APT glue passes in, then unread data.
+// Owns the .rodata 0x8049E680-0x8049E8F8: the two bin tables the APT glue passes in, then unread data;
+// the last string's final word went to Game/fn_801B6D8C.cpp, whose 8-aligned pool needs it.
 
 struct SOABin
 {
@@ -149,5 +150,4 @@ __asm__(".section .rodata
         "\t.4byte 0x00000000, 0x4575726F, 0x7374696C, 0x65204C54\n"
         "\t.4byte 0x20537464, 0x20436F6E, 0x64656E73, 0x65640000\n"
         "\t.4byte 0x45415320, 0x53616E73, 0x436F6E64, 0x656E7365\n"
-        "\t.4byte 0x64000000\n"
         "	.text");
