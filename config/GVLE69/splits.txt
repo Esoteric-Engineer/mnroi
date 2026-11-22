@@ -4273,7 +4273,7 @@ Game/fn_80428F74.cpp:
 	.text       start:0x80428F74 end:0x80428FE0
 
 Game/fn_80428FE0.c:
-	.text       start:0x80428FE0 end:0x80429090
+	.text       start:0x80428FE0 end:0x804291A4
 
 Game/fn_8042D854.c:
 	.text       start:0x8042D854 end:0x8042D8A8
