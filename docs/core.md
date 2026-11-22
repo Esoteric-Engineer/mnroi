@@ -42,7 +42,8 @@ All of it is `-O0` game code. A `.ctors` entry (`_GLOBAL_.I`) ends a file that h
 | 0x801B26DC-0x801B50BC | Tuning and the `Game:Hashtables` registry, mostly matched ([`characters.md`](characters.md) section 4); several units are C. Gaps: path-string helpers 0x801B3E6C-0x801B4284 and small ones up to 0x801B4E84 | 16 |
 | 0x801B50BC-0x801B5BA8 | **`KVList` and `KSList`** (`Game:KVList` `fn_801B5400`, `Game:KSList` `fn_801B59F0`). `.rodata` 0x8049E620-0x8049E660. Starts at the `KVList` constructor: 0x801B4F40-0x801B50BC are registry C (`register` parameters, called only from the registry at 0x801B4764-0x801B4D7C) | 8 |
 | 0x801B5BA8-0x801B6AF0 | **`Game:List`** (`fn_801B5E38`), a growable pointer array. `.rodata` 0x8049E660-0x8049E680 | 9 |
-| 0x801B6AF0-0x801B738C | Unknown wrappers (calls into 0x800FE284-0x80101188 and 0x8023E850-0x8023E98C). From 0x801B6D8C: `CSysMon`'s base class (section 4.7). Its `.rodata` holds two short tables, 0x8049E680 and 0x8049E71C, read only from the APT glue's `fn_80126F0C` | 15 |
+| 0x801B6AF0-0x801B6D8C | **Small-object allocator wrapper** over the tail's SOA class (0x80467494-0x80467894, row 18), built only by the APT glue (0x8011D244-0x8011EDE0) from one of the two 13-bin tables `lbl_8049E680` and `lbl_8049E71C` (`{u32 size; u16 ?, count, ?}`). `.rodata` 0x8049E680-0x8049E8FC: the tables, then unread SOA stats formats, `"[CPUSPAM]"`, a 1.0f, and the recurring font-name header block (`"UI/eafont0"` to `"EAS SansCondensed"`), which closes a file's `.rodata`. So `CTask`'s pool at 0x8049E8FC starts the next file. The empty startup stub `fn_801B6D70` is pair-less on either side; it is put at this file's end (a guess) | 15 |
+| 0x801B6D8C-0x801B738C | **`CTask`**, `CSysMon`'s base class (section 4.7); calls into 0x800FE284-0x80101188 and 0x8023E850-0x8023E98C. `.rodata` from 0x8049E8FC: its pools to 0x8049E920, then `"Utils:Strings"`, `"rb"` and floats to 0x8049E97C that no code reads | 15 |
 | 0x801B738C-0x801B7A48 | **String helpers and the string hash table**: in-place lowercase `fn_801B738C` and the seeded djb2 hash `fn_801B741C` (both called game-wide), then a table that only `stdVar` uses. No `.rodata`. The edge with `stdVar` is a guess from the code: before it, free functions over a table parameter; from it, `stdVar`'s singleton and methods, the first code to touch file data. `.rodata`, the pair map and the language (C++ on both sides) do not separate them | 10 |
 | 0x801B7A48-0x801B8E78 | **`stdVar`**, a singleton of named int, float and string variables read from INI-style text (`[section]`, `key = value`, `//` comments, `"` quoting; keys become `PREFIX/SECTION/KEY`, uppercased). Init `fn_801B8530` loads a file under the tag `"Game:stdVar"`. `.rodata` 0x8049E97C-0x8049E9A8; the floats before it, to 0x8049E8FC, are row 15's (read from 0x801B7018-0x801B7308) | 10 |
 | 0x801B8E78-0x801BA090 | **View frustum**, called from the renderer (0x8039xxxx-0x803Bxxxx). `.rodata` 0x8049E9A8-0x8049E9B8, its last two zero words unread | 11 |
@@ -164,7 +165,6 @@ Methods: constructor `fn_801B6D8C`, destructor `_._5CTask`, `fn_801B6E44(cb)` re
 
 - **The tail is ordered by the first file that emitted each inline** ([`prodg.md`](prodg.md#inline-functions-and-the-tail-of-text)), so a tail run is not one class. 0x80426A2C-0x80428FE0 has its pools in the first kilobyte of `.rodata` (the HUD files at 0x80003808 on): it holds HUD-only inlines (`fn_80426F94` and `fn_80427214` call `fn_800098CC`, `fn_80426AB0` tests `G+0x770`) next to `Color`, `Vector` and the list wrappers. Claim a tail function for this map only if its callers are spread across the game or are in the rows above; leave the rest for the branch that owns their callers.
 - **The most-called generic inline still open** is the localization getter `fn_80427400` (31 calling functions, row 19).
-- **The two short tables in row 15's `.rodata`** (0x8049E680, 0x8049E71C) sit between `Game:List`'s pool and `fn_801B6FCC`'s, so they belong to that file even though only `fn_80126F0C` reads them.
 - **Call counts in this file are calling functions, not call sites**, counted once per function. `build/GVLE69/asm/` holds stale copies of split files, so a raw `grep -c` over it double-counts.
 
 ---
@@ -189,7 +189,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 12 | Pad manager | 0x801AA1E8-0x801ABA18 | Done |
 | 13 | System monitor | 0x801AD588-0x801AF394 | Done |
 | 14 | Frame clock | 0x801AF394-0x801AFEC0 | Done |
-| 15 | Unknown wrappers | 0x801B6AF0-0x801B738C | Identify, then match; claims the two short tables (section 2) |
+| 15 | SOA wrapper and `CTask` | 0x801B6AF0-0x801B6D8C, then 0x801B6D8C-0x801B738C | SOA wrapper done; match `CTask` from `fn_801B6D8C` |
 | 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Extend the neighbouring units or merge into them |
 | 17 | Math gaps | 0x801BC9DC-0x801BEE2C, the unclaimed functions | Extend the neighbouring units or merge into them |
 | 18 | Std inline functions | 0x80466298-0x80468888, and the ones in 0x80465F68-0x80466268 that the Std rows call | Match; one small unit per run of neighbours |
@@ -200,5 +200,4 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 
 ## 7. Open Questions
 
-- What the file at 0x801B6AF0 is.
 - What the 100 (0x64) that the file layer passes to close, open and the RealCore reads and writes means (a timeout or a priority: a guess).

@@ -3143,6 +3143,10 @@ Game/fn_801B5BA8.cpp:
 	.text       start:0x801B5BA8 end:0x801B6AF0
 	.rodata     start:0x8049E660 end:0x8049E680
 
+Game/fn_801B6AF0.cpp:
+	.text       start:0x801B6AF0 end:0x801B6D8C
+	.rodata     start:0x8049E680 end:0x8049E8FC
+
 Game/fn_801B738C.cpp:
 	.text       start:0x801B738C end:0x801B7A48
 
