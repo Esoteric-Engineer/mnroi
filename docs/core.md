@@ -107,7 +107,7 @@ The calls callers need: open `fn_801A8500(path, mode)`, open through the search 
 | 0x804F6978 | `KVList`, a `Game:List` of `{char *key, void *value}` nodes (vptr `+0x20`, object 0x24). Slots: `+0x10`-`+0x20` the List's, stubbed to return -1; `+0x28` set(key, value); `+0x30` remove(key) | `fn_801B50BC(this, n, grow)` |
 | 0x804F6908 | `KSList` : `KVList`, string values. Adds `+0x38` set(key, string), then setters that format and call it: `+0x40` float, `+0x48` unsigned, `+0x50` int, `+0x58` vector (`"%f %f %f"`), `+0x60` bool (`"1"`/`"0"`). Its destructor is the tail inline `_._5Sub24` (0x80467428) | `fn_801B54E8(this, n, grow)` |
 | 0x804F69B8 | `Game:List`, 0x24 bytes: items `+0x0`, growth factor `+0x4`, capacity `+0x8`, count `+0xC`, flags `+0x10` (bit 0 sorted), item callback `+0x14` (`(op, item)`, op 0 added, 1 removed), match `+0x18` (`(item, key)`), compare `+0x1C`, vptr `+0x20`. Slots: `+0x10` add(item), `+0x18` insert(i, item), `+0x20` remove(item) | `fn_801B5BA8(this, capacity, grow)` |
-| 0x804F2DE0-0x804F2E40 | Five callback handles `{Impl *impl; vptr}`, one virtual slot each (the destructor). Placeholder names, shared with the other units that build them: 0x804F2DE0 `HandleD`, 0x804F2DF8 `HandleG`, 0x804F2E10 `Cue`, 0x804F2E28 `HandleA`, 0x804F2E40 `HandleC`; destructors `_._7HandleD` etc. The 0x18-byte impl is built from (owner, a pointer to member `{0, 0xFFFF, fn}`). Still open in the tail (row 19), per handle: copy constructor, `get` (the list key), destructor, at 0x80429470-0x80429BB8 | 0x80428314, then every 0x108 bytes to 0x80428734; `fn_8042883C` is a second `HandleA` constructor |
+| 0x804F2DE0-0x804F2E40 | Five callback handles `{Impl *impl; vptr}`, one virtual slot each (the destructor). Placeholder names, shared with the other units that build them: 0x804F2DE0 `HandleD`, 0x804F2DF8 `HandleG`, 0x804F2E10 `Cue`, 0x804F2E28 `HandleA`, 0x804F2E40 `HandleC`; destructors `_._7HandleD` etc. The 0x18-byte impl is built from (owner, a pointer to member `{0, 0xFFFF, fn}`). Impl vtables 0x804F2E58-0x804F2F20: `+0x8` destructor, `+0x10` get (the list key), `+0x18` invoke; their bodies, 0x80429D10-0x8042A2B8, have no direct callers and are still open (row 19) | 0x80428314, then every 0x108 bytes to 0x80428734; `fn_8042883C` is a second `HandleA` constructor |
 
 
 ### 4.5 Memory-card slots (`lbl_80589260`)
@@ -195,7 +195,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Done |
 | 17 | Math gaps | 0x801BC9DC-0x801BEE2C, the unclaimed functions | Done |
 | 18 | Std inline functions | 0x8046655C-0x80468888 | Done; 0x80465F68-0x8046655C is the model's and graphics' (section 2) |
-| 19 | Rest of the generic tail inlines | the unclaimed functions in 0x804291A4-0x80431788 | Class each by its callers (section 5), match the generic ones. `fn_804291A4` (normalize) is render- and HUD-only |
+| 19 | Rest of the generic tail inlines | the unclaimed functions in 0x80429D10-0x80431788 | Class each by its callers (section 5), match the generic ones. 0x804291A4-0x804293F4 is render- and HUD-only |
 | 20 | Rename pass | the functions section 4 describes | Names only where section 4 records what a function does; leaf accessors keep `fn_` |
 
 ---
