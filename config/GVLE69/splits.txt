@@ -4296,6 +4296,9 @@ Game/fn_8042CE28.cpp:
 Game/fn_8042D1E8.cpp:
 	.text       start:0x8042D1E8 end:0x8042D2FC
 
+Game/fn_8042D324.cpp:
+	.text       start:0x8042D324 end:0x8042D444
+
 Game/fn_8042D854.c:
 	.text       start:0x8042D854 end:0x8042D8A8
 
