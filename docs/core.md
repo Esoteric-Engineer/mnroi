@@ -147,7 +147,7 @@ The monitor uses the base's text measure and draw in place of its own font code 
 
 ### 4.8 Frame clock (`lbl_80593BE8`)
 
-0x70 bytes, ticked once a frame by `fn_801AF790` from the ms counter `fn_8023EA4C` (the timer `fn_8023D994(1000)` starts). It has two counter blocks of 0x20, *real* at +0x20 and *game* at +0x40, each holding frames, `int` ms, `float` s, `unsigned` delta ms (clamped to 1-1000), `float` delta s, 1 / delta s, a `float` scale and an `int` pause count. The game block accumulates seconds rather than ms, and its scale ramps toward the target. Readers in the tail: `fn_8042EFF8` +0x44, `fn_8042F024` +0x4C, `fn_8043B3B0` +0x54, `fn_804669A4` +0x38, `fn_80435650` +0x58; `fn_80466828`/`fn_80466850` write +0x3C and `fn_804325CC` writes +0x5C.
+0x70 bytes, ticked once a frame by `fn_801AF790` from the ms counter `fn_8023EA4C` (the timer `fn_8023D994(1000)` starts). It has two counter blocks of 0x20, *real* at +0x20 and *game* at +0x40, each holding frames, `int` ms, `float` s, `unsigned` delta ms (clamped to 1-1000), `float` delta s, 1 / delta s, a `float` scale and an `int` pause count. The game block accumulates seconds rather than ms, and its scale ramps toward the target. Readers in the tail: `fn_8042E96C` +0x24, `fn_8042E998` +0x30, `fn_8042EFF8` +0x44, `fn_8042F024` +0x4C, `fn_8043B3B0` +0x54, `fn_804669A4` +0x38, `fn_80435650` +0x58; `fn_80466828`/`fn_80466850` write +0x3C and `fn_804325CC` writes +0x5C.
 
 | Offset | What |
 |---|---|
@@ -195,7 +195,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Done |
 | 17 | Math gaps | 0x801BC9DC-0x801BEE2C, the unclaimed functions | Done |
 | 18 | Std inline functions | 0x8046655C-0x80468888 | Done; 0x80465F68-0x8046655C is the model's and graphics' (section 2) |
-| 19 | Rest of the generic tail inlines | the unclaimed functions in 0x8042A7D8-0x80431788 | Class each by its callers (section 5), match the generic ones. 0x804291A4-0x804293F4 is render- and HUD-only; the unclaimed functions in 0x8042A858-0x8042E96C are HUD-only (callers at 0x8000xxxx) or called only from the loading-screen singleton's file (0x80015248-0x80017FB0, `lbl_8066B54C`) and the APT glue, apart from `fn_8042D0A8` (one more caller at 0x80132838, unclassed). next generic run: `fn_8042E96C`, `fn_8042E998` (18 and 21 callers) |
+| 19 | Rest of the generic tail inlines | the unclaimed functions in 0x8042A7D8-0x80431788 | Class each by its callers (section 5), match the generic ones. 0x804291A4-0x804293F4 is render- and HUD-only; the unclaimed functions in 0x8042A858-0x8042EA08 are HUD-only (callers at 0x8000xxxx) or each called from one game file in 0x80015248-0x8001C258 (the loading-screen singleton `lbl_8066B54C`'s among them) and the APT glue, apart from `fn_8042D0A8` (one more caller at 0x80132838, unclassed). `fn_8042EA08` (12 callers, `__7XformEx` among them) is the next generic one |
 | 20 | Rename pass | the functions section 4 describes | Names only where section 4 records what a function does; leaf accessors keep `fn_` |
 
 ---
