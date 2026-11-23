@@ -195,7 +195,7 @@ Work the rows in order and skip whatever is done; `configure.py` is the authorit
 | 16 | Tuning-area gaps | 0x801B3E6C-0x801B4F40, the unclaimed functions | Done |
 | 17 | Math gaps | 0x801BC9DC-0x801BEE2C, the unclaimed functions | Done |
 | 18 | Std inline functions | 0x8046655C-0x80468888 | Done; 0x80465F68-0x8046655C is the model's and graphics' (section 2) |
-| 19 | Rest of the generic tail inlines | the unclaimed functions in 0x8042A7D8-0x80431788 | Class each by its callers (section 5), match the generic ones. 0x804291A4-0x804293F4 is render- and HUD-only; the unclaimed functions in 0x8042A858-0x8042EA08 are HUD-only (callers at 0x8000xxxx) or each called from one game file in 0x80015248-0x8001C258 (the loading-screen singleton `lbl_8066B54C`'s among them) and the APT glue, apart from `fn_8042D0A8` (one more caller at 0x80132838, unclassed). `fn_8042EA08` (12 callers, `__7XformEx` among them) is the next generic one |
+| 19 | Rest of the generic tail inlines | the unclaimed functions in 0x8042A7D8-0x80431788 | Class each by its callers (section 5), match the generic ones. 0x804291A4-0x804293F4 is render- and HUD-only; the unclaimed functions in 0x8042A858-0x8042EA08 are HUD-only (callers at 0x8000xxxx) or each called from one game file in 0x80015248-0x8001C258 (the loading-screen singleton `lbl_8066B54C`'s among them) and the APT glue, apart from `fn_8042D0A8` (one more caller at 0x80132838, unclassed). next generic run: 0x8042EB0C-0x8042EBF4 (callers in at least two files each), then `fn_8042EBF4` and `fn_8042EC54` (121 and 99 callers) |
 | 20 | Rename pass | the functions section 4 describes | Names only where section 4 records what a function does; leaf accessors keep `fn_` |
 
 ---
