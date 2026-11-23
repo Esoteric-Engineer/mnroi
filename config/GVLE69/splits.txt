@@ -4344,6 +4344,12 @@ Game/fn_8042E4FC.cpp:
 Game/fn_8042E7E4.cpp:
 	.text       start:0x8042E7E4 end:0x8042E80C
 
+Game/fn_8042E83C.cpp:
+	.text       start:0x8042E83C end:0x8042E894
+
+Game/fn_8042E894.cpp:
+	.text       start:0x8042E894 end:0x8042E8C4
+
 Game/fn_8042FB28.cpp:
 	.text       start:0x8042FB28 end:0x8042FB58
 
