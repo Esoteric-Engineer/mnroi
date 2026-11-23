@@ -287,7 +287,7 @@ has to be zero padding, so a unit with a string literal or a table in `.rodata` 
 is for float pools only.
 
 The pool addresses of consecutive functions are consecutive when the original file wrote them out together,
-so several functions can share a unit and one address (`Game/fn_80448364.c`). When they are not, give each
+so several functions can share a unit and one address (`Game/fn_80448364.c`). Each function gets its own pool at `-O0`, so the same literal in two neighbouring pools (1.0f at 0x80483BF4 and 0x80483BFC) is no sign of a file edge: one unit emits it twice (`Game/fn_8042DCC0.cpp`, measured in a scratch unit). When they are not, give each
 function its own unit. A unit that owns its `.rodata` for real (strings, a file's ordinary functions) claims
 it in `splits.txt` as before; `extern_pool` is for the linkonce functions.
 

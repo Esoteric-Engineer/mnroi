@@ -4333,7 +4333,7 @@ Game/fn_8042DC84.c:
 	.text       start:0x8042DC84 end:0x8042DCC0
 
 Game/fn_8042DCC0.cpp:
-	.text       start:0x8042DCC0 end:0x8042DD30
+	.text       start:0x8042DCC0 end:0x8042DEE8
 
 Game/fn_8042E438.cpp:
 	.text       start:0x8042E438 end:0x8042E4CC
