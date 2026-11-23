@@ -1,7 +1,8 @@
-// Matrix identity and Euler angles (degrees) to a rotation matrix (docs/core.md row 19).
+// Matrix identity, Euler angles (degrees) to a rotation matrix, and matrix product (docs/core.md row 19).
 
 struct Matrix {
     float m[4][4];
+    Matrix() __asm__("fn_8042D7B0");
 };
 
 inline int sn_return_decl(int a) { return a; }
@@ -14,6 +15,7 @@ struct Vector
 extern "C" {
 void *memset(void *dst, int value, unsigned int n);
 void fn_8042A7D8(float deg, float *s, float *c);
+void fn_8042E438(Matrix *dst, const Matrix *src);
 
 void fn_8042DCC0(register Matrix *self)
 {
@@ -50,5 +52,28 @@ void fn_8042DD30(register Matrix *m, register const Vector *e)
     m->m[3][1] = 0.0f;
     m->m[3][2] = 0.0f;
     m->m[3][3] = 1.0f;
+}
+
+void fn_8042DEE8(register Matrix *self, register const Matrix *b)
+{
+    Matrix tmp;
+    Matrix *t = &tmp;
+    fn_8042E438(t, self);
+    self->m[0][0] = b->m[0][0] * t->m[0][0] + b->m[1][0] * t->m[0][1] + b->m[2][0] * t->m[0][2] + b->m[3][0] * t->m[0][3];
+    self->m[0][1] = b->m[0][1] * t->m[0][0] + b->m[1][1] * t->m[0][1] + b->m[2][1] * t->m[0][2] + b->m[3][1] * t->m[0][3];
+    self->m[0][2] = b->m[0][2] * t->m[0][0] + b->m[1][2] * t->m[0][1] + b->m[2][2] * t->m[0][2] + b->m[3][2] * t->m[0][3];
+    self->m[0][3] = b->m[0][3] * t->m[0][0] + b->m[1][3] * t->m[0][1] + b->m[2][3] * t->m[0][2] + b->m[3][3] * t->m[0][3];
+    self->m[1][0] = b->m[0][0] * t->m[1][0] + b->m[1][0] * t->m[1][1] + b->m[2][0] * t->m[1][2] + b->m[3][0] * t->m[1][3];
+    self->m[1][1] = b->m[0][1] * t->m[1][0] + b->m[1][1] * t->m[1][1] + b->m[2][1] * t->m[1][2] + b->m[3][1] * t->m[1][3];
+    self->m[1][2] = b->m[0][2] * t->m[1][0] + b->m[1][2] * t->m[1][1] + b->m[2][2] * t->m[1][2] + b->m[3][2] * t->m[1][3];
+    self->m[1][3] = b->m[0][3] * t->m[1][0] + b->m[1][3] * t->m[1][1] + b->m[2][3] * t->m[1][2] + b->m[3][3] * t->m[1][3];
+    self->m[2][0] = b->m[0][0] * t->m[2][0] + b->m[1][0] * t->m[2][1] + b->m[2][0] * t->m[2][2] + b->m[3][0] * t->m[2][3];
+    self->m[2][1] = b->m[0][1] * t->m[2][0] + b->m[1][1] * t->m[2][1] + b->m[2][1] * t->m[2][2] + b->m[3][1] * t->m[2][3];
+    self->m[2][2] = b->m[0][2] * t->m[2][0] + b->m[1][2] * t->m[2][1] + b->m[2][2] * t->m[2][2] + b->m[3][2] * t->m[2][3];
+    self->m[2][3] = b->m[0][3] * t->m[2][0] + b->m[1][3] * t->m[2][1] + b->m[2][3] * t->m[2][2] + b->m[3][3] * t->m[2][3];
+    self->m[3][0] = b->m[0][0] * t->m[3][0] + b->m[1][0] * t->m[3][1] + b->m[2][0] * t->m[3][2] + b->m[3][0] * t->m[3][3];
+    self->m[3][1] = b->m[0][1] * t->m[3][0] + b->m[1][1] * t->m[3][1] + b->m[2][1] * t->m[3][2] + b->m[3][1] * t->m[3][3];
+    self->m[3][2] = b->m[0][2] * t->m[3][0] + b->m[1][2] * t->m[3][1] + b->m[2][2] * t->m[3][2] + b->m[3][2] * t->m[3][3];
+    self->m[3][3] = b->m[0][3] * t->m[3][0] + b->m[1][3] * t->m[3][1] + b->m[2][3] * t->m[3][2] + b->m[3][3] * t->m[3][3];
 }
 }
