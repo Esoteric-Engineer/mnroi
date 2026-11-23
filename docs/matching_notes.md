@@ -324,8 +324,7 @@ The MWCC notes from the SDK decomp (Dolphin SDK source shapes, MWCC data placeme
 - **A compound assignment whose stored register also feeds `mr r3` is one statement, `return x |= BIT;`.**
   Splitting it into `x |= BIT; return x;` reloads the field after the store, which shows up as an extra
   `lwz`; the returning form also adds one register copy before the store that the `void` setter beside
-  it does not have (`Game/fn_804428E0.c`, `fn_8044324C` vs `fn_804432AC`).
-
+  it does not have (`Game/fn_804428E0.c`, `fn_8044324C` vs `fn_804432AC`). The same holds for a test: `if (--p->n == 0)` compares a register copy (`mr r9, r0` / `stw r9` / `cmpwi r9`), while `p->n--; if (p->n == 0)` stores and reloads (`stw r0` / `lwz r0` / `cmpwi r0`) (`Game/fn_8042A350.cpp`, `fn_8042A37C`).
 - **`rlwinm rX, rY, 0, n, n` followed by `clrlwi rZ, rX, 16` on a getter's result is a 16-bit return, not a wider field.** Keep the `int` return type and write `return (unsigned short)(*(unsigned short *)(self + N) & MASK);`; the `unsigned short` return type would change the callers' prototypes (`Game/fn_804441A0.c`, `fn_80444CD0`).
 
 - **Parameters copied into scratch registers on entry (`mr r0, r3` / `mr r9, r4` / `mr r11, r5`) and never stored to the frame are `register` parameters,** used or not. A stub that ignores them, such as a vtable slot returning -1, is `int f(register void *self, register void *a) { return -1; }`; unnamed or plain parameters spill and the frame grows by 8 (`Game/fn_801B50BC.cpp`, `fn_801B5B20`).

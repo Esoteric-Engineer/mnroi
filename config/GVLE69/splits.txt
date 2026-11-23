@@ -4281,6 +4281,9 @@ Game/fn_804293F4.cpp:
 Game/fn_8042A2B8.cpp:
 	.text       start:0x8042A2B8 end:0x8042A350
 
+Game/fn_8042A350.cpp:
+	.text       start:0x8042A350 end:0x8042A7D8
+
 Game/fn_8042D854.c:
 	.text       start:0x8042D854 end:0x8042D8A8
 
